@@ -1,0 +1,399 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Cost>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@using UTOFrameWork.FrameworkClasses
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Code for paging
+        if ($('#Pagination'))
+            SetPaging();
+
+        $("#txtPageSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxDigits: 3
+        });
+        $('#Deal_Cost').autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+    });
+
+    var IsCall = 'Y';
+    function SetPaging() {
+        IsCall = 'N';
+        var PageNo, recordCnt, pageSize = 10;
+
+        if ('@ViewBag.RecordCount' != null) {
+            var lblTotalRecords = $("#lblTotalRecords");
+            lblTotalRecords.val('@ViewBag.RecordCount');
+            lblTotalRecords.text('@ViewBag.RecordCount');
+        }
+        if ('@ViewBag.TotalDealCost' != null) {
+            var lblTotalAgreementValue = $("#lblTotalAgreementValue");
+            lblTotalAgreementValue.val('@ViewBag.TotalDealCost');
+            lblTotalAgreementValue.text('@ViewBag.TotalDealCost');
+        }
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        if ('@ViewBag.pageSize' != null) {
+            pageSize = '@ViewBag.pageSize';
+            $('#txtPageSize').val(pageSize);
+        }
+        else
+            pageSize = $('#txtPageSize').val();
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = pageSize;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if ($('#txtPageSize').val() != "") {
+            if (IsCall == 'Y') {
+                if (CheckEditMode()) {
+                    LoadAcqDealCostNew(page_index, 'N');
+                }
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+
+</script>
+<style>
+    .SumoSelect,#divddllstTitle{
+        width : 94% !important;
+    }
+    #divddllstTitle > div{
+        width : 100% !important;
+    }
+   .navigation_tabs{
+       overflow : visible !important;
+   }
+</style>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+            {
+                <th style="width: 20%; vertical-align: middle;">@objMessageKey.Title</th>
+                <th style="width: 15%; vertical-align: middle;">@objMessageKey.CostType</th>
+                <th style="width: 10%; vertical-align: middle;">@objMessageKey.Amount</th>
+                <th style="width: 10%; vertical-align: middle;">@objMessageKey.Incentive</th>
+                <th style="width: 35%; vertical-align: middle;">@objMessageKey.Remarks</th>
+                <th style="width: 10%; vertical-align: middle;">@objMessageKey.Action</th>
+            }
+            else
+            {
+                <th style="width: 25%; vertical-align: middle;">@objMessageKey.Title</th>
+                <th style="width: 20%; vertical-align: middle;">@objMessageKey.CostType</th>
+                <th style="width: 10%; vertical-align: middle;">@objMessageKey.Amount</th>
+                <th style="width: 10%; vertical-align: middle;">@objMessageKey.Incentive</th>
+                <th style="width: 35%; vertical-align: middle;">@objMessageKey.Remarks</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName != "Edit")
+        {
+            if (Model != null)
+            {
+                int count = 0;
+                string NewTitle = "";
+                foreach (var item in Model)
+                {
+                    count++;
+                    <tr>
+                        <td>
+                            @{
+                    if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                    {
+                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name + " ( " + s.Episode_From + " - " + s.Episode_To + " )").ToArray()));
+                    }
+                    else if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Music)
+                    {
+                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name + (Convert.ToString(s.Episode_From) == "0" ? " ( Unlimited ) " : " ( " + s.Episode_From + " )")).ToArray()));
+                    }
+                    else
+                    {
+                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name).ToArray()));
+                    }
+                            }
+
+                            <div class="expandable">
+                                @NewTitle
+                                <a href="#"><span></span></a>
+                            </div>
+                        </td>
+                        <td>
+                            @{
+                    string CostType = "";
+
+                    CostType = string.Join(", ", (item.Acq_Deal_Cost_Costtype.Select(s => s.Cost_Type.Cost_Type_Name).Distinct().ToArray()));
+
+                            }
+                            @CostType
+                        </td>
+                        <td align="right">
+                            @GlobalParams.CurrencyFormat(Convert.ToDouble(@item.Deal_Cost))
+                        </td>
+                        <td align="center">
+                            @{
+                    string IncentiveString = "";
+                    if (item.Incentive == "Y")
+                    {
+                        IncentiveString = "Yes";
+                    }
+                    else
+                    {
+                        IncentiveString = "No";
+                    }
+                            }
+
+                            @IncentiveString
+                        </td>
+                        <td>
+                            <div class="expandable">
+                                @item.Remarks
+                                <a href="#"><span></span></a>
+                            </div>
+                        </td>
+                        @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                        {
+                            <td align="center">
+                                <a title="" href="#" class="glyphicon glyphicon-pencil" onclick="EditCostNew(@item.Acq_Deal_Cost_Code)"></a>
+                                <a title="" href="#" class="glyphicon glyphicon-trash" onclick='return OnDeleteClick(@item.Acq_Deal_Cost_Code);'></a>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        }
+
+        @if (ViewBag.CommandName == "Add")
+        {
+            using (Html.BeginForm("Save", "Acq_Cost_New", "", FormMethod.Post))
+            {
+                <tr>
+                    <td>
+                        @if (ViewBag.lstTitle != null)
+                        {
+                            <div id="divddllstTitle">
+                                @Html.DropDownList("Acq_Deal_Movie_Code", ViewBag.lstTitle as MultiSelectList, new { @id = "ddllstTitle", @multiple = "multiple" })
+                            </div>
+
+                        }
+                        @Html.Hidden("hdnTitleCodes")
+                        @Html.Hidden("hdnIncentive")
+                        @Html.Hidden("hdnDeal_Cost")
+                    </td>
+                    <td>
+                        @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.lstCost_Type, new { style = "width:200px;", @class = "form_input chosen-select" })
+                    </td>
+                    <td>
+                        @Html.TextBox("Deal_Cost", "", new { style = "width:80px;text-align:right;", maxlength = 12 })
+                    </td>
+                    <td>
+                        <input id="rdbYes" type="radio" checked="checked" name="rdb" value="Y">
+                        <label for="Yes">@objMessageKey.Yes</label>
+                        <input id="rdbNo" type="radio" name="rdb" value="N">
+                        <label for="No">@objMessageKey.NO</label>
+                    </td>
+                    <td>
+                        <textarea name="Remarks" id="Remarks" class="textarea" onkeyup="countChar(this)"></textarea>
+                        <div class="divBlock">
+                            <div id="CharNum" class="charNum">0/4000</div>
+                        </div>
+                    </td>
+                    <td align="center">
+                        @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Save" onclick="return checkForsave(0);" />*@
+                        <a title ="" href="#" class="glyphicon glyphicon-ok-circle" data-original-title="Save" onclick="return checkForsave(0);"></a>
+                        <a title ="" href="#" class="glyphicon glyphicon-remove-circle" data-original-title="Cancel" onclick="AddCancelCostNew(0)"></a>
+                    </td>
+                </tr>
+            }
+        }
+
+        @if (Model != null && ViewBag.CommandName == "Edit")
+        {
+            int count = 0;
+            foreach (var item in Model)
+            {
+                count++;
+                if (ViewBag.Acq_Deal_Cost_Code == item.Acq_Deal_Cost_Code)
+                {
+                    if (ViewBag.CommandName == "Edit")
+                    {
+                        using (Html.BeginForm("Update", "Acq_Cost_New", "", FormMethod.Post))
+                        {
+                            <tr>
+                                <td>
+                                    @Html.Hidden("Acq_Deal_Cost_Code", item.Acq_Deal_Cost_Code)
+                                    @Html.Hidden("Acq_Deal_Code", item.Acq_Deal_Code)
+                                    @if (ViewBag.lstTitle != null)
+                                    {
+                                        <div id="divddllstTitle">
+                                            @Html.DropDownList("Acq_Deal_Movie_Code", ViewBag.lstTitle as MultiSelectList, new { @id = "ddllstTitle", @multiple = "multiple" })
+                                        </div>
+                                    }
+                                    @Html.Hidden("hdnTitleCodes")
+                                    @Html.Hidden("hdnIncentive")
+                                    @Html.Hidden("hdnCostTypeCode")
+                                    @Html.Hidden("hdnDeal_Cost")
+                                </td>
+                                <td>
+                                    @if (ViewBag.IsRefPayTerm == false)
+                                    {
+                                        @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.lstCost_Type, new { style = "width:200px;", @class = "form_input chosen-select" })
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.lstCost_Type, new { disabled = true });
+                                    }
+                                </td>
+                                <td>
+                                    @Html.TextBox("Deal_Cost", GlobalParams.CurrencyFormat(Convert.ToDouble(item.Deal_Cost)), new { style = "width:80px;text-align:right;", maxlength = 12 })
+                                </td>
+
+                                <td>
+                                    @if (item.Incentive == "Y")
+                                    {
+                                        <input id="rdbYes" type="radio" checked="checked" name="rdb" value="Y">
+                                        <label for="Yes">@objMessageKey.Yes</label>
+                                        <input id="rdbNo" type="radio" name="rdb" value="N">
+                                        <label for="No">@objMessageKey.NO</label>
+                                    }
+                                    else
+                                    {
+                                        <input id="rdbYes" type="radio" name="rdb" value="Y">
+                                        <label for="Yes">@objMessageKey.Yes</label>
+                                        <input id="rdbNo" type="radio" checked="checked" name="rdb" value="N">
+                                        <label for="No">@objMessageKey.NO</label>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.TextArea("Remarks", item.Remarks, new { onkeyup = "countChar(this)", @class = "textarea" })
+                                    <div class="divBlock">
+                                        <div class="charNum">0/4000</div>
+                                    </div>
+                                </td>
+
+
+                                <td align="center">
+                                 
+                                       @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Update" onclick="return checkForsave(1);" />*@
+                                    <a title="" href="#" class="glyphicon glyphicon-ok-circle" data-original-title="Update" onclick="return checkForsave(1);"></a>
+                                    <a title="" href="#" class="glyphicon glyphicon-remove-circle" data-original-title="Cancel" onclick="AddCancelCostNew(0)"></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                else
+                {
+                    count++;
+                    <tr>
+                        <td>
+                            @*@{
+                                    string NewTitle = "";
+                                    if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                    {
+                                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name + " ( " + s.Episode_From + " - " + s.Episode_To + " )").ToArray()));
+                                    }
+                                    else if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Music)
+                                    {
+                                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name + s.Episode_From == "0" ? "Unlimited" : " ( " + s.Episode_From + " )").ToArray()));
+                                    }
+                                    else
+                                    {
+                                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name).ToArray()));
+                                    }
+                                }*@
+                            @{
+                    string NewTitle = "";
+                    if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                    {
+                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name + " ( " + s.Episode_From + " - " + s.Episode_To + " )").ToArray()));
+                    }
+                    else if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Music)
+                    {
+                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name + (Convert.ToString(s.Episode_From) == "0" ? " ( Unlimited ) " : " ( " + s.Episode_From + " )")).ToArray()));
+                    }
+                    else
+                    {
+                        NewTitle = string.Join(", ", (item.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name).ToArray()));
+                    }
+                            }
+                            <div class="expandable">
+                                @NewTitle
+                                <a href="#"><span></span></a>
+                            </div>
+                        </td>
+                        <td>
+                            @{
+                    string CostType = "";
+
+                    CostType = string.Join(", ", (item.Acq_Deal_Cost_Costtype.Select(s => s.Cost_Type.Cost_Type_Name).Distinct().ToArray()));
+
+                            }
+                            @CostType
+                        </td>
+                        <td align="right">
+                            @GlobalParams.CurrencyFormat(Convert.ToDouble(@item.Deal_Cost))
+                        </td>
+                        <td align="center">
+                            @{
+                    string IncentiveString = "";
+                    if (item.Incentive == "Y")
+                    {
+                        IncentiveString = "Yes";
+                    }
+                    else
+                    {
+                        IncentiveString = "No";
+                    }
+                            }
+
+                            @IncentiveString
+                        </td>
+                        <td>
+                            <div class="expandable">
+                                @item.Remarks
+                                <a href="#"><span></span></a>
+                            </div>
+                        </td>
+                        @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                        {
+                            <td align="center">
+                                <a title="" href="#" class="glyphicon glyphicon-pencil" data-original-title="Edit" onclick="EditCostNew(@item.Acq_Deal_Cost_Code)"></a>
+                                <a title="" href="#" class="glyphicon glyphicon-trash" data-original-title="Delete" onclick="return OnDeleteClick(@item.Acq_Deal_Cost_Code);"></a>
+                            </td>
+                        }
+                    </tr>
+
+                }
+            }
+        }
+    </tbody>
+</table>

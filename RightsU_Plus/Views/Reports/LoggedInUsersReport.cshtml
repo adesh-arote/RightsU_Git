@@ -1,0 +1,62 @@
+﻿@model RightsU_Plus.Controllers.ReportsController.OnlineVisitorsContainer_Class
+@{
+    ViewBag.Title = "LoggedInUsersReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @objMessageKey.LoggedInUsersReport<span></span>
+                    </h2>
+                    <div class="right_nav pull-right">
+                    </div>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width:15%;">@objMessageKey.UserName</th>
+                                        <th style="width:20%;">@objMessageKey.SessionStarted</th>
+                                        <th style="width:15%;">@objMessageKey.IP</th>
+                                        <th style="width:50%;">@objMessageKey.Others</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.lst_OnlineVisitorsContainer_Class.Count > 0)
+                                    {
+                                        foreach (var item in Model.lst_OnlineVisitorsContainer_Class)
+                                        {
+                                            <tr>
+                                                <td><span>@item.UserName</span></td>
+                                                <td><span>@item.SessionStarted</span></td>
+                                                <td><span>@item.IpAddress</span></td>
+                                                <td><span>@item.UserAgent</span><br /><span>@item.EnterUrl</span><br /><span>@item.UrlReferrer</span>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr><td colspan="4">@objMessageKey.Norecordfound</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

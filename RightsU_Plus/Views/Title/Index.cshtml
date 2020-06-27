@@ -1,0 +1,706 @@
+﻿@using RightsU_BLL;
+@model RightsU_Entities.Title
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var call = ViewBag.IsFirstTime;
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RightsU</title>
+    <meta charset="utf-8" />
+    <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+    <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+    <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+    <script type="text/javascript">
+    debugger;
+    var CommandName_G = "";
+    var recordLockingCode = @ViewBag.RecordLockingCode;
+    var confirmed = false;
+    var dummyobj;
+    var Dir_G = '@ViewBag.Direction';
+    var pageNo = '@ViewBag.PageNo';
+    var dealTypeCode = '@ViewBag.DealTypeCode';
+    var searchedTitle = '@ViewBag.SearchedTitle';
+    var pageSize = '@ViewBag.PageSize';
+    var title_Code = '@Model.Title_Code.ToString()'
+    var rolesList = '@ViewBag.RolesList'
+    var CommandName_G = "";
+    var URL_TitleList_Ok = '@Url.Action("Index", "Title_List", new { CallFrom = "T" })';
+    //var URL_TitleList_Cancel = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "Code", SearchedTitle =""})';
+    //var URL_TitleList = '@Url.Action("Index", "Title_List", new { CallFrom = "T" })';
+    var URL_BindFieldNamedd = '@Url.Action("BindFieldNameddl", "Title")';
+    var URL_fillUDT = '@Url.Action("fillUDT", "Title")';
+    var URL_ValidateIsDuplicate = '@Url.Action("ValidateIsDuplicate", "Title")';
+    var URL_SaveTalent = '@Url.Action("SaveTalent", "Title")';
+    var URLSave = '@Url.Action("Save_Talent", "Title")';
+    var URL_Index = '@Url.Action("Index", "Title_List", new { CallFrom = "T" })';
+    var URL_AddProgram = '@Url.Action("Save_Program", "Title")';
+    var URL_BindAlternateTab = '@Url.Action("BindAlternateTab", "Title")';
+    var URL_SaveFile = '@Url.Action("SaveFile", "Title")'
+    var URL_BindRoles = '@Url.Action("BindRoles", "Title")';
+    var URL_TitleList_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code"})',
+    URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")',
+    URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    URL_Reload_Current_Page = '@Url.Action("Index", "Title", new { Type = ViewBag.CommandName})';
+    </script>
+    <script src="~/Custom_Scripts/Title_AddEdit.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+    <script>
+        var IsValidForTab = true;
+        $(document).ready(function () {
+            debugger;
+            if ('RTL' == '@objMessageKey.LayoutDirection'){
+                //$('.pull-left').addClass('pull-left-Head')
+                //$('.pull-right').addClass('pull-right-Head')
+
+            }
+            $('#hdnRecordLockingCode').val(recordLockingCode)
+            if(recordLockingCode > 0)
+                Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+            $('#ulalternate > li > a').on('click',function(){
+                TabChange($(this).data('tabname'),$(this).data('configitem'));
+                var prevElm = $(this).parents('#ulalternate').find('li.active');
+                if(!IsValidForTab)
+                {
+                    $(this).removeClass('active');
+                    $(prevElm).addClass('active');
+                    IsValidForTab = true;
+                    return false;
+                }
+            });
+           // $("#ancFileName").attr('href', '/Help/Masters/Layout.html?TitleList');
+            $('#txtTitle_Name').keyup(function () {
+                $('#lblTitleHead').text(this.value);
+            });
+            $("#txtDuration").numeric({
+                allowMinus: false,
+                allowThouSep: true,
+                allowDecSep: true,
+                maxDecimalPlaces: 2,
+                maxPreDecimalPlaces: 3
+            });
+            var dir = '@ViewBag.Direction';
+            $('#popAddTalent').css("direction",dir);
+            //$('.poptalent').css("float", "Left");
+            $('.close').css("float", "Right");
+            $('.PopGender').css("float","Left");
+            $('.inline-radio').css("float","Left");
+            //if(dir=="LTR")
+            //{
+            //    $('.poptalent').css("float", "Right");
+            //    $('.close').css("float", "Left");
+            //}
+            //if(dir=="RTL")
+            //{
+            //    $('.poptalent').css("float", "Right");
+            //    $('.close').css("float", "Left");
+            //}
+            BindAlternateTab('TA',0);
+            if ("RTL" == '@objMessageKey.LayoutDirection') {
+                $('.poptalent').css("float", "Right");
+                $('.close').css("float", "left");
+                $('.PopGender').css("float", "Right");
+                $('.inline-radio').css("float", "Right");
+                $('#TalentHeader').css("direction","RTL")
+            }
+            else {
+                $('.poptalent').css("float", "Left");
+                $('.close').css("float", "Right");
+                $('.inline-radio').css("float", "Left");
+                $('.PopGender').css("float", "Left");
+                $('#TalentHeader').css("direction","LTR")
+            }
+        });
+        function sumoselectChange()
+        {
+            $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px")
+
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect .select-all > label').css("direction", "LTR")
+            $('.SumoSelect > .CaptionCont > span.placeholder').css("direction", "RTL")
+            $('.SumoSelect > .CaptionCont > span').css("direction", "LTR");
+            $('.SumoSelect > .CaptionCont > span').css("text-align", "Right");
+        }
+        function HideAllPopupDiv() {
+            try {
+                FadeOutPopup();
+            }
+            catch (err) {
+            }
+        }
+        function AddProgram() {
+            $("#Program_Name").val('');
+            $("#popAddProgram").modal();
+        }
+        function SaveFile() {
+            var data = new FormData();
+            var files = $("#uploadFile").get(0).files;
+            if (files.length > 0) {
+                data.append("InputFile", files[0]);
+                $.ajax({
+                    url: URL_SaveFile,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                    },
+                    error: function (er) {
+                    }
+                });
+            }
+        }
+        function validateSave()
+        {
+            debugger
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            if ($("#Deal_Type_Code").val() == null || $("#Deal_Type_Code").val() == "") {
+                showAlert("e", "Please select title type", "");
+                IsValidForTab= false;
+            }
+            if ($.trim($('#txtTitle_Name').val()) == null || $.trim($('#txtTitle_Name').val()) == "") {
+                $('#txtTitle_Name').addClass('required');
+                IsValidForTab = false;
+            }
+            if ($("#Title_Language_Code").val() == null || $("#Title_Language_Code").val() == "" || $("#Title_Language_Code").val() == 0) {
+                $("#Title_Language_Code").addClass('required');
+                IsValidForTab= false;
+            }
+           
+            return IsValidForTab;
+        }
+        function Save() {
+            debugger
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            showLoading();
+            IsValidForTab = true;
+            var hdnProducer = "";
+            var hdnDirector = "";
+            var hdnGenres = "";
+            var hdnStarCast = "";
+            var hdnCountry = ""
+            var Deal_Type_Code = "";
+            var hdnmode = "";
+            var IsValid = true;
+            hdnmode = "@ViewBag.CommandName";
+
+            if ($("#Deal_Type_Code").val() == null || $("#Deal_Type_Code").val() == "") {
+                showAlert("e", "Please select title type", "");
+                IsValidForTab= false;
+                hideLoading();
+            }
+            if ($.trim($('#txtTitle_Name').val()) == null || $.trim($('#txtTitle_Name').val()) == "") {
+                $('#txtTitle_Name').addClass('required');
+                IsValidForTab = false;
+                hideLoading();
+            }
+            if ($("#Title_Language_Code").val() == null || $("#Title_Language_Code").val() == "" || $("#Title_Language_Code").val() == 0) {
+                $("#Title_Language_Code").addClass('required');
+                IsValidForTab= false;
+                hideLoading();
+            }
+
+            if ('@ViewBag.IsTitleDurationMandatory' == "Y") {
+                   debugger;
+                if ($("#txtDuration").val() == null || $("#txtDuration").val() == "" || $("#txtDuration").val() == 0) {
+                    $("#txtDuration").addClass('required');
+                    IsValidForTab = false;
+                    hideLoading();
+                }
+            }
+            
+            if (hdnmode == "C") {
+                var hdnTitleCode = $('#Title_Code').val();
+                $('#Title_Code').val() == "0";
+                Deal_Type_Code = $('#Deal_Type_Code').val();
+            }
+            if (hdnmode == "E") {
+                var hdnTitleCode = $('#Title_Code').val();
+                Deal_Type_Code = null;
+            }
+            if (Deal_Type_Code == 0) {
+                $('#Deal_Type_Code').addClass('required');
+                return false;
+            }
+            if ($("#hdnRowNum").val() != "") {
+                showAlert("e", "complete add/edit operation.", "");
+                hideLoading();
+                return false;
+            }
+            if(IsValidForTab) {
+                if ($("#ddlProducer").val() != null)
+                    hdnProducer = $("#ddlProducer").val().join(',');
+                if ($("#ddlDirector").val() != null)
+                    hdnDirector = $("#ddlDirector").val().join(',');
+                if ($("#ddlGenres").val() != null)
+                    hdnGenres = $("#ddlGenres").val().join(',');
+                if ($("#ddlStarCast").val() != null)
+                    hdnStarCast = $("#ddlStarCast").val().join(',');
+                if ($("#ddlCountry").val() != null)
+                    hdnCountry = $("#ddlCountry").val().join(',');
+                $("#hdnProducer").val(hdnProducer);
+                $("#hdnDirector").val(hdnDirector);
+                $("#hdnGenres").val(hdnGenres);
+                $("#hdnStarCast").val(hdnStarCast);
+                $("#hdnCountry").val(hdnCountry);
+                $("#hdnmode").val(hdnmode);
+                $("#hdnTitleCode").val(hdnTitleCode);
+                $("#hdnDealTypeCode").val(Deal_Type_Code);
+                $('#hdnAlternateTabName').val();
+            }
+            if (hdnmode == "C" || hdnmode == "E") {
+                var ISDuplicate = ""
+                var NewTitleName = $("#txtTitle_Name").val();
+
+                if (NewTitleName != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("ValidateIsDuplicate", "Title")',
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        async: false,
+                        data: JSON.stringify({
+                            TitleName: NewTitleName,
+                            DealTypeCode: $('#Deal_Type_Code').val(),
+                            Mode: hdnmode
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            if (result.Message != "") {
+                                ISDuplicate = result.Message;
+                                showAlert("E", ISDuplicate);
+                                IsValidForTab = false;
+                                hideLoading();
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+            }
+            if(IsValidForTab)
+            {
+                SaveFile();
+            }
+            return IsValidForTab;
+        }
+        function Save_Success(result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            else {
+                if (result.Status == "S")
+                {
+                    if(result.TabNAme == "")
+                    {
+                        window.location.href = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "0" })';
+
+                    }
+                    else
+                    {
+                        var tabname = result.TabNAme;
+                        var configCode = result.ConfigCode;
+                        BindAlternateTab(tabname, configCode);
+                    }
+                    showAlert("S", result.Message, "");
+                }
+                else
+                {
+                    showAlert("E", result.Message);
+                }
+            }
+        }
+        function validate() {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            var Program_Name = $.trim($("#Program_Name").val());
+            if (Program_Name == "") {
+                $("#Program_Name").val('');
+                $("#Program_Name").attr('required', true);
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: URL_AddProgram,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Program_Name: Program_Name
+                }),
+                success: function (result) {
+
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+                        $("#popAddProgram").modal('hide');
+                        $('#Program_Code').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                        $('#Program_Code').trigger("chosen:updated");
+
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                        ("#popAddProgram").modal();
+                    }
+                },
+                error: function (result) { }
+            });
+        }
+        function TabChange(tabName,configCodes) {
+            var isvalidate = true;
+            var hdntabname = $('#hdnTitleTabName').val();
+            $('#hdnAlternateTalenttab').val(tabName);
+            if(tabName == "AL" && $('#hdnTitleTabName').val() == "")
+            {
+                if(validateAlternateSave())
+                {
+                    $('#tabGeneral').hide();
+                    $('#divAlternateLanguage').show();
+                    $("#hdnTitleTabName").val(tabName);
+                    $('#hdnTitleAlternateConfigCode').val(configCodes);
+                    $('#hdnAlternateConfigCode').val(configCodes);
+                    $('#btnAlternateSave').click();
+                }
+            }
+            if(tabName == "AL" && $('#hdnTitleTabName').val() != "" && $('#hdnTabName').val() == "TA")
+            {
+                if(validateSave())
+                {
+                    $('#tabGeneral').hide();
+                    $('#divAlternateLanguage').show();
+                    $('#hdnAlternateTabName').val(tabName);
+                    $("#hdnTitleTabName").val(tabName);
+                    $('#hdnAlternateConfigCode').val(configCodes);
+                    $('#hdnTitleAlternateConfigCode').val(configCodes);
+                    $('#hdnTabName').val(tabName);
+                    $('#btnSave').click();
+                }
+            }
+            if(tabName == "TA")
+            {
+                if(validateAlternateSave())
+                {
+                    $('#divAlternateLanguage').show();
+                    $("#hdnTitleTabName").val(tabName);
+                    $('#hdnTitleAlternateConfigCode').val(configCodes);
+                    $('#hdnAlternateConfigCode').val(configCodes);
+                    $('#btnAlternateSave').click();
+                    $('#hdnTabName').val(tabName);
+                }
+            }
+        }
+        function BindAlternateTab(tabName,configCode) {
+
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            var titleCode = @Model.Title_Code;
+            var mode = '@ViewBag.CommandName';
+            var dierction = '@ViewBag.Direction';
+            showLoading();
+            $.ajax({
+                type: "POST",
+                url: URL_BindAlternateTab,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    configCode: configCode,
+                    titleCode: titleCode,
+                    tabName:tabName,
+                    mode : mode
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+
+                        $("#divAlternateLanguage").empty();
+                        $("#divAlternateLanguage").append(result);
+
+                        initializeTooltip();
+                        hideLoading();
+                    }
+                },
+                error: function (result) {
+                    alert(result);
+                }
+            });
+        }
+
+        function SaveAlternate_Success(result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            else {
+                if (result.Status == "S") {
+                    if (result.TabNAme == "") {
+                        window.location.href = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "0" })';
+                    }
+                    else {
+                        var tabname = result.TabNAme;
+                        var configCode = result.ConfigCode;
+                        BindAlternateTab(tabname, configCode);
+                    }
+                    showAlert("S", result.Message, "");
+                }
+                else {
+                    showAlert("E", result.Message);
+                }
+            }
+        }
+
+        function validateAlternateSave()
+        {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            if ($("#txtalternateTitle_Name").val() == null || $("#txtalternateTitle_Name").val() == "") {
+                $("#txtalternateTitle_Name").addClass('required');
+                IsValidForTab=  false;
+            }
+            if ($("#Alternate_Title_Language_Code").val() == null || $("#Alternate_Title_Language_Code").val() == "" || $("#Alternate_Title_Language_Code").val() == 0) {
+                $("#Alternate_Title_Language_Code").addClass('required');
+                IsValidForTab= false;
+            }
+            return IsValidForTab;
+        }
+    </script>
+    <style>
+        #imgTitle {
+            cursor: pointer;
+            max-height: 300px;
+        }
+
+        #uploadFile {
+            display: none;
+        }
+
+        #Music_Label_Code {
+            position: absolute !important;
+            width: 234px !important;
+            max-width: 234px !important;
+        }
+
+        #Music_Label_Code_chosen {
+            width: 234px !important;
+        }
+
+        #Program_Code_chosen {
+            width: 292px !important;
+        }
+
+        .sumo_ddlProducer {
+            width: 292px !important;
+        }
+
+        .sumo_ddlStarCast {
+            width: 292px !important;
+        }
+
+        .sumo_ddlCountry {
+            width: 292px !important;
+        }
+
+        .sumo_ddlDirector {
+            width: 292px !important;
+        }
+
+        .sumo_ddlGenres {
+            width: 292px !important;
+        }
+
+        /*.pull-left-Head {
+            float: right !important;
+            padding-right: 1%;
+        }
+
+        .pull-right-Head {
+            float: left !important;
+        }*/
+        .sumo_lbRoles{
+            width:279px !important;
+        }
+    </style>
+</head>
+<body>
+    <input id="hdnMainConfirmationtype" type="hidden" />
+    <div class="main_section" onclick="HideAllPopupDiv()">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col title_edit" onclick="$('.leftPanel').css('left', panelHideCss);">
+                <div class="top_area">
+                    <div class="title_block dotted_border clearfix">
+                        @if (ViewBag.CommandName == "E")
+                        {
+                            <h2 class="pull-left">
+                                @objMessageKey.EditTitle -
+                                <span>@Html.Label(objMessageKey.TitleName, Model.Title_Name, new { @id = "lblTitleHead" }) </span>
+                                @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+                            </h2>
+                        }
+                        @if (ViewBag.CommandName == "C")
+                        {
+                            <h2 class="pull-left">
+                                Title Clone -
+                                <span>@Html.Label(objMessageKey.TitleName, Model.Title_Name, new { @id = "lblTitleHead" }) </span>
+                            </h2>
+                        }
+                    </div>
+                    <div class="grid_area">
+                        <div class="navigation_tabs">
+                            <div class="tabbable" id="divAlternateConfig">
+                                <input type="hidden" id="hdnTabName" value="TA" />
+                                <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                                    <li class="active" id="tabtitle">
+                                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0">@objMessageKey.Title</a>
+                                        @*onclick="TabChange('TA',0);"*@
+                                    </li>
+                                    @if (ViewBag.PartialTabList != null)
+                                    {
+                                        int[] alternateCode = ViewBag.PartialTabList;
+                                        foreach (var item in alternateCode)
+                                        {
+                                            string config_Name = new Alternate_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Alternate_Config_Code == item).Select(x => x.Alternate_Name).FirstOrDefault();
+                                            <li class="" id="tabAlternate">
+                                                <a data-toggle="tab" href="#" id="tab12" role="tab" data-tabname="AL" data-configitem="@item">@config_Name</a>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                    <div id="divAlternateLanguage" dir="@objMessageKey.LayoutDirection"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddTalent" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="talent_popup">
+                    <div>
+                        <div class="form_fields" id="TalentHeader">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#" style="float:right">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>@objMessageKey.AddTalent</h2>
+                            </div>
+                            <div class="modal_block" style="height:111px;">
+                                <ul class="add_title_popup">
+                                    <li>
+                                        <label><b>@objMessageKey.Talent</b></label>
+                                        <input class="form_input" id="talent_name" name="title" type="text" value="" maxlength="100" ondrop="return false;" style="width:50%;" />
+                                        <input id="hdnConfirmationtype" type="hidden" />
+                                        <input type="hidden" id="hdnAlternateTalenttab" />
+
+                                    </li>
+                                    <li>
+                                        <label style="padding-right:14px;"><b>@objMessageKey.Role</b></label>
+
+                                        <select id="lbRoles" name="lbRoles" multiple="multiple"></select>
+                                        <br />
+                                        @Html.Hidden("hdnRoles")
+                                    </li>
+                                    <li style="margin-bottom:10px;">
+                                        <label class="PopGender"><b>@objMessageKey.Gender</b></label>
+                                        <label class="inline-radio">
+                                            &nbsp;  <input type="radio" name="sex" value="0" checked />@objMessageKey.Male
+                                        </label>
+                                        <label class="inline-radio">
+                                            &nbsp;  <input type="radio" name="sex" value="1" />@objMessageKey.Female
+                                        </label>
+                                        <label class="inline-radio">
+                                            &nbsp;  <input type="radio" name="sex" value="2" />@objMessageKey.NA
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full" dir="rtl">
+                                <div class="form_links" dir="rtl">
+                                    <ul class="modal_block clearfix" dir="rtl">
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary"
+                                               href="#" onclick="ValidateSave('')">@objMessageKey.Save</a>
+                                        </li>
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddProgram" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="program_popup">
+                    <div>
+                        <div class="form_fields" dir="@objMessageKey.LayoutDirection">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>@objMessageKey.AddProgram</h2>
+                            </div>
+                            <div class="modal_block">
+                                <ul class="form_fields_wrapper add_program_popup">
+                                    <li>
+                                        <label><b>@objMessageKey.Program</b></label>
+                                        <input class="form_input" id="Program_Name" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);"/>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" onclick="return validate()">@objMessageKey.Save</a>
+                                        </li>
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

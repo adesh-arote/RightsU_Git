@@ -1,0 +1,394 @@
+﻿@model List<RightsU_Entities.USP_Title_List_Result>
+@using UTOFrameWork.FrameworkClasses
+@using System.Configuration;
+@{
+    Layout = null;
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+  }
+<style>
+    mark {
+        padding: 0;
+        background: transparent;
+        background-color: yellow !important;
+        background-position: right bottom;
+        background-size: 200% 100%;
+        transition: all .5s ease;
+    }
+
+    /*.RTL-AddLi li {
+        list-style: none;
+        float: right !important;
+    }*/
+
+    .RTL-RemoveLi li {
+        list-style: none;
+        float: left !important;
+    }
+
+    /*.RTL-AddH4 h4 {
+        list-style: none;
+        float: right !important;
+    }*/
+
+    .RTL-RemoveH4 h4 {
+        list-style: none;
+        float: left !important;
+    }
+
+    /*.pull-left-Head {
+        float: right !important;
+    }
+
+    .pull-right-Head {
+        float: left !important;
+    }*/
+    /*.pagination-Head {
+        float: left !important;
+        margin-top: 4px;
+        display: flex;
+    }*/
+</style>
+
+<script src="~/JS_Core/jquery.mark.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<style>
+    h5.not-available, span.not-available {
+        font-style: italic;
+        opacity: 0.5;
+    }
+</style>
+<script>
+     var URL_BindMilestoneTitle = '@Url.Action("Title_Milestone", "Title")';
+    $(document).ready(function(){
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+        }
+    });
+    var IsCall = 'Y';
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = @(Convert.ToInt32(ViewBag.PageSize) == 0 || ViewBag.PageSize == null ? 10 : ViewBag.PageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $(".pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (!ValidatePageSize())
+            return false;
+
+        if (IsCall == 'Y') {
+            //LoadDeals(page_index, '@ViewBag.isAdvanced', 'N');
+            BindGrid(page_index,"", '@ViewBag.isSearch', '@ViewBag.isAdvanced');
+            $("#hdnPageIndex").val(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+    function setPageSize()
+    {
+        debugger;
+        var s = $("#PageSize").val();
+        $("#hdnPageSize").val(s);
+        $("#hdnPageIndex").val('0');
+        BindGrid($("#hdnPageIndex").val(),"", '@ViewBag.isSearch', '@ViewBag.isAdvanced');
+    }
+    function txtPageSize_OnChange() {
+        debugger;
+        @*var  Page_index = '@ViewBag.PageNo';
+        Page_index = Page_index -1;*@
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        BindGrid(0,"", '@ViewBag.isSearch', '@ViewBag.isAdvanced');
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#PageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#PageSize').attr('required', true)
+        return false;
+
+    }
+    function pageBinding() {
+        BindGrid(0,"", '@ViewBag.isSearch', '@ViewBag.isAdvanced');
+             SetPaging();
+    }
+
+    function Milestone_Title() {
+        debugger
+    
+        $.ajax({
+            type: "POST",
+            url: URL_BindMilestoneTitle,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+
+            }),
+           
+            error: function (result) {
+                alert(result);
+            }
+        });
+    }
+    $("#PageSize").numeric({
+        allowMinus: false,
+        allowThouSep: false,
+        allowDecSep: false,
+        max: 99,
+        min: 1
+    });
+
+    $('.expand_CountryName').expander({
+        slicePoint: 29,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $('.expand_TalentName').expander({
+        slicePoint: 60,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $('.expand_Director').expander({
+        slicePoint: 60,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+</script>
+<div class="paging_area clearfix">
+    <input type="hidden" id="hdnPageIndex" />
+    <span class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+    <input type="hidden" id="hdnPageSize" />
+    <div class="pagination"></div>
+    <span class="pull-right">
+        @objMessageKey.PageSize :
+        <input id="PageSize" type="text" class="smallTextBox" onchange="txtPageSize_OnChange()" onkeypress="return isNumber(event);" maxlength="2" 
+               value="@(Convert.ToInt32(ViewBag.PageSize) == 0 || ViewBag.PageSize == null ? 10 : ViewBag.PageSize)" onblur="setDefaultPaging('PageSize')" />
+    </span>
+
+</div>
+
+
+
+@{
+    int counter = 0;
+    @Html.Hidden("hdnRowNum", new { @id = "hdnRowNum" })
+    foreach (var item in Model)
+    {
+        counter += 1;
+        <div class="grid_area clearfix">
+            <table class="grid_item active" id="tblMultilanguage">
+                <tr>
+                    <td class="title_logo">
+                        @if (item.Title_Image != null && item.Title_Image.ToString().Trim(' ') != "")
+                        {
+                            <a><img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + item.Title_Image)" alt="Image" /></a>
+                        }
+                        else
+                        {
+                            if (item.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                            { <a><img src="~/Images/musicIcon.png" alt="Image" /></a> }
+                            else if (item.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                            {<a><img src="~/Images/program.png" alt="Image" /></a> }
+                            else if (item.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program || item.Deal_Type_Code == GlobalParams.Deal_Type_WebSeries)
+                            {<a><img src="~/Images/formatShow.png" alt="Image" /></a> }
+                            else if (item.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                            {<a><img src="~/Images/Event.png" alt="Image" /></a> }
+                            else
+                            {<a><img src="~/Images/movieIcon.png" alt="Image" /></a> }
+                        }
+                        @Html.Hidden("hdnTitleCode", item.Title_Code, new { id = counter + "_hdnTitleCode" })
+                    </td>
+                    <td>
+                        @*<h4 class="title_name" data-toggle="tooltip" title="Title Name">@Html.Label("Title_Name", item.Title_Name) </h4>*@
+                        <h4 class="expandable title_name title_descriptn" data-toggle="tooltip" title="@objMessageKey.TitleName">@Html.ActionLink(item.Title_Name, "View", "Title", new { id = item.Title_Code, @Type = "V", @Page_No = ViewBag.PageNo, @DealTypeCode = ViewBag.DealTypeCode, @SearchedTitle = ViewBag.SearchedTitle, @PageSize = ViewBag.PageSize }, new { @title = "" })</h4>
+                        <ul>
+                            <li>                          
+                               <h5 class="title_lang  title_descriptn" title="@objMessageKey.TitleType">
+                                    @if (item.Deal_Type_Name != null && item.Deal_Type_Name != "")
+                                    {
+                                        {@Html.Label("Title_Type", item.Deal_Type_Name)}
+                                     }
+                                    else
+                                    {<span class="not-available">NA</span>}
+                                </h5>
+                            </li>
+                            <li><span class="seperator">| </span></li>
+                            <li>
+                                @if (item.Year_Of_Production != null || item.Year_Of_Production.ToString() != "")
+                                {<h5 class="title_code" title="@objMessageKey.YearOfRelease">@item.Year_Of_Production</h5>
+                                }
+                                else
+                                {
+                                    <h5 class="not-available" title="@objMessageKey.YearOfRelease">@objMessageKey.NA</h5>
+                                }
+                            </li>
+                            <li><span class="seperator">| </span></li>
+                            <li>
+                                <h5 class="title_lang  title_descriptn" title="@objMessageKey.TitleLanguage">
+                                    @if (item.Language_Name != null && item.Language_Name != "")
+                                    {@Html.Label("Language_Name", item.Language_Name)}
+                                    else
+                                    {<span class="not-available">@objMessageKey.Nolanguage</span> }
+                                </h5>
+                            </li>
+                            <li><span class="seperator">| </span></li>
+                            @*<li class="expand_CountryName">
+                                <h5 class="title_country" title="@objMessageKey.CountryOfOrigin">
+                                    @if (item.CountryName != null && item.CountryName != "")
+                                    {@Html.Label("CountryName", item.CountryName.ToString().Trim(' ').Trim(','))}
+                                    else
+                                    {<span class="not-available">@objMessageKey.Nocountry</span> }
+                                </h5>
+                            </li>*@
+                            <li class="">
+                                <h5 class="title_country" title="@objMessageKey.OriginalLanguage">
+                                    @if (item.Original_Language != null && item.Original_Language != "")
+                                    {@Html.Label("CountryName", item.Original_Language.ToString())}
+                                    else
+                                    {<span class="not-available">@objMessageKey.NA</span> }
+                                </h5>
+                            </li>
+                        </ul>
+                    </td>
+                    <td class="title_credits">
+                        <ul>
+                            <li class="expand_TalentName" title="@objMessageKey.KeyStarCast">
+                                <h5 class="title_cast">
+                                    @*@Html.Label("TalentName", item.TalentName.ToString().Trim(','))*@
+                                    @if (item.TalentName != null && item.TalentName != "")
+                                    {
+                                        @Html.Label("TalentName", Convert.ToString(item.TalentName).Trim(' ').Trim(','))
+                                    }
+                                    else
+                                    {
+                                        <span class="not-available">@objMessageKey.Notalent</span>
+                                    }
+
+                                </h5>
+                            </li>
+                        </ul>
+
+                        <ul>
+                            <li class="expand_Director" title="@objMessageKey.DirectedBy">
+                                <h5 class="title_director">
+                                    @if (item.Director != null && item.Director != "")
+                                    {@Html.Label("Director", Convert.ToString(item.Director).Trim(' ').Trim(','))}
+                                    else
+                                    {    <span class="not-available">@objMessageKey.Nodirector</span>}
+                                </h5>
+                            </li>
+                        </ul>
+                    </td>
+                    <td class="title_action">
+                        @if (ViewBag.buttonsVisibility.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                        {
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open"
+                               href="@Url.Action("View", "Title", new
+                                {
+                                    id = item.Title_Code,
+                                    Type = "V",
+                                    //Page_No = ViewBag.PageNo,
+                                    //DealTypeCode = ViewBag.DealTypeCode,
+                                    //SearchedTitle = ViewBag.SearchedTitle,
+                                    //PageSize = ViewBag.PageSize
+                                })"></a>
+                        }
+                        @if (ViewBag.buttonsVisibility.Contains("~" + GlobalParams.RightCodeForTitleRelease + "~"))
+                        {
+                            <a class="glyphicon glyphicon-export" href="#" title='@objMessageKey.Release' onclick="CheckRecordLock(@item.Title_Code,'R');"></a>
+                        }
+                        @if (item.Is_Active == "Active")
+                        {
+                            if (ViewBag.buttonsVisibility.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {
+
+                                <input type="hidden" id="_PageNo" value="@ViewBag.PageNo" />
+                                <input type="hidden" id="_PageSize" value="@ViewBag.PageSize" />
+
+                                <a class="glyphicon glyphicon-pencil" href="#" title='@objMessageKey.Edit' onclick="CheckRecordLock(@item.Title_Code,'E');"></a>
+                            }
+                            if (ViewBag.buttonsVisibility.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                <a title=@objMessageKey.Deactivate id="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="Ask_Confirmation('DEACTIVATE', @counter )"></a>
+                            }
+                            if (ViewBag.buttonsVisibility.Contains("~" + GlobalParams.RightCodeForRightGranted + "~"))
+                            {
+                                @Html.ActionLink(" ", "Index", "Title",
+                                new
+                                {
+                                    id = item.Title_Code,
+                                    @Type = "C",
+                                    @Page_No = ViewBag.PageNo,
+                                    //@DealTypeCode = ViewBag.DealTypeCode,
+                                    //@SearchedTitle = ViewBag.SearchedTitle,
+                                    @PageSize = ViewBag.PageSize
+                                }, new { @class = "glyphicon glyphicon-duplicate", @title = objMessageKey.Clone })
+                            }
+                            if (ViewBag.buttonsVisibility.Contains("~" + GlobalParams.RightCodeForTitleMilestone + "~"))
+                            {
+                                @*<a title="Milestone" class="glyphicon glyphicon-modal-window" href="@Url.Action("Title_Milestone", "Title",
+                new
+                {
+                    id = item.Title_Code,
+                    @Page_No = ViewBag.PageNo,
+                    @PageSize = ViewBag.PageSize
+                }
+                    )"></a>*@
+                                <input type="hidden" id="_PageNo" value="@ViewBag.PageNo" />
+                                <input type="hidden" id="_PageSize" value="@ViewBag.PageSize" />
+
+                                <a class="glyphicon glyphicon-modal-window" href="#" title='Milestone' onclick="CheckRecordLock(@item.Title_Code,'M');"></a>
+                            }
+
+                        }
+                        else
+                        {
+                            if (ViewBag.buttonsVisibility.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title=@objMessageKey.Active id="Activate" class="glyphicon glyphicon-thumbs-up" onclick="DeActivateTitle(@item.Title_Code,'Y')"></a>
+                            }
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+}

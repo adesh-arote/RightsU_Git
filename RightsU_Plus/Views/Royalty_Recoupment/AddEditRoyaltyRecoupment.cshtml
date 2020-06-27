@@ -1,0 +1,150 @@
+﻿@model RightsU_Entities.Royalty_Recoupment
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('tbody').sortable();
+
+        if ($('.checkbox:checked:not("#checkId")').length == $('.checkbox:not("#checkId")').length) {
+            $('#checkId').prop('checked', true);
+        }
+
+        $('#checkId').change(function (e) {
+            if (this.checked) {
+                $('.checkbox').prop('checked', true);
+            }
+            else {
+                $('.checkbox').prop('checked', false);
+            }
+        });
+        $('input:checkbox.checkbox').change(function (e) {
+            if (!this.checked) {
+                $('#checkId').prop('checked', false);
+            }
+            if ($('.checkbox:checked:not("#checkId")').length == $('.checkbox:not("#checkId")').length) {
+                $('#checkId').prop('checked', true);
+            }
+        });
+
+    });
+    function Validate_Save()
+    {
+
+        var returnmsg = true;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var royaltyName = $.trim($('#txtRoyaltyName').val());
+        if(royaltyName == '')
+        {         
+            $('#txtRoyaltyName').val('');
+            $('#txtRoyaltyName').attr('required', true)
+            returnmsg = false;
+        }
+        if ($('.checkbox:checked:not("#checkId")').length=="0")
+        {
+            showAlert("E","@objMessageKey.PleaseSelectatleastonecheckbox");
+            returnmsg = false;
+        }
+        return returnmsg;
+    }
+    function Save_Success(result) {
+        debugger;
+        if (result == "true") {
+            redirectToLogin();
+        }
+        else {
+            if (result.Status == "S") {
+                showAlert("I", result.Message);
+                window.location = 'Index';
+            }
+            else {
+                showAlert("E", result.Message);
+                window.location = 'Index';
+            }
+
+        }
+
+    }
+</script>
+@using (Ajax.BeginForm("SaveRoyalty", "Royalty_Recoupment", new AjaxOptions() { OnSuccess = "Save_Success" }))
+
+            {
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+           
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                       @objMessageKey.RoyaltyRecoupmentList
+                    </h2>
+                </div>
+              
+                <div class="search_area">
+                    <table class="table">
+                       
+                        <tr>
+                            <td style="width:7%;">
+                                @objMessageKey.RoyaltyRecoupmentName :
+                            </td>
+                            <td style="width:30%;">
+                                <input type="text" name="Royalty_Recoupment_Name" value="@Model.Royalty_Recoupment_Name" id="txtRoyaltyName" class="form-control input-sm" style="width:45%" placeholder="Royalty Recoupment Name" />
+                                @Html.HiddenFor(m => Model.Royalty_Recoupment_Code)
+                                <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />      
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th style="width:27%;">
+                                <text>@objMessageKey.CheckAll  </text>   <input type="checkbox" id="checkId" />
+                            </th>
+                            <th>
+                                @objMessageKey.RecoupmentName
+                            </th>
+                        </tr>
+                        <tbody>
+                            @foreach (var item in ViewBag.RecoupmentTypeList)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (Model.Royalty_Recoupment_Details.Where(w => w.Recoupment_Type == item.Recoupment_Type
+                                            && w.Recoupment_Type_Code == item.Recoupment_Type_Code).Count() > 0)
+                                        {
+                                            <input type="checkbox" class="checkbox" name="chkRecoupmentType" value="@item.Dummy_Guid" checked="checked" />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" class="checkbox" name="chkRecoupmentType" value="@item.Dummy_Guid" />
+                                        }
+                                    </td>
+                                    <td>
+                                        @item.Recoupment_Type_Name
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return Validate_Save();" />
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="window.location.href='@Url.Action("Index", "Royalty_Recoupment")'" />
+                </div>
+                
+            </div>
+        </div>
+        
+    </section>
+</div>
+}

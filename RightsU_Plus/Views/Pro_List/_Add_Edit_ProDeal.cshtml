@@ -1,0 +1,1009 @@
+﻿@model RightsU_Entities.Provisional_Deal
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    if (objMessageKey.LayoutDirection == "RTL")
+    {
+        <link href="~/CSS/CommonRTL.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/CSS/CommonLTR.css" rel="stylesheet" />
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css">
+<script type="text/javascript" src="~/JS_Core/jquery.plugin.js"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.timeentry.js"></script>
+
+<style>
+    .sumo_Provisional_Deal_Licensor {
+        width: 253px;
+    }
+
+    #divRunDefTitle {
+        width: 473px;
+    }
+
+    .four_column tr > td:nth-child(2n+1) {
+        font-weight: 700;
+        width: 14%;
+    }
+
+    .four_column tr > td:nth-child(2n) {
+        width: 36%;
+    }
+
+    .four_column_Period tr > td:nth-child(2n+1) {
+        font-weight: 700;
+        width: 2.7%;
+    }
+
+    .four_column_Period tr > td:nth-child(2n) {
+        width: 19%;
+    }
+
+    #tblPeriod {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #tbldealFor {
+        margin-bottom: 10px;
+    }
+
+    input.smalltextbox {
+        width: 40px !important;
+    }
+
+    .form .modal_block li {
+        list-style-type: none;
+        margin-bottom: 3px !important;
+    }
+
+    .SelectClass, .SumoUnder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        border: none;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+        -moz-opacity: 0;
+        -khtml-opacity: 0;
+        opacity: 0;
+    }
+
+    #tblTitle {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #tblNoOfRun {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #tblRightRule {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #tblChannel {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #tblYearwiseDef {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #tblPopRightRule {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #tblEditPopRightRule {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #tblRunDef {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    #Select8_chosen {
+        width: 65% !important;
+    }
+
+    .small_popup_popAddRunDef {
+        max-width: 600px !important;
+    }
+
+    .form_wrapper_popAddRunDef {
+        max-width: 920px !important;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    #txtStartPrimeTimeS {
+        width: 65px;
+    }
+
+    #txtEndPrimeTimeS {
+        width: 65px;
+    }
+
+    #txtStartNPrimeTimeS {
+        width: 65px;
+    }
+
+    #txtEndNPrimeTimeS {
+        width: 65px;
+    }
+
+    .runTextBox {
+        width: 35px !important;
+    }
+
+    .runTextBox1 {
+        width: 25px !important;
+    }
+
+    .timeTextBox {
+        width: 65px !important;
+    }
+
+    .RunDef {
+        float: right;
+        margin-top: -27px;
+        margin-right: 0px;
+    }
+
+    #popAddRunDef {
+        overflow: hidden !important;
+    }
+
+    #popEditRunDef {
+        overflow: hidden !important;
+    }
+
+    #liYear {
+        margin-bottom: 0px !important;
+    }
+
+    #liChannel {
+        margin-bottom: 0px !important;
+    }
+
+    .sumo_ddlDays {
+        width: 115px !important;
+    }
+
+    .sumo_Licensor_List {
+        width: 65% !important;
+    }
+
+    .sumo_Title {
+        width: 85% !important;
+    }
+
+    select[multiple], select[size] {
+        height: 0 !important;
+    }
+
+    .sumo_channelwise {
+        width: 70% !important;
+    }
+
+    .sumo_ddlEditchannelwiseChannel {
+        width: 70% !important;
+    }
+
+    .sumo_ddlYearwiseChannel1 {
+        width: 48% !important;
+    }
+
+    #txtNOS {
+        width: 40px !important;
+    }
+    /*#ddlBusinessUnit {
+        width: 65% !important;
+    }*/
+
+    .sumo_Channel {
+        width: 142px !important;
+    }
+
+    .sumo_EditChannel {
+        width: 142px !important;
+    }
+
+    .ddlRightRule_chosen {
+        width: 100% !important;
+    }
+
+    input.isDatepicker {
+        width: 96px;
+        z-index: auto;
+    }
+    .small_popup {
+        max-width: 40%;
+    }
+
+</style>
+
+<script>
+    debugger;
+    var URL_Cancel = '@Url.Action("Cancel", "Pro_List")';
+    var URl_GetEpF_EpT_ForRunDef = '@Url.Action("GetEpF_EpT_ForRunDef","Pro_List")';
+    var URL_GetProDealTitleNotIn = '@Url.Action("GetProDealTitlesNotIn", "Pro_List")';
+    var recordLockingCode = 0;
+    recordLockingCode = @ViewBag.RecordLockingCode;
+    $('#hdnRecordLockingCode').val(recordLockingCode);
+    // Start Record Locking Code
+    var RecordLockInterval;
+    function ReleaseRecordLock(code, url) {
+        if (code != undefined && url != undefined)
+            RefreshRecordReleaseTime(code, url)
+
+        RecordLockInterval = window.clearInterval(RecordLockInterval);
+    }
+    function RefreshRecordReleaseTime(code, url) {
+        $.ajax({
+            type: "POST",
+            url: url,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                RLCode: code
+            }),
+            success: function (result) { },
+            error: function (result) { }
+        });
+    }
+    function Call_RefreshRecordReleaseTime(code, url) {
+        RefreshRecordReleaseTime(code, url);
+        RecordLockInterval = setInterval("RefreshRecordReleaseTime(" + code + ",'" + url + "')", 15000);
+    }
+    // End Record Locking Code
+    function GetProDealTitles(DealForCode, searchString) {
+        debugger;
+        var TitleCode = '@ViewBag.TitleCode';
+        var searchString = $.trim($("#txtSearchTitle").val());
+        var TitleCodes_A = $("#hdn_Title_Codes").val();
+        var dealTypeCode = GetDealTypeCode();
+        if (dealTypeCode == "1") {
+            if (TitleCode != "" || TitleCodes_A != "") {
+                if (TitleCodes_A != "") {
+                    TitleCode = TitleCodes_A;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: URL_GetProDealTitleNotIn,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: false,
+                    data: JSON.stringify({
+                        DealForCode: dealTypeCode,
+                        searchString: searchString,
+                        removeTitleCode: TitleCode,
+                        action: "A"
+                    }),
+                    success: function (result) {
+                        debugger;
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            $("#ddlTitle").html("");
+                            $.each(result, function (i, Form_ID) {
+                                $("#ddlTitle").append($('<option></option>').val(result[i].Title_Code).html(result[i].Title_Name));
+                            });
+                            $('#ddlTitle')[0].sumo.reload();
+                        }
+                    },
+                    error: function (result) { }
+                });
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: URL_Pro_Deal_Title,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: false,
+                    data: JSON.stringify({
+                        DealForCode: DealForCode,
+                        searchString: searchString
+                    }),
+                    success: function (result) {
+                        $("#ddlTitle").html("");
+                        $.each(result, function (i, Form_ID) {
+                            $("#ddlTitle").append($('<option></option>').val(result[i].Title_Code).html(result[i].Title_Name));
+                        });
+                        $('#ddlTitle')[0].sumo.reload();
+                    },
+                    error: function (result) { }
+                });
+            }
+        } else {
+            $.ajax({
+                type: "POST",
+                url: URL_Pro_Deal_Title,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    DealForCode: DealForCode,
+                    searchString: searchString
+                }),
+                success: function (result) {
+                    $("#ddlTitle").html("");
+                    $.each(result, function (i, Form_ID) {
+                        $("#ddlTitle").append($('<option></option>').val(result[i].Title_Code).html(result[i].Title_Name));
+                    });
+                    $('#ddlTitle')[0].sumo.reload();
+                },
+                error: function (result) { }
+            });
+        }
+    }
+    function searchTitle() {
+        var _searchString = $("#txtSearchTitle").val();
+        GetProDealTitles(DealforCode, _searchString);
+    }
+
+    function CancelTitle() {
+        $("#txtSearchTitle").val("");
+    }
+
+    function AutoPopulateTermEdit() {
+        var _txtStartDate = $('.Right_Start_Date');
+        var _txtEndDate = $('.Right_End_Date');
+        var _rightSD = new Date(MakeDateFormate(_txtStartDate.val()));
+        var _rightED = new Date(MakeDateFormate(_txtEndDate.val()));
+
+        if (!isNaN(_rightSD) && !isNaN(_rightED)) {
+            _rightED.setDate(_rightED.getDate() + 1);
+            var term = CalculateTerm(_rightSD, _rightED);
+            var arr = term.split('.');
+            $('.Term_YY').val(arr[0]);
+            $('.Term_MM').val(arr[1]);
+        }
+    }
+
+    function Save_Success_ProDeal(result) {
+        //hideLoading();
+        if (result == "true") {
+            redirectToLogin();
+        }
+        else {
+            if (result.Status == "S") {
+                BindPartialView("LIST", "0");
+                showAlert("S", result.Message);
+            } else {
+                showAlert("E", result.Message);
+            }
+        }
+    }
+
+    function GetDealTypeCode() {
+        var dealTypeCode = $("input[name='Deal_Type_Code']:radio:checked").val();
+        if (dealTypeCode == undefined)
+            dealTypeCode = 0;
+        return dealTypeCode;
+    }
+
+    function GetEpF_EpT_ForRunDef() {
+
+        if (!ValidateEpisodeOverlapping()) {
+            return false;
+        }
+
+        var titleList = new Array();
+        var tblProTitle = $("#tblProTitle tr:not(:has(th))");
+
+        var dealTypeCode = GetDealTypeCode();
+        var dealCondition = GetDealTypeCondition(dealTypeCode);
+        var i = 0;
+
+        tblProTitle.each(function () {
+            var _titleCode = 0, _dummyGuid = "", _episode_from = 1, _episode_to = 1;
+            _titleCode = parseInt($("#hdnTitleCode_" + i).val());
+            _dummyGuid = $("#hdnDummyGuid_" + i).val();
+            if (dealCondition == Deal_Program) {
+                _episode_from = parseInt($('#txtEpisode_From_' + i).val());
+                _episode_to = parseInt($('#txtEpisode_To_' + i).val());
+            }
+
+            titleList.push({
+                Title_Code: _titleCode, _Dummy_Guid: _dummyGuid, Episode_From: _episode_from,
+                Episode_To: _episode_to
+            });
+            i++;
+        });
+
+        $.ajax({
+            type: "POST",
+            url: URl_GetEpF_EpT_ForRunDef,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                titleList: titleList
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                } else {
+                    BindRunDef('', 'ADD_RD', 'ADD');
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
+    function btnSaveTitle_OnClick() {
+        debugger;
+        var arrTitleCodes = $("#ddlTitle").val();
+        if (arrTitleCodes == null) {
+            $(".sumo_Title").addClass("required");
+            return false;
+        }
+        if (arrTitleCodes != null) {
+            titleCodes = arrTitleCodes.join(',');
+            var Start_Date = $('#Start_Date').val();
+            var End_Date = $("#End_Date").val();
+            var Term_YY = $("#Term_YY").val();
+            var Term_MM = $("#Term_MM").val();
+
+            $.ajax({
+                type: "POST",
+                url: URL_SaveTitle,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    titleCodes: titleCodes,
+                    dealTypeCode: DealforCode,
+                    startdate: Start_Date,
+                    enddate: End_Date,
+                    month: Term_MM,
+                    year: Term_YY
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (arrTitleCodes != null) {
+                            $("#popAddDealMovie").modal("hide");
+                        }
+                        TitleCode = result.TitleCode;
+                        if (GetDealTypeCode() != "1") {
+                            if (TitleCode != null) {
+                                $("#ddlTitle").val(TitleCode.split(",")).attr("selected", "true")[0].sumo.reload();
+                            }
+                        }
+                        BindListTitle(0, "");
+                        if ($("#tblProTitle tr:not(:has(th))").length > 0) {
+                            $('input[name="Deal_Type_Code"]').attr('disabled', true);
+                        }
+                        $(".tabText").text($("input:radio:disabled:checked").parent("label").text());
+                        $("#txtSearchTitle").val("");
+                        $("#hdn_Title_Codes").val(TitleCode);
+                    }
+                },
+                error: function (result) { }
+            });
+
+        }
+    }
+
+    $("#btnAddDealTile").click(function (e) {
+        debugger;
+        var Start_Date = $('#Start_Date').val();
+        var End_Date = $("#End_Date").val();
+        var Term_YY = $("#Term_YY").val();
+        var Term_MM = $("#Term_MM").val();
+        var returnval = true;
+        var arrTitleCodes = '@ViewBag.TitleCode';
+        var TitleCodes_A = $("#hdn_Title_Codes").val();
+        var dealTypeCode = GetDealTypeCode();
+        var _searchString = $("#txtSearchTitle").val();
+        GetProDealTitles(dealTypeCode, _searchString);
+
+        if (arrTitleCodes != "" || TitleCodes_A != "") {
+            if (dealTypeCode == "1") {
+                if (TitleCodes_A != "") {
+                    arrTitleCodes = TitleCodes_A;
+                }
+                var searchString = $.trim($("#txtSearchTitle").val());
+                $.ajax({
+                    type: "POST",
+                    url: URL_GetProDealTitleNotIn,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: false,
+                    data: JSON.stringify({
+                        DealForCode: dealTypeCode,
+                        searchString: _searchString,
+                        removeTitleCode: arrTitleCodes,
+                        action: "A"
+                    }),
+                    success: function (result) {
+                        debugger;
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            $("#ddlTitle").html("");
+                            $.each(result, function (i, Form_ID) {
+                                $("#ddlTitle").append($('<option></option>').val(result[i].Title_Code).html(result[i].Title_Name));
+                            });
+                            $('#ddlTitle')[0].sumo.reload();
+                            $("#txtSearchTitle").val("");
+                        }
+                    },
+                    error: function (result) { }
+                });
+            }
+        }
+
+
+        if ($.trim(Start_Date) == "" || $.trim(End_Date) == "" || $.trim(Term_YY) == "" || $.trim(Term_MM) == "") {
+            $("#Start_Date,#Term_YY,#Term_MM,#End_Date").attr('required', true);
+            returnval = false;
+        }
+        return returnval;
+
+        if (returnval == false) {
+            e.stopPropagation();
+        }
+    });
+
+
+
+
+    $(document).ready(function () {
+        initializeChosen();
+        $('#ddlTitle').SumoSelect();
+        $('#ddlLicensors').SumoSelect();
+        $('#ddlRunDefTitle').SumoSelect();
+        var restrictCharLength = $(".restrictChar").val().length;
+        $("#spnRemarkLength").html(restrictCharLength + "/4000");
+        searchString = $("#txtSearchTitle").val();
+
+        DealforCode = $("input:radio[name=Deal_Type_Code]:checked").val();
+        var arrLicensorCodes = '@ViewBag.VendorCodes';
+        if (arrLicensorCodes != null) {
+            $("#ddlLicensors").val(arrLicensorCodes.split(",")).attr("selected", "true")[0].sumo.reload();
+        }
+        if ($("#Agreement_Date").val() != "") {
+            $("#Agreement_Date").val($("#Agreement_Date").val().split(' ')[0]);
+        }
+        GetProDealTitles(DealforCode, searchString);
+        AutoPopulateTerm();
+        $(".isDatepicker").datepicker();
+        $('#Start_Date').change(function () {
+            SetMinDt();
+            AutoPopulateTerm();
+        });
+        $('#End_Date').change(function () {
+            SetMaxDt();
+            AutoPopulateTerm();
+        });
+        $('#Term_YY, #Term_MM').change(function () {
+            OnFocusLostTerm();
+        });
+        $("input[type=radio][name=Deal_For]").change(function () {
+            DealforCode = $(this).val();
+            GetProDealTitles($(this).val(), searchString);
+        });
+        $("input[type=radio][name=Deal_Type_Code]").change(function () {
+            DealforCode = $(this).val();
+            GetProDealTitles($(this).val(), searchString);
+        });
+        debugger;
+        $('#hdnRecordLockingCode').val(recordLockingCode);
+        if (recordLockingCode > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+
+        AssignTimeJquery();
+        AssignTimeJquery_Edit();
+        $("#Agreement_Date").datepicker("option", "maxDate", new Date());
+    });
+
+    $(document).on('keyup', 'textarea', function () {
+        var count = $(this).val().length;
+        $("#spnRemarkLength").html(count + "/4000");
+    });
+</script>
+
+@using (Ajax.BeginForm("Save", "Pro_List", new AjaxOptions { OnSuccess = "Save_Success_ProDeal" }, new { @id = "frmProDeal" }))
+{
+    <input type="hidden" id="hdn_minDate" />
+    <input type="hidden" id="hdn_maxDate" />
+    <input type="hidden" id="hdn_Current_Action" />
+    <input type="hidden" id="hdn_Title_Codes" />
+    <input type="hidden" id="hdn_recentCloseOnFocus" />
+    <input type="hidden" id="hdnRecordLockingCode" />
+
+
+    <div class="main_section">
+        <div class="container acq main_col">
+            @if (ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Mode == "A")
+            {
+                <h2 class="pull-left">
+                    @objMessageKey.EditProvisionalDeal
+                    <span></span>
+                </h2>
+            }
+            else if (ViewBag.Mode == GlobalParams.DEAL_MODE_CLONE)
+            {
+                <h2 class="pull-left">
+                    @objMessageKey.CloneProvisionalDeal
+                    <span></span>
+                </h2>
+            }
+            else
+            {
+                <h2 class="pull-left">
+                    @objMessageKey.AddProvisionalDeal
+                    <span></span>
+                </h2>
+            }
+            <div style="margin-top:38px;float:right;">
+                <ul>
+                    <li style="list-style-type: none;" id="liVersion">
+                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_CLONE)
+                        {
+                            <span class="pull-Right">Version #: VN0001 </span>
+                        }
+                        else
+                        {
+                            if (ViewBag.AgreementNo != null)
+                            {<span class="pull-Right">Agreement No.@ViewBag.AgreementNo Version #: VN @ViewBag.VersionNo </span>}
+                            else
+                            {<span class="pull-Right">Version #: VN0001 </span>}
+                        }
+                    </li>
+                </ul>
+            </div>
+            <div class="top_area"></div>
+            <div class="title_block clearfix">
+            </div>
+            <div class="scale_table_block">
+                <table class="four_column table" id="tblGeneral">
+                    <tbody>
+                        <tr>
+                            <td>@objMessageKey.BusinessUnit</td>
+                            <td>
+                                @Html.DropDownListFor(m => Model.Business_Unit_Code, ViewBag.BusineesUnitList as SelectList, "Please Select", new { @id = "ddlBUUnit", @class = "form_input chosen-select" })
+                            </td>
+                            <td>@objMessageKey.ModeofAcquisition</td>
+                            <td>
+                                @{int countMode_Acquisition = 0;}
+                                @foreach (var item in ViewBag.Mode_Acquisition_list)
+                                {
+                                    if (countMode_Acquisition == 0)
+                                    {
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => m.Content_Type, (object)item.Value, new { @id = "rbMode_Acquisition_" + item.Value, @checked = "checked" })@item.Text
+                                        </label>
+                                    }
+                                    else
+                                    {
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => m.Content_Type, (object)item.Value, new { @id = "rbMode_Acquisition_" + item.Value })@item.Text
+                                        </label>
+                                    }
+                                    countMode_Acquisition++;
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td_label">@objMessageKey.Licensee</td>
+                            <td>
+                                <span>
+                                    @Html.DropDownList("LicenseeList", ViewBag.BindLincense as SelectList, new { @id = "ddlLicensee", @class = "form_input chosen-select" })
+                                </span>
+                            </td>
+                            <td class="td_label">@objMessageKey.Licensor</td>
+                            <td>
+                                @*@Html.DropDownListFor(m => m.Provisional_Deal_Licensor, ViewBag.BindLicensor as MultiSelectList, new { @id = "ddlLicensor", @multiple = "multiple" })*@
+                                @Html.ListBox("Provisional_Deal_Licensor", ViewBag.BindLicensor as MultiSelectList, new { @id = "ddlLicensors" })
+                                @*@Html.DropDownList("Provisional_Deal_Licensor", ViewBag.BindLicensor as MultiSelectList, new { @id = "ddlLicensors", @multiple = "multiple" })*@
+
+                                <input type="hidden" id="hdnVendorCode" value="0" name="Vendor_Code" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td_label">@objMessageKey.AgreementDate</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.Agreement_Date, htmlAttributes: new { @style = "width:65%!important;", @class = "isDatepicker" })
+                            </td>
+                            <td class="td_label">@objMessageKey.Description</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.Deal_Desc, htmlAttributes: new { @style = "margin-left: 0px; width: 65%" })
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="four_column table">
+                    <tbody>
+                        <tr>
+                            <td class="td_label" style="width: 6%;">
+                                @objMessageKey.DealFor
+                            </td>
+                            <td style="font-weight: bold;">
+                                @{int countDealFor = 0; }
+                                @foreach (var item in ViewBag.Deal_For_List)
+                                {
+                                    if (countDealFor == 0)
+                                    {
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => m.Deal_Type_Code, (object)item.Value, new { @id = "rdProDeal_For" + item.Value, @checked = "checked" })@item.Text
+                                        </label>
+                                    }
+                                    else
+                                    {
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => m.Deal_Type_Code, (object)item.Value, new { @id = "rdProDeal_For" + item.Value })@item.Text
+                                        </label>
+                                    }
+                                    countDealFor++;
+                                }
+                                @Html.Hidden("hdnDeal_Type_Code", "0")
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="scale_table_block" id="movieSearchBand">
+                    <table class="table style_table" style="margin-left:-4px;">
+                        <tbody>
+                            <tr>
+                                <td style="width:14%;"><b>@objMessageKey.RightsPeriod</b></td>
+                                <td>
+                                    <label style="margin-left:6px;" id="lblStartDate">Start Date</label>
+                                    @Html.TextBox("Start_Date", string.Format("{0:" + GlobalParams.DateFormat + "}", Model.Right_Start_Date), new { @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY" })
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    @Html.TextBox("Term_YY", Model.Term, "", new { @class = "smallTextBox numericTerm", @placeholder = "YY", @maxlength = 2 })
+                                    &nbsp;&nbsp;&nbsp;
+                                    @Html.TextBox("Term_MM", Model.Term, "", new { @class = "smallTextBox numericTerm", @placeholder = "MM", @maxlength = 2 })
+                                    <label style="margin-left:15px">End Date</label>
+                                    @Html.TextBox("End_Date", string.Format("{0:" + GlobalParams.DateFormat + "}", Model.Right_End_Date), new { @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY" })
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    @*<a data-toggle="tab" href="#tabrights" role="tab" id="titleName" style="display:none;"></a>*@
+
+                                    @if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Content)
+                                    {
+                                        <a data-toggle="tab" href="#tabrights" class="tabText" role="tab">Program</a>
+                                    }
+                                    else if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Event)
+                                    {
+                                        <a data-toggle="tab" href="#tabrights" class="tabText" role="tab">Event</a>
+                                    }
+                                    else
+                                    {
+                                        <a data-toggle="tab" href="#tabrights" class="tabText" role="tab">Movie</a>
+                                    }
+
+                                </li>
+                            </ul>
+                            <div>
+                                <a class="btn btn-primary AddDealTile" data-target="#popAddDealMovie" id="btnAddDealTile" data-toggle="modal">@objMessageKey.Add</a>
+                            </div>
+                            <div class="RunDef">
+                                <input type="button" class="btn btn-primary" value="Run Def" onclick="GetEpF_EpT_ForRunDef();">
+                            </div>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabrights">
+                                    <div class="scale_table_block" id="tblDealFor">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--REMARKS-->
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <span style="float:right;" id="spnRemarkLength"></span>
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#tabrights" role="tab">@objMessageKey.Remarks</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabrights">
+                                <div class="scale_table_block">
+                                    @Html.TextAreaFor(m => m.Remarks, new { @class = "textarea restrictChar", @rows = "2", @cols = "20", @maxlength = "4000" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--BUTTONS-->
+            <div class="bottom_action" style="padding-top:10px;">
+                <input type="hidden" id="hdnIsSubmitted" name="IsSubmitted" value="N" />
+                <ul class="form_link_nav clearfix">
+                    <li>
+                        <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.Save" onclick="return ValidateSave('N')" />
+                    </li>
+                    <li>
+                        <input type="submit" id="btnSaveSubmit" class="btn btn-primary" value="@objMessageKey.SaveandConfirm" onclick="return ValidateSave('Y')" />
+                    </li>
+                    <li>
+                        <a class="btn btn-primary" onclick="CancelSaveDeal('')">@objMessageKey.Cancel</a>
+                    </li>
+                </ul>
+            </div>
+            <!--MODAL-->
+            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" data-backdrop="static" data-keyboard="false" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-width:1094px">
+                <div class="modal-dialog">
+                    <div class="modal-content clearfix">
+                        <div class="form_fields acq">
+                            <div class="modal_block modal_header">
+                                <a class="close" onclick="ClosePopup()">
+                                    <span>X</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>Run Definition</h2>
+                            </div>
+                            <div class="modal_block" style="padding: 10px 20px;">
+                                <div id="Multiple_Title">
+                                    <table>
+                                        <tr>
+                                            <td style="width:16%;"><b>@objMessageKey.Title</b></td>
+                                            <td colspan="4">
+                                                <div id="divRunDefTitle">
+                                                    <select id='ddlRunDefTitle' class='' multiple='multiple'></select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table style="border-collapse: inherit;border-spacing: 4px;padding-left: 0px;">
+                                        <tr>
+                                            <td style="width:16%"><b>@objMessageKey.PrimeTime<b></td>
+                                            <td style="width:10%"><span>Start Time:</span></td>
+                                            <td style="width:15%"><input type="text" id="txtStartPrimeTime" class="PrimetimeRange" name="txtStartPrimeTime" /></td>
+                                            <td style="width:10%"><span>End Time:</span></td>
+                                            <td><input type="text" id="txtEndPrimeTime" class="PrimetimeRange" name="txtEndPrimeTime" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:16%"><b>Off Prime Time</b></td>
+                                            <td><span>Start Time:</span></td>
+                                            <td><input type="text" id="txtStartNPrimeTime" class="PrimetimeRange" name="txtStartNPrimeTime" /></td>
+                                            <td><span>End Time:</span></td>
+                                            <td><input type="text" id="txtEndNPrimeTime" class="PrimetimeRange" name="txtEndNPrimeTime" /></td>
+                                            <td>
+                                                <a class="btn btn-primary AddChannelrundef_class" style="float:right" disabled="true" id="AddChannelrundef" onclick="AddEditRunChannel('','ADD_RC')">Add Channels</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div id="Single_Title" style="display:none">
+                                    <input type="hidden" id="hdn_UniqueID" />
+                                    <input type="hidden" id="hdn_Title_dummycode" value="" />
+                                    <table>
+                                        <tr>
+                                            <td style="width:16%;"><b>@objMessageKey.Title</b></td>
+                                            <td colspan="4">
+                                                <span id="Title_Name"></span> ( <span id="Title_Start_Date"></span> - <span id="Title_End_Date"></span> )
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table style="border-collapse: inherit;border-spacing: 4px;padding-left: 0px;">
+                                        <tr>
+                                            <td style="width:16%"><b>@objMessageKey.PrimeTime<b></td>
+                                            <td style="width:10%"><span>Start Time:</span></td>
+                                            <td style="width:15%"><input type="text" id="txtStartPrimeTime_Edit" class="PrimetimeRange" name="txtStartPrimeTime" /></td>
+                                            <td style="width:10%"><span>End Time:</span></td>
+                                            <td><input type="text" id="txtEndPrimeTime_Edit" class="PrimetimeRange" name="txtEndPrimeTime" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:16%"><b>Off Prime Time</b></td>
+                                            <td><span>Start Time:</span></td>
+                                            <td><input type="text" id="txtStartNPrimeTime_Edit" class="NonPrimetimeRange" name="txtStartNPrimeTime" /></td>
+                                            <td><span>End Time:</span></td>
+                                            <td><input type="text" id="txtEndNPrimeTime_Edit" class="NonPrimetimeRange" name="txtEndNPrimeTime" /></td>
+                                            <td colspan="5">
+                                                <a class="btn btn-primary AddChannelrundef_class" disabled="true" id="AddChannelrundef" onclick="AddEditRunChannel('','ADD_RC')">Add Channels</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <input type="hidden" id="hdnAction" value="" />
+                                <div id="pupupHtml"></div>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links" style="padding: 10px;">
+                                    <a class="btn btn-primary" onclick="Save_Update_Run_Defination();">@objMessageKey.Save</a>
+                                    <a class="btn btn-primary" onclick="Cancel_Run_Defination();">@objMessageKey.Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" data-backdrop="static" data-keyboard="false" id="popAddDealMovie" role="dialog" tabindex="-1" aria-hidden="false">
+                <div class="modal-dialog" style="width: 100%;">
+                    <div class="modal-content clearfix">
+                        <form class="form" id="movie_popup">
+                            <div class="form_wrapper" id="modalTitle">
+                                <div class="form_fields acq">
+                                    <div class="modal_block modal_header">
+                                        <a class="close" data-dismiss="modal" href="#">
+                                            <span>×</span>
+                                            <span class="sr-only">Close</span>
+                                        </a>
+                                        <h2>Add Deal Title</h2>
+                                    </div>
+                                    <div class="modal_block">
+
+                                        <input type="text" id="txtSearchTitle" class="" style="width:76%;height:30px;" placeholder="Search by Title,StarCast,Genres,Year of Production">
+                                        <a class="btn btn-primary" id="btnSearchTitle" onclick="searchTitle()">@objMessageKey.Search</a>
+                                        <ul class="form_fields_wrapper add_title_popup" style="padding-top:15px;">
+                                            <li>
+                                                <select id="ddlTitle" multiple="multiple" name="Title"></select>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                    <div class="modal_block_full">
+                                        <div class="form_links">
+                                            <ul class="modal_block clearfix">
+                                                <li>
+                                                    <a class="btn btn-primary" id="btnSaveTitle" onclick="btnSaveTitle_OnClick()">@objMessageKey.Save</a>
+                                                </li>
+                                                <li>
+                                                    <a data-dismiss="modal" class="btn btn-primary" href="#" onclick="CancelTitle()">@objMessageKey.Cancel</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

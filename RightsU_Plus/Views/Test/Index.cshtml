@@ -1,0 +1,21 @@
+﻿@model RightsU_Entities.Acq_Deal_Rights
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <div>
+        @using (Html.BeginForm("Save_Rights", "Test", FormMethod.Post, new { objRights = Model }))
+        { 
+            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="Save" />
+        }
+    </div>
+</body>
+</html>

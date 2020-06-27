@@ -1,0 +1,46 @@
+﻿@model List<RightsU_Entities.USP_List_Acq_Linear_Title_Status_Result>
+<style>
+    #bindDealStatus td:not(:first-child) {
+        text-align: center;
+    }
+</style>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<div class="modal_block">
+    <table class="table table-bordered table-hover" style="display: table;">
+        <tr>
+            <th class="movie" style="width: 60%;">@objMessageKey.TitleName</th>
+            <th class="movie" style="width: 20%;">Rights Added</th>
+            <th class="movie" style="width: 20%;">Runs Added</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+
+            <tr>
+                <td>@item.Title_Name</td>
+                <td align="center">@((item.Title_Added == "Yes~" ? "Yes" : item.Title_Added))</td>
+                <td align="center">@item.Runs_Added</td>
+            </tr>
+        }
+    </table>
+</div>
+<div class="modal_block_full">
+    <div class="form_links">
+        <ul class="modal_block clearfix">
+            <li>
+                <a class="btn-primary" data-dismiss="modal" href="#">@objMessageKey.Cancel</a>
+            </li>
+        </ul>
+    </div>
+</div>

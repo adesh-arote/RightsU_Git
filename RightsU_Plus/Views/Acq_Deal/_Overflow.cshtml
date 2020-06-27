@@ -1,0 +1,179 @@
+﻿@model RightsU_Entities.Acq_Deal_Cost
+@using System.Linq;
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script type="text/javascript">
+
+    var variableCostType_G = '@ViewBag.Variable_Cost_Type';
+
+    var URL_ReBindVariableCost = '@Url.Action("ReBindVariableCost", "Acq_Cost")'
+
+    $(document).ready(function () {
+        debugger
+        /*---Collect Variable Cost Details---*/
+        var RevenueSharing = $("#RevenueSharing tr:not(:has(th),.hide)");
+        var i = 0;
+        RevenueSharing.each(function (rowId_outer) {
+            $("#txtPercentage_" + i).numeric({
+                allowMinus: false,
+                allowThouSep: false,
+                allowDecSep: true,
+                maxDecimalPlaces: 2,
+                maxPreDecimalPlaces: 3
+            });
+
+            i = i + 1;
+        });
+        /*------------------------------------*/
+        if (variableCostType_G == "P" || variableCostType_G == "R") { document.getElementById("RevenueSharing").style.display = 'block'; }
+        else if (variableCostType_G == "N") { document.getElementById("RevenueSharing").style.display = 'none'; }
+        var RecoupmentCode = $('#ddlRoyaltyRecoupment').val();
+        $("input[name=Variable_Cost_Type][value=" + variableCostType_G + "]").prop("checked", "checked");
+        if (RecoupmentCode == "0") {
+            $("input[name=Variable_Cost_Type][value='P']").attr('disabled', true);
+            $("input[name=Variable_Cost_Type][value='R']").attr('disabled', false);
+        }
+        else {
+            $("input[name=Variable_Cost_Type][value='P']").attr('disabled', false);
+            $("input[name=Variable_Cost_Type][value='R']").attr('disabled', true);
+        }
+    });
+    function showOverflow(isChangeRecoup) {
+        debugger
+        var rdoVal = $("input[name='Variable_Cost_Type']:radio:checked").val();
+        radioVal = $("input[name='Commission_Type_0']:radio:checked").val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_ReBindVariableCost,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                VarCostType: rdoVal
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#tabOverflow').html(result);
+                    if (rdoVal == "P" || rdoVal == "R") {
+                        document.getElementById("RevenueSharing").style.display = 'block';
+                    }
+                    else if (rdoVal == "N" ) {
+                        document.getElementById("RevenueSharing").style.display = 'none';
+                    }
+                    if (isChangeRecoup == "Y")
+                        document.getElementById("RevenueSharing").style.display = 'none';
+                    initializeChosen();
+                    var RecoupmentCode = $('#ddlRoyaltyRecoupment').val();
+                    variableCostType_G = rdoVal;
+                    if (isChangeRecoup == "Y") {
+                        if (RecoupmentCode == "0") {
+                            $("input[name=Variable_Cost_Type][value='P']").attr('disabled', true);
+                            $("input[name=Variable_Cost_Type][value='R']").attr('disabled', false);
+
+                        }
+                        else {
+                            $("input[name=Variable_Cost_Type][value='P']").attr('disabled', false);
+                            $("input[name=Variable_Cost_Type][value='R']").attr('disabled', true);
+
+                        }
+                        $("input[name=Variable_Cost_Type][value='N']").prop("checked", "checked");
+                    }
+                    else {
+                        $("input[name=Variable_Cost_Type][value='" + rdoVal + "']").prop("checked", "checked");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+@{if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+    {
+    string strvarCostType = "NA";
+    if (ViewBag.Variable_Cost_Type == "P") { strvarCostType = "Profit Sharing"; }
+    else if (ViewBag.Variable_Cost_Type == "R") { strvarCostType = "Revenue Sharing"; }
+    @Html.Label("strvarCostType", strvarCostType)
+}
+else{
+    foreach (var item in ViewBag.VariableType)
+    {<label class="radio-inline">
+       @{
+       
+           @Html.RadioButtonFor(v=>Model.Variable_Cost_Type, (object)item.Value, new { id = "rdoVT_" + item.Value, onchange = "showOverflow('N')" })@item.Text
+       }
+        </label>
+    }
+}}
+<table class="table table-bordered table-hover" id="RevenueSharing" style="display: none;">
+    <thead style="border:1px solid #ddd">
+        <tr>
+            <th style="width: 70%">@objMessageKey.Licensor</th>
+            <th style="width: 30%">@objMessageKey.Percentage</th>
+        </tr>
+        </thead>
+    <tbody>
+        @{  
+            if (ViewBag.VariableCostList != null)
+            {
+                System.Collections.Generic.List<RightsU_Entities.Acq_Deal_Cost_Variable_Cost> objADCVC = ViewBag.VariableCostList;
+                int i = 0;
+                foreach (var objADC in objADCVC)
+                {
+            <tr>
+                <td>
+                    @if (objADC.Vendor_Code > 0)
+                    {
+                        RightsU_BLL.Vendor_Service objSRE = new RightsU_BLL.Vendor_Service(objLoginEntity.ConnectionStringName);
+                        string Entity_Name = objSRE.GetById(Convert.ToInt32(objADC.Vendor_Code)).Vendor_Name;
+                        @Html.Label("Entity_Name", Entity_Name, new { @id = "lblEntity_NameSR" + i })
+                        @Html.Hidden("Entity_Code_" + i, objADC.Vendor_Code)
+                        @Html.Hidden("Licensor_Type_" + i, "L")
+                    }
+                    else
+                    {
+                        RightsU_BLL.Entity_Service objSRE = new RightsU_BLL.Entity_Service(objLoginEntity.ConnectionStringName);
+                        string Entity_Name = objSRE.GetById(Convert.ToInt32(objADC.Entity_Code)).Entity_Name;
+                        @Html.Label("Entity_Name", Entity_Name, new { @id = "lblEntity_NameSR" + i })
+                        @Html.Hidden("Entity_Code_" + i, objADC.Entity_Code)
+                        @Html.Hidden("Licensor_Type_" + i, "O")
+                    }
+                    @Html.Hidden("VariableCost_Code_" + i, objADC.Acq_Deal_Cost_Variable_Cost_Code)
+                </td>
+
+                <td>@if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+                    @Html.Label("Percentage", objADC.Percentage.ToString(), new { @id = "txtPercentage_" + i ,@class="text-right"})
+                    }
+                    else
+                    {
+                    @Html.TextBox("Percentage", objADC.Percentage.ToString(), new { @id = "txtPercentage_" + i ,@class="text-right"})
+                    }
+                </td>
+            </tr>
+                    i++;
+                }
+            }
+        }
+    </tbody>
+</table>

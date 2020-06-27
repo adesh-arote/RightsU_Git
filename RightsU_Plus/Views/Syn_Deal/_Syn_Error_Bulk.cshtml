@@ -1,0 +1,171 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Bulk_Update>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+
+    var IsCallS = 'Y';
+
+    $(document).ready(function () {
+        debugger
+        $('#txtPageSize1').val('@ViewBag.PageSize');
+        $('#txtPageSize1').numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 3,
+            maxDecimalPlaces: 0
+        });
+        $('.expandable').expander({
+            slicePoint: 20,
+            expandPrefix: '',
+            expandText: '@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        //if ($("#lbTitle_ErrorPopup").val() != null)
+        //    $("#hdnSearchTitles").val($("#lbTitle_ErrorPopup").val().join(','));
+
+        if ($('#PaginationErrPop'))
+            SetPaging1();
+    });
+
+    function SetPaging1() {
+        debugger
+        var PageNo, recordCnt;
+        IsCall = 'N';
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = '@ViewBag.PageSize';
+        opt["num_display_entries"] = 5;
+        opt["num"] = '@ViewBag.PageSize';
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#PaginationErrPop").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger
+        $("#hdnPageIndex1").val(page_index);
+
+        if (IsCall == 'Y') {
+            if ($("#lbTitle_ErrorPopup").val() != null)
+                Show_Error_Popup_Bulk($("#lbTitle_ErrorPopup").val().join(','), $('#txtPageSize1').val(), page_index);
+            else
+                Show_Error_Popup_Bulk('', $('#txtPageSize1').val(), page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+
+    function SearchResult() {
+        debugger;
+        $("#hdnSearchTitles").val('');
+        if ($("#lbTitle_ErrorPopup").val() != null)
+            $("#hdnSearchTitles").val($("#lbTitle_ErrorPopup").val().join(','));
+        Show_Error_Popup_Bulk($("#hdnSearchTitles").val(), $('#txtPageSize1').val(), 0)
+    }
+
+    function applyPaging() {
+        if ($('#txtPageSize1').val() == '' || parseInt($('#txtPageSize1').val()) == 0) {
+            //showAlert('E', 'Please enter valid page size');
+            $('#txtPageSize1').addClass('required');
+            return false;
+        }
+        else
+            Show_Error_Popup_Bulk($("#hdnSearchTitles").val(), $('#txtPageSize1').val(), 0);
+    }
+
+    //function OnErrorTypeChanged() {
+    //    $("#hdnSearchTitles").val('');
+    //    Show_Error_Popup_Bulk($("#hdnSearchTitles").val(), $('#txtPageSize1').val(), $('#hdnRightCode').val());
+    //}
+    function OnErrorTypeChanged() {
+        $("#hdnSearchTitles").val('');
+        Show_Error_Popup_Bulk($("#hdnSearchTitles").val(), $('#txtPageSize1').val(), 0);
+    }
+</script>
+<style>
+    /*#lbTitle_ErrorPopup_chosen {
+        width: 84% !important;
+    }*/
+</style>
+@*@Html.DropDownList("ddlErrorType", ViewBag.ErrorRecord as MultiSelectList, new { @class = "form_input chosen-select", @onchange = "OnErrorTypeChanged()" })*@
+@*<span>@ViewBag.Msg</span>*@
+@Html.DropDownList("ddlErrorType", ViewBag.ErrorRecord as SelectList, new { @class = "form_input chosen-select", @onchange = "OnErrorTypeChanged()" })
+<br />
+<br />
+<span>Title: </span>
+@Html.Hidden("hdnSearchTitles")
+@Html.Hidden("hdnRightCode")
+@Html.Hidden("hdnPageIndex1")
+@Html.ListBox("lbTitle_ErrorPopup", ViewBag.SearchTitles as MultiSelectList, new { @class = "form_input chosen-select" })
+<input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="return SearchResult();">
+<br />
+<br />
+<div class="paging_area clearfix">
+    @*<span class="pull-left">Total Records: @ViewBag.RecordCount</span>*@
+    <div id="PaginationErrPop" class="pagination"></div>
+    <span class="pull-right">@objMessageKey.PageSize: @Html.TextBox("txtPageSize1", 5, new { @onchange = "applyPaging()", @style = "width:35px" })</span>
+</div>
+
+<div>
+    <table class="table table-bordered table-hover" style="display: table;" id="tblError">
+        <tr>
+            <th>@objMessageKey.TitleName</th>
+            <th>@objMessageKey.Platform</th>
+            <th>@objMessageKey.Period</th>
+            <th>@objMessageKey.Region</th>
+            <th>@objMessageKey.Subtitling</th>
+            <th>@objMessageKey.Dubbing</th>
+        </tr>
+        @{
+            foreach (var objErrList in Model)
+            {
+                <tr>
+                    <td width="15%">@objErrList.Title_Name.TrimEnd(',')</td>
+                    <td width="12%">
+                        <div class="expandable">@objErrList.Platform_Name</div>
+                    </td>
+                    <td width="8%">
+                        @if (objErrList.Right_Start_Date != null)
+                        {
+                            @objErrList.Right_Start_Date.Value.ToString("dd MMM yyyy")
+                        }
+                        @if (objErrList.Right_End_Date != null)
+                        {
+                            @: To @objErrList.Right_End_Date.Value.ToString("dd MMM yyyy")
+                    }
+                    </td>
+                    <td width="15%">
+                        <div class="expandable">
+                            @if (objErrList.Country_Name != null && objErrList.Country_Name != "")
+                            {
+                                @objErrList.Country_Name.TrimEnd(',')
+                            }
+                        </div>
+                    </td>
+                    <td width="15%">
+                        <div class="expandable">@objErrList.Subtitling_Language.TrimEnd(',')</div>
+                    </td>
+                    <td width="15%">
+                        <div class="expandable">@objErrList.Dubbing_Language.TrimEnd(',')</div>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>

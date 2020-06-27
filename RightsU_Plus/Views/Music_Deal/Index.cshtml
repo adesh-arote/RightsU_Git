@@ -1,0 +1,2074 @@
+﻿@model RightsU_Entities.Music_Deal
+@using UTOFrameWork.FrameworkClasses;
+@{
+    var j = (string)ViewBag.Music_Platform_Tree;
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string channelname = "";
+    string minutes = "";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.MUSIC_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.MUSIC_DEAL_SCHEMA];
+        if (objSchema.Deal_Code != 0)
+        {
+            objSchema.Deal_Workflow_Flag = objSchema.Deal_Workflow_Flag.Trim();
+        }
+        else
+        {
+            objSchema.Deal_Workflow_Flag = GlobalParams.dealWorkFlowStatus_New;
+        }                
+    }    
+}
+
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css">
+<script type="text/javascript" src="~/JS_Core/jquery.plugin.js"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.timeentry.js"></script>
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+
+
+<style>
+   .stampBg {
+        background-image: none !important;
+        height: 0 !important;
+        width: auto !important;
+        float: right;
+    }
+
+    .stampBg h4 {
+            transform: none !important;
+            float: right;
+            width: auto !important;
+    }
+    #Tree_Filter_Rights_Platform {
+        width: 425px;
+        position: relative !important;
+    }
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
+    }
+
+    #tabRights .ui-fancytree {
+        height: 164px;
+        overflow-y: auto;
+        width: 425px;
+    }
+
+    /*#popEditHB .fancytree-container {
+        height: 400px;
+        width: 410px;
+    }
+
+    #popPlatformRights .fancytree-container {
+        height: 400px;
+        width: 100%;
+    }*/
+
+    .four_column td:nth-child(2n) {
+        width: 35% !important;
+    }
+
+    .four_column td:nth-child(2n+1) {
+        width: 15% !important;
+        font-weight: 700 !important;
+    }
+
+    #txtAgreement_Date {
+        width: 44% !important;
+    }
+
+    #txtRefNo {
+        width: 44% !important;
+    }
+
+    /*#txtDuration {
+        width: 35% !important;
+
+    }*/
+
+    #txtDuration {
+        width: 26% !important;
+        height: 30px !important;
+    }
+
+    #txtNoOfSong {
+        width: 98px !important;
+    }
+
+    #Start_Date {
+        width: 95px !important;
+    }
+
+    #End_Date {
+        width: 95px !important;
+    }
+
+    #tblRights tr {
+        height: 30px;
+    }
+
+    .main_section {
+        overflow: auto;
+    }
+
+    .chosen-choices li.search-choice.primary {
+        /* background: #ddd; */
+        color: #666;
+        font-weight: 700;
+    }
+
+    #txtSpecific {
+        width: 300px !important;
+    }
+
+    #divLinkShowList {
+        width: 100% !important;
+    }
+
+    #divStatusHistory {
+        overflow: auto;
+        max-height: 200px;
+    }
+
+    .sumo_ddlMusicLangugae {
+        width: 353px;
+    }
+
+    .sumo_ddlDealTypeFor {
+        width: 353px;
+    }
+
+    .sumo_ddlChannel {
+        width: 433px;
+    }
+
+    .sumo_ddlCountry {
+        width: 433px;
+    }
+
+    #ddlChannelCategory_chosen {
+        width: 24% !important;
+    }
+
+    .MoreActionDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 200px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        right: 490px;
+        display: none;
+    }
+</style>
+<script>
+    var CommandName_G = "";
+    var URL_GetRightRuleData = '@Url.Action("GetRightRuleData", "Music_Deal")';
+    var URL_BindCountryList = '@Url.Action("BindCountryList", "Music_Deal")';
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Music_Deal")';
+    var URL_BindChannelList = '@Url.Action("BindChannelList", "Music_Deal")';
+    var URL_BindLinkShowList = '@Url.Action("BindLinkShowList", "Music_Deal")';
+    var URL_SaveChannelWiseList = '@Url.Action("SaveChannelWiseList", "Music_Deal")';
+    var URL_GetChannelNames = '@Url.Action("GetChannelNames", "Music_Deal")';
+    var URL_Cancel = '@Url.Action("Cancel", "Music_Deal")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var URL_BindMusicPlatformTreeView = '@Url.Action("BindMusicPlatformTree", "Music_Deal")';
+    var URL_CheckPlatform = '@Url.Action("Check_Platform", "Music_Deal")';
+    var channelCode;
+    var recordLockingCode = @ViewBag.RecordLockingCode;
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Music_Deal")';
+    var URL_BindMusicScheduleValidation = '@Url.Action("BindMusicScheduleValidationData", "Music_Deal")';
+
+    var Height = '';
+    $(document).ready(function () {     
+        debugger;       
+        var channelType = $("input[name='Channel_Type']:radio:checked").val();
+        if(channelType == 'C')
+        {
+            Height = $('#divChannel').height();
+            var NewHeight = Height + 150;
+            $('#tabRights .ui-fancytree').css("height",NewHeight+"px")
+        }
+        BindMusicPlatform();
+        if ('RTL'=='@objMessageKey.LayoutDirection') {
+            debugger
+            $("#tabRightRule , #tabLinkShow , #tabstatusHistory , #tabRights ,#tabGeneral ,#txtRemark").css('direction','rtl');
+            $("input[type=radio]").css({position:'relative',margin:'2px 0 0 2px',top:'2px'});
+            $(".divBlock").css({ marginTop: '10px'});
+            $(".divBlock .bold").css('padding-left','94%');
+            $(".divBlock .charNum").css({float: 'left',marginTop: '-18px'});
+            $(".bottom_action").css('float','right');
+            $(".bottom_action li").css('float','right');
+            $("#spnRemarkLength").css('float','left');
+        }
+        else
+            $("#spnRemarkLength").css('float','right');
+
+        var restrictCharLength = $(".restrictChar").val().length;
+        $("#spnRemarkLength").html(restrictCharLength + "/4000");
+
+        $("#txtAgreement_Cost").autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+
+        $('#hdnRecordLockingCode').val(recordLockingCode)
+        if(recordLockingCode > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+
+
+
+        $('#ddlMusicLangugae').SumoSelect();
+
+        $('#ddlMusicLangugae').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({paddingRight: '6px'});
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({direction:"LTR",paddingRight:'30px'});
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+        });
+
+        $('#ddlDealTypeFor').SumoSelect();
+
+        $('#ddlDealTypeFor').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({paddingRight: '6px'});
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({direction:"LTR",paddingRight:'30px'});
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+        });
+
+        $('#ddlChannel').SumoSelect();
+
+      
+        $('#ddlChannel').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({paddingRight: '6px'});
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({direction:"LTR",paddingRight:'30px'});
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+        });
+
+        $('#ddlCountry').SumoSelect();
+        $('#ddlCountry').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({paddingRight: '6px'});
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({direction:"LTR",paddingRight:'30px'});
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+        });
+        addNumeric();
+        AutoPopulateTerm();
+        $(".isDatepicker").datepicker();
+        AllowChosenRightClick();
+        if ($('#ddlRightRule').val() != null && $('#ddlRightRule').val() != "") {
+            GetRightRuleData();
+        }
+        if ($('#ddlChannel').val() != null && $('#ddlChannel').val() != "") {
+
+            BindCountryList();
+            ChannelType_OnChange(false);
+            LinkShowType_OnChange(true);
+        }
+
+        if('@Model.Channel_Or_Category' == "C")
+        {
+            $('#divddlChannel').show();
+            $('#divChannelCategory').hide();
+        }
+        else
+        {
+            $('#divddlChannel').hide();
+            $('#divChannelCategory').show();
+
+        }
+
+        RunType_Changed('@Model.Run_Type');
+        rulRunType_Changed('@Model.Right_Rule_Type')
+
+        $("#txtAgreement_Date").datepicker("option", "maxDate", new Date());
+        $('#Term_YY, #Term_MM').change(function () {
+            OnFocusLostTerm();
+        });
+
+        $('#Start_Date').change(function () {
+            SetMinDt();
+            AutoPopulateTerm();
+        });
+
+        $('#End_Date').change(function () {
+            SetMaxDt();
+            AutoPopulateTerm();
+        });
+
+        if(@Model.Music_Deal_Code > 0)
+        {
+            SetMinDt();
+            SetMaxDt();
+        }
+
+
+        var plc = @(Model.Primary_Vendor_Code ?? 0);
+        if(plc > 0)
+        {
+            setPrimaryLicensor(plc)
+        }
+        //var txtRemark = document.getElementById('txtRemark');
+        //countChar(txtRemark);
+        $('.show_hide').click(function () {
+            debugger;
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        });
+    });
+
+    function AllowChosenRightClick() {
+        $('#ddlLicensor_chosen li.search-choice').bind("contextmenu", function (e) {
+            e.preventDefault();
+            $('#ddlLicensor_chosen li.search-choice.primary').removeClass('primary');
+            $(this).addClass('primary');
+        });
+
+    }
+    function setPrimaryLicensor(value) {
+        var index = $('#ddlLicensor [value=' + value + ']').index();
+        $('#ddlLicensor_chosen a').filter('[data-option-array-index="' + index + '"]').closest('li').addClass('primary');
+    }
+    function getPrimaryLicensor() {
+        var index = $('#ddlLicensor_chosen li.search-choice.primary a').data("option-array-index");
+        if (isNaN(index))
+            return 0;
+
+        index = parseInt(index) + 1;
+        return $('#ddlLicensor option:nth-child(' + index + ')').val();
+    }
+    function OnFocusLostTerm() {
+        debugger;
+        var canAssign = true;
+        var txtStartDate = $('#Start_Date');
+        var txtEndDate = $('#End_Date');
+        var txtTermYear = $('#Term_YY');
+        var txtTermMonth = $('#Term_MM');
+
+        if (txtTermYear.val() == '' || isNaN(txtTermYear.val()))
+            txtTermYear.val('0');
+        if (txtTermMonth.val() == '' || isNaN(txtTermMonth.val()))
+            txtTermMonth.val('0');
+
+        if (txtStartDate.val() != "") {
+            var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
+            if (!isNaN(rightSD)) {
+
+                var year = 0;
+                var month = 0;
+
+                if (txtTermYear.val() != '')
+                    year = parseInt(txtTermYear.val());
+                if (txtTermMonth.val() != '')
+                    month = parseInt(txtTermMonth.val());
+
+                if (year > 0 || month > 0) {
+                    var newDate = CalculateEndDate(rightSD, year, month, 0);
+                    if (canAssign) {
+                        txtEndDate.val(newDate);
+                    }
+                    else {
+                        txtEndDate.val('');
+                    }
+                }
+                else {
+                    txtEndDate.val('');
+                }
+            }
+        }
+        else if (txtEndDate.val() != "") {
+            var rightED = new Date(MakeDateFormate(txtEndDate.val()));
+            if (!isNaN(rightED)) {
+
+                var year = 0;
+                var month = 0;
+
+                if (txtTermYear.val() != '')
+                    year = parseInt(txtTermYear.val());
+                if (txtTermMonth.val() != '')
+                    month = parseInt(txtTermMonth.val());
+
+                if (year > 0 || month > 0) {
+                    var newDate = CalculateStartDate(rightED, year, month);
+                    txtStartDate.val(newDate);
+                }
+                else {
+                    txtStartDate.val('');
+                }
+            }
+        }
+        else {
+            txtTermYear.val('0');
+            txtTermMonth.val('0');
+        }
+    }
+    function CalculateEndDate(startDate, year, month, days) {
+        var yearToMonth = 12 * year;
+        month = month + yearToMonth;
+        startDate.setMonth(startDate.getMonth() + month);
+        startDate.setDate(startDate.getDate() + days);
+        startDate.setDate(startDate.getDate() - 1);
+        var newDateStr = ConvertDateToCurrentFormat(startDate);
+        return newDateStr;
+    }
+    function CalculateStartDate(startDate, year, month) {
+        debugger;
+        var yearToMonth = 12 * year;
+        month = month + yearToMonth;
+        startDate.setMonth(startDate.getMonth() - month);
+        startDate.setDate(startDate.getDate() + 1);
+        var newDateStr = ConvertDateToCurrentFormat(startDate);
+        return newDateStr;
+    }
+    function ConvertDateToCurrentFormat(objDate) {
+        var dd = objDate.getDate();
+        var mm = objDate.getMonth() + 1; //January is 0!
+        var yyyy = objDate.getFullYear();
+
+        if (dd < 10)
+            dd = '0' + dd
+
+        if (mm < 10)
+            mm = '0' + mm
+
+        var newDate = dd + '/' + mm + '/' + yyyy;
+        return newDate;
+    }
+    function CalculateTerm(startDate, endDate) {
+        var val = CalculateMonthBetweenTwoDate(startDate, endDate);
+        var year = val / 12;
+        var month = val % 12;
+        var term = parseInt(year) + '.' + month;
+        return term;
+    }
+    function SetMaxDt() {
+        debugger
+        setMinMaxDates('Start_Date', '', $('#End_Date').val());
+    }
+    function SetMinDt() {
+        debugger
+        setMinMaxDates('End_Date', $('#Start_Date').val(), '');
+    }
+    function AutoPopulateTerm() {
+        var txtStartDate = $('#Start_Date');
+        var txtEndDate = $('#End_Date');
+        var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
+        var rightED = new Date(MakeDateFormate(txtEndDate.val()));
+
+        if (!isNaN(rightSD) && !isNaN(rightED)) {
+            rightED.setDate(rightED.getDate() + 1);
+            var term = CalculateTerm(rightSD, rightED);
+            var arr = term.split('.');
+            $('#Term_YY').val(arr[0]);
+            $('#Term_MM').val(arr[1]);
+        }
+    }
+    function CalculateMonthBetweenTwoDate(startDate, endDate) {
+        var months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+        months += endDate.getMonth() - startDate.getMonth();
+
+        if (endDate.getDate() < startDate.getDate())
+            months--;
+        return months;
+    }
+    function MakeDateFormate(dateInString) {
+        if (dateInString != null || dateInString != "") {
+            var array = dateInString.split('/');
+            var month = parseFloat(array[1]);
+            switch (month) {
+                case 1:
+                    array[1] = "Jan";
+                    //array[1] = "01";
+                    break;
+
+                case 2:
+                    //array[1] = "Feb";
+                    array[1] = "02";
+                    break;
+
+                case 3:
+                    //array[1] = "Mar";
+                    array[1] = "03";
+                    break;
+
+                case 4:
+                    //array[1] = "Apr";
+                    array[1] = "04";
+                    break;
+
+                case 5:
+                    //array[1] = "May";
+                    array[1] = "05";
+                    break;
+
+                case 6:
+                    //array[1] = "Jun";
+                    array[1] = "06";
+                    break;
+
+                case 7:
+                    //array[1] = "Jul";
+                    array[1] = "07";
+                    break;
+
+                case 8:
+                    //array[1] = "Aug";
+                    array[1] = "08";
+                    break;
+
+                case 9:
+                    //array[1] = "Sep";
+                    array[1] = "09";
+                    break;
+
+                case 10:
+                    //array[1] = "Oct";
+                    array[1] = "10";
+                    break;
+
+                case 11:
+                    //array[1] = "Nov";
+                    array[1] = "11";
+                    break;
+
+                case 12:
+                    //array[1] = "Dec";
+                    array[1] = "12";
+                    break;
+            }
+
+            //if ($.browser.chrome) {
+
+            //} else if ($.browser.mozilla) {
+            //    alert(2);
+            //} else if ($.browser.msie) {
+            //    alert(3);
+            //}
+            var format = array[2] + "-" + array[1] + "-" + array[0];
+            return format;
+        }
+        return "";
+    }
+    function addNumeric() {
+
+        $(".numericTerm").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 2,
+            maxDecimalPlaces: 0
+        });
+        //$("#txtDuration").numeric({
+        //    allowMinus: false,
+        //    allowThouSep: true,
+        //    allowDecSep: true,
+        //    maxDecimalPlaces: 2,
+        //    maxPreDecimalPlaces: 3
+        //});
+        $("#txtNoOfSong").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 999,
+            min: 0
+        });
+
+        //$("#txtAgreement_Cost").numeric({
+        //    allowMinus: false,
+        //    allowThouSep: true,
+        //    allowDecSep: true,
+        //    maxDecimalPlaces: 2,
+        //    maxPreDecimalPlaces: 3
+        //});
+    }
+    function checkAfterDecimal(idthis, evt) {
+        var v = $('#' + idthis.id).val();
+        var v1 = evt.key;
+        var v2 = v + '' + v1;
+        var v3 = v2.split('.');
+        var v4 = parseInt(v3[1]);
+
+        if (v4 > 59)
+            return false;
+        else
+            return true;
+    }
+    function GetRightRuleData() {
+        var rightRuleCode = $('#ddlRightRule').val();
+
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: URL_GetRightRuleData,
+            data: JSON.stringify({
+                rightRuleCode: rightRuleCode
+            }),
+            success: function (result) {
+                debugger
+                $("#spnstarttime").text(result.StartTime);
+                $("#spnplayperday").text(result.PlayPerDay);
+                $("#spnDuration").text(result.Duration);
+                $("#spnRepeat").text(result.NoofRepeat);
+
+            }
+
+        });
+    }
+    function getSelectedChannelCodes(addRequired)
+    {
+        var channelOrCategory = $("input[name='Channel_Or_Category']:radio:checked").val();
+        var channelCodes = "";
+        if(channelOrCategory == "C")
+        {
+            channelCodes = $('#ddlChannel').val()
+            if (channelCodes != null)
+                channelCodes = channelCodes.join(',');
+            else if (addRequired)
+                $("#ddlChannel").attr('required', true);
+        }
+        else
+        {
+            channelCodes = $('#hdnChannelCodes').val();
+        }
+
+        return channelCodes;
+    }
+    function getSelectedTitleCodes(addRequired)
+    {
+        var selectedTitleCode = "";
+        $("input[id*='chkTitleCode_']:checkbox:checked").each(function(){
+            if(selectedTitleCode == "")
+                selectedTitleCode = $(this).val();
+            else
+                selectedTitleCode = selectedTitleCode + "," + $(this).val();
+        });
+
+        if(selectedTitleCode == "" && addRequired)
+        {
+            returnVal = false
+            showAlert("E", "Please select atleast one title", 'chkAll');
+        }
+
+        return selectedTitleCode;
+    }
+    function BindCountryList() {
+        if ($('#ddlChannel').val() != null) {
+            var channelCode = $('#ddlChannel').val().join(',');
+        }
+
+        var selectedCountryCodes = $('#ddlCountry').val();
+        if (selectedCountryCodes != null)
+            selectedCountryCodes = selectedCountryCodes.join(',');
+        else
+            selectedCountryCodes = "";
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: URL_BindCountryList,
+            data: JSON.stringify({
+                selectedCountryCodes: selectedCountryCodes
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger
+                    $("#ddlCountry").empty();
+                    $(result.Country).each(function (index, item) {
+                        $("#ddlCountry").append($("<option />").val(this.Value).text(this.Text));
+
+                    });
+                    // $("#ddlCountry").val(result.SelectedCode.split(','))[0].sumo.reload();
+
+                    $('#ddlCountry').each(function () {
+                        $("#ddlCountry").val(result.SelectedCode.split(','))[0].sumo.reload();
+                        $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+                        $('.SumoSelect .select-all').css({paddingRight: '6px'});
+                        $('.SumoSelect > .optWrapper > .options li.opt label').css({direction:"LTR",paddingRight:'30px'});
+                        $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+                    });
+
+
+                }
+            }
+
+        });
+    }
+    function BindChannelWiseList()
+    {
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            url: URL_BindChannelList,
+            async: true,
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divSubChannel').show();
+                    $('#divSubChannel').empty();
+                    $('#divSubChannel').html(result);
+                    Height = $('#divChannel').height();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BindLinkShowList(showName, selectedTitleCode, calledOnLoad) {
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            url: URL_BindLinkShowList,
+            async: true,
+            data: JSON.stringify({
+                showName: showName,
+                SelectedTitleCode :selectedTitleCode,
+                CalledOnLoad: calledOnLoad
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divLinkShowList').empty();
+                    $('#divLinkShowList').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function RunType_Changed(key) {
+        if (key == "L")
+        {
+            $('#txtNoOfSong').show();
+            $("input[name=Channel_Type][value='C']:radio").attr("disabled", false);
+        }
+        else
+        {
+            $("input[name=Channel_Type][value='S']:radio").prop("checked", "checked");
+            $('#divSubChannel').empty();
+            $('#divSubChannel').hide();
+            $("input[name=Channel_Type][value='C']:radio").attr("disabled", true);
+            SaveChannelWiseList(false);
+            $('#txtNoOfSong').hide();
+        }
+    }
+    function rulRunType_Changed(key) {
+        debugger;
+        if (key == "L")
+        {
+            //$('#ddlRightRule').val('').trigger('chosen:updated');
+            $('#ddlRightRule').prop('disabled', false).trigger("chosen:updated");
+            $('#ddlRightRule').removeClass("required");
+
+        }
+        else if (key == "U" || key == "")
+        {
+            $('#ddlRightRule').removeClass("required");
+            $('#ddlRightRule').val('').trigger('chosen:updated');
+            $('#ddlRightRule').prop('disabled', true).trigger("chosen:updated");
+            $('.right-rule').text("");
+        }
+    }
+    function ChannelType_OnChange(channelChanged) {
+        debugger;
+        var channelType = $("input[name='Channel_Type']:radio:checked").val();
+        if (channelType == "S") {
+            $('#divSubChannel').empty();
+            $('#divSubChannel').hide();
+            $('#tabRights .ui-fancytree').css("height","150px")
+        }
+        else {
+            debugger;
+            var channelCode = getSelectedChannelCodes(!channelChanged);
+
+            var NewHeight = Height + 150;
+            $('#tabRights .ui-fancytree').css("height",NewHeight+"px")
+            if(channelCode != null && channelCode != "" || channelChanged) {
+                BindChannelWiseList();
+            }
+        }
+    }
+    function LinkShowType_OnChange(calledOnLoad) {
+        var linkShowType = $("input[name='Link_Show_Type']:radio:checked").val();
+        if (linkShowType != 'SP') {
+            $('#divLinkShowList').empty()
+            $('#divLinkShowList').hide();
+            $('#Specific_TextText').hide().val('');
+        }
+        else{
+            $('#Specific_TextText').show();
+            $('#divLinkShowList').show()
+            if(calledOnLoad)
+            {
+                var showName = $('#txtSpecific').val();
+                var selectedTitleCode = getSelectedTitleCodes(false);
+                BindLinkShowList(showName, selectedTitleCode, calledOnLoad);
+            }
+        }
+    }
+    function SearchLinkShow(){
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var showName = $('#txtSpecific').val();
+        if(showName != "")
+            var showNameLength = showName.length;
+        if($('#ddlChannel').val() == "" || $('#ddlChannel').val() == null)
+        {
+            $('#ddlChannel').addClass('required');
+        }
+        if(showName == "")
+        {
+            $('#txtSpecific').attr('required',true)
+        }
+        if(showNameLength < 3)
+        {
+            showAlert("E","Please enter search criteria greater than 3 characters","")
+        }
+        else{
+            var selectedTitleCode = getSelectedTitleCodes(false);
+            BindLinkShowList(showName, selectedTitleCode, false);
+        }
+    }
+    function SaveChannelWiseList(calledOnChange) {
+        debugger
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var returnVal = true;
+        var arrCodes = new Array();
+        var lstChannel = new Array();
+        var channelType = $("input[name='Channel_Type']:radio:checked").val();
+        var arrChannelcode = null;
+        var channelOrCategory = $("input[name='Channel_Or_Category']:radio:checked").val();
+
+        if(channelOrCategory == "C")
+            arrChannelcode = $('#ddlChannel').val();
+        else
+            arrChannelcode = $('#hdnChannelCodes').val().split(',');
+
+        var noOfSongs = parseInt($.trim($('#txtNoOfSong').val()));
+        if(isNaN(noOfSongs))
+            noOfSongs = 0;
+
+        if (channelType == "C")
+        {
+            if(arrChannelcode != null)
+            {
+                var tblData = $("#tblChannel tbody tr");
+                var totalDefinedSong  = 0;
+                $.each($(tblData), function (index, value) {
+                    var channelCode = $(value).find('input[name="hdnChannelCode"]').val();
+                    var index = arrChannelcode.indexOf(channelCode);
+                    if(index >= 0)
+                    {
+                        var definedSong = $.trim($(value).find('input[name="txtSong"]').val());
+                        //if (definedSong == "" || definedSong == "0")
+                        if (definedSong == "")
+
+                        {
+                            if(calledOnChange)
+                                definedSong = null;
+                            else
+                            {
+                                returnVal = false;
+                                $(value).find('input[name="txtSong"]').val('').attr('required', true)
+                            }
+                        }
+                        else
+                        {
+                            totalDefinedSong = totalDefinedSong  + parseInt(definedSong)
+                        }
+                        if(returnVal)
+                        {
+                            lstChannel.push({
+                                Channel_Code: channelCode, Defined_Runs: definedSong, EntityState: "Added"
+                            });
+                        }
+                        arrCodes.push(channelCode);
+                    }
+                });
+
+                if(totalDefinedSong != noOfSongs && !calledOnChange)
+                {
+                    returnVal = false;
+                    showAlert("E", "Total No. of Songs must be equal with No. of Songs (" + noOfSongs + ")")
+                }
+            }
+        }
+
+        if (channelType == "S" || calledOnChange)
+        {
+            if(arrChannelcode != null)
+            {
+                for (var i = 0; i < arrChannelcode.length; i++) {
+                    var channelCode = arrChannelcode[i];
+                    var index = arrCodes.indexOf(channelCode);
+                    if(index < 0)
+                    {
+                        lstChannel.push({
+                            Channel_Code: channelCode, EntityState: "Added"
+                        });
+                    }
+                }
+            }
+            else if(!calledOnChange)
+                returnVal = false;
+        }
+
+        if(returnVal)
+        {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveChannelWiseList,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    lst: lstChannel
+                }),
+                async: true,
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+
+                    if(calledOnChange)
+                    {
+                        BindCountryList();
+                        ChannelType_OnChange(calledOnChange);
+                        LinkShowType_OnChange(false);
+
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+        return returnVal;
+    }
+
+    function CheckPlatforms()
+    {
+        debugger;
+        CommandName_G = "LIST";
+        var PlatformCheck = $('#hdnTVCodes').val();
+        var chkPlatform = true;
+        PlatformCheck = PlatformCheck.trim();
+        $.ajax({
+            type: "POST",
+            url: URL_CheckPlatform,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Platform_Code: PlatformCheck
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                if(result.isError == true)
+                {
+                    showAlert('I', 'Both Underlying Works and Commissioned Works are selected. Do you wish to continue to saving the deal?', 'OKCANCEL');
+                    chkPlatform = false;
+                }
+                else
+                {
+                    chkPlatform = true;
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+        //if (PlatformCheck == "0") {
+        //    $('#hdnTVCodes').val('N');
+        //    PlatformCheck = 'N';
+        //}
+        //else{
+        //    PlatformCheck = 'N';
+        //}
+
+        //if (PlatformCheck == 'N') {
+        //    hideLoading();
+        //    showAlert('I', 'Both Underlying Works and Commissioned Works are selected. Do you wish to continue to saving the deal?', 'OKCANCEL');
+        //    return Check = false;
+        //}
+        //else {
+        //    return Check = true;
+        //}
+        return chkPlatform;
+    }
+
+
+    function ValidateSave() {
+        debugger
+        var duration = $('#txtDuration').val();
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        var returnVal = true;
+        var businessUnitCode = $("select[ID='ddlBusinessUnit'] option:selected").val();
+        //var ddlDealTypeFor = $("select[ID='ddlDealTypeFor'] option:selected").val();
+
+        if ($("#hdnTVCodes").val() == "" || $("#hdnTVCodes").val() == null) {
+            var MusicPlatformsCodes = 0;
+            $('#hdnTVCodes').val(MusicPlatformsCodes);
+        }
+        if ($.trim($("#txtAgreement_Date").val()) == "") {
+            $('#txtAgreement_Date').val('').attr('required', true)
+            returnVal = false;
+        }
+
+        if ($.trim($("#txtDescription").val()) == "") {
+            $('#txtDescription').val('').attr('required', true)
+            returnVal = false;
+        }
+
+        if ($("#ddlLicensee").val() == "" || $("#ddlLicensee").val() == null) {
+            $('#ddlLicensee').addClass("required");
+            returnVal = false;
+        }
+        if (businessUnitCode == 0) {
+            $('#ddlBusinessUnit').addClass("required");
+            returnVal = false;
+        }
+        //if (ddlDealTypeFor == 0) {
+        //    $('#ddlDealTypeFor').addClass("required");
+        //    returnVal = false;
+        //}
+        if ($('#ddlDealTypeFor').val() == "" || $('#ddlDealTypeFor').val() == null){
+            $('#divDealType').addClass("required");
+            returnVal = false;
+        }
+        if ( $('#ddlMusicLabel').val() == "" ||  $('#ddlMusicLabel').val() == null) {
+            $('#ddlMusicLabel').addClass("required");
+            returnVal = false;
+        }
+        if ($('#ddlMusicLangugae').val() == "" || $('#ddlMusicLangugae').val() == null) {
+            $('#divLanguage').addClass("required");
+            returnVal = false;
+        }
+        if ($('#Start_Date').val() == "" || $('#Start_Date').val() == null) {
+            $('#Start_Date').attr('required', true)
+            returnVal = false;
+        }
+        if ($('#Term_YY').val() == "" || $('#Term_YY').val() == null) {
+            $('#Term_YY').attr('required', true)
+            returnVal = false;
+        }
+        if ($('#Term_MM').val() == "" || $('#Term_MM').val() == null) {
+            $('#Term_MM').attr('required', true)
+            returnVal = false;
+        }
+        if ($('#End_Date').val() == "" || $('#End_Date').val() == null) {
+            $('#End_Date').attr('required', true)
+            returnVal = false;
+        }
+
+        if($("#tree").is(':visible') == true){
+            if ($("#hdnTVCodes").val() == "" || $("#hdnTVCodes").val() == null ||  $("#hdnTVCodes").val() == '0'){
+                $('#tree').addClass("required");
+                returnVal = false;
+            }
+        }
+        //else
+        //{
+        //    var MusicPlatformsCodes = 0;
+        //    $('#hdnTVCodes').val(MusicPlatformsCodes);
+        //}
+        debugger;
+        if($('#rulLimited').is(':checked')) {
+            if ($('#ddlRightRule').val() == ""){
+                $('#ddlRightRule').addClass("required");
+                returnVal = false;
+            }
+            else
+                $('#ddlRightRule').removeClass("required");
+        }
+        var channelOrCategory = $("input[name='Channel_Or_Category']:radio:checked").val();
+
+        if(channelOrCategory == "C")
+        {
+            if ($("#ddlChannel").val() == "" || $("#ddlChannel").val() == null) {
+                $('#divddlChannel').addClass("required");
+                returnVal = false;
+            }
+        }
+        else
+        {
+            if ($("#ddlChannelCategory").val() == "" || $("#ddlChannelCategory").val() == null) {
+                $('#divChannelCategory').addClass("required");
+                returnVal = false;
+            }
+        }
+
+        //if ($("#ddlCountry").val() == "" || $("#ddlCountry").val() == null) {
+        //    $('#ddlCountry').addClass("required");
+        //    returnVal = false;
+        //}
+        //if ($('#ddlRightRule').val() == "" || $('#ddlRightRule').val() == null) {
+        //    $('#ddlRightRule').addClass("required");
+        //    returnVal = false;
+        //}
+        if ( $('#ddlLicensor').val() == null) {
+            $('#ddlLicensor').addClass("required");
+            returnVal = false;
+        }
+        else {
+            var plc = getPrimaryLicensor();
+
+            if (plc == 0 || plc == "") {
+                showAlert("E", "Please select primary licensor", 'ddlLicensor')
+                returnVal = false;
+            }
+            else
+                $('#hdnPrimaryVendorCode').val(plc);
+        }
+
+        //var pvc = getPrimaryLicensor();
+
+        if(returnVal)
+        {
+            debugger;
+            var channnelCodes = getSelectedChannelCodes(true);
+            if(channnelCodes != null)
+                returnVal = SaveChannelWiseList(false);
+        }
+
+        if(returnVal)
+        {
+            var linkShowType = $("input[name='Link_Show_Type']:radio:checked").val();
+            if(linkShowType == "SP")
+            {
+                var selectedTitleCode = getSelectedTitleCodes(true);
+                $('#hdnTitleCodes').val(selectedTitleCode);
+                if(selectedTitleCode == "")
+                    returnVal = false;
+            }
+        }
+
+        if (returnVal == true) {
+            var CheckPlatforms1 = CheckPlatforms();
+            //var x = CheckPlatforms();
+            if (CheckPlatforms1) {
+                returnVal = true;
+            }
+            else {
+                returnVal = false;
+            }
+        }
+
+        if(returnVal)
+            showLoading();
+
+
+        //CheckPlatforms();
+        return returnVal;
+    }
+    function Save_Success(result) {
+        hideLoading();
+        if (result == "true") {
+            redirectToLogin();
+        }
+        else {
+            if (result.Status == "S")
+            {
+                CommandName_G = "LIST_PAGE";
+                showAlert("S", result.Message, "OK");
+                if('@objMessageKey.LayoutDirection'=="RTL")
+                {
+                    $('.fade.in').css('direction','rtl');
+                    $('.btn-primary').css({float: 'left'});
+                }
+            }
+            else
+            {
+                if(result.IsValidation == "Y")
+                {
+                    BindMusicScheduleValidation();
+                }
+                else{
+                    showAlert("E", result.Message);
+                }
+                if('@objMessageKey.LayoutDirection'=="RTL")
+                {
+                    $('.fade.in').css('direction','rtl');
+                    $('.btn-primary').css({float: 'left'});
+                }
+            }
+        }
+    }
+    function BindMusicScheduleValidation() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $.ajax({
+            type: "POST",
+            url: URL_BindMusicScheduleValidation,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+            }),
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    initializeChosen();
+                    initializeExpander();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ClosePopup() {
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+    function CancelSaveDeal() {
+        CommandName_G = "LIST_PAGE";
+        showAlert("I", '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead?', "OKCANCEL");
+        if('@objMessageKey.LayoutDirection'=="RTL")
+        {
+            $('.fade.in').css('direction','rtl');
+            $('.btn-primary').css({float: 'left'});
+            $("#btnSearchLinkShow").css({float:'right'});
+        }
+
+    }
+    function handleOk() {
+        debugger
+        if (CommandName_G == "LIST_PAGE") {
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+            location.href = URL_Cancel;
+        }
+        if(CommandName_G == "LIST")
+        {
+            $('#frmMusicDeal').submit();
+        }
+    }
+    function handleCancel()
+    {
+        CommandName_G = "";
+    }
+    function ChannelOrCategory_Changed(type)
+
+    {
+        debugger
+        if(type == "C")
+        {
+            $('#divddlChannel').show();
+            $('#divChannelCategory').hide();
+            var arrChannelcode = $('#ddlChannel').val();
+            if(arrChannelcode != null)
+            {
+                SaveChannelWiseList(true);
+            }
+        }
+        else
+        {
+            $('#divddlChannel').hide();
+            $('#divChannelCategory').show();
+            if(@Model.Music_Deal_Code <= 0)
+            {
+                $('#show_hide').hide();
+                $('#categorychannelheader').hide();
+            }
+            var channelCategoryCode = $('#ddlChannelCategory').val();
+            if(channelCategoryCode == "")
+            {
+                $('#show_hide').hide();
+                $('#categorychannelheader').hide();
+            }
+            if(channelCategoryCode!= "" && channelCategoryCode != null)
+            {
+                SaveChannelWiseList(true);
+            }
+        }
+    }
+
+    function ChannelCategory_Changed()
+    {
+        var channelCategoryCode = $('#ddlChannelCategory').val();
+        if(channelCategoryCode!= "" && channelCategoryCode != null)
+        {
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                url: URL_GetChannelNames,
+                data: JSON.stringify({
+                    ChannelCategoryCode: channelCategoryCode
+                }),
+                async: true,
+                success: function (result) {
+                    debugger
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if(result.ChannelCodes != "")
+                        {
+                            channelname = result.ChannelNames;
+                            $('#lblname').text(channelname.substring(0,20));
+                            $('#lblChannelNames').text(result.ChannelNames);
+                            $('#hdnChannelCodes').val(result.ChannelCodes);
+                            $('#show_hide').show();
+                            $('#categorychannelheader').show();
+                        }
+
+                        SaveChannelWiseList(true);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else{
+            $('#lblname').text('');
+            $('#lblChannelNames').text('');
+            $('#hdnChannelCodes').val('');
+            $('#show_hide').hide();
+            $('#categorychannelheader').hide();
+        }
+    }
+    function hideChannelCategory()
+    {
+        $('.MoreActionDiv').hide('slow');
+    }
+
+
+    function BindMusicPlatform() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+
+        $("#hdnTVCodes").val('@j');
+        $.ajax({
+            type: "POST",
+            url: URL_BindMusicPlatformTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                MusicPlatformCodes: $("#hdnTVCodes").val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }            
+                $('#tree').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+
+    $(document).on('keyup', 'textarea', function () {
+        var count = $(this).val().length;
+        $("#spnRemarkLength").html(count + "/4000");
+    });
+    @*
+        function GetWorkflowStatusFromServer() {
+        debugger
+        var dealTypeCode = 0;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetWorkflowStatusFromServer", "Music_Deal")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger
+                    if (result.DealWorkflowFlag == "O" || result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_New' ||
+                     result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Ammended') {
+                        $('#divStamp').removeClass().addClass('stampBg approved');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Approved') {
+                        $('#divStamp').removeClass().addClass('stampBg approved');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Waiting') {
+                        $('#divStamp').removeClass().addClass('stampBg pending');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Declined') {
+                        $('#divStamp').removeClass().addClass('stampBg rejected');
+                    }
+                    $('#lblWorkflowStatus').text(result.DealWorkflowStatus);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+        return dealTypeCode;
+    }*@
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col" onclick="hideChannelCategory()">
+            <div class="top_area">
+                    <h2 class="pull-left">
+                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_ADD)
+                        {
+                            <label>@objMessageKey.AddMusicDeal</label>
+                        }
+                        else if (ViewBag.Mode == GlobalParams.DEAL_MODE_CLONE)
+                        {
+                            <label>@objMessageKey.CloneMusicDeal</label>
+                        }
+                        else
+                        {
+                            <label>@objMessageKey.EditMusicDeal</label>
+                        }
+                    </h2>
+                    @{
+                        if (objSchema.Deal_Code > 0)
+                        {
+                            objSchema.Deal_Workflow_Status = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Deal_DealWorkFlowStatus(objSchema.Deal_Code, objSchema.Deal_Workflow_Flag, 143, "M").First();
+                        }
+                        else
+                        {
+                            objSchema.Deal_Workflow_Status = objMessageKey.NewDeal;
+                        }
+                    }
+                    @if (objSchema.Deal_Workflow_Flag == "O" || objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_New ||
+     objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Ammended)
+                    {
+
+                        <div class="stampBg approved nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Approved)
+                    {
+
+                        <div class="stampBg approved nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Waiting)
+                    {
+
+                        <div class="stampBg pending nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Declined)
+                    {
+
+                        <div class="stampBg rejected nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == "RO")
+                    {
+                        <div class="stampBg approved nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+                    }
+        </div>
+            @using (Ajax.BeginForm("Save", "Music_Deal", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmMusicDeal" }))
+            {
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">@objMessageKey.General</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabGeneral">
+                                    <div class="scale_table_block">
+                                        <table class="four_column table" style="margin-top:10px">
+                                            <tbody>
+                                                <tr style="height:35px">
+                                                    <td class="td_label">@objMessageKey.DealNo</td>
+                                                    <td>
+                                                        @Html.Label("Agreement_No", (string.IsNullOrEmpty(Model.Agreement_No)) ? "New" : Model.Agreement_No)
+                                                        @Html.Label("Version_No", "Version #: VN " + ((string.IsNullOrEmpty(Model.Version)) ? "0001" : Model.Version))
+                                                        @Html.HiddenFor(m => Model.Music_Deal_Code)
+                                                        @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+                                                    </td>
+                                                    @if (ViewBag.IsMuciVersionSPN == "N")
+                                                    {
+                                                        <td>Status</td>
+                                                        <td>
+                                                            @Html.DropDownListFor(m => Model.Deal_Tag_Code, ViewBag.DealTagList as SelectList, new { @id = "ddlStatus", @class = "form_input chosen-select" })
+                                                        </td>
+                                                    }
+                                                   
+                                                </tr>
+                                                <tr>
+                                                    <td>@objMessageKey.Description</td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => Model.Description, "", new { @id = "txtDescription", @maxlength = 500 })
+                                                    </td>
+
+                                                    <td>@objMessageKey.AgreementDate</td>
+                                                    <td>
+                                                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Mode == GlobalParams.DEAL_MODE_CLONE)
+                                                        {
+                                                            @Html.TextBox("Agreement_Date", string.Format("{0:" + GlobalParams.DateFormat + "}", Model.Agreement_Date), new { @class = "isDatepicker shortDate", @id = "txtAgreement_Date" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.TextBox("Agreement_Date", string.Format("{0:" + GlobalParams.DateFormat + "}", DateTime.Today), new { @class = "isDatepicker shortDate", @id = "txtAgreement_Date" })
+                                                        }
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>@objMessageKey.MusicLabel</td>
+                                                    <td>
+                                                        @Html.DropDownListFor(m => Model.Music_Label_Code, ViewBag.MusicLabelList as SelectList, "Please Select", new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
+                                                    </td>
+                                                    <td>@objMessageKey.MusicType</td>
+                                                    <td>
+                                                        <label class="radio-inline">
+                                                            <b>@Html.RadioButtonFor(m => Model.Title_Type, "L", new { @id = "rdLibrary", @checked = "checked" })@objMessageKey.Library</b>
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <b>@Html.RadioButtonFor(m => Model.Title_Type, "P", new { @id = "radPremier" })@objMessageKey.Premier</b>
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <b>@Html.RadioButtonFor(m => Model.Title_Type, "N", new { @id = "radNa" })@objMessageKey.NA</b>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@objMessageKey.TrackLanguage</td>
+                                                    <td>
+                                                        <div id="divLanguage" style="width:95%!important">
+                                                            @Html.ListBox("ddlMusicLangugae", ViewBag.TrackLanguageList as MultiSelectList, new { @id = "ddlMusicLangugae", @class = "", @width = "95%!important" })
+                                                        </div>
+                                                        <input type="hidden" id="hdnMusicLabel" name="hdnMusicLabel" />
+                                                    </td>
+                                                    <td>@objMessageKey.DurationRestrictionPerSong</td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => Model.Duration, "", new { @id = "txtDuration", @type = "time", @step = "1", @min = "00:00:00", @max = "00:59:59" }) (MM:SS)
+                                                    </td>
+                                                </tr>
+                                                @*<tr>
+                                                    </tr>*@
+                                                <tr>
+                                                    <td>@objMessageKey.Licensee / @objMessageKey.Assignee</td>
+                                                    <td>
+                                                        @Html.DropDownListFor(m => Model.Entity_Code, ViewBag.EntityList as SelectList, "Please Select", new { @id = "ddlLicensee", @class = "form_input chosen-select" })
+                                                    </td>
+                                                    <td>@objMessageKey.Licensor</td>
+                                                    <td>
+                                                        @Html.ListBox("ddlLicensor", ViewBag.VendorList as MultiSelectList, new { @id = "ddlLicensor", @class = "form_input chosen-select", @onchange = "AllowChosenRightClick()" })
+                                                        <input type="hidden" id="hdnVendorCodes" name="hdnVendorCodes" />
+                                                        <input type="hidden" id="hdnPrimaryVendorCode" name="hdnPrimaryVendorCode" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@objMessageKey.BusinessUnit</td>
+                                                    <td>
+                                                        @Html.DropDownListFor(m => Model.Business_Unit_Code, ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                                                    </td>
+                                                    <td>@objMessageKey.ReferenceNo</td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => Model.Reference_No, "", new { @id = "txtRefNo", @maxlength = 50 })
+
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@objMessageKey.AgreementCost</td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => Model.Agreement_Cost, "", new { @id = "txtAgreement_Cost" })
+                                                    </td>
+                                                    <td>@objMessageKey.DealFor</td>
+                                                    @*<td>
+                                                            @Html.DropDownListFor(m => Model.Deal_Type_Code, ViewBag.DealTypeList as MultiSelectList, new { @id = "ddlDealFor", @class = "" ,@width = "95%!important"})
+                                                        </td>*@
+                                                    <td>
+                                                        <div id="divDealType" style="width:95%!important">
+                                                            @Html.ListBox("ddlDealTypeFor", ViewBag.DealTypeList as MultiSelectList, new { @id = "ddlDealTypeFor", @class = "", @width = "95%!important" })
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">@objMessageKey.Rights</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabRights">
+                                    <table>
+                                        <tbody>
+                                            <tr class="scale_table_block">
+                                                <td width="50%" style="vertical-align:top; padding-left:11px;">
+                                                    <div>
+
+                                                        <table id="tblRights" style="width:653px;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="width:22%"><b>@objMessageKey.Period</b></td>
+                                                                    <td>
+                                                                        <label style="margin-left:6px;">@objMessageKey.StartDate</label>
+                                                                        @Html.TextBox("Start_Date", string.Format("{0:" + GlobalParams.DateFormat + "}", Model.Rights_Start_Date), new { @class = "isDatepicker shortDate", @id = "Start_Date", @placeholder = "DD/MM/YYYY" })
+                                                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                                                        @Html.TextBox("Term_YY", Model.Term, "", new { @class = "smallTextBox numericTerm", @placeholder = "YY", @maxlength = 2, @id = "Term_YY" })
+                                                                        &nbsp;&nbsp;&nbsp;
+                                                                        @Html.TextBox("Term_MM", Model.Term, "", new { @class = "smallTextBox numericTerm", @placeholder = "MM", @maxlength = 2, @id = "Term_MM" })
+
+                                                                        <label style="margin-left:15px">@objMessageKey.EndDate</label>
+                                                                        @Html.TextBox("End_Date", string.Format("{0:" + GlobalParams.DateFormat + "}", Model.Rights_End_Date), new { @class = "isDatepicker shortDate", @id = "End_Date", @placeholder = "DD/MM/YYYY" })
+                                                                    </td>
+                                                                </tr>
+                                                                <tr style="width:22%">
+                                                                    <td><b>@objMessageKey.Noofsongs</b></td>
+                                                                    <td>
+                                                                        <table class="four_column table style_table">
+                                                                            <tr>
+                                                                                <td style="width:15%!important">
+                                                                                    <span>
+                                                                                        <label class="radio-inline" style="margin-left:0;">
+                                                                                            <b>@Html.RadioButtonFor(m => Model.Run_Type, "U", new { @id = "radUnlimited", @checked = "checked", @onClick = "RunType_Changed('U');" })@objMessageKey.Unlimited</b>
+                                                                                        </label>
+                                                                                        <label class="radio-inline" style="margin-left:0;">
+                                                                                            <b>@Html.RadioButtonFor(m => Model.Run_Type, "L", new { @id = "radLimited", @onClick = "RunType_Changed('L');" })@objMessageKey.Limited</b>
+                                                                                        </label>
+                                                                                    </span>
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => Model.No_Of_Songs, "", new { @id = "txtNoOfSong" })
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr style="width:22%">
+                                                                    @if (ViewBag.IsMuciVersionSPN == "Y")
+                                                                    {
+                                                                        <td>
+                                                                            <b>@objMessageKey.DealAssignedTo</b>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>
+                                                                            <b>@objMessageKey.DealFor</b>
+                                                                        </td>
+                                                                    }
+                                                                    <td>
+                                                                        <label class="radio-inline">
+                                                                            <b>@Html.RadioButtonFor(m => Model.Channel_Or_Category, "C", new { @id = "rbChannel", @onClick = "ChannelOrCategory_Changed('C');" })@objMessageKey.Channel</b>
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            <b>@Html.RadioButtonFor(m => Model.Channel_Or_Category, "G", new { @id = "rbChannelCategory", @onClick = "ChannelOrCategory_Changed('G');" })@objMessageKey.ChannelCategory</b>
+                                                                        </label>
+                                                                        <div id="divddlChannel" style="width:85%!important; display:none">
+                                                                            @Html.ListBox("ddlChannel", ViewBag.ChannelList as MultiSelectList, new { @id = "ddlChannel", @class = "", @onchange = "SaveChannelWiseList(true);" })
+                                                                        </div>
+                                                                        <div id="divChannelCategory" style="width:95%!important;display:none">
+                                                                            @Html.DropDownListFor(m => Model.Channel_Category_Code, ViewBag.ChannelCategoryList as SelectList, "Please Select", new { @id = "ddlChannelCategory", @class = "form_input chosen-select", @onchange = "ChannelCategory_Changed();" })
+                                                                            &nbsp;&nbsp;
+                                                                            @{
+                                                                                string strChannelCode = "", strChannelNames = "";
+                                                                                if (Model.Channel_Category != null)
+                                                                                {
+                                                                                    strChannelCode = string.Join(",", Model.Channel_Category.Channel_Category_Details.Select(s => s.Channel_Code).ToArray());
+                                                                                    //.Channels.Select(s => s.Channel_Code).ToArray());
+                                                                                    strChannelNames = string.Join(", ", Model.Channel_Category.Channel_Category_Details.Select(s => s.Channel.Channel_Name).ToArray());
+                                                                                    //.Channels.Select(s => s.Channel_Name).ToArray());
+                                                                                }
+                                                                            }
+                                                                            <span id="categorychannelheader"><b>@objMessageKey.ViewCategoryChannels : </b></span>
+                                                                            <a id="show_hide" class="glyphicon glyphicon-triangle-right show_hide"></a>
+                                                                            <div id="extent" class="MoreActionDiv" style="display:none;">
+                                                                                <span id="lblChannelNames">@strChannelNames</span>
+                                                                                <input type="hidden" id="hdnChannelCodes" value="@strChannelCode" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr style="width:22%">
+                                                                    <td><b>@objMessageKey.Type</b></td>
+                                                                    <td>
+                                                                        <label class="radio-inline">
+                                                                            <b>@Html.RadioButtonFor(m => Model.Channel_Type, "S", new { @id = "radShared", @onClick = "ChannelType_OnChange(false);", @checked = "checked" })@objMessageKey.Shared</b>
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            <b>@Html.RadioButtonFor(m => Model.Channel_Type, "C", new { @id = "radChannelWise", @onClick = "ChannelType_OnChange();" })@objMessageKey.ChannelWise</b>
+                                                                        </label>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
+                                                        <div class="scale_table_block" id="divSubChannel">
+
+                                                            @if (Model.Channel_Type == "C")
+                                                            {
+                                                                @Html.Partial("~/Views/Music_Deal/_ChannelList.cshtml", Model.Music_Deal_Channel.ToList())
+                                                            }
+
+                                                        </div>
+
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    @if (ViewBag.IsMuciVersionSPN == "Y")
+                                                                    {
+                                                                        <td style="width:22%"><b>@objMessageKey.CountryExclusion</b></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="width:13%"><b>@objMessageKey.CountryExclusion</b></td>
+                                                                    }
+
+                                                                    <td>
+                                                                        @if (ViewBag.Country != null)
+                                                                        {
+                                                                            <div id="divddlCountry" style="width:95%!important">
+                                                                                @Html.ListBox("ddlCountry", ViewBag.Country as MultiSelectList, new { @id = "ddlCountry", @class = "" })
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div id="divddlCountry" style="width:95%!important">
+                                                                                <select id="ddlCountry" name="ddlCountry" class="" multiple="Multiple"></select>
+                                                                            </div>
+                                                                        }
+                                                                        <input type="hidden" id="hdnCountryCode" name="hdnCountryCode" />
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
+
+                                                    </div>
+                                                </td>
+                                                @if (ViewBag.IsMuciVersionSPN == "Y")
+                                                {
+
+                                                    <td style="vertical-align:top">
+                                                        <div>
+                                                            <table>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td valign="top" rowspan="4">
+                                                                            <label class="bold" for="platform">@objMessageKey.Platform  @objMessageKey.Rights</label>
+                                                                            <div class="platform_wrapper" id="divTree">
+                                                                                <div id="tree" class="treeClass">
+                                                                                </div>
+                                                                            </div>
+                                                                            <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+
+                                                }
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">@objMessageKey.RightRule</a>
+                                </li>
+                            </ul>
+                            <div>
+                                <label class="radio-inline" style="margin-left:0;">
+                                    <b>@Html.RadioButtonFor(m => Model.Right_Rule_Type, "U", new { @id = "rulUnlimited", @checked = "checked", @onClick = "rulRunType_Changed('U');" })@objMessageKey.Unlimited</b>
+                                </label>
+                                <label class="radio-inline" style="margin-left:0;">
+                                    <b>@Html.RadioButtonFor(m => Model.Right_Rule_Type, "L", new { @id = "rulLimited", @onClick = "rulRunType_Changed('L');" })@objMessageKey.Limited</b>
+                                </label>
+                            </div>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabRightRule">
+                                    <div class="scale_table_block">
+                                        <table class="table table-bordered table-hover" id="tblRightRule">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:40%;">@objMessageKey.Rule</th>
+                                                    <th style="width:15%;">@objMessageKey.DayStartTime</th>
+                                                    <th style="width:15%;">@objMessageKey.Playsperday</th>
+                                                    <th style="width:15%;">@objMessageKey.DurationofDay</th>
+                                                    <th style="width:15%;">@objMessageKey.NoofRepeat</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownListFor(m => Model.Right_Rule_Code, ViewBag.RightRule as SelectList, "Please Select", new { @id = "ddlRightRule", @class = "form_input chosen-select", @onchange = "GetRightRuleData();" })
+                                                    </td>
+                                                    <td><span class="right-rule" id="spnstarttime"></span></td>
+                                                    <td><span class="right-rule" id="spnplayperday"></span></td>
+                                                    <td><span class="right-rule" id="spnDuration"></span></td>
+                                                    <td><span class="right-rule" id="spnRepeat"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">@objMessageKey.LinkShow</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabLinkShow">
+                                    <div class="scale_table_block">
+                                        <table class="four_column table">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <input type="hidden" id="hdnTitleCodes" name="hdnTitleCodes" />
+                                                        <label class="radio-inline">
+                                                            <b>@Html.RadioButtonFor(m => Model.Link_Show_Type, "AS", new { @id = "radShows", @checked = "checked", @onClick = "LinkShowType_OnChange(false)" })@objMessageKey.AllShows</b>
+
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <b>@Html.RadioButtonFor(m => Model.Link_Show_Type, "AF", new { @id = "radFiction", @onClick = "LinkShowType_OnChange(false)" })@objMessageKey.AllFiction</b>
+
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <b>@Html.RadioButtonFor(m => Model.Link_Show_Type, "AN", new { @id = "radNonFiction", @onClick = "LinkShowType_OnChange(false)" })@objMessageKey.AllNonFiction</b>
+
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <b>@Html.RadioButtonFor(m => Model.Link_Show_Type, "AE", new { @id = "radEvent", @onClick = "LinkShowType_OnChange(false)" })@objMessageKey.AllEvent</b>
+
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <b>@Html.RadioButtonFor(m => Model.Link_Show_Type, "SP", new { @id = "radSpecific", @onClick = "LinkShowType_OnChange(false)" })@objMessageKey.Specific</b>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr id="Specific_TextText" style="display:none;">
+                                                    <td width="25%">
+                                                        <input type="text" class="" id="txtSpecific" style="margin-left:10px" placeholder="@objMessageKey.ShowName">
+                                                    </td>
+                                                    <td width="10%"><input type="button" id="btnSearchLinkShow" class="btn btn-primary" value="@objMessageKey.Search" onclick="SearchLinkShow()" style="margin-left:-56px"></td>
+
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div id="divLinkShowList">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">@objMessageKey.StatusHistory</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabstatusHistory">
+                                    <div class="scale_table_block" id="divStatusHistory">
+                                        <table class="table table-bordered table-hover" id="tblStatusHistory">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:20%;">@objMessageKey.Status</th>
+                                                    <th style="width:20%;">@objMessageKey.ChangedOn</th>
+                                                    <th style="width:30%;">@objMessageKey.ChangedBy</th>
+                                                    <th style="width:30%">@objMessageKey.StatusHistoryRemarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @if (ViewBag.Status_History != null)
+                                                {
+                                                    foreach (RightsU_Entities.USP_List_Status_History_Result objStatusHistory in ViewBag.Status_History)
+                                                    {
+                                                        <tr>
+                                                            <td>@objStatusHistory.Status</td>
+                                                            @{
+                                                                string dt = Convert.ToDateTime(objStatusHistory.Date).ToString("dd-MMM-yyyy hh:mm:ss tt");
+                                                            }
+                                                            <td>@dt</td>
+                                                            <td>@objStatusHistory.By</td>
+                                                            <td>
+                                                                <div class="expandable">
+                                                                    @objStatusHistory.Remarks
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="scale_table_block">
+                            <div class="divBlock">
+                                <div class="bold" style="padding-right: 84%;">@objMessageKey.Remarks</div>
+                                <div class="charNum">4000</div>
+                            </div>
+                            @Html.TextAreaFor(m => Model.Remarks, new { @id = "txtRemark", @class = "textarea", @row = "2", @cols = "20", @onkeyup = "countChar(this)" })
+
+                    </div>*@
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <span id="spnRemarkLength"></span>
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#tabrights" role="tab">@objMessageKey.Remarks</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabrights">
+                                    <div class="scale_table_block">
+                                        @Html.TextAreaFor(m => m.Remarks, new { @class = "textarea restrictChar", @rows = "2", @cols = "20", @maxlength = "4000" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li style="margin-top:10px;">
+                            <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.Save" onclick="return ValidateSave()" />
+                        </li>
+                        <li style="margin-top:10px;">
+                            <input type="button" id="btnCancel" class="btn btn-primary" name="CANCEL" value="@objMessageKey.Cancel" onclick="CancelSaveDeal()" />
+                        </li>
+                    </ul>
+                </div>
+            }
+        </div>
+
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup in" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>

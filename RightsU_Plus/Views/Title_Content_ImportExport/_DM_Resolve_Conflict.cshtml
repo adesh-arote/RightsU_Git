@@ -1,0 +1,59 @@
+﻿@model List<RightsU_Entities.DM_Master_Log>
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#hdnPageNo").val(@((ViewBag.PageNo ?? 1)));
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        SetPaging();
+    });
+</script>
+
+<div class="scale_table_block">
+    <table class="table table-bordered table-hover" id="tblMasterLogData">
+        <thead>
+            <tr>
+                <th style="width:10%;"> <input type="checkbox" id="chkAll" /> Exclude</th>
+                <th style="width:40%;">Name </th>
+                <th style="width:50%;">Map Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (item.IsIgnore)
+                            {
+                                <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" />
+                            }
+                        </td>
+                        <td>@item.Name</td>
+                        <td align="center">
+
+                            @if (item.IsIgnore)
+                            {
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code)" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code)" value="@item.Mapped_Name" disabled="disabled" />
+                            }
+                            else
+                            {
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code)" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code)" value="@item.Mapped_Name" />
+                            }
+                            <input type="hidden" id="hdnMappedCode_@item.DM_Master_Log_Code" name="MappedCode" value="@item.Mapped_Code" />
+                            <input type="hidden" id="hdnMasterLogCode_@item.DM_Master_Log_Code" value="@item.DM_Master_Log_Code" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

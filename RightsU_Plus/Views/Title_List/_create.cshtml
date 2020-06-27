@@ -1,0 +1,313 @@
+﻿@model RightsU_Entities.Title
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            //$('.form_links').addClass('form_links-Head')
+            //$('.close').addClass('close-Head')
+        }
+        $("#ddlDealType").change(function () {
+            debugger;
+            if ($("#ddlDealType").val() == '@ViewBag.CodeForEmbeddedMusic') {
+                $("#liMusicLabel").show();
+            }
+            else
+                $("#liMusicLabel").hide();
+        })
+        $("#txtDuration").numeric({
+            allowMinus: false,
+            allowThouSep: true,
+            allowDecSep: true,
+            maxDecimalPlaces: 2,
+            maxPreDecimalPlaces: 3
+        });
+    })
+
+    function LanguageOnChange(obj)
+    {
+
+        if (obj.selectedIndex > 0) {
+            $("#ddlLanguage").removeClass('required');
+            $("#ddlLanguage").trigger("chosen:updated");
+        }
+    }
+    function ValidateSave(Type)
+    {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var hdnddlDealType = "";
+        var hdnddlLanguage = "";
+        var hdnTxtTitleName = "";
+        var hdnMusicLabel = "0";
+        var hdnProgramCategory = "";
+        var hdnTxtDuration = "0";
+        var Error = "";
+
+        if ($("#ddlDealType").val() != "0")
+        {
+            hdnddlDealType = $("#ddlDealType").val();
+        }
+        else {
+            $('#ddlDealType').addClass("required");
+            Error = "E";
+        }
+
+        if ($.trim($('#txtTitleName').val()) != "")
+            hdnTxtTitleName = $("#txtTitleName").val();
+        else {
+            $("#txtTitleName").addClass("required");
+            Error = "E";
+        }
+
+        if ('@ViewBag.IsTitleDurationMandatory' == 'Y') {
+            if ($("#txtDuration").val() != undefined) {
+                if ($.trim($('#txtDuration').val()) != "")
+                    hdnTxtDuration = $("#txtDuration").val();
+                else {
+                    $("#txtDuration").addClass("required");
+                    Error = "E";
+                }
+            }
+        }
+
+        if ($("#ddlLanguage").val() != "") {
+            hdnddlLanguage = $("#ddlLanguage").val();
+            if (hdnddlLanguage == "0") {
+                $('#ddlLanguage').addClass('required');
+                Error = "E";
+            }
+        }
+        else {
+            Error = "E";
+        }
+
+        if ($("#ddlProgramCategory").val()!=undefined ){
+            if ($("#ddlProgramCategory").val() != "0") {
+                hdnProgramCategory = $("#ddlProgramCategory").val();
+            }
+            else {
+                $("#ddlProgramCategory").addClass('required');
+                $("#ddlProgramCategory").attr('required', true);
+                Error = "E";
+            }
+        }
+
+        if ($("#ddlDealType").val() == '@ViewBag.CodeForEmbeddedMusic') {
+            if ($("#ddlMusicLabel").val() != "" && $("#ddlMusicLabel").val() != null) {
+                hdnMusicLabel = $("#ddlMusicLabel").val();
+            }
+            else {
+                $('#ddlMusicLabel').addClass("required");
+                Error = "E";
+            }
+        }
+
+        var ISDuplicate = ""
+        var NewTitleName = $.trim($('#txtTitleName').val());
+
+        if (NewTitleName != "") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ValidateIsDuplicate", "Title_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    TitleName: NewTitleName,
+                    DealTypeCode: $("#ddlDealType").val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.Message != "") {
+                        ISDuplicate = result.Message;
+                        showAlert("E", ISDuplicate);
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+        if (Error == "E" && ISDuplicate != "") {
+            $('#popAddTitle').modal('');
+
+        }
+
+        if (Error == "" && ISDuplicate == "") {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveTitle", "Title_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    hdnddlDealType: hdnddlDealType,
+                    hdnddlLanguage: hdnddlLanguage,
+                    hdnTxtTitleName: hdnTxtTitleName,
+                    hdnProgramCategory:hdnProgramCategory,
+                    hdnTxtDuration:hdnTxtDuration,
+                    hdnMusicLabel: hdnMusicLabel,
+                    Type: Type
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+
+                    var TitleCode = parseInt(result.TitleCode);
+                    if (Type == "SS") {    //window.location.href = '.replace("TitleCode", parseInt(result.TitleCode));
+
+                        var URL = '@Url.Action("Index", "Title", new { id = "TitleCode", Page_No = @ViewBag.PageNo, SearchedTitle = @ViewBag.SearchedTitle, PageSize = @ViewBag.PageSizeCreate,DealTypeCode=@ViewBag.DealTypeCodeSearch, Type = "E"})';
+                        URL = URL.replace("TitleCode", parseInt(result.TitleCode));
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        window.location.href = URL;
+                    }
+                    BindGrid($("#hdnPageIndex").val(),'','','');
+                    BindTitle();
+                    $('#popAddTitle').modal('hide');
+                    showAlert("S", result.Message, "");
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+
+    function BindTitle() {
+
+        var hdnddlDealType = "";
+
+        if ($("#ddlDealType").val() != "") {
+            hdnddlDealType = $("#ddlDealType").val();
+        }
+        //var abc = '';
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitle_Ajax", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            data: JSON.stringify({
+                Selected_deal_type_Code: '@ViewBag.DealTypeCodeSearch',
+                Selected_BUCode: 0,
+                Selected_Title_Codes: ""
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+
+                $.each(result, function () {
+                    $("#lbTitle_Code").append($("<option />").val(this.Value).text(this.Text));
+                });
+                $("#lbTitle_Code").trigger("chosen:updated");
+                initializeChosen();
+            },
+            error: function (result) {
+            }
+        });
+    }
+
+
+</script>
+<style>
+    /*.form_links-Head li {
+        float: right !important;
+        list-style-type: none;
+        margin-right: 10px;
+    }
+     .close-Head {
+            float: left;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            filter: alpha(opacity=20);
+            opacity: .3;
+            padding-left: 28px;
+            /*position: relative;
+                top: -21px;*/
+    }
+    */
+</style>
+
+<div class="modal-dialog" dir="@objMessageKey.LayoutDirection">
+    <div class="modal-content clearfix">
+        <form class="form" id="movie_popup">
+            <div class="form_wrapper">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>@objMessageKey.AddTitle</h2>
+                    </div>
+                    <div class="modal_block">
+                        <ul class="add_title_popup">
+                            <li>
+                                <label>@objMessageKey.Type</label>
+                                @Html.Hidden("hdnddlDealType")
+                                @Html.Hidden("hdnddlLanguage")
+
+                                @Html.DropDownList("ddlDealType", (List<SelectListItem>)ViewBag.DealType, new { @id = "ddlDealType", @class = "form_input chosen-select" })
+                            </li>
+                            <li>
+                                <label>@objMessageKey.TitleName</label>
+                                @Html.TextBoxFor(m => Model.Title_Name, new { @id = "txtTitleName", @class = "form_input", @MaxLength = "500" })
+                            </li>
+                            <li>
+                                <label>@objMessageKey.TitleLanguage</label>
+                                @Html.DropDownList("ddlLanguage", (List<SelectListItem>)ViewBag.Language, new { @id = "ddlLanguage", @class = "form_input chosen-select", @onchange = "LanguageOnChange(this);" })
+                            </li>
+                            @if (Enumerable.Count(ViewBag.LstExtendedColumns) > 0)
+                            {
+                                <li style="margin-top:15px;">
+                                    <label>@objMessageKey.TitleProgramCategory</label>
+                                    @Html.DropDownList("LstExtendedColumns", (List<SelectListItem>)ViewBag.LstExtendedColumns, new { @id = "ddlProgramCategory", @class = "form_input chosen-select" })
+                                </li>
+
+                            }
+                            @if ((string)ViewBag.IsTitleDurationMandatory == "Y")
+                            {
+                            <li style="margin-top:15px;">
+                                <label>@objMessageKey.Duration</label>
+                                @Html.TextBoxFor(m => Model.Duration_In_Min, new { @id = "txtDuration", @style = "width:95%" })
+                            </li>
+                            }
+                            <li id="liMusicLabel" style="display:none">
+                                <label>@objMessageKey.MusicLabel</label>
+                                @Html.DropDownList("ddlMusicLabel", (List<SelectListItem>)ViewBag.MusicLabelList,
+                           new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <a class="btn btn-primary" href="#" onclick="ValidateSave('S');">@objMessageKey.Save</a>
+                                </li>
+                                <li>
+                                    <a class="btn btn-primary" href="#" onclick="ValidateSave('SS');">@objMessageKey.AddAdditionalmetadata</a>
+                                </li>
+                                <li>
+                                    <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

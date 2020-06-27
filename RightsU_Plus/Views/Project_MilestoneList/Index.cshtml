@@ -1,0 +1,443 @@
+﻿@model List<RightsU_Entities.ProjectMilestone>
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    var URL_AddEditProject_Milestone = '@Url.Action("AddEditProject_Milestone", "Project_MilestoneList")';
+    var URL_BindProjectMilestoneList = '@Url.Action("BindProjectMilestoneList", "Project_MilestoneList")';
+      $(document).ready(function () {
+          debugger;
+          BindProjectMilestoneList();
+        if (recordLockingCode > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+          BindProjectMilestoneList();
+        if(LayoutDirection_G == "RTL")
+        {
+            $('#btnUser').css("float","right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else
+        {
+            $('#btnUser').css("float","left");
+            $('#txtSort').css("text-align","right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+        $('#hdnRecordLockingCode').val(recordLockingCode)
+
+        addNumeric();
+        var searchIsLDAPUser = $('input[name=IsLDAPUser]:checked').val();
+        SearchUser("", searchIsLDAPUser,0);
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+
+        $("#ddlSortType").change(function () {
+            debugger;
+            var searchIsLDAPUser = $('input[name=IsLDAPUser]:checked').val();
+            var vendorCode = "";
+            if ($('#ddlVendor').val() == "") {
+                vendorCode = 0;
+            }
+            else {
+                vendorCode = $('#ddlVendor').val();
+            }
+            $('#hdnPageNo').val(1);
+            sort_Type_G = $('#ddlSortType').val();
+
+            SearchUser($('#searchCommon').val(),searchIsLDAPUser,vendorCode);
+        });
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?User');
+
+        if ('@ViewBag.AllowUSer' == "Y") {
+            $('#radioLDAP').removeAttr('hidden');
+        }
+
+
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging1() {
+        debugger
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback1 };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#paginationTM").pagination(recordCount, opt);
+    }
+    function pageselectCallback1(page_index, jq) {
+        debugger
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindTitleMilestoneList();
+        else
+            IsCall = 'Y';
+    }
+    function txtPageSize_OnChange() {
+        debugger
+
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+        $('#hdnPageNo').val(1);
+        BindTitleMilestoneList()
+        SetPaging1();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function pageBinding() {
+        BindTitleMilestoneList()
+        SetPaging1();
+    }
+
+    function BindProjectMilestoneList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindProjectMilestoneList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+            }),
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divProjectMilestoneList').empty();
+                    $('#divProjectMilestoneList').html(result);
+                    //$('#hdnRecordCount').val('@ViewBag.RecordCount');
+                    initializeTooltip();
+                    initializeExpander();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ShowAll_PM() {
+        debugger;
+        var searchText = $.trim($('#searchCommon').val());
+        if (searchText != "") {
+            searchText = $('#searchCommon').val("");
+        }
+        SearchOnClick();
+    }
+function SearchOnClick() {
+    debugger;
+    $("[required='required']").removeAttr("required");
+    $('.required').removeClass('required');
+    var searchText = $.trim($('#searchCommon').val());
+    //if (searchText == "") {
+    //    searchText =   $('#searchCommon').val("");
+    //}
+   // else {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SearchPM","Project_MilestoneList")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging1();
+                    BindProjectMilestoneList();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    //}
+    }
+
+
+    function AddEditProject_Milestone(ProjectMilestoneCode, CommandName) {
+        debugger;
+
+        $('#popup').modal();
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditProject_Milestone,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                ProjectMilestoneCode: ProjectMilestoneCode,
+                CommandName: CommandName,
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    //$('#pupupHtml').empty();
+                    //$('#pupupHtml').html(result);
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+
+
+</script>
+<style>
+    li.deal_no {
+        width: 15%;
+    }
+
+    li.deal_desc {
+        width: 20%;
+    }
+
+    li.channels {
+        width: 20%;
+    }
+
+    li.agreement_date {
+        width: 10%;
+    }
+
+    li.deal_status {
+        width: 27%;
+    }
+
+    li.deal_title {
+        width: 15%;
+    }
+
+    li.deal_licensor {
+        width: 23%;
+    }
+
+    li.deal_territory {
+        width: 21.5%;
+    }
+
+    li.deal_period {
+        width: 20%;
+    }
+
+    /*li.deal_action {
+        width: 15%;
+        text-align: right;
+        margin-right: 10px;
+    }*/
+
+    span.not-available, label.not-available {
+        font-style: italic;
+        opacity: 0.5;
+    }
+
+    #sideNavi {
+        position: fixed;
+        right: 32px;
+        top: 20.8%;
+    }
+
+    .tinyADSearch {
+        top: 40px;
+    }
+
+    .SumoSelect {
+        width: 322px;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+
+        <div class="container acq main_col">
+            <div class="top_area">
+                <h2 class="pull-left">Project Milestone</h2>
+                <div class="right_nav pull-right">
+                    <ul>
+                        <li>
+                            <div id="divddlMilestoneNatureName" style="width:100%">
+                                @*<select name="" id="Select32" class="form_input chosen-select" style="width:100%">
+                                    <option value="1">Film Development Agreement</option>
+                                    <option value="2">Film Pre-Production Agreement</option>
+                                    <option value="3">Writer Agreement</option>
+                                    <option value="4">Book Rights Agreement</option>
+                                    <option value="5">Remake Rights Agreement</option>
+                                    <option value="6">Other Adaptation Rights Agreement</option>
+                                    <option value="7">Investment Agreement</option>
+                                    <option value="8">Investment Agreement</option>
+                                </select>*@
+                                @Html.DropDownList("divddlMilestoneNature", ViewBag.MilestoneNatureList as SelectList, new { @id = "divddlMilestoneNature", @class = "form_input chosen-select", @onchange = "" })
+
+                            </div>
+                                </li>
+                        <li>
+                            <input type="text" name="srchCommon" id="searchCommon" value="" class="search" style="width:340px !important;"
+                                   placeholder=" Search by Project Name" />
+                        </li>
+                        <li>
+                            <a class="btn btn-primary" id="txtSearchCommon" style="cursor: pointer" onclick="SearchOnClick()"> Search</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="ShowAll_PM()">
+                                <span class="glyphicon glyphicon-refresh" title=" ShowAll" id="ShowAll"></span>
+                            </a>
+                        </li>
+
+                        <li>
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAdd + "~"))
+                            {
+                                @*<a class="btn btn-primary" onclick="AddEditProject_Milestone(0,'A')"> AddDeal</a>*@
+                                <a class="btn btn-primary" href="@Url.Action("AddEditProject_Milestone", "Project_MilestoneList", new {ProjectMilestoneCode = 0,Type = "A" })">Add Deal</a>
+                            }
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid_area">
+                <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                <div class="paging_area clearfix">
+                    <span class="pull-left">Total Records: @ViewBag.RecordCount</span>
+                    @*//<span class="pull-left" id="lblRecordCount"></span>*@
+                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                    <div class="pagination" id="paginationTM">
+                    </div>
+                    <span class="pull-right">
+                        Page Size
+                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                               onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                    </span>
+                </div>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="scale_table_block">
+                        <input type="hidden" id="hdnCurrencyCode" value="0" />
+                        <input type="hidden" id="hdnRecodLockingCode_temp" name="hdnRecodLockingCode" value="0" />
+                        <div id="divProjectMilestoneList" class="deal clearfix">
+                        </div>
+                    </div>
+                    <a class="btn btn-primary" href="@Url.Action("Main","Base")">Cancel</a>
+                </div>
+            </div>
+        </div>
+</div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popApprovalRemark" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="formApprovalRemark">
+                <div class="form_wrapper">
+                    <div class="form_fields acq" style="height:210px;">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="CloseApprovalRemark()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2 id="lblApprove"> ApprovalRemarks</h2>
+                        </div>
+                        <div style="padding:10px 20px;">
+                            @Html.TextArea("ApproverRemark", new { id = "txtApprovalRemark", @rows = "5", @cols = "20", @maxlength = "4000", @class = "textarea", style = "resize: none" })
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" id="btnSaveApprovalRemark" class="btn btn-primary" value=" Approve" onclick="Approve()">
+                                        <input type="hidden" id="AprCode" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

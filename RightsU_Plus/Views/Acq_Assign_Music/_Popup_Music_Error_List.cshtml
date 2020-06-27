@@ -1,0 +1,157 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Validate_And_Save_Assigned_Music_UDT>
+@using UTOFrameWork.FrameworkClasses
+@{
+    int errorCount = 0;
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+}
+
+<div class="tab-pane active scale_table_block">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+
+                @if (Model != null)
+                {
+
+                    errorCount = Model.Where(w => w.Is_Warning == "N").Count();
+                    string errorColHeading = errorCount > 0 ? "Error" : "Warning";
+
+
+                    if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music && ViewBag.Link_Show == "N")
+                    {
+                    <th style="width: 20%;">Music Library</th>
+                    <th style="width: 20%;">Music Title</th>
+                    <th style="width: 20%;">Album / Movie</th>   
+                    <th style="width: 40%;">Error</th>   
+                    }
+                    else if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music && ViewBag.Link_Show == "Y" && errorCount > 0)
+                    {
+                    <th style="width: 13%;">Music Library</th>
+                    <th style="width: 13%;">Music Title</th>
+                    <th style="width: 13%;">Agreement No</th>
+                    <th style="width: 13%;">Deal Type</th>
+                    <th style="width: 13%;">Title</th>
+                    <th style="width: 5%;">Episodes #</th>
+                    <th style="width: 30%;">Error</th>   
+                    }
+                    else if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music && errorCount > 0)
+                    {
+                    <th style="width: 13%;">Title</th>
+                    <th style="width: 13%;">Agreement No.</th>
+                    <th style="width: 13%;">Music Library</th>
+                    <th style="width: 13%;">Music Title</th>
+                    <th style="width: 13%;">Album / Movie</th>
+                    <th style="width: 5%;">Episodes #</th>
+                    <th style="width: 30%;">Error</th>
+                    }
+                    else if (errorCount == 0)
+                    {
+                    <th style="width: 10%;">Agreement No</th>
+                    <th style="width: 10%;">Deal Type</th>
+                    <th style="width: 15%;">Title</th>
+                    <th style="width: 15%;">Music Library</th>
+                    <th style="width: 15%;">Music Title</th>
+                    <th style="width: 35%;">Warning</th>   
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var objRow in Model)
+                {
+                <tr>
+
+                    @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music && ViewBag.Link_Show == "N")
+                    {
+                        <div class="expandable">
+                            <td style="width: 20%;">@objRow.Music_Library</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 20%;">@objRow.Music_Title</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 20%;">@objRow.Movie_Album</td>
+                        </div>
+                        <td style="width: 40%;">
+                            <div class="expandable">
+                                @objRow.Err_Message
+                            </div>
+                        </td>   
+                    }
+                    else if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music && ViewBag.Link_Show == "Y" && errorCount > 0)
+                    {
+                        <div class="expandable">
+                            <td style="width: 13%;">@objRow.Music_Library</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 13%;">@objRow.Music_Title</td>
+                        </div>
+                        <td style="width: 13%;">@objRow.Agreement_No</td>
+                        <td style="width: 13%;">@objRow.Deal_Type</td>
+                        <div class="expandable">
+                            <td style="width: 13%;">@objRow.Title_Name</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 5%;">@objRow.Episodes</td>
+                        </div>
+                        <td style="width: 30%;">
+                            <div class="expandable">
+                                @objRow.Err_Message
+                            </div>
+                        </td>   
+                    }
+                    else if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music && errorCount > 0)
+                    {
+                        <div class="expandable">
+                            <td style="width: 13%;">@objRow.Title_Name</td>
+                        </div>
+                        <td style="width: 13%;">@objRow.Agreement_No</td>
+                        <div class="expandable">
+                            <td style="width: 13%;">@objRow.Music_Library</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 13%;">@objRow.Music_Title</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 13%;">@objRow.Movie_Album</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 5%;">@objRow.Episodes</td>
+                        </div>
+                        <td style="width: 30%;">
+                            <div class="expandable">
+                                @objRow.Err_Message
+                            </div>
+                        </td>  
+                    }
+                    else if (errorCount == 0)
+                    {
+                        <td style="width: 10%;">@objRow.Agreement_No</td>
+                        <td style="width: 10%;">@objRow.Deal_Type</td>
+                        <div class="expandable">
+                            <td style="width: 15%;">@objRow.Title_Name</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 15%;">@objRow.Music_Library</td>
+                        </div>
+                        <div class="expandable">
+                            <td style="width: 15%;">@objRow.Music_Title</td>
+                        </div>
+                        <td style="width: 35%;">
+                            <div class="expandable">
+                                @objRow.Err_Message
+                            </div>
+                        </td>   
+                    }
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

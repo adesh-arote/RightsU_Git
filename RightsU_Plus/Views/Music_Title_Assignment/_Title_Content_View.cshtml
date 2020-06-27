@@ -1,0 +1,74 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <h2>@objMessageKey.ViewContentMusicLink</h2>
+</div>
+<div class="modal_block">
+    <div class="search_area">
+        <table class="table">
+            <tr>
+                <td style="width:14%;line-height: 26px;text-align:center;">
+                    @objMessageKey.ProgramName:
+                </td>
+                <td style="width:65%;">
+                    <input type="text" name="srchCommon" id="searchTxtProgram_view" class="search" style="width:60%" placeholder="@objMessageKey.ProgramName" onkeyup="populateContentCML_View(this)" />&nbsp;&nbsp;
+                    <b> Episode# </b>&nbsp;&nbsp;
+                    <input type="text" placeholder="@objMessageKey.From" id="txtEpisodeFrm_view" class="episodeRange" style="width: 10%;">&nbsp;&nbsp;
+                    <input type="text" placeholder="@objMessageKey.To" id="txtEpisodeTo_view" class="episodeRange" style="width:10%;">&nbsp;&nbsp;
+                </td>
+                <td>
+                    <input type="button" id="btnSearch" class="btn btn-primary" value="@objMessageKey.Search" onclick="btnSearchCMLView_OnClick()">
+                    <input type="button" id="btnShowAll" class="btn btn-primary" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick('txtPageSizeCTV')">
+                    
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <div class="grid_area" style="margin: 0 auto; width: 98%;">
+        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+        <div class="paging_area clearfix">
+            <span class="pull-left">@objMessageKey.TotalRecords: </span>
+            <span class="pull-left" id="lblRecordCountCTV"></span>
+            <input type="hidden" id="hdnPageNoCTV" name="hdnPageNoCTV" value="1" />
+            <input type="hidden" id="hdnPagePerBatchCTV" name="hdnPagePerBatchCTV" value="5" />
+            <input type="hidden" id="hdnRecordCountCTV" name="hdnRecordCountCTV" value="0" />
+
+            <div id="PaginationCTV" class="pagination">
+            </div>
+            <span class="pull-right">
+                @objMessageKey.PageSize:
+                <input type="text" id="txtPageSizeCTV" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange('txtPageSizeCTV')">
+            </span>
+        </div>
+
+        <div class="tab-content clearfix table-wrapper scale_table_container">
+            <div class="scale_table_block">
+                <input type="hidden" id="hdnMusicTitleCodeView" value="@ViewBag.MusicTitleCode" />
+                <div id="divContentTypeViewList" class="deal clearfix">
+
+                </div>
+            </div>
+        </div>
+        <br />
+    </div>
+</div>
+<div class="modal_block_full">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10; padding-top: 0px;">
+            <li>
+                <input type="button" class="btn btn-primary" style="margin-left: 13px;margin-top: 10px;" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,1760 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C4C193D1-A15A-4B1D-9AFF-727FCAD2971B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RightsU_InterimDb</RootNamespace>
+    <AssemblyName>RightsU_InterimDb</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFrameworkExtras.EF6">
+      <HintPath>..\packages\EntityFrameworkExtras.EF6.1.0.0\lib\net45\EntityFrameworkExtras.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.VisualStudio.QualityTools.UnitTestFramework.11.0.50727.1\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Acq_Deal.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Ancillary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Ancillary_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Ancillary_Platform_Medium.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Ancillary_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Attachment.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Budget.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Cost.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Cost_Additional_Exp.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Cost_Commission.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Cost_Costtype.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Cost_Costtype_Episode.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Cost_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Cost_Variable_Cost.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Licensor.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Mass_Territory_Update.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Mass_Territory_Update_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Mass_Update_ErrorLog.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Material.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Movie.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Movie_Music.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Movie_Music_Link.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Payment_Terms.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Pushback.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Pushback_Dubbing.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Pushback_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Pushback_Subtitling.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Pushback_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Pushback_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Blackout.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Blackout_Dubbing.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Blackout_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Blackout_Subtitling.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Blackout_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Dubbing.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Error_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Holdback.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Holdback_Dubbing.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Holdback_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Holdback_Subtitling.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Holdback_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Promoter.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Promoter_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Promoter_Remarks.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Subtitling.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Rights_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Run.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Run_Channel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Run_Repeat_On_Day.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Run_Shows.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Run_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Run_Yearwise_Run.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Run_Yearwise_Run_Week.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Ancillary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Ancillary_Broadcast.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Ancillary_Source.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Ancillary_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Broadcast.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Monetisation_Ancillary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Monetisation_Ancillary_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Monetisation_Ancillary_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Sales_Ancillary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Sales_Ancillary_Sponsor.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Sales_Ancillary_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Sport_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Tab_Version.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Rights_Template.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Additional_Expense.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Aired.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Aired_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Alternate_Config.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Amort_Rule.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Amort_Rule_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Ancillary_Medium.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Ancillary_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Ancillary_Platform_Medium.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Ancillary_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AsRun_FileStatus.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ASRUN_Transaction.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ASRUN_Transaction_Shows.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Avail_Acq.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Avail_Acq_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Avail_Acq_Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BMS_All_Masters.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BMS_Asset.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BMS_Deal.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BMS_Deal_Content.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BMS_Deal_Content_Rights.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BMS_Log.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Broadcast_Mode.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Business_Unit.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BVException.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BVException_Channel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BVException_Users.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BV_HouseId_Data.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BV_HouseId_Data_Shows.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BV_HouseId_Data_Temp.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BV_House_ID_Temp.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BV_Schedule_Transaction.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BV_Schedule_Transaction_Show.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BV_WBS.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Category.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Channel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ChannelWiseConsumption_Report.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Channel_Category.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Channel_Category_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Channel_Cluster.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Channel_Entity.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Channel_Region.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Channel_Region_Mapping.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Channel_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Content_Music_Link.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Content_Status_History.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Cost_Center.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Cost_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Country.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Country_Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Currency.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Currency_Exchange_Rate.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Deal_Rights_Process.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Deal_Tag.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Deal_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Deal_Workflow_Status.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DM_AQDeal.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DM_Content_Music.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DM_Master_Import.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DM_Master_Log.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DM_Music_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DM_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Document_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Config.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Config_Detail.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Config_Detail_Alert.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Config_Detail_User.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Notification_AsRun.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Notification_AsRun_Shows.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Notification_Log.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Notification_Msg.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Notification_Schedule.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Notification_Schedule_Show.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email_Template.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Entity.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ErrorOn_AsRun_Schedule.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ErrorOn_SendMail_For_Workflow.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Error_Code_Master.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Extended_Columns.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Extended_Columns_Value.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Format_Show_Data.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Genre.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Glossary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Glossary_AskExpert.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Grade_Master.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\HouseID_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_APP_STATUS.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_CLASS.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Country.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_ENTITY.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Opp.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Opp_Attachment.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Opp_Business_Unit.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Opp_Channel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Opp_Email_Freq.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Opp_Status.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Opp_Status_History.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_REP.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_REP_ATTACHMENTS.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Rep_Business_Unit.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_Rep_Channel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_REP_CLASS.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_REP_EMAIL_FREQ.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_REP_STATUS_HISTORY.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IPR_TYPE.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Language_Deal_Log.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Language_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Language_Group_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Login_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Map_Extended_Columns.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Map_Extended_Columns_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Material_Medium.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Material_Order.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Material_Order_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Material_Receipt.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Material_Receipt_Order.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Material_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHCueSheet.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHCueSheetSong.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHPlayList.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHPlayListSong.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHRequest.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHRequestDetail.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHRequestStatu.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHRequestType.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MHUser.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Milestone_Nature.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Milestone_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Module_Status_History.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Module_Workflow_Detail.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Monetisation_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MQ_Log.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Album.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Album_Talent.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Deal.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Deal_Channel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Deal_Country.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Deal_DealType.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Deal_Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Deal_LinkShow.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Deal_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Deal_Vendor.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Label.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Override_Reason.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Schedule_Exception.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Schedule_Transaction.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Theme.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Title_Label.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Title_Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Title_Talent.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Title_Theme.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Music_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Paf.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Paf_Cost_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Paf_Cost_Type_Mapping.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Paf_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PAF_Detail_Import_Temp.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Party_Category.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Party_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Payment_Terms.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Platform_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Platform_Group_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Program.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProjectMilestone.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProjectMilestoneDetail.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProjectMilestoneTitle.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Promoter_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Promoter_Remarks.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Provisional_Deal.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Provisional_Deal_Licensor.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Provisional_Deal_Run.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Provisional_Deal_Run_Channel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Provisional_Deal_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Provisional_Deal_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Report_Column.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Report_Column_Setup.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Report_Condition.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Report_Format.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Report_Query.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Report_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Report_Territory_Country.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Revenue_Heads.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Rights_Bulk_Update.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Right_Rule.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ROFR.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Role.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Royalty_Commission.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Royalty_Commission_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Royalty_Recoupment.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Royalty_Recoupment_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RunData.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SAP_Export.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SAP_WBS.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Security_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Security_Group_Rel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sponsor.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sport_Ancillary_Broadcast.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sport_Ancillary_Config.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sport_Ancillary_Periodicity.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sport_Ancillary_Source.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sport_Ancillary_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sql_Job_Parameters.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StatusMessage.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sub_License.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Acq_Mapping.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Ancillary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Ancillary_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Ancillary_Platform_Medium.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Ancillary_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Attachment.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Material.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Movie.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Payment_Terms.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Revenue.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Revenue_Additional_Exp.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Revenue_Commission.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Revenue_Costtype.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Revenue_Costtype_Episode.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Revenue_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Revenue_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Revenue_Variable_Cost.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Blackout.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Blackout_Dubbing.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Blackout_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Blackout_Subtitling.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Blackout_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Dubbing.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Holdback.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Holdback_Dubbing.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Holdback_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Holdback_Subtitling.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Holdback_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Promoter.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Promoter_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Promoter_Remarks.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Subtitling.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Rights_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Run.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Run_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Run_Repeat_On_Day.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Run_Yearwise_Run.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagram.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Language_Message.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Message.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Module.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Module_Message.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Module_Right.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Parameter_New.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Right.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\System_Versions.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Talent.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Talent_Role.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TAT.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TATSLA.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TATSLAMatrix.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TATSLAMatrixDetail.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TATSLAStatus.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TATStatusLog.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TblHouseIdMap.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TblHouseIdRange.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Territory.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Territory_Deal_Log.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Territory_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TitleType_HouseId_Prefix.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Alternate.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Alternate_Content.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Alternate_Country.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Alternate_Genres.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Alternate_Talent.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Audio_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Audio_Details_Singers.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Content.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Content_Mapping.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Content_Version.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Content_Version_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Country.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Geners.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Milestone.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Promotion.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Release.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Release_Platforms.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Release_Region.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Talent.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Upload_Err_Detail.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Upload_Files.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\User.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Users_Business_Unit.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Users_Channel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Users_Configuration.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Users_Entity.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Users_Exclusion_Rights.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Users_Password_Detail.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPBindJobAndExecute_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPExportToExcelBulkImport_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPGetAiredNotAiredDates_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPGetTitleCode_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPGetTitleEpisodes_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPListResolveConflict_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPMHCueSheetList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPMHGetChartPopupList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPMHMusicTitleAlbumSearch_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPMHRequisitionList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPMHRequistionTrackList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPMHStatusHistoryList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPPopulateTitleForMapping_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPRUBVMappingList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPTATList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPTATSLAList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPValidateMHRequestConsumption_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPVWTitleList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Acq_Deal_Rights_Holdback_Release_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Acq_Deal_Rights_Holdback_Validation_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Acq_List_Runs_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Add_ACQ_Milestone_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Ancillary_Validate_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Audit_Log_Report_for_Territory_and_Language_Group_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Bind_Extend_Column_Grid_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Bind_Title_Platform_Tree_Report_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Bind_Title_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Check_HoldBack_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Close_Deal_Movie_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Deal_Rights_Template_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Export_Table_To_Excel_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Generate_Deal_Type_Year_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetContentMetadata_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetContentRestrictionRemarks_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetContentsAiringData_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetContentsMusicData_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetContentsRightData_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetContentsStatusHistoryData_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetContentsVersionData_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetMenu_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetMinMaxEpisode_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetRunDefinitonForContent_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GetSystem_Language_Message_ByModule_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Acq_PreReq_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Acq_Rights_Details_Codes_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Acq_Syn_Status_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Avail_Titles_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_BUWise_Title_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Content_Cost_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Dashboard_Data_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Dashboard_Detail_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GET_DATA_FOR_APPROVED_TITLES_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_IPR_Class_Tree_Hierarchy_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Login_Details_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Mapping_SubTitling_Dubbing_Languages_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Music_Platform_Tree_Hierarchy_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Platform_Tree_Hierarchy_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Promoter_Group_Tree_Hierarchy_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Provisional_Deal_Title_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Release_Content_List_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Security_Group_Tree_Hierarchy_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Syn_Rights_Errors_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Talent_Name_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Termination_Title_Data_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Territory_ForDDL_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Title_Availability_LanguageWise_Filter_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Title_Content_Data_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GET_TITLE_DATA_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GET_TITLE_FOR_RUN_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_GET_TITLE_FOR_SYN_RUN_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Title_PreReq_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Title_WBS_Data_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_User_Security_Group_Tree_Hierarchy_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Integration_Generate_XML_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Integration_Response_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Integration_SDM_Generate_XML_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Acq_Ancillary_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Acq_Budget_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Acq_Deal_Status_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Acq_Linear_Title_Status_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Acq_PaymentTerms_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Acq_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Amort_Rule_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Approval_Acq_Syn_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Assign_Music_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_BMS_log_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_BV_WBS_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_ContentBulkImport_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Content_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Content_Version_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Cost_Colors_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Country_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Deal_Title_Content_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_DM_Master_Import_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_IPR_Opp_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_IPR_Opp_Status_History_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_IPR_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_IPR_Status_History_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_MusicTrackBulkImport_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_MusicTrack_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Music_Deal_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Music_Title_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Platform_Group_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Provisional_Deal_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Rights_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Sports_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Status_History_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Syn_Deal_Status_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Syn_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Territory_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_TitleBulkImport_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Title_Content_ExportToXml_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_List_Title_Milestone_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Login_Details_Report_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Music_Deal_Link_Show_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Music_Deal_Schedule_Validation_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Music_Exception_Dashboard_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Music_Exception_Handling_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Music_Title_Contents_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_PopulateContent_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Populate_Master_Deal_Titles_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Populate_Music_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Populate_Titles_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_RollBack_Acq_Deal_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_RollBack_Syn_Deal_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_SAP_Export_Detail_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Schedule_AsRun_Report_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Schedule_ShowDetails_Sche_Report_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Search_Run_Shows_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Select_Mass_Territory_Update_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_SendMail_AskExpert_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Syn_Bulk_Populate_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Syn_Deal_Rights_Holdback_Validation_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Syn_List_Runs_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Title_Deal_Info_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Title_List_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Uploaded_File_Detail_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Uploaded_File_Error_List_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Uploaded_File_List_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_ValidateIfHoldbackExist_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Validate_Close_Movie__Scheduled_Run_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Validate_Duplicate_Syn_Run_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Validate_Episode_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Validate_Run_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Validate_SDM_Title_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_VALIDATE_SYN_TITLES_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Validate_SYN_YEARWISE_RIGHT_FOR_RUN_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_VALIDATE_TITLES_FOR_YEARWISE_RUN_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Validate_YEARWISE_RIGHT_FOR_RUN_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Vendor.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Vendor_Contacts.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Vendor_Country.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Vendor_Role.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Version.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WBS_Type.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Workflow.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Workflow_BU.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Workflow_BU_Role.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Workflow_Module.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Workflow_Module_BU.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Workflow_Module_BU_Role.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Workflow_Module_Role.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Workflow_Role.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="USPDataTests.cs" />
+    <Compile Include="Enum.cs" />
+    <Compile Include="Models\RightsU_EF.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RightsU_EF.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RightsU_EF.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RightsU_EF.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RightsU_EF.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserDefinedTable.cs" />
+    <Compile Include="USP_Ancillary_Validate_Udt.cs" />
+    <Compile Include="USP_SaveAcqDeal.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <EntityDeploy Include="Models\RightsU_EF.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RightsU_EF.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Models\RightsU_EF.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RightsU_EF.edmx</DependentUpon>
+      <LastGenOutput>RightsU_EF.Context.cs</LastGenOutput>
+    </None>
+    <None Include="Models\RightsU_EF.edmx.diagram">
+      <DependentUpon>RightsU_EF.edmx</DependentUpon>
+    </None>
+    <None Include="Models\RightsU_EF.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RightsU_EF.edmx</DependentUpon>
+      <LastGenOutput>RightsU_EF.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

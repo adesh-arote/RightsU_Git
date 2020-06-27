@@ -1,0 +1,624 @@
+﻿@model List<RightsU_Entities.Acq_Rights_Template>
+@{
+    RightsU_Entities.Acq_Rights_Template objAcq_Rights_Template = new RightsU_Entities.Acq_Rights_Template();
+
+    if (ViewData["MyAcq_Rights_Template"] != "")
+    {
+        objAcq_Rights_Template = (RightsU_Entities.Acq_Rights_Template)ViewData["MyAcq_Rights_Template"];
+    }
+
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    var IsCall = 'Y', Command_Name = "" , Mode_G = '@ViewBag.Mode';
+
+    var URL_SaveAcq_Rights_Template = '@Url.Action("SaveAcq_Rights_Template", "Acq_Rights_Template")';
+    var URL_Cancel_Acq_Rights_Template = '@Url.Action("CancelAddEditAcq_Rights_Template", "Acq_Rights_Template")';
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_Rights_Template")';
+    var URL_BindPlatformTreeView = '@Url.Action("BindPlatformTreeView", "Acq_Rights_Template")';
+    var URL_SaveAcq_Rights_Template = '@Url.Action("SaveAcq_Rights_Template", "Acq_Rights_Template")';
+    var URL_Validate_Groups = '@Url.Action("Validate_Groups", "Acq_Rights")';
+
+    $(document).ready(function () {
+        initializeChosen();
+        showLoading();
+        $('#lbTerritory,#lbSub_Language,#lbDub_Language').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+
+        $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val());
+
+        var Status = '@ViewData["Status"]';
+        if (Status == 'A') {
+            $("#btnSave").val("Save");
+        }
+        else if (Status == 'U') {
+            $("#btnSave").val("Save");
+        }
+        $(".numeric").keypress(function () {
+            CheckNumeric(event);
+        });
+        BindAllPreReq_Async();
+        hideLoading();
+    });
+
+
+    function Validate_Save() {
+        debugger;
+        var returnVal = true;
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var lbSub_Language = $("#lbSub_Language").val();
+        var lbDub_Language = $("#lbDub_Language").val();
+        var hdnIs_Title_Language_Right = $("input[name='hdnIs_Title_Language_Right']:checked").val();
+
+        if (hdnIs_Title_Language_Right == "N" && lbSub_Language == null && lbDub_Language == null) {
+            returnVal = false;
+            showAlert('E', "Please select at least one Language");
+        }
+
+        var txtTemplateName = $("#txtTemplateName").val();
+        var strPlatform = $("#hdnTVCodes").val();
+        var lbTerritory = $("#lbTerritory").val();
+
+        if (txtTemplateName == "") {
+            returnVal = false;
+            $('#txtTemplateName').attr('required', true);
+        }
+        if (strPlatform == "") {
+            returnVal = false;
+            $("#tree").attr('required', true);
+            $("#tree").addClass('required');
+        }
+        if (lbTerritory == null) {
+            returnVal = false;
+            $("#divCountry").addClass("required");
+        }
+
+        var rdoSublicensing = $("input[name='rdoSublicensing']:checked").val();
+        var ddlSub_License_Code = $("#ddlSub_License_Code").val();
+
+        if (rdoSublicensing == "Y" && ddlSub_License_Code == "0") {
+            returnVal = false;
+            $('#ddlSub_License_Code').addClass('required');
+        }
+
+        var regionType = $("#rdoCountryHB").prop('checked') ? $("#rdoCountryHB").val() : $("#rdoTerritoryHB").val();
+        var subType = $("#rdoSubL").prop('checked') ? $("#rdoSubL").val() : $("#rdoSubLG").val();
+        var dubbingType = $("#rdoDubbingL").prop('checked') ? $("#rdoDubbingL").val() : $("#rdoDubbingLG").val();
+
+        var selectedRegion = '';
+        if ($("#lbTerritory option:selected").length > 0) {
+            $("#lbTerritory option:selected").each(function () {
+                if (selectedRegion == '')
+                    selectedRegion = $(this).val();
+                else
+                    selectedRegion = selectedRegion + ',' + $(this).val();
+            });
+        }
+
+        var selectedDub = '';
+        if ($("#lbDub_Language option:selected").length > 0) {
+            $("#lbDub_Language option:selected").each(function () {
+                if (selectedDub == '')
+                    selectedDub = $(this).val();
+                else
+                    selectedDub = selectedDub + ',' + $(this).val();
+            });
+        }
+
+        var selectedSub = '';
+        if ($("#lbSub_Language option:selected").length > 0) {
+            $("#lbSub_Language option:selected").each(function () {
+                if (selectedSub == '')
+                    selectedSub = $(this).val();
+                else
+                    selectedSub = selectedSub + ',' + $(this).val();
+            });
+        }
+
+        if (returnVal) {
+            if (regionType == "G" || dubbingType == "G" || subType == "G") {
+                var groupOfRegions = selectedRegion;
+                if (regionType != "G")
+                    groupOfRegions = "";
+
+                var groupOfDubs = selectedDub;
+                if (dubbingType != "G")
+                    groupOfDubs = "";
+
+                var groupOfSubs = selectedSub;
+                if (subType != "G")
+                    groupOfSubs = "";
+
+                var msg = ValidateGroups(groupOfRegions, groupOfDubs, groupOfSubs)
+                if (msg != '') {
+                    showAlert('E', msg);
+                    return false;
+                }
+            }
+        }
+
+        return returnVal;
+    }
+
+    function CheckNumeric(e) {
+        if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) { event.returnValue = false; return false; } }
+    }
+    function CancelSaveDeal() {
+        Command_Name = "CANCEL_SAVE_DEAL";
+        showAlert("I", 'All Unsaved Data Will Be Lost Still Want to Go Ahead?', "OKCANCEL");
+    }
+    function handleOk() {
+
+        if (Command_Name == "CANCEL_SAVE_DEAL" || Command_Name == "SAVE_UPDATE_Acq_Rights_Template") {
+
+            var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+            if (recordLockingCode > 0)
+                ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+
+            BindPartialView("LIST", 0)
+            //window.location.href = URL_Cancel_Acq_Rights_Template;
+        }
+    }
+    function handleCancel() {
+        Command_Name = "";
+        dummyGuid_G = "";
+    }
+
+    function SaveAcq_Rights_Template() {
+        debugger;
+       // if (checkCurrentAction()) {
+        if (true) {
+            if (!Validate_Save())
+                return false;
+            else
+                SaveSuccess();
+        }
+        else {
+            return false;
+        }
+    }
+    function SaveSuccess() {
+        debugger;
+        showLoading();
+        var formData = new FormData();
+
+        var hdnAcq_Rights_TemplateCode = $("#hdnAcq_Rights_TemplateCode").val();
+        var txtTemplateName = $("#txtTemplateName").val();
+        var hdnExclusive = $("input[name='hdnExclusive']:checked").val();
+        var hdnIs_Title_Language_Right = $("input[name='hdnIs_Title_Language_Right']:checked").val();
+        var rdoTerritoryType = $("input[name='rdoTerritoryType']:checked").val();
+        var lbTerritory = $("#lbTerritory").val();
+        var rdoSublicensing = $("input[name='rdoSublicensing']:checked").val();
+        var ddlSub_License_Code = $("#ddlSub_License_Code").val();
+        var rdoSubtitlingLanguage = $("input[name='rdoSubtitlingLanguage']:checked").val();
+        var lbSub_Language = $("#lbSub_Language").val();
+        var rdoDubbingLanguage = $("input[name='rdoDubbingLanguage']:checked").val();
+        var lbDub_Language = $("#lbDub_Language").val();
+        var strPlatform = $("#hdnTVCodes").val();
+
+        formData.append("hdnAcq_Rights_TemplateCode", hdnAcq_Rights_TemplateCode);
+        formData.append("txtTemplateName", txtTemplateName);
+        formData.append("hdnExclusive", hdnExclusive);
+        formData.append("hdnIs_Title_Language_Right", hdnIs_Title_Language_Right);
+        formData.append("rdoTerritoryType", rdoTerritoryType);
+        formData.append("lbTerritory", lbTerritory);
+        formData.append("rdoSublicensing", rdoSublicensing);
+        formData.append("ddlSub_License_Code", ddlSub_License_Code);
+        formData.append("rdoSubtitlingLanguage", rdoSubtitlingLanguage);
+        formData.append("lbSub_Language", lbSub_Language);
+        formData.append("rdoDubbingLanguage", rdoDubbingLanguage);
+        formData.append("lbDub_Language", lbDub_Language);
+        formData.append("strPlatform", strPlatform);
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveAcq_Rights_Template,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                      if (result.Status == "S") {
+                            showAlert("S", result.Message);
+                            //$('#hdnRecodLockingCode').val(0)
+                            //$('#hdnRecodLockingCode_temp').val(0)
+                            BindPartialView("LIST", 0)
+                      }
+                      else
+                      {
+                            Command_Name = "";
+                            showAlert("E", result.Message, "OK");
+                    }
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                hideLoading();
+            }
+        });
+    }
+
+    function BindAllPreReq_Async() {
+        debugger;
+        showLoading();
+        var Code = @objAcq_Rights_Template.Acq_Rights_Template_Code != null ? @objAcq_Rights_Template.Acq_Rights_Template_Code : 0;
+        $.ajax({
+            type: "POST",
+            url: URL_BindAllPreReq_Async,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ARTCode: Code
+            }),
+            async: true,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $.each(result.Sub_License_List, function () {
+                        $("#ddlSub_License_Code").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $("#ddlSub_License_Code").val(result.Sub_License_Code)
+
+                    var Val = $("input[name='rdoSublicensing']:checked").val();
+                    if (Val == 'N') {
+                        ShowHideSublicensingList(false)
+                    }
+                    else if(Val == 'Y') {
+                        ShowHideSublicensingList(true)
+                    }
+
+
+                    $.each(result.Region_List, function () {
+                        $("#lbTerritory").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    if (result.Selected_Region_Code != '')
+                        $("#lbTerritory").val(result.Selected_Region_Code.split(','))
+
+                    $.each(result.Subtitle_List, function () {
+                        $("#lbSub_Language").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    if (result.Selected_Subtitling_Code != '') {
+                        $("#lbSub_Language").val(result.Selected_Subtitling_Code.split(','))
+                    }
+
+                    $.each(result.Dubbing_List, function () {
+                        $("#lbDub_Language").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    if (result.Selected_Dubbing_Code != '') {
+                        $("#lbDub_Language").val(result.Selected_Dubbing_Code.split(','))
+                    }
+
+                    $("#ddlSub_License_Code").trigger("chosen:updated");
+                    for (var i = 0; i <= 2; i++) {
+                        $('#lbTerritory,#lbSub_Language,#lbDub_Language')[i].sumo.reload();
+                    }
+                    BindPlatform();
+
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindPlatform() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strPlatform: $("#hdnTVCodes").val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+
+    function ValidateGroups(RegionCodes, DubbingCodes, SubtitlingCodes) {
+        var msg = '';
+        $.ajax({
+            type: "POST",
+            url: URL_Validate_Groups,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                Region_Codes: RegionCodes,
+                Dubbing_Codes: DubbingCodes,
+                Subtitling_Codes: SubtitlingCodes
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                msg = result;
+            },
+            error: function (result) {
+            }
+        });
+        return msg;
+    }
+</script>
+
+<style>
+    #Tree_Filter_Rights_Platform {
+        width: 565px;
+        padding-left: 3px;
+        position: relative !important;
+    }
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
+    }
+
+    .SumoSelect, #divCountry, #lbTitles, #lbTerritory {
+        width: 512px !important;
+    }
+
+    ul.fancytree-container {
+        height: 328px !important;
+    }
+</style>
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        @if (ViewData["Status"] == "A")
+        {
+            <span>  Add Template Details </span>
+        }
+        else if (ViewData["Status"] == "U")
+        {
+            <span>  Edit Template Details</span>
+        }
+        else
+        {
+            <span> View Template Details </span>
+        }
+        <span> </span>
+    </h2>
+</div>
+
+<table class="table_brif table">
+    <tbody>
+        <tr>
+            <td class="intro">
+                <div class="scale_table_block">
+                    <table>
+                        <tr>
+                            <td width="50%" valign="top" id="RightPad">
+                                <label class="bold">Template Name</label>
+                                <input type="text" id="txtTemplateName" name="name" style="width:74.4%" value="@objAcq_Rights_Template.Template_Name" />
+                                <input type="hidden" id="hdnAcq_Rights_TemplateCode" value="@objAcq_Rights_Template.Acq_Rights_Template_Code" />
+                                <br />
+                                <br />
+                                <label class="bold">Rights Definition</label>
+                                <div class="platform_checkbox">
+                                    <input type="hidden" value="" id="hdnIs_Exclusive" name="hdnIs_Exclusive">
+                                    <table>
+                                        <tr>
+                                            <td style="width: 102px;"><label>Exclusive Rights</label></td>
+                                            <td style="padding-right: 338px;">
+                                                <div style="width: 83%; float: right;">
+                                                    <div id="divExclusiveRights" style="width:90px; height:23px">
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButton("hdnExclusive", "Y", objAcq_Rights_Template.Is_Exclusive == "Y" || objAcq_Rights_Template.Is_Exclusive == null, new { id = "rdoIsExclusiveY", style = "cursor: pointer;", @class = "exc" }) Yes
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButton("hdnExclusive", "N", objAcq_Rights_Template.Is_Exclusive == "N", new { id = "rdoIsExclusiveN", style = "cursor: pointer;", @class = "exc" })  No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 102px;"><label>Title Language</label></td>
+                                            <td style="padding-right: 338px;">
+                                                <div style="width: 83%; float: right;">
+                                                    <div id="divIs_Title_Language_Right" style="width:90px; height:23px">
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButton("hdnIs_Title_Language_Right", "Y", objAcq_Rights_Template.Is_Title_Language == "Y" || objAcq_Rights_Template.Is_Title_Language == null, new { id = "hdnIs_Title_Language_RightY", style = "cursor: pointer;", @class = "exc" }) Yes
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButton("hdnIs_Title_Language_Right", "N", objAcq_Rights_Template.Is_Title_Language == "N", new { id = "hdnIs_Title_Language_RightN", style = "cursor: pointer;", @class = "exc" }) No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <label class="bold"> Region </label>
+                                <div style="width: 90%; float: right;">
+                                    <label class="radio-inline">
+                                        @Html.RadioButton("rdoTerritoryType", "I", objAcq_Rights_Template.Region_Type == "I" || objAcq_Rights_Template.Is_Title_Language == null, new { id = "rdoCountryHB", style = "cursor: pointer;", @class = "exc", @onchange = "BindDropdown('I')" }) Country
+                                    </label>
+                                    <label class="radio-inline">
+                                        @Html.RadioButton("rdoTerritoryType", "G", objAcq_Rights_Template.Region_Type == "G", new { id = "rdoTerritoryHB", style = "cursor: pointer;", @class = "exc", @onchange = "BindDropdown('T')" }) Territory
+                                    </label>
+                                </div>
+                                <div id="divCountry">
+                                    <select id="lbTerritory" name="lbTerritory" multiple="multiple"></select>
+                                </div>
+                                <br>
+
+                                <label class="bold">Sublicensing</label>
+                                <div style="width: 83%; float: right;">
+                                    <div id="divSublicensingOptions" style="width:90px; height:23px">
+                                        <label class="radio-inline">
+                                            @Html.RadioButton("rdoSublicensing", "Y", objAcq_Rights_Template.Is_Sublicense == "Y" || objAcq_Rights_Template.Is_Sublicense == null, new { id = "rdoSublicensingY", style = "cursor: pointer;", @class = "exc", @onchange = "ShowHideSublicensingList(true)" }) Yes
+                                        </label>
+                                        <label class="radio-inline">
+                                            @Html.RadioButton("rdoSublicensing", "N", objAcq_Rights_Template.Is_Sublicense == "N", new { id = "rdoSublicensingN", style = "cursor: pointer;", @class = "exc", @onchange = "ShowHideSublicensingList(false)" }) No
+                                        </label>
+                                    </div>
+                                </div>
+                                <br>
+                                <div id="divSublicensingList">
+                                    <select id="ddlSub_License_Code" name="ddlSub_License_Code" class="form_input chosen-select"></select>
+                                </div>
+                                <br>
+                                <label class="bold">Language</label>
+                                <div style="margin-bottom:4px;">
+                                    <label class="radio-inline">
+                                        @Html.RadioButton("rdoSubtitlingLanguage", "L", objAcq_Rights_Template.Subtitling_Type == "L" || objAcq_Rights_Template.Subtitling_Type == null, new { id = "rdoSubL", style = "cursor: pointer;", @class = "exc", @onchange = "BindDropdown('SL')" }) Subtitle
+                                    </label>
+                                    <label class="radio-inline">
+                                        @Html.RadioButton("rdoSubtitlingLanguage", "G", objAcq_Rights_Template.Subtitling_Type == "G", new { id = "rdoSubLG", style = "cursor: pointer;", @class = "exc", @onchange = "BindDropdown('SG');" }) Subtitle Group
+                                    </label>
+                                </div>
+
+                                <div id="divSubSingle">
+                                    <select id="lbSub_Language" name="lbSub_Language" multiple="multiple"></select>
+                                </div>
+                                <div style="margin-bottom:4px;">
+                                    <label class="radio-inline">
+                                        @Html.RadioButton("rdoDubbingLanguage", "L", objAcq_Rights_Template.Dubbing_Type == "L" || objAcq_Rights_Template.Dubbing_Type == null, new { id = "rdoDubbingL", style = "cursor: pointer;", @class = "exc", @onchange = "BindDropdown('DL')" }) Dubbing
+                                    </label>
+                                    <label class="radio-inline">
+                                        @Html.RadioButton("rdoDubbingLanguage", "G", objAcq_Rights_Template.Dubbing_Type == "G", new { id = "rdoDubbingLG", style = "cursor: pointer;", @class = "exc", @onchange = "BindDropdown('DG')" }) Dubbing Group
+                                    </label>
+                                </div>
+                                <div id="divDubSingle">
+                                    <select id="lbDub_Language" name="lbDub_Language" multiple="multiple"></select>
+                                </div>
+                                <br>
+                            </td>
+                            <td valign="top">
+                                <div class="platform_wrapper">
+                                    <label class="bold" for="platform">Platform / Rights</label>
+                                    <div id="tree" class="treeClass">
+                                    </div>
+                                    <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" value="@((objAcq_Rights_Template.Platform_Codes != null ? @objAcq_Rights_Template.Platform_Codes : "0"))" />
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        <li>
+            @if (ViewBag.Mode != "V")
+            {
+                <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="return SaveAcq_Rights_Template();" />
+            }
+        </li>
+        <li>
+            <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal()" />
+        </li>
+    </ul>
+</div>
+
+<script>
+    var URL_Bind_JSON_ListBox = '@Url.Action("Bind_JSON_ListBox", "Acq_Rights_Template")';
+    function BindDropdown(radioType, CallFrom) {
+        debugger;
+        var selectedTitles = '';
+
+        var platformCodes = $('#hdnTVCodes').val();
+        if (platformCodes == undefined)
+            platformCodes = "";
+
+        var region_type = $("#rdoCountryHB").prop('checked') ? 'I' : 'T';
+
+        var SL_Type = $("#rdoSubL").prop('checked') ? 'SL' : 'SG';
+
+        var DL_Type = $("#rdoDubbingL").prop('checked') ? 'DL' : 'DG';
+
+        var selectedId = '';
+
+        if (radioType == "I" || radioType == "T") {
+            selectedId = 'lbTerritory';
+        }
+        else if (radioType == "DL" || radioType == "DG") {
+            selectedId = 'lbDub_Language';
+        }
+        else if (radioType == "SL" || radioType == "SG") {
+            selectedId = 'lbSub_Language';
+        }
+        var selectedCodes = '';
+        var selected_Territory = '';
+        var selected_Sub_Lang = '';
+        var selected_Dub_Lang = '';
+        if (CallFrom == 'PF') {
+            if (selectedCodes != "")
+                selectedCodes = $('#' + selectedId).val();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_Bind_JSON_ListBox,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                str_Type: radioType
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                debugger;
+                if (radioType == 'A') {
+                    var selected_Territory = $('#lbTerritory').val();
+                    var selected_Sub_Lang = $('#lbSub_Language').val();
+                    var selected_Dub_Lang = $('#lbDub_Language').val();
+                    $("#lbTerritory,#lbSub_Language,#lbDub_Language").empty();
+                }
+                else {
+                    $("#" + selectedId).empty();
+                    $("#" + selectedId).trigger("chosen:updated");
+                    $.each(result, function () {
+                        $("#" + selectedId).append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $("#" + selectedId)[0].sumo.reload();
+                }
+            }
+            , error: function (result) {
+                showAlert('E', 'Error: ' + result.responseText);
+            }
+        });
+    }
+    function ShowHideSublicensingList(show) {
+        $("#ddlSub_License_Code").trigger("chosen:updated");
+        if (show) {
+            $('#divSublicensingList').show();
+        }
+        else {
+            $("#ddlSub_License_Code").val('0');
+            $('#divSublicensingList').hide();
+        }
+    }
+</script>

@@ -1,0 +1,553 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<style>
+    .navigation_tabs {
+        overflow: hidden !important;
+    }
+
+    .grid_area {
+        margin-top: 0px !important;
+    }
+</style>
+<script>
+    var clickedOnTab = false;
+    var CurrentTab = null;
+    var RedirectTab = null;
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Acq_Deal")';
+
+
+    var pageGeneral = '@GlobalParams.Page_From_General';
+    var pageRights_List = '@GlobalParams.Page_From_Rights';
+    var pageRightsDetailAddEdit = '@GlobalParams.Page_From_Rights_Detail_AddEdit';
+    var pageRightsDetailView = '@GlobalParams.Page_From_Rights_Detail_View';
+    var pagePushback = '@GlobalParams.Page_From_Pushback';
+    var pageRun = '@GlobalParams.Page_From_Run';
+    var pageRunDetailAddEdit = '@GlobalParams.Page_From_Run_Detail_AddEdit';
+    var pageRunDetailView = '@GlobalParams.Page_From_Run_Detail_View';
+    var pageSports = '@GlobalParams.Page_From_Sports';
+    var pageAncillary = '@GlobalParams.Page_From_Ancillary';
+    var pageBudget = '@GlobalParams.Page_From_Budget';
+    var pageCost = '@GlobalParams.Page_From_Cost';
+    var pagePaymentTerm = '@GlobalParams.Page_From_PaymentTerm';
+    var pageMaterial = '@GlobalParams.Page_From_Material';
+    var pageStatusHistory = '@GlobalParams.Page_From_StatusHistory';
+    var pageAmort = '@GlobalParams.Page_From_Amort';
+    var pageAttachment = '@GlobalParams.Page_From_Attachment';
+    var dealType_Sports = '@GlobalParams.Deal_Type_Sports'
+    var dealMode_View = '@GlobalParams.DEAL_MODE_VIEW';
+    var dealMode_Approve = '@GlobalParams.DEAL_MODE_APPROVE';
+    var pageRightsBulkUpdate = '@GlobalParams.Page_From_Rights_Bulk_Update';
+    var PageRunBulkUpdate = '@GlobalParams.Page_From_Run_Bulk_update';
+    var PageRunBulkDelete = '@GlobalParams.Page_From_Run_Bulk_Delete';
+    var dealMode_EditWOA = '@GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL';
+    var digital_Rights = '@GlobalParams.Page_From_Digital_Rights';
+    var isAmort = '@ViewBag.IsAmort';
+    var currentTabMultiLnag = '@ViewBag.currentTab';
+
+
+    $(document).ready(function () {
+        var url_page = "";
+        if (isAmort == "Y") {
+            debugger;
+            BindPartialTabs(pageAmort);
+            BindTopAcqDetails();
+        }
+        else {
+            debugger;
+            if ('@ViewBag.currentTab' != "") {
+
+                if (document.location.search == "") {
+                    url_page = history.pushState({}, null, window.location.href + "?currentTab=GNR");
+                }
+                else {
+                    if (document.location.search.substring(12) !=  '@ViewBag.currentTab')
+                    {
+                        if (window.location.href.slice(window.location.href.length - 1) == "#")
+                            url_page = history.pushState({}, null, window.location.href.replace(document.location.search + '#', '') + "?currentTab=" + @ViewBag.currentTab);
+                        else
+                            url_page = history.pushState({}, null, window.location.href.replace(document.location.search, '') + "?currentTab=" + @ViewBag.currentTab);
+                    }
+                }
+                $('#hdn_curent_TabFor_MultiLang_Acq').val('@ViewBag.currentTab');
+                if ('@ViewBag.currentTab' == "RGT") {
+                    //history.pushState({}, null, window.location.href + "?currentTab=RGT");
+                    BindPartialTabs(pageRights_List);
+                }
+                else if ('@ViewBag.currentTab' == "RGT_DTL_AE") {
+                    BindPartialTabs(pageRightsDetailAddEdit);
+                }
+                else if ('@ViewBag.currentTab' == "RGT_DTL_VW") {
+                    BindPartialTabs(pageRightsDetailView);
+                }
+                else if ('@ViewBag.currentTab' == "PBK") {
+                    BindPartialTabs(pagePushback);
+                }
+                else if ('@ViewBag.currentTab' == "RUN") {
+                    BindPartialTabs(pageRun);
+                }
+                else if ('@ViewBag.currentTab' == "RUN_DTL_AE") {
+                    BindPartialTabs(pageRunDetailAddEdit);
+                }
+                else if ('@ViewBag.currentTab' == "RUN_DTL_VW") {
+                    BindPartialTabs(pageRunDetailView);
+                }
+                else if ('@ViewBag.currentTab' == "SPT") {
+                    BindPartialTabs(pageSports);
+                }
+                else if ('@ViewBag.currentTab' == "ANC") {
+                    BindPartialTabs(pageAncillary);
+                }
+                else if ('@ViewBag.currentTab' == "BGT") {
+                    BindPartialTabs(pageBudget);
+                }
+                else if ('@ViewBag.currentTab' == "CST") {
+                    BindPartialTabs(pageCost);
+                }
+                else if ('@ViewBag.currentTab' == "PYT") {
+                    BindPartialTabs(pagePaymentTerm);
+                }
+                else if ('@ViewBag.currentTab' == "MTR") {
+                    BindPartialTabs(pageMaterial);
+                }
+                else if ('@ViewBag.currentTab' == "STH") {
+                    BindPartialTabs(pageStatusHistory);
+                }
+                else if ('@ViewBag.currentTab' == "ATT") {
+                    BindPartialTabs(pageAttachment);
+                }
+                else if ('@ViewBag.currentTab' == "27") {  //Deal_Type_Sports is remaining
+                    BindPartialTabs(dealType_Sports);
+                }
+                else if ('@ViewBag.currentTab' == "V") {
+                    BindPartialTabs(dealMode_View);
+                }
+                else if ('@ViewBag.currentTab' == "APRV") {
+                    BindPartialTabs(dealMode_Approve);
+                }
+                else if ('@ViewBag.currentTab' == "BLK") {
+                    BindPartialTabs(pageRightsBulkUpdate);
+                }
+                else if ('@ViewBag.currentTab' == "BLK_RUN") {
+                    BindPartialTabs(PageRunBulkUpdate);
+                }
+                else if ('@ViewBag.currentTab' == "BLK_DEL_RUN") {
+                    BindPartialTabs(PageRunBulkUpdate);
+                }
+                else if ('@ViewBag.currentTab' == "EWOA") {
+                    BindPartialTabs(dealMode_EditWOA);
+                }
+                else if ('@ViewBag.currentTab' == "DGR") {
+                    BindPartialTabs(digital_Rights);
+                }
+                else if ('@ViewBag.currentTab' == "GNR") {
+                    BindPartialTabs(pageGeneral);
+                }
+            }
+            else
+                BindPartialTabs(pageGeneral);
+
+        }
+    });
+
+
+    function GetDealTypeCodeFromServer() {
+        var dealTypeCode = 0;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetDealTypeCodeFromServer", "Acq_General")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    dealTypeCode = result.DealTypeCode;
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+        return dealTypeCode;
+    }
+
+    function GetWorkflowStatusFromServer() {
+        debugger;
+        alert('GetWorkflowStatusFromServer')
+        var dealTypeCode = 0;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetWorkflowStatusFromServer", "Acq_General")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.DealWorkflowFlag == "O" || result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_New' ||
+                     result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Ammended') {
+                        $('#divStamp').removeClass().addClass('stampBg approved');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Approved') {
+                        $('#divStamp').removeClass().addClass('stampBg approved');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Waiting') {
+                        $('#divStamp').removeClass().addClass('stampBg pending');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Declined') {
+                        $('#divStamp').removeClass().addClass('stampBg rejected');
+                    }
+                    $('#lblWorkflowStatus').text(result.DealWorkflowStatus);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+        return dealTypeCode;
+    }
+    function GetCostTabConfigFromServer() {
+        var isDirectCostGrid = "N";
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetCostTabConfigFromServer", "Acq_Deal")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    isDirectCostGrid = result.IsDirectCostGrid;
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+        return isDirectCostGrid;
+    }
+
+    function BindTopAcqDetails() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTopAcqDetails", "Acq_General")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTopBand').empty();
+                    $('#divTopBand').html(result);
+
+
+                    var length = $('#ddlDeal_Tag').length;
+                    if (length > 0)
+                        $('#ddlDeal_Tag').chosen().trigger("chosen:updated");
+
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        fromGeneralTab = "N";
+    }
+
+    function BindPartialTabs(tabName) {
+        debugger;
+
+        $('#divPartialTabs').empty();
+        CurrentTab = tabName;
+        var URL_PartialView = "";
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liSports,#liAncillary,#liBudget,#liCost,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory,#liDigitalRights,#liAmort").removeClass("active");
+        if (tabName == pageGeneral) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_General');
+            URL_PartialView = '@Url.Action("Index", "Acq_General")';
+            $("#liGeneral").addClass("active");
+        }
+        else if (tabName == pageRights_List) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Rights');
+            URL_PartialView = '@Url.Action("Index", "Acq_Rights_List")';
+            $("#liRights").addClass("active");
+        }
+        else if (tabName == pageRightsDetailAddEdit) {
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Rights');
+
+            URL_PartialView = '@Url.Action("Index", "Acq_Rights")';
+            $("#liRights").addClass("active");
+        }
+        else if (tabName == pageRightsDetailView) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Rights');
+            URL_PartialView = '@Url.Action("View", "Acq_Rights")';
+            $("#liRights").addClass("active");
+        }
+        else if (tabName == pageRightsBulkUpdate) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Rights');
+            URL_PartialView = '@Url.Action("BulkUpdate", "Acq_Rights_List")';
+            $("#liRights").attr('disabled', 'disabled').addClass("active");
+            // $("#liRights input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == PageRunBulkUpdate) {
+          URL_PartialView = '@Url.Action("BulkUpdateForRun", "Acq_Run_List",new { callFor = "BLK_RUN" })';
+          $("#liRights").attr('disabled', 'disabled').addClass("active");
+          // $("#liRights input:button").attr('disabled', 'disabled');
+        }
+         else if (tabName == PageRunBulkDelete) {
+          URL_PartialView = '@Url.Action("BulkUpdateForRun", "Acq_Run_List",new { callFor = "BLK_DEL_RUN" })';
+          $("#liRights").attr('disabled', 'disabled').addClass("active");
+          // $("#liRights input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pagePushback) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_LicensorHoldback');
+            URL_PartialView = '@Url.Action("Index", "Acq_Pushback")';
+            $("#liPushback").addClass("active");
+        }
+        else if (tabName == pageRun) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_RunDefinition');
+            URL_PartialView = '@Url.Action("Index", "Acq_Run_List")';
+            $("#liRun").addClass("active");
+        }
+        else if (tabName == pageRunDetailAddEdit) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_RunDefinition');
+            URL_PartialView = '@Url.Action("Index", "Acq_Run")';
+            $("#liRun").addClass("active");
+        }
+        else if (tabName == pageRunDetailView) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_RunDefinition');
+            URL_PartialView = '@Url.Action("View", "Acq_Run")';
+            $("#liRun").addClass("active");
+        }
+        else if (tabName == pageSports) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_SportsRights');
+            URL_PartialView = '@Url.Action("Index", "Acq_Sports")';
+            $("#liSports").addClass("active");
+        }
+        else if (tabName == pageAncillary) {
+            var dealTypeCode = GetDealTypeCodeFromServer();
+
+            if (dealTypeCode == dealType_Sports) {
+
+               // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_SportsAncillary');
+                URL_PartialView = '@Url.Action("Index", "Acq_Sport_Ancillary")';
+            }
+            else {
+
+               // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Ancillary');
+                URL_PartialView = '@Url.Action("Index", "Acq_Ancillary")';
+            }
+
+            $("#liAncillary").addClass("active");
+        }
+        else if (tabName == pageBudget) {
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Budget');
+            URL_PartialView = '@Url.Action("Index", "Acq_Budget")';
+            $("#liBudget").addClass("active");
+        }
+        else if (tabName == pageCost) {
+            var isDirectCostGrid = GetCostTabConfigFromServer();
+            if (isDirectCostGrid == "Y") {
+
+                URL_PartialView = '@Url.Action("Index", "Acq_Cost_New")';
+            }
+            else {
+                URL_PartialView = '@Url.Action("Index", "Acq_Cost")';
+            }
+
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?Login');
+            $("#liCost").addClass("active");
+        }
+        else if (tabName == pagePaymentTerm) {
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=PaymentTerms');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?PaymentTerms');
+            URL_PartialView = '@Url.Action("Index", "Acq_Payment_Term")';
+            $("#liPaymentTerm").addClass("active");
+        }
+        else if (tabName == pageMaterial) {
+
+            URL_PartialView = '@Url.Action("Index", "Acq_Material")';
+            $("#liMaterial").addClass("active");
+        }
+        else if (tabName == pageAttachment) {
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=acq_Attachments');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Attachments');
+            URL_PartialView = '@Url.Action("Index", "Acq_Attachment")';
+            $("#liAttachment").addClass("active");
+        }
+        else if (tabName == pageStatusHistory) {
+            // $("#ancFileName").attr('href', 'Help/index.html?IntCode=acq_StatusHistory');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_StatusHistory');
+            URL_PartialView = '@Url.Action("Index", "Acq_Status_History")';
+            $("#liStatusHistory").addClass("active");
+        }
+        else if (tabName == digital_Rights) {
+
+            //  $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_SportsRights');
+            URL_PartialView = '@Url.Action("DigitalRights", "Digital_Rights")';
+            $("#liDigitalRights").addClass("active");
+        }
+        else if (tabName == pageAmort) {
+            URL_PartialView = '@Url.Action("Index", "Acq_Amort")';
+            $("#liAmort").addClass("active");
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_PartialView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#divPartialTabs').empty();
+                    $('#divPartialTabs').html(result);
+                    if (currentTabMultiLnag != "") {
+                        BindTopAcqDetails();
+                    }
+                    else {
+                        debugger;
+                        if (tabName == pageGeneral) {
+                            BindTopAcqDetails();
+                        }
+                        else {
+                            GetWorkflowStatusFromServer();
+                        }
+                    }
+
+                    if (isAmort == "N") {
+                        $('#liAmort').remove();
+                    }
+                    else {
+                        $('#lblDealMainHeader').text('Amort Acquisition Deal');
+                    }
+
+                    initializeTooltip();
+                    initializeDatepicker();
+                    initializeChosen();
+                    initializeExpander();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function SaveApprovalRemarksAndRedirect(tabName) {
+        if (SaveApprovalRemarks()) {
+            BindPartialTabs(tabName);
+        }
+    }
+
+    function HideAllPopupDiv() {
+        try {
+            FadeOutPopup();
+        }
+        catch (err) {
+        }
+    }
+
+</script>
+<style>
+    .container .grid_area {
+        height: 80%;
+        margin-top: 0px !important;
+    }
+</style>
+<div class="main_section" onclick="HideAllPopupDiv()">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <input type="hidden" id="hdn_curent_TabFor_MultiLang_Acq" value="" />
+            <div id="divTopBand">
+            </div>
+            <div id="divPartialTabs">
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddPaymentTerm" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="program_popup">
+                <div>
+                    <div class="form_fields" dir="@objMessageKey.LayoutDirection">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Add Payment Term</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper add_program_popup">
+                                <li>
+                                    <label><b>Payment Term</b></label>
+                                    <input class="form_input" id="Payment_Term_Name" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);" />
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li class="poptalent">
+                                        <a class="btn btn-primary" href="#" onclick="return validate()">@objMessageKey.Save</a>
+                                    </li>
+                                    <li class="poptalent">
+                                        <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

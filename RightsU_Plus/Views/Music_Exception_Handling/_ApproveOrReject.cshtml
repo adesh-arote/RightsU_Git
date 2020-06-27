@@ -1,0 +1,72 @@
+﻿@model List<RightsU_Entities.USP_List_Status_History_Result>
+@using UTOFrameWork.FrameworkClasses
+@using System.Configuration;
+@{
+    Layout = null;
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        <form class="form" id="new_syndication_bundle_form">
+            <div class="form_wrapper">
+                <div class="form_fields acq">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>@objMessageKey.Approve / @objMessageKey.Reject</h2>
+                    </div>
+                    <div class="modal_block">
+                        <ul>
+                            <li id="ShowRemarks2">
+                                <label>@objMessageKey.Remarks</label>
+                                <textarea name="txtPRemarks" id="txtPRemarks" class="textarea"></textarea>
+                            </li>
+                            <li>
+                                <strong>@objMessageKey.StatusHistory</strong><br>
+                                <table class="table table-bordered table-hover">
+                                    <tr>
+                                        <th>@objMessageKey.Date</th>
+                                        <th>@objMessageKey.User</th>
+                                        <th>@objMessageKey.Status</th>
+                                        <th>@objMessageKey.Remarks</th>
+                                    </tr>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.Date</td>
+                                            <td>@item.By</td>
+                                            <td>@item.Status</td>
+                                            <td>@item.Remarks</td>
+                                        </tr>
+                                    }
+                                </table>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <input type="button" id="btnApprove" class="btn btn-primary" value="@objMessageKey.Approve" onclick="ApproveOrReject('@ViewBag.Music_Schedule_Transaction_Code','A')" />
+                                </li>
+                                <li>
+                                    <input type="button" id="btnReject" class="btn btn-primary" value="@objMessageKey.Reject" onclick="ApproveOrReject('@ViewBag.Music_Schedule_Transaction_Code','R')" />
+                                </li>
+                                <li>
+                                    <a data-dismiss="modal" class="btn-primary" href="#">@objMessageKey.Cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    </div>

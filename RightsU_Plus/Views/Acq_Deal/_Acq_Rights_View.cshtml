@@ -1,0 +1,344 @@
+﻿@model RightsU_Entities.Acq_Deal_Rights
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    RightsU_Plus.Controllers.Rights_Page_Properties objPage_Properties = new RightsU_Plus.Controllers.Rights_Page_Properties();
+
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+
+    if (Session["Rights_Page_Properties"] != null)
+    {
+        objPage_Properties = (RightsU_Plus.Controllers.Rights_Page_Properties)Session["Rights_Page_Properties"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    $('.expand_tabRestriction').expander({
+        slicePoint: 490,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<script type="text/javascript">
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+    var mode_G = '@ViewBag.MODE';
+    var dealMode_G = '@objSchema.Mode';
+    var rightType_G = '@Model.Original_Right_Type';
+    var isTheatricalRight_G = '@Model.Is_Theatrical_Right';
+    var treeID_G = '@ViewBag.TreeId';
+    var disableRightType_G = '@Model.Disable_RightType';
+    var existingRightType_G = '@Model.Existing_RightType'
+    var showPopup_G = '@ViewBag.ShowPopup';
+    var message_G = '@ViewBag.Message';
+    var messageFrom_G = '@ViewBag.MessageFrom';
+    var theatricalPlatformCode_G = '@Model.Theatrical_Platform_Code';
+
+    var URL_BindHoldback = '@Url.Action("BindHoldback", "Acq_Rights_Holdback")';
+    var URL_Add_Holdback = '@Url.Action("Add_Holdback", "Acq_Rights_Holdback")';
+    var URL_BindBlackOut = '@Url.Action("BindBlackOut", "Acq_Rights_Blackout")';
+    var URL_Add_Blackout = '@Url.Action("Add_Blackout", "Acq_Rights_Blackout")';
+    var URL_Bind_JSON_ListBox = '@Url.Action("Bind_JSON_ListBox", "Acq_Rights")'
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+    var URL_Cancel_Rights = '@Url.Action("Cancel_Rights", "Acq_Rights")';
+    var URL_Index = '@Url.Action("Index", "Acq_Rights_List")';
+    var URL_BindPlatformTreeView = '@Url.Action("BindPlatformTreeView", "Acq_Rights")';
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")';
+    var URL_BindPromoter = '@Url.Action("BindPromoter", "Acq_Rights_Promoter")';
+
+    var ShowMessage = {
+       "MsgTabCal": '@objMessageKey.Cannotselectrighttypeyearbasedasrightsalreadysyndicated',
+       "MsgTabPerp": '@objMessageKey.Cannotselectrighttypeperpetuityasrightsalreadysyndicated',
+       "MsgTabMile": '@objMessageKey.Cannotselectrighttypemilestoneasrightsalreadysyndicated',
+    }
+
+    $(document).ready(function () {
+       // $("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');
+    });
+</script>
+<script src="~/Custom_Scripts/Acq_Deal_Rights_View.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<style>
+    #Tree_Filter_Rights_Platform {
+        width: 511px;
+        position: relative !important;
+    }
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
+    }
+
+    #tabBlackout td {
+        text-align: center;
+    }
+
+    ul.fancytree-container {
+        height: 500px;
+        width: 510px;
+    }
+
+    #popPlatformRights .fancytree-container {
+        height: 400px;
+        width: 100%;
+    }
+
+    .Count {
+        position: absolute;
+        top: -22%;
+        background: #f9df73;
+        border-radius: 87%;
+        font-size: 11px;
+        height: 18px;
+        width: 18px;
+        text-align: center;
+        vertical-align: middle;
+        right: -21%;
+        z-index: 2;
+    }
+</style>
+
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabRights">
+
+                    <div class="scale_table_block">
+                        <table>
+                            <tr>
+                                <td width="50%" valign="top">
+                                    <label class="bold">@objMessageKey.Titles</label>
+                                    <div class="expandable">
+                                        @ViewBag.TitleNames
+
+                                        @{string ORightType = "";
+                                            if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
+                                            {
+                                                ORightType = Model.Original_Right_Type;
+                                            }
+                                            else
+                                            {
+                                                ORightType = Model.Right_Type;
+                                            }}
+                                        <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                    </div>
+                                    <br />
+                                    <label class="bold">@objMessageKey.RightsDefinition</label>
+                                    <div class="platform_checkbox">
+                                        <label>@objMessageKey.ExclusiveRights : @(Model.Is_Exclusive == "Y" ? "Yes" : "No")</label>
+                                        <br />
+                                        @objMessageKey.TitleLanguage :
+                                        <label id="Title_Language">@ViewBag.TitleLanguageName @(Model.Is_Title_Language_Right == "Y" ? "Yes" : "No")</label>
+                                        <br />
+                                        <label>Domestic Theatrical : @(Model.Is_Theatrical_Right == "Y" ? "Yes" : "No")</label>
+                                    </div>
+                                    <label>
+                                        <font class="bold">@objMessageKey.Region :</font>&nbsp;
+                                        @ViewBag.selected_Country_Count
+                                    </label>
+                                    <div class="expandable">
+                                        @ViewBag.selected_Country
+                                    </div>
+                                    <br />
+                                    <label class="bold">@objMessageKey.Sublicensing</label>
+                                    <div class="expandable">
+                                        @(Model.Sub_License_Code != null ? Model.Sub_License.Sub_License_Name : "No")
+                                    </div>
+                                    <br />
+                                    @if (ORightType == "Y")
+                                    {
+                                        <label class="bold">@objMessageKey.Yearbased</label>
+                                        <br />
+                                        <label>@objMessageKey.Tentative: </label>
+                                        @(Model.Is_Tentative == "Y" ? "Yes" : "No")
+                                        <span>&emsp;&emsp;&emsp;&emsp;@objMessageKey.Term:  </span>
+                                        @Html.Display("Term_YY", Model.Term_YY)
+                                        <span> @objMessageKey.Years </span>
+                                        @Html.Display("Term_MM", Model.Term_MM)
+                                        <span> @objMessageKey.Months</span>
+                                        @Html.Display("Term_DD", Model.Term_DD)
+                                        <span> Days</span>
+                                        <br />
+                                        <label>@objMessageKey.StartDate: </label>
+                                        <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Actual_Right_Start_Date).Replace("/", "-")</span>
+                                        <label>&emsp;&emsp;@objMessageKey.EndDate: </label>
+                                        if (Model.Is_Tentative != "Y")
+                                        {
+                                            <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Actual_Right_End_Date).Replace("/", "-")</span>
+                                        }
+                                    }
+                                    else if (ORightType == "M")
+                                    {
+                                        <label class="bold">@objMessageKey.Milestonebased</label>
+                                        <br />
+                                        <label>@objMessageKey.From</label>
+                                        @(Model.Milestone_Type_Code != null ? Model.Milestone_Type.Milestone_Type_Name : "")
+
+                                        <label>&emsp;&emsp;&emsp;&emsp;@objMessageKey.Term:  </label>
+                                        @Model.Milestone_No_Of_Unit
+                                        <label></label>
+                                        @ViewBag.Milestone_Unit_Type
+
+                                        if (!string.IsNullOrEmpty(Model.Milestone_Start_Date))
+                                        {
+                                            <br />
+                                            <label>@objMessageKey.StartDate: </label>
+                                            <span id="Milestone_SD" name="Milestone_SD">@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Actual_Right_Start_Date).Replace("/", "-")</span>
+                                            <label>&emsp;&emsp;@objMessageKey.EndDate: </label>
+                                            <span id="Milestone_ED" name="Milestone_ED">@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Actual_Right_End_Date).Replace("/", "-")</span>
+                                        }
+                                    }
+                                    else if (ORightType == "U")
+                                    {
+                                        <label class="bold">@objMessageKey.Perpetuity</label>
+                                        <br />
+                                        if (ViewBag.Enabled_Perpetuity == "Y")
+                                        {
+                                            <span>@objMessageKey.Term:&nbsp;&nbsp;</span>
+                                            @Html.Display("Term_YY", Model.Term_YY)
+                                            <span>@objMessageKey.Years&nbsp;&nbsp;</span>
+                                            @Html.Display("Term_MM", Model.Term_MM)
+                                            <span>@objMessageKey.Months</span>
+                                            @Html.Display("Term_DD", Model.Term_DD)
+                                            <span>Days</span>
+                                            <br />
+                                        }
+                                        <label>@objMessageKey.StartDate: </label>
+                                        <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Actual_Right_Start_Date).Replace("/", "-")</span>
+                                        if (ViewBag.Enabled_Perpetuity == "Y")
+                                        {
+                                            <label>&emsp;&emsp;@objMessageKey.EndDate: </label>
+                                            <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Actual_Right_End_Date).Replace("/", "-")</span>
+                                        }
+                                    }
+                                    @Html.Hidden("Right_Type", Model.Right_Type)
+                                    @Html.Hidden("Original_Right_Type", Model.Original_Right_Type)
+                                    <br />
+                                    <br />
+                                    <label class="bold">@objMessageKey.ROFR</label>
+                                    @if (Model.ROFR_DT != null)
+                                    {
+                                        <span id="ROFR_DT">@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.ROFR_Date).Replace("/", "-")</span>
+                                        <label class="bold">&nbsp;&nbsp;&nbsp;@objMessageKey.Days</label>
+                                        @Html.Display("ROFR_Days", Model.ROFR_Days)
+                                    }
+                                    else
+                                    {
+                                        <text>@objMessageKey.NA</text>
+                                        <label class="bold">&nbsp;&nbsp;&nbsp;@objMessageKey.Days</label>
+                                        <text>@objMessageKey.NA</text>
+                                    }
+                                    @if (Model.ROFR != null && objPage_Properties.Is_ROFR_Type_Visible == "Y")
+                                    {
+                                        <br />
+                                        <label class="bold">@objMessageKey.ROFRType</label>
+                                        @Model.ROFR.ROFR_Type
+                                    }
+                                    @if (Model.ROFR == null && objPage_Properties.Is_ROFR_Type_Visible == "Y")
+                                    {
+                                        <br />
+                                        <label class="bold">@objMessageKey.ROFRType</label>
+                                        <text>@objMessageKey.NA</text>
+                                    }
+                                    <br />
+                                    <br />
+                                    <label class="bold">@objMessageKey.Subtitling&nbsp;:&nbsp;</label> @ViewBag.selected_SL_Count
+                                    <div class="expandable">
+                                        @ViewBag.selected_SL
+                                    </div>
+                                    <br />
+                                    <label class="bold">@objMessageKey.Dubbing&nbsp;:&nbsp;</label>@ViewBag.selected_DL_Count
+                                    <div class="expandable">
+                                        @ViewBag.selected_DL
+                                    </div>
+                                    <br />
+                                </td>
+                                <td valign="top">
+                                    <div class="platform_wrapper">
+                                        <label class="bold" for="platform">@objMessageKey.Platform/ @objMessageKey.Rights</label>
+                                        <div id="tree" class="treeClass">
+                                        </div>
+                                        <span id="lblTheatrical" style="display: none;">@objMessageKey.Theatrical</span>
+                                        <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" value="@Model.Platform_Codes" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <label class="bold">@objMessageKey.SpecialDetails</label>
+                                    <div class="tabbable">
+                                        <ul class="nav nav-tabs nav-tab pull-left">
+                                            <li class="active" style="z-index:0;">
+                                                <a data-toggle="tab" href="#tabRestriction" onclick="OnTabChange('RR')" role="tab">@objMessageKey.RestrictionRemark</a>
+                                            </li>
+                                            <li data-toggle="tab" href="#tabHoldback" onclick="OnTabChange('HB')" role="tab" style="z-index:0;">
+                                                <a class="" href='#'>@objMessageKey.Holdback</a>
+                                                <span id="spnHoldBackCount" class="Count">@Model.Acq_Deal_Rights_Holdback.Count()</span>
+                                            </li>
+                                            <li data-toggle="tab" href="#tabBlackout" onclick="OnTabChange('BO')" role="tab" style="z-index:0;">
+                                                <a class="" href="#">@objMessageKey.Blackout</a>
+                                                <span id="spnBlackOutCount" class="Count">@Model.Acq_Deal_Rights_Blackout.Count()</span>
+                                            </li>
+                                            @if (ViewBag.PromoterTab == "Y")
+                                            {
+                                                <li data-toggle="tab" href="#tabPromoter" onclick="OnTabChange('PR')" role="tab" style="z-index:0;">
+                                                    <a class="" href="#">@objMessageKey.Promoter</a>
+                                                    <span id="spnPromotercount" class="Count">@Model.Acq_Deal_Rights_Promoter.Count()</span>
+                                                </li>
+                                            }
+                                        </ul>
+                                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                                            <div class="tab-pane active scale_table_block" id="tabRestriction">
+                                                <div class="expand_tabRestriction">
+                                                    @{
+                                                        if (!string.IsNullOrEmpty(Model.Restriction_Remarks))
+                                                        {
+                                                            @Html.Raw(Model.Restriction_Remarks.Replace("\n", "<br/>"))
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane scale_table_block" id="tabHoldback">
+                                            </div>
+                                            <div class="tab-pane scale_table_block" id="tabBlackout">
+                                            </div>
+                                            <div class="tab-pane scale_table_block" id="tabPromoter">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Approved_List")
+                    <br />
+                }
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            @*<input type="button" id="btnCancelDeal" class="btn btn-primary" value="Cancel" onclick="SaveApprovalRemarks(); location.href='@Url.Action("Index", "Acq_Rights_List")    '" />*@
+                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="SaveApprovalRemarksAndRedirect('@GlobalParams.Page_From_Rights')" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

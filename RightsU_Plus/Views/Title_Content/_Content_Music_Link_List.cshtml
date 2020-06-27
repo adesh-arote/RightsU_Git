@@ -1,0 +1,200 @@
+﻿@model List<RightsU_Entities.Content_Music_Link>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.System_Parameter_New objSPN = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "DefaultVersionCode").FirstOrDefault();
+    int DefaultVersionCode = 0;
+    if (objSPN != null)
+    {
+        DefaultVersionCode = Convert.ToInt32(objSPN.Parameter_Value);
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }   
+}
+<script>
+    $(document).ready(function () {
+        debugger
+        $('select[id*="ddlVersion_"]').each(function (index) {
+            debugger
+            var ddlVersionID = $(this)[0].id;
+            var hdnVerCodeId = ddlVersionID.replace('ddlVersion_', 'hdnVersionCode_');
+            var versionCode = $('#' + hdnVerCodeId).val();
+            $('#' + ddlVersionID).val(versionCode);
+        });
+    });
+</script>
+<style>
+    .tdchkMusicLink {
+        width: 2%;
+    }
+</style>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            @if (ViewBag.Mode != "V")
+            {
+                <th><input type="checkbox" value="" id="chkAllMusicLink" data-placement="right" title="@objMessageKey.SelecttoRemoveMusicTrack" /></th>}
+            <th style="width:20%;">@objMessageKey.MusicTrack</th>
+            <th style="width:15%">@objMessageKey.MovieName</th>
+            <th style="width:20%">@objMessageKey.Version</th>
+            <th style="width:15%;">@objMessageKey.TCIn</th>
+            <th style="width:15%;">@objMessageKey.TCOut</th>
+            <th style="width:15%;">@objMessageKey.Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int i = 1; }
+        @foreach (var item in Model)
+        {
+            string strFrom = "00:00:00", strTo = "00:00:00", strDuration = "00:00:00", strFromFrame = "00", strToFrame = "00", strDurationFrame = "00", titleContentVersionName = "";
+            if (item.From != null && item.To != null && item.Duration != null)
+            {
+                strFrom = item.From.Value.ToString();
+                strTo = item.To.Value.ToString();
+                strDuration = item.Duration.ToString();
+            }
+
+            if (item.From_Frame != null && item.To_Frame != null && item.Duration_Frame != null)
+            {
+                strFromFrame = item.From_Frame.Value.ToString("00");
+                strToFrame = item.To_Frame.Value.ToString("00");
+                strDurationFrame = item.Duration_Frame.Value.ToString("00");
+            }
+            if (item.Title_Content_Version_Code != null)
+            {
+                titleContentVersionName = item.Title_Content_Version.Version.Version_Name;
+            }
+            <tr id="trMusicLink_@i">
+                @if (ViewBag.Mode != "V")
+                {
+                    <td>
+                        <input type="hidden" id="hdnMusicCode_@i" value="@item.Music_Title_Code" />
+                        <input type="hidden" id="hdnDummyGuid_@i" value="@item.Dummy_Guid" />
+                        <input type="checkbox" id="chkMusicLink_@i" value="@item.Dummy_Guid" data-placement="right" title="@objMessageKey.SelecttoremoveTrack" />
+                    </td>
+                }
+                <td>@item.Music_Title.Music_Title_Name</td>
+
+
+                <td>
+                    @if (item.Music_Title.Music_Album != null)
+                    {
+                        @item.Music_Title.Music_Album.Music_Album_Name;
+
+                    }
+                    else
+                    {
+                        @item.Music_Title.Movie_Album;
+                    }
+                </td>
+                <td>
+                    @if (ViewBag.Mode == "V")
+                    {
+                        @item.Title_Content_Version.Version.Version_Name
+                    }
+                    @if (ViewBag.Mode != "V")
+                    {
+                        if ((item.Version_Code ?? 0) == 0)
+                        {
+                            if (item.Title_Content_Version != null)
+                            {
+                                item.Version_Code = item.Title_Content_Version.Version_Code;
+                            }
+                            else
+                            {
+                                item.Version_Code = DefaultVersionCode;
+                            }
+                        }
+                            @Html.DropDownList("Version_Name", ViewBag.Version as SelectList, new { @id = "ddlVersion_" + i, @class = "",@style = "width:100%"})
+                            <input type="hidden" id="hdnVersionCode_@i" value="@item.Version_Code" />
+
+                    }  
+                </td>
+                <td style="text-align:center">
+                    @if (ViewBag.Mode == "V")
+                    {
+                        <span id="lblFrom_@i">@strFrom:</span>
+                        <span id="lblFromFrame_@i">@strFromFrame</span>
+                    }
+                    else
+                    {
+                        @*<input type="time" step="1" id="txtFrom_@i" min="00:00:00" max="30:00:00" value="@strFrom" class="timeTextBox" onfocusout="calculateDuration(@i, false, false)">*@
+                        <input type="text" id="txtFrom_@i" value="@strFrom" name="txtFrom" onfocusout="calculateDuration(@i, false, false)" style="width:70px" />
+                        <input type="text" id="txtFrameFrom_@i" class="numeric_Frame smalltext" value="@strFromFrame" onfocusout="calculateDuration(@i, false, false)" />
+                    }
+                </td>
+                <td style="text-align:center">
+                    @if (ViewBag.Mode == "V")
+                    {
+                        <span id="lblTo_@i">@strTo:</span>
+                        <span id="lblToFrame_@i">
+                            @strToFrame
+                        </span>
+                    }
+                    else
+                    {
+                        @*<input type="time" step="1" id="txtTo_@i" min="00:00:00" max="30:00:00" value="@strTo" class="timeTextBox" onfocusout="calculateDuration(@i, false, false)">*@
+                        <input type="text" id="txtTo_@i" value="@strTo" onfocusout="calculateDuration(@i, false, false)" style="width:70px">
+                        <input type="text" id="txtFrameTo_@i" class="numeric_Frame smalltext" value="@strToFrame" onfocusout="calculateDuration(@i, false, false)" />
+                    }
+                </td>
+                <td style="text-align:center">
+                    @if (ViewBag.Mode == "V")
+                    {
+                        <span id="lblDuration_@i">@strDuration:</span>
+                        <span id="lblDurationFrame_@i">
+                            @strDurationFrame
+                        </span>
+                    }
+                    else
+                    {
+                        @*<input type="time" step="1" id="lblDuration_@i" min="00:00:00" max="30:00:00" value="@strDuration" onkeypress="Clear(@i)" onclick="Clear(@i)" class="timeTextBox">*@
+                        <input type="text" id="lblDuration_@i" value="@strDuration" onkeypress="Clear(@i)" onclick="Clear(@i)" style="width:70px" >
+                        <input type="text" id="lblDurationFrame_@i" value="@strDurationFrame" class="numeric_Frame smalltext" onkeypress="Clear(@i)" onclick="Clear(@i)" />
+                    }
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>
+
+<script>
+    function Clear(rowNo) {
+        debugger;
+        $("#txtFrom_" + rowNo).val("00:00:00");
+        $("#txtFrameFrom_" + rowNo).val("00");
+        $("#txtTo_" + rowNo).val("00:00:00");
+        $("#txtFrameTo_" + rowNo).val("00");
+    }
+    $(document).ready(function () {
+        debugger;
+
+        $('input[id*="txtFrom_"]').each(function (index) {
+            debugger
+            var txtFrom = $(this)[0].id;
+            $('#' + txtFrom).timeEntry({ show24Hours: true, showSeconds: true });
+        });
+        $('input[id*="txtTo_"]').each(function (index) {
+            debugger
+            var txtTo = $(this)[0].id;
+            $('#' + txtTo).timeEntry({ show24Hours: true, showSeconds: true });
+        });
+        $('input[id*="lblDuration_"]').each(function (index) {
+            debugger
+            var lblDuration = $(this)[0].id;
+            $('#' + lblDuration).timeEntry({ show24Hours: true, showSeconds: true });
+        });
+
+        $('.timeEntry-control').hide();
+    });
+</script>

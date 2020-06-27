@@ -1,0 +1,169 @@
+﻿@model List<RightsU_Entities.USPTATSLAList_Result>
+@using RightsU_BLL
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    List<RightsU_Entities.TATSLAMatrix> lstTATSLAMatrix = new TATSLAMatrix_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).ToList();
+}
+
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    $(document).ready(function () {
+        validateTxtValues();
+    });
+   function validateTxtValues() {
+        $(".txtSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+   }
+</script>
+<style>
+    .txtStyle {
+        width: 50px;
+    }
+
+    #ddlWorkflowStatus_chosen {
+        max-width: 100px;
+    }
+
+    .sumo_ddlUsersSLA1 {
+        width: 150px;
+    }
+
+    .sumo_ddlUsersSLA2 {
+        width: 150px;
+    }
+
+    .sumo_ddlUsersSLA3 {
+        width: 150px;
+    }
+</style>
+
+<div class="">
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block">
+            <table class="table table-bordered table-hover" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:100px;">Work flow Status</th>
+                        <th colspan="2" style="width:100px;">SLA 1(Days)</th>
+                        <th rowspan="2" style="width:150px;">Email Recipients for SLA 1</th>
+                        <th colspan="2" style="width:100px;">SLA 2(Days)</th>
+                        <th rowspan="2" style="width:150px;">Email Recipients for SLA 2</th>
+                        <th colspan="2" style="width:100px;">SLA 3(Days)</th>
+                        <th rowspan="2" style="width:150px;">Email Recipients for SLA 3</th>
+                        <th rowspan="2" style="width:100px;">Action</th>
+                    </tr>
+                    <tr>
+                        <th style="width:50px">From</th>
+                        <th style="width:50px;">To</th>
+                        <th style="width:50px;">From</th>
+                        <th style="width:50px;">To</th>
+                        <th style="width:50px;">From</th>
+                        <th style="width:50px;">To</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (Model != null)
+                    {
+                        if (ViewBag.CommandName == "Add")
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DropDownList("ddlWorkflowStatus", ViewBag.SLAStatus as SelectList, "Select", new { @id = "ddlWorkflowStatus", @class = "form_input chosen-select" })
+                                </td>
+                                <td><input type="text" id="txtSLA1FromDays" name="txtSLA1FromDays" class="txtStyle txtSize" /></td>
+                                <td><input type="text" id="txtSLA1ToDays" name="txtSLA1ToDays" class="txtStyle txtSize" /></td>
+                                <td>
+                                    @Html.DropDownList("ddlUsersSLA1", ViewBag.lstUsers as MultiSelectList, new { @id = "ddlUsersSLA1", @multiple = "multiple" })
+                                </td>
+                                <td><input type="text" id="txtSLA2FromDays" name="txtSLA2FromDays" class="txtStyle txtSize" /></td>
+                                <td><input type="text" id="txtSLA2ToDays" name="txtSLA12ToDays" class="txtStyle txtSize" /></td>
+                                <td>
+                                    @Html.DropDownList("ddlUsersSLA2", ViewBag.lstUsers as MultiSelectList, new { @id = "ddlUsersSLA2", @multiple = "multiple" })
+                                </td>
+                                <td><input type="text" id="txtSLA3FromDays" name="txtSLA3FromDays" class="txtStyle txtSize" /></td>
+                                <td><input type="text" id="txtSLA3ToDays" name="txtSLA3ToDays" class="txtStyle txtSize" /></td>
+                                <td>
+                                    @Html.DropDownList("ddlUsersSLA3", ViewBag.lstUsers as MultiSelectList, new { @id = "ddlUsersSLA3", @multiple = "multiple" })
+                                </td>
+                                <td align="center">
+                                    <a title="Save" href="#" data-original-title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveSLAMatrix('Add');"></a>
+                                    <a title="Cancel" href="#" class="glyphicon glyphicon-remove-circle" data-original-title="Cancel" onclick="BindSLAMatrix('', 0, 'Delete');"></a>
+                                </td>
+                            </tr>
+                        }
+                        foreach (var item in Model)
+                        {
+                            if (ViewBag.CommandName == "Edit" && item.TATSLAStatusName == ViewBag.StatusName)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DropDownList("ddlWorkflowStatus", ViewBag.SLAStatus as SelectList, new { @id = "ddlWorkflowStatus", @class = "form_input chosen-select" })
+                                    </td>
+                                    <td><input type="text" id="txtSLA1FromDays" name="txtSLA1FromDays" value="@item.SLA1FromDays" class="txtStyle txtSize" /></td>
+                                    <td><input type="text" id="txtSLA1ToDays" name="txtSLA1ToDays" value="@item.SLA1ToDays" class="txtStyle txtSize" /></td>
+                                    <td style="width:15%;">
+                                        @Html.DropDownList("ddlUsersSLA1", ViewBag.lstUsers1 as MultiSelectList, new { @id = "ddlUsersSLA1", @multiple = "multiple" })
+                                    </td>
+                                    <td><input type="text" id="txtSLA2FromDays" name="txtSLA2FromDays" value="@item.SLA2FromDays" class="txtStyle txtSize" /></td>
+                                    <td><input type="text" id="txtSLA2ToDays" name="txtSLA2ToDays" value="@item.SLA2ToDays" class="txtStyle txtSize" /></td>
+                                    <td style="width:15%;">
+                                        @Html.DropDownList("ddlUsersSLA2", ViewBag.lstUsers2 as MultiSelectList, new { @id = "ddlUsersSLA2", @multiple = "multiple" })
+                                    </td>
+                                    <td><input type="text" id="txtSLA3FromDays" name="txtSLA3FromDays" value="@item.SLA3FromDays" class="txtStyle txtSize" /></td>
+                                    <td><input type="text" id="txtSLA3ToDays" name="txtSLA3ToDays" value="@item.SLA3ToDays" class="txtStyle txtSize" /></td>
+                                    <td>
+                                        <input type="hidden" name="MatrixCodes" id="hdnMatrixCodes_@item.SLA1FromDays" value='@item.TATSLAMatixCodes' />
+                                        @Html.DropDownList("ddlUsersSLA3", ViewBag.lstUsers3 as MultiSelectList, new { @id = "ddlUsersSLA3", @multiple = "multiple" })
+                                    </td>
+                                    <td align="center" style="width:10%;">
+                                        <a title="Save" href="#" data-original-title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveSLAMatrix('Edit','@item.TATSLAMatixCodes');"></a>
+                                        <a title="Cancel" href="#" class="glyphicon glyphicon-remove-circle" data-original-title="Cancel" onclick="BindSLAMatrix('',0,'Delete');"></a>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@item.TATSLAStatusName</td>
+                                    <td align="center">@item.SLA1FromDays</td>
+                                    <td align="center">@item.SLA1ToDays</td>
+                                    <td>@item.SLA1Users</td>
+                                    <td align="center">@item.SLA2FromDays</td>
+                                    <td align="center">@item.SLA2ToDays</td>
+                                    <td>@item.SLA2Users</td>
+                                    <td align="center">@item.SLA3FromDays</td>
+                                    <td align="center" id="tdSLA3ToDays">
+                                        @item.SLA3ToDays
+                                </td>
+                                <td>@item.SLA3Users</td>
+                                <td align="center">
+                                    <a title="Edit" href="#" class="glyphicon glyphicon-pencil" onclick="BindSLAMatrix('@item.TATSLAStatusName',0,'Edit');"></a>
+                                    <a title="Delete" href="#" class="glyphicon glyphicon-trash" data-original-title="Cancel" onclick="DeleteConfirmation('@item.TATSLAMatixCodes');"></a>
+                                </td>
+                            </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="11">No record found</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

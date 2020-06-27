@@ -1,0 +1,61 @@
+﻿@model List<RightsU_Entities.Email_Notification_Log>
+@{
+    int count = 0;
+    <input type="hidden" id="hdnCount" value="@ViewBag.EmailCount" />
+    <input type="hidden" id="FirstTotalCount" value="@ViewBag.FirstTotalCount"  />
+    <input type="hidden" id="hdnDiv" value="div_1" />
+    foreach (var item in Model)
+    {
+        count = count + 1;
+        
+        <input type="hidden" id="hdnSeenId_@count" value="@item.Email_Notification_Log_Code" />
+        <input type="hidden" id="hdnSeen_@count" value="@item.Is_Read" />
+        if (count != 1)
+        {
+
+            <div id='div_@count' style="display:none">
+                @Html.Raw(HttpUtility.HtmlDecode(@item.Email_Body.Replace("tblFormat", "table table-bordered table-hover")))
+            </div>
+        }
+        else
+        {
+            <div id='div_@count'>
+                @Html.Raw(HttpUtility.HtmlDecode(@item.Email_Body.Replace("tblFormat", "table table-bordered table-hover")))
+            </div>
+        }
+    }
+    <input type="hidden" id="hdnNoOfGrid" value="@count" />
+    
+}
+<script>
+    $(document).ready(function () {
+        debugger
+        if ($('#hdnNoOfGrid').val() < 2)
+        {
+            $('#btnPrev').attr('disabled', true);
+            $('#btnNext').attr('disabled', true);
+        }
+        else {
+
+            $('#btnPrev').attr('disabled', false);
+            $('#btnNext').attr('disabled', false);
+        }
+    });
+</script>
+<style>
+    /*.tblFormat {border-collapse: collapse;width: 100%;border-color:black}th, td {text-align: left;padding: 2px;border-color:black; Font-Size:12; font-family: verdana;}*/
+					 /*th {background-color: #c7c6c6;color: black;border-color:black}*/
+        /*.tblFormat td {
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+        border-left: 1px solid black;
+        vertical-align: middle;
+    }
+        .tblFormat th {
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+        border-left: 1px solid black;
+        border-top: 1px solid black;
+        vertical-align: middle;
+    }*/
+</style>

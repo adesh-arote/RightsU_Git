@@ -1,0 +1,172 @@
+﻿@model List<RightsU_Entities.Channel>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    } 
+}
+@using RightsU_BLL
+@using RightsU_Entities
+@using RightsU_DAL
+@using UTOFrameWork.FrameworkClasses
+
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<script>
+    @*$(document).ready(function () {
+
+        //@ViewBag.ChannelCode = "";
+    });*@
+
+    $('.expand_strCountry').expander({
+        slicePoint: 22,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:12%;">@objMessageKey.ChannelName</th>
+            @*<th style="width:13%;">Channel Beam</th>
+                <th style="width:14%;">Genres</th>*@
+            <th style="width:8%;">@objMessageKey.EntityType</th>
+            <th style="width:17%;">@objMessageKey.Entity / @objMessageKey.Broadcaster</th>
+            <th style="width:15%;">@objMessageKey.Country</th>
+            <th style="width:9%;">@objMessageKey.Status</th>
+            <th style="width:9%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                string EntityType = "";
+                string EntityBroadcaster = "";
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+
+                //        RightsU_NeoEntities en = new RightsU_NeoEntities("");
+                if (item.Entity_Type == "O")
+                {
+                    EntityType = objMessageKey.Own;
+                    EntityBroadcaster = new RightsU_BLL.Entity_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(item.Entity_Code)).Entity_Name;
+                }
+                else
+                {
+                    EntityType = objMessageKey.Others;
+                    EntityBroadcaster = new RightsU_BLL.Vendor_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(item.Entity_Code)).Vendor_Name;
+                }
+
+                //var Country = new RightsU_BLL.Country_Service().GetById().Country_Name;
+
+                string strCountry = "";
+                if (item.Channel_Territory.Count > 0)
+                {
+
+                    strCountry = string.Join(", ", item.Channel_Territory.Select(s => s.Country.Country_Name).ToList());
+                }
+
+                if (item.Is_Active == "N")
+                {
+                    strActive = @objMessageKey.Deactive;
+                }
+                <tr>
+                    <td>
+                        <span>@item.Channel_Name</span>
+                    </td>
+                    @*<td>
+                            <span>@item.Channel_Id</span>
+                        </td>
+                        <td>
+                            <span>@item.Genre.Genres_Name</span>
+                        </td>*@
+                    <td align="center">
+                        <span>@EntityType</span>
+                    </td>
+                    <td>
+                        <span>@EntityBroadcaster</span>
+                    </td>
+                    <td style="text-align:center">
+                        <span class="expand_strCountry">@strCountry</span>
+                    </td>
+                    <td style="text-align:center">
+                        <span>@strActive</span>
+                    </td>
+
+                    <td style="text-align:center">
+                        @{
+                            bool canDeactive = true;
+                            string toolTipMsg = "";
+                            if (item.IPR_Opp_Channel.Count > 0 || item.IPR_Rep_Channel.Count > 0)
+                            {
+                                canDeactive = false;
+                                toolTipMsg = objMessageKey.CannotdeactivatethischannelasitisusedinIPR;
+                            }
+                            else if (item.Music_Deal_Channel.Count > 0)
+                            {
+                                canDeactive = false;
+                                toolTipMsg = objMessageKey.CannotdeactivatethischannelasitisusedinMusicDeal;
+                            }
+
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            {
+                                if (item.Is_Active == "Y")
+                                {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock('EDIT',@item.Channel_Code)"></a>
+                                }
+                                else
+                                {
+                                    @*<a title="Can not edit this language as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>*@
+                                      <a title="@objMessageKey.Cannoteditthislanguageasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                }
+                            }
+
+                            if (item.Is_Active == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                {
+                                    if (canDeactive)
+                                    {
+                                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactiveChannel(@item.Channel_Code, 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveChannel(@item.Channel_Code, 'Y')"></a>
+                                }
+                            }
+                        }
+                    </td>
+
+                </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">@objMessageKey.Norecordfound</td>
+                                </tr>
+                            }
+    </tbody>
+</table>

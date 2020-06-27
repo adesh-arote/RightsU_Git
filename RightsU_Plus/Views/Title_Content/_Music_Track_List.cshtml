@@ -1,0 +1,39 @@
+﻿@model List<RightsU_Entities.USP_List_MusicTrack_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }   
+}
+
+<table class="table table-bordered table-hover" id="tblMusicTrack">
+    <thead>
+        <tr>
+            @*<th>
+                <input type="checkbox" id="chkAllMusicTrack"/>
+            </th>*@
+            <th style="width: 22%;">@objMessageKey.MusicTrack</th>
+            <th style="width: 9%;">@objMessageKey.YOR</th>
+            <th style="width: 10%;">@objMessageKey.Duration</th>
+            <th style="width: 28%;">@objMessageKey.MovieName</th>
+            <th style="width: 30%;">@objMessageKey.MusicLabel</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int i = 1; }
+        @foreach (var item in Model)
+        {
+            <tr id="trMusicTrack_@i" ondblclick="trMusicTrack_OnDblClick('@item.Dummy_Guid')" style="cursor:pointer" title="@objMessageKey.Doubleclicktoselect">
+                @*<td class="action">
+                    <input type="checkbox" id="chkMusicTrack_@i" value="@item._Dummy_Guid" clientmode="Static" style="margin-left: 2px;" />
+                </td>*@
+                <td>@item.Music_Title_Name</td>
+                <td style="text-align:center">@item.Release_Year</td>
+                <td style="text-align:center">@item.Duration_In_Min</td>
+                <td>@item.Movie_Album</td>
+                <td>@item.Music_Label_Name</td>
+            </tr>
+        }
+    </tbody>
+</table>

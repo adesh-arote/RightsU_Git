@@ -1,0 +1,66 @@
+
+-------------------------------------------------
+24-Jul-2019  21:26:40    LDAP 
+LDAP Login    LDAP Validation
+dominName:oracle11i.com
+
+-------------------------------------------------
+24-Jul-2019  21:26:41    LDAP 
+LDAP Login    LDAP Validation
+userName:ADMIN
+
+-------------------------------------------------
+24-Jul-2019  21:26:41    LDAP 
+LDAP Login    LDAP Validation
+pwd:a
+
+-------------------------------------------------
+24-Jul-2019  21:26:41    LDAP 
+LDAP Login    LDAP Validation
+DirPath:LDAP://uto.oracle11i.com:389/DC=UTO,DC=ORACLE11I,DC=COM
+
+-------------------------------------------------
+24-Jul-2019  21:26:43    LDAP 
+LDAP Login    LDAP Validation
+domainAndUsername:oracle11i.com\ADMIN
+
+-------------------------------------------------
+24-Jul-2019  21:26:43    LDAP 
+LDAP Login    LDAP Validation
+password:a
+
+-------------------------------------------------
+24-Jul-2019  21:26:43    LDAP 
+LDAP Login    LDAP Validation
+Directory Entry Code Started
+
+-------------------------------------------------
+24-Jul-2019  21:26:43    LDAP 
+LDAP Login    LDAP Validation
+Directory Entry object created
+
+-------------------------------------------------
+24-Jul-2019  21:27:16    LDAP 
+LDAP Login    LDAP Validation
+domainAndUsername:oracle11i.com\ADMIN
+
+-------------------------------------------------
+24-Jul-2019  21:27:17    LDAP 
+LDAP Login    LDAP Validation
+password:a
+
+-------------------------------------------------
+24-Jul-2019  21:27:17    LDAP 
+LDAP Login    LDAP Validation
+Directory Entry Code Started
+
+-------------------------------------------------
+24-Jul-2019  21:27:18    LDAP 
+LDAP Login    LDAP Validation
+Directory Entry object created
+
+-------------------------------------------------
+24-Jul-2019  21:28:12    LDAP 
+LDAP Login    LDAP Validation-1
+The server is not operational.
+

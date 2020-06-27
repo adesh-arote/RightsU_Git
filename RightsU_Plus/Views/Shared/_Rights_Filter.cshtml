@@ -1,0 +1,641 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@using RightsU_BLL;
+@using RightsU_Entities;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    var Modulecodes = 0;
+    int rightcount = 0;
+    int pushbackcount = 0;
+    if (ViewBag.FilterPageFrom == "AR" || ViewBag.FilterPageFrom == "AP")
+    {
+        if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+        {
+            objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+            Modulecodes = GlobalParams.ModuleCodeForAcqDeal;
+            if (objSchema.Rights_Platform != null)
+            {
+                string[] code = objSchema.Rights_Platform.Split(',');
+                int[] element = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => code.Contains(x.Platform_Code.ToString())).Select(s => s.Platform_Code).Distinct().ToArray();
+                //var code = objSchema.Rights_Platform.Replace("0", "");
+                // int?[] element = new Acq_Deal_Rights_Service().SearchFor(x => x.Acq_Deal_Code == objSchema.Deal_Code).SelectMany(x => x.Acq_Deal_Rights_Platform).Where(s => objSchema.Rights_Platform.Contains(s.Platform_Code.ToString())).Select(s => s.Platform_Code).Distinct().ToArray();
+                rightcount = element.Count();
+            }
+            if (objSchema.Pushback_Platform != null)
+            {
+                string[] code = objSchema.Pushback_Platform.Split(',');
+                int[] element = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => code.Contains(x.Platform_Code.ToString())).Select(s => s.Platform_Code).Distinct().ToArray();
+                pushbackcount = element.Count();
+            }
+        }
+    }
+    if (ViewBag.FilterPageFrom == "SR" || ViewBag.FilterPageFrom == "SP")
+    {
+        if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+        {
+            objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+            Modulecodes = GlobalParams.ModuleCodeForSynDeal;
+            if (objSchema.Rights_Platform != null)
+            {
+                string[] code = objSchema.Rights_Platform.Split(',');
+                int[] element = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => code.Contains(x.Platform_Code.ToString())).Select(s => s.Platform_Code).Distinct().ToArray();
+                rightcount = element.Count();
+            }
+            if (objSchema.Pushback_Platform != null)
+            {
+                string[] code = objSchema.Pushback_Platform.Split(',');
+                int[] element = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => code.Contains(x.Platform_Code.ToString())).Select(s => s.Platform_Code).Distinct().ToArray();
+                pushbackcount = element.Count();
+            }
+        }
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    @*var URL_BindRightsPlatformTreePopup = '@Url.Action("BindRightsPlatformTreePopup", "Acq_Rights_List")';*@
+</script>
+<script>
+    var pos = null;
+    var URL_BindRegionList = "";
+    var URL_BindRightsPlatformTreePopup = "";
+    var rightsRegion_G = "";
+    var rightsTitle_G = "";
+    var viewType = "";
+    var IsShowAll = "N";
+    if ('@objSchema.Page_From' == "PBK") {
+        rightsRegion_G = '@objSchema.Pushback_Region'.split(',');
+    }
+    else {
+        rightsRegion_G = '@objSchema.Rights_Region'.split(',');
+    }
+    if ('@objSchema.Page_From' == "PBK") {
+        rightsTitle_G = '@objSchema.Pushback_Titles'.split(',');
+    }
+    else {
+        rightsTitle_G = '@objSchema.Rights_Titles'.split(',');
+    }
+    if ('@objSchema.Page_From' == "PBK") {
+        viewType = '@objSchema.Pushback_View'.split(',');
+    }
+    else {
+        viewType = '@objSchema.Rights_View'.split(',');
+    }
+    $(document).ready(function () {
+        var rego = rightsRegion_G;
+        $('#ddlTitleCode').SumoSelect();
+        var ModuleCode =$('#hdnModuleCode').val();
+        var currentTab = '@objSchema.Page_From';
+
+        $('#ddlRegionn').SumoSelect();
+
+        $("#ddlTitleCode").val(rightsTitle_G)[0].sumo.reload();
+        $('#ddlRegionn').val(rightsRegion_G);
+        if (viewType == "G")
+        {
+            $("#G").prop("checked", true);
+        }
+        else if (viewType == "S")
+        {
+            $("#S").prop("checked", true);
+        }
+        else if (viewType == "D")
+        {
+            $("#D").prop("checked", true);
+        }
+        if (rightsRegion_G != "") {
+            if ('@ViewBag.RegionName' != "") {
+                $('.sumo_Region p .placeholder')
+
+                $('.sumo_Region p .placeholder').text('@ViewBag.RegionName')
+                $('.sumo_Region  p .placeholder').removeAttr('class');
+            }
+        }
+        $('#hdnTVCode').val(rightsPlatform_G);
+        if (rightsExclusive_G != "")
+         $("#lstReleaseUnit").val(rightsExclusive_G).trigger("chosen:updated");
+
+        $("td").bind("mousemove", function (event) {
+            $(this).find("span.PlatformExpand").css({
+                top: event.pageY + 5 + "px",
+                left: event.pageX + 5 + "px"
+            }).show();
+        }).bind("mouseout", function () {
+            $("span.PlatformExpand").hide();
+        });
+        $('.clsPlatform').on('click', function (e) {
+            debugger
+            if ('@Modulecodes' == '@GlobalParams.ModuleCodeForAcqDeal') {
+                    if (currentTab == "RGT") {
+                        URL_BindRightsPlatformTreePopup = '@Url.Action("BindRightsPlatformTreePopup", "Acq_Rights_List")';
+                    } else {
+                        URL_BindRightsPlatformTreePopup = '@Url.Action("BindRightsPlatformTreePopup", "Acq_Pushback")';
+                    }
+                }
+                else {
+                    if (currentTab == "RGT") {
+                        URL_BindRightsPlatformTreePopup = '@Url.Action("BindRightsPlatformTreePopup", "Syn_Rights_List")';
+                    } else {
+                        URL_BindRightsPlatformTreePopup = '@Url.Action("BindRightsPlatformTreePopup", "Syn_Pushback")';
+                    }
+                }
+                titleCode = $('#hdnTitleCode').val();
+                platformcode = $('#hdnTVCode').val();
+
+                var btdId = e.target.id;
+                // var hdnRightCodeID = btdId.replace("_aViewPlatform", "_hdnRightCode");
+                //var rightCode = $('#' + hdnRightCodeID).val();
+                pos = $('#' + btdId).offset();
+                $.ajax({
+                    type: "POST",
+                    url: URL_BindRightsPlatformTreePopup,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        titleCode: titleCode,
+                        platformCode: platformcode
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                            $('#divPlatformTrees').empty();
+                            $('#divPlatformTrees').html(result);
+                            $('#popupFade1').offset({ top: pos.top, left: pos.left }).fadeIn();
+                            $('#popupFade1').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    },
+                    error: function (result) { }
+                });
+                return false;
+             });
+        $("#popupFade1").click(function (event) {
+            event.stopPropagation();
+        });
+    });
+
+    function FadeOutPopup1(temp) {
+        debugger;
+        if (pos != null) {
+            var code = $('#hdnTVCode').val();
+            if (code != "") {
+                if (document.getElementById('Rights_Platform_FilterplatformCnt') != null) {
+                    var count = parseInt(document.getElementById('Rights_Platform_FilterplatformCnt').innerHTML);
+                    document.getElementById('TotalselectedPlatform').innerHTML = count;
+                }
+            }
+            $('#divPlatformTrees').empty();
+            $('#popupFade1').offset({ top: pos.top, left: pos.left }).fadeOut();
+            return false;
+        }
+    }
+    function HideAllDiv() {
+        try {
+            FadeOutPopup1();
+        }
+        catch (err) {
+        }
+    }
+
+    $('#ddlTitleCode').on('sumo:closed', function (sumo) {
+        BindRegionList();
+    });
+
+
+    function BindRegionList() {
+        showLoading();
+        document.getElementById('TotalselectedPlatform').innerHTML = parseInt(0);
+        var ModuleCode = $('#hdnModuleCode').val();
+        var currentTab = '@objSchema.Page_From';
+        if ('@Modulecodes' == '@GlobalParams.ModuleCodeForAcqDeal') {
+            if (currentTab == "RGT") {
+                URL_BindRegionList = '@Url.Action("BindRegionList", "Acq_Rights_List")';
+            } else {
+                URL_BindRegionList = '@Url.Action("BindRegionList", "Acq_Pushback")';
+
+            }
+        }
+        else {
+            if (currentTab == "RGT") {
+                URL_BindRegionList = '@Url.Action("BindRegionList", "Syn_Rights_List")';
+            } else {
+                URL_BindRegionList = '@Url.Action("BindRegionList", "Syn_Pushback")';
+            }
+        }
+        if ($('#ddlTitleCode').val() != null)
+            TitleCode = $('#ddlTitleCode').val().join(',');
+        else
+            TitleCode = "";
+       
+        $.ajax({
+            type: "POST",
+
+            url: URL_BindRegionList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                TitleCode: TitleCode
+
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#ddlRegionn").empty();
+                    $('#ddlRegionn').append(result.htmldata);
+                   
+                    $("#ddlRegionn")[0].sumo.reload();
+                    $('#hdnTitleCode').val(result.TitleCode);
+                    $('#hdnTVCode').val('');
+                    if (IsShowAll == "N") {
+                        hideLoading();
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                if (IsShowAll == "N") {
+                    hideLoading();
+                }
+            }
+        });
+       
+    }
+    function serachBindrights()
+    {
+        debugger
+        var ModuleCode = $('#hdnModuleCode').val();
+
+        var ViewType = $('input[name=optViewType]:checked').val();
+        if('@objSchema.Page_From' == "PBK" && '@Modulecodes' == '@GlobalParams.ModuleCodeForAcqDeal')
+        {
+            Bind_Grid(ViewType,0,'C','N');
+        }
+        else{
+            BindGridNew($("#" + ViewType)[0], 'N','N');
+        }
+    }
+
+    if('@Modulecodes' == '@GlobalParams.ModuleCodeForAcqDeal' && '@objSchema.Page_From' == "PBK")
+    {
+        $("#btnShowAll").click(function () {
+            debugger;
+            if (ValidatePageSize()) {
+                IsShowAll = "Y";
+                $("#ddlTitleCode")[0].sumo.reload();
+                showLoading();
+                $.ajax({
+                    type: "POST",
+                    url: URL_ShowAll,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        $('#G')[0].checked = true;
+                        //$("#ddlTitleCode").find("option").attr("selected", false);
+                        $("#ddlTitleCode").val('');
+                        $("#ddlTitleCode")[0].sumo.reload();
+                        //$("#ddlRegionn").find("option").attr("selected", false);
+                        $("#ddlRegionn").val('');
+                        $("#ddlRegionn")[0].sumo.reload();
+                        $('#lstReleaseUnit').val('B').trigger("chosen:updated");
+                        $('.sumo_Region > .optWrapper.multiple > .options li ul li.opt').removeClass('selected')
+                        document.getElementById('TotalselectedPlatform').innerHTML = parseInt(0)
+                        BindRegionList();
+                        IsShowAll = "N";
+                        $('#hdnTVCode').val('')
+                        Bind_Grid('G', 0, 'C','Y');
+                        hideLoading();
+                    },
+                    error: function (result) {
+                    }
+                });
+            }
+        });
+    }
+    else{
+        $("#btnShowAll").click(function () {
+            debugger;
+            if (ValidatePageSize()) {
+                IsShowAll = "Y";
+               // $("#ddlTitleCode").find("option").attr("selected", false);
+                $("#ddlTitleCode").val('');
+                $("#ddlTitleCode")[0].sumo.reload();
+               // $("#ddlRegionn").find("option").attr("selected", false);
+                $("#ddlRegionn").val('');
+                $("#ddlRegionn")[0].sumo.reload();
+                $('#lstReleaseUnit').val('B').trigger("chosen:updated");
+                $('#hdnTVCode').val('')
+                $("#G").prop("checked", true);
+                ClearTitleValues();
+                document.getElementById('TotalselectedPlatform').innerHTML = parseInt(0)
+                $('.sumo_Region > .optWrapper.multiple > .options li ul li.opt').removeClass('selected')
+                BindRegionList();
+                IsShowAll = "N";
+                BindGridNew($("#G")[0], 'N', 'Y');
+            }
+        });
+    }
+</script>
+<div class="scale_table_block" @*onclick="HideAllDiv();"*@>
+    <table class="table">
+        <tr>
+            <td class="bold" style="width: 10%;">@objMessageKey.PageView:</td>
+            @if (objSchema.Page_From == "PBK" && Modulecodes == GlobalParams.ModuleCodeForAcqDeal)
+            {
+                <td style="width: 20%;" onclick="FadeOutPopup1();">
+                    <div>
+                        @Html.Hidden("ViewType", "")
+                        <label class="radio-inline">
+                            <input type="radio" name="optViewType" id="G" value="G" checked />
+                            @*@Html.Hidden("hdnCurrentPageNo")*@
+                            @Html.Hidden("hdn_Command_Name")
+                            <input type="hidden" id="hdnModuleCode" name="hdnModuleCode" />
+                            <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                            @*<input type="radio" name="optViewType" id="G" value="G" checked onchange="return Bind_Grid('G',0,'C');" />*@
+                            @objMessageKey.Group
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optViewType" id="S" value="S" />
+                            @objMessageKey.Summary
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optViewType" id="D" value="D" />
+                            @objMessageKey.Detail
+                        </label>
+                    </div>
+                </td>
+
+            }
+            else
+            {
+                <td style="width: 20%;" onclick="FadeOutPopup1();">
+                    <div>
+                        @Html.Hidden("ViewType", "")
+                        <label class="radio-inline">
+                            <input type="radio" name="optViewType" id="G" value="G" checked />
+                            @Html.Hidden("hdnCurrentPageNo")
+                            @Html.Hidden("hdn_Command_Name")
+                            <input type="hidden" id="hdnModuleCode" name="hdnModuleCode" />
+                            <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                            @*<input type="radio" name="optViewType" id="G" value="G" checked onchange="BindGridNew(this,'N');" />*@
+                            @objMessageKey.Group
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optViewType" id="S" value="S" />
+                            @objMessageKey.Summary
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optViewType" id="D" value="D" />
+                            @objMessageKey.Detail
+                        </label>
+                    </div>
+                </td>
+            }
+            <td class="bold" style="width: 13%;">
+                @objMessageKey.Titles
+            </td>
+            @if (objSchema.Page_From == "PBK" && Modulecodes == GlobalParams.ModuleCodeForAcqDeal)
+            {
+                <td class="bold" style="width: 22%;" colspan="5">
+                    <div id="divddlTitleCode">
+                        @Html.ListBox("ddlTitleCode", ViewBag.TitleList as MultiSelectList)
+                    </div>
+                </td>
+            }
+            else
+            {
+                <td class="bold" style="width: 25%;">
+                    <div id="divddlTitleCode">
+                        @Html.ListBox("ddlTitleCode", ViewBag.TitleList as MultiSelectList)
+                    </div>
+                </td>
+            }
+
+            <td class="bold" style="width: 13%;">
+                <a id="platformRights" href="#" title="View Platforms" class="clsPlatform">@objMessageKey.PlatformTree</a>
+                <input type="hidden" id="hdnTitleCode" name="hdnTitleCode" />
+            </td>
+            @if (objSchema.Page_From == "RGT")
+            {
+                <td><span id="TotalselectedPlatform">@rightcount</span> <span id="TotalselectedPlatforms">@objMessageKey.Platformsselected</span></td>
+
+            }
+            else
+            {
+                <td><span id="TotalselectedPlatform">@pushbackcount</span> <span id="TotalselectedPlatforms">@objMessageKey.Platformsselected</span></td>
+            }
+            @*style="width:15%">
+                    <a id="platformRights" href="#" title="View Platforms" class="clsPlatform">Platformss</a>
+                    <input type="hidden" id="hdnTitleCode" name="hdnTitleCode" />
+                </td>*@
+            @if (objSchema.Page_From == "PBK" && Modulecodes == GlobalParams.ModuleCodeForAcqDeal)
+            {
+                <td></td>
+            }
+            @if (objSchema.Page_From == "RGT")
+            {
+                if (Modulecodes == GlobalParams.ModuleCodeForAcqDeal)
+                {
+                    if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+                        <td>
+                            <a class="btn btn-primary pull-right" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_ADD')">@objMessageKey.AddRights</a>
+
+                        </td>
+                    }
+                }
+                else
+                {
+                    if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        <td>
+                            <a class="btn btn-primary pull-right" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_ADD')">@objMessageKey.AddRights</a>
+                        </td>
+                    }
+                }
+            }
+            @if (objSchema.Page_From == "PBK" && Modulecodes == GlobalParams.ModuleCodeForAcqDeal)
+            {
+                if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    <td>
+                        <a class="btn btn-primary pull-right" href="#" data-toggle="modal" id="btnAdd" onclick="Add('popEditRevHB');">@objMessageKey.Add</a>
+                    </td>
+
+                }
+                <td></td>
+            }
+            @if (objSchema.Page_From == "PBK" && Modulecodes == GlobalParams.ModuleCodeForSynDeal)
+            {
+                if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    <td>
+                        <a class="btn btn-primary pull-right" href="#" data-toggle="modal" id="btnAdd" onclick="Add('popEditRevHB');">@objMessageKey.Add</a>
+                    </td>
+                }
+            }
+        </tr>
+        <tr>
+            <td class="bold" style="width: 8%;">
+                @objMessageKey.Region
+            </td>
+            <td class="bold" style="width: 20%;">
+                @Html.DropdownGroup(ViewBag.Region as List<GroupItem>, ViewBag.RegionId as string, "Region", "", true)
+            </td>
+
+            @if (objSchema.Page_From != "PBK")
+            {
+                <td class="bold" style="width: 11%;">@objMessageKey.ExclusiveRights</td>
+                    <td style="width:20%">
+                        @Html.DropDownList("lstReleaseUnit", ViewBag.Exclusive_Rights as MultiSelectList, new { @class = "form_input chosen-select", @width = "150px" })
+                    </td>
+            }
+            @if (objSchema.Page_From == "PBK")
+            {
+                <td></td>
+            }
+            <td colspan="2">
+                <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch" onclick="return serachBindrights();">
+                <input type="button" class="button" value="@objMessageKey.ShowAll" id="btnShowAll">
+            </td>
+            @*<td style="width:8%"><input type="button" class="button" value="Show All" id="btnShowAll"></td>*@
+            @if (objSchema.Page_From == "RGT")
+            {
+                <td>
+                    @if (ViewBag.ButtonVisibility && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+                        <input type="button" class="button" value="@objMessageKey.BulkUpdate" id="btnBulkUpdate" onclick="BindPartialTabs('@GlobalParams.Page_From_Rights_Bulk_Update');">
+                    }
+                </td>
+
+            }
+        </tr>
+    </table>
+</div>
+<div id="popupFade1">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="FadeOutPopup1()">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h5>@objMessageKey.PlatformMatrix</h5>
+                    </div>
+                    <div class="modal_block treeClass" id="divPlatformTrees">
+                    </div>
+                    <input type="hidden" id="hdnTVCode" name="hdnTVCode" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    #popupFade1 .modal_header{
+        background:#c3c3c3;
+    }
+    #Rights_Platform_Filter {
+        max-height: 300px;
+    }
+
+    #divPlatformTrees {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    .sumo_ddlTitleCode {
+        width: 248px !important;
+    }
+
+    .sumo_Region {
+        width: 200px !important;
+    }
+
+    .SumoSelect > .optWrapper.multiple > .options li.opt {
+        font-weight: 100 !important;
+    }
+
+    .select-all {
+        font-weight: 100 !important;
+    }
+
+    .SumoSelect > .CaptionCont > span {
+        font-weight: 100 !important;
+    }
+
+    #popupFade1 {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade1 .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            overflow-y: auto;
+        }
+
+        #popupFade1 form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade1 #Rights_Platform {
+            max-height: 300px;
+            /*overflow-y:auto;*/
+        }
+
+    .PlatformExpand {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        background-color: black;
+        color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    #TotalselectedPlatform {
+        color: #2b64a5;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    #TotalselectedPlatforms {
+        color: #2b64a5;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    #Tree_Filter_Rights_Platform_Filter {
+        margin-left: -10px;
+        width: 300px;
+        margin-top: -3px;
+    }
+</style>

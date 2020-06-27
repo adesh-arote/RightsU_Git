@@ -1,0 +1,199 @@
+﻿@model RightsU_Entities.Acq_Deal_Rights_Blackout
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Acq_Deal_Rights Obj_Acq_Deal_Rights = null;
+    if (Session["ACQ_DEAL_RIGHTS"] != null)
+    { Obj_Acq_Deal_Rights = (RightsU_Entities.Acq_Deal_Rights)Session["ACQ_DEAL_RIGHTS"]; }
+    
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script type="text/javascript">
+
+    var URL_Edit_Blackout = '@Url.Action("Edit_Blackout", "Acq_Rights_Blackout")';
+    var URL_Save_Blackout = '@Url.Action("Save_Blackout", "Acq_Rights_Blackout")'
+    var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+    function Delete_Blackout(Counter) {
+        if ($('#hdnEditRecord').val() == '') {
+            $('#hdnDummyProp').val(Counter);
+            showAlert('I', '@objMessageKey.AreyousureyouwanttodeletethisBlackout ?', 'OKCANCEL');
+        }
+        else
+            showAlert('E', '@objMessageKey.PleasecompletetheAddEditfirst');
+    }
+    function Edit_Blackout(Counter) {
+        if ($('#hdnEditRecord').val() == '') {
+            $('#hdnEditRecord').val('Edit');
+            $.ajax({
+                type: "POST",
+                url: URL_Edit_Blackout,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    DummyProperty: Counter
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+
+                    $('a[href="#tabHoldback"]').prop("disabled", true);
+                    $('a[href="#tabRestriction"]').prop("disabled", true);
+                    $('#tabBlackout').html(result);
+                    initializeDatepicker();
+                },
+                error: function (result) {
+                    debugger;
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else
+            showAlert('E', '@objMessageKey.PleasecompletetheAddEditfirst');
+    }
+    function Save_Blackout(Counter) {
+
+        var IsValid = true;
+        var StartDate = $('#' + Counter + '_Start_Date').val();
+        var EndDate = $('#' + Counter + '_End_Date').val();
+        if (StartDate == '' || StartDate == 'DD/MM/YYYY')
+            showAlert('E', '@objMessageKey.Pleaseselectstartdate.')
+        else
+            if (EndDate == '' || EndDate == 'DD/MM/YYYY')
+                showAlert('E', '@objMessageKey.Pleaseselectenddate.')
+            else {
+                $('#hdnEditRecord').val('');
+                $.ajax({
+                    type: "POST",
+                    url: URL_Save_Blackout,
+                    data: ({
+                        Start_Date: StartDate,
+                        End_Date: EndDate,
+                        DummyProperty: Counter
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        if (result.message == 'Success') {
+                            if (result.mode == "A") {
+                                var count = parseInt($('#spnBlackOutCount').text());
+                                count += 1;
+                                $('#spnBlackOutCount').text(count);
+                            }
+                            $('a[href="#tabHoldback"]').prop("disabled", false);
+                            $('a[href="#tabRestriction"]').prop("disabled", false);
+                            Bind_BlackOut();
+                            hideLoading();
+                        }
+                        else {
+                            showAlert('E', result)
+                        }
+                    },
+                    error: function (result) {
+                        debugger;
+                        hideLoading();
+                        alert('Error Validate_Save_Rights: ' + result.responseText);
+                    }
+                });
+            }
+    }
+    function Cancel_Blackout() {
+        $('#hdnEditRecord').val('');
+        $('a[href="#tabHoldback"]').prop("disabled", false);
+        $('a[href="#tabRestriction"]').prop("disabled", false);
+    }
+</script>
+<form id="frm_Save_Holdback" method="post">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>@objMessageKey.EffectiveStartDate</th>
+                <th>@objMessageKey.EffectiveEndDate</th>
+                @if (ViewBag.CommandName_HB != GlobalParams.DEAL_MODE_VIEW && @ViewBag.CommandName_HB != GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    <th>@objMessageKey.Action</th>
+                }
+            </tr>
+        </thead>
+
+        @if (Obj_Acq_Deal_Rights.Acq_Deal_Rights_Blackout.Count() > 0)
+        {
+            string Counter = "0";
+            foreach (var objADRB in Obj_Acq_Deal_Rights.Acq_Deal_Rights_Blackout.Where(w => w.EntityState != RightsU_Entities.State.Deleted))
+            {
+                Counter = objADRB.strDummyProp;
+                if (objADRB.EntityState != RightsU_Entities.State.Deleted)
+                {
+                    /*Edit*/
+                    if (ViewBag.DummyProperty == objADRB.strDummyProp)
+                    {
+                        
+            <tr>
+                <td>
+                    @Html.TextBox(Counter + "_Start_Date", objADRB.Start_Date.Value.ToString("dd/MM/yyyy"), new { @class = "isDatepicker", @id = Counter + "_Start_Date" })
+                </td>
+                <td>
+                    @Html.TextBox(Counter + "_End_Date", objADRB.End_Date.Value.ToString("dd/MM/yyyy"), new { @class = "isDatepicker", @id = Counter + "_End_Date" })
+                </td>
+                <td>
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="return Save_Blackout('@Counter');"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel_Blackout(); Bind_BlackOut();"></a>
+                </td>
+            </tr>
+                    }
+                    /*LIST*/
+                    else
+                    {
+            <tr>
+                @*<td class="text-right">@Html.Label("Acq_Deal_Rights_Holdback_Code", objADRB.Acq_Deal_Rights_Holdback_Code.ToString(), new { @id = "lblAcq_Deal_Rights_Holdback_Code" + Counter })</td>*@
+                <td>@objADRB.Start_Date.Value.ToString(GlobalParams.DateFormat_Display)</td>
+                <td>
+                    @objADRB.End_Date.Value.ToString(GlobalParams.DateFormat_Display)
+                </td>
+                @if (ViewBag.CommandName_HB != GlobalParams.DEAL_MODE_VIEW && @ViewBag.CommandName_HB != GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    <td>
+
+
+                        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="return Edit_Blackout('@Counter');"></a>
+                        <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" onclick="return Delete_Blackout('@Counter');"></a>
+
+                    </td>
+                }
+            </tr>
+                    }
+                }
+            }
+        }
+
+        @if (ViewBag.CommandName_HB == "ADD")
+        {   
+        
+            <tr id="trAddEditBO" style="display: none" class="hideCT">
+                <td>
+                    @Html.TextBox("0_Start_Date", "DD/MM/YYYY", new { @class = "isDatepicker", @id = "0_Start_Date" })
+                </td>
+                <td>
+                    @Html.TextBox("0_End_Date", "DD/MM/YYYY", new { @class = "isDatepicker", @id = "0_End_Date" })
+                </td>
+                <td>
+                    @*<input type="button" class="glyphicon glyphicon-ok-circle" title="Save" value="Save" onclick="return Save_Blackout('0');" />*@
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="return Save_Blackout('0');"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel_Blackout();Bind_BlackOut();"></a>
+                </td>
+            </tr>
+        }
+        @Html.Hidden("hdnDummyProp")
+    </table>
+</form>

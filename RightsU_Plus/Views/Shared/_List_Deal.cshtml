@@ -1,0 +1,836 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_Acq_Result>
+@using UTOFrameWork.FrameworkClasses;
+<script type="text/javascript">
+    var IsCall = 'Y', RecordCount_PVG = '@ViewBag.RecordCount', PageNo_PVG = '@ViewBag.PageNo';
+    $(document).ready(function () {
+        if ($('.pagination'))
+            SetPaging();
+
+    });
+    function SetPaging() {
+        var PageNo, recordCnt;
+        IsCall = 'N';
+        if (PageNo_PVG != null)
+            PageNo = PageNo_PVG;
+        if (RecordCount_PVG != null)
+            recordCnt = RecordCount_PVG;
+        PageNo = PageNo - 1;
+        var opt = { callback: pageselectCallback };
+        debugger;
+        opt["items_per_page"] = 10;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $(".pagination").pagination(recordCnt, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        if (IsCall == 'Y')
+            LoadDeals(page_index, tmp_IsAdvanced, 'N');
+        else
+            IsCall = 'Y';
+    }
+</script>
+
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.mark.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+
+
+    $('.expand_DealTitles').expander({
+        slicePoint: 33,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    function AllsubmenuHide() {
+        debugger;
+        $('.leftPanel').css('left', panelHideCss);
+        $('.MoreActionDiv').hide('slow');
+    }
+
+    $(document).ready(function () {
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.MoreActionDiv').css("left", "32px");
+            $('.modal .scale_table_block').css("margin", "5px");
+        }
+        var mark = function () {
+            var keyword = $("#srchCommon").val();
+            var options = { 'separateWordSearch': true };
+            $(".Highlight").unmark({
+                done: function () {
+                    $(".Highlight").mark(keyword, options);
+                }
+            });
+            $("#srchCommon").on("input", mark);
+            $("#srchCommon").on("change", mark);
+        }
+
+        $('.show_hide').click(function () {
+            debugger;
+            $(".tooltip").stop().fadeIn();
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        }, function () {
+            debugger;
+            $(".tooltip").stop().fadeOut();
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        });
+    });
+    function CheckRecordLock(Acq_Deal_Code, CommandName) {
+        debugger
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                Acq_Deal_Code: Acq_Deal_Code,
+                CommandName: CommandName
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        debugger
+                        if (result.ErrorMessage != '' && result.DealStatus == 'Y') {
+                            message = result.ErrorMessage;
+                            showAlert('E', result.ErrorMessage);
+                        }
+                        else {
+                            var URL = '@Url.Action("ButtonEvents", "Acq_List", new { Acq_Deal_Code = "_Acq_Deal_Code_", CommandName = "_CommandName_" })';//, new { CallFrom = "T", Page_No = "Code", DealTypeCode = "Deal_Type_Code", TitleName = "Title_Name" }
+
+
+                            URL = URL.replace("_Acq_Deal_Code_", result.Acq_Deal_Code);
+                            URL = URL.replace("amp;", "");
+                            URL = URL.replace("_CommandName_", result.CommandName);
+                            URL = URL.replace("amp;", "");
+                            window.location.href = URL;
+                        }
+                    }
+                    if (result.Is_Locked == "N") {
+                        showAlert("E", result.Message);
+
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+
+    }
+    //function handleCancelValidationPopup()
+    //{
+    //debugger
+    //    $('#popupValidationError').modal('hide');
+    //    $('#popupValidationError').empty();
+    //}
+</script>
+<style>
+    .MoreActionDiv {
+        padding: 2px;
+        background: #ffffff;
+        width: 40px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 15px;
+        color: #fff;
+        text-align: center;
+        position: absolute;
+        z-index: 99;
+        right: 32px;
+    }
+
+
+    span.not-available {
+        font-style: italic;
+        opacity: 0.5;
+    }
+    /*.modal .scale_table_block {
+    margin: 5px !important;*/
+    }
+</style>
+<div class="paging_area clearfix">
+    <span class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+    <div class="pagination" id="Pagination_List"></div>
+</div>
+<div class="grid_area deal clearfix" onclick="AllsubmenuHide();">
+    @Html.Hidden("hdnAcqDealCode")
+    @{
+        int tempCount = 0;
+        int counter = 0;
+        foreach (var objAcqList in Model)
+        {
+            tempCount = tempCount + 1;
+            counter += 1;
+            <div class="grid_item">
+                <ul>
+                    <li class="deal_no">
+                        <h4 class="agreementNo Highlight" data-toggle="tooltip" title="@objMessageKey.AgreementNo"> <a href="#" onclick="window.location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = objAcqList.IntCode }) '">@Html.Label("id", objAcqList.Agreement_No, new { style = "cursor:pointer;" })</a></h4>
+                        <span class="deal_version VR_@objAcqList.Acq_Deal_Code" title="@objMessageKey.VersionNo">V-@objAcqList.version</span>
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="deal_desc" title="@objMessageKey.DealDescription">
+                        <div class="expandable">
+                            @objAcqList.DealDesc<a href="#"><span></span></a>
+                        </div>
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="deal_type">
+                        <span title="@objMessageKey.DealType">@objAcqList.DealTypeName</span>
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="deal_status">
+                        <span title="@objMessageKey.AgreementDate">
+                            @*@objAcqList.DealTagDescription*@
+                            @string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objAcqList.DealSignedDate)
+                            @*@objAcqList.DealSignedDate*@
+                        </span>
+                        @{
+                            string groupname = objAcqList.Final_Deal_Workflow_Status;
+                            if (objAcqList.Final_Deal_Workflow_Status.Contains("Runs, Rights Pending") || objAcqList.Final_Deal_Workflow_Status.Contains("Runs Pending"))
+                            {
+                                <span data-toggle="modal" data-target="#popLinearStatus" class="deal_workflow_status pending" title="@objMessageKey.WorkflowStatus"
+                                      onclick="BindLinearStatusPopup(@objAcqList.Acq_Deal_Code)">@objAcqList.Final_Deal_Workflow_Status</span>
+                                }
+                                else if (objAcqList.Final_Deal_Workflow_Status.Contains("Pending"))
+                                {
+                                    <span data-toggle="modal" data-target="#popDealStatus" class="deal_workflow_status pending" title="@objMessageKey.WorkflowStatus"
+                                          onclick="BindDealStatusPopup(@objAcqList.Acq_Deal_Code)">@objAcqList.Final_Deal_Workflow_Status</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="deal_workflow_status" title="@objMessageKey.WorkflowStatus">@groupname</span>
+                                    }
+                        }
+                    </li>
+                </ul>
+                <ul>
+                    <li class="deal_title">
+                        <span class="Highlight" title="@objMessageKey.Title">
+                            @objAcqList.DealTitles
+                        </span>
+                        @if (objAcqList.Cnt_DealTitles > 3)
+                        {
+                            <a title="More Title" href="#" data-toggle="modal" style="transform: rotate(270deg);padding-right: 7px;" class="glyphicon glyphicon-option-vertical" onclick="BindMoreTitles(@objAcqList.Acq_Deal_Code, '@objAcqList.Agreement_No', @objAcqList.Cnt_DealTitles)"></a>
+                        }
+                    </li>
+
+
+                    <li class="deal_licensor Highlight" title="@objMessageKey.Licensor">@objAcqList.VendorName</li>
+                    <li class="deal_period" title="@objMessageKey.Period">
+                        @if (string.IsNullOrEmpty(objAcqList.RightPeriod))
+                        {
+                            <span class="not-available">@objMessageKey.NO @objMessageKey.Period</span>
+                        }
+                        else
+                        {
+                            @objAcqList.RightPeriod
+                        }
+                    </li>
+                    <li class="deal_territory" title="@objMessageKey.Country/@objMessageKey.Territory">
+                        @if (string.IsNullOrEmpty(objAcqList.CountryDetails))
+                        {
+                            <span class="not-available">@objMessageKey.NO @objMessageKey.Country/@objMessageKey.Territory</span>
+                        }
+                        else
+                        {
+                            <div class="expandable">
+                                @objAcqList.CountryDetails
+                                <a href="#"><span></span></a>
+                            </div>
+                        }
+                    </li>
+
+                    <li class="deal_action clsTdAction_@objAcqList.Acq_Deal_Code@objAcqList.AT_Status TC_@tempCount" id="divAction_@tempCount">
+                        @{
+                            int Count = 0;
+                        }
+
+                        @if (objAcqList.Show_Hide_Buttons != null)
+                        {
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + ","))
+                            {
+                                Count = Count + 1;
+
+                                <a title="@objMessageKey.View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @objAcqList.IntCode })"></a>
+                                <img id="imgLoading_@objAcqList.Acq_Deal_Code" title="@objMessageKey.PleaseWait.." src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
+                                <a id="btnShowError_@objAcqList.Acq_Deal_Code" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none; color: #2b64a5;"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#View_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Edit" id="Edit_@tempCount" class="glyphicon glyphicon-pencil AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Edit')"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Edit_@tempCount'));
+                                    </script>
+                                }
+                            } @*onclick="return CheckRecordLocking(@objAcqList.Acq_Deal_Code)"*@
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRightGranted + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.RenewClone" class="glyphicon glyphicon-duplicate AT_@objAcqList.Acq_Deal_Code" id="RenewClone_@tempCount" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Clone", Acq_Deal_Code = @objAcqList.IntCode })"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#RenewClone_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmendment + ","))
+                            {
+                                Count = Count + 1;
+
+                                <a title="@objMessageKey.Amendment" id="Amendment_@tempCount" class="glyphicon glyphicon-edit AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Amendment')"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Amendment_@tempCount'));
+                                    </script>
+                                }
+                            }
+
+                            @* DEAL ARCHIVE STARTS *@
+                        if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForArchive + ","))
+                        {
+
+                            string arrName = "Send For Archive";
+                            if (objAcqList.dealWorkFlowStatus.Trim() == "A")
+                            {
+                                List<RightsU_Entities.Module_Status_History> lstMSH = new RightsU_BLL.Module_Status_History_Type_Service(objLoginEntity.ConnectionStringName)
+                                     .SearchFor(x => x.Record_Code == objAcqList.Acq_Deal_Code).OrderByDescending(x => x.Module_Status_Code).Take(2).ToList();
+
+                                RightsU_Entities.Module_Status_History objMSH = lstMSH.LastOrDefault();
+
+                                if (objMSH.Status == "WA")
+                                {
+                                    arrName = "Re-send For Archive";
+                                }
+                            }
+
+
+                            if (@objAcqList.IsZeroWorkFlow == "Y")
+                            {
+                                Count = Count + 1;
+
+                                    <a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@objAcqList.Acq_Deal_Code"
+                                       href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objAcqList.Acq_Deal_Code, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                        $("#extend_@tempCount").append($('#Archive_@tempCount'));
+                                        </script>
+                                    }
+                                }
+                                else
+                                {
+                                    Count = Count + 1;
+                                    <a title="@arrName" class="glyphicon glyphicon-share-alt  AT_@objAcqList.Acq_Deal_Code" id="SendForArchive_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForArchive',@objAcqList.IntCode,0);"></a>
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                        $("#extend_@tempCount").append($('#SendForArchive_@tempCount'));
+                                        </script>
+                                    }
+                                }
+
+                            }
+
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDealArchive + ","))
+                            {
+
+                                Count = Count + 1;
+                                <a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@objAcqList.Acq_Deal_Code"
+                                   @*onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Archive',@objAcqList.IntCode,0);"*@
+                                   href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objAcqList.Acq_Deal_Code, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Archive_@tempCount'));
+                                    </script>
+                                }
+                            }
+
+                            @* DEAL ARCHIVE ENDS *@
+                            {
+                                if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForApproval + ","))
+                                {
+                                    string apprName = objMessageKey.SendForApproval;
+                                    if (objAcqList.dealWorkFlowStatus == "R")
+                                    {
+                                        RightsU_BLL.USP_Service objUSP = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName);
+                                        int CreatorGroupCode = Convert.ToInt32(objUSP.USP_Get_Creator_Group_Code_AfterReject(@objAcqList.IntCode, UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAcqDeal).ElementAt(0));
+                                        string Allow_Edit_All_On_Rejection = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Edit_All_On_Rejection" && x.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
+
+                                        if (CreatorGroupCode == @ViewBag.UserSecurityCode || Allow_Edit_All_On_Rejection == "Y")
+                                        {
+                                            apprName = objMessageKey.ResendForApproval;
+                                        }
+                                    }
+                                    if (@objAcqList.IsZeroWorkFlow == "Y")
+                                    {
+                                        Count = Count + 1;
+
+                                        <a title="@objMessageKey.Approve" id="Approve_Remark_@tempCount" class="glyphicon glyphicon-check AT_@objAcqList.Acq_Deal_Code" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Approve',@objAcqList.IntCode,0);"></a>
+                                        if (Count > 3)
+                                        {
+                                            <script>
+                                                $("#extend_@tempCount").append($('#Approve_@tempCount'));
+                                            </script>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Count = Count + 1;
+
+                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename0_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
+                                        if (Count > 3)
+                                        {
+                                            <script>
+                                                $("#extend_@tempCount").append($('#approvename_@tempCount'));
+                                            </script>
+                                        }
+                                    }
+                                }
+                                if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRollback + ","))
+                                {
+                                    double versionNo = Convert.ToDouble(objAcqList.Previous_Version);
+                                    double curr_Version = Convert.ToDouble(objAcqList.version);
+                                    string btnName = "";
+                                    if (curr_Version > 1)
+                                    {
+                                        double prevVersionNo = versionNo;
+                                        string digitFormat = "";
+
+                                        if (versionNo < 9)
+                                        {
+                                            digitFormat = "000";
+                                        }
+                                        else if (versionNo < 99)
+                                        {
+                                            digitFormat = "00";
+                                        }
+                                        else if (versionNo < 999)
+                                        {
+                                            digitFormat = "0";
+                                        }
+                                        digitFormat = digitFormat + prevVersionNo.ToString();
+                                        btnName = objMessageKey.BackToVersion + "-" + digitFormat;
+                                        Count = Count + 1;
+                                        <a title="@btnName" id="btnName_@tempCount" href="#" class="glyphicon glyphicon-repeat AT_@objAcqList.Acq_Deal_Code" onclick="Ask_Confirmation('Rollback', @objAcqList.Acq_Deal_Code,0)"></a>
+                                        if (Count > 3)
+                                        {
+                                            <script>
+                                                $("#extend_@tempCount").append($('#btnName_@tempCount'));
+                                            </script>
+                                        }
+                                    }
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForCloseMovie + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.CloseTitle" id="CloseTitle_@tempCount" class="glyphicon glyphicon-copyright-mark AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'CloseMovie')"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#CloseTitle_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDelete + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Delete" id="Delete_@tempCount" href="#" class="glyphicon glyphicon-trash delete_@tempCount AT_@objAcqList.Acq_Deal_Code"
+                                   onclick="Ask_Confirmation('Delete', @objAcqList.Acq_Deal_Code,0)"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('.delete_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains(",Y,"))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.SetMilestone" id="SetMilestone_@tempCount" class="glyphicon glyphicon-modal-window AT_@objAcqList.Acq_Deal_Code" href="#" onclick="BindMilestonePopup(@objAcqList.Acq_Deal_Code)"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#SetMilestone_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmendAfterSyn + ","))
+                            {
+                                Count = Count + 1;
+
+                                <a title="@objMessageKey.AmendmentafterSyndication" id="AmendmentAfterSyndication_@tempCount" class="glyphicon glyphicon-erase AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Amendment_Syn')"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#AmendmentAfterSyndication_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForApprove + ","))
+                            {
+
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Approve" class="glyphicon glyphicon-check ApproveCounter_@tempCount AT_@objAcqList.Acq_Deal_Code" onclick="return Validate_Record_Site(@objAcqList.Acq_Deal_Code, 'A', this)" id="Approve+@counter"
+                                   href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objAcqList.Acq_Deal_Code, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('.ApproveCounter_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAcqContentTab + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Content" id="Content_@tempCount" class="glyphicon glyphicon-copy AT_@objAcqList.Acq_Deal_Code" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Content", Acq_Deal_Code = @objAcqList.IntCode })"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Content_@tempCount'));
+                                    </script>
+                                }
+                            }
+
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForTerminate + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Terminate" id="Terminate_@tempCount" class="glyphicon glyphicon-eye-close AT_@objAcqList.Acq_Deal_Code" onclick="TerminateDeal(@objAcqList.Acq_Deal_Code, @objAcqList.Deal_Type_Code, '@objAcqList.Agreement_No')"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Terminate_@tempCount'));
+                                    </script>
+                                }
+                            }
+
+                            if (@objAcqList.Show_Hide_Buttons.Contains(",E,"))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.ShowError" style="color: #2b64a5;" id="ShowError_@tempCount" class="glyphicon glyphicon-exclamation-sign AT_@objAcqList.Acq_Deal_Code" href="#" data-target="#popupShowError"
+                                   onclick="HideShow('divAction_@tempCount','View_@tempCount','Y'); Show_Error_Popup('', $('#txtPageSize').val(), 0, @objAcqList.Acq_Deal_Code)"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                    $("#extend_@tempCount").append($('#ShowError_@tempCount'));
+                                    </script>
+                                }
+                            }
+
+
+                            if (@objAcqList.Show_Hide_Buttons != null && @objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAssignMusic_NonMusic + ",") &&
+                                objAcqList.Deal_Type_Code != UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Type_Music)
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.AssignMusic" id="AssignMusic_@tempCount" class="glyphicon glyphicon-music AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Assign_Music')"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#AssignMusic_@tempCount'));
+                                    </script>
+                                }
+                            }
+                        }
+                        @if (objAcqList.Deal_Type_Code == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Type_Music && objAcqList.dealWorkFlowStatus.Trim() == "A" && objAcqList.Status != "T")
+                        {
+                            Count = Count + 1;
+                            <a title="@objMessageKey.MusicTrack" id="MusicTrack_@tempCount" class="glyphicon glyphicon-music AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Music_Track')"></a>
+
+                            if (Count > 3)
+                            {
+                                <script>
+                                    $("#extend_@tempCount").append($('#MusicTrack_@tempCount'));
+                                </script>
+                            }
+                        }
+                        @if (objAcqList.Show_Hide_Buttons != null)
+                        {
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEditWOApproval + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.EditWithoutApproval" id="EditWithoutApproval_@tempCount" class="glyphicon_Approval glyphicon-pencil AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'EditWOA')"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#EditWithoutApproval_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRollWOApproval + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.RollbackWithoutApproval" id="RollbackWithoutApproval_@tempCount" class="glyphicon_Approval glyphicon-repeat AT_@objAcqList.Acq_Deal_Code" onclick="return Ask_Confirmation('RollbackWOApprove',@objAcqList.IntCode,0)"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#RollbackWithoutApproval_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmort + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Amort" id="Amort_@tempCount" class="glyphicon glyphicon-stats AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Amort')"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Amort_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAcqReleaseContent + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.ReleaseContent" id="ReleaseContent_@tempCount" class="glyphicon glyphicon-paste AT_@objAcqList.Acq_Deal_Code" onclick="ReleaseContent(@objAcqList.Acq_Deal_Code, '@objAcqList.Agreement_No', @tempCount)"></a>
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#ReleaseContent_@tempCount'));
+                                    </script>
+                                }
+                            }
+
+                            @*if (true)
+                                {
+                                    Count = Count + 1;
+                                    <label for="btnExportToXml" class="glyphicon glyphicon-floppy-save" title="Export Agreement" id="Export_@tempCount">
+                                        @using (Html.BeginForm("ExportToWord", "Acq_List"))
+                                        {
+                                            <input type="submit" style="display: none" id="btnExportToXml" />
+                                            <input type="hidden" name="DealTypeC" value="" id="DealTypeC" />
+                                        }
+                                    </label>
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                            $("#extend_@tempCount").append($('#Export_@tempCount'));
+                                        </script>
+                                    }
+                                }*@
+
+                        }
+                        @if (Count > 3)
+                        {
+                            <a title="@objMessageKey.MoreAction" id="show_hide_@tempCount" href="#" class="glyphicon glyphicon-option-vertical show_hide AT_@objAcqList.Acq_Deal_Code"></a>
+                            <div id="extend_@tempCount" class="MoreActionDiv" style="display:none;">
+                            </div>
+                        }
+                    </li>
+
+                </ul>
+            </div>
+        }
+    }
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupShowError" role="dialog" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_Error_Popup">
+                <div>
+                    <div class="form_fields syn">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="handleCancel()">
+                                <span>×</span>
+                                <span class="sr-only">@objMessageKey.Close</span>
+                            </a>
+                            <h2>Error Details</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="BindErrorPopup">
+                            </div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input class="btn btn-primary" style="background-color: #2b64a5;" type="button" value="Reprocess" onclick="return Reprocess();" />
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" style="background-color: #2b64a5;" class="btn-primary" href="#" onclick="handleCancel()">Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popDealStatus" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="new_acq_bundle_form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DealStatus</h2>
+                        </div>
+                        <div id="bindDealStatus">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popSetMileStone" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DatesagainstMilestone</h2>
+                        </div>
+                        <div id="BindMilestonePopup">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="popupValidationError" role="dialog" tabindex="-1" data-backdrop="static" data-keyboard="false" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_Validation_Popup">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="handleCancelValidationPopup()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DuplicateCombination</h2>
+                        </div>
+                        <div class="modal_block" style="overflow-y:hidden!important">
+                            <div id="BindValidationPopup">
+                            </div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" href="#" onclick="handleCancelValidationPopup()">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="pop_setRemark" role="dialog" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="new_acq_bundle_form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq" style="height:210px;">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="CloseApprovalRemark()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.Remarks</h2>
+                        </div>
+                        <div style="padding:10px 20px;">
+                            @Html.TextArea("ApproverRemark", new { id = "txtArea", @rows = "5", @cols = "20", @class = "textarea", style = "resize: none" })
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" id="btnStatus" class="btn btn-primary" value="@objMessageKey.Approve"
+                                               onclick="ButtonEvents();">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popLinearStatus" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="new_acq_bundle_form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DealStatus</h2>
+                        </div>
+                        <div id="bindLinearStatus">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,571 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+    }
+
+    #divUpload {
+        padding: 6px 10px;
+        margin-bottom: 5px;
+        border: 1px solid #ddd;
+        background-color: #eee;
+    }
+
+        #divUpload > ul > li {
+            float: left;
+            min-height: 32px;
+            list-style-type: none;
+            padding: 0 3px;
+        }
+
+        #divUpload .chosen-container {
+            margin: 0;
+        }
+
+        #divUpload .checkbox-inline {
+            margin-bottom: 7px;
+        }
+
+    .top_filter {
+        margin-top: 22px;
+    }
+
+    #divSearch {
+        padding: 6px 10px;
+        margin-bottom: 5px;
+        border: 1px solid #ddd;
+        background-color: #eee;
+    }
+
+        /*#divSearch > right_nav > ul > li {
+            float: left;
+            min-height: 32px;
+            list-style-type: none;
+            padding: 0 3px;
+        }*/
+
+
+        /*#divSearch .chosen-container {
+            margin: 0;
+        }*/
+
+        #divSearch .checkbox-inline {
+            margin-bottom: 7px;
+        }
+</style>
+<script>
+    var URL_UploadTitle = '@Url.Action("UploadTitle", "Title_Content_ImportExport")';
+    var URL_BindExcelErrorList = '@Url.Action("BindExcelErrorList", "Title_Content_ImportExport")';
+    var URL_Back_TitleContent = '@Url.Action("BackTitleContent", "Title_Content_ImportExport")';
+    var URL_Reload_Current_Page = '@Url.Action("Music_Program_Import", "Title_Content_ImportExport")';
+    var URL_BindContentError = '@Url.Action("BindContentError", "Title_Content_ImportExport")';
+    var URL_GetFileImportStatus = '@Url.Action("GetFileImportStatus", "Title_Content_ImportExport")';
+    $(document).ready(function () {
+        debugger
+        $('#divError').hide();
+        addNumeric();
+        $('#ddlFilterBy').val('@ViewBag.FilterbyStatus').trigger('chosen:updated');
+        $('#hdnPageNo').val('@ViewBag.PageNoBack');
+        PopulateContentGrid($('#hdnPageNo').val());
+        $("#ddlFilterBy").change(function () {
+             debugger
+            $('#hdnPageNo').val(1);
+             PopulateContentGrid('0');
+             var ddlfilterby = $('#ddlFilterBy').val();
+             if (ddlfilterby = "Q")
+                 CheckPendingStatus();
+        });
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = 1, recordCount = 0, pagePerBatch=0, recordPerPage=0;
+        pageNo = parseInt($('#hdnPageNo').val());
+        recordCount = parseInt($('#hdnRecordCount').val());
+        pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize('txtPageSize'))
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindExcelErrorList();
+        else
+            IsCall = 'Y';
+    }
+    function txtPageSize_OnChange(txtID) {
+        debugger
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize(txtID))
+            return false;
+
+        BindExcelErrorList()
+        SetPaging();
+    }
+    function ValidatePageSize(txtID) {
+        var recordPerPage = $('#' + txtID).val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+       // $('#'+ txtID).attr('required', true)
+        return false
+    }
+    function handleOk() {
+    }
+    function handleCancel() {
+    }
+
+    function UploadTitle() {
+        debugger
+        showLoading();
+        var txtpageSize = $('#txtPageSize').val();
+        $('#ddlFilterBy').val('A').trigger('chosen:updated');
+        var FilterBy = $('#ddlFilterBy').val();
+        var formdata = new FormData();
+        var files = $("#fileUpload").get(0).files;
+        if (files.length > 0) {
+            formdata.append("InputFile", files[0]);
+            formdata.append("FilterBy", FilterBy);
+            formdata.append("txtpageSize", txtpageSize);
+        }
+        else {
+            showAlert("a", "@objMessageKey.PleaseselectFile");
+            hideLoading();
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_UploadTitle,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (result) {
+                $('#gvArea').html(result);
+                SetTitlePaging();
+                CheckPendingStatus();
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+    function PopulateContentGrid(PageNo) {
+        var txtP = $('#txtPageSize').val();
+        var FilterBy=  $('#ddlFilterBy').val();
+        if (txtP == null)
+            txtP = 10;
+        showLoading();
+        $.ajax({
+
+            type: "POST",
+            url: '@Url.Action("PopulateContentGrid", "Title_Content_ImportExport")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                txtPageSize: txtP,
+                PgNo: PageNo,
+                FilterBy: FilterBy
+            }),
+            success: function (result) {
+                debugger;
+                $('#gvArea').html(result);
+                SetTitlePaging();
+                CheckPendingStatus();
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+    function BindContentError(pageNo, DM_Import_Master_Code, File_Type) {
+        debugger
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var txtpagesize = $('#txtErrorPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindContentError,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                txtpagesize: txtpagesize,
+                DM_Import_Master_Code: DM_Import_Master_Code,
+                File_Type: File_Type
+
+            }),
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    initializeChosen();
+                    initializeExpander();
+                    SetErrorPaging();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function SetTitlePaging() {
+        var txtPageSize = $('#txtPageSize').val();
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback1 };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function pageselectCallback1(page_index, jq) {
+        $('#hdnPageNo').val(page_index);
+        if (IsCall == 'Y') {
+            PopulateContentGrid(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+    function Page_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            PopulateContentGrid('0');
+
+            SetTitlePaging();
+        }
+        else
+            return false;
+    }
+    function pageBinding() {
+        PopulateContentGrid('0');
+        SetTitlePaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val();
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function BindExcelErrorList()
+    {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindExcelErrorList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async:true,
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divExcelErrorList').html(result);
+                $('.expandable').expander({
+                    slicePoint: 20,
+                    expandPrefix: '',
+                    expandText: '...@objMessageKey.readmore',
+                    collapseTimer: 0,
+                    userCollapseText: '<span>[^]</span>'
+                });
+                initializeTooltip();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BackTitleContent() {
+        window.location.href = URL_Back_TitleContent;
+    }
+    function CheckPendingStatus() {
+        debugger
+        var pendingRecord = 0;
+        $(".deal_action").each(function () {
+            debugger
+            var SiblingClass = $(this).attr('class').split(' ')[1];
+            if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+                var dealCode = SiblingClass.slice(12, SiblingClass.length - 1);
+                //if (SiblingClass.substr(SiblingClass.length - 1) != 'E') {
+
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'W' || SiblingClass.substr(SiblingClass.length - 1) == 'N' || SiblingClass.substr(SiblingClass.length - 1) == 'R' || SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                    $.ajax({
+                        type: "POST",
+                        url: URL_GetFileImportStatus,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: false,
+                        data: JSON.stringify({
+                            dealCode: dealCode
+                        }),
+                        success: function (result) {
+                            debugger
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            if (result.RecordStatus == "N") {
+                                $("#imgLoading_" + dealCode).css("display", '');
+                                pendingRecord++;
+                            }
+                           else if (result.RecordStatus == "W") {
+                                $("#imgLoading_" + dealCode).css("display", '');
+                                pendingRecord++;
+                           }
+                           else if (result.RecordStatus == "I") {
+                               $("#imgLoading_" + dealCode).css("display", '');
+                               pendingRecord++;
+                           }
+                            else if (result.RecordStatus == "S") {
+                                $("#imgLoading_" + dealCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+
+                                var a = '<a  title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindViewData(' + dealCode + ')"></a>';
+
+                                $('.' + SiblingClass).append(a);
+                                $('.clsTdStatus_' + dealCode).empty();
+                                $('.clsTdStatus_' + dealCode).append('Success');
+                                var a = '<div title="Proper Records" id="Success_' + dealCode + '" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: ' + result.Completion + '%;" aria-valuenow="' + result.SuccessCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.SuccessCount + '</div><div title="Ignored Records" id="Ignored_' + dealCode + '" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:' + result.IgnoreCompletion + '%" aria-valuenow="' + result.IgnoreCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.IgnoreCount + '</div><div title="Error Records" id="Error_' + dealCode + '" data-placement="top" class="progress-bar bg-danger"  role="progressbar" style="width:' + result.ErrorCompletion + '%" aria-valuenow="' + result.ErrorCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ErrorCount + '</div><div title="Conflict Records" id="Conflict_' + dealCode + '" class="progress-bar bg-warning" role="progressbar" style="width:' + result.ConflictCompletion + '%" data-placement="top" aria-valuenow="' + result.ConflictCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ConflictCount + '</div><div title="No Error Records" id="NoError_' + dealCode + '" class="progress-bar" role="progressbar" data-placement="top" style="width: ' + result.WaitingCompletion + '%" aria-valuenow="' + result.WaitingCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.WaitingCount + '</div>'
+                                $('#statusbar_' + dealCode).empty();
+                                $('#statusbar_' + dealCode).append(a);
+                                initializeTooltip();
+                            }
+                            else if (result.RecordStatus == "R") {
+                                $("#imgLoading_" + dealCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+                                var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindViewData(' + dealCode + ')"></a> <a title="Resolve Conflict" class="glyphicon glyphicon-link" style="cursor: pointer;" onclick="BindResolveConflict(' + dealCode + ')"></a>'
+
+                                $('.' + SiblingClass).append(a);
+                                $('.clsTdStatus_' + dealCode).empty();
+                                $('.clsTdStatus_' + dealCode).append('Resolve Conflict');
+                                var a = '<div title="Proper Records" id="Success_' + dealCode + '" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: ' + result.Completion + '%;" aria-valuenow="' + result.SuccessCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.SuccessCount + '</div><div title="Ignored Records" id="Ignored_' + dealCode + '" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:' + result.IgnoreCompletion + '%" aria-valuenow="' + result.IgnoreCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.IgnoreCount + '</div><div title="Error Records" id="Error_' + dealCode + '" data-placement="top" class="progress-bar bg-danger"  role="progressbar" style="width:' + result.ErrorCompletion + '%" aria-valuenow="' + result.ErrorCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ErrorCount + '</div><div title="Conflict Records" id="Conflict_' + dealCode + '" class="progress-bar bg-warning" role="progressbar" style="width:' + result.ConflictCompletion + '%" data-placement="top" aria-valuenow="' + result.ConflictCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ConflictCount + '</div><div title="No Error Records" id="NoError_' + dealCode + '" class="progress-bar" role="progressbar" data-placement="top" style="width: ' + result.WaitingCompletion + '%" aria-valuenow="' + result.WaitingCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.WaitingCount + '</div>'
+                                $('#statusbar_' + dealCode).empty();
+                                $('#statusbar_' + dealCode).append(a);
+                                initializeTooltip();
+                            }
+                            else if (result.RecordStatus == "T") {
+                                $("#imgLoading_" + dealCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+                                var a = '<a title="There is some issue. Contact the administrator" class="glyphicon glyphicon-exclamation-sign" style="cursor: pointer;" ></a>'
+                                $('.' + SiblingClass).append(a);
+                                $('.clsTdStatus_' + dealCode).empty();
+                                $('.clsTdStatus_' + dealCode).append('There is some issue Contact to administrator');
+                                var a = '<div title="Proper Records" id="Success_' + dealCode + '" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: ' + result.Completion + '%;" aria-valuenow="' + result.SuccessCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.SuccessCount + '</div><div title="Ignored Records" id="Ignored_' + dealCode + '" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:' + result.IgnoreCompletion + '%" aria-valuenow="' + result.IgnoreCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.IgnoreCount + '</div><div title="Error Records" id="Error_' + dealCode + '" data-placement="top" class="progress-bar bg-danger"  role="progressbar" style="width:' + result.ErrorCompletion + '%" aria-valuenow="' + result.ErrorCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ErrorCount + '</div><div title="Conflict Records" id="Conflict_' + dealCode + '" class="progress-bar bg-warning" role="progressbar" style="width:' + result.ConflictCompletion + '%" data-placement="top" aria-valuenow="' + result.ConflictCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ConflictCount + '</div><div title="No Error Records" id="NoError_' + dealCode + '" class="progress-bar" role="progressbar" data-placement="top" style="width: ' + result.WaitingCompletion + '%" aria-valuenow="' + result.WaitingCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.WaitingCount + '</div>'
+                                $('#statusbar_' + dealCode).empty();
+                                $('#statusbar_' + dealCode).append(a);
+                                initializeTooltip();
+
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+            }
+        });
+
+        if (pendingRecord > 0) {
+            setTimeout(CheckPendingStatus, 5000);
+        }
+    }
+    function BindResolveConflict(masterImportCode) {
+        var URL = '@Url.Action("BindDMMasterLog", "Title_Content_ImportExport", new
+              {
+                  DM_Import_Master_Code = "_DM_Import_Master_Code_",
+                  fileType = "_fileType_"
+              })';
+        URL = URL.replace("_DM_Import_Master_Code_", masterImportCode);
+        URL = URL.replace("_fileType_", "C");
+        URL = URL.replace(/amp;/g, "");
+        window.location.href = URL;
+    }
+    function BindViewData(masterImportCode) {
+        debugger
+        var URL = '@Url.Action("BindContentView", "Title_Content_ImportExport", new
+              {
+                  DM_Master_Import_Code = "_DM_Import_Master_Code_",
+                  fileType = "_fileType_"
+              })';
+        URL = URL.replace("_DM_Import_Master_Code_", masterImportCode);
+        URL = URL.replace("_fileType_", "C");
+        URL = URL.replace(/amp;/g, "");
+        window.location.href = URL;
+    }
+</script>
+<style>
+    #ddlFilterBy_chosen {
+        width: 100%;
+        /*text-align: left;*/
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="top_area">
+                <h2 class="pull-left">Content Bulk Import</h2>
+
+            </div>
+            <div class="">
+                    <div id="divSearch" class="search_area clearfix">
+                        <div class="">
+                            <table>
+                                <tr id="FirstUl">
+                                    <td style="width:10%;">
+                                        @objMessageKey.UploadFile:
+                                    </td>
+                                    <td style="width:25%;">
+                                        <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                                    </td>
+                                    <td style="width:20%;">
+                                        <input type="button" onclick="return UploadTitle();" class="btn btn-primary" value="@objMessageKey.Upload" />
+                                    </td>
+                                    <td style="width:20%; text-align:right">Filter By Status : </td>
+                                    <td style="width:15%">
+                                        @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
+                                    </td>
+                                    
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                <div class="paging_area clearfix">
+                    <span class="pull-left">Total Records: </span>
+                    <span class="pull-left" id="lblTotal"></span>
+                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                    <div id="Pagination" class="pagination">
+                    </div>
+                    <span class="pull-right">
+                        @objMessageKey.PageSize:
+                        <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return Page_OnChange();"
+                               onkeypress="return isNumber(event);" maxlength="2" onblur="setDefaultPaging('txtPageSize')" />
+                    </span>
+                </div>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="scale_table_block">
+                        <div id="gvArea" class="deal clearfix">
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div>
+                    <input type="button" value="@objMessageKey.Back" id="btnBack" onclick="BackTitleContent()" class="btn btn-primary" style="margin-top: 7px;margin-bottom: 3px;" />
+                </div>
+            </div>
+          
+          
+           
+
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup in" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>

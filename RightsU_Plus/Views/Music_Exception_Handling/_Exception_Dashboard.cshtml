@@ -1,0 +1,97 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }  
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ('@ViewBag.IsAired' == 'N') {
+            $('#rbtNotAired').attr('checked', true);
+            $('#rbtAired').attr('checked', false);
+        }
+        else if ('@ViewBag.IsAired' == 'Y') {
+            $('#rbtNotAired').attr('checked', false);
+            $('#rbtAired').attr('checked', true);
+        }
+        $("#txtStart").change(function () {
+            debugger
+            $("#txtStart1").val($(this).val())
+        })
+        $("#txtStart1").change(function () {
+            debugger
+            $("#txtStart").val($(this).val())
+        })
+        $("#txtEnd").change(function () {
+            debugger
+            $("#txtEnd1").val($(this).val())
+        })
+        $("#txtEnd1").change(function () {
+            debugger
+            $("#txtEnd").val($(this).val())
+        })
+
+        if ('@ViewBag.IsAired' == 'N') {
+            $("#txtStart,#txtEnd,#txtStart1,#txtEnd1").val('')
+            $('#txtStart,#txtStart1').datepicker("setDate", '@ViewBag.NStart_Date');
+            $('#txtEnd,#txtEnd1').datepicker("setDate", '@ViewBag.NEnd_Date');
+            $("#txtStart,#txtStart1").datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", '@ViewBag.NStart_Date'));
+            $("#txtEnd,#txtEnd1").datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", '@ViewBag.NStart_Date'));
+
+        }
+        else if ('@ViewBag.IsAired' == 'Y') {
+            $("#txtStart,#txtEnd,#txtStart1,#txtEnd1").val('')
+            $('#txtStart,#txtStart1').datepicker("setDate", '@ViewBag.AStart_Date');
+            $('#txtEnd,#txtEnd1').datepicker("setDate", '@ViewBag.AEnd_Date');
+
+            //var a = new Date();
+            //a.setDate(a.getDate() - 15);
+            $("#txtStart,#txtStart1").datepicker("option", "maxDate", new Date());
+            $("#txtEnd,#txtEnd1").datepicker("option", "maxDate", new Date());
+        }
+    })
+    function drawPie3dChart2() {
+
+    }
+    google.charts.setOnLoadCallback(drawStackedColumnChart2);
+
+    function ClearDates() {
+        $("#txtStart").val('')
+        $("#txtEnd").val('')
+        showDashboard($('input:radio[name=optDashboard]:checked').val())
+    }
+    function showDashboard(obj4) {
+        debugger;
+        if (obj4 == "1") {
+            $('#hdnIsAiredrb').val('N');
+            drawStackedColumnChart2();
+        }
+        if (obj4 == "2") {
+            $('#hdnIsAiredrb').val('Y');
+            drawStackedColumnChart2();
+        }
+    }
+
+
+</script>
+<label class="radio-inline">
+    <input type="radio" onclick="ClearDates();" name="optDashboard" id="rbtNotAired" value="1" checked />@objMessageKey.NotAired
+</label>
+<label class="radio-inline">
+    <input type="radio" name="optDashboard" onclick="ClearDates();" id="rbtAired" value="2" />@objMessageKey.Aired
+</label>
+<div id="dashboardFull">
+    @* @Html.Partial("_Exception_Dashboard")*@
+
+    <div id="RowAired" class="dashboardGroup">
+        <div class="dashboard music">
+            <span id="lblTotalExceptions"></span>
+            <div id="3_piechart_3d_4" style="width:100%; height:190px;"></div>
+        </div>
+        <div class="dashboard music">
+            <span>@objMessageKey.MusicLabelwiseExceptions</span>
+            <div id="2_StackedColumn_chart_5" style="width:100%; height:220px;"></div>
+        </div>
+    </div>
+</div>

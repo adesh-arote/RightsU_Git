@@ -1,0 +1,235 @@
+﻿@using System.Web.Optimization
+@using RightsU_Entities
+@{
+    Layout = null;
+    System_Versions objSysVersion = (System_Versions)Session["VersionDetails"];
+}
+
+<html>
+<head>
+    <title>RightsU</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="~/CSS/CommonLTR.css" rel="stylesheet" />
+    <link rel="icon" type="image/ico" href="~/Images/u-to.ico" />
+
+    @Styles.Render("~/bundles/Login/CSS?v="+ System.Configuration.ConfigurationManager.AppSettings["Version_No"])
+    <link type="text/css" rel="stylesheet" href="~/css/responsive.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"
+          media="screen and (max-width:960px) and (max-height:640px)" />
+
+    @Scripts.Render("~/bundles/Login/JS_Core?v="+ System.Configuration.ConfigurationManager.AppSettings["Version_No"])
+
+    <script type="text/javascript">
+        var message = '';
+        var MsgOk = 'Ok';
+        var MsgCancel = 'Cancel';
+        var LayoutDirection_G = 'LTR';
+        $(document).ready(function () {
+            debugger
+
+            if ('@ViewBag.AlertMsg' != '') {
+                message = '@ViewBag.AlertMsg';
+                showAlert('E', message);
+            }
+
+            if ('@TempData["STRUSERNAME"]' != '')
+                $('#Username').val('@TempData["STRUSERNAME"]');
+
+            if ('@TempData["STRPASSWORD"]' != '')
+                $('#Password').val('@TempData["STRPASSWORD"]');
+
+            if ('@TempData["LOGGEDUSER"]' != '')
+                AlertConfirmRe('@TempData["LOGGEDUSER"]')
+
+            $('#Username, #Password, #txtLoginID').keyup(function () {
+                $(this).val($(this).val().replace(/ +?/g, ''));
+            });
+
+            if ($('#Username').val().trim() == '')
+                $('#Username').focus();
+            else if ($('#Password').val().trim() == '')
+                $('#Password').focus();
+        });
+        var User = '';
+        function AlertConfirmRe(name) {
+            User = name;
+            showAlert('E', 'You are already logged in.\n Do you want to release account?', 'OKCANCEL')
+        }
+        function handleOk() {
+            window.location.href = '@Url.Action("Index", "Login")?ReleaseAC=' + 'Y' + '&name=' + User + '';
+            return true;
+        }
+        function handleCancel() {
+            return true;
+        }
+
+        function validateControl() {
+            var UserName = $('#Username').val();
+            var Password = $('#Password').val();
+            var msg = '';
+            var valid = true;
+
+            $('#Username, #Password, #txtLoginID').removeClass('required');
+
+            if (UserName == '') {
+                msg = 'Enter Username';
+                valid = false;
+                $('#Username').addClass('required');
+                $('#Username').focus();
+            }
+
+            if (Password == '') {
+                if (valid) {
+                    msg = 'Enter Password';
+                    $('#Password').focus();
+                }
+                else
+                    msg = msg + ' and Password';
+
+                valid = false;
+                $('#Password').addClass('required');
+            }
+
+            if (!valid)
+                showAlert('E', msg);
+
+            return valid;
+        }
+
+        function validate() {
+            var LoginID = $('#txtLoginID').val();
+            var msg = '';
+            var valid = true;
+
+            $('#Username, #Password, #txtLoginID').removeClass('required');
+
+            if (LoginID == '') {
+                msg = 'Enter User Name';
+                valid = false;
+                $('#txtLoginID').addClass('required');
+            }
+
+            if (!valid)
+                showAlert('E', msg);
+
+            return valid;
+        }
+
+        function LoginClick() {
+            if (!validateControl())
+                return false;
+        }
+
+        function SaveClick() {
+            if (validate()) {
+                debugger;
+                $('#hdnEntity').val($('#ddlEntity').val());
+                $('#frmForgetPassword').submit();
+            }
+            else
+                return false;
+        }
+
+        function CancelClick() {
+            $('#Username, #Password, #txtLoginID').removeClass('required');
+            return true;
+        }
+    </script>
+</head>
+<body class="">
+    <div class="main_section">
+        <header class="rightsU_header clearfix">
+            <div class="header-navHome">
+                <div class="pull-left">
+                    <img alt="Site-Logo" src="@Url.Content("~/Images/logo-rights.png")" />
+                    <span class="tag_line">Rights Management System
+                    </span>
+                </div>
+            </div>
+        </header>
+        <section class="rightsU_container clearfix">
+            <div class="container main_col">
+                @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { @class = "form-5 clearfix", id = "frmLogin", enctype = "multipart/form-data" }))
+                {
+                    <p>
+                        @Html.DropDownList("Entitycode", (SelectList)ViewBag.BindEntity, new { id = "ddlEntity" })
+
+                        <input type="text" id="Username" name="Username" placeholder="User Name" autocomplete="off" maxlength="20" />
+                        <input type="password" name="dummy_disable_autofill" id="dummy_disable_autofill" value="" style="display: none;" />
+                        <input type="password" name="Password" id="Password" placeholder="Password" autocomplete="off" maxlength="50" />
+                    </p>
+                    <button class="md-close" type="submit" name="submit" onclick="return LoginClick();">
+                        <i class="icon-arrow-right"></i>
+                        <span>Sign In</span>
+                    </button>
+                    if (System.Configuration.ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().Trim().ToUpper() == "N")
+                    {
+                       @*<a href="#" data-target="#popForgotPwd" data-toggle="modal" data-original-title="">Forgot Password?</a>*@
+                    }
+                }
+                @* </form>*@
+            </div>
+        </section>
+    </div>
+    <footer class="rightsU_footer clearfix">
+        <div class="footer_content pull-right">
+            <ul class="nav nav-pills pull-left">
+                <li class="footer_link">
+                    <a href="http://uto.in/RightsUNew.aspx" target="_blank">Product of U-TO Solutions</a>
+                </li>
+                @*<li class="footer_link">
+                    <a href="http://uto.in/reachUs.aspx" target="_blank">Contact Us</a>
+                </li>*@
+                <li>&nbsp;Version No: <span>@objSysVersion.Version_No</span> | Last Modified On:   <span>@Convert.ToDateTime(objSysVersion.Version_Published_Date).ToString("dddd, MMMM dd,yyyy hh:mm tt")</span></li>
+            </ul>
+            <div class="footer_logo pull-right">
+            </div>
+            @*<div class="footer_logo pull-right">
+                <img alt="Site-Logo" src="@Url.Content("~/Images/logo-rights.png")" />
+            </div>*@
+        </div>
+    </footer>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popForgotPwd" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                @using (Html.BeginForm("ForgetPassword", "Login", FormMethod.Post, new { @class = "form", id = "frmForgetPassword" }))
+                {    
+                    <div class="form_wrapper">
+                        <div class="form_fields">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>x</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>Forgot Password</h2>
+                            </div>
+                            <div class="modal_block">
+                                <ul class="add_title_popup">
+                                    <li>
+                                        <label>Username</label>
+                                        <input class="form_input" type="text" name="txtLoginID" id="txtLoginID"
+                                            maxlength='15' autocomplete="off" placeholder="Username" />
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li>
+                                            <a class="btn btn-primary" href="#" onclick="return SaveClick();">Submit</a>
+                                            @Html.Hidden("hdnEntity")
+                                        </li>
+                                        <li>
+                                            <a data-dismiss="modal" class="btn btn-primary" href="#" onclick="return CancelClick();">cancel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>

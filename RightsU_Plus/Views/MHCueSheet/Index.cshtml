@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    var URL_BindPartialPages = '@Url.Action("BindPartialPages", "MHCueSheet")';
+
+    $(document).ready(function () {
+        debugger;
+
+        BindPartialView("LIST", 0,'');
+    });
+
+    function BindPartialView(key, MHCueCode, callFor) {
+        debugger
+        
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                MHCueCode: MHCueCode,
+                callFor: callFor
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger
+                    $('#divMHCueSheet').empty();
+                    $('#divMHCueSheet').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="divMHCueSheet">
+
+            </div>
+        </div>
+    </section>
+    <input type="hidden" id="index_hdnPageNo"  />
+    <input type="hidden" id="index_txtPageSize"  />
+    <input type="hidden" id="index_ddlStatus" " />
+    <input type="hidden" id="index_ddlProdHouse"  />
+    <input type="hidden" id="index_hdnRecordCount"  />
+
+</div>

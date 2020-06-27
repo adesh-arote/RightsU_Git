@@ -1,0 +1,739 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    var platformCodes_G = "";
+    var URL_BindTitle = '@Url.Action("BindTitleForDealExpiry", "Reports")';
+    var URL_BindRegion = '@Url.Action("BindRegionDealExpiry", "Reports")';
+    @*var URL_BindPlatformList = '@Url.Action("BindPlatformTreeView", "Reports")';*@
+    var URL_BindExpiryDealReport = '@Url.Action("BindExpiryDealReport", "Reports")';
+    var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Reports")';
+
+    var URL_BindPlatformTreeView = '@Url.Action("BindPlatformTreeView", "Reports")';
+    var URL_BindPlatformPopup = '@Url.Action("BindPlatformPopup", "Reports")';
+    var URL_BindPlatformGroup = '@Url.Action("BindPlatformGroup", "Reports")';
+    $(function () {
+        addNumeric();
+        $("#ddlExpiry").change(function () {
+            if ($('#ddlExpiry').val() == "S") {
+                $('#chkIncludeSubDeal').hide();
+                $('#txtIncludeSubDeal').hide();
+            }
+            else {
+                $('#chkIncludeSubDeal').show();
+                $('#txtIncludeSubDeal').show();
+                $('#chkIncludeSubDeal').attr('checked', false);
+            }
+            $('#txtTitle').val('');
+        });
+
+        $("#chkDomestic").change(function () {
+            debugger
+            $('#txtCountry').val('');
+            var isChecked = $('#chkDomestic').is(':checked');
+            if (isChecked) {
+                $('#rbCountry').hide();
+                $('#rbTerritory').hide();
+                $('#spnCountry').hide();
+                $('#spnTerritory').hide();
+                $('#rbCountry,#rbTerritory').removeAttr('checked');
+                $("#txtCountry").attr("placeholder", "Domestic Territory");
+            }
+            else {
+                $('#rbCountry').show();
+                $('#rbTerritory').show();
+                $('#spnCountry').show();
+                $('#spnTerritory').show();
+                $('#rbCountry').prop("checked", true);
+                $("#txtCountry").attr("placeholder", "Country");
+            }
+        });
+        $("#ddlBusinessUnit").change(function () {
+            var expiryType = $('#ddlExpiry').val();
+            var BUCode = parseInt($('#ddlBusinessUnit').val());
+            $('#txtTitle').val('');
+            //$.ajax({
+            //    type: "POST",
+            //    url: URL_BindTitle,
+            //    traditional: true,
+            //    enctype: 'multipart/form-data',
+            //    contentType: "application/json; charset=utf-8",
+            //    data: JSON.stringify({
+            //        BU_Code: BUCode,
+            //        ExpiryFor: expiryType
+            //    }),
+            //    async: false,
+            //    success: function (result) {
+            //        if (result == "true") {
+            //            redirectToLogin();
+            //        }
+            //        else {
+            //            $('#ddlTitle').empty();
+            //            $.each(result.ddlTitle, function (index, item) {
+            //                $("#ddlTitle").append($("<option>").val(this.Value).text(this.Text));
+            //            });
+            //            $('#ddlTitle')[0].sumo.reload();
+
+            //        }
+            //    },
+            //    error: function (result) {
+            //        alert('Error: ' + result.responseText);
+            //    }
+            //});
+        });
+        $("#rbCountry , #rbTerritory").change(function () {
+            $('#txtCountry').val('');
+            var isChecked = $('#rbCountry').is(':checked');
+            var region = "";
+            if (isChecked) {
+                region = "C";
+                $("#txtCountry").attr("placeholder", "Country");
+            }
+            else {
+                region = "T";
+                $("#txtCountry").attr("placeholder", "Territory");
+            }
+        });
+
+        $('#txtfrom').change(function () {
+            SetMinDt();
+        });
+
+        $('#txtto').change(function () {
+            SetMaxDt();
+        });
+
+        $('#txtfrom').get(0).type = 'hidden';
+        $('#txtto').get(0).type = 'hidden';
+
+        if('@ViewBag.callFrom' == "D")
+        {
+            $('#txtfrom').val('@ViewBag.startDate')
+            $('#txtto').val('@ViewBag.endDate')
+            btnShow_OnClick();
+        }
+    });
+    function SetMaxDt() {
+        setMinMaxDates('txtfrom', '', $('#txtto').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtto', $('#txtfrom').val(), '');
+    }
+    function addNumeric() {
+        $("#txtExpiryInDays").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 365,
+            min: 1
+        });
+    }
+    function BindPlatformPopup() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformPopup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+                $('#popup').modal();
+            },
+            error: function (result) { }
+        });
+    }
+    function BindPlatform() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SelectedPlatform: $('#hdnTVCodes').val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divTree').empty();
+                $('#divTree').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+    function TabChange(tabName) {
+        $('#hdnTabName').val(tabName);
+        $('#hdnTVCodes').val('');
+        if (tabName == 'P') {
+           //$('#ddlPFGroup').val(null);
+            $('#divDdlPG').hide();
+            BindPlatform();
+        }
+        else {
+            $('#divDdlPG').show();
+            ddlPFGroup_Change();
+        }
+    }
+    function BindPlatformGroup() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                PlatformGroupCode: $('#ddlPFGroup').val()
+                //SelectedCodes: $('#hdnTVCodes').val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTree').empty();
+                    $('#divTree').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ddlPFGroup_Change() {
+        debugger;
+        var pgCode = $('#ddlPFGroup').val();
+        if (pgCode != null && pgCode != "") {
+            $('#hdnPGCode').val(pgCode);
+            BindPlatformGroup();
+        }
+        else {
+            $('#hdnPGCode').val("");
+            $('#divTree').empty();
+        }
+
+    }
+    function ClosePopup() {
+        platformCodes_G = $("#hdnTVCodes").val();
+        var selectedPlatform = $('#Rights_PlatformplatformCnt').text();
+        if (selectedPlatform.trim() == "")
+            selectedPlatform = '0';
+        $('#selectedPlatofrms').text('');
+        $('#selectedPlatofrms').text("@objMessageKey.SelectedPlatforms: " + selectedPlatform);
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+    function btnShow_OnClick() {
+        debugger;
+        var Tag = "";
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal = true;
+        var days = $('#txtExpiryInDays').val();
+        var str = "", subDeal = "", domestic = "", strRegion = "", platformCodes = "";
+        var expriyFor = $('#ddlExpiry').val();
+        var titleList = $('#txtTitle').val();
+        var RegionList = $('#txtCountry').val();
+        var BUCode = $('#ddlBusinessUnit').val();
+
+        var isSubDeal = $('#chkIncludeSubDeal').is(':checked');
+        var isDomestic = $('#chkDomestic').is(':checked');
+
+        if ($('#txtTitle').val() != '0') {
+            var Title = $('#txtTitle').val();
+        }
+        else {
+            var Title = "";
+        }
+        //if ($('#txtTitle').val() == "") {
+        //    $('#txtTitle').addClass('required');
+        //    returnVal = false;
+        //}
+        //else {
+        //    returnVal = true;
+        //}
+        if ($('input[name=Expiring]:checked').val() == 'P') {
+            if ($('#txtfrom').val() == '' && $('#txtto').val() != '') {
+                showAlert('E', 'From Period cannot be blank');
+                return false;
+            }
+            if ($('#txtfrom').val() != '' && $('#txtto').val() == '') {
+                showAlert('E', 'To Period cannot be blank');
+                return false;
+            }
+            if ($('#txtfrom').val() == '' && $('#txtto').val() == '') {
+                showAlert('E', 'Please Select From Period And To Period');
+                returnVal = false;
+            }
+        }
+        else {
+            if (days == '') {
+                showAlert('E', 'Expiry In Days cannot be blank');
+                return false;
+            }
+        }
+
+        if (isSubDeal)
+            subDeal = "Y";
+        else
+            subDeal = "N";
+        if (isDomestic)
+            domestic = "Y";
+        else
+            domestic = "N";
+
+        if (platformCodes_G == '')
+            platformCodes = "0";
+        else
+            platformCodes = platformCodes_G;
+        if ($('#rbCountry').is(':checked') == true) {
+            Tag = "C";
+        }
+        if ($('#rbTerritory').is(':checked') == true) {
+            Tag = "T";
+        }
+        var Range = $('input[name=Expiring]:checked').val();
+        if (returnVal == true) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindExpiryDealReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    TitleCodes: titleList,
+                    platformCodes: platformCodes,
+                    RegionCodes: RegionList,
+                    days: days,
+                    FromDate: $('#txtfrom').val(),
+                    ToDate: $('#txtto').val(),
+                    expiryFor: expriyFor,
+                    Domestic: domestic,
+                    SubDeal: subDeal,
+                    BUCode: BUCode,
+                    Tag: Tag,
+                    Range: Range,
+                    dateformat: $('#ddlDateFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function isNumeric(e, t) {
+        if (window.event) {
+            var charCode = window.event.keyCode;
+        }
+        else if (e) {
+            var charCode = e.which;
+        }
+        else { return true; }
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function PopulateCountry(keyword) {
+        var Type = "";
+        if ($('#txtCountry').val().length == "0") {
+            $('#hdnCountryCode').val(0);
+        }
+
+        var isCountry = $('#rbCountry').is(':checked');
+        var isTerritory = $('#rbTerritory').is(':checked');
+
+        if (isCountry == true)
+            Type = "C";
+
+        if (isTerritory == true)
+            Type = "T";
+
+
+        var selectedtxt = $('#txtCountry').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtCountry").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Type: Type,
+                        keyword: $('#txtCountry').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindCountryTerritory,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtCountry').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtCountry').removeClass('loader');
+                                    return {
+                                        label: v.Name,
+                                        val: v.Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    if (i.item.value != "Result Not Found") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnCountryCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnCountryCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtCountry').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "350px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function PopulateTitle(keyword) {
+        var Type = "";
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        BU_Code: $('#ddlBusinessUnit').val(),
+                        ExpiryFor: ($('#ddlExpiry').val()).substring(1,0),
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindTitle,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "Result Not Found") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "350px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function RangeType_Changed(key) {
+        if (key == "P") {
+            $('#txtExpiryInDays').get(0).type = 'hidden';
+            $('#txtfrom').get(0).type = 'text';
+            $('#txtto').get(0).type = 'text';
+        }
+        else if (key == "E" || key == "") {
+            $('#txtExpiryInDays').get(0).type = 'text';
+            $('#txtfrom').get(0).type = 'hidden';
+            $('#txtto').get(0).type = 'hidden';
+        }
+    };
+</script>
+
+<style>
+      #Tree_Filter_Rights_Platform {   
+        position:relative!important;
+    }
+    #Rights_Platform{
+        margin:0px 0px 0px 0px!important;
+    }
+    #ddlExpiry_chosen {
+        width:120% !important;
+        max-width: 120%;
+        direction:@objMessageKey.LayoutDirection;
+    }
+    ddlExpiry_chosen
+    /*#ddlTitle_chosen{
+         max-width : 60%;
+     }*/
+    .SumoSelect {
+        width: 229px;
+    }
+    /*#ddlRegion_chosen{
+         max-width : 60%;
+     }*/
+    #ddlBusinessUnit_chosen {
+        max-width: 92%;
+    }
+
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+        #ddlDateFormat_chosen{
+            width:76% !important;
+        }
+         #ddlPFGroup_chosen
+        {
+            width:100% !important;
+        }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <span class="pull-right" style="padding-top: 11px;margin-right: 40px;">
+                @Html.DropDownList("ExpiryFor", ViewBag.ExpiryFor as SelectList, new { @id = "ddlExpiry", @class = "form_input chosen-select" })
+            </span>
+            <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.DashboardReport
+            </h2>
+            
+            <div id="divFilter">
+                <table border=0>
+                    <tr>
+                        <td style="width: 100px">
+                        @objMessageKey.BusinessUnit:
+                        </td>
+                        <td  style="width: 300px;">
+                            @Html.DropDownList("BusinessUnitList", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                        </td>
+                        <td style="width: 50px;">
+                        @objMessageKey.Title:
+                        </td>
+                        <td  style="width: 290px;">
+                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:264px" placeholder="@objMessageKey.Title" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnTitleCode" value="0" />
+                        </td>
+                        <td>
+                            <a title="@objMessageKey.SelectPlatforms" class="glyphicon glyphicon-flash" style="cursor: pointer;" onclick="BindPlatformPopup()"></a> <span id="selectedPlatofrms">@objMessageKey.SelectedPlatforms: 0</span>
+                            <input type="hidden" id="hdnTabName" value="P" />
+                            <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                            <input type="hidden" id="hdnPGCode" name="hdnPGCode" value="" />
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="chkIncludeSubDeal" /><span style="padding-left:1%;"></span><text id="txtIncludeSubDeal">@objMessageKey.IncludeSubDeals</text>
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <td rowspan="2">
+                            @objMessageKey.Region:
+                        </td>
+                        <td>
+                            <input type="checkbox" id="chkDomestic" /><span style="padding-left:1%;"></span>@objMessageKey.DomesticTerritory
+                            <input type="radio" name="Region" id="rbCountry" checked="checked" /> <span id="spnCountry" style="padding-left:1%;">@objMessageKey.Country</span>
+                            <span style="padding-left:1%;"></span>
+                            <input type="radio" name="Region" id="rbTerritory" /><span id="spnTerritory" style="padding-left:1%;">@objMessageKey.Territory</span>
+                        </td>
+                        <td rowspan="2">
+                            @objMessageKey.Range
+                        </td>
+                        <td rowspan="2">
+
+                            @Html.RadioButton("Expiring", "E",true, new { @id = "Expiring", @onClick = "RangeType_Changed('E');" }) @objMessageKey.Days
+                            <input type="text" title="From Date" class="isDatepicker shortDate common" value="" id="txtfrom" style="width: 58%;margin-left: 47px;" placeholder="DD/MM/YYYY" />
+                            <input type="text" id="txtExpiryInDays" style="width: 58%;margin-left: 47px;" value="@ViewBag.expDays" maxlength="4" onkeypress="return isNumeric(event,this);" />     
+                            <br />
+                            @Html.RadioButton("Expiring", "P", false, new { @id = "Period", @onClick = "RangeType_Changed('P');" }) @objMessageKey.Period &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="text" title="To Date" class="isDatepicker shortDate common" value="" id="txtto" style="width: 58%;margin-left: -20px;" placeholder="DD/MM/YYYY" />
+                        </td>
+                        <td>
+                            @objMessageKey.DateFormat:
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                        </td>
+                    </tr>
+                    <tr>                     
+                        <td>
+                            <input type="text" id="txtCountry" class="search" maxlength="100" style="width:277px" placeholder="@objMessageKey.Country" onkeyup="PopulateCountry(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnCountryCode" value="0" />
+                        </td>  
+                        <td class="pull-right" style="padding-right: 8px;">
+                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()" style="float:none;">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+
+        </div>
+    </div>
+</div>

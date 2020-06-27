@@ -1,0 +1,150 @@
+﻿@model List<RightsU_Entities.Vendor_Contacts>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }  
+}
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:5%;">@objMessageKey.Srno.</th>
+            <th style="width:20%;">@objMessageKey.Department</th>
+            <th style="width:20%;">@objMessageKey.Email</th>
+            <th style="width:15%;">@objMessageKey.PhoneNo.</th>
+            <th style="width:20%;">@objMessageKey.ContactName</th>
+            @if(ViewBag.Mode != "V")
+            { 
+            <th style="width:15%;">@objMessageKey.Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (TempData["Action"] == "AddVendorContact")
+        {
+        <tr>
+            <td align="center">
+                New No.
+            </td>
+            <td>
+                @Html.TextBox("Department", "", new { @class = "alpha", style = "width:90% ", maxlength = 30 })
+            </td>
+            <td>
+                @Html.TextBox("Email", "", new { @class = "email", style = "width:90% ", maxlength = 100 })
+            </td>
+            <td>
+                @Html.TextBox("Phone_No", "", new { @class = "numeric", style = "width:90% ", maxlength = 15 })
+            </td>
+            <td>
+                @Html.TextBox("Contact_Name", "", new { @class = "alpha", style = "width:90% ", maxlength = 30 })
+            </td>
+            <td align="center">
+                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveVendorContact()"></a>
+                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelVendorContact()"></a>
+            </td>
+        </tr>
+        }
+        @{int rowNumber = 1; }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                if (TempData["Action"] == "EditVendorContact" && item.Dummy_Guid.ToString() == Convert.ToString(TempData["idVendorContact"]))
+                {
+                    <tr>
+                        <td align="center">
+                            <span>@rowNumber</span>
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.Department, new { @class = "alpha", style = "width:90% ", maxlength = 30, id = "Department_Edit" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.Email, new { @class = "email", style = "width:90% ", maxlength = 100, id = "Email_Edit" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.Phone_No, new { @class = "numeric", style = "width:90% ", maxlength = 15, id = "Phone_No_Edit" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.Contact_Name, new { @class = "alpha", style = "width:90% ", maxlength = 30, id = "Contact_Name_Edit" })
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Update" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="UpdateVendorContact('@item.Dummy_Guid')"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelVendorContact()"></a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td align="center">
+                            <span>@rowNumber</span>
+                        </td>
+                        <td>
+                            <span>@item.Department</span>
+                        </td>
+                        <td>
+                            <span>@item.Email</span>
+                        </td>
+                        <td>
+                            <span>@item.Phone_No</span>
+                        </td>
+                        <td>
+                            <span>@item.Contact_Name</span>
+                        </td>
+@if (ViewBag.Mode != "V")
+{
+    <td align="center">
+        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditVendorContact('@item.Dummy_Guid','EDIT')"></a>
+        <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteVendorContact('@item.Dummy_Guid', false)"></a>
+
+    </td>
+}
+                    </tr>
+                }
+                rowNumber++;
+            }
+        }
+        else
+        {
+            if (TempData["Action"] != "AddVendorContact")
+            {
+                <tr>
+                    <td colspan="6">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>
+
+
+<script>
+    $(document).ready(function () {     
+        $(".alpha").keypress(function (event) {
+            debugger;
+            var regex = new RegExp("^[a-zA-Z0-9 ]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+        $('.email').keypress(function (e) {
+            debugger;
+            var regex = new RegExp("^[a-zA-Z0-9_@@./+-]+$");
+            var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+            if (regex.test(str)) {
+                return true;
+            }
+            e.preventDefault();
+            return false;
+        });
+        function CheckNumeric(e) {
+            if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) { event.returnValue = false; return false; } }
+        }
+        $(".numeric").keypress(function () {
+            CheckNumeric(event);
+        });  
+    });
+</script>

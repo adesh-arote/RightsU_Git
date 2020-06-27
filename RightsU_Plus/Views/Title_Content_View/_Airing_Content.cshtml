@@ -1,0 +1,94 @@
+﻿@*<link type="text/css" rel="stylesheet" href="~/CSS/common.css">*@
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<div class="tab-pane" id="tabAiring">
+    <div class="scale_table_block">
+        <table class="table">
+            <tr>
+                <td class="bold" style="width:36%">
+                    @objMessageKey.From &nbsp;<input type="date" id="txtStartDt" value="">&nbsp;To&nbsp;<input type="date" id="txtEndDt" value="">
+                </td>
+                <td class="bold" style="width:20%">@objMessageKey.Version: 
+                    <select name="ddlVersion" id="ddlVersion" class="form_input chosen-select" multiple="multiple" style="width:139px;">
+                        <option value="1">@objMessageKey.Standard</option>
+                        <option value="2">@objMessageKey.Prime</option>
+                        <option value="3">@objMessageKey.OffPrime</option>
+                    </select>
+                </td>
+
+                <td class="bold" style="width:30%">@objMessageKey.Channel :
+                    @Html.DropDownList("ddlChannel", new SelectList(ViewBag.ChannelList, "Value", "Text"), new { @class = "form_input chosen-select", multiple = "multiple", style="width:250px;" })
+                </td>
+                <td style="width:14%">
+                    <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch">&nbsp;&nbsp;
+                    <input type="button" class="button" value="@objMessageKey.ShowAll" id="btnShowAll">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="list"></div>
+</div>
+<script>
+    $(function () {
+        $('#ddlChannel,#ddlVersion').chosen();
+
+        $('#btnSearch,#btnShowAll').click(function () {
+            debugger;
+            $('.required').removeClass('required');
+
+            var startDt = '', endDt = '', channelCodes = "";
+            if($(this).attr('id') == 'btnShowAll')
+            {
+                $('.table :input').not('input:button').each(function(){
+                    if($(this).is('select'))
+                        $(this).val('').trigger('chosen:updated');
+                    else
+                        $(this).val('');
+                });
+            }
+            else
+            {
+                if($('#ddlChannel').val() == null && $("#txtStartDt").val() == "" && $("#txtEndDt").val() == "")
+                {
+                    showAlert("E", "Please select search criteria", 'txtStartDt')
+                    return false
+                }
+                else if($("#txtStartDt").val() == "" && $("#txtEndDt").val() != "")
+                {
+                    showAlert("E", "Please select Start date", 'txtStartDt')
+                    return false
+                }
+                else if($("#txtStartDt").val() != "" && $("#txtEndDt").val() == "")
+                {
+                    showAlert("E", "Please select End date", 'txtEndDt')
+                    return false
+                }
+
+                startDt = $("#txtStartDt").val();
+                endDt = $("#txtEndDt").val();
+                if((new Date(endDt).getTime()) < (new Date(startDt).getTime()))
+                {
+                    showAlert("E", "End date can not be less then Start date", 'txtEndDt')
+                    return false;
+                }
+
+                if($('#ddlChannel').val() != null)
+                    channelCodes = $('#ddlChannel').val().toString();
+            }
+
+            GetAiringListData($('#hdnAcqdealCode').val(), $('#hdnEpisodeId').val(), $('#hdnTitleCode').val(), @Session["Acq_Deal_Movie_Content_Code"], startDt, endDt, '', channelCodes);
+        });
+
+    });
+
+</script>
+<style>
+    input[type=date] {
+        line-height: normal !important;
+    }
+</style>

@@ -1,0 +1,278 @@
+﻿@model IEnumerable<RightsU_Entities.Acq_Sport_Ancillary_Wrapper>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+
+    var CallFromDeleted = '';
+    var URL_BindFCT = '@Url.Action("BindFCT", "Acq_Sport_Ancillary")';
+    var URL_CreateFCT = '@Url.Action("CreateFCT", "Acq_Sport_Ancillary")';
+    var URL_DeleteSportAncillary = '@Url.Action("DeleteSportAncillary", "Acq_Sport_Ancillary")';
+
+    $(document).ready(function () {
+        $('#lblDisplayFCTTitle').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#lblDisplayFCTTitle')[0].sumo.reload();
+        $(":radio[name=rdoFCTDisplayType]").change(function (e) {
+            var type = $(this).val();
+            var arrTitles = '';
+
+            if (($('#lblDisplayFCTTitle').val() == '' || $('#lblDisplayFCTTitle').val() == null) && type == 'D') {
+                showAlert('E', '@objMessageKey.Pleaseselecttitle');
+
+                if (type == 'G')
+                    $('input[name=rdoFCTDisplayType][value=D]').prop('checked', true);
+                else
+                    $('input[name=rdoFCTDisplayType][value=G]').prop('checked', true);
+            }
+            else {
+                if ($('#lblDisplayFCTTitle').val() != null)
+                    arrTitles = $('#lblDisplayFCTTitle').val().join(',');
+
+                if (type == 'G')
+                    arrTitles = '';
+
+                $.ajax({
+                    type: "POST",
+                    url: URL_BindFCT,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        displayType: type,
+                        selectedTitle: arrTitles
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+
+                        $('#hdnAcqDealSportAncillaryCode').val('');
+                        $('#divFCT').html(result);
+                        initializeChosen();
+                        initializeExpander();
+                        $('#lblDisplayFCTTitle').val(arrTitles.split(','))[0].sumo.reload();
+                        $('input[name=rdoFCTDisplayType][value=' + type + ']').prop('checked', true);
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        });
+    });
+    function openFCTPopUp(obj, titleCode) {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        //$('#ddlTitleFCT').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        //$('#ddlTitleFCT')[0].sumo.reload();
+        var type = $(":radio[name=rdoFCTDisplayType]:checked").val()
+
+        $.ajax({
+            type: "POST",
+            url: URL_CreateFCT,
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Acq_Deal_Sport_Ancillary_Code: obj,
+                TitleCode: titleCode,
+                DisplayType: type
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                $('#popSportFCTAncillary').html(result);
+                $('#TitleCodes').val(titleCode);
+                initializeChosen();
+                initializeExpander();
+                $('#popSportFCTAncillary').modal();
+                $('#ddlTitleFCT,#ddlWhenToBroadcastFCT').SumoSelect();
+                $('#ddlTitleFCT')[0].sumo.reload();
+                $('#ddlWhenToBroadcastFCT')[0].sumo.reload();
+                initializeExpander();
+            },
+            error: function (result) { }
+        });
+        return false;
+    }
+    function closeFCTPopUp() {
+        $('#popSportFCTAncillary').modal('hide');
+    }
+    function DeleteSportAncliallary(Acq_Deal_Sport_Ancillary_Code, titleCode) {
+        $('#hdnAcqDealSportAncillaryCode').val(Acq_Deal_Sport_Ancillary_Code);
+        $('#hdnTitleCode').val(titleCode);
+        CallFromDeleted = 'Y';
+        showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord ?", "OKCANCEL");
+    }
+    function handleOk() {
+        if (CallFromDeleted == 'Y') {
+            var Acq_Deal_Sport_Ancillary_Code = $('#hdnAcqDealSportAncillaryCode').val();
+            var titleCode = $('#hdnTitleCode').val();
+            var type = $(":radio[name=rdoFCTDisplayType]:checked").val();
+
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteSportAncillary,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    id: Acq_Deal_Sport_Ancillary_Code,
+                    titleCode: titleCode,
+                    DisplayType: type
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+
+                    if (result == 'Success') {
+                        var arrTitles = '';
+                        CallFromDeleted = '';
+                        showAlert("S", "@objMessageKey.RecordDeletedsuccessfully", "OK");
+
+                        if ($('#lblDisplayFCTTitle').val() != null)
+                            arrTitles = $('#lblDisplayFCTTitle').val().join(',');
+
+                        $.ajax({
+                            type: "POST",
+                            url: URL_BindFCT,
+                            traditional: true,
+                            enctype: 'multipart/form-data',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({
+                                displayType: type,
+                                selectedTitle: arrTitles
+                            }),
+                            success: function (result) {
+                                $('#hdnAcqDealSportAncillaryCode').val('');
+                                $('#divFCT').html(result);
+                                initializeChosen();
+                                initializeExpander();
+                                $('#lblDisplayFCTTitle').val(arrTitles).trigger("chosen:updated");
+                                $('input[name=rdoFCTDisplayType][value=' + type + ']').prop('checked', true);
+                            },
+                            error: function (result) {
+                                alert('Error: ' + result.responseText);
+                            }
+                        });
+                    }
+                    else {
+                        showAlert("E", result);
+                        return false;
+                    }
+                },
+                error: function (result) { }
+            });
+        }
+
+        $(document.getElementsByClassName('modal-open')).removeClass('modal-open');
+    }
+    function showAllClick() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindFCT,
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                displayType: 'G',
+                selectedTitle: ''
+            }),
+            success: function (result) {
+                $('#divFCT').html(result);
+                initializeChosen();
+                initializeExpander();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+<style>
+    .SumoSelect{
+        width: 94% !important;
+    }
+</style>
+<div class="scale_table_block">
+    <table class="table abovePaging">
+        <tr>
+            <td class="bold" style="width: 10%;">@objMessageKey.PageView : </td>
+            <td style="width: 14%;">
+                <label class="radio-inline">
+                    <input type="radio" name="rdoFCTDisplayType" value="G" checked="checked" tabindex="0" />@objMessageKey.Group
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="rdoFCTDisplayType" value="D" tabindex="0" />@objMessageKey.Detail
+                </label>
+            </td>
+            <td style="width: 56%;">
+                @Html.ListBox("lblDisplayFCTTitle", ViewBag.DisplayFCTTitleList as MultiSelectList)
+            </td>
+            <td style="width: 10%;">
+                <input type="submit" class="btn-primary" value="@objMessageKey.ShowAll" onclick="showAllClick()"></td>
+            <td style="width: 10%;">
+                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                {
+                    <input type="submit" class="btn-primary" value="@objMessageKey.Add" onclick="return openFCTPopUp(0);" />
+                }
+            </td>
+        </tr>
+    </table>
+</div>
+<table class="table table-bordered table-hover" id="tblFCT">
+    <thead>
+        <tr>
+            <th style="width: 25%;">@objMessageKey.Title</th>
+            <th style="width: 14%;">@objMessageKey.Type</th>
+            <th style="width: 7%;">@objMessageKey.Duration</th>
+            <th style="width: 37%;">@objMessageKey.WhentoBroadcast</th>
+            <th style="width: 12%;">@objMessageKey.SourceofContent</th>
+            <th style="width: 5%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <div class="expandable">
+                        @item.Title
+                    </div>
+                </td>
+                <td>@item.Type</td>
+                <td>@item.Duration</td>
+                <td>@item.Broadcast</td>
+                <td>
+                    <div class="expandable">
+                        @item.Source
+                    </div>
+                </td>
+                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                {
+                    <td><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openFCTPopUp(@item.Acq_Deal_Sport_Ancillary_Code,@item.TitleCode);'/>&nbsp; <a title="Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportAncliallary(@item.Acq_Deal_Sport_Ancillary_Code,@item.TitleCode);'/></td>
+                }
+                else
+                {
+                    <td><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openFCTPopUp(@item.Acq_Deal_Sport_Ancillary_Code,@item.TitleCode);' /></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.Hidden("hdnAcqDealSportAncillaryCode")
+@Html.Hidden("hdnTitleCode")
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popSportFCTAncillary" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+</div>

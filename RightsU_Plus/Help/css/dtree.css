@@ -1,0 +1,163 @@
+/*!
+ * dtree.css v1.0.0 
+ * mefe.net
+ * 2014-08-21
+ */
+
+/*body
+{
+    font-family: "Verdana";
+    font-size: 13px;
+}*/
+.dTree{
+	position: fixed;
+	top:105px;
+	left:0px;
+}
+.dTree ul, li
+{
+    margin:0px;
+    padding: 10px auto;
+    list-style-type: none;
+    
+}
+
+.dTree ul li a
+{
+    height: 18px;
+    display: inline-block;
+    padding-top: 0px;
+    color:#fff;
+    text-decoration: none;
+}
+
+.text
+{
+    height: 18px;
+    display: inline-block;
+    float: left;
+    text-decoration: none;
+}
+
+
+li
+{
+    height: 18px;
+    display: block;
+    width: 300px;
+    line-height: 20px;
+}
+
+li.folder-group
+{
+    height: auto;
+    
+}
+
+.folder-group ul
+{
+   padding-left: 20px;
+   display: none;
+}
+
+.folder
+{
+    background: url('../img/misc.png') 0px -39px no-repeat;
+    padding-left: 20px;
+     height: 18px;
+    display: inline-block;
+    float: left;
+    transition: all 0.5s ease-in-out;
+}
+
+.folder-open
+{
+    background: url('../img/misc.png') -21px -39px no-repeat;
+    padding-left: 20px;
+    height: 18px;
+    display: inline-block;
+    float: left;
+    transition: all 0.5s ease-in-out;
+}
+
+.main
+{
+    background: url('../img/misc.png') 2px 0 no-repeat;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    float: left;
+}
+
+.folder-group
+{
+    background: url('../img/misc.png') -46px -2px repeat-y;
+}
+
+.folder-group.last
+{
+   background: none;
+}
+
+.plus
+{
+    background: url('../img/misc.png') 0px -59px no-repeat;
+    padding-left: 20px;
+    display: inline-block;
+    height: 18px;
+    float: left;
+}
+
+.last .plus
+{
+    background: url('../img/misc.png') 0px -82px no-repeat;
+    padding-left: 20px;
+    display: inline-block;
+    height: 18px;
+    float: left;
+}
+
+.folder-group.last .minus
+{
+    background: url('../img/misc.png') -18px -82px no-repeat;
+    padding-left: 20px;
+    display: inline-block;
+    height: 18px;
+    float: left;
+}
+
+.minus
+{
+    background: url('../img/misc.png') -18px -59px no-repeat;
+    padding-left: 20px;
+    display: inline-block;
+    height: 18px;
+    float: left;
+}
+
+.page
+{
+    background: url('../img/misc.png') no-repeat;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    float: left;
+}
+
+.join
+{
+    background: url('../img/misc.png') 0 -20px no-repeat;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    float: left;
+}
+
+.join-last .join
+{
+    background: url('../img/misc.png') -18px -20px no-repeat;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    float: left;
+}

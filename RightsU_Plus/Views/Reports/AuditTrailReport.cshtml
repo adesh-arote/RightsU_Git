@@ -1,0 +1,394 @@
+﻿
+@model List<RightsU_Entities.Business_Unit>
+@using UTOFrameWork.FrameworkClasses
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    input.isDatepicker {
+        width: 100px;
+        z-index: auto;
+    }
+    #ddlAcquisitionDeal_chosen {
+      width:108% !important
+    }
+   .SumoSelect.open > .optWrapper {
+        top: 35px;
+        display: block;
+        width: 250px !important;
+    }
+
+    .SumoSelect {
+        width: 150px !important;
+    }
+</style>
+<script>
+    var URL_PopulateTitleNameForAcqDeal = '@Url.Action("PopulateTitleNameForAcqDeal", "Reports")';
+    var URL_BindAuditTrailReport = '@Url.Action("BindAuditTrailReport", "Reports")';
+
+    $(document).ready(function () {     
+        initializeChosen();
+        $("#ddlLicensor").SumoSelect();
+        $("#ddlUserName").SumoSelect();
+        $("#ddlUserName")[0].sumo.reload();
+        $("#ddlLicensor")[0].sumo.reload();
+        $("#ddlUserName_chosen").hide();
+        $("#ddlLicensor_chosen").hide();
+        
+        $("#datetype").filter("[value=C]").prop('checked', true);
+        $('#txtStart').change(function () {
+            SetMinDt();
+        });
+        $('#txtEnd').change(function () {
+            SetMaxDt();
+        });
+        $("#ddlBusinessUnit").change(function () {
+            $("#txtTitle").val('');
+        });
+        
+        $('#txtStart').click(function () {
+            debugger
+            $('#txtStart').removeClass('required');           
+        });
+        $('#txtEnd').click(function () {
+            debugger
+            $('#txtEnd').removeClass('required');           
+        });
+    });
+
+    function btnShow_OnClick() {
+        debugger
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+    
+        var userName = '';
+        var vendorCode = '';
+
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+     
+        if ($('#txtTitle').val() != '0')
+            var Title = $('#txtTitle').val();
+            //var Title = $("#hdnTitleCode").val();
+        else
+            var Title = "";
+
+        var moduleCode = $("#ddlAcquisitionDeal").val()
+        if ($("#datetype").val() == "C") {
+            var startDate = $('#txtStart').val();
+            var endDate = $('#txtEnd').val();
+        }
+        else {
+            var amendStart = $('#txtStart').val();
+            var amendEnd = $('#txtEnd').val();
+        }
+        if ($('#ddlLicensor').val() != null) {
+            vendorCode = $('#ddlLicensor').val().join();
+        }
+        if ($('#ddlUserName').val() != null) {
+            userName = $('#ddlUserName').val().join();
+        }
+
+        var returnVal = true;
+
+        if ($('#txtStart').val() == "" || $('#txtEnd').val() == "") {
+            $('#txtStart').addClass('required');
+            $('#txtEnd').addClass('required');
+            returnVal = false;
+        }
+       
+        if ($('#datetype').val() == "") {
+            showAlert("E", 'Deal Creation Date or Amended Date is mandatory')
+            $('#txtStart').addClass('required');
+            $('#txtEnd').addClass('required');           
+            returnVal = false;
+        }
+        if ($("#ddlBusinessUnit").val() == "" || $("#ddlBusinessUnit").val()==undefined)
+        {
+            showAlert("E", 'Business Unit Selection is mandatory')
+            $("#ddlBusinessUnit").addClass('required');
+            returnVal = false;
+        }
+            
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindAuditTrailReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    businessUnitcode: businessUnitcode,                    
+                    moduleCode: moduleCode,
+                    startDate: startDate,
+                    endDate: endDate,
+                    amendStart: amendStart,
+                    amendEnd: amendEnd,
+                    createdOramended: $('input:radio[name=datetype]:checked').val(),
+                    titleCode: Title,
+                    vendorCode:vendorCode,
+                    userCode: userName,
+                    dateformat: $('#ddlDateFormat').val(),                    
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+    function SetMaxDt() {
+        setMinMaxDates('txtStart', '', $('#txtEnd').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtEnd', $('#txtStart').val(), '');
+    }
+    Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
+    function EndRequestHandler(sender, args) {
+        AssignDateJQuery();
+    }
+    function PopulateTitleNameForAcqDeal(keyword) {
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    debugger
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        BU_Code: $('#ddlBusinessUnit').val(),
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_PopulateTitleNameForAcqDeal,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = '@objMessageKey.ResultNotFound';
+                                response($.map(data, function (v, i) {
+                                    debugger
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                   select: function (event, i) {
+                       if (i.item.value != "@objMessageKey.ResultNotFound") {
+                           var text = this.value.split(/﹐\s*/);
+                           text.pop();
+                           text.push(i.item.value);
+                           text.push("");
+                           this.value = text;
+                           this.value = text.join("﹐");
+                           var value = $("#hdnTitleCode").val().split(/,\s*/);
+                           value.pop();
+                           value.push(i.item.val);
+                           value.push("");
+                           $("#hdnTitleCode")[0].value = value.join(", ");
+                           return false;
+                       }
+                       else {
+                           $('#txtTitle').val("");
+                           return false;
+                       }
+                   },
+                   minLength: 3,
+                   open: function (event, ui) {
+                       $(".ui-autocomplete").css("position", "absolute");
+                       $(".ui-autocomplete").css("max-height", "200px");
+                       $(".ui-autocomplete").css("max-width", "285px");
+                       $(".ui-autocomplete").css("overflow-y", "auto");
+                       $(".ui-autocomplete").css("overflow-x", "hidden");
+                       $(".ui-autocomplete").css("z-index", "2147483647");
+                       $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                   },
+                   
+                });
+              }
+          else
+              return false;
+    }
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+              <h2 dir='@objMessageKey.LayoutDirection'>Audit Trail Report <span style="float:right;font-family:Arial, Helvetica, sans-serif"><h6> @Html.DropDownList("AcquisitionDeal", ViewBag.AcquisitionDeal as SelectList, new { @id = "ddlAcquisitionDeal", @class = "form_input chosen-select" })</h6></span></h2>            
+            
+            </div>
+            <div id="divFilter">
+                <table>
+                    <tbody>
+                        @*<tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>@Html.DropDownList("AcquisitionDeal", ViewBag.AcquisitionDeal as SelectList, new { @id = "ddlAcquisitionDeal", @class = "form_input chosen-select" })</td>
+                         </tr>*@
+                        <tr style="width:100%">
+                            <td width="10%">
+                                <b>@objMessageKey.BusinessUnit :</b>
+                            </td>
+                            <td width="13%">
+                                @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList,  new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                            </td>
+                            <td width="2%"></td>
+                            <td width="14%">
+                                <input type="radio" id="datetype" name="datetype" value="C" /> 
+                                <b>Deal Creation Date :</b>                                                   
+                           </td>                           
+                            <td width="1%"></td>
+                            <td width="14%">
+                                <input type="radio" id="datetype" name="datetype" value="A" />
+                                <b>Deal Amended Date :</b>
+                            </td>
+                            <td width="1%"></td>
+                            <td width="9%;"><b style="padding-left:30px;">@objMessageKey.Title : </b></td>
+                            <td width="13%"><input type="text" id="txtTitle" class="search" maxlength="100" style="width:96%;" placeholder="@objMessageKey.Title" onkeyup="PopulateTitleNameForAcqDeal(event)" autocomplete="on" />
+                                <input type="hidden" id="hdnTitleCode" value="0" /></td>
+                            <td width="10%"><b>@objMessageKey.DateFormat:</b></td>
+                            <td width="13%">@Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })</td>
+                        </tr>
+                        <tr>
+                            <td><b>@objMessageKey.Licensor :</b></td>
+                            <td>@Html.DropDownList("Licensor", ViewBag.Licensor as SelectList ,  new { @id = "ddlLicensor", @class = "form_input chosen-select",@multiple="multiple" })</td>                           
+                            <td width="2%"></td>
+                            <td style="padding-left:45px;"> <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="From" width="100"
+                                       title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                                <input type="hidden" id="hdnStartDate" /></td>
+                            <td></td>
+                            <td> <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="To" width="100" 
+                                       title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                                <input type="hidden" id="hdnEndDate" /></td>
+                            <td width="1%"></td>
+                            <td><b style="padding-left:12px;">User Name :</b></td>
+                            <td>@Html.DropDownList("UserName", ViewBag.UserName as SelectList,new { @id = "ddlUserName", @class = "form_input chosen-select",@multiple="multiple" })</td>
+                            <td></td>
+                            <td><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"></td>
+                        </tr>                        
+                    </tbody>
+                </table>
+            </div>
+            @*asdfa
+            asdaf
+            sgsdf
+            ssdfsdf
+            sdfsdf           
+            sdfsdf
+            sdf
+            afdf
+            asdasd
+            sgdf*@
+         
+            <div class="title_block dotted_border clearfix">
+            </div>
+
+            <div>
+                <table>
+                    <tr align="left" id="trImg">
+                        <td id='tdShowImg' align='left' style="display: none">
+                            <input type="image" title="@objMessageKey.Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
+                        </td>
+                        <td id='tdHideImg' align="left">
+                            <input type="image" title="@objMessageKey.Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

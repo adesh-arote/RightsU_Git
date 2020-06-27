@@ -1,0 +1,119 @@
+﻿@model List<RightsU_Entities.USP_List_Acq_Budget_Result>
+
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script type="text/javascript">
+    var IsCall = 'Y';
+    function SetPaging() {
+        debugger
+        var txtPageSize = $('#txtPageSize').val();
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null && '@ViewBag.RecordCount' != '0')
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        $('#hdnPageNo').val(page_index);
+        debugger;
+        if (IsCall == 'Y') {
+            BindGrid(page_index, false);
+        }
+        else
+            IsCall = 'Y';
+    }
+</script>
+
+<table class="table table-bordered table-hover" id="tblMain">
+    <thead>
+        <tr>
+            <th style="width: 5%;">@objMessageKey.Srno</th>
+            <th style="width: 15%;">@objMessageKey.Title</th>
+            <th style="width: 12%;">@objMessageKey.WBSCode</th>
+            <th style="width: 38%;">@objMessageKey.WBSDescription</th>
+            <th style="width: 10%;">@objMessageKey.StudioVendor</th>
+            <th style="width: 10%;">@objMessageKey.OriginalDubbed</th>
+            @if (objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_VIEW && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+            {
+                <th style="width: 10%;">@objMessageKey.Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+                @if (Model.Count != 0)
+        {
+            int Count = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@(Count + ViewBag.SrNo_StartFrom)</td>
+                    <td>@item.Title_Name</td>
+                    <td>@item.WBS_Code</td>
+                    <td>@item.WBS_Description</td>
+                    <td>@item.Studio_Vendor</td>
+                    <td>@item.Original_Dubbed</td>
+                    @if (objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_VIEW && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+                        if (item.Acq_Deal_Budget_Code > 0)
+                        {
+                            <td align="center">
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="EditBudget('@item.Acq_Deal_Budget_Code');"></a>
+                                &nbsp;<a class="glyphicon glyphicon-trash" title="Delete" onclick="DeleteBudget('@item.Acq_Deal_Budget_Code')" />
+                            </td>
+                        }
+                        else
+                        {
+                            <td align="center">
+                                <a title="@objMessageKey.Add" class="glyphicon glyphicon-plus" onclick="AddBudget();"></a>
+                            </td>
+                        }
+                    }
+
+                </tr>
+                    Count++;
+                    }
+                    @Html.Hidden("Acq_Deal_Budget_Code")
+                    }
+                    else
+                    {
+                    <tr>
+                        @if (objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_VIEW && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                //&& objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    <td colspan="7">@objMessageKey.NoResultFound!</td>
+                }
+                else
+                {
+                    <td colspan="6">@objMessageKey.NoResultFound!</td>
+                }
+            </tr>
+                        }
+</tbody>
+</table>

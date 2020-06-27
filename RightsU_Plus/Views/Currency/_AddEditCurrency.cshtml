@@ -1,0 +1,142 @@
+﻿@model RightsU_Entities.Currency
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }    
+
+}
+<script>
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.lblExchangeRate').css("padding-right", "2%");
+        }
+        else {
+            $('.lblExchangeRate').css("padding-left", "2%");
+        }
+    });
+</script>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    @if (Model.Currency_Code > 0)
+    {
+        if (ViewBag.CommandName == "VIEW")
+        {
+            <h2>@objMessageKey.ViewCurrencyDetails</h2>
+        }
+        else
+        {
+            <h2>@objMessageKey.EditCurrencyDetails</h2>
+        }
+    }
+    else
+    {
+        <h2>@objMessageKey.AddCurrencyDetails</h2>
+    }
+</div>
+<div class="modal_block">
+    <table class="add_title_popup">
+        <tr>
+            <td class="lblExchangeRate" style="width:20%" ><b>@objMessageKey.CurrencyName</b></td>
+            <td>
+                @if (ViewBag.CommandName == "VIEW")
+                {
+                    <span>@Model.Currency_Name</span>
+                }
+                else
+                {
+                    <input type="text" id="txtCurrencyName" value="@Model.Currency_Name" placeholder="@objMessageKey.CurrencyName" maxlength="50" class="form-control input-sm" style="width:50%" />
+                    <input type="hidden" id="hdnCurrencyCode" value="@Model.Currency_Code" />
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="lblExchangeRate"><b>@objMessageKey.CurrencySign</b></td>
+            <td>
+                @if (ViewBag.CommandName == "VIEW")
+                {
+                    <span>@Model.Currency_Sign</span>
+                }
+                else
+                {
+                    <input type="text" id="txtCurrencySign" value="@Model.Currency_Sign" placeholder="@objMessageKey.CurrencySign" maxlength="10" class="form-control input-sm" style="width:50%" />
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="lblExchangeRate"><b>@objMessageKey.BaseCurrency</b></td>
+            <td>
+                @if (ViewBag.CommandName != "VIEW")
+                {
+                    if (Model.Is_Base_Currency == "Y")
+                    {
+                        if (ViewBag.EnableBaseCurrency == "Y")
+                        {
+                            <input type="checkbox" id="chkBaseCurrency" name="Is_Base_Currency" checked="checked" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkBaseCurrency" name="Is_Base_Currency" checked="checked" disabled="disabled" />
+                        }
+                    }
+                    else
+                    {
+                        if (ViewBag.EnableBaseCurrency == "Y")
+                        {
+                            <input type="checkbox" id="chkBaseCurrency" name="Is_Base_Currency" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkBaseCurrency" name="Is_Base_Currency" disabled="disabled" />
+                        }
+                    }
+                }
+                else
+                {
+                    <span>@objMessageKey.NO</span>
+                }
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="grid_area" style="margin: 0 auto; width: 98%;">
+    <div class="paging_area clearfix" style="height:27px !important;">
+        <span class="pull-left bold" style="padding-left: 0.3%">@objMessageKey.CurrencyExchangeRate</span>
+        
+    </div>
+    <div class="paging_area clearfix" id="Pg3" style="height:30px !important;line-height:0px !important;padding-left:0.5% !important;">
+        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+        <span class="pull-left" id="lblRecordCountPopup"></span>
+        <span class="pull-right" style="vertical-align:top;line-height:0px !important;margin-top:-4px;">
+            @if (ViewBag.CommandName != "VIEW")
+            {                                           
+                if (Model.Is_Base_Currency != "Y")
+                {
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Add" style="float:right" onclick="AddEditExchangeRate('ADD', '')" />
+                }
+            }
+        </span>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block" id="divCurrencyExchangeRate" style="overflow:auto; max-height:500px">
+        </div>
+    </div>
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                @if (ViewBag.CommandName != "VIEW")
+                {
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="SaveCurrency()" />
+                }
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

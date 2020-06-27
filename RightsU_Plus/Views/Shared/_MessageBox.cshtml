@@ -1,0 +1,15 @@
+﻿<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        showAlert('e', '@ViewBag.ErrorMessage', '@ViewBag.Button')
+
+    });
+
+    function handleOk() {
+        if ('@ViewBag.IsRedirect' == "Y") {
+            window.location.href = '@Url.Action(ViewBag.Action, ViewBag.Controller)';
+        }
+    }
+
+</script>

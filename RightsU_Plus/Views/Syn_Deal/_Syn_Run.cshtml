@@ -1,0 +1,293 @@
+﻿@model RightsU_Entities.Syn_Deal_Run
+@{
+    List<int> Lst_Day_Codes = Model.Syn_Deal_Run_Repeat_On_Day.Select(i => i.Day_Code ?? 0).ToList();
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    string Message = Convert.ToString(Session["Message"]);
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RightsU</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css" />
+    <script type="text/javascript" src="~/JS_Core/jquery.plugin.js"></script>
+    <script type="text/javascript" src="~/JS_Core/jquery.timeentry.js"></script>
+    <style>
+        #tabRunDef .chosen-container {
+            margin: 0;
+        }
+
+        input.is-timeEntry {
+            width: 80px;
+        }
+
+        input.numbertext {
+            width: 55px;
+        }
+
+        span + .numbertext {
+            margin-right: 20px;
+        }
+
+        .sumo_ddlPTitle {
+            width: 845px !important;
+        }
+
+        .sumo_ddlPPlatform {
+            width: 845px !important;
+        }
+          span::after{
+                content:"\200E‎";
+            }
+            label::after{
+                content:"\200E‎";
+            }
+    </style>
+    <script>
+        var ShowMessage = {
+            "MSGRunDefUpdate": '@objMessageKey.RunDefinitionUpdatedSuccessfully',
+            "MSGRunDefAdd": '@objMessageKey.RunDefinitionAddedSuccessfully',
+            "MSGAllUnsaved": '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead',
+            "PleaseenternoofRuns": '@objMessageKey.PleaseenternoofRuns',
+            "PleaseselectTitle": '@objMessageKey.Pleaseselecttitle',
+            "Days": '@objMessageKey.Days',
+            "Hrs": '@objMessageKey.hrs',
+            "Sumofyearwiserunshouldbeequaltonumberofexhibition": '@objMessageKey.Sumofyearwiserunshouldbeequaltonumberofexhibition',
+            "Combinationconflictswithotherrundefinition": '@objMessageKey.Combinationconflictswithotherrundefinition',
+            "Jan": '@objMessageKey.Jan',
+            "Feb": '@objMessageKey.Feb',
+            "Mar": '@objMessageKey.Mar',
+            "Apr": '@objMessageKey.Apr',
+            "May": '@objMessageKey.May',
+            "Jun": '@objMessageKey.Jun',
+            "Jul": '@objMessageKey.Jul',
+            "Aug": '@objMessageKey.Aug',
+            "Sep": '@objMessageKey.Sep',
+            "Oct": '@objMessageKey.Oct',
+            "Nov": '@objMessageKey.Nov',
+            "Dec": '@objMessageKey.Dec',
+            "MsgPlaceSearch": '@objMessageKey.Search'
+        }
+        var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+    , URL_BindPlatform = '@Url.Action("BindPlatform", "Syn_Run")'
+    , URL_PartialYearWiseList = '@Url.Action("PartialYearWiseList", "Syn_Run")'
+    , URL_GetYearWiseRun = '@Url.Action("GetYearWiseRun", "Syn_Run")'
+    , URL_GetRightRule = '@Url.Action("GetRightRule", "Syn_Run")'
+    , URL_ValidateTitleOnSave = '@Url.Action("ValidateTitleOnSave", "Syn_Run")'
+    , URL_ValidateDuplication = '@Url.Action("ValidateDuplication", "Syn_Run")'
+    , URL_ValidatePlatform = '@Url.Action("ValidatePlatform", "Syn_Run")'
+    , URL_SRL_Index = '@Url.Action("Index", "Syn_Run_List")'
+    , URL_ChangeTab = '@Url.Action("ChangeTab", "Global")';
+
+        var Record_Locking_Code_G = '@ViewBag.Record_Locking_Code'
+    , Syn_Deal_Run_Code_G = '@Model.Syn_Deal_Run_Code'
+    , Run_Type_G = '@(Model.Run_Type)'
+    , Is_Yearwise_Definition_G = '@(Model.Is_Yearwise_Definition)'
+    , Is_Rule_Right_G = '@(Model.Is_Rule_Right)'
+    , Right_Rule_Code_G = '@(Model.Right_Rule_Code)'
+    , Repeat_Within_Days_Hrs_G = '@(Model.Repeat_Within_Days_Hrs)'
+    , Syn_Deal_Run_Repeat_On_Day_Count_G = '@Model.Syn_Deal_Run_Repeat_On_Day.Count'
+    , List_Repeat_On_Day_Code_G = [];
+
+        function Set_Repeat_Day_Codes() {
+            @for (int i = 0; i < Model.Syn_Deal_Run_Repeat_On_Day.Count; i++)
+    {
+                    <text>
+            var day = '@(Model.Syn_Deal_Run_Repeat_On_Day.ElementAt(i).Day_Code)';
+            List_Repeat_On_Day_Code_G.push(day);
+            </text>
+    }
+        }
+        $(document).ready(function () {
+            debugger;
+            $('#ddlPTitle').SumoSelect();
+            $('#ddlPPlatform').SumoSelect();
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?=syn_RunDefinition');
+
+        });
+    </script>
+    <script src="~/Custom_Scripts/Syn_Deal_Runs.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+</head>
+<body>
+    @using (Ajax.BeginForm("Save", "Syn_Run", new AjaxOptions { OnSuccess = "OnSuccess" }))
+    {
+        <input type="hidden" id="hdnTabName" name="hdnTabName" />
+        <div class="grid_area">
+            <div class="navigation_tabs">
+                <div class="tabbable">
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="tab-pane active" id="tabRunDef">
+                            <div class="scale_table_block">
+                                <table class="table">
+                                    <tr>
+                                        <td class='bold' width="20%">@objMessageKey.Title </td>
+                                        <td id="tdTitleCodes" colspan="3">
+                                            <div class="ddlPTitle" style="width: 847px;">
+                                                @Html.ListBox("ddlPTitle", ViewBag.TitleList as MultiSelectList, new { @multiple = "multiple" })
+                                            </div>
+                                            @Html.Hidden("hdnTitleList")
+                                            @Html.HiddenFor(m => m.Syn_Deal_Run_Code)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class='bold' width="20%">@objMessageKey.Platform </td>
+                                        <td id="tdPlatformCodes" colspan="3">
+                                            <div class="ddlPPlatform" style="width: 847px;">
+                                                @Html.ListBox("ddlPPlatform", ViewBag.PlatformList as MultiSelectList, new { @multiple = "multiple" })
+                                            </div>
+                                            @Html.Hidden("hdnPlatformList")
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class='bold'>@objMessageKey.NoofExhibition</td>
+                                        <td colspan="3">
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => Model.Run_Type, "U", new { @onclick = "showLimited2(this)", @checked = "checked" })
+                                                @objMessageKey.Unlimited
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => Model.Run_Type, "C", new { @onclick = "showLimited2(this)" })
+                                                @objMessageKey.Limited
+                                            </label>
+                                            @Html.TextBoxFor(m => Model.No_Of_Runs, new { @name = "addLimited2", @id = "addLimited2", @style = "display:none;", @class = "numbertext" })
+                                            <label id="lblAddLimited" style="display: none;">@objMessageKey.EntireLicensePeriod</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class='bold'>@objMessageKey.YearWiseRunDefinition</td>
+                                        <td colspan="3">
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => Model.Is_Yearwise_Definition, "Y", new { @onclick = "showrunsDefinition2(this)" })
+                                                @objMessageKey.Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => Model.Is_Yearwise_Definition, "N", new { @onclick = "showrunsDefinition2(this)", @checked = "checked" })
+                                               @objMessageKey.NO
+                                            </label>
+                                            @Html.Hidden("hdnIs_Yearwise_Definition", (string.IsNullOrEmpty(Model.Is_Yearwise_Definition)) ? "N" : Model.Is_Yearwise_Definition)
+                                        </td>
+                                    </tr>
+                                    <tr id="addrunsDef2" style="display: none;"></tr>
+                                    <tr>
+                                        <td class='bold'>@objMessageKey.PerExhibitionDayRuleRight</td>
+                                        <td colspan="3">
+                                            <span class="required">
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(m => Model.Is_Rule_Right, "Y", new { @onclick = "showRules2(this)" })
+                                                    @objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(m => Model.Is_Rule_Right, "N", new { @onclick = "showRules2(this)", @checked = "checked" })
+                                                    @objMessageKey.NO
+                                                </label>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr id="RuleEdit_1" style="display: none;">
+                                        <td class='search'>@objMessageKey.Rule</td>
+                                        <td colspan="3">
+                                            @Html.DropDownList(
+                                                                     "ddlRuleRight",
+                                                                     ViewBag.RightRule as MultiSelectList,
+                                                                     new { @class = "form_input chosen-select", @onchange = "bindRuleRecord(this)" }
+                                                                  )
+                                            @Html.HiddenFor(m => Model.Right_Rule_Code, new { @name = "Right_Rule_Code", @id = "Right_Rule_Code" })
+                                        </td>
+                                    </tr>
+                                    <tr id="RuleEdit_2" style="display: none;">
+                                        <td class='search'>@objMessageKey.DayStartTime </td>
+                                        <td colspan="3">
+                                            @Html.TextBox("txtDayStartTime", string.Empty, new { @readonly = "readonly" })
+                                        </td>
+                                    </tr>
+                                    <tr id="RuleEdit_3" style="display: none;">
+                                        <td class='search'>@objMessageKey.Playsperday </td>
+                                        <td colspan="3">@Html.TextBox("txtPlaysperday", string.Empty, new { @readonly = "readonly" })</td>
+                                    </tr>
+                                    <tr id="RuleEdit_4" style="display: none;">
+                                        <td class='search'>@objMessageKey.Durationofdayinhrs</td>
+                                        <td colspan="3">@Html.TextBox("txtDurationofDay", string.Empty, new { @readonly = "readonly" })</td>
+                                    </tr>
+                                    <tr id="RuleEdit_5" style="display: none;">
+                                        <td class='search'>@objMessageKey.NoofRepeat  </td>
+                                        <td colspan="3">@Html.TextBox("txtNoofRepeat", string.Empty, new { @readonly = "readonly" })</td>
+                                    </tr>
+                                    <tr id="RuleEdit_6" style="display: none;">
+                                        <td class='search'>@objMessageKey.RepeatWithinDuration  </td>
+                                        <td colspan="3">
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(model => Model.Repeat_Within_Days_Hrs, "D", new { id = "Days", @checked = "checked", @onclick = "showdays2(this)" })
+                                                @objMessageKey.Days
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(model => Model.Repeat_Within_Days_Hrs, "H", new { id = "Hours", @onclick = "showdays2(this)" })
+                                                @objMessageKey.Hours
+                                            </label>
+
+                                            @Html.TextBoxFor(m => Model.No_Of_Days_Hrs, new { @name = "txtHrs2", @id = "txtHrs2", @class = "text numbertext" })
+                                            @Html.Label(objMessageKey.Days, new { @id = "lblDaysHours" })
+                                        </td>
+                                    </tr>
+                                    <tr id="RuleEdit_7" style="display: none;">
+                                        <td class='search'>@objMessageKey.OnlyOn</td>
+                                        <td colspan="3">
+                                            @foreach (UTOFrameWork.FrameworkClasses.AttribValue attr in ViewBag.DaysList)
+                                            {                                                
+                                                <label class="checkbox-inline">
+                                                    <input type='checkbox' name='chkDays' value='@attr.Val' id="@attr.Attrib" />
+                                                    @attr.Attrib
+                                                </label>
+                                                @Html.Hidden("hdnDays");
+                                            }
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bottom_action">
+                            <ul class="form_link_nav clearfix">
+                                <li>
+                                    <input type="submit" class="btn-primary" value="@objMessageKey.Save" id="btnSaveRun" onclick="ClearHidden(); return ValidateSave();" />
+                                </li>
+                                <li>
+                                    <input type="button" class="btn-primary" value="@objMessageKey.Cancel" onclick="validateOnCancel();" />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popRunDefn" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="Form1">
+                    <div>
+                        <div class="form_fields acq">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>
+                                        ×
+                                    </span>
+                                    <span class="sr-only">@objMessageKey.Close</span>
+                                </a>
+                                <h2 id="lblConflictHeading">@objMessageKey.Combinationconflictswithotherrundefinition</h2>
+                            </div>
+                            <div id="conflictRun" class="modal_block">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

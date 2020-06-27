@@ -1,0 +1,1185 @@
+﻿@model RightsU_Entities.Amort_Rule
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //debugger;
+        if ('@ViewBag.ErrorMessage' != '') {
+            showAlert('p', 'Percent cannot be Zero', 'OK');
+            $('#txt_RuleNo').focus();
+            $('#txt_RuleNo').addClass("required");
+        }
+        var commandAction = '@ViewBag.CommandAction';
+        var value = $("input[name='Ruletype']:checked").val();
+        var Selvalue = '';
+        var id = 0;
+        id = '@ViewBag.AmortCode';
+        if (commandAction == 'Edit') {
+            debugger;
+            if (value == 'R') {
+                $('#tr_Run').show();
+                $('#tr_type').hide();
+                $('#tr_Period').hide();
+                $('#tr_NoMonth').hide();
+                $('#tr_Premier').hide();
+                Selvalue = $("input[name='RunType_Dist']:checked").val();
+                if (Selvalue == 'E') {
+                    $('#tr_NoRun').show();
+                    $('#div_Run').hide();
+                }
+                else {
+                    AddAmortDetail(commandAction, id);
+                    $('#tr_NoRun').show();
+                    $('#div_Run').show();
+                    $('#tbl_Run').show();
+                }
+            }
+            else if (value == 'P') {
+                $('#tr_Run').hide();
+                $('#tr_NoRun').hide();
+                $('#tr_type').show();
+                $('#tr_Period').show();
+                $('#tr_Premier').hide();
+                SelValue = $("input[name='PeriodType_Dist']:checked").val();
+
+                if (SelValue == 'M' && $('#chk_equ').is(':checked')) {
+                    $('#div_Run').show();
+                    $('#tbl_Period').show();
+                    $('#tr_NoMonth').show();
+                    AddAmortDetail(commandAction, id);
+                }
+                else if (SelValue == 'M') {
+                    $('#div_Run').show();
+                    $('#tbl_Period').show();
+                    $('#tr_NoMonth').show();
+                    AddAmortDetail(commandAction, id);
+                }
+                else if (SelValue != 'M') {
+                    $('#tr_NoMonth').hide();
+                    $('#div_Run').hide();
+                }
+            }
+            else if (value == 'O') {
+                $('#tr_Run').hide();
+                $('#tr_NoRun').hide();
+                $('#tr_type').hide();
+                $('#tr_Period').hide();
+                $('#tr_NoMonth').hide();
+                $('#tr_Premier').hide();
+                $('#div_Run').show();
+                $('#tbl_Other').show();
+                AddAmortDetail(commandAction, id);
+
+            }
+            else if (value == 'C') {
+                $('#tr_Run').hide();
+                $('#tr_NoRun').hide();
+                $('#tr_type').hide();
+                $('#tr_Period').hide();
+                $('#tr_NoMonth').hide();
+                $('#tr_Premier').show();
+                $('#div_Run').show();
+                $('#tbl_Premier').show();
+                AddAmortDetail(commandAction, id);
+            }
+        }
+
+        if ('@ViewBag.message' != "") {
+            showAlert('m', '@ViewBag.message', 'OK');
+        }
+        countChar($('#txt_RuleDescription'));
+    });
+
+
+    $(document).ready(function () {
+        $("input[name='Ruletype']:radio").change(function () {
+            debugger;
+            var value = $("input[name='Ruletype']:checked").val();
+            if (value == 'R') {
+                $('#tr_Run').show();
+                $('#tr_type').hide();
+                $('#tr_Period').hide();
+                $('#tr_NoMonth').hide();
+                $('#tr_Premier').hide();
+                $("#div_Run").hide();
+                $("input[name='PeriodType_Dist']:radio").prop("checked", false);
+                $("#chk_equ").prop("checked", false);
+            }
+            else if (value == 'P') {
+                $('#tr_Run').hide();
+                $('#tr_NoRun').hide();
+                $('#tr_type').show();
+                $('#tr_Period').show();
+                $('#tr_Premier').hide();
+                $("#div_Run").hide();
+                $("input[name='RunType_Dist']:radio").prop("checked", false);
+            }
+            else if (value == 'O') {
+                $('#tr_Run').hide();
+                $('#tr_NoRun').hide();
+                $('#tr_type').hide();
+                $('#tr_Period').hide();
+                $('#tr_NoMonth').hide();
+                $('#tr_Premier').hide();
+                $('#div_Run').show();
+                $("#chk_equ").prop("checked", false);
+                AddAmortDetail('Add', 0);
+                $("input[name='RunType_Dist']:radio").prop("checked", false);
+                $("input[name='PeriodType_Dist']:radio").prop("checked", false);
+            }
+            else if (value == 'C') {
+                $('#tr_Run').hide();
+                $('#tr_NoRun').hide();
+                $('#tr_type').hide();
+                $('#tr_Period').hide();
+                $('#tr_NoMonth').hide();
+                $('#tr_Premier').show();
+                $('#div_Run').show();
+                AddAmortDetail('Add', 0);
+                $("input[name='RunType_Dist']:radio").prop("checked", false);
+                $("input[name='PeriodType_Dist']:radio").prop("checked", false);
+                $("#chk_equ").prop("checked", false);
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        $("input[name='RunType_Dist']:radio").change(function () {
+            var Selvalue = $("input[name='RunType_Dist']:checked").val();
+            $('#NoRun').removeClass("required");
+            AddAmortDetail('Add', 0);
+            if (Selvalue == 'E') {
+                $('#tr_NoRun').show();
+                $('#div_Run').hide();
+            }
+            else {
+                $('#tr_NoRun').show();
+                $('#div_Run').show();
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("input[name='PeriodType_Dist']:radio").change(function () {
+
+            var Selvalue = $("input[name='PeriodType_Dist']:checked").val();
+            AddAmortDetail('Add', 0);
+            if (Selvalue == 'M') {
+                $('#tr_NoMonth').show();
+                $('#div_Run').show();
+
+                if ($('#chk_equ').is(':checked') && $("input[name='PeriodType_Dist']:checked")) {
+                    PeriodEquallyDistributeCheck(@ViewBag.ListCount);
+                        $('#trPriodAmortDeatil').attr('onkeypress', 'return false');
+                        $('#btn_Add_0').attr('style', 'display:none');
+                    }
+                    else {
+                        $('#trPriodAmortDeatil').attr('onkeypress', 'return true');
+                        $('#btn_Add_0').removeAttr('display');
+                    }
+                }
+                else {
+                    $('#NoMonth').val('');
+                    $('#tr_NoMonth').hide();
+                    $('#div_Run').hide();
+                }
+            });
+
+            $('#chk_equ').change(function () {
+                $("#NoMonth").val('');
+                var SelValue = $("input[name='PeriodType_Dist']:checked").val();
+                PeriodEquallyDistributeCheck(@ViewBag.ListCount);
+                if (SelValue == 'M' && $('#chk_equ').is(':checked')) {
+                    $('#div_Run').show();
+                }
+                else if (SelValue == 'M') {
+                    $('#div_Run').show();
+                }
+                else if (SelValue != 'M') {
+                    $('#tr_NoMonth').hide();
+                    $('#div_Run').hide();
+                }
+                if ($('#chk_equ').is(':checked') && $("input[name='PeriodType_Dist']:checked")) {
+                    $('#trPriodAmortDeatil').attr('onkeypress', 'return false');
+                    $('#btn_Add_0').attr('style', 'display:none');
+                }
+                else {
+                    $('#trPriodAmortDeatil').attr('onkeypress', 'return true');
+                    $('#btn_Add_0').removeAttr('display');
+                }
+            });
+        });
+
+        function PeriodEquallyDistributeCheck(count) {
+
+            var RuleType = $("input[name='Ruletype']:checked").val();
+            var RunPeriodType = '';
+            if (RuleType == 'P')
+                RunPeriodType = $("input[name='PeriodType_Dist']:checked").val();
+            var EquallyDistribute = $('#chk_equ').is(':checked');
+            if ($('#chk_equ').is(':checked'))
+                $('#chk_equ').val('E');
+            else
+                $('#chk_equ').val('D');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("PeriodEquallyDistributeCheck", "Amort_Rule")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    RuleType: RuleType,
+                    RunType: RunPeriodType,
+                    Index: count,
+                    status: EquallyDistribute
+                }),
+                async: false,
+                datatype: 'html',
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+
+                        showLoading();
+                        $("#div_Run").empty();
+                        $("#div_Run").append(result);
+
+                        switch (RuleType) {
+                            case 'P':
+                                switch (RunPeriodType) {
+                                    case 'A': $('#tbl_Period').hide();
+                                        break;
+                                    case 'M': $('#tbl_Period').show();
+                                        break;
+                                }
+                                break;
+                        }
+                        hideLoading();
+                    }
+                },
+
+                error: function (result) {
+                    alert(result);
+                }
+
+            });
+
+        }
+
+        function ADDNewRow(pIndex, index, count, command) {
+            debugger;
+            var Percentage = 0;
+            var RuleType = $("input[name='Ruletype']:checked").val();
+            var RunPeriodType = '';
+            if (RuleType == 'R')
+                RunPeriodType = $("input[name='RunType_Dist']:checked").val();
+            else if (RuleType == 'P')
+                RunPeriodType = $("input[name='PeriodType_Dist']:checked").val();
+            else
+                RunPeriodType = 'O';
+
+            for (var j = 0; j < count; j++) {
+                if (command == 'Add') {
+                    $('#txt_From_Range_' + j).removeClass("required");
+                    $('#txt_To_Range_' + j).removeClass("required");
+                    $('#txt_Per_Cent_' + j).removeClass("required");
+                    if ($('#txt_From_Range_' + j).val() == '') {
+                        $('#txt_From_Range_' + j).addClass("required");
+                        $('#txt_From_Range_' + j).focus();
+                        return false;
+                    }
+                    if ($('#txt_To_Range_' + j).val() == '') {
+                        $('#txt_To_Range_' + j).addClass("required");
+                        $('#txt_To_Range_' + j).focus();
+                        return false;
+                    }
+                    if ($('#txt_Per_Cent_' + j).val() == '') {
+                        $('#txt_Per_Cent_' + j).addClass("required");
+                        $('#txt_Per_Cent_' + j).focus();
+                        return false;
+                    }
+                    if (parseInt($('#txt_From_Range_' + j).val()) == 0) {
+                        showAlert('p', 'From Run cannot be Zero', 'OK');
+                        return false;
+                    }
+                    if (parseInt($('#txt_To_Range_' + j).val()) == 0) {
+                        showAlert('p', 'To Run cannot be Zero', 'OK');
+                        return false;
+                    }
+                    if (parseInt($('#txt_Per_Cent_' + j).val()) == 0) {
+                        showAlert('p', 'Percent cannot be Zero', 'OK');
+                        return false;
+                    }
+                    Percentage = parseInt(Percentage) + parseInt($('#txt_Per_Cent_' + j).val());
+                    if (Percentage > 100 && (RuleType == 'P' || RuleType == 'R' || RuleType == 'O')) {
+                        $('#txt_Per_Cent_' + j).addClass("required");
+                        $('#txt_Per_Cent_' + j).focus();
+                        showAlert('p', 'Total Of Percentage Can\'t be Greater than 100');
+                        return false;
+                    }
+                }
+            }
+            var bigArray = new Array();
+            var rowindex = '';
+            for (var i = 0; i < count; i++) {
+                var From_Range = '', To_Range = '', Per_Cent = '', Month = 0, Year = 0;
+                if (RuleType == 'P' || RuleType == 'R') {
+                    From_Range = $('#txt_From_Range_' + i).val();
+                    To_Range = $('#txt_To_Range_' + i).val();
+                    Per_Cent = $('#txt_Per_Cent_' + i).val();
+                }
+                else if (RuleType == 'O') {
+                    if ($('#hdn_Month_' + i).val() != null || $('#hdn_Month_' + i).val() != '')
+                        if ($('#hdn_Month_' + i).val() != '0')
+                            Month = $('#hdn_Month_' + i).val();
+                        else
+                            Month = $('#ddl_Month_' + i + ' option:selected').val();
+                    Year = $('#txt_Year_' + i).val();
+                    Per_Cent = $('#txt_Per_Cent_' + i).val();
+                }
+                bigArray.push({ From_Range: From_Range, To_Range: To_Range, Per_Cent: Per_Cent, Month: Month, Year: Year });
+            }
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ADDNewRow", "Amort_Rule")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    RuleType: RuleType,
+                    RunType: RunPeriodType,
+                    commandName: command,
+                    Index: pIndex,
+                    deleteIndex: index,
+                    lstAmortRuleDetails: bigArray
+                }),
+                async: false,
+                datatype: 'html',
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+
+                        showLoading();
+                        $("#div_Run").empty();
+                        $("#div_Run").append(result);
+
+                        switch (RuleType) {
+                            case 'R':
+                                switch (RunPeriodType) {
+                                    case 'E': $('#tbl_Run').hide();
+                                        break;
+                                    case 'D': $('#tbl_Run').show();
+                                        Showhidebutton(RuleType, count, command);
+                                        break;
+                                }
+                                break;
+                            case 'P':
+                                switch (RunPeriodType) {
+                                    case 'A': $('#tbl_Period').hide();
+                                        break;
+                                    case 'M': $('#tbl_Period').show();
+                                        Showhidebutton(RuleType, count, command);
+                                        break;
+                                }
+                                break;
+                            case 'O':
+                                $('#tbl_Other').show();
+                                Showhidebutton(RuleType, count, command);
+                                break;
+                            case 'C':
+                                $('#tbl_Premier').show();
+                                break;
+                        }
+                        hideLoading();
+                    }
+                },
+
+                error: function (result) {
+                    alert(result);
+                }
+
+            });
+        }
+
+
+        function Showhidebutton(Ruletype, count, command) {
+            //debugger;
+            if (command == 'Add' || command == 'Edit') {
+                var j = 0;
+                for (j = 0; j < count; j++) {
+                    if (Ruletype == 'P') {
+                        $('#btn_Add_' + j).hide();
+                        if (j != 0)
+                            $('#btn_Del_' + j).hide();
+                    }
+                    else if (Ruletype == 'R') {
+                        $('#bt_Add_' + j).hide();
+                        if (j != 0)
+                            $('#bt_Del_' + j).hide();
+                    }
+                    else if (Ruletype == 'O') {
+                        $('#btnAdd_' + j).hide();
+                        if (j != 0)
+                            $('#btnDel_' + j).hide();
+                    }
+                }
+                if (j >= count && Ruletype == 'P') {
+                    if (j != 0)
+                        $('#btn_Del_' + j).show();
+                }
+                else if (j >= count && Ruletype == 'R') {
+                    if (j != 0)
+                        $('#bt_Del_' + j).show();
+                }
+                else if (j >= count && Ruletype == 'O') {
+                    if (j != 0)
+                        $('#btnDel_' + j).show();
+                }
+
+            }
+            else {
+                var i = 0;
+                var k = count - 1;
+                var l = count - 2;
+                for (i = 0; i < k; i++) {
+                    if (Ruletype == 'P') {
+                        $('#btn_Add_' + i).hide();
+                        if (i != 0)
+                            $('#btn_Del_' + i).hide();
+                        if (i == l) {
+                            $('#btn_Add_' + i).show();
+                            if (i != 0)
+                                $('#btn_Del_' + i).show();
+                        }
+                    }
+                    else if (Ruletype == 'R') {
+                        $('#bt_Add_' + i).hide();
+                        if (i != 0)
+                            $('#bt_Del_' + i).hide();
+                        if (i == l) {
+                            $('#bt_Add_' + i).show();
+                            if (i != 0)
+                                $('#bt_Del_' + i).show();
+                        }
+                    }
+                    else if (Ruletype == 'O') {
+                        $('#btnAdd_' + i).hide();
+                        if (i != 0)
+                            $('#btnDel_' + i).hide();
+                        if (i == l) {
+                            $('#btnAdd_' + i).show();
+                            if (i != 0)
+                                $('#btnDel_' + i).show();
+                        }
+                    }
+
+                }
+            }
+        }
+
+
+        function AddAmortDetail(commandAction, id) {
+
+            showLoading();
+            var RuleType = $("input[name='Ruletype']:checked").val();
+            var RunPeriodType = '';
+            if (RuleType == 'R')
+                RunPeriodType = $("input[name='RunType_Dist']:checked").val();
+            else if (RuleType == 'P')
+                RunPeriodType = $("input[name='PeriodType_Dist']:checked").val();
+            else
+                RunPeriodType = 'O';
+            $('#tbl_Run').empty();
+            $('#tbl_Period').empty();
+            $('#tbl_Other').empty();
+            $('#tbl_Premier').empty();
+            $("#div_Run").show();
+            var item = { From_Range: '', To_Range: '', Per_Cent: '' }
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AddAmortDetail", "Amort_Rule")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    RuleType: RuleType,
+                    RunType: RunPeriodType,
+                    commandName: commandAction,
+                    Index: 1,
+                    objJson: item,
+                    code: id
+                }),
+                datatype: 'html',
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+
+                        $("#div_Run").empty();
+                        $("#div_Run").append(result);
+                        var tblRowCount = 0;
+
+                        switch (RuleType) {
+                            case 'R':
+                                switch (RunPeriodType) {
+                                    case 'E': $('#tbl_Run').hide();
+                                        break;
+                                    case 'D': $('#tbl_Run').show();
+                                        tblRowCount = $('#tbl_Run tr').length;
+                                        break;
+                                }
+                                break;
+                            case 'P':
+                                switch (RunPeriodType) {
+                                    case 'A': $('#tbl_Period').hide();
+                                        break;
+                                    case 'M': $('#tbl_Period').show();
+                                        tblRowCount = $('#tbl_Period tr').length;
+                                        break;
+                                }
+                                break;
+                            case 'O':
+                                $('#tbl_Other').show();
+                                tblRowCount = $('#tbl_Other tr').length;
+                                break;
+                            case 'C':
+                                $('#tbl_Premier').show();
+                                break;
+                        }
+                        if (commandAction == 'Edit') {
+                            tblRowCount = tblRowCount - 2;
+                            if (RuleType == 'P' || RuleType == 'R' || RuleType == 'O') {
+                                Showhidebutton(RuleType, tblRowCount, commandAction);
+                            }
+                        }
+                        hideLoading();
+                    }
+                },
+
+                error: function (result) {
+                    alert(result);
+                }
+
+            });
+
+        }
+
+
+        function ValidateAmortdata() {
+            //debugger;
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            if ($('#txt_RuleNo').val() == '') {
+                // alert('Please enter Rule #');
+                $('#txt_RuleNo').addClass("required");
+                $('#txt_RuleNo').focus();
+                return false;
+            }
+            if ($('textarea#txt_RuleDescription').val() == '') {
+                //alert('Please enter Rule Description.');
+                $('textarea#txt_RuleDescription').addClass("required");
+                $('textarea#txt_RuleDescription').focus();
+                return false;
+            }
+            var EquallyDistribute = '';
+            var RuleType = $("input[name='Ruletype']:checked").val();
+            var RunPeriodType = '';
+            var RuleNo = $('#txt_RuleNo').val();
+            var RuleDescription = $('textarea#txt_RuleDescription').val();
+            var bigArray = new Array();
+            var NoRuns = 0, rowCount = 0, Percentage = 0;
+            var message = '';
+            if (RuleType == 'R') {
+                RunPeriodType = $("input[name='RunType_Dist']:checked").val();
+                if (!$("input[name='RunType_Dist']:checked").val()) {
+                    showAlert('p', 'Please select Run.');
+                    return false;
+                }
+                if (RunPeriodType == 'E')
+                    EquallyDistribute = 'E';
+                NoRuns = $('#NoRun').val();
+                rowCount = $('#tbl_Run tr').length;
+                rowCount = parseInt(rowCount) - 1;
+
+                if ($("input[name='RunType_Dist']:checked")) {
+                    if ($('#NoRun').val() == '') {
+                        $('#NoRun').addClass("required");
+                        $('#NoRun').focus();
+                        return false;
+                    }
+                }
+            }
+            else if (RuleType == 'P') {
+                RunPeriodType = $("input[name='PeriodType_Dist']:checked").val();
+                if (RunPeriodType == undefined) {
+                    showAlert('p', 'Please Select Period');
+                    $('#PeriodType_Dist').focus();
+                    return false;
+                }
+                else if ($('#NoMonth').val() == '' && RunPeriodType != 'A') {
+                    showAlert('p', 'Enter Number of Months ');
+                    return false;
+                }
+                //if ($('#chk_equ').is(':checked'))
+                EquallyDistribute = RunPeriodType;
+                NoRuns = $('#NoMonth').val();
+                rowCount = $('#tbl_Period tr').length;
+                rowCount = parseInt(rowCount) - 1;
+            }
+            else if (RuleType == 'O') {
+                RunPeriodType = 'O';
+                rowCount = $('#tbl_Other tr').length;
+                rowCount = parseInt(rowCount) - 1;
+            }
+            else {
+                RunPeriodType = 'C';
+                rowCount = 2;
+            }
+
+            if (RunPeriodType == 'M' || RunPeriodType == 'O' || RunPeriodType == 'C' || RunPeriodType == 'D') {
+                //debugger;
+                for (var l = 0; l < rowCount; l++) {
+                    Percentage = parseFloat(Percentage) + parseFloat($('#txt_Per_Cent_' + l).val());
+                    if (RuleType == 'R' || RuleType == 'P') {
+                        var x = rowCount - 1;
+                        if ($('#txt_From_Range_' + l).val() == '') {
+                            $('#txt_From_Range_' + l).addClass("required");
+                            $('#txt_From_Range_' + l).focus();
+                            return false;
+                        }
+                        if ($('#txt_To_Range_' + l).val() == '') {
+                            $('#txt_To_Range_' + l).addClass("required");
+                            $('#txt_To_Range_' + l).focus();
+                            return false;
+                        }
+                        if ($('#txt_To_Range_' + x).val() != '')
+                            if ($('#txt_To_Range_' + x).val() != NoRuns) {
+                                message = (RuleType == 'P') ? 'No.of Month is not matching with the last To Effective Month.' : 'No of Runs is not equal to the Last To RUN.';
+                                showAlert('p', message);
+                                return false;
+                            }
+                    }
+                    else if (RuleType == 'O') {
+                        if ($('#ddl_Month_' + l + ' option:selected').val() == '' || $('#ddl_Month_' + l + ' option:selected').val() == '0') {
+                            if ($('#hdn_Month_' + l).val() == '' || $('#hdn_Month_' + l).val() == '0') {
+                                $('#ddl_Month_' + l).focus();
+                                //$('#ddl_Month_' + l).addClass("required");
+                                $('#ddl_Month_' + l).attr('style', 'border-color: red;background-color: rgba(155,0,0,.1);');
+                                return false;
+                            }
+                        }
+                        if ($('#txt_Year_' + l).val() == '') {
+                            $('#txt_Year_' + l).addClass("required");
+                            $('#txt_Year_' + l).focus();
+                            return false;
+                        }
+                        else if (parseInt($('#txt_Year_' + l).val()) < 1999) {
+                            $('#txt_Year_' + l).addClass("required");
+                            showAlert('p', 'Year should be Greater than 1999');
+                            $('#txt_Year_' + l).focus();
+                            return false;
+                        }
+                    }
+                    else if (RuleType == 'C') {
+                        if (l == 1) {
+                            if ($('#txt_Year_' + l).val() == '') {
+                                $('#txt_Year_' + l).addClass("required");
+                                $('#txt_Year_' + l).focus();
+                                return false;
+                            }
+                        }
+                        if (l == 0) {
+                            if ($('#Nos').val() == '') {
+                                $('#Nos').addClass("required");
+                                $('#Nos').focus();
+                                return false;
+                            }
+                        }
+                    }
+                    if ((Percentage > parseFloat(100) || Percentage < parseFloat(100)) && l == rowCount - 1) {
+                        $('#txt_Per_Cent_' + l).addClass("required");
+                        $('#txt_Per_Cent_' + l).focus();
+                        showAlert('p', 'Total Of Percentage should be 100.');
+                        return false;
+                    }
+                }
+
+                if (RuleType == 'P' || RuleType == 'R') {
+                    for (var j = 0; j < rowCount - 1; j++) {
+                        var k = j + 1;
+                        var toRange = $('#txt_To_Range_' + j).val();
+                        var toForm = $('#txt_From_Range_' + k).val();
+                        var count = parseInt(toForm) - parseInt(toRange);
+                        if (count != 1) {
+                            showAlert('p', 'Please Correct From Range Value.');
+                            return false;
+                        }
+
+                    }
+                }
+            }
+            //debugger;
+            var msg = '';
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DuplicateData", "Amort_Rule")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    id: $('#Amort_Rule_Code').val(),
+                    ruleno: $('#txt_RuleNo').val(),
+                    noOfMonth: NoRuns,
+                    periodType: EquallyDistribute
+                }),
+                success: function (result) {
+                    if (result.Error != "")
+                        msg = result.Message;
+                    else if (result.Message != "") {
+                        if (result.errortype == "RuleNo") {
+                            $('#txt_RuleNo').focus();
+                            $('#txt_RuleNo').addClass("required");
+                        }
+                        if (result.errortype == "NoOfRuns") {
+                            $('#NoRun').focus();
+                            $('#NoRun').addClass("required");
+                        }
+                        msg = result.Message;
+                    }
+                },
+                error: function (result) {
+                    if (result != "") {
+                        msg = result;
+                    }
+                }
+
+            });
+            if (msg != '') {
+                showAlert('S', msg);
+                return false;
+            }
+        }
+
+        function Save_Success(result) {
+
+            if (result == "true") {
+                redirectToLogin();
+            }
+            else {
+
+                status = result.Status;
+                if (result.Status == "S") {
+                    if (result.Success_Message != "") {
+                        Command_Name = "REDIRECT_PAGE"
+                        Redirect_URL = result.Redirect_URL;
+                        showAlert("S", result.Success_Message, "OK");
+                    }
+                    else
+                        window.location.href = result.Redirect_URL;
+                }
+                else if (result.Status == undefined) {
+                    Command_Name = null;
+                    Redirect_URL = null;
+                    window.location.href = '@Url.Action("Index", "Login")';
+                } else {
+                    Command_Name = null;
+                    Redirect_URL = null;
+                    $('#hdnTabName').val("");
+                    showAlert("E", result.Error_Message);
+                }
+        }
+        hideLoading();
+        return false;
+    }
+
+
+    function btnCancel() {
+
+        var URL = '@Url.Action("List", "Amort_Rule", new { SearchedTitle = "Searched_Title" })';//, new { CallFrom = "T", Page_No = "Code", DealTypeCode = "Deal_Type_Code", TitleName = "Title_Name" }
+
+            URL = URL.replace("Searched_Title", '');
+            window.location.href = URL;
+        }
+
+        function handleOk() {
+            if ($('#hdnCommandName').val() == 'SAVE') {
+                location.href = '@Url.Action("List", "Amort_Rule")'
+            }
+            else if ($('#hdnCommandName').val() == 'CANCEL') {
+                location.href = '@Url.Action("CancelData", "Amort_Rule")'
+            }
+    }
+
+    function OnSaveSuccess(obj) {
+
+        $('#hdnCommandName').val('SAVE');
+        showAlert('S', obj, 'OK');
+    }
+
+    function OnCancelClick() {
+        $('#hdnCommandName').val('CANCEL');
+        showAlert('I', 'All unsaved data will be lost, still want to go ahead?', 'OKCANCEL');
+    }
+    function FillEffectiveMonth(month) {
+        if ($('#chk_equ').is(':checked') && $("input[name='PeriodType_Dist']:checked"))
+            $('#txt_To_Range_0').val($('#NoMonth').val());
+        return true;
+    }
+    function isNumber(evt, id) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 13) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function countChar(val) {
+        var max = 500;
+        var len = val.val().length;
+
+        if (len >= max)
+            val.val(val.val().substring(0, max));
+
+        $('.charNum').text(val.val().length.toString() + '/' + max.toString());
+    }
+</script>
+
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="top_area">
+                <h2>Add Amort Rule</h2>
+            </div>
+            @using (Html.BeginForm("Save", "Amort_Rule", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            { 
+                <div class="grid_area">
+                    <div>
+                        <div>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabGeneral">
+                                    <div class="scale_table_block">
+                                        <table class="four_column table style_table">
+                                            <tr>
+                                                <td>Amort Rule Type
+                                                    @Html.Hidden("Amort_Rule_Code", Model.Amort_Rule_Code)
+                                                </td>
+
+                                                <td>
+                                                    @if (Model.Rule_Type != null)
+                                                    {
+                                                        if (Model.Rule_Type == "R")
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "R", new { Name = "Ruletype", @checked = "checked" })  Run
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "P", new { Name = "Ruletype" })Period
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "O", new { Name = "Ruletype" }) Other
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "C", new { Name = "Ruletype" })    Premier/Show Premier
+                                                        </label>
+                                                        }
+                                                        else if (Model.Rule_Type == "P")
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "R", new { Name = "Ruletype" })  Run
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "P", new { Name = "Ruletype", @checked = "checked" })Period
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "O", new { Name = "Ruletype" }) Other
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "C", new { Name = "Ruletype" })    Premier/Show Premier
+                                                        </label>
+                                                        }
+                                                        else if (Model.Rule_Type == "O")
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "R", new { Name = "Ruletype" })  Run
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "P", new { Name = "Ruletype" })Period
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "O", new { Name = "Ruletype", @checked = "checked" }) Other
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "C", new { Name = "Ruletype" })    Premier/Show Premier
+                                                        </label>
+                                                        }
+                                                        else if (Model.Rule_Type == "C")
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "R", new { Name = "Ruletype" })  Run
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "P", new { Name = "Ruletype" })Period
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "O", new { Name = "Ruletype" }) Other
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "C", new { Name = "Ruletype", @checked = "checked" })    Premier/Show Premier
+                                                        </label>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="Ruletype" checked="checked" value="R" />
+                                                            Run</label>
+                                                    
+                                                        <label class="radio-inline">
+
+                                                            <input type="radio" name="Ruletype" value="P" />
+                                                            Period
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="Ruletype" value="O" />
+                                                            Other
+                                                  
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="Ruletype" value="C" />
+                                                            Premier/Show Premier
+       
+                                                        </label>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Rule#
+                                                </td>
+                                                <td>
+                                                    @if (Model.Rule_No != null)
+                                                    {
+                                                        <input type="text" id="txt_RuleNo" name="txt_RuleNo" value="@Model.Rule_No"  autocomplete="off" class="form_input" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" id="txt_RuleNo" name="txt_RuleNo" autocomplete="off" class="form_input" />
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align: right">
+                                                    <div class="charNum" style="font-size: small; font-weight: lighter; padding-right: 6%;">500</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Rule Description
+                                                </td>
+                                                <td>
+                                                    @if (Model.Rule_Desc != null)
+                                                    {
+                                                        <textarea id="txt_RuleDescription" rows="4" cols="50" name="txt_RuleDescription"
+                                                            onkeydown="countChar($('#txt_RuleDescription'));" onkeyup="countChar($('#txt_RuleDescription'))" class="form_input" maxlength="100">@Model.Rule_Desc</textarea>
+                                                    }
+                                                    else
+                                                    {
+                                                        <textarea id="txt_RuleDescription" rows="4" cols="50" name="txt_RuleDescription" class="form_input"
+                                                            onkeydown="countChar($('#txt_RuleDescription'));" onkeyup="countChar($('#txt_RuleDescription'))" maxlength="100"></textarea>
+                                                    }
+                                                </td>
+                                            </tr>
+
+                                            <tr id="tr_Run">
+                                                <td>Run
+                                                </td>
+                                                <td>
+                                                    @if (Model.Rule_Type != null && Model.Rule_Type == "R" && Model.Distribution_Type != null)
+                                                    {
+                                                        if (Model.Distribution_Type == "E")
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "E", new { Name = "RunType_Dist", @checked = "checked" })  Equally Distribute
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "D", new { Name = "RunType_Dist" }) Defined Manually
+                                                        </label>
+                                                        }
+                                                        else
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "E", new { Name = "RunType_Dist" })  Equally Distribute
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Rule_Type, "D", new { Name = "RunType_Dist", @checked = "checked" }) Defined Manually
+                                                        </label>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="RunType_Dist" value="E" />
+                                                            Equally Distribute</label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="RunType_Dist" value="D" />
+                                                            Defined Manually
+                                                        </label>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr id="tr_NoRun" style="display: none;">
+                                                <td>No. of Runs </td>
+                                                <td>
+                                                    @if (Model.Nos != null)
+                                                    {
+                                                        <input type="text" id="NoRun" name="NoRun" value="@Model.Nos" onkeypress="return isNumber(event);" maxlength="3" autocomplete="off" class="form_input" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" id="NoRun" name="NoRun" autocomplete="off" onkeypress="return isNumber(event);" maxlength="3" class="form_input" />
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr id="tr_type" style="display: none;">
+                                                <td>Type</td>
+                                                <td>
+                                                    @if (Model.Rule_Type != null && Model.Rule_Type == "P" && Model.Distribution_Type != null && Model.Distribution_Type == "E")
+                                                    {
+                                                        <label>
+                                                            <input type="checkbox" id="chk_equ" name="chk_equ" value="E" checked="checked" />
+                                                            Equally Distribute
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>
+                                                            <input type="checkbox" id="chk_equ" name="chk_equ" value="E" />
+                                                            Equally Distribute
+                                                        </label>
+                                                    }
+                                                    <input type="hidden" id="hdnchk_equ" name="hdnchk_equ" />
+                                                </td>
+                                            </tr>
+                                            <tr id="tr_Period" style="display: none;">
+                                                <td>Period</td>
+                                                <td>
+                                                    @if (Model.Rule_Type != null && Model.Rule_Type == "P" && Model.Period_For != null && Model.Period_For == "M")
+                                                    {
+                                                        <label class="radio-inline">
+                                                            @if (ViewBag.PeriodForDisable == "Y")
+                                                            {
+                                                                @Html.RadioButtonFor(m => Model.Distribution_Type, "A", new { Name = "PeriodType_Dist", disabled = "disabled" })}
+                                                            else
+                                                            {
+                                                                @Html.RadioButtonFor(m => Model.Distribution_Type, "A", new { Name = "PeriodType_Dist" })}  Amongst the Rights Period
+                                                                                                                                                                             
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Distribution_Type, "M", new { Name = "PeriodType_Dist", @checked = "checked" }) Defined Manually
+                                                        </label>
+                                                    }
+                                                    else if (Model.Rule_Type != null && Model.Rule_Type == "P" && Model.Period_For != null && Model.Period_For == "A")
+                                                    {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Distribution_Type, "A", new { Name = "PeriodType_Dist", @checked = "checked" })  Amongst the Rights Period
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Distribution_Type, "M", new { Name = "PeriodType_Dist" }) Defined Manually
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="radio-inline">
+                                                            @if (ViewBag.PeriodForDisable == "Y")
+                                                            {
+                                                                <input type="radio" name="PeriodType_Dist" value="A" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="radio" name="PeriodType_Dist" value="A" />
+                                                            }
+                                                            Amongst the Rights Period
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="PeriodType_Dist" value="M" />
+                                                            Defined Manually</label>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr id="tr_NoMonth" style="display: none;">
+                                                <td>No. of Months</td>
+                                                <td>
+                                                    @if (Model.Nos != null)
+                                                    {
+                                                        <input type="text" id="NoMonth" autocomplete="off" name="NoMonth" value="@Model.Nos" onkeypress="return isNumber(event);" onkeyup="return FillEffectiveMonth(this)" maxlength="3" class="form_input" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" id="NoMonth" autocomplete="off" name="NoMonth" onkeyup="return FillEffectiveMonth(this)" onkeypress="return isNumber(event);" maxlength="3" class="form_input" />
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr id="tr_Premier" style="display: none;">
+                                                <td colspan="2">
+                                                    @if (Model.Year_Type != null)
+                                                    {
+                                                        if (Model.Year_Type == "D")
+                                                        {
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="year" value="F" />Financial Year&nbsp;</label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="year" value="D" checked="checked" />Deal Year</label>
+                                                        }
+                                                        if (Model.Year_Type == "F")
+                                                        {
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="year" value="F" checked="checked" />Financial Year&nbsp;</label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="year" value="D" />Deal Year</label>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="year" value="F" />Financial Year&nbsp;</label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="year" value="D" checked="checked" />Deal Year</label>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div id="div_Run" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="submit" class="btn btn-primary" value="Save" onclick="return ValidateAmortdata();" />&nbsp;
+                                                        <input value="Cancel" class="btn btn-primary" type="button" onclick="return OnCancelClick();" />
+                                <input type="hidden" id="hdnCommandName" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </section>
+</div>
+

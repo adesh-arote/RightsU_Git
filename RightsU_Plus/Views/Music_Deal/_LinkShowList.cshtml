@@ -1,0 +1,131 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@model List<RightsU_Entities.USP_Music_Deal_Link_Show_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<style>
+    .mark {
+        background-color: yellow;
+    }
+    
+</style>
+<div class="scale_table_block" id="divLinkShow">
+    <table class="table table-bordered table-hover" id="tblLinkShow">
+        <thead>
+            <tr>
+                @{
+                    int colspanCount = 2;
+                    string[] arrSelectedTitleCodes = (string[])ViewBag.SelectedTitleCodes;
+                }
+                @if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    colspanCount = 3;
+
+                    <th style="width:10%"><input type="checkbox" id="chkAll" name="chkAll"></th>
+
+                }
+                <th style="width:30%;">@objMessageKey.ShowName</th>
+                <th style="width:60%;">@objMessageKey.Channel</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count() > 0)
+            {
+                int i = 1;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        @if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                        {
+                            bool isSelected = arrSelectedTitleCodes.Contains(item.Title_Code.ToString());
+                            <td align="center">
+                                @if (isSelected)
+                                {
+                                    <input type="checkbox" id="chkTitleCode_@i" value="@item.Title_Code" name="chkType" class="checkboxAll" checked="checked">
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="chkTitleCode_@i" value="@item.Title_Code" name="chkType" class="checkboxAll">
+                                }
+                            </td>
+                        }
+                        <td>
+                            @item.Title_Name
+                        </td>
+                        <td>
+                            <div class="expandable1">
+                                @{
+                                    string channelNameSelected = "", channelNameUnselected = "";
+                                    string[] arrChannels = item.Channel_Name.Split('~');
+                                    channelNameSelected = arrChannels[0];
+                                    channelNameUnselected = arrChannels[1];
+                                }
+                                
+                                <span class="mark">@(string.IsNullOrEmpty(channelNameUnselected) ? channelNameSelected : channelNameSelected + ", ")</span>
+                                <span> @(channelNameUnselected)</span>
+                            </div>
+                        </td>
+                    </tr>
+                                            i++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="@colspanCount">@objMessageKey.Norecordfound</td>
+                                        </tr>
+                                    }
+        </tbody>
+    </table>
+</div>
+<script>
+
+    $(document).ready(function () {
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $("#tblLinkShow thead th").css('text-align', 'right')
+        }
+        initializeExpander();
+        $('#divLinkShowList').css({ "display": "block" });
+        var checkedLength = $('.checkboxAll:checked').length;
+        var allLength = $('.checkboxAll').length;
+        if (checkedLength == allLength && checkedLength > 0) {
+            $('#chkAll').prop('checked', true);
+
+        }
+        else {
+            $('#chkAll').prop('checked', false);
+        }
+        $('.expandable1').expander({
+            slicePoint: 80,
+            expandPrefix: '',
+            expandText: 'read more',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    });
+    $('#chkAll').on("click", function () {
+        var IsCheck = $(this).prop("checked");
+        $('.checkboxAll').prop('checked', IsCheck);
+    });
+    $('.checkboxAll').on("click", function () {
+        debugger;
+        if ($('.checkboxAll:checked').length == $('.checkboxAll').length) {
+            $('#chkAll').prop('checked', true);
+        } else {
+            $('#chkAll').prop('checked', false);
+        }
+    });
+
+</script>
+<style>
+    #divLinkShow {
+        overflow: auto;
+        max-height: 200px;
+    }
+</style>
+
+

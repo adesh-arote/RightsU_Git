@@ -1,0 +1,205 @@
+﻿@model List<RightsU_Entities.Talent>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<script>
+    $('.expand_strRoles').expander({
+        slicePoint: 60,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+    $('.expand_Talent_Name').expander({
+        slicePoint: 33,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+</script>
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:25%;">@objMessageKey.Talent</th>
+            <th style="width:15%;">@objMessageKey.Gender</th>
+            <th style="width:40%;">@objMessageKey.Role</th>
+            <th style="width:10%;">@objMessageKey.Status</th>
+            <th style="width:20%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (TempData["Action"] == "AddTalent")
+        {
+            <tr>
+                <td>
+                    @Html.TextBox("Talent_Name", "", new { style = "width:90% ", @id = "Talent_NameAdd", @maxlength = "100" })
+
+                </td>
+                <td>
+                    @Html.RadioButton("Male", "M", new { id = "rbgMale", @class = "genderclassAdd" }) <span>@objMessageKey.Male</span>
+                    @Html.RadioButton("Male", "F", new { id = "rbgFemale", @class = "genderclassAdd" })<span>@objMessageKey.Female</span>
+                    @Html.RadioButton("Male", "N", new { id = "rbgNa", @class = "genderclassAdd", @checked = true })<span>@objMessageKey.NA</span>
+                </td>
+                <td>
+                    <div id="divRoleAdd">
+                        @Html.DropDownList("ddlRole", Session["RoleList"] as MultiSelectList, new { @id = "Role_CodeAdd", @multiple = "multiple" })
+                    </div>
+                </td>
+                <td>
+                    <span></span>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveTalent()"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelTalent()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+
+                if (TempData["Action"] == "EditTalent" && item.Talent_Code == Convert.ToInt32(TempData["idTalent"]))
+                {
+                    string strRoles = "";
+                    if (item.Talent_Role.Count > 0)
+                    {
+                        strRoles = string.Join(", ", item.Talent_Role.Select(s => s.Role.Role_Name).ToArray());
+                    }
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(model => item.Talent_Name, new { style = "width:90% ", id = "Talent_NameEdit", @maxlength = "100" })
+                            @Html.HiddenFor(model => item.Talent_Code, new { id = "Talent_CodeEdit", style = "width:90%;" })
+                        </td>
+                        <td>
+                            @Html.RadioButtonFor(model => item.Gender, "M", new { id = "rbgMale", @class = "genderclass" }) <span>@objMessageKey.Male</span>
+                            @Html.RadioButtonFor(model => item.Gender, "F", new { id = "rbgFemale", @class = "genderclass" })<span>@objMessageKey.Female</span>
+                            @Html.RadioButtonFor(model => item.Gender, "N", new { id = "rbgNa", @class = "genderclass" })<span>@objMessageKey.NA</span>
+                        </td>
+                        <td>
+                            <div id="divRole">
+                                @Html.DropDownList("ddlRole", Session["RoleList"] as MultiSelectList, new { @id = "Role_Code", @multiple = "multiple" })
+                            </div>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="UpdateTalent(@item.Talent_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelTalent()"></a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    var strRoles = "";
+                    string gender = "";
+                    if (item.Talent_Role.Count > 0)
+                    {
+                        strRoles = string.Join(", ", item.Talent_Role.Select(s => s.Role.Role_Name));
+                    }
+                    if (item.Gender == "M")
+                    {
+                        gender = objMessageKey.Male;
+                    }
+                    else if (item.Gender == "F")
+                    {
+                        gender = objMessageKey.Female;
+                    }
+                    else if (item.Gender == "N")
+                    {
+                        gender = objMessageKey.NA;
+                    }
+                    bool canDeactive = true;
+                    string toolTipMsg = "";
+                    if (item.Title_Audio_Details_Singers.Count > 0)
+                    {
+                        canDeactive = false;
+                        toolTipMsg = objMessageKey.CannotdeactivatethistalentasitisusedinTitleAudioDetailsSingers;
+                    }
+                    if (item.Title_Talent.Count > 0)
+                    {
+                        canDeactive = false;
+                        toolTipMsg = objMessageKey.CannotdeactivatethistalentasitisusedinTitleTalent;
+                    }
+                    if (item.Music_Title_Talent.Count > 0)
+                    {
+                        canDeactive = false;
+                        toolTipMsg = objMessageKey.CannotdeactivatethistalentasitisusedinMusicTitleTalent;
+                    }
+                    if (item.Music_Album_Talent.Count > 0)
+                    {
+                        canDeactive = false;
+                        toolTipMsg = objMessageKey.CannotdeactivatethistalentasitisusedinMusicTitleTalent;
+                    }
+                    <tr>
+                        <td>
+                            <span class="expand_Talent_Name">@item.Talent_Name</span>
+                        </td>
+                        <td>
+                            <span>@gender</span>
+                        </td>
+                        <td>
+                            <div class="expand_strRoles">@strRoles</div>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            @if (item.Is_Active == "Y")
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Talent_Code)"></a>
+                            }
+                            else
+                            {
+                                <a title="@objMessageKey.CannoteditthisTalentasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                            @if (item.Is_Active == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                {
+                                    if (canDeactive)
+                                    {
+                                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveTalent(@item.Talent_Code, 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveTalent(@item.Talent_Code, 'Y')"></a>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

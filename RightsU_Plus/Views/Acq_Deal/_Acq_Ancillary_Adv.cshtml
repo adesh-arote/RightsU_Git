@@ -1,0 +1,327 @@
+﻿@model RightsU_Entities.Acq_Deal_Ancillary
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+
+<script>
+    var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+    var recordMode_G = '@ViewBag.Mode';
+    var acqDealAncillaryCode_G = @Model.Acq_Deal_Ancillary_Code;
+    var URL_BindAncillary_Right = '@Url.Action("BindAncillary_Right", "Acq_Ancillary")';
+    var URL_BindAncillary_Medium = '@Url.Action("BindAncillary_Medium", "Acq_Ancillary")';
+    var URL_BindPlatformTreeView = '@Url.Action("BindPlatformTreeView", "Acq_Ancillary")';
+
+    $(document).ready(function () {
+       // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?@Session["FileName"]');
+        //BindPlatform();
+        if(isCatchUpright == "Y"){
+            $('#ddlAncillary_Type').change(function(e){
+                var selectedText = $('#ddlAncillary_Type option:selected').text()
+                if(selectedText.toUpperCase() == "CATCH UP RIGHTS")
+                {
+                    $('#divCatchup,#lblCatchup').show();
+                    $("#CatchUpEach").prop("checked", true)
+                }else
+                {
+                    $('#divCatchup,#lblCatchup').hide();
+                    $("#CatchUpEach").prop("checked", false)
+                    $("#CatchUpFirst").prop("checked", false)
+                }
+            });
+
+            if('@Model.Catch_Up_From' != ""){
+                if('@Model.Catch_Up_From' =='E'){
+                    $("#CatchUpEach").prop("checked", true)
+                }
+                else if('@Model.Catch_Up_From' =='F')
+                {
+                    $('#CatchUpFirst').prop('checked',true)
+                }
+                $('#divCatchup,#lblCatchup').show();
+            }
+            else{
+                $('#divCatchup,#lblCatchup').hide();
+            }
+        }
+        if ('@ViewBag.Mode' == "EDIT" || '@ViewBag.Mode' == "CLONE") {
+            BindPlatform();
+        }
+
+        //if(isCatchUpright == "Y")
+        //{
+        //    $("#DivAncillaryMedium").hide();
+        //    $('#lblAncillryMedium').hide();
+        //}
+        //else{
+        //    $("#DivAncillaryMedium").show();
+        //    $('#lblAncillryMedium').show();
+        //}
+    });
+
+    $('#lbTitle_Popup').change(function () {
+        debugger;
+        showLoading();
+
+        BindPlatform();
+        TreeViewSelectedChange(document.getElementById('Rights_Platform'));
+
+        hideLoading();
+    });
+
+    function BindPlatform() {
+        debugger;
+        var selectedTitles = '';
+        if ($("#lbTitle_Popup").val() != null)
+            selectedTitles = $("#lbTitle_Popup").val().join(',');
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strPlatform: $("#hdnTVCodes").val(),
+                strTitles: selectedTitles
+            }),
+            async: true,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree').html(result);
+
+                hideLoading();
+            },
+            error: function (result) { }
+        });
+    }
+</script>
+
+<style>
+    .SumoSelect, #divlbTitle_Popup, #divlbMedium_Popup, #divlbRights_Popup {
+        width: 300px !important;
+    }
+
+        #divlbTitle_Popup > div {
+            width: 100% !important;
+        }
+
+        #divlbMedium_Popup > div {
+            width: 100% !important;
+        }
+
+        #divlbRights_Popup > div {
+            width: 100% !important;
+        }
+
+    #ddlAncillary_Type_chosen {
+        width: 33% !important;
+        margin-bottom:7% !important;
+        position:absolute !important;
+        bottom:200px;
+    }
+
+    #Tree_Filter_Rights_Platform {
+        width: 439px !important;
+    }
+
+    #Rights_Platform {
+        margin: 4px 10px 0px 0px !important;
+        padding: 36px 0px 0px 0px !important;
+    }
+
+    .form_wrapper {
+        max-width: 900px !important;
+    }
+
+    .modal.scroll .modal_block {
+        overflow-y: hidden !important;
+    }
+
+    #txtDuration, #txtDay {
+        width: 54px;
+    }
+
+    span::after {
+        content: "\200E‎";
+    }
+
+    label::after {
+        content: "\200E‎";
+    }
+
+    .platform_wrapper {
+        height: 91% !important;
+    }
+    .ui-fancytree, .fancytree-container {
+        height: 136px !important;
+    }
+    /*.chosen-container-single .chosen-single {
+        width:100% !important;
+        position: absolute !important;
+        display: block;
+        overflow: hidden;
+        padding: 0 0 0 5px;
+        height: 27px;
+        border: 1px solid #bbb;
+        border-radius: 3px;
+        background-color: #fff;
+        background-clip: padding-box;
+        color: #444;
+        text-decoration: none;
+        white-space: nowrap;
+        line-height: 25px;
+    }*/
+
+</style>
+<script src="~/Custom_Scripts/Acq_Deal_Ancillary.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+@if (ViewBag.Mode != null && (ViewBag.Mode == "ADD" || ViewBag.Mode == "EDIT" || ViewBag.Mode == "CLONE"))
+{
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            @using (Ajax.BeginForm("Save_Ancillary", "Acq_Ancillary", new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "Save_OnSuccess" }))
+            {
+                <div class="form_wrapper acq">
+                    <div class="form_fields">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">@objMessageKey.Close</span>
+                            </a>
+                            <h2>@objMessageKey.AddAncillaryRights</h2>
+                        </div>
+                        <div id="tdTitleCodes">
+                        </div>
+                        <table  style="height: 300px;">
+                            <tr>
+                                <td style="padding-left:10px;width:15%;">
+                                    <label class="bold">@objMessageKey.Titles</label>
+                                </td>
+                                <td style="width:35%">
+                                    <div id="divlbTitle_Popup">
+                                        @Html.ListBox("lbTitle_Popup", ViewBag.Title_List_Popup as MultiSelectList)
+                                    </div>
+                                    @Html.Hidden("hdnTitles")
+                                    @Html.Hidden("Acq_Deal_Ancillary_Code")
+                                    @Html.HiddenFor(i => Model.Acq_Deal_Ancillary_Code)
+                                    @Html.Hidden("Ancillary_Mode")
+                                </td>
+                                <td rowspan="5">
+                                    <label class="bold" for="platform">@objMessageKey.PlatformRights</label>
+                                    <div class="platform_wrapper" id="divTree">
+                                        <div id="divlbTree_Popup" style="width:98%">
+                                            <div id="tree" class="treeClass" style="width: 448px;overflow-x: auto;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*@Html.Hidden("hdnTVCodes")*@
+                                    <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" value="@ViewBag.PlatFormCodes" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <!-- Hidden for demo-->
+                                <td style="padding-left:10px ;display:none">
+                                    <label class="bold">@objMessageKey.AncillaryRights</label>
+                                </td>
+                                <td style="display:none">
+
+                                    <div id="divlbRights_Popup">
+                                        @Html.ListBox("lbRights_Popup", ViewBag.Rights_List_Popup as MultiSelectList, new { })
+                                    </div>
+                                    @Html.Hidden("hdnAncillaryRightCode")
+                                </td>
+                                <!--End Hidden for demo-->
+
+                                <td style="padding-left:10px;width:15%;">
+                                    <label class="bold">@objMessageKey.Type</label>
+                                </td>
+                                <td style="width:35%">
+                                    @Html.DropDownListFor(m => Model.Ancillary_Type_code, (List<SelectListItem>)ViewBag.Type_List_Popup, new { @id = "ddlAncillary_Type", @class = "form_input chosen-select" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left:10px;width:15%;">
+                                    <label class="bold">@objMessageKey.Durationsec</label>
+                                </td>
+                                <td>
+                                    @Html.TextBox("Duration", Model.Duration, new { @id = "txtDuration", @maxlength = 5 })
+                                    &nbsp;&nbsp;&nbsp;
+                                    <label class="bold">@objMessageKey.PeriodDay</label>&nbsp;&nbsp;&nbsp;
+                                    @Html.TextBox("Day", Model.Day, new { @id = "txtDay", @maxlength = 3 })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left:10px;width:15%;">
+                                    @if (ViewBag.IsCatchUpRights != "Y")
+                                    {
+                                        <label class="bold" id="lblAncillryMedium">@objMessageKey.Medium</label>
+                                    }
+                                    else
+                                    {
+                                        <label id="lblCatchup" class="bold" style="display:none">@objMessageKey.CatchUpFrom</label>
+                                    }
+                                </td>
+                                <td>
+                                    @if (ViewBag.IsCatchUpRights != "Y")
+                                    {
+                                        <div id="DivAncillaryMedium">
+                                            <div id="divlbMedium_Popup">
+                                                @Html.ListBox("lbMedium_Popup", ViewBag.Medium_List_Popup as MultiSelectList, new { })
+                                            </div>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="divCatchup" style="display: none;">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="CatchUp" id="CatchUpEach" value="E"> Each Broadcast
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="CatchUp" id="CatchUpFirst" value="F"> First Broadcast
+                                            </label>
+                                        </div>
+                                    }
+                                    @Html.Hidden("hdnMedium")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="padding:10px">
+                                    <div class="divBlock">
+                                        <div class="bold" style="padding-right: 320px;">@objMessageKey.Remarks</div>
+                                        <div style="">&nbsp;&nbsp;</div>
+                                        <div id="CharNum" class="charNum" style="float: right;">0/4000</div>
+                                    </div>
+                                    @Html.TextAreaFor(m => Model.Remarks, new { @id = "txtRemarks", @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+                                </td>
+                            </tr>
+
+                        </table>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="form_link_nav clearfix">
+                                    <li>
+                                        <input type="submit" id="btnSave" value="@objMessageKey.Save" class="btn btn-primary" onclick="return Validate_Save_Ancillary_Adv();" />
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

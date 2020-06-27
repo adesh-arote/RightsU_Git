@@ -1,0 +1,73 @@
+﻿@using RightsU_Entities
+@model List<USP_GetRunDefinitonForContent_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<div id="extent" class="MoreActionDiv">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:62%;font-size:smaller;" rowspan="2">@objMessageKey.ChannelName</th>
+                <th style="width:10%;font-size:smaller;" colspan="3">@objMessageKey.Runs</th>
+            </tr>
+            <tr>
+                <th style="font-size:smaller;"> @objMessageKey.DefinedRuns</th>
+                <th style="font-size:smaller;">@objMessageKey.Schedule</th>
+                <th style="font-size:smaller;">@objMessageKey.BalanceRuns</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="text-align:left; font-size:smaller;">@item.Channel_Name</td>
+                        @if (item.Defined_Runs == -1)
+                        {
+                            <td style="text-align:center;font-size:smaller;"><span>Unlimited</span></td>
+                        }
+                        else
+                        {
+                            <td style="text-align:center;font-size:smaller;">@item.Defined_Runs</td>
+                        }
+
+                        
+                        <td style="text-align:center;font-size:smaller;">@item.Schedule_Runs</td>
+                        @if (@item.Defined_Runs == null)
+                        {
+                            <td></td>
+                        }
+                        else
+                        {
+                            if (@item.Balanced_Runs == null)
+                            {
+                                if (item.Defined_Runs == -1)
+                                {
+                                    <td style="text-align:center;font-size:smaller;"><span>Unlimited</span></td>
+                                }
+                                else
+                                {
+                                    <td style="width:12%;text-align:center;font-size:smaller;">@item.Defined_Runs</td>
+                                }
+                            }
+                            @*else if (@item.Balanced_Runs == -1)
+                            {
+                                <td style="width:12%;text-align:center;font-size:smaller;"><span>Unlimited</span></td>
+                            }*@
+                            else
+                            {
+                                <td style="width:12%;text-align:center;font-size:smaller;">@item.Balanced_Runs</td>
+                            }
+                        }
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,473 @@
+﻿@model List<RightsU_Entities.Provisional_Deal_Title>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_BLL.Title_Service objTitle_Service = new RightsU_BLL.Title_Service(objLoginEntity.ConnectionStringName);
+    RightsU_Entities.Title objTitle = new RightsU_Entities.Title();
+
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    function SetMinDtEdit() {
+        debugger;
+        setMinMaxDates('Right_End_Date ', $('.Right_Start_Date').val(), '');
+    }
+    function SetMaxDtEdit() {
+        debugger;
+        setMinMaxDates('Right_Start_Date', '', $('.Right_End_Date').val());
+    }
+    function OnFocusLostTerm_Edit() {
+        debugger;
+        var canAssign = true;
+        var _txtStartDate = $('.Right_Start_Date');
+        var _txtEndDate = $('.Right_End_Date');
+        var _txtTermYear = $('.Term_YY');
+        var _txtTermMonth = $('.Term_MM');
+        if (_txtTermYear.val() == '' || isNaN(_txtTermYear.val())) {
+            _txtTermYear.val('0');
+        }
+        if (_txtTermMonth.val() == '' || isNaN(_txtTermMonth.val())) {
+            _txtTermMonth.val('0');
+        }
+
+        if (_txtStartDate.val() != "") {
+            var rightSD = new Date(MakeDateFormate(_txtStartDate.val()));
+            if (!isNaN(rightSD)) {
+
+                var year = 0;
+                var month = 0;
+
+                if (_txtTermYear.val() != '')
+                    year = parseInt(_txtTermYear.val());
+                if (_txtTermMonth.val() != '')
+                    month = parseInt(_txtTermMonth.val());
+
+                if (year > 0 || month > 0) {
+                    var newDate = CalculateEndDate(rightSD, year, month, 0);
+                    if (canAssign) {
+                        _txtEndDate.val(newDate);
+                    }
+                    else {
+                        _txtEndDate.val('');
+                    }
+                }
+                else {
+                    _txtEndDate.val('');
+                }
+            }
+        }
+        else if (_txtEndDate.val() != "") {
+            var rightED = new Date(MakeDateFormate(_txtEndDate.val()));
+            if (!isNaN(rightED)) {
+
+                var year = 0;
+                var month = 0;
+
+                if (_txtTermYear.val() != '')
+                    year = parseInt(_txtTermYear.val());
+                if (_txtTermMonth.val() != '')
+                    month = parseInt(_txtTermMonth.val());
+
+                if (year > 0 || month > 0) {
+                    var newDate = CalculateStartDate(rightED, year, month);
+                    _txtStartDate.val(newDate);
+                }
+                else {
+                    _txtStartDate.val('');
+                }
+            }
+        }
+        else {
+            _txtTermYear.val('0');
+            _txtTermMonth.val('0');
+        }
+    }
+    function MyFunction(e,callFrom)
+    {
+        debugger;
+        var EpFrom = "";
+        var EpTo = "";
+        if (callFrom=='F') {
+            EpFrom = $("#" + e.id).val();
+        }
+        if (callFrom == 'T') {
+            EpTo = $("#" + e.id).val();
+        }
+   
+        var arr = e.id.split('_');
+        var num = arr[2];
+        var guid = $("#hdnDummyForTitle_"+num).val();
+        
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("OnKeyupEpisodes","Pro_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                guid: guid,
+                callFrom: callFrom,
+                EpFrom: EpFrom,               
+                EpTo: EpTo
+                
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                }
+            },
+            error: function (result) {
+                hideLoading();
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    
+    $(document).ready(function () {
+        $(".isDatepicker").datepicker();
+        addNumeric();
+
+        $('input.Right_Start_Date').change(function () {
+            SetMinDtEdit();
+            AutoPopulateTermEdit();
+        });
+
+        $('input.Right_End_Date').change(function () {
+            SetMaxDtEdit();
+            AutoPopulateTermEdit();
+        });
+
+        $('.Term_YY, .Term_MM').change(function () {
+            OnFocusLostTerm_Edit();
+        });
+        $(".numeric").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 1
+        });
+    });
+</script>
+
+@if (TempData["View"] == GlobalParams.DEAL_MODE_VIEW)
+{
+    <table class="table table-bordered table-hover" id="tblProTitle" style="display: table;">
+        <thead>
+            @if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Content)
+            {
+                <tr>
+                    <th class="movie" style="width:15%">Program</th>
+                    <th style="width:4%">@objMessageKey.Eps @objMessageKey.From</th>
+                    <th style="width:4%">@objMessageKey.Eps @objMessageKey.To</th>
+                    <th style="width:12%">@objMessageKey.StartDate</th>
+                    <th style="width:8%">@objMessageKey.Term</th>
+                    <th style="width:6%">@objMessageKey.EndDate</th>
+
+                </tr>
+            }
+            else if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Event)
+            {
+                <tr>
+                    <th class="movie" style="width:15%">@objMessageKey.Event</th>
+                    <th style="width:4%">@objMessageKey.Eps @objMessageKey.From</th>
+                    <th style="width:4%">@objMessageKey.Eps @objMessageKey.To</th>
+                    <th style="width:12%">@objMessageKey.StartDate</th>
+                    <th style="width:8%">@objMessageKey.Term</th>
+                    <th style="width:6%">@objMessageKey.EndDate</th>
+
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <th style="width:25%;vertical-align:middle" rowspan="2" align="center">@objMessageKey.Title</th>
+                    <th style="width:65%" colspan="3" align="center">@objMessageKey.RightsPeriod</th>
+
+                </tr>
+                <tr>
+                    <th align="center">@objMessageKey.StartDate</th>
+                    <th align="center">@objMessageKey.Term</th>
+                    <th align="center">@objMessageKey.EndDate</th>
+
+                </tr>
+            }
+
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                int i = 0;
+                foreach (var item in Model)
+                {
+                    objTitle = objTitle_Service.GetById((int)item.Title_Code);
+                    <tr id="tblProTitle_tr_@i">
+
+                        @{ string[] arr = item.Term.Split('.');
+                         string termText = "";
+                         int year = 0, month = 0;
+                         if (arr.Length > 1)
+                         {
+                             if (!string.IsNullOrEmpty(arr[1].Trim()))
+                             {
+                                 month = Convert.ToInt32(arr[1].Trim());
+                             }
+                         }
+
+                         if (arr.Length > 0)
+                         {
+                             if (!string.IsNullOrEmpty(arr[0].Trim()))
+                             {
+                                 year = Convert.ToInt32(arr[0].Trim());
+                             }
+                         }
+
+                         if (year > 0)
+                         {
+                             termText = year + " Year" + ((year > 1) ? "s " : " ");
+                         }
+
+                         if (month > 0)
+                         {
+                             termText += month + " Month" + ((month > 1) ? "s " : "");
+                         }
+
+                         if (termText == "")
+                         {
+                             termText = " - ";
+                         }
+                        }
+
+
+                        <td>
+                            @Html.Hidden("Provisional_Deal_Title[" + i + "]._Dummy_Guid", item._Dummy_Guid, new { id = "hdnDummyGuid_" + i })
+                            @*@Html.Label(objTitle.Title_Name)*@
+                            <span>@objTitle.Title_Name</span>
+                        </td>
+                        @if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Content || ViewBag.DealTypeCode == GlobalParams.Deal_Type_Event)
+                        {
+                            <td>
+                                @Html.Label(item.Episode_From.ToString())
+                            </td>
+                            <td>
+                                @Html.Label(item.Episode_To.ToString())
+                            </td>
+                        }
+                        <td style="text-align:center">
+                            @Html.Label(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Right_Start_Date.Value))
+                        </td>
+                        <td style="text-align:center">
+                            @Html.Label(termText)
+                        </td>
+                        <td style="text-align:center">
+                            @Html.Label(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Right_End_Date.Value))
+                        </td>
+
+                    </tr>
+                        i = i + 1;
+                }
+
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-bordered table-hover" id="tblProTitle" style="display: table;">
+        <thead>
+            @if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Content)
+            {
+                <tr>
+                    <th class="movie" style="width:15%">Program</th>
+                    <th style="width:4%">@objMessageKey.Eps @objMessageKey.From</th>
+                    <th style="width:4%">@objMessageKey.Eps @objMessageKey.To</th>
+                    <th style="width:8%">@objMessageKey.StartDate</th>
+                    <th style="width:11%">@objMessageKey.Term</th>
+                    <th style="width:8%">@objMessageKey.EndDate</th>
+                    <th style="width:10%">@objMessageKey.Action</th>
+                </tr>
+            }
+            else if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Event)
+            {
+                <tr>
+                    <th class="movie" style="width:15%">@objMessageKey.Event</th>
+                    <th style="width:4%">@objMessageKey.Eps @objMessageKey.From</th>
+                    <th style="width:4%">@objMessageKey.Eps @objMessageKey.To</th>
+                    <th style="width:8%">@objMessageKey.StartDate</th>
+                    <th style="width:11%">@objMessageKey.Term</th>
+                    <th style="width:8%">@objMessageKey.EndDate</th>
+                    <th style="width:10%">@objMessageKey.Action</th>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <th style="width:25%;vertical-align:middle" rowspan="2" align="center">@objMessageKey.Title</th>
+                    <th style="width:65%" colspan="3" align="center">@objMessageKey.RightsPeriod</th>
+                    <th style="width:10%" rowspan="2" align="center">@objMessageKey.Action</th>
+                </tr>
+                <tr>
+                    <th align="center" style="width:20%">@objMessageKey.StartDate</th>
+                    <th align="center" style="width:25%">@objMessageKey.Term</th>
+                    <th align="center" style="width:20%">@objMessageKey.EndDate</th>
+                </tr>
+            }
+
+        </thead>
+        <tbody>
+
+            @if (Model.Count > 0)
+            {
+                int i = 0;
+                foreach (var item in Model)
+                {
+                    objTitle = objTitle_Service.GetById((int)item.Title_Code);
+                    <tr id="tblProTitle_tr_@i">
+                        @Html.Hidden("hdnTitleCode_" + @i, item.Title_Code)
+                        
+                        @if (ViewBag.Action == "EDIT" && ViewBag.Row == i)
+                        {
+                            string[] arr = item.Term.Split('.');
+
+                            if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Movie)
+                            {
+                                <td>
+                                    @Html.Label(objTitle.Title_Name)
+                                </td>
+                                <td>
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Right_Start_Date", item.Right_Start_Date.Value.ToShortDateString(), new { id = "lblRight_Start_Date_" + i, @class = "isDatepicker shortDate Right_Start_Date", @style = "margin-left: 60px" })
+                                </td>
+                                <td>
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Term", arr[0], new { id = "Term_YY_" + i, @class = "smallTextBox Term_YY", @placeholder = "YY", @style = "margin-left: 25%;" }) Years
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Term", arr[1], new { id = "Term_MM_" + i, @class = "smallTextBox Term_MM", @placeholder = "MM" }) Months
+                                </td>
+                                <td>
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Right_End_Date", item.Right_End_Date.Value.ToShortDateString(), new { id = "lblRight_End_Date_" + i, @class = "isDatepicker shortDate Right_End_Date", @style = "margin-left: 60px" })
+                                </td>
+
+                            }
+                            else if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Content || ViewBag.DealTypeCode == GlobalParams.Deal_Type_Event)
+                            {
+                                <td>
+                                    @Html.Label("Provisional_Deal_Title[" + i + "].Title.Title_Name", objTitle.Title_Name, new { id = "lblTitle_Name_" + i })
+                                </td>
+                                <td>
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Episode_From", item.Episode_From, new { @class = "smallTextBox numeric", id = "txtEpisode_From_" + i })
+                                    @Html.Hidden("hdnMaximumEpisodeFrom_" + @i, "0")
+                                </td>
+                                <td>
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Episode_To", item.Episode_To, new { @class = "smallTextBox numeric", id = "txtEpisode_To_" + i })
+                                    @Html.Hidden("hdnMininumEpisodeTo_" + @i, "0")
+                                </td>
+                                <td style="text-align: center;">
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Right_Start_Date", item.Right_Start_Date.Value.ToShortDateString(), new { id = "lblRight_Start_Date_" + i, @class = "isDatepicker shortDate Right_Start_Date" })
+                                </td>
+                                <td style="text-align: center;">
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Term", arr[0], new { id = "Term_YY_" + i, @class = "smallTextBox  Term_YY numeric", @placeholder = "YY" }) Years
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Term", arr[1], new { id = "Term_MM_" + i, @class = "smallTextBox  Term_MM numeric", @placeholder = "MM" }) Months
+                                </td>
+                                <td style="text-align: center;">
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Right_End_Date", item.Right_End_Date.Value.ToShortDateString(), new { id = "lblRight_End_Date_" + i, @class = "isDatepicker shortDate Right_End_Date" })
+                                </td>
+                            }
+                            <td style="text-align: center;">
+                                <a title="" class="glyphicon glyphicon-ok-circle" data-original-title="Save" onclick="OnEditSave_Title('@item.Dummy_Guid',@i,'SAVE')"></a>
+                                <a title="" class="glyphicon glyphicon-remove-circle" onclick="BindListTitle(0,'')" data-original-title="Cancel"></a>
+                            </td>
+
+                        }
+                        else
+                        {
+                            string[] arr = item.Term.Split('.');
+                            string termText = "";
+                            int year = 0, month = 0;
+                            if (arr.Length > 1)
+                            {
+                                if (!string.IsNullOrEmpty(arr[1].Trim()))
+                                {
+                                    month = Convert.ToInt32(arr[1].Trim());
+                                }
+                            }
+
+                            if (arr.Length > 0)
+                            {
+                                if (!string.IsNullOrEmpty(arr[0].Trim()))
+                                {
+                                    year = Convert.ToInt32(arr[0].Trim());
+                                }
+                            }
+
+                            if (year > 0)
+                            {
+                                termText = year + " Year" + ((year > 1) ? "s " : " ");
+                            }
+
+                            if (month > 0)
+                            {
+                                termText += month + " Month" + ((month > 1) ? "s " : "");
+                            }
+                            if (termText == "")
+                            {
+                                termText = " - ";
+                            }
+
+                            <td>
+                                @Html.Hidden("Provisional_Deal_Title[" + i + "].Dummy_Guid", item.Dummy_Guid)
+                                @Html.Hidden("Provisional_Deal_Title[" + i + "]._Dummy_Guid", item._Dummy_Guid, new { id = "hdnDummyGuid_" + i })
+                                @*@Html.Label(objTitle.Title_Name)*@
+                                <span>@objTitle.Title_Name</span>
+                            </td>
+                            if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Content || ViewBag.DealTypeCode == GlobalParams.Deal_Type_Event)
+                            {
+                                <td>
+                                    <input type="hidden" id="hdnDummyForTitle_@i" value="@item._Dummy_Guid" />
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Episode_From", item.Episode_From, new { @class = "smallTextBox numeric", @id = "txtEpisode_From_" + i, onkeyup = "MyFunction(this,'F');" })
+                                    @Html.Hidden("hdnMaximumEpisodeFrom_" + @i, "0")
+                                </td>
+                                <td>
+                                    @Html.TextBox("Provisional_Deal_Title[" + i + "].Episode_To", item.Episode_To, new { @class = "smallTextBox numeric", @id = "txtEpisode_To_" + i, onkeyup = "MyFunction(this,'T');" })
+                                    @Html.Hidden("hdnMininumEpisodeTo_" + @i, "0")
+                                </td>
+                            }
+                            <td style="text-align:center">
+                                @Html.Label(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Right_Start_Date.Value))
+                            </td>
+                            <td style="text-align:center">
+                                @Html.Label(termText)
+                            </td>
+                            <td style="text-align:center">
+                                @Html.Label(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Right_End_Date.Value))
+                            </td>
+                            <td style="text-align:center;">
+                                <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick="tblTitle_CommonAction('@item.Dummy_Guid', @i, 'EDIT')"></a>
+                                <a title="@objMessageKey.Delete" href="#" id="btnDelete_@i" class="glyphicon glyphicon-trash" onclick="Ask_Confirmation_Title_Del('Are you sure, you want to delete this record ?', '@item.Dummy_Guid', @i, 'DELETE')"></a>
+                                <a title="@objMessageKey.EditRunDefinition" href="#" class="glyphicon glyphicon-road" onclick="BindSingleTitle('@item.Dummy_Guid','txtEpisode_From_@i','txtEpisode_To_@i')"></a>
+                            </td>
+
+                        }
+                    </tr>
+                        i = i + 1;
+                }
+
+            }
+
+        </tbody>
+    </table>
+}
+
+
+

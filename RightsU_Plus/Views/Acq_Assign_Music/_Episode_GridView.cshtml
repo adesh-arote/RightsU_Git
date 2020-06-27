@@ -1,0 +1,88 @@
+﻿@using RightsU_Entities;
+@model IEnumerable<Episode_Play>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            @{
+                string widthCol1 = "78%", widthCol2 = "11%", widthCol3 = "11%";
+                if (ViewBag.LinkShow == "Y")
+                {
+                    widthCol1 = "64%";
+                    widthCol2 = "22%";
+                    widthCol3 = "14%";
+                }
+
+                <th style="width: @widthCol1;">Episodes #</th>
+                <th style="width: @widthCol2;">No.of Play</th>
+                if (ViewBag.CommandName != "VIEW")
+                {
+                    <th style="width: @widthCol3;">Action</th>
+                }
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            if (ViewBag.CommandName == "ADD_EPISODE")
+            {
+                <tr id="trAddEpisode_@ViewBag.DealMovieCode">
+                    <td>
+                        <select name="ddlEpisodes_@ViewBag.DealMovieCode" id="ddlEpisodes_@ViewBag.DealMovieCode" class="form_input chosen-select" multiple></select>
+                    </td>
+                    <td>
+                        <input type="text" id="txtNoOfPlay_@ViewBag.DealMovieCode" value="" class="textbox smallTextBox numeric" />
+                    </td>
+                    <td>
+                        <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="Episode_RowCommand('', 'SAVE', @ViewBag.DealMovieCode, '@ViewBag.LinkShow')"></a>
+                    </td>
+                </tr>
+            }
+            for (int i = 0; i < Model.Count(); i++)
+            {
+                Episode_Play objRow = Model.ElementAt(i);
+                string id = ViewBag.DealMovieCode + "_" + i;
+                if (ViewBag.CommandName == "EDIT_EPISODE" && ViewBag.DummmyGuid == objRow.Dummy_Guid)
+                {
+                    <tr id="trEditEpisode_@ViewBag.DealMovieCode">
+                        <td>
+                            <select name="ddlEpisodes_@ViewBag.DealMovieCode" id="ddlEpisodes_@ViewBag.DealMovieCode" class="form_input chosen-select" multiple></select>
+                        </td>
+                        <td>
+                            <input type="text" id="txtNoOfPlay_@ViewBag.DealMovieCode" value="@objRow.No_Of_Play" class="textbox smallTextBox numeric" />
+                        </td>
+                        <td>
+                            @if (ViewBag.LinkShow == "Y")
+                            {
+                                <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="Episode_RowCommand('@objRow.Dummy_Guid', 'UPDATE', @ViewBag.DealMovieCode, '@ViewBag.LinkShow')"></a>
+                                <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Episode_RowCommand('', 'CANCEL', @ViewBag.DealMovieCode, '@ViewBag.LinkShow')"></a>
+                            }
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr id="trItemEpisode_@id">
+                        <td>
+                            <div class="expandable">
+                                @objRow.Episode_Numbers_Display
+                            </div>
+                        </td>
+                        <td>@objRow.No_Of_Play</td>
+                        @if (ViewBag.CommandName != "VIEW")
+                        {
+                            <td>
+                                @if (ViewBag.LinkShow == "Y")
+                                {
+                                    <a title="Edit" class="glyphicon glyphicon-pencil" onclick="Episode_RowCommand('@objRow.Dummy_Guid', 'EDIT', @ViewBag.DealMovieCode, '@ViewBag.LinkShow')"></a>
+                                    <a title="Delete" class="glyphicon glyphicon-trash" onclick="Episode_RowCommand('@objRow.Dummy_Guid', 'DELETE', @ViewBag.DealMovieCode, '@ViewBag.LinkShow')"></a>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>

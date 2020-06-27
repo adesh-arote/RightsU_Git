@@ -1,0 +1,266 @@
+﻿@model RightsU_Entities.Music_Title
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RightsU</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/ico" href="~/img/u-to.ico">
+
+    <link type="text/css" rel="stylesheet" href="~/CSS/chosen.min.css">
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            showLoading();
+            hideLoading();
+            $("#lblStarcast").html('@ViewBag.StarcastJoins');
+        });
+
+        function btnCancel() {
+            //window.location.href = '@Url.Action("Index", "Title_List")';
+            var URL = '@Url.Action("List", "Music_Title", new { SearchedTitle = "Searched_Text", IsMenu= "N" })';
+            @*URL = URL.replace("Code", '@ViewBag.PageNo');
+            URL = URL.replace("Deal_Type_Code", '@ViewBag.DealTypeCode');*@
+            URL = URL.replace("Searched_Text", '@ViewBag.SearchedTitle');
+            URL = URL.replace("amp;", "");
+            URL = URL.replace("amp;", "");
+            URL = URL.replace("amp;", "");
+            window.location.href = URL;
+        }
+
+    </script>
+    <style>
+        .details a,
+        .copyright a {
+            text-decoration: none;
+            color: #2b64a5;
+        }
+
+        .details {
+            padding-left: 15px;
+            margin-top: 6px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            @{
+                RightsU_BLL.Language_Service objLS = new RightsU_BLL.Language_Service(objLoginEntity.ConnectionStringName);
+                RightsU_BLL.Music_Type_Service objMTS = new RightsU_BLL.Music_Type_Service(objLoginEntity.ConnectionStringName);
+    //RightsU_BLL.Talent_Service objT = new RightsU_BLL.Talent_Service(objLoginEntity.ConnectionStringName);
+    //var lstTalent = new RightsU_BLL.USP_Service().USP_Get_Talent_Name().ToList();
+            }
+            @using (Html.BeginForm("Save", "Title", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                <div class="container acq main_col title_edit" onclick="$('.leftPanel').css('left', panelHideCss);">
+                    <div class="top_area">
+                        <div class="title_block dotted_border clearfix">
+                            <h2 class="pull-left">
+                                @objMessageKey.ViewMusicTrack -
+                                <span>@Model.Music_Title_Name</span>
+                            </h2>
+                            <div class="right_nav pull-right">
+                                <ul>
+                                    @*<li>
+                                            <a href="#">
+                                                <span class="red_icon glyphicon glyphicon-print"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <span class="red_icon glyphicon glyphicon-envelope"></span>
+                                            </a>
+                                        </li>*@
+                                </ul>
+                            </div>
+                        </div>
+                        <table class="table_brif table">
+                            <tbody>
+                                <tr>
+                                    <td class="intro_pic">
+                                        <div>
+                                            @if (Model.Image_Path != null)
+                                            {   <img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Image_Path)" alt="Image" style="height:225px!important" />}
+                                            else
+                                            {
+                                                <a href="javascript:void(0)">
+                                                    <img src="~/Images/musicIcon.png" alt="Image" style="height:225px!important" />
+                                                </a>
+
+                                            }
+                                        </div>
+                                    </td>
+                                    <td class="intro">
+                                        <table class="four_column table">
+                                            <tr>
+                                                <td>@objMessageKey.MusicTrack</td>
+                                                <td>
+                                                    @Model.Music_Title_Name
+                                                </td>
+                                                <td>@objMessageKey.Length (@objMessageKey.mins)</td>
+                                                <td>
+                                                    @Model.Duration_In_Min
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.Movie / @objMessageKey.Album </td>
+                                                <td>
+                                                    @if (@Model.Music_Album != null)
+                                                    {
+                                                        @Model.Music_Album.Music_Album_Name
+                                                    }
+
+                                                </td>
+                                                <td>@objMessageKey.YearOfRelease</td>
+                                                <td>
+                                                    @Model.Release_Year
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.MusicVersion</td>
+                                                <td>
+                                                    @if (ViewBag.version_Name != null)
+                                                    {
+                                                        @ViewBag.version_Name
+                                                    }
+                                                </td>
+                                                <td>@objMessageKey.MusicLanguage</td>
+                                                <td>
+
+                                                    @ViewBag.LanguageName
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.Singer</td>
+                                                <td class="expandable">
+                                                    @ViewBag.SingerList
+                                                </td>
+                                                <td>@objMessageKey.MusicComposer</td>
+                                                <td class="expandable">
+                                                    @ViewBag.ComposerList
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.Lyricist</td>
+                                                <td class="expandable">
+                                                    @ViewBag.LyricistList
+                                                </td>
+                                                <td>@objMessageKey.MusicLabel</td>
+                                                <td class="expandable">
+                                                    @ViewBag.MusicLabelList
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.MusicType</td>
+                                                <td>
+                                                    @{
+                                                    string TitleType = "";
+                                                    if (@Model.Music_Type_Code > 0)
+                                                    {
+                                                        TitleType = objMTS.GetById(Model.Music_Type_Code ?? 0).Music_Type_Name;
+                                                    }
+                                                    }
+                                                    @Html.Label("MusicType", TitleType)
+                                                </td>
+                                                @if (ViewBag.MusicThemeVisibility == "G" || ViewBag.MusicThemeVisibility == "GT")
+                                                {
+                                                    <td>@objMessageKey.Genres</td>
+                                                    <td>
+                                                        @ViewBag.GenresName
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                    <td></td>
+                                                }
+                                            </tr>
+
+                                            <tr>
+                                                <td>@objMessageKey.SongStarCast</td>
+                                                <td class="expandable">
+                                                    @ViewBag.StarCastList
+                                                </td>
+                                                @if (ViewBag.MusicThemeVisibility == "T" || ViewBag.MusicThemeVisibility == "GT")
+                                                {
+                                                    <td>@objMessageKey.MusicTheme</td>
+                                                    <td class="expandable">
+                                                        @ViewBag.ThemeName
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                    <td></td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 13%">@objMessageKey.MovieStarCast</td>
+                                                <td style="width: 40%">
+                                                    @Html.Label("lblStarcast", new { id = "lblStarcast" })
+
+                                                </td>
+                                                <td>@objMessageKey.Tag</td>
+                                                <td class="expandable">@Model.Music_Tag</td>
+                                            </tr>
+                                            @if (ViewBag.IsMuciVersionSPN == "Y")
+                                            {
+                                            <tr>
+                                                @{ 
+                                                    string lblPublicDomain = Model.Public_Domain.Trim() == "Y" ? objMessageKey.Yes : objMessageKey.NO;
+                                                }
+                                                <td>
+                                                    @objMessageKey.PublicDomain
+                                                </td>
+                                               <td>@lblPublicDomain</td>
+                                                
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="divgvAdditionalField">
+                    </div>
+                    <div class="divAdditionalField">
+                    </div>
+                    <br />
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="button" class="btn btn-primary" value="@objMessageKey.Back" onclick="return btnCancel();" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            }
+        </section>
+    </div>
+
+
+</body>
+</html>

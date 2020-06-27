@@ -1,0 +1,70 @@
+﻿@model List<RightsU_Entities.Workflow_Module>
+@using UTOFrameWork.FrameworkClasses;
+
+@{
+    List<RightsU_Entities.Workflow_Module> objWorkflow_Module = new List<RightsU_Entities.Workflow_Module>();
+    if (ViewData["MyWorkflow"] != "")
+    {
+        objWorkflow_Module = (List<RightsU_Entities.Workflow_Module>)ViewData["MyWorkflow"];
+    }
+}
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        <span>  View History For @ViewBag.HistoryModuleName  </span>
+        <span> </span>
+    </h2>
+</div>
+<br />
+<div class="tab-content clearfix table-wrapper scale_table_container">
+    <div class="scale_table_block">
+
+
+        <table class="table table-bordered table-hover" id="tblMusicLink">
+            <thead>
+                <tr>
+                    <th style="width:25%;">Module Name</th>
+                    <th style="width:25%;">Business Unit</th>
+                    <th style="width:25%;">Effective Start Date</th>
+                    <th style="width:25%;">Effective End Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (objWorkflow_Module.Count > 0)
+                {
+                    foreach (var item in objWorkflow_Module)
+                    {
+                        <tr>
+                            <td>
+                                <span>@item.System_Module.Module_Name</span>
+                            </td>
+                            <td>
+                                <span>@item.Business_Unit.Business_Unit_Name</span>
+                            </td>
+                            <td align="center">
+                                <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", @item.Effective_Start_Date)</span>
+                            </td>
+                            <td align="center">
+                                <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", @item.System_End_Date)</span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">No record found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        <li>
+            <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="BindPartialView('LIST', 0)" />
+        </li>
+    </ul>
+</div>

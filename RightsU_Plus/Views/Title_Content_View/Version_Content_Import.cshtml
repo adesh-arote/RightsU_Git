@@ -1,0 +1,179 @@
+﻿@{
+    ViewBag.Title = "Version_Content_Import";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Message = Convert.ToString(Session["Message"]);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<html>
+<head>
+    <title>RightsU</title>
+    <meta charset="utf-8" />
+    <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+    <style>
+            .search_area {
+                border-bottom: 1px dotted #777;
+                margin-bottom: 5px;
+            }
+
+            #divSearch {
+                padding: 6px 10px;
+                margin-bottom: 5px;
+                border: 1px solid #ddd;
+                background-color: #eee;
+            }
+
+                #divSearch > ul > li {
+                    float: left;
+                    min-height: 32px;
+                    list-style-type: none;
+                    padding: 0 3px;
+                }
+
+
+                #divSearch .chosen-container {
+                    margin: 0;
+                }
+
+                #divSearch .checkbox-inline {
+                    margin-bottom: 7px;
+                }
+
+            .top_filter {
+                margin-top: 22px;
+            }
+            /*.pull-left-Head {
+                float: right !important;
+                padding-right:1%;
+            }*/
+
+            /*.pull-right-Head {
+                float: left !important;
+            }*/
+            /*.pagination-Head {
+            float: left !important;
+            margin-top: 4px;
+             display: flex;
+        }*/
+            .right_nav li {
+                float: left;
+                list-style-type: none;
+                margin: 0 7px;
+            }
+
+            /*.right_nav_Head li {
+                    float: right;
+                    list-style-type: none;
+                    margin: 0 7px;
+                }*/
+    </style>
+    <script type="text/javascript">
+    function UploadTitleContentVersion() {
+        debugger;
+        $('#txtPageSize').val('10');
+        var formdata = new FormData();
+        var files = $("#fileUpload").get(0).files;
+        if (files.length > 0) {
+            formdata.append("InputFile", files[0]);
+        }
+        else {
+            showAlert("a", "Please select File");
+            return false;
+        }
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("UploadContentTitle", "Title_Content_View")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divError').hide();
+                $('#fileUpload').val('')
+
+                if (result.IsError == "Y") {
+                    showAlert("E", result.Message);
+                }
+                else if (result.IsError == "X") {
+                    $('#divError').show();
+                    BindExcelErrorList();
+                }
+                else {
+                    showAlert("S", "Data Uploaded Successfully");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        hideLoading();
+    }
+
+    </script>
+
+</head>
+<body>
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <div class="top_area">
+                    <h2 class="pull-left">Title Import</h2>
+
+                </div>
+                <div class="">
+                    <div id="divSearch" class="search_area clearfix">
+                        <div class="right_nav pull-left">
+                            <ul id="FirstUl">
+                                <li>
+                                   Title Import:
+                                </li>
+                                <li>
+                                    <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                                </li>
+                                <li>
+                                    <input type="button" onclick="return UploadTitleContentVersion();" class="btn btn-primary" value="Upload" />
+                                </li>
+                            </ul>
+                        </div> 
+                    </div>
+                    <div @*dir="@objMessageKey.LayoutDirection"*@>
+                        <a class="btn-primary" href='@Url.Action("Cancel", "Title_Content_View")'>Back</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        var v = '@ViewBag.Message';
+        var s = '@ViewBag.status';
+        $(document).ready(function () {
+            debugger;
+            if (v != '') {
+                if (s == 'S') {
+                    showAlert("S", v);
+                }
+                else if (s == 'E') {
+                    showAlert("E", v);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+

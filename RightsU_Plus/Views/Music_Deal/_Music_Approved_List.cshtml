@@ -1,0 +1,110 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.MUSIC_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.MUSIC_DEAL_SCHEMA];
+    }
+
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        countChar(document.getElementById('approvalremarks'));
+        
+    });
+    var DoConfirmation = ''
+    var ApprovalValue = ''
+    function setUserAction(value) {
+        var approvalremarks = $.trim($('#approvalremarks').val());
+        ApprovalValue = value;
+        if (approvalremarks == '') {
+            showAlert('I', '@objMessageKey.Pleaseenterremarks');
+        }
+        else {
+            if (value == 'A') {
+                showAlert('I', '@objMessageKey.Areyousureyouwanttoapprovethisdeal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+            else if (value == 'RO') {
+                showAlert('I', '@objMessageKey.Areyousureyouwanttoreopenthisdeal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+            else {
+                showAlert('I', '@objMessageKey.Areyousureyouwanttorejectthisdeal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+        }
+        return false;
+    }
+
+    function handleCancel() { }
+
+    function handleOk() {
+        if (DoConfirmation == 'Y') {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Music_Approve_Reject_Deal", "Global")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    user_Action: ApprovalValue,
+                    approvalremarks: $('#approvalremarks').val()
+                }),
+                success: function (result) {
+                    var message = '@objMessageKey.DealRejectedsuccessfully';
+                    if (ApprovalValue == 'A')
+                        message = '@objMessageKey.DealApprovedsuccessfully';
+
+                    if (result == 'Y')
+                        message = message + ', @objMessageKey.butunabletosendmailPleasechecktheerrorlog';
+
+                    ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+                    showAlert('S', message, 'OK');
+                    DoConfirmation = 'N';
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            location.href = '@Url.Action("Index","Music_Deal_List")'
+        }
+    }
+</script>
+<div class="scale_table_block">
+    <div class="divBlock">
+        <div class="bold" style="padding-right: 750px;">@objMessageKey.Approval / @objMessageKey.RejectionRemarks</div>
+        <div class="charNum">0/4000</div>
+    </div>
+    <textarea id="approvalremarks" name="approvalremarks" class="textarea" rows="2" cols="20" onkeyup="countChar(this)"></textarea>
+    @Html.Hidden("user_Action")
+</div>
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        @{
+            if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForApprove))
+            {
+                <li>
+                    <input class="btn-primary" type="submit" onclick='return setUserAction("A")' value="@objMessageKey.Approve" />
+                </li>
+            }
+            if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForDealReject))
+            {
+                <li>
+                    <input class="btn-primary" type="submit" onclick='return setUserAction("R")' value="@objMessageKey.Reject" />
+                </li>
+            }
+            <li>
+                <input class="btn-primary" type="button" onclick="location.href='@Url.Action("Index", "Music_Deal_List")'" value="@objMessageKey.BackToList" />
+            </li>
+        }
+    </ul>
+</div>

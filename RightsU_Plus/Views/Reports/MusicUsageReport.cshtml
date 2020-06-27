@@ -1,0 +1,627 @@
+﻿@{
+    ViewBag.Title = "MusicUsageReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+
+    var URL_BindMusicUsageReport = '@Url.Action("BindMusicUsageReport", "Reports")';
+    var URL_BindContentList = '@Url.Action("BindContentList", "Reports")';
+    var URL_BindStarList = '@Url.Action("BindStarCast", "Reports")';
+
+    $(function () {
+        $("#ddlBusinessUnit1").change(function () {
+            debugger;
+            var businessUnitcode = $("#ddlBusinessUnit").val();
+            BindBUList(businessUnitcode);
+            $("#ddlTitleList").val('').trigger("chosen:updated");
+        });
+    });
+
+
+    $(document).ready(function () {
+        debugger;
+        $('#txtfrom').change(function () {
+            SetMinDt();
+        });
+
+        $('#txtto').change(function () {
+            SetMaxDt();
+        });
+
+        $('#ddlContentList').SumoSelect();
+        $('#ddlChannelList').SumoSelect();
+        $('#ddlTitleTypeList').SumoSelect();
+        $('#ddlMusicLabelList').SumoSelect();
+        $('#ddlStarCastList').SumoSelect();
+        $('#ddlGenresList').SumoSelect();
+        $('#ddlMusicThemeList').SumoSelect();
+    });
+
+    function btnShow_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal = true;
+        var str = "";
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var Content = $('#txtTitle').val();
+        var EpisodeFrom = parseInt($('#episodeFrom').val());
+        var EpisodeTo = parseInt($('#episodeTo').val());
+        var Channel = $('#ddlChannelList').val();
+        var TitleType = $('#ddlTitleTypeList').val();
+        var MusicLabel = $('#ddlMusicLabelList').val();
+        var txtfrom = $('#txtfrom').val();
+        var txtto = $('#txtto').val();
+        var StarCast = $('#txtStar').val();
+        var Genres = $('#ddlGenresList').val();
+        var MusicTheme = $('#ddlMusicThemeList').val();
+
+        var fromepisode = isNaN(EpisodeFrom);
+        var toepisode = isNaN(EpisodeTo);
+
+        if (fromepisode == true)
+            EpisodeFrom = 0;
+        if (toepisode == true)
+            EpisodeTo = 0;
+
+        if ($('#txtfrom').val() == '' && $('#txtto').val() != '') {
+            showAlert('E', 'From Period cannot be blank');
+            return false;
+        }
+        if ($('#txtfrom').val() != '' && $('#txtto').val() == '') {
+            showAlert('E', 'To Period cannot be blank');
+            return false;
+        }
+
+        if (fromepisode == true && toepisode == false) {
+            showAlert('E', 'Episode From cannot be blank');
+            return false;
+        }
+        if (fromepisode == false && toepisode == true) {
+            showAlert('E', 'Episode To cannot be blank');
+            return false;
+        }
+        if (EpisodeFrom > EpisodeTo)
+        {
+            showAlert('E', 'Episode From cannot be greater than Episode To');
+            return false;
+        }
+
+        if ($('#txtTitle').val() == 0 && $('#txtfrom').val() == '' && $('#txtto').val() == '' && $('#ddlChannelList').val() == null && $('#ddlTitleTypeList').val() == null && $('#ddlMusicLabelList').val() == null && $('#txtStar').val() == 0 && $('#ddlGenresList').val() == null && $('#ddlMusicThemeList').val() == null) {
+            showAlert('E', 'Please Select at least one search criteria');
+            return false;
+        }
+        if ($('#ddlChannelList').val() == null) {
+            Channel = "";
+        }
+        if ($('#ddlTitleTypeList').val() == null) {
+            TitleType = "";
+        }
+        if ($('#ddlMusicLabelList').val() == null) {
+            MusicLabel = "";
+        }
+        if ($('#ddlGenresList').val() == null) {
+            Genres = "";
+        }
+
+        if ($('#ddlMusicThemeList').val() == null) {
+            MusicTheme = "";
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindMusicUsageReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    businessUnitcode: businessUnitcode,
+                    Content: Content,
+                    EpisodeFrom: EpisodeFrom,
+                    EpisodeTo: EpisodeTo,
+                    Channel: Channel,
+                    TitleType: TitleType,
+                    MusicLabel: MusicLabel,
+                    txtfrom: txtfrom,
+                    txtto: txtto,
+                    StarCast: StarCast,
+                    Genres: Genres,
+                    MusicTheme: MusicTheme,
+                    dateformat: $('#ddlDateFormat').val(),
+                    datetimeformat: $('#ddlDateTimeFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    
+    function PopulateTitle(keyword) {
+        var Type = "";
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        BU_Code : $('#ddlBusinessUnit').val(),
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindContentList,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "Result Not Found") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "350px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+    function PopulateStar(keyword) {
+        var Type = "";
+        if ($('#txtStar').val().length == "0") {
+            $('#hdnStarCode').val(0);
+        }
+        var selectedtxt = $('#txtStar').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtStar").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtStar').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindStarList,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtStar').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtStar').removeClass('loader');
+                                    return {
+                                        label: v.Talent_Name,
+                                        val: v.Talent_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "Result Not Found") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnStarCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnStarCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtStar').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "350px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function ClearAll() {
+        debugger;
+        var code = 1;
+        $("#episodeFrom,#episodeTo,#txtfrom,#txtto,#txtTitle,#txtStar").val('');
+        //$("#ddlContentList,#ddlChannelList,#ddlTitleTypeList,#ddlMusicLabelList,#ddlStarCastList,#ddlMusicThemeList,#ddlGenresList").val('').trigger("chosen:updated");
+        $('#hdnStarCode,#txtTitle').val('');
+        $("#ddlChannelList")[0].sumo.unSelectAll();
+        $("#ddlTitleTypeList")[0].sumo.unSelectAll();
+        $("#ddlMusicLabelList")[0].sumo.unSelectAll();
+        $("#ddlMusicThemeList")[0].sumo.unSelectAll();
+        $("#ddlGenresList")[0].sumo.unSelectAll();
+        $('#ddlBusinessUnit').val(code).trigger('chosen:updated');
+
+        // BindTitleList(code);
+        BindContentList();
+    }
+    function isNumeric(e, t) {
+        if (window.event) {
+            var charCode = window.event.keyCode;
+        }
+        else if (e) {
+            var charCode = e.which;
+        }
+        else { return true; }
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+
+
+    function SetMaxDt() {
+        setMinMaxDates('txtfrom', '', $('#txtto').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtto', $('#txtfrom').val(), '');
+    }
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+
+</script>
+
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 70%;
+        text-align: left;
+    }
+
+    #ddlTitleList_chosen {
+        max-width: 70%;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+
+    td {
+        width: 15%;
+        padding: 1px;
+    }
+
+    .chosen-container-multi {
+        max-width: 90%;
+        display: inline-block;
+    }
+
+    td {
+        width: 10px;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+
+        <div class="container acq main_col">
+
+
+
+            <div class="title_block dotted_border clearfix">
+                
+
+                <table>
+                    <tr>
+                        <td>
+                            <h2 class="pull-left">
+                                Music Usage Report
+                                <span></span>
+                            </h2>
+                        </td>
+                        @*<td style="width:25%;"></td>
+                        <td style="width:25%;"></td>
+                        <td style="width:20%;text-align:right"></td>*@
+                        <td style="width:30%;text-align:right;">
+                            <label class="bold">Business Unit</label>
+                            <span style="padding-left:1%;"></span>
+                            @Html.DropDownList("BusinessUnit",ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select"})
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td>
+                            Content
+                            <br />
+                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:210px" placeholder="Content" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnTitleCode" value="0" />
+                        </td>
+                        <td>
+                            Episode From
+                            <br />
+                            <input type="text" id="episodeFrom" maxlength="4" style="width:70px" onkeypress="return isNumeric(event,this);" />
+                            To
+                            <input type="text" id="episodeTo" maxlength="4" style="width:70px" onkeypress="return isNumeric(event,this);" />
+                        </td>
+                        <td>
+                            Channels
+                            <br />
+                            @*@Html.DropDownList("ChannelList", ViewBag.ChannelList as MultiSelectList, new { @id = "ddlChannelList", @class = "form_input chosen-select", @multiple = "multiple" })*@
+                            @Html.DropDownList("ChannelList", ViewBag.ChannelList as MultiSelectList, new { @id = "ddlChannelList", @multiple = "multiple" })
+                        </td>
+                        <td>
+                            Title Type
+                            <br />
+                            @*@Html.DropDownList("TitleTypeList", ViewBag.TitleTypeList as MultiSelectList, new { @id = "ddlTitleTypeList", @class = "form_input chosen-select", @multiple = "multiple" })*@
+                            @Html.DropDownList("TitleTypeList", ViewBag.TitleTypeList as MultiSelectList, new { @id = "ddlTitleTypeList", @multiple = "multiple" })
+                        </td>
+                        <td>
+                            Music Label
+                            <br />
+                            @*@Html.DropDownList("MusicLabelList", ViewBag.MusicLabelList as MultiSelectList, new { @id = "ddlMusicLabelList", @class = "form_input chosen-select", @multiple = "multiple" })*@
+                            @Html.DropDownList("MusicLabelList", ViewBag.MusicLabelList as MultiSelectList, new { @id = "ddlMusicLabelList", @multiple = "multiple" })
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: middle;">
+                            Airing Date
+                            <br />
+                            <input type="text" class="isDatepicker shortDate common" value="" id="txtfrom" placeholder="From" title="From" />
+                            To
+                            <input type="text" class="isDatepicker shortDate common" value="" id="txtto" placeholder="To" title="To" />
+
+                        </td>
+                        <td>
+                            Talent
+                            <br />
+                            <input type="text" id="txtStar" class="search" maxlength="100" style="width:210px" placeholder="Talent" onkeyup="PopulateStar(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnStarCode" value="0" />
+                        </td>
+                        @if (ViewBag.parmValue == "G")
+                        {
+                            <td>
+                                Genres
+                                <br />
+                                @*@Html.DropDownList("GenresList", ViewBag.GenresList as MultiSelectList, new { @id = "ddlGenresList", @class = "form_input chosen-select", @multiple = "multiple" })*@
+                                @Html.DropDownList("GenresList", ViewBag.GenresList as MultiSelectList, new { @id = "ddlGenresList", @class = "form_input chosen-select", @multiple = "multiple" })
+                            </td>
+                            <td></td>
+                        }
+                        else if (ViewBag.parmValue == "T")
+                        {
+                            <td>
+                                Music Theme
+                                <br />
+                                @*@Html.DropDownList("MusicThemeList", ViewBag.MusicThemeList as MultiSelectList, new { @id = "ddlMusicThemeList", @class = "form_input chosen-select", @multiple = "multiple" })*@
+                                @Html.DropDownList("MusicThemeList", ViewBag.MusicThemeList as MultiSelectList, new { @id = "ddlMusicThemeList", @multiple = "multiple" })
+                            </td>
+                            <td></td>
+                        }
+                        else if (ViewBag.parmValue == "GT")
+                        {
+                            <td>
+                                Genres
+                                <br />
+                                @*@Html.DropDownList("GenresList", ViewBag.GenresList as MultiSelectList, new { @id = "ddlGenresList", @class = "form_input chosen-select", @multiple = "multiple" })*@
+                                @Html.DropDownList("GenresList", ViewBag.GenresList as MultiSelectList, new { @id = "ddlGenresList", @multiple = "multiple" })
+                            </td>
+                            <td>
+                                Music Theme
+                                <br />
+                                @*@Html.DropDownList("MusicThemeList", ViewBag.MusicThemeList as MultiSelectList, new { @id = "ddlMusicThemeList", @class = "form_input chosen-select", @multiple = "multiple" })*@
+                                @Html.DropDownList("MusicThemeList", ViewBag.MusicThemeList as MultiSelectList, new { @id = "ddlMusicThemeList", @multiple = "multiple" })
+                            </td>
+                        }
+                        <td style="width:8%">
+                            Date Time Format
+                            @Html.DropDownList("DateTimeFormat", (List<SelectListItem>)ViewBag.DateTimeFormat,  new { @id = "ddlDateTimeFormat", @class = "form_input chosen-select" })
+                        </td>
+                       
+                    </tr>
+                    <tr>
+                        <td style="width:8%">
+                            Date Format
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+
+
+                    </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td style="width:20%;text-align:right">
+                            <input type="button" id="btnShow" class="btn btn-primary" value="Show" onclick="btnShow_OnClick()">
+                            <input type="button" id="btnClearAll" class="btn btn-primary" value="Reset" onclick="ClearAll()">
+                        </td>
+                    </tr>
+
+
+                </table>
+            </div>
+            <div>
+                <table>
+                    <tr align="left" id="trImg">
+                        <td id='tdShowImg' align='left' style="display: none">
+                            <input type="image" title="Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
+                        </td>
+                        <td id='tdHideImg' align="left">
+                            <input type="image" title="Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+﻿@model RightsU_Entities.Security_Group
+@{
+
+    var j = (string)ViewBag.strRightModuleCode;
+    var URL_SaveSecurity_Group = Url.Action("SaveSecurity_Group", "Security_Group");
+    var URL_UpdateSecurity_Group = Url.Action("UpdateSecurityGroup", "Security_Group");
+    var URL_BindPartialPages = Url.Action("BindPartialPages", "Security_Group");
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+
+
+<script>
+
+    function BindSecurityGroup() {
+      
+        $("#hdnTVCodes").val('@j');
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: "",
+                SecurityGroupCode: $("#hdnTVCodes").val()
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#tree').html(result);
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    $(function () {
+        debugger;     
+        BindSecurityGroup();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        debugger;
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode_temp').val())
+        $("#hdnRecodLockingCode").val(recordLockingCode);
+    });
+
+    $('#btnCancel').click(function () {
+        debugger;
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode_temp').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+        BindPartialView("LIST", 0);
+    });
+
+    function validateSave() {
+        debugger;
+        var recordCode = $.trim($('#hdnRecodLockingCode').val());
+        var retrunmsg = true;
+        var securityName = $.trim($('#txtSecurityGroupName').val());
+        if (securityName == '') {
+            $('#txtSecurityGroupName').val('');
+            $('#txtSecurityGroupName').attr('required', true);
+           retrunmsg = false;
+        }
+        if ($('#hdnTVCodes').val() == "") {
+            showAlert('E', '@objMessageKey.PleaseSelectatleastoneRight');
+            retrunmsg = false;
+        }
+        return retrunmsg;
+    }
+    
+</script>
+
+<div class="">
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            @if (TempData["Action"] == "Edit")
+            {
+                <span>@objMessageKey.EditSecurityGroup</span>
+            }
+            else
+            {
+                <span>@objMessageKey.AddSecurityGroup</span>
+            }
+            <span></span>
+        </h2>
+        <div class="right_nav pull-right">
+        </div>
+    </div>
+    @using (Ajax.BeginForm("SaveSecurity_Group", "Security_Group", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+    { 
+    <div class="grid_area">
+        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+        <div class="search_area" style="padding:5px;">
+
+            <table class="table">
+                <tr>
+                    <td style="width:35% !important;">
+                        @objMessageKey.SecurityGroup: &nbsp;&nbsp;
+                        <input id="txtSecurityGroupName" placeholder="@objMessageKey.SecurityGroupName" name="txtSecurityGroupName" type="text" maxlength="100" value="@Model.Security_Group_Name" style="width:200px;" />
+                        <input type="hidden" id="hdnSecurityCode" name="hdnSecurityCode" value="@Model.Security_Group_Code" />
+                        <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tab-content clearfix table-wrapper scale_table_container">
+            <div class="scale_table_block">
+                <div id="divTree" class="platform_wrapper">
+                    <div id="tree" class="treeClass">
+                    </div>
+                    <span id="lblTheatrical" style="display: none;">@objMessageKey.Theatrical</span>
+                    <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                </div>
+            </div>
+        </div>    
+        <br />
+        <div class="bottom_action">
+            <ul>
+                    <li><input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return validateSave();" /></li>
+                    <li><input type="button" id="btnCancel" class="btn btn-primary" value="@objMessageKey.Cancel" /></li>               
+            </ul>
+        </div>
+
+    </div>
+    }
+</div>
+    
+<style>
+     #Tree_Filter_Rights_Security {   
+        width:1108px;
+        position:relative!important;
+    }
+    #Rights_Security{
+        margin:0px 0px 0px 0px!important;
+    }
+</style>

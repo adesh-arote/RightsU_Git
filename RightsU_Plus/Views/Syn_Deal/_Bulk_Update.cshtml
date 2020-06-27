@@ -1,0 +1,1556 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
+<script>
+    var r = '';
+    var URL_BindRightsFilterData = '@Url.Action("BindRightsFilterData","Syn_Rights_List")';
+    var URL_BindBulkUpdateList = '@Url.Action("BindBulkUpdateList", "Syn_Rights_List")';
+
+    $(document).ready(function () {
+
+        $("#lbTerritory,#lbSub_Language,#lbDub_Language").SumoSelect();
+        initializeChosen();
+        @*if ('@ViewBag.TitleCode' != '')
+            $('#hdnTitle_Code').val('@ViewBag.TitleCode');*@
+
+        BindChanges();
+        BindPlatform();
+        var ViewType = $('input[name=optViewType]:checked').val();
+        BindGridNew($("#" + ViewType)[0], 'Y');
+        //LoadBulkUpdateList();
+
+        BindRightsFilterData();
+        $("btnSave").attr("style", "display:none");
+        $("btnCancelDeal").attr("style", "display:none");
+
+
+        $('#Is_Tentative').change(function () {
+            OnClickTentative();
+        });
+
+        $('#Term_YY').change(function () {
+            OnFocusLostTerm();
+        });
+
+        $('#Term_MM').change(function () {
+            OnFocusLostTerm();
+        });
+
+        $('#Start_Date').change(function () {
+            SetMinDt();
+            AutoPopulateTerm();
+        });
+
+        $('#End_Date').change(function () {
+            SetMaxDt();
+            AutoPopulateTerm();
+        });
+
+        $('#txtPerpetuity_Date').change(function () {
+            CalculatePerpetuityEndDate();
+        });
+
+        function CalculateTerm(startDate, endDate) {
+            var val = CalculateMonthBetweenTwoDate(startDate, endDate);
+            var year = val / 12;
+            var month = val % 12;
+            var term = parseInt(year) + '.' + month;
+            return term;
+        }
+        function CalculateMonthBetweenTwoDate(startDate, endDate) {
+            var months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+            months += endDate.getMonth() - startDate.getMonth();
+
+            // Subtract one month if b's date is less that a's.
+            if (endDate.getDate() < startDate.getDate())
+                months--;
+            return months;
+        }
+
+        function AutoPopulateTerm() {
+            var txtStartDate = $('#Start_Date');
+            var txtEndDate = $('#End_Date');
+            var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
+            var rightED = new Date(MakeDateFormate(txtEndDate.val()));
+
+            if (!isNaN(rightSD) && !isNaN(rightED)) {
+                rightED.setDate(rightED.getDate() + 1);
+                var term = CalculateTerm(rightSD, rightED);
+                var arr = term.split('.');
+                $('#Term_YY').val(arr[0]);
+                $('#Term_MM').val(arr[1]);
+            }
+        }
+        $("#Term_YY").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 2,
+            maxDecimalPlaces: 0
+        });
+        $("#Term_MM").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 2,
+            maxDecimalPlaces: 0
+        });
+    });
+
+    function BindRightsFilterData() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindRightsFilterData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                callFor: 'BLK'
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divRightsFilterBLK').empty();
+                    $('#divRightsFilterBLK').html(result);
+                    initializeExpander();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function CalculatePerpetuityEndDate() {
+        var strSD = $('#txtPerpetuity_Date').val();
+        if (strSD != '') {
+            var startDate = new Date(MakeDateFormate(strSD));
+            if (!isNaN(startDate)) {
+                var year = $('#hdnTerm_Perputity').val();
+                var endDate = CalculateEndDate(startDate, year, 0, 0);
+                $('#txtPerpetuity_EndDate').val(endDate);
+            }
+        }
+    }
+
+    function PageSize_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        var ViewType = $('input[name=optViewType]:checked').val();
+
+        if (IsValid)
+            BindGridNew($("#" + ViewType)[0], 'Y');
+        //LoadBulkUpdateList();
+        else
+            return false;
+    }
+
+    function SetMinDt() {
+        setMinMaxDates('End_Date', $('#Start_Date').val(), '');
+    }
+    function SetMaxDt() {
+        setMinMaxDates('Start_Date', '', $('#End_Date').val());
+    }
+    function OnClickTentative(control) {
+        var IsTentative = false;
+        if ($('#Is_Tentative').prop('checked'))
+            IsTentative = true
+        if (IsTentative) {
+            $('#End_Date').prop("disabled", true);
+            $('#End_Date').val('');
+        }
+        else {
+            $('#End_Date').prop("disabled", false);
+            OnFocusLostTerm();
+        }
+    }
+
+    function OnFocusLostTerm() {
+        var canAssign = true;
+        if ($('#Is_Tentative').prop('checked'))
+            canAssign = false
+
+        var txtStartDate = $('#Start_Date');
+        var txtEndDate = $('#End_Date');
+        var txtTermYear = $('#Term_YY');
+        var txtTermMonth = $('#Term_MM');
+
+        if (txtTermYear.val() == '' || isNaN(txtTermYear.val()))
+            txtTermYear.val('0');
+        if (txtTermMonth.val() == '' || isNaN(txtTermMonth.val()))
+            txtTermMonth.val('0');
+
+        if (txtStartDate.val() != "") {
+            var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
+            if (!isNaN(rightSD)) {
+
+                var year = 0;
+                var month = 0;
+
+                if (txtTermYear.val() != '')
+                    year = parseInt(txtTermYear.val());
+                if (txtTermMonth.val() != '')
+                    month = parseInt(txtTermMonth.val());
+
+                if (year > 0 || month > 0) {
+                    var newDate = CalculateEndDate(rightSD, year, month);
+                    if (canAssign) {
+                        txtEndDate.val(newDate);
+                    }
+                    else {
+                        txtEndDate.val('');
+                    }
+                }
+                else {
+                    txtEndDate.val('');
+                }
+            }
+        }
+        else if (txtEndDate.val() != "") {
+            var rightED = new Date(MakeDateFormate(txtEndDate.val()));
+            if (!isNaN(rightED)) {
+
+                var year = 0;
+                var month = 0;
+
+                if (txtTermYear.val() != '')
+                    year = parseInt(txtTermYear.val());
+                if (txtTermMonth.val() != '')
+                    month = parseInt(txtTermMonth.val());
+
+                if (year > 0 || month > 0) {
+                    var newDate = CalculateStartDate(rightED, year, month);
+                    txtStartDate.val(newDate);
+                }
+                else {
+                    txtStartDate.val('');
+                }
+            }
+        }
+        else {
+            txtTermYear.val('0');
+            txtTermMonth.val('0');
+        }
+    }
+    function BindPlatform() {
+        debugger;
+        var RightCodes = '';
+        var Lcount = parseInt($('#hdnCount').val());
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                RightCodes += ',' + $('#' + i + "_hdnRightCode").val();
+            }
+        }
+        var ActionFor = '';
+        if ($('#rbtndelete').prop('checked')) {
+            ActionFor = 'D';
+        }
+        else {
+            ActionFor = 'A';
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindPlatformTreeView", "Syn_Rights_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Action_For: ActionFor,
+                Right_Code: RightCodes
+            }),
+            async: true,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+    function CalculateEndDate(startDate, year, month) {
+        var yearToMonth = 12 * year;
+        month = month + yearToMonth;
+        startDate.setMonth(startDate.getMonth() + month);
+        startDate.setDate(startDate.getDate() - 1);
+        var newDateStr = ConvertDateToCurrentFormat(startDate);
+        return newDateStr;
+    }
+
+    function CalculateStartDate(startDate, year, month) {
+        var yearToMonth = 12 * year;
+        month = month + yearToMonth;
+        startDate.setMonth(startDate.getMonth() - month);
+        startDate.setDate(startDate.getDate() + 1);
+        var newDateStr = ConvertDateToCurrentFormat(startDate);
+        return newDateStr;
+    }
+
+    function ConvertDateToCurrentFormat(objDate) {
+        var dd = objDate.getDate();
+        var mm = objDate.getMonth() + 1; //January is 0!
+        var yyyy = objDate.getFullYear();
+
+        if (dd < 10)
+            dd = '0' + dd
+
+        if (mm < 10)
+            mm = '0' + mm
+
+        var newDate = dd + '/' + mm + '/' + yyyy;
+        return newDate;
+    }
+
+    function CalculateMonthBetweenTwoDate(startDate, endDate) {
+        var months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+        months += endDate.getMonth() - startDate.getMonth();
+
+        // Subtract one month if b's date is less that a's.
+        if (endDate.getDate() < startDate.getDate())
+            months--;
+        return months;
+    }
+
+    function BindChanges() {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindChangeDropdown", "Syn_Rights_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                $("#ddlChange").empty();
+                $.each(result, function () {
+                    if (this.Selected == true)
+                        $("#ddlChange").append($("<option />").val(this.Value).text(this.Text).attr("selected", "selected"));
+                    else
+                        $("#ddlChange").append($("<option />").val(this.Value).text(this.Text));
+                });
+                $("#ddlChange").trigger("chosen:updated");
+                initializeChosen();
+            },
+            error: function (result) { }
+        });
+    }
+
+    function Search_BulkUpdate(key) {
+        var isValid = tree;
+        if (key == "S") {
+            if ($.trim($('#SearchRights').val()) == "") {
+                $('#SearchRights').val('').attr('required', true);
+                isValid = false;
+            }
+        }
+        else {
+            $('#SearchRights').val('').attr('required', false);
+        }
+
+        if (isValid) {
+            var ViewType = $('input[name=optViewType]:checked').val();
+            BindGridNew($("#" + ViewType)[0], 'Y');
+            //LoadBulkUpdateList();
+        }
+    }
+
+    function LoadBulkUpdateList() {
+        var pageNo = '1';
+
+        if ($("#hdnPageIndex") != undefined && $("#hdnPageIndex").val() != "")
+             pageNo = $("#hdnPageIndex").val();
+
+        var searchText = $.trim($('#SearchRights').val());
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindBulkUpdateList", "Syn_Rights_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                pageSize: $('#txtPageSize').val(),
+                pageNo: pageNo
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true")
+                    redirectToLogin();
+                else
+                    $("#div_BindGrid").html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function changediv() {
+        $('#divRightsPeriod,#divPlatform,#divCountry,#divTerritory,#divSubLan,#divSubLanGrp,#divDubLan,#divDubLanGrp,#divExclusive,#divSublicensing,#divTitleLanguage').attr("style", "display:none");
+
+        var ddlchange = $('#ddlChange').val();
+        $('#hdnChangeType').val(ddlchange)
+        if (ddlchange == 'RP') {
+            $('#divRightsPeriod').attr("style", "display:block");
+            $('#ActionDiv').attr("style", "display:none");
+            $('#hdnRights_Type').val('Y');
+        }
+        else if (ddlchange == 'P') {
+            $('#divPlatform').attr("style", "display:block");
+            $('#ActionDiv').attr("style", "display:block");
+        }
+        else if (ddlchange == 'T' || ddlchange == 'I') {
+            $('#divTerritory').attr("style", "display:block");
+            $('#ActionDiv').attr("style", "display:block");
+        }
+        else if (ddlchange == 'SL' || ddlchange == 'SG') {
+            $('#divSubLan').attr("style", "display:block");
+            $('#ActionDiv').attr("style", "display:block");
+        }
+        else if (ddlchange == 'DL' || ddlchange == 'DG') {
+            $('#divDubLan').attr("style", "display:block");
+            $('#ActionDiv').attr("style", "display:block");
+        }
+        else if (ddlchange == 'E') {
+            $('#divExclusive').attr("style", "display:block");
+            $('#ActionDiv').attr("style", "display:none");
+        }
+        else if (ddlchange == 'S') {
+            $('#divSublicensing').attr("style", "display:block");
+            $('#ActionDiv').attr("style", "display:none");
+        }
+        else if (ddlchange == 'TL') {
+            $('#divTitleLanguage').attr("style", "display:block");
+            $('#ActionDiv').attr("style", "display:none");
+        }
+        $('.checkbox').prop('checked', false);
+        CommonCalling();
+    }
+    function BindDropdownList(SelectedType, Right_Codes) {
+        debugger;
+        var region_type = 'G';
+        var SL_Type = 'G';
+        var DL_Type = 'G';
+        var Right_Codes = '';
+        var Lcount = parseInt($('#hdnCount').val());
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                Right_Codes += ',' + $('#' + i + "_hdnRightCode").val();
+            }
+        }
+        if (SelectedType == 'I' || SelectedType == 'SL' || SelectedType == 'DL') {
+            region_type = 'I';
+            SL_Type = 'L';
+            DL_Type = 'L';
+        }
+        var selectedId = '';
+        if (SelectedType == "I" || SelectedType == "T") {
+            selectedId = 'lbTerritory';
+        }
+        else if (SelectedType == "DL" || SelectedType == "DG") {
+            selectedId = 'lbDub_Language';
+        }
+        else if (SelectedType == "SL" || SelectedType == "SG") {
+            selectedId = 'lbSub_Language';
+        }
+        var selectedCodes = '';
+        var selected_Territory = '';
+        var selected_Sub_Lang = '';
+        var selected_Dub_Lang = '';
+        var ActionFor = '';
+        if ($('#rbtndelete').prop('checked')) {
+            ActionFor = 'D';
+        }
+        else {
+            ActionFor = 'A';
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Bind_JSON_ListBox", "Syn_Rights_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                str_Type: SelectedType,
+                Action_For: ActionFor,
+                Right_Code: Right_Codes
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                if (result == 'Holdback is already added.') {
+                    showAlert('E', result);
+                }
+                else {
+
+                    $("#lbTerritory,#lbSub_Language,#lbDub_Language,#Sub_License_Code").empty();
+                    debugger;
+                    $(result).each(function (index, item) {
+                        debugger;
+                        if (SelectedType == "I" || SelectedType == "T")
+                            $("#lbTerritory").append($("<option>").val(this.Value).text(this.Text));
+                        else if (SelectedType == "SL" || SelectedType == "SG")
+                            $("#lbSub_Language").append($("<option>").val(this.Value).text(this.Text));
+                        else if (SelectedType == "DL" || SelectedType == "DG")
+                            $("#lbDub_Language").append($("<option>").val(this.Value).text(this.Text));
+                        if (SelectedType == 'S') {
+                            $("#Sub_License_Code").append($("<option>").val(this.Value).text(this.Text));
+                        }
+                    });
+                    //if (SelectedType == 'A') {
+                    $("#lbTerritory").val(selected_Territory)[0].sumo.reload();
+                    $("#lbSub_Language").val(selected_Sub_Lang)[0].sumo.reload();
+                    $("#lbDub_Language").val(selected_Dub_Lang)[0].sumo.reload();
+                    $("#Sub_License_Code").val(selected_Dub_Lang).trigger("chosen:updated");
+                    //}
+                    //else
+                    debugger;
+                    if (selectedId !="") {
+                        $("#" + selectedId).val(selectedCodes)[0].sumo.reload();
+                    }
+                }
+            }
+            , error: function (result) {
+                showAlert('E', 'Error: ' + result.responseText);
+            }
+        });
+    }
+    function ValidateBulkApply() {
+        debugger;
+        var Lcount = parseInt($('#hdnCount').val());
+        var RightCodes = '';
+        var TitleCodes = '';
+        var TitleNames = '';
+        var Eps_Frm_To = '';
+        var IsValidSave = true;
+        var Rights_Type = '';
+        var isTentative = 'false';
+        var txtStartDate = '';
+        var txtEndDate = '';
+        var Action_For = '';
+        Rights_Type = $('#hdnRights_Type').val();
+        var changeType = $('#hdnChangeType').val();
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                RightCodes += ',' + $('#' + i + "_hdnRightCode").val();
+                TitleCodes += ',' + $('#' + i + "_hdnTitleCode").val();
+                TitleNames += ',' + $('#' + i + "_hdnTitleName").val();
+                //Is_Syn_Acq_Mapp += ',' + $('#' + i + "_hdnIs_Syn_Acq_Mapp").val();
+                Eps_Frm_To += ',' + $('#' + i + "_hdnEps_Frm_To").val();
+            }
+        }
+        //alert(RightCodes);
+        //var hdnTitle_Code = $("#hdnTitle_Code");
+        var hdnRegion_Code = $("#hdnRegion_Code");
+        var hdnDub_Code = $("#hdnDub_Code");
+        var hdnSub_Code = $("#hdnSub_Code");
+         
+        //hdnTitle_Code.val('');
+        hdnRegion_Code.val('');
+        hdnDub_Code.val('');
+        hdnSub_Code.val('');
+
+        //------------------ PLATFORM
+        if (changeType == 'P')
+            if ($("#hdnTVCodes").val() == '') {
+                IsValidSave = false;
+                $("#tree").attr('required', true);
+                $("#tree").addClass('required');
+                showAlert('E', '@objMessageKey.PleaseSelectAtLeastOnePlatform');
+            }
+
+        //------------------ END
+
+        //------------------ COUNTRY
+        if (changeType == 'I' || changeType == 'T') {
+            var regionType = changeType;
+            $("#hdnRegion_Type").val(regionType);
+
+            var selectedRegion = '';
+            if ($("#lbTerritory option:selected").length > 0) {
+                $("#lbTerritory option:selected").each(function () {
+                    if (selectedRegion == '')
+                        selectedRegion = $(this).val();
+                    else
+                        selectedRegion = selectedRegion + ',' + $(this).val();
+                });
+            }
+            else {
+                if (changeType == 'I')
+                    showAlert('E', '@objMessageKey.PleaseSelectAtLeastOneCountry');
+                else
+                    showAlert('E', '@objMessageKey.PleaseSelectAtLeastOneTerritory');
+                return false;
+            }
+            hdnRegion_Code.val(selectedRegion);
+
+            if (selectedRegion == '') {
+                IsValidSave = false;
+                $("#lbTerritory").attr('required', true);
+                $(".lbTerritory").addClass('required');
+            }
+        }
+        //------------------ END
+
+        var ErrorMsg = '';
+
+        //------------------ PERIOD
+        if (changeType == 'RP') {
+            debugger;
+            var Term = $('#hdnRights_Type').val();
+            Action_For = 'A';
+
+            txtStartDate = $('#Start_Date').val();
+            txtEndDate = $('#End_Date').val();
+            if (Term == 'Y') {
+                if ($('#Is_Tentative').prop('checked'))
+                    isTentative = 'true';
+
+                if (txtStartDate == "") {
+                    IsValidSave = false;
+                    showAlert("E", "@objMessageKey.PleaseenterStartDate");
+                    $("#Start_Date").attr('required', true);
+                    return false;
+                }
+
+                if (txtEndDate == "" && isTentative == 'false') {
+                    IsValidSave = false;
+                    showAlert("E", "@objMessageKey.PleaseenterEndDate");
+                    $("#End_Date").attr('required', true);
+                    return false;
+                }
+
+                if (txtStartDate != "" && txtEndDate != "" && compareDates_DMY(txtStartDate, txtEndDate) < 0) {
+                    IsValidSave = false;
+                    $("#Start_Date").attr('required', true);
+                    $("#End_Date").attr('required', true);
+                    txtROFRDays.val('');
+                    ErrorMsg = '@objMessageKey.Startdateshouldbelessthanenddate';
+                }
+
+                var txtYear = $('#Term_YY').val();
+                var txtMonth = $('#Term_MM').val();
+                if (isTentative == 'true' && (txtYear == null || txtYear == '0' || txtYear == undefined || txtYear == '') && (txtMonth == null || txtMonth == '0' || txtMonth == undefined || txtMonth == '')) {
+                    IsValidSave = false;
+                    showAlert("E", "@objMessageKey.PleaseentervalidTerm");
+                }
+            }
+            else if (Term == 'U') {
+                txtStartDate = $('#txtPerpetuity_Date').val();
+                if ($('#txtPerpetuity_Date').val() == "" || $('#txtPerpetuity_Date').val() == "DD/MM/YYYY") {
+                    IsValidSave = false;
+                    $("#txtPerpetuity_Date").attr('required', true);
+                }
+            }
+        }
+        //------------------ END
+
+        //------------------ DUBBING
+        if (changeType == 'DL' || changeType == 'DG') {
+            var dubbingType = changeType;
+            $("#hdnDub_Type").val(dubbingType);
+
+            var selectedDub = '';
+
+            if ($("#lbDub_Language option:selected").length > 0) {
+                $("#lbDub_Language option:selected").each(function () {
+                    if (selectedDub == '')
+                        selectedDub = $(this).val();
+                    else
+                        selectedDub = selectedDub + ',' + $(this).val();
+                });
+            }
+            else {
+                if (changeType == 'DL')
+                    showAlert('E', '@objMessageKey.PleaseselectatleastoneLanguage');
+                else
+                    showAlert('E', '@objMessageKey.PleaseSelectAtLeastOneLanguageGroup');
+                return false;
+            }
+            hdnDub_Code.val(selectedDub);
+        }
+        //------------------ END
+
+        //------------------ SUBTITLING
+        if (changeType == 'SL' || changeType == 'SG') {
+            var subType = changeType;
+            $("#hdnSub_Type").val(subType);
+
+            var selectedSub = '';
+
+            if ($("#lbSub_Language option:selected").length > 0) {
+                $("#lbSub_Language option:selected").each(function () {
+                    if (selectedSub == '')
+                        selectedSub = $(this).val();
+                    else
+                        selectedSub = selectedSub + ',' + $(this).val();
+                });
+            }
+            else {
+                if (changeType == 'SL')
+                    showAlert('E', '@objMessageKey.PleaseselectatleastoneLanguage');
+                else
+                    showAlert('E', '@objMessageKey.PleaseSelectAtLeastOneLanguageGroup');
+                return false;
+            }
+
+            hdnSub_Code.val(selectedSub);
+        }
+        //------------------ END
+
+        //if ($("#Is_Title_Language_Right").prop('checked') == false && selectedSub == '' && selectedDub == '') {
+        //    IsValidSave = false;
+        //    $("#lbTerritory").attr('required', true);
+        //    if (ErrorMsg != '')
+        //        ErrorMsg = ErrorMsg + '</br>'
+
+        //    ErrorMsg = ErrorMsg + 'Please select atleast one language.';
+        //}
+        if ($('#TitleY').prop('checked')) {
+            $('#hdnTitle_Language').val('Y');
+        }
+        if ($('#TitleN').prop('checked')) {
+            $('#hdnTitle_Language').val('N');
+        }
+        if ($('#ExclusiveY').prop('checked')) {
+            $('#hdnIs_Exclusive').val('Y');
+        }
+        if ($('#ExclusiveN').prop('checked')) {
+            $('#hdnIs_Exclusive').val('N');
+        }
+        if (!IsValidSave && $.trim(ErrorMsg) != '') {
+            showAlert('E', ErrorMsg);
+        }
+
+        if (IsValidSave) {
+            var ValidationMessage = '';
+            if (regionType == "T" || dubbingType == "DG" || subType == "SG") {
+                var groupOfRegions = selectedRegion;
+                if (regionType != "T")
+                    groupOfRegions = "";
+
+                var groupOfDubs = selectedDub;
+                if (dubbingType != "DG")
+                    groupOfDubs = "";
+
+                var groupOfSubs = selectedSub;
+                if (subType != "SG")
+                    groupOfSubs = "";
+
+                var msg = ValidateGroups(groupOfRegions, groupOfDubs, groupOfSubs)
+                if (msg != '') {
+                    IsValidSave = false;
+                    showAlert('E', msg);
+                    return false;
+                }
+            }
+        }
+        //msgSyn = Validate_Acq_Right_Title_Platform($("#hdnTVCodes").val(), selectedTitles, Term, isTentative,
+        //                                           $('#Start_Date').val(), $('#End_Date').val())
+        //if (msgSyn != '') {
+        //    showAlert('E', msgSyn);
+        //    return false;
+        //}
+        if ($('#rbtndelete').prop('checked')) {
+            Action_For = 'D';
+        }
+        else {
+            Action_For = 'A';
+        }
+        if (changeType == 'E' || changeType == 'S' || changeType == 'TL')
+            Action_For = 'A'
+
+        if (RightCodes == '') {
+            IsValidSave = false;
+            showAlert('E', '@objMessageKey.PleaseSelectAnyRight');
+        }
+        if (changeType == '0' || changeType == '') {
+            IsValidSave = false;
+            showAlert('E', '@objMessageKey.PleaseSelectAnyChange');
+        }
+        if (Action_For == '') {
+            IsValidSave = false;
+            showAlert('E', '@objMessageKey.PleaseSelectAddOrDelete');
+        }
+        if (changeType == 'S' && ($("#Sub_License_Code").val() == "" || $("#Sub_License_Code").val() == null)) {
+            IsValidSave = false;
+
+            showAlert('E', '@objMessageKey.PleaseSelectSubLicensing');
+        }
+        //var r = '';
+        if (IsValidSave) {
+            var codes = '';
+            var Change_For = $('#hdnChangeType').val();
+
+            if (Change_For == 'T' || Change_For == 'I')
+            { codes = $("#hdnRegion_Code").val(); }
+            else if (Change_For == 'SL' || Change_For == 'SG')
+            { codes = $("#hdnSub_Code").val(); }
+            else if (Change_For == 'DL' || Change_For == 'DG')
+            { codes = $("#hdnDub_Code").val(); }
+            else if (Change_For == 'P')
+            { codes = $("#hdnTVCodes").val(); }
+            else if (Change_For == 'S')
+            { codes = $("#Sub_License_Code").val(); }
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BulkSave", "Syn_Rights_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    SelectedRightCodes: RightCodes,
+                    SelectedTitleCodes: TitleCodes,
+                    SelectedTitleNames: TitleNames,
+                    //Is_Syn_Acq_Mapp: Is_Syn_Acq_Mapp,
+                    Eps_Frm_To: Eps_Frm_To,
+                    ChangeFor: changeType,
+                    SelectedCodes: codes,
+                    SelectedStartDate: txtStartDate,
+                    SelectedEndDate: txtEndDate,
+                    IsExclusive: $('#hdnIs_Exclusive').val(),
+                    IsTitleLanguage: $('#hdnTitle_Language').val(),
+                    RightsType: $('#hdnRights_Type').val(),
+                    ActionFor: Action_For,
+                    IsTentative: isTentative,
+                    Term_YY: $('#Term_YY').val(),
+                    Term_MM: $('#Term_MM').val(),
+                    pageView: $('input[name=optViewType]:checked').val()
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        initializeChosen();
+                        BindChanges();
+                        LoadBulkUpdateList();
+
+                        var ViewType = $('input[name=optViewType]:checked').val();
+                        BindGridNew($("#" + ViewType)[0], 'Y');
+
+                        if (result.message == "ERROR") {
+                            Show_Error_Popup_Bulk("", 5, 0, true);
+                        }
+                        else if (result.message != "") {
+                            showAlert('S', result.message, 'OK');
+                        }
+                        $('#divRightsPeriod,#divPlatform,#divCountry,#divTerritory,#divSubLan,#divSubLanGrp,#divDubLan,#divDubLanGrp,#divExclusive,#divSublicensing,#divTitleLanguage,#ActionDiv').attr("style", "display:none");
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+    function ValidateGroups(RegionCodes, DubbingCodes, SubtitlingCodes) {
+        var msg = '';
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Validate_Groups", "Syn_Rights")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                Region_Codes: RegionCodes,
+                Dubbing_Codes: DubbingCodes,
+                Subtitling_Codes: SubtitlingCodes
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                msg = result;
+            },
+            error: function (result) {
+            }
+        });
+        return msg;
+    }
+
+    function Validate_Acq_Right_Title_Platform(hdnPlatform, hdnMMovies, Right_Type, Is_Tentative, Start_Date, End_Date) {
+        var msg = '';
+        $.ajax({
+            type: "POST",
+            url: URL_Validate_Acq_Right_Title_Platform,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                hdnPlatform: hdnPlatform,
+                hdnMMovies: hdnMMovies,
+                Right_Type: Right_Type,
+                Is_Tentative: Is_Tentative,
+                Start_Date: Start_Date,
+                End_Date: End_Date
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                msg = result;
+            },
+            error: function (result) {
+            }
+        });
+        return msg;
+    }
+
+    function chkAllBxEnableOrDisable(idthis) {
+        debugger;
+        var RightCodes = '';
+        var changefor = $('#ddlChange').val();
+        var chkid = idthis.id;
+        var count = chkid.split('_')[0];
+        var rightcode = $('#' + count + '_hdnRightCode').val()
+        var IsValid = true;
+        if (!$('#' + chkid).prop('checked')) {
+            debugger;
+            IsValid = ValidateRightsTitleWithAcq(rightcode, '0', '0', '0', chkid);
+            if (IsValid) {
+                if (!$('#' + chkid).prop('checked')) {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("ChkBxEnableOrDisable", "Syn_Rights_List")',
+                        traditional: true,
+                        async: false,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                            Right_Code: rightcode,
+                            Change_For: changefor
+                        }),
+                        success: function (result) {
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            if (result.flag == 'true') {
+                                //making it purposely false becauseby default its geting selected on load
+                                $('#' + chkid).prop('checked', false);
+                            }
+                            else {
+                                //showAlert('e', result.Message);
+                                $('#' + chkid).attr('title', result.Message);
+                                $('#' + chkid).prop('checked', false);
+                                IsValid = false;
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+            }
+            else {
+                //$('#' + chkid).prop('checked', false);
+                $('#' + chkid).attr('disabled', true);
+            }
+        }
+        if (IsValid) {
+            CommonCalling();
+        }
+    }
+
+     function chkBxEnableOrDisable(idthis) {
+        debugger;
+        var RightCodes = '';
+        var changefor = $('#ddlChange').val();
+        var chkid = idthis.id;
+        var count = chkid.split('_')[0];
+        var rightcode = $('#' + count + '_hdnRightCode').val()
+        var IsValid = true;
+        if ($('#' + chkid).prop('checked')) {
+            debugger;
+            IsValid = ValidateRightsTitleWithAcq(rightcode, '0', '0', '0','');
+            if (IsValid) {
+                if ($('#' + chkid).prop('checked')) {
+                    //alert('a')
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("ChkBxEnableOrDisable", "Syn_Rights_List")',
+                        traditional: true,
+                        async: false,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                            Right_Code: rightcode,
+                            Change_For: changefor
+                        }),
+                        success: function (result) {
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            if (result.flag == 'true')
+                                $('#' + chkid).prop('checked', true)
+                            else {
+                                showAlert('e', result.Message);
+                                $('#' + chkid).prop('checked', false)
+                                IsValid = false;
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+            }
+            else {
+                $('#' + chkid).prop('checked', false)
+            }
+        }
+        if (IsValid) {
+            CommonCalling();
+        }
+    }
+
+    function CommonCalling() {
+        debugger;
+        var RightCodes = '';
+        var changefor = $('#ddlChange').val();
+        var Lcount = parseInt($('#hdnCount').val());
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                RightCodes += ',' + $('#' + i + "_hdnRightCode").val();
+            }
+        }
+        if (changefor == 'P') {
+            BindPlatform();
+        }
+        else if (changefor != '') {
+            BindDropdownList(changefor, RightCodes);
+        }
+    }
+    function SetRightPeriod(rightType) {
+        $('#hdnRights_Type').val(rightType)
+        if (rightType == 'Y' && $('#tabValidity a[href="#tabCal"]').prop("disabled")) {
+            return false;
+        }
+        else if (rightType == 'U' && $('#tabValidity a[href="#tabPerp"]').prop("disabled")) {
+            return false;
+        }
+    }
+
+
+
+    function ValidateRightsTitleWithAcq(RCode, TCode, Episode_From, Episode_To, chkID) {
+        debugger;
+        var Isvalid = true;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ValidateRightsTitleWithAcq", "Syn_Rights_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                RCode: RCode,
+                TCode: TCode,
+                Episode_From: Episode_From,
+                Episode_To: Episode_To
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                if (result == "VALID") {
+                    Isvalid = true;
+                }
+                else {
+                    hideLoading();
+                    if (chkID != '')
+                        $('#' + chkID).attr('title', 'Cannot edit Rights as corresponding Acquisition Deal is in Amendment state');
+                    else
+                        showAlert('E', '@objMessageKey.CannoteditRightsascorrespondingAcquisitionDealisinAmendmentstate')
+                    Isvalid = false;
+                }
+            },
+            error: function (result) {
+                Isvalid = false;
+            }
+        });
+
+        return Isvalid;
+    }
+    function ValidateSave() {
+        showLoading();
+        if (!clickedOnTab) {
+            if ($(event.target).val().toUpperCase() == "SAVE & APPROVE") {
+                $('input[name=hdnReopenMode]').val('RO');
+            }
+            else {
+                $('input[name=hdnReopenMode]').val('E');
+            }
+        }
+        else {
+            $('input[name=hdnReopenMode]').val('E');
+        }
+        var Isvalid = true;
+
+        if (ValidatePageSize() && Dealmode_G == 'APRV') {
+            // Code for Maintaining approval remarks in session
+            if (SaveApprovalRemarks())
+                Isvalid = true
+            else
+                Isvalid = false;
+        }
+
+        if (Isvalid && (Dealmode_G == dealMode_View)) {
+            hideLoading();
+            var tabName = $('#hdnTabName').val();
+            BindPartialTabs(tabName);
+        }
+        hideLoading();
+        return Isvalid;
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val();
+
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+
+            if (pageSize > 0)
+                return true;
+        }
+
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function Show_Error_Popup_Bulk(search_Titles, Page_Size, Page_No, IsFirst) {
+        debugger;
+        var selectedErrorType = '';
+        if (IsFirst != true)
+             selectedErrorType = $("#ddlErrorType").val();
+        //$("#hdnSynDealCode").val(Syn_Deal_Code);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BulkSaveError", "Syn_Rights_List")',
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchForTitles: search_Titles,
+                PageSize: Page_Size,
+                PageNo: Page_No,
+                ErrorMsg: selectedErrorType
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $("#BindErrorPopup").html(result);
+            },
+            error: function (x, e) {
+            }
+        });
+        $('#popupShowError').modal();
+        initializeChosen();
+        setChosenWidth('#lbTitle_ErrorPopup', '500px');
+    }
+
+    function BindGridNew(obj, IsCallFromPaging, ShowAll) {
+        debugger;
+        showLoading();
+        var regionCode = "";
+        var exclusiveRights = "";
+        var isValid = true;
+        if ($('#ddlRegionn').val() == null)
+            regionCode = "";
+        else
+            regionCode = $('#ddlRegionn').val().join(',');
+
+        exclusiveRights = $('#lstReleaseUnit').val();
+        var platformcode = $('#hdnTVCode').val();
+        if (ShowAll == "N") {
+            if ($("#ddlTitleCode").val() == null && $('#ddlRegionn').val() == null && $('#hdnTVCode').val() == "" && $('#lstReleaseUnit').val() == "B") {
+                showAlert('E', ShowMessage.Pleaseselectatleastonecriteriatoview, "ddlTitleCode");
+                hideLoading();
+                isValid = false;
+            }
+        }
+        if (isValid) {
+            if (ValidatePageSize()) {
+                var ViewType = "";
+                var TitleCode = "";
+
+                if ($("#ddlTitleCode").val() != undefined && $("#ddlTitleCode").val() != null)
+                    TitleCode = $("#ddlTitleCode").val().join(',');
+                else
+                    TitleCode = "";
+                if (obj == null)
+                    ViewType = "G";
+                else
+                    ViewType = $('input[name=optViewType]:checked').val();
+
+                //var Rights_PageNo = 1;
+                //var page_Index = 0;
+                //var txtpageSize = $("#txtPageSize").val();
+
+                //if ($('#hdnCurrentPageNo').val() != undefined && $('#hdnCurrentPageNo').val() != '')
+                //    Rights_PageNo = $('#hdnCurrentPageNo').val();
+                //page_Index = parseInt(Rights_PageNo) - 1;
+
+                var page_Index = '1';
+                if ($("#hdnPageIndex") != undefined && $("#hdnPageIndex").val() != "")
+                    page_Index = $("#hdnPageIndex").val();
+
+                var txtpageSize = $("#txtPageSize").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: URL_BindBulkUpdateList,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        Selected_Title_Code: TitleCode,
+                        view_Type: ViewType,
+                        txtpageSize: txtpageSize,
+                        page_index: page_Index,
+                        IsCallFromPaging: IsCallFromPaging,
+                        RegionCode: regionCode,
+                        PlatformCode: platformcode,
+                        ExclusiveRight: exclusiveRights
+                    }),
+                    success: function (result) {
+                        debugger;
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        $("#div_BindGrid").empty();
+                        $("#div_BindGrid").html(result);
+
+                        SetPaging($('#txtPageSize').val());
+                        initializeExpander();
+                        hideLoading();
+                    },
+                    error: function (result) {
+                        hideLoading();
+                    }
+                });
+            }
+        }
+        else {
+            if (Rights_View_G != null)
+                $('#' + Rights_View_G)[0].checked = true;
+        }
+    }
+</script>
+
+<style>
+    #ddlChange_chosen {
+        width: 60% !important;
+    }
+
+    .chosen-container-multi {
+        width: 60% !important;
+    }
+
+    .modal-open {
+        overflow: scroll !important;
+    }
+
+    #Tree_Filter_Rights_Platform {
+        width: 1100px;
+        padding-left: 3px;
+        position: relative !important;
+    }
+
+    #Rights_Platform {
+        margin: 0px 0px 6px 0px !important;
+    }
+</style>
+@using (Ajax.BeginForm("ChangeTab", "Syn_Rights_List", new AjaxOptions { OnSuccess = "Save_Success" }))
+{
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabRights" style="height:650px">
+                        <div class="scale_table_block">
+                            <div id="divRightsFilterBLK">
+
+                            </div>
+                            @Html.Hidden("hdnPageIndex")
+                            @Html.Hidden("hdnTitle_Code")
+                            @Html.Hidden("hdnPalform_Code")
+                            @Html.Hidden("hdnChangeType")
+                            @Html.Hidden("hdnRights_Type")
+                            @Html.Hidden("hdnSynDealCode")
+                            <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                            <input type="hidden" id="hdnTabCurrent" name="hdnTabCurrent" value="BLK" />
+                            <!--<table class="table">
+                                <tr>
+
+                                    <td style="width: 25%;">
+                                        <span class="bold">@objMessageKey.BulkUpdate:</span>&nbsp;&nbsp;
+                                        <input id="SearchRights" class="search" placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.Platform, @objMessageKey.Language, @objMessageKey.Region" style="width:300px" />
+                                        <input type="button" id="btnSearchBulkUpdate" value="@objMessageKey.Search" class="btn-block" onclick="Search_BulkUpdate('S')" />
+                                        <input type="button" id="btnShowAllBulkUpdate" value="@objMessageKey.ShowAll" class="btn-block" onclick="Search_BulkUpdate('SA')" />
+                                    </td>
+
+                                </tr>
+                            </table>-->
+                        </div>
+                        <div class="paging_area clearfix">
+                            <span class="pull-left" id="lblTotal"></span>
+                            <div id="PaginationBulk" class="pagination">
+                            </div>
+                            <span class="pull-right">
+                                @objMessageKey.PageSize:
+                                <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();" />
+                            </span>
+                        </div>
+                        <div class="scale_table_block" style="overflow-y:auto;max-height:300px">
+                            <div id="div_BindGrid">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="scale_table_block" style="height:50px; background-color:#f7f7f7">
+                            <div>
+                                <table class="table">
+                                    <tr>
+                                        <td style="width: 40%;">
+                                            <span class="bold">
+                                                @objMessageKey.BulkUpdateFor:
+                                            </span>
+                                            <select name="ddlChange" id="ddlChange" class="form_input chosen-select" onchange="changediv();"></select>
+                                        </td>
+                                        <td style="width: 15%;">
+                                            @*Start Title Language *@
+                                            <div id="ActionDiv" style="display:none">
+                                                <label class="radio-inline" style="position:relative">
+                                                    <input type="radio" name="optaddDelete" id="rbtnadd" value="A" checked onchange="CommonCalling()" />
+                                                    @objMessageKey.Add
+                                                </label>
+                                                <label class="radio-inline" style="position:relative">
+                                                    <input type="radio" name="optaddDelete" id="rbtndelete" value="D" onchange="CommonCalling()" />
+                                                    @objMessageKey.Delete
+                                                </label>
+                                                @Html.Hidden("hdnActionName")
+                                            </div>
+                                            <div id="divTitleLanguage" style="display:none">
+                                                <label class="radio-inline" style="position:relative">
+                                                    <input type="radio" name="optTitLan" id="TitleY" value="true" checked onchange="" />
+                                                    @objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline" style="position:relative">
+                                                    <input type="radio" name="optTitLan" id="TitleN" value="false" onchange="" />
+                                                    @objMessageKey.NO
+                                                </label>
+                                                @Html.Hidden("hdnTitle_Language")
+                                            </div>
+                                            @*End Title Language *@
+                                            @*Start Exclusive *@
+                                            <div id="divExclusive" style="display:none">
+                                                <label class="radio-inline" style="position:relative">
+                                                    <input type="radio" name="optExclusive" id="ExclusiveY" value="true" checked onchange="" />
+                                                    @objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline" style="position:relative">
+                                                    <input type="radio" name="optExclusive" id="ExclusiveN" value="false" onchange="" />
+                                                    @objMessageKey.NO
+                                                </label>
+                                                @Html.Hidden("hdnIs_Exclusive")
+                                            </div>
+                                            @*End Exclusive *@
+                                        </td>
+                                        <td style="width: 45%;">
+
+                                            @*Start Territory*@
+                                            <div id="divTerritory" style="display:none">
+                                                <div class="lbTerritory" style="width: 202px;">
+                                                    <select id="lbTerritory" class="" multiple="multiple"></select>
+                                                </div>
+                                                @Html.Hidden("hdnRegion_Type")
+                                                @Html.Hidden("hdnRegion_Code")
+                                            </div>
+                                            @*End Territory*@
+
+                                            @*Start Sub-titling language*@
+                                            <div id="divSubLan" style="display:none">
+                                                <select id="lbSub_Language" class="" multiple="multiple"></select>
+                                                @Html.Hidden("hdnSub_Code")
+                                                @Html.Hidden("hdnSub_Type")
+                                            </div>
+                                            @*End Sub-titling language*@
+
+                                            @*Start Dubbing language*@
+                                            <div id="divDubLan" style="display:none">
+                                                <select id="lbDub_Language" class="" multiple="multiple"></select>
+                                                @Html.Hidden("hdnDub_Type")
+                                                @Html.Hidden("hdnDub_Code")
+                                            </div>
+                                            @*End Dubbing language*@
+
+                                            @*Start Sub-licensing*@
+                                            <div id="divSublicensing" style="display:none;width:50%">
+                                                <select id="Sub_License_Code" name="Sub_License_Code" class="form_input chosen-select"></select>
+                                            </div>
+                                            @*End Sub-licensing*@
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                            @*<div><span class="bold" id="lblChange"></span></div>*@
+                        </div>
+                        <div style="background-color:#f7f7f7">
+                            <table>
+                                <tr>
+                                    <td colspan="3">
+                                        @*Start Rights Period*@
+
+                                        <div id="divRightsPeriod" style="display:none;width:45%">
+                                            <div id="tabValidity" class="tabbable">
+                                                <ul class="nav nav-tabs nav-tab pull-left">
+                                                    <li class="active" onclick="SetRightPeriod('Y');">
+                                                        <a data-toggle="tab" href="#tabCal" role="tab">@objMessageKey.Yearbased</a>
+                                                    </li>
+                                                    <li class="" onclick="SetRightPeriod('U');">
+                                                        <a data-toggle="tab" href="#tabPerp" role="tab">@objMessageKey.Perpetuity</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                    <div class="tab-pane active scale_table_block" id="tabCal">
+
+                                                        @Html.CheckBox("Is_Tentative", false)
+                                                        <label>@objMessageKey.Tentative</label>
+                                                        <br>
+                                                        <label>@objMessageKey.StartDate</label>
+                                                        @Html.TextBox("Start_Date", "", new { @id = "Start_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                        @Html.TextBox("Term_YY", "", new { @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
+                                                        @Html.TextBox("Term_MM", "", new { @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
+                                                        <label style="margin-left: 15px">@objMessageKey.EndDate</label>
+                                                        @Html.TextBox("End_Date", "", new { @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                    </div>
+                                                    <div class="tab-pane scale_table_block" id="tabPerp">
+                                                        @*<ul class="from_to clearfix">
+                                                                <li class="form_li_sub">
+                                                                    <label>From</label>
+                                                                    @Html.TextBox("Perpetuity_Date", "", new { @id = "txtPerpetuity_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                                </li>
+                                                            </ul>*@
+                                                        <ul style="height: 30px;width: 45%;">
+                                                            <li style="text-decoration: none;display: inline;width: 35%;float: left">
+                                                                <label>@objMessageKey.StartDate</label>
+                                                                @Html.TextBox("Perpetuity_Date", "", new { @id = "txtPerpetuity_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                            </li>
+                                                            @if (ViewBag.Enabled_Perpetuity == "Y")
+                                                            {
+                                                                <li style="text-decoration: none;display: inline;padding-left: 4%">
+                                                                    <b>Term : </b>
+                                                                    <label>@ViewBag.Term_Perputity</label>
+                                                                    <label>@objMessageKey.Years</label>
+                                                                    @Html.Hidden("Term_Perputity", ViewBag.Term_Perputity as string, new { @id = "hdnTerm_Perputity" })
+                                                                </li>
+                                                                <li style="text-decoration: none;display: inline;width: 35%;float: right">
+                                                                    <label>@objMessageKey.EndDate</label>
+                                                                    @Html.TextBox("Perpetuity_EndDate", "", new { @id = "txtPerpetuity_EndDate", @placeholder = "DD/MM/YYYY", @readonly = "readonly", @style = "width:95px;" })
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*End Rights Period*@
+                                        @*Start Platforms*@
+                                        <div id="divPlatform" style="display:none; width:50%">
+                                            <div class="platform_wrapper">
+                                                @*<label class="bold" for="platform">Platform / Rights</label>*@
+                                                <div id="tree" class="treeClass">
+                                                </div>
+                                                <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                                            </div>
+                                        </div>
+                                        @*End Platforms*@
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="bottom_action">
+                            <ul class="form_link_nav clearfix">
+                                @*@if (objSchema.Mode != GlobalParams.DEAL_MODE_VIEW && objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                    {*@
+                                <li>
+                                    <input type="button" id="btnApply" class="btn btn-primary" value="@objMessageKey.Apply" onclick="return ValidateBulkApply();" />
+                                </li>
+                                <li>
+                                    <input type="button" id="btnBack1" class="btn btn-primary" value="@objMessageKey.Back" onclick="BindPartialTabs('@GlobalParams.Page_From_Rights');" />
+                                    <input type="submit" id="btnBack" class="btn btn-primary" value="@objMessageKey.Back" style="display:none" onclick="return ValidateSave();" />
+                                    @*<input type="button" id="btnBack" class="btn btn-primary" value="Back" onclick="BindPartialTabs('@GlobalParams.Page_From_Rights');" />*@
+                                </li>
+                                @*  }*@
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupShowError" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_Error_Popup">
+                <div>
+                    <div class="form_fields syn">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">@objMessageKey.Close</span>
+                            </a>
+                            <h2>@objMessageKey.ErrorDetails</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="BindErrorPopup">
+                            </div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    @*<li>
+                                        <input class="btn btn-primary" type="button" value="Reprocess" onclick="return Reprocess();" />
+                                        </li>*@
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

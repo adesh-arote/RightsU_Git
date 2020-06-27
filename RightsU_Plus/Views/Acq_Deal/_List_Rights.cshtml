@@ -1,0 +1,714 @@
+﻿@model List<RightsU_Entities.USP_List_Rights_Result>
+@using UTOFrameWork.FrameworkClasses
+@using RightsU_BLL;
+@using RightsU_Entities;
+@*<script type="text/javascript" src="~/JS_Core/common.concat.js"></script>*@
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+
+
+    $(document).ready(function () {
+        initializeTooltip();
+        $(".btnCancel").click(function () {
+            $('#popAddDealMovie').modal('hide');
+        });
+          //$('.expandable').expander({
+        //    slicePoint: 20,
+        //    expandPrefix: '',
+        //    expandText: '...read more',
+        //    collapseTimer: 0,
+        //    userCollapseText: '<span>[^]</span>'
+        //});
+
+        //$('.expand_TermY').expander({
+        //    slicePoint: 45,
+        //    expandPrefix: '',
+        //    expandText: '...read more',
+        //    collapseTimer: 0,
+        //    userCollapseText: '<span>[^]</span>'
+        //});
+        $('.expand_Territory').expander({
+            slicePoint: 40,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        $('.expand_Title_Name').expander({
+            slicePoint: 55,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+
+        if(@ViewBag.RecordCount>0)
+        {
+            $('#btnBulkUpdate').show();
+        }
+        else
+        {
+            $('#btnBulkUpdate').hide();
+        }
+    });
+
+    var IsCall = 'Y';
+    function SetPaging(txtPageSize) {
+        IsCall = 'N';
+        var PageNo, recordCnt = 3;
+        var Page_Index = 0;
+        PageNo = 1;
+        PageNo = '@ViewBag.PageNo';
+        recordCnt = '@ViewBag.RecordCount';
+        $("#lblTotal").text('@objMessageKey.TotalRecords : ' + recordCnt);
+        Page_Index = parseInt(PageNo) - 1;
+        $('#hdnCurrentPageNo').val(PageNo);
+        var opt = { callback: pageselectCallback };
+
+        opt["items_per_page"] = txtPageSize;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 1;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = Page_Index;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+    function Show_Restriction_Remark_popup(Counter) {
+        var Remark = $("#hdnRemarks_" + Counter).val();
+        if (Remark != "") {
+            $("#lblRestRemark").text(Remark);
+            $('#popAddDealMovie').modal();
+        }
+    }
+    function pageselectCallback(page_index, jq) {
+        if (ValidatePageSize()) {
+            if (IsCall == 'Y') {
+                var hdnCurrentPageNo = parseInt(page_index) + 1;
+                $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
+                BindGridNew($("#G")[0], 'Y');
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function PageSize_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            BindGridNew($("#G")[0], 'Y');
+        }
+        else
+            return false;
+    }
+</script>
+<script language="javascript" type="text/javascript">
+    var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Acq_Rights_List")';
+    var pos = null;
+    $(document).ready(function () {
+
+        $('.nav-toggle').click(function () {
+            var collapse_content_selector = $(this).attr('onclick');
+            var toggle_switch = $(this);
+            if ($(this).hasClass('glyphicon-triangle-top')) {
+                toggle_switch.removeClass("glyphicon-triangle-top");
+                toggle_switch.addClass("glyphicon-triangle-bottom");
+                $(collapse_content_selector).hide();
+            }
+            else {
+                toggle_switch.removeClass("glyphicon-triangle-bottom");
+                toggle_switch.addClass("glyphicon-triangle-top");
+                $(collapse_content_selector).show();
+            }
+            //$(collapse_content_selector).toggle(function () {
+            //});
+        });
+
+        $('.list-toggle').click(function () {
+            var totalCount = @Model.Count;
+
+            for (var i = 1; i <= totalCount; i++) {
+                var collapse_content_selector = "#coll"+i;
+                var toggle_switch = $(this);
+                var toggle_switch_Col = $(".expander");
+                if ($(this).hasClass('glyphicon-triangle-top')) {
+
+                    if (i == totalCount) {
+                        toggle_switch.removeClass("glyphicon-triangle-top");
+                        toggle_switch.addClass("glyphicon-triangle-bottom");
+                    }
+                    toggle_switch_Col.removeClass("glyphicon-triangle-top");
+                    toggle_switch_Col.addClass("glyphicon-triangle-bottom");
+                    $(collapse_content_selector).hide();
+                }
+                else {
+                    if (i == totalCount) {
+                        toggle_switch.removeClass("glyphicon-triangle-bottom");
+                        toggle_switch.addClass("glyphicon-triangle-top");
+                    }
+                    toggle_switch_Col.removeClass("glyphicon-triangle-bottom");
+                    toggle_switch_Col.addClass("glyphicon-triangle-top");
+                    $(collapse_content_selector).show();
+                }
+
+            }
+
+            //$(collapse_content_selector).toggle(function () {
+            //});
+        });
+
+        $("td").bind("mousemove", function (event) {
+            $(this).find("span.PlatformExpand").css({
+                top: event.pageY + 5 + "px",
+                left: event.pageX + 5 + "px"
+            }).show();
+        }).bind("mouseout", function () {
+            $("span.PlatformExpand").hide();
+        });
+        $('.clsPlatformPopup').on('click', function (e) {
+            debugger
+            var btdId = e.target.id;
+            var hdnRightCodeID = btdId.replace("_aViewPlatform", "_hdnRightCode");
+            var rightCode = $('#' + hdnRightCodeID).val();
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    rightCode: rightCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPlatformTree').html(result);
+                    $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeIn();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+
+        $( "#popupFade" ).click(function( event ) {
+            event.stopPropagation();
+        });
+    });
+
+    function helpClose() {
+        document.getElementById("collapse1").style.display = 'none';
+    }
+
+    function FadeOutPopup()
+    {
+        $('#divPlatformTree').empty();
+        $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeOut();
+        return false;
+    }
+</script>
+<script>
+    function Show_Validation_Popup(search_Titles, Page_Size, Page_No, RightCode, IsFirst) {
+    debugger;
+    var selectedErrorType = '';
+    if (IsFirst != true)
+        selectedErrorType = $("#ddlErrorType").val();
+    //$("#hdnSynDealCode").val(Syn_Deal_Code);
+    $.ajax({
+        type: "POST",
+        url: '@Url.Action("BulkSaveError", "Acq_Rights_List")',
+        traditional: true,
+        async: false,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            searchForTitles: search_Titles,
+            PageSize: Page_Size,
+            PageNo: Page_No,
+            ErrorMsg: selectedErrorType,
+            RightCode: RightCode
+        }),
+        success: function (result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            $("#BindValidationPopup").html(result);
+            hideLoading();
+        },
+        error: function (x, e) {
+        }
+    });
+    $('#popupValidationError').modal();
+    initializeChosen();
+    setChosenWidth('#lbTitle_ErrorPopup', '500px');
+    //initializeExpander();
+}
+
+</script>
+<style>
+    #divPlatformTree {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    .container {
+        /* width: 900px; */
+        width: 95%;
+        margin: 0 auto;
+        /* min-height: 710px; */
+        padding: 0px 0 55px 80px;
+    }
+
+    .help {
+        text-align: center;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 0px 2px 2px 2px;
+        width: 80px;
+        float: right;
+    }
+
+        .help:hover {
+            background: #e0e0e0;
+        }
+
+    .collapse {
+        position: absolute;
+        right: 3px;
+        top: 72px;
+        width: 180px;
+        height: 280px;
+        z-index: 99;
+        background-color: #f3f3f3;
+        border: 1px solid #000000;
+    }
+
+        .collapse div {
+            padding: 15px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+            .collapse div:hover {
+                background-color: #0080c0;
+                color: #ffffff;
+            }
+
+    .rowBorder td {
+        border-bottom: 1px dotted #dddddd !important;
+        background-color: #ffffff !important;
+    }
+
+    .rowBg {
+        background-color: #eaeaea;
+    }
+
+        .rowBg td {
+            border-bottom: 1px dotted #dddddd !important;
+        }
+
+    .PlatformExpand {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        background-color: black;
+        color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            overflow-y: auto;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_List_Platform {
+            max-height: 300px;
+        }
+
+    .clsPlatformPopup {
+        color: #2b64a5;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    #Tree_Filter_Rights_List_Platform {
+        margin-left: -10px;
+        width: 300px;
+        margin-top: -3px;
+    }
+</style>
+<style>
+    .chosen-choices li.search-choice.primary {
+        /* background: #ddd; */
+        color: #2b64a5;
+        font-weight: 700;
+        border: 1px solid #2b64a5;
+    }
+
+    .expandable li {
+        float: none;
+        line-height: initial;
+        list-style: none;
+        margin: 0;
+    }
+
+        .expandable li:before {
+            content: "\0BB \020";
+        }
+</style>
+
+<div class="deal clearfix">
+    @{
+        int counter = 0;
+        string Concat = " To ";
+        var hdnPlatformCode_ = "hdnPlatformCode_";
+        string ClassName = "rowBg";
+
+        <input type="hidden" id="hdnCurrentID" />
+        @Html.Hidden("hdnSynDealCode")
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <ul>
+                            <li class="glyphicon glyphicon-triangle-bottom list-toggle"></li>
+                        </ul>
+                    </th>
+                    <th style="width:19%; text-align:center">@objMessageKey.Title</th>
+                    <th style="width:12%; text-align:center">@objMessageKey.Exclusive</th>
+                    <th style="width:17%; text-align:center">@objMessageKey.Platform</th>
+                    <th style="width:17%; text-align:center">@objMessageKey.Region</th>
+                    <th style="width:24%; text-align:center">@objMessageKey.Period/ @objMessageKey.Term</th>
+                    <th style="width:11%; text-align:center">@objMessageKey.Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    counter += 1;
+                    if (counter % 2 == 0)
+                    {
+                        ClassName = "rowBorder";
+                    }
+                    else
+                    {
+                        ClassName = "rowBg";
+                    }
+                    @Html.Hidden("hdnRightCode", item.Rights_Code, new { id = counter + "_hdnRightCode" })
+                    @Html.Hidden("hdnDealCode", item.Deal_Code, new { id = counter + "_hdnDealCode" })
+                    @Html.Hidden("hdnTitleCode", item.Title_Code, new { id = counter + "_hdnTitleCode" })
+                    @Html.Hidden("hdnPlatformCode", item.Platform_Code, new { id = counter + "_hdnPlatformCode" })
+                    @Html.Hidden("hdnEpisodeFrom", item.Episode_From, new { id = counter + "_hdnEpisodeFrom" })
+                    @Html.Hidden("hdnEpisodeTo", item.Episode_To, new { id = counter + "_hdnEpisodeTo" })
+                    @Html.Hidden("hdnIsDelete", item.IsDelete, new { id = counter + "_hdnIsDelete" })
+                    @Html.Hidden("hdnIs_Ref_Close_Title", item.Is_Ref_Close_Title, new { id = counter + "_hdnIs_Ref_Close_Title" })
+                    @Html.Hidden("hdnIs_Syn_Acq_Mapp", item.Is_Syn_Acq_Mapp, new { id = counter + "_hdnIs_Syn_Acq_Mapp" })
+
+                    <tr class="@ClassName Acq_Right_List_@item.Rights_Code">
+                        <td>
+                            <ul>
+                                <li class="glyphicon glyphicon-triangle-bottom nav-toggle expander" onclick="@("#coll"+counter)"></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="expand_Title_Name">@Html.Label("Title_Name", item.Title_Name)<a href="#"><span></span></a></div>
+                        </td>
+                        @*<td>
+                                @Html.DropdownGroup( ViewBag.Region as List<GroupItem>, "ddlRegionn","Region","", true)
+                            </td>*@
+                        <td class="action">
+                            @*@if (item.Is_Exclusive == "Yes")
+                                {
+                                    <span>Exclusive - </span>
+                                }
+                                @if (item.Is_Exclusive == "No")
+                                {
+                                    <span>Non-Exclusive - </span>
+                                }
+                                <span class="glyphicon glyphicon-flag"></span>*@
+                            @item.Is_Exclusive
+                        </td>
+                        <td>
+                            @if (item.Platform_Name != null && item.Platform_Name != "")
+                            {
+                                @Html.Raw(item.Platform_Name.Split('~').First())
+                                if (ViewBag.Page_View != "D")
+                                {
+                                    int? Rights_Code = @item.Rights_Code;
+                                    Acq_Deal_Rights objADR = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(Rights_Code));
+                                    int PlatFormCount = objADR.Acq_Deal_Rights_Platform.Select(s => s.Platform_Code).Count();
+                                    <a id="@(counter)_aViewPlatform" href="#" title="@objMessageKey.ViewPlatforms" class="clsPlatformPopup"> ...  @PlatFormCount Platforms</a>
+
+                                    @*<a id="@(counter)_aViewPlatform" title="View Platforms" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>*@
+                                }
+                            }
+                        </td>
+                        <td>
+                            <div class="expand_Territory">
+                                @if (item.Country != null && item.Country != "")
+                                {
+                                    @Html.Label("Territory", item.Country)
+                                }
+                                else
+                                {
+                                    @Html.Label("Territory", item.Territory)
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="expand_TermY">
+                                @if (@item.Right_Type == "Y" && @item.Term != null && @item.Term != "")
+                                {
+                                    var arr = item.Term.Split('.');
+                                    //var str = arr[0] + " years";
+                                    var str = "";
+
+                                    if (arr[0] != "0")
+                                    {
+                                        str += " " + arr[0] + " Years";
+                                    }
+
+                                    if (arr[1] != "0")
+                                    {
+                                        str += " " + arr[1] + " Months";
+                                    }
+                                    if (arr[2] != "0")
+                                    {
+                                        str += " " + arr[2] + " Days";
+                                    }
+
+                                    @Html.Label("TermY", str, new { @title = "Term" })
+                                }
+                                else
+                                {
+                                    @Html.Label("TermY", item.Right_Term, new { @title = "Term" })
+                                }
+
+                                @if (item.Rights_Start_Date != null && item.Rights_End_Date != null && item.Right_Term != "Perpetuity")
+                                {
+                                    <text> (</text>
+                                    if (item.Rights_Start_Date != null)
+                                    {
+                                        @Convert.ToDateTime(item.Rights_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+
+                                    if (item.Rights_End_Date != null)
+                                    {
+                                        <text> @objMessageKey.To </text>
+                                        @Convert.ToDateTime(item.Rights_End_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+                                    <text>)</text>
+                                    if (item.Rights_End_Date < DateTime.Now.Date && item.Rights_End_Date != null)
+                                    {
+                                        <span style='color: red'>(@objMessageKey.Expired)</span>
+                                    }
+                                }
+                                else
+                                {
+
+                                    if (item.Rights_Start_Date != null)
+                                    {
+                                        <text> @objMessageKey.From </text>
+                                        @Convert.ToDateTime(item.Rights_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td class="action clsTdAction">
+                            <input type="hidden" id="hdnRefCloseTitle" value="@item.Is_Ref_Close_Title" />
+                            <input type="hidden" id="hdnRightStatus" value="@item.Right_Status" />
+                            <input type="hidden" id="hdnRightCode" value="@item.Rights_Code" />
+
+                            @if (item.Right_Status == "E")
+                            {
+                                <a id="btnShowError" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" onclick="showLoading();Show_Validation_Popup('',5, 0, @item.Rights_Code, true)"></a>
+                                <a id="btnReprocess" title="Reprocess" class="glyphicon glyphicon-check" onclick="RightReprocess(@item.Rights_Code)"></a>
+                            }
+
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_VIEW', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
+
+                            @if (@ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL && @ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                            {
+                                if (item.Is_Ref_Close_Title == "Y")
+                                {
+                                    <a title="@objMessageKey.Cannoteditthistitleasitisclosed" href="#" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                    <a title="@objMessageKey.Cannotdeletethistitleasitisclosed" href="#" class="glyphicon glyphicon-trash disabled" onclick="return false;"></a>
+                                    <a title="@objMessageKey.Cannotclonethistitleasitisclosed" href="#" class="glyphicon glyphicon-duplicate disabled" onclick="return false;"></a>
+                                }
+                                else
+                                {
+
+                                    if (item.Right_Status == "P")
+                                    {
+                                        <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                                        <a id="btnShowError" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none;" onclick="showLoading();Show_Validation_Popup('',5, 0, @item.Rights_Code, true)"></a>
+                                        <a id="btnReprocess" title="Reprocess" class="glyphicon glyphicon-check" style="display: none;" onclick="RightReprocess(@item.Rights_Code)"></a>
+                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="display: none;" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
+                                        <a id="btnDelete" title="@objMessageKey.Delete" class="glyphicon glyphicon-trash " href="#" style="display: none;" onclick="return ValidateDelete('@counter');"></a>
+                                        <a id="btnClone" title="@objMessageKey.Clone" class="glyphicon glyphicon-duplicate" style="display: none;" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_CLONE', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', 'N')"></a>
+
+                                    }
+                                    else if (item.Right_Status == "E")
+                                    {
+                                        <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px; display: none;" />
+                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
+                                        <a id="btnDelete" title="@objMessageKey.Delete" class="glyphicon glyphicon-trash " href="#" onclick="return ValidateDelete('@counter');"></a>
+                                        <a id="btnClone" title="@objMessageKey.Clone" class="glyphicon glyphicon-duplicate" style="display: none;" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_CLONE', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px; display: none;" />
+                                        <a id="btnShowError" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none;" onclick="showLoading();Show_Validation_Popup('',5, 0, @item.Rights_Code, true)"></a>
+                                        <a id="btnReprocess" title="Reprocess" class="glyphicon glyphicon-check" style="display: none;" onclick="RightReprocess(@item.Rights_Code)"></a>
+                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
+                                        <a id="btnDelete" title="@objMessageKey.Delete" class="glyphicon glyphicon-trash " href="#" onclick="return ValidateDelete('@counter');"></a>
+                                        <a id="btnClone" title="@objMessageKey.Clone" class="glyphicon glyphicon-duplicate" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_CLONE', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', 'N')"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (item.Is_Ref_Close_Title != "Y" && item.Right_Status == "P")
+                                {
+                                    <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                                }
+                            }
+                        </td>
+                    </tr>
+                    <tr class=@ClassName id="@("coll"+counter)" style="display: none;">
+                        <td></td>
+                        <td><strong>@objMessageKey.SubLicense-</strong> @Html.Label("Is_Sublicencing", item.Is_Sublicencing, new { @title = "Sublicensing" })</td>
+                        <td><strong>@objMessageKey.TitleLanguage -</strong> @Html.Label("Title_Language_Right", item.Title_Language_Right, new { @title = "Title Language" })</td>
+                        <td><div class="expandable"><strong>@objMessageKey.Subtitle:</strong> @Html.Label("Sub_Titling_Language", @item.Sub_Titling_Language)</div></td>
+                        <td><div class="expandable"><strong>@objMessageKey.Dubbing:</strong> @Html.Label("Dubbing_Titling_Language", item.Dubbing_Titling_Language)</div></td>
+                        <td>
+                            <label class="bold">@objMessageKey.RestrictionRemark - </label>
+                            <a title="@objMessageKey.RestrictionRemark" href="#" class="view_link btnRestriction" data-target="#popPlatformRights"
+                               data-toggle="modal" onclick="Show_Restriction_Remark_popup(@counter);">
+                                @Html.Hidden("hdnRemarks_" + @counter, item.Remarks)
+                                <img src="~/Images/remarks.png" alt="" style="border: 0px;" />
+                            </a>
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddDealMovie" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="movie_popup">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.RestrictionRemark</h2>
+                        </div>
+                        <div class="modal_block">
+                            <span id="lblRestRemark" style="white-space:pre-line;"></span>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary btnCancel" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="popupFade">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="FadeOutPopup()">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h5>@objMessageKey.PlatformMatrix</h5>
+                    </div>
+                    <div class="modal_block treeClass" id="divPlatformTree">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupValidationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DuplicateCombination</h2>
+                        </div>
+                        <div class="modal_block" style="overflow-y:hidden!important;max-height: 348px;">
+                            <div id="BindValidationPopup"></div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

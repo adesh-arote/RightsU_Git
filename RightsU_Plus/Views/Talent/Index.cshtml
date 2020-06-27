@@ -1,0 +1,685 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    var IsCall = 'Y', Command_Name = "", sort_Type_G = "T",Module_Code_G =@ViewBag.code, SysLanguageCode_G = '@ViewBag.LangCode';
+    var URL_BindTalentList = '@Url.Action("BindTalentList", "Talent")';
+    var URL_SearchTalent = '@Url.Action("SearchTalent", "Talent")';
+    var URL_ActiveDeactiveTalent = '@Url.Action("ActiveDeactiveTalent", "Talent")';
+    var URL_EditTalentList = '@Url.Action("EditTalentList", "Talent")';
+    var URL_UpdateTalent = '@Url.Action("UpdateTalent", "Talent")';
+    var URL_AddTalent = '@Url.Action("AddTalent", "Talent")';
+    var URL_SaveTalent = '@Url.Action("SaveTalent", "Talent")';
+
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Talent")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Talent")';
+
+
+    $(document).ready(function () {
+        if(LayoutDirection_G == "RTL")
+        {
+            $('#btnUser').css("float","right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else
+        {
+            $('#btnUser').css("float","left");
+            $('#txtSort').css("text-align","right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+        addNumeric();
+        SearchTalent("",0);
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $("#ddlSortType").change(function () {
+            var roleCode = "";
+            if ($('#ddlRoleListSearch').val() == "") {
+                roleCode = 0;
+            }
+            else {
+                roleCode = $('#ddlRoleListSearch').val();
+            }
+            $('#hdnPageNo').val(1);
+            sort_Type_G = $('#ddlSortType').val();
+            SearchTalent($('#searchCommon').val(), roleCode);
+        });
+
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Talent');
+
+
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindTalentList();
+        else
+            IsCall = 'Y';
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindTalentList()
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function pageBinding() {
+        BindTalentList()
+        SetPaging();
+    }
+    function btnSearch_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+        var roleCode= "";
+        var searchText = $.trim($('#searchCommon').val());
+        var RoleCode = $('#ddlRoleListSearch').val();
+        $('#hdnPageNo').val(1);
+        if (searchText== '' && RoleCode == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        else
+        {
+            if(RoleCode == '')
+            {
+                roleCode = 0;
+            }
+            else
+            {
+                roleCode = $('#ddlRoleListSearch option:selected').val();
+            }
+        }
+
+
+        SearchTalent(searchText, roleCode);
+    }
+    function btnShowAll_OnClick() {
+        if (!ValidatePageSize())
+            return false;
+
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').attr('required', false)
+        $('#searchCommon').val('');
+        $('#ddlRoleListSearch').val('').trigger("chosen:updated")
+
+        sort_Type_G = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        SearchTalent("",0);
+    }
+    function BindTalentList() {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindTalentList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType : sort_Type_G
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTalentList').empty();
+                    $('#divTalentList').html(result);
+                    initializeTooltip();
+                    $('#Role_CodeAdd,#Role_Code').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+                    $('#Role_CodeAdd,#Role_Code')[0].sumo.reload();
+
+                    initializeChosen();
+                    initializeExpander();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SearchTalent(searchText,roleCode) {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchTalent,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                roleCode : roleCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindTalentList();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ActiveDeactiveTalent(talentCode, doActive) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ActiveDeactiveTalent,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                talentCode: talentCode,
+                doActive: doActive
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+
+                        var RoleCode = $('#ddlRoleListSearch').val();
+
+                        if (RoleCode == '') {
+                            RoleCode = 0;
+                        }
+                        else {
+                            roleCode = $('#ddlRoleListSearch option:selected').val();
+                        }
+
+
+                        if ($("#searchCommon").val() != "") {
+                            SearchTalent($("#searchCommon").val(),RoleCode)
+                        }
+                        else {
+                            BindTalentList();
+                        }
+
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function EditTalent(talentcode) {
+        debugger;
+        if (ValidatePageSize()) {
+            $.ajax({
+                type: "POST",
+                url: URL_EditTalentList,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    talentcode: talentcode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            BindTalentList();
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function UpdateTalent(talentcode) {
+
+
+        if (validateUpdate()) {
+            debugger;
+            var Record_Code = $('#hdnRecodLockingCode').val();
+            var talentcode = talentcode;
+            var Talent_NameEdit = $("#Talent_NameEdit").val();
+            var Talent_Role = $("#Role_Code").val();
+            var formData = new FormData();
+            var gender = '';
+            gender = $('.genderclass:checked').val();
+
+            formData.append("Record_Code", Record_Code);
+            formData.append("Talent_Code", talentcode);
+            formData.append("Talent_Name", Talent_NameEdit);
+            formData.append("Gender", gender);
+            formData.append("Talent_Role", Talent_Role);
+            $.ajax({
+                type: "POST",
+                url: URL_UpdateTalent,
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert("S", result.Message);
+                            $('#hdnRecodLockingCode').val(0);
+                            var RoleCode = $('#ddlRoleListSearch').val();
+
+                            if(RoleCode == '')
+                            {
+                                roleCode = 0;
+                            }
+                            else
+                            {
+                                roleCode = $('#ddlRoleListSearch option:selected').val();
+                            }
+
+                            if ($("#searchCommon").val() != "") {
+                                SearchTalent($("#searchCommon").val(),roleCode)
+                            }
+                            else {
+                                BindTalentList();
+                            }
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function AddTalent() {
+        debugger;
+        if (ValidatePageSize()) {
+            $.ajax({
+                type: "POST",
+                url: URL_AddTalent,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: '',
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            BindTalentList();
+
+                        }
+                        else if (result.Status == "E") {
+                            showAlert("E", result.Message);
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function SaveTalent() {
+        if(validateSave())
+        {
+            debugger;
+            var formData = new FormData();
+            var Talent_Name = $("#Talent_NameAdd").val();
+            var Talent_Role = $("#Role_CodeAdd").val();
+            var formData = new FormData();
+            var gender = '';
+
+            gender = $('.genderclassAdd:checked').val();
+            formData.append("Talent_Name", Talent_Name);
+            formData.append("Gender", gender);
+            formData.append("Talent_Role", Talent_Role);
+
+
+
+            $.ajax({
+                type: "POST",
+                url: URL_SaveTalent,
+                method: "POST",
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            $('#lblRecordCount').text(result.Record_Count);
+                            showAlert("S", result.Message);
+                            var RoleCode = $('#ddlRoleListSearch').val();
+                            if(RoleCode == '')
+                            {
+                                RoleCode = 0;
+                            }
+                            else
+                            {
+                                roleCode = $('#ddlRoleListSearch option:selected').val();
+                            }
+                            if ($("#searchCommon").val() != "") {
+                                SearchTalent($("#searchCommon").val(),RoleCode)
+                            }
+                            else {
+                                BindTalentList();
+                            }
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function validateSave() {
+        debugger
+        var retrunmsg = true;
+        if($.trim($('#Talent_NameAdd').val())== "")
+        {
+            $('#Talent_NameAdd').val('');
+            $('#Talent_NameAdd').attr('required', true)
+            retrunmsg = false;
+        }
+        if($('#Role_CodeAdd').val()==null)
+        {
+            $('#divRoleAdd').addClass("required");
+            retrunmsg = false;
+        }
+        return retrunmsg;
+    }
+
+    function validateUpdate() {
+        debugger
+        var retrunmsg = true;
+        if ($.trim($('#Talent_NameEdit').val()) == "") {
+            $('#Talent_NameEdit').val('');
+            $('#Talent_NameEdit').attr('required', true)
+            retrunmsg = false;
+        }
+        if ($('#Role_Code').val() == null) {
+            $('#divRole').addClass("required");
+            retrunmsg = false;
+        }
+        return retrunmsg;
+    }
+    function CancelTalent() {
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+        BindTalentList();
+    }
+    function handleOk() {
+    }
+    function handleCancel() {
+    }
+
+    //------------------------Record Locking-----------------
+
+    function CheckRecordLock(talentcode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                talentcode: talentcode,
+                //commandName: commandName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        EditTalent(talentcode)
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ExportToExcel()
+    {
+        var type = "";
+        var Module_Name = "Talent";
+        type = $('#ddlSortType').val();
+        var StrSearchCriteria = $.trim($('#searchCommon').val()) + '~' + $('#ddlRoleListSearch').val();
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code='+Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G +  '&Module_Name='+Module_Name+ '&sortColumnOrder='+type+'&StrSearchCriteria=' + StrSearchCriteria ;
+    }
+</script>
+
+<style>
+      #ddlSortType_chosen {
+        max-width: 50%;
+        text-align:left;
+    }
+      .SumoSelect{
+          width : 384px;
+      }
+      #divRoleAdd,#divRole{
+          width : 384px;
+      }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                       @objMessageKey.TalentList
+                        <span></span>
+                    </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li id="btnUser">
+                                @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <input type="submit" value="@objMessageKey.Add" onclick="AddTalent()" id="btnAdd" class="btn btn-primary">
+                                }
+                            </li>
+                            <li>
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
+                                {
+                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()">
+                                    </a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="right_nav pull-right">
+                    </div>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%;vertical-align: middle;text-align:center;">
+                                @objMessageKey.TalentName :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;" align="left">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="@objMessageKey.TalentName" />
+                            </td>
+                            <td style="width:10%;vertical-align: middle;" align="right">
+                                @objMessageKey.TalentRole:
+                            </td>
+                            <td style="width:15%;">
+                                @Html.DropDownList("ddlRoleListSearch", Session["RoleList"] as IEnumerable<SelectListItem> ,new { @id = "ddlRoleListSearch", @class = "form_input chosen-select", style = "width: 197px;" })
+                            </td>
+                            <td style="width:13%;">
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                            <td style="width:38%;" id="txtSort">
+                                @objMessageKey.SortBy :
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnTalentCode" value="0" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divTalentList" class="deal clearfix">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

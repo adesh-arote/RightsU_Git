@@ -1,0 +1,512 @@
+﻿@using RightsU_BLL;
+@model RightsU_Entities.Title_Alternate
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }      
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    var URL_TitleList_Cancel = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "Code", SearchedTitle = "" })';
+    var URL_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code"})';
+
+    var IsValidForTab = true;
+    var URL_SaveAlternateFile = '@Url.Action("SaveAlternateFile", "Title")'
+    $(document).ready(function () {
+        initializeChosen();
+       // $("#ancFileName").attr('href', '/Help/Masters/Layout.html?TitleList');
+        $('#ddlProducers').SumoSelect();
+        $('#ddlDirectors').SumoSelect();
+        $('#ddlCountrys').SumoSelect();
+        $('#ddlGenress').SumoSelect();
+        $('#ddlStarCasts').SumoSelect();
+        $("#AlternateImgTitle").on("click", function () {
+            $("#AlternateUploadFile").click();
+        });
+        $('#txtTitle_Name').keyup(function () {
+            $('#lblAlternateTitleHead').text(this.value);
+        });
+        $("#txtAlternateDuration").numeric({
+            allowMinus: false,
+            allowThouSep: true,
+            allowDecSep: true,
+            maxDecimalPlaces: 2,
+            maxPreDecimalPlaces: 3
+        });
+        var dir = '@ViewBag.Direction';
+        Dir_G = '@ViewBag.Direction';
+        $('#popAddTalent').css("direction", dir);
+        $('#popGender').css("direction", dir);
+        if ("RTL" == '@objMessageKey.LayoutDirection') {
+            $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px")
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
+
+            $('.poptalent').css("float", "Right");
+            $('.close').css("float", "left");
+            $('.PopGender').css("float", "Right");
+            $('.inline-radio').css("float", "Right");
+        }
+        else {
+            $('.poptalent').css("float", "Left");
+            $('.close').css("float", "Right");
+            $('.inline-radio').css("float", "Left");
+            $('.PopGender').css("float", "Left");
+        }
+        if (dir == "RTL") {
+            $('.poptalent').css("float", "Right");
+            $('.close').css("float", "Left");
+            $('.PopGender').css("float", "Right");
+            $('.inline-radio').css("float", "Right");
+            $('#TalentHeader').css("direction", "RTL")
+        }
+        else {
+            $('.poptalent').css("float", "Left");
+            $('.close').css("float", "Right");
+            $('.inline-radio').css("float", "Left");
+            $('.PopGender').css("float", "Left");
+            $('#TalentHeader').css("direction", "LTR")
+        }
+
+        if ('@ViewBag.Direction' == "RTL") {
+            sumoselectChange();
+        }
+    });
+    //$('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
+    function fileCheck(obj) {
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+
+        if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            return false;
+        }
+
+        if (obj.files && obj.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#AlternateImgTitle').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(obj.files[0]);
+        }
+
+        return true;
+    }
+    function SaveAlternate() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        showLoading();
+        IsValidForTab = true;
+        var hdnAlternateProducer = "";
+        var hdnAlternateDirector = "";
+        var hdnAlternateGenres = "";
+        var hdnAlternateStarCast = "";
+        var hdnAlternateCountry = ""
+        var Deal_type_Name = "";
+        var hdnmode = "";
+        var IsValid = true;
+        hdnmode = "@ViewBag.CommandName";
+        var hdnAlternateDealTypeCode = "";
+        var hdnTitleCodes = "";
+        var hdnAlternateConfigCode = "";
+        var alternateCode = $('#Title_Alternate_Code').val();
+        var hdnTabName = "";
+        var tabname = $('#hdnTitleTabName').val();
+        var code = $('#hdnTitleAlternateConfigCode').val();
+
+        Deal_Type_Code = $('#hdnAlternateDealTypeCode').val();
+
+        //if ($("#hdnRowNum").val() != "") {
+        //    showAlert("e", "Please complete add/edit operation.", "");
+        //    return false;
+        //}
+        if ($("#txtalternateTitle_Name").val() == null || $("#txtalternateTitle_Name").val() == "") {
+            $("#txtalternateTitle_Name").addClass('required');
+            IsValidForTab = false;
+            hideLoading();
+        }
+        if ($("#Alternate_Title_Language_Code").val() == null || $("#Alternate_Title_Language_Code").val() == "" || $("#Alternate_Title_Language_Code").val() == 0) {
+            $("#Alternate_Title_Language_Code").addClass('required');
+            IsValidForTab = false;
+            hideLoading();
+        }
+        if (IsValidForTab) {
+            if ($("#ddlProducers").val() != null)
+                hdnAlternateProducer = $("#ddlProducers").val().join(',');
+            if ($("#ddlDirectors").val() != null)
+                hdnAlternateDirector = $("#ddlDirectors").val().join(',');
+            if ($("#ddlGenress").val() != null)
+                hdnAlternateGenres = $("#ddlGenress").val().join(',');
+            if ($("#ddlStarCasts").val() != null)
+                hdnAlternateStarCast = $("#ddlStarCasts").val().join(',');
+            if ($("#ddlCountrys").val() != null)
+                hdnAlternateCountry = $("#ddlCountrys").val().join(',');
+
+
+            $("#hdnAlternateProducer").val(hdnAlternateProducer);
+            $("#hdnAlternateDirector").val(hdnAlternateDirector);
+            $("#hdnAlternateGenres").val(hdnAlternateGenres);
+            $("#hdnAlternateStarCast").val(hdnAlternateStarCast);
+            $("#hdnAlternateCountry").val(hdnAlternateCountry);
+            $("#hdnmode").val(hdnmode);
+            $("#hdnTitleCodes").val(@ViewBag.Title_Code);
+            $("#hdnAlternateDealTypeCode").val(Deal_Type_Code);
+            $('#hdnTitleAlternateConfigCode').val(code);
+            $('#hdnTitleTabName').val(tabname);
+
+            var ISDuplicate = ""
+            var NewTitleName = $("#txtalternateTitle_Name").val();
+            var alternateCode = $('#Title_Alternate_Code').val();
+            if (NewTitleName != "") {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ValidateAlternateIsDuplicate", "Title")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    async: false,
+                    data: JSON.stringify({
+                        TitleName: NewTitleName,
+                        alternateCode: alternateCode,
+                        DealTypeCode: $("#hdnAlternateDealTypeCode").val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        if (result.Message != "") {
+                            ISDuplicate = result.Message;
+                            showAlert("E", ISDuplicate);
+                            IsValidForTab = false;
+                            hideLoading();
+                        }
+                    },
+                    error: function (result) {
+                    }
+                });
+            }
+        }
+        //hideLoading();
+        if (IsValidForTab) {
+            SaveAlternateFile();
+        }
+        return IsValidForTab;
+    }
+    function SaveAlternateFile() {
+        var data = new FormData();
+        var files = $("#AlternateUploadFile").get(0).files;
+        if (files.length > 0) {
+            data.append("InputFile", files[0]);
+            $.ajax({
+                url: URL_SaveAlternateFile,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                },
+                error: function (er) {
+                }
+            });
+        }
+    }
+    function btnAlternateCancel() {
+        var URL = URL_Cancel;
+        URL = URL.replace("Code", pageNo);
+        URL = URL.replace("amp;", "");
+        window.location.href = URL;
+       
+    }
+</script>
+<style>
+    .form_input .chosen-container {
+        font-size: 18px !important;
+    }
+
+    .form_input .chosen-container-multi .chosen-choices li {
+        float: right !important;
+    }
+
+    #AlternateImgTitle {
+        cursor: pointer;
+        max-height: 300px;
+    }
+
+    #AlternateUploadFile {
+        display: none;
+    }
+
+    #Music_Label_Code {
+        position: absolute !important;
+        width: 234px !important;
+        max-width: 234px !important;
+    }
+
+    #Music_Label_Code_chosen {
+        width: 234px !important;
+    }
+
+    .sumo_ddlProducers {
+        width: 292px !important;
+    }
+
+    .sumo_ddlStarCasts {
+        width: 292px !important;
+    }
+
+    .sumo_ddlCountrys {
+        width: 292px !important;
+    }
+
+    .sumo_ddlDirectors {
+        width: 292px !important;
+    }
+
+    .sumo_ddlGenress {
+        width: 292px !important;
+    }
+    .four_column td:nth-child(2n) {
+        width: 36% !important;
+    }
+
+    .four_column td:nth-child(2n+1) {
+        width: 14% !important;
+        font-weight: 700 !important;
+    }
+    tr.spaceUnder > td
+{
+  padding-bottom: 1em;
+}
+    .form_input[type=checkbox], input[type=radio] {
+    padding: 0!important;
+    margin: 1px 0.5px 0!important;
+    line-height: normal!important;
+}
+</style>
+@{ 
+    string textalignlast = "";
+    if (objMessageKey.LayoutDirection == "RTL")
+    {
+        textalignlast = "right";
+    }
+}
+<input id="hdnMainConfirmationtype" type="hidden" />
+<div class="main_section" onclick="HideAllPopupDiv()">
+    <section class="rightsU_container clearfix">
+        @using (Ajax.BeginForm("SaveAlternate", "Title", new AjaxOptions { OnSuccess = "SaveAlternate_Success" }, new { @id = "frmMusicDeal" }))
+        {
+
+            <div class="scale_table_block" dir="@ViewBag.Direction">
+                <input type="hidden" id="hdnDirection" value="@ViewBag.Direction" />
+                <table class="table_brif table">
+                    <tbody>
+                        <tr>
+                            <td class="intro_pic">
+                                <div>
+                                    @{
+                                        int title_Code = ViewBag.Title_Code;
+                                        string TitleAlternateImage = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Title_Image).FirstOrDefault();
+                                        string Deal_type_Name = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Deal_Type.Deal_Type_Name).FirstOrDefault();
+                                        int? Deal_type_Code = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Deal_Type_Code).FirstOrDefault();
+                                        int? program_Code = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Program_Code).FirstOrDefault();
+                                        string Program_Name = new Program_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Program_Code == program_Code).Select(s => s.Program_Name).FirstOrDefault();
+                                    }
+                                    @if (Model.Title_Image != null)
+                                    {   <img id="AlternateImgTitle" alt="Image" src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + Model.Title_Image)" />}
+                                    else
+                                    {
+                                        if (Deal_type_Code == GlobalParams.Deal_Type_Music)
+                                        {<img id="AlternateImgTitle" alt="Image" src="~/Images/musicIcon.png" />}
+                                        else if (Deal_type_Code == GlobalParams.Deal_Type_Content)
+                                        {<img id="AlternateImgTitle" alt="Image" src="~/Images/program.png" /> }
+                                        else if (Deal_type_Code == GlobalParams.Deal_Type_Format_Program)
+                                        {<img id="AlternateImgTitle" alt="Image" src="~/Images/formatShow.png" /> }
+                                        else if (Deal_type_Code == GlobalParams.Deal_Type_Event)
+                                        {<img id="AlternateImgTitle" alt="Image" src="~/Images/Event.png" /> }
+                                        else
+                                        {<img id="AlternateImgTitle" alt="Image" src="~/Images/movieIcon.png" />}
+                                    }
+                                    <input type="file" id="AlternateUploadFile" name="uploadFile" onchange="fileCheck(this);" />
+
+                                </div>
+                            </td>
+                            <td class="intro">
+                                <table class="four_column table">
+                                    <tr>
+                                        <td style="padding-bottom:12px!important">Titre Type</td>
+                                        <td>
+                                            <span id="Deal_Type_Code">@Deal_type_Name</span>
+                                            @Html.HiddenFor(m => Model.Title_Alternate_Code)
+                                            <input type="hidden" id="hdnAlternateDealTypeCode" value="@Deal_type_Code" />
+                                        </td>
+                                        <td style="padding-bottom:12px!important">Programme</td>
+                                        <td>
+                                            <span id="Program_Code">@Program_Name</span>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>Titre</td>
+                                        <td>
+                                            @Html.TextBoxFor(m => Model.Title_Name, new { @id = "txtalternateTitle_Name" })
+                                            @Html.Hidden("hdnmode")
+                                            @Html.Hidden("hdnTitleCodes")
+                                            @Html.Hidden("hdnTitleAlternateConfigCode")
+                                            @Html.Hidden("hdnTitleTabName")
+                                        </td>
+                                        <td>Titre original</td>
+                                        <td>
+                                            @Html.TextBoxFor(m => Model.Original_Title)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        @if (ViewBag.Direction == "RTL")
+                                        {
+                                        <td>Durée (min)&#x200E;</td>@*(Duration (Min*@
+                                        }
+                                        else
+                                        {
+                                        <td>Durée (min)</td>
+                                        }
+                                        @{
+                                            Decimal? Duration_In_Min = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Duration_In_Min).FirstOrDefault();
+                                        }
+                                        <td style="padding-top:5px!important" >
+                                            <span id="txtAlternateDuration" >@Duration_In_Min</span>
+                                        </td>
+                                        <td>Année de sortie</td>
+                                        @{
+                                            int? Year_Of_Release = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Year_Of_Production).FirstOrDefault();
+                                            int? YOR = Model.Year_Of_Production;
+                                            if (YOR != null)
+                                            {
+                                                Year_Of_Release = YOR;
+                                            }
+                                        }
+                                        <td>
+                                            @Html.TextBoxFor(m => Year_Of_Release, new { @id = "YearOfRelease", @onkeypress = "return isNumber(event);", @MaxLength = "4" })
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Titre La langue</td>
+                                        <td>
+                                            @Html.DropDownList("Alternate_Title_Language_Code", (List<SelectListItem>)ViewBag.LanguageList, new { @id = "Alternate_Title_Language_Code", @class = "form_input chosen-select" })
+                                        </td>
+                                        <td>Langue originale</td>
+                                        <td>
+                                            @Html.DropDownList("Alternate_Original_Language_Code", (List<SelectListItem>)ViewBag.OriginalLanguageList, new { @id = "Alternate_Original_Language_Code", @class = "form_input chosen-select" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nom du producteur</td>
+                                        <td>
+                                            @Html.ListBox(
+                                                                     "ddlProducers",
+                                                                     ViewBag.ProduceList as MultiSelectList,
+                                      new { @multiple = "multiple", @width = "89%" }
+                                                        )
+                                            @Html.Hidden("hdnAlternateProducer")
+                                            <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddTalent" onclick="AddTalent(@GlobalParams.Role_code_Producer);" />
+                                        </td>
+                                        <td>Nom du directeur</td>
+                                        <td>
+                                            @Html.ListBox(
+                                                                     "ddlDirectors",
+                                                                     ViewBag.DirectorList as MultiSelectList,
+                                      new { @multiple = "multiple" }
+                                                        )
+                                            @Html.Hidden("hdnAlternateDirector")
+                                            <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddTalent" onclick="AddTalent(@GlobalParams.RoleCode_Director);" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pays d'origine</td>
+                                        <td>
+                                            @Html.ListBox(
+                                                                     "ddlCountrys",
+                                                                     ViewBag.CountryList as MultiSelectList,
+                                      new { @multiple = "multiple" }
+                                                        )
+                                            @Html.Hidden("hdnAlternateCountry")
+                                        </td>
+                                        <td>Titre Genre</td>
+                                        <td>
+                                            @Html.ListBox(
+                                                                     "ddlGenress",
+                                                                     ViewBag.GenresList as MultiSelectList,
+                                      new { @multiple = "multiple" }
+                                                        )
+                                            @Html.Hidden("hdnAlternateGenres")
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>starcast clé</td>
+                                        <td>
+                                            @Html.ListBox(
+                                                                     "ddlStarCasts",
+                                                                     ViewBag.StarCastList as MultiSelectList,
+                                                                     new { @multiple = "multiple" }
+                                                        )
+                                            <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddTalent" onclick="AddTalent(@GlobalParams.Role_code_StarCast);" />
+                                            @Html.Hidden("hdnAlternateStarCast")
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Synopsis</td>
+                                        <td colspan="3">
+                                            <div class="divBlock">
+                                                <div class="charNum">4000</div>
+                                            </div>
+                                            @Html.TextAreaFor(m => Model.Synopsis, new { @name = "Alternate_Synopsis", @id = "Alternate_Synopsis", @class = "textarea", @rows = "2", @col = "20", @onkeyup = "countChar(this)" })
+
+
+                                            @*@Html.TextArea("Alternate_Synopsis", new { @id = "Alternate_Synopsis", @class = "textarea", @rows = "2", @cols = "20", @onkeyup = "countChar(this)" })*@
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            if (ViewBag.Direction == "RTL")
+            {
+                <div class="bottom_action" dir="@objMessageKey.LayoutDirection" style="text-align-last:@(textalignlast);">
+                    <ul class="form_link_nav clearfix">
+                        <li style="float:right">
+                            <input type="submit" class="btn btn-primary" value="enregistrer" id="btnAlternateSave" onclick="return SaveAlternate();" />
+                        </li>
+                        <li style="float:right">
+                            <input type="button" class="btn btn-primary" value="Annuler" onclick="return btnAlternateCancel();" />
+                        </li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class="bottom_action" style="float:left">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            <input type="submit" class="btn btn-primary" value="enregistrer" id="btnAlternateSave" onclick="return SaveAlternate();" />
+                        </li>
+                        <li>
+                            <input type="button" class="btn btn-primary" value="Annuler" onclick="return btnAlternateCancel();" />
+                        </li>
+                    </ul>
+                </div>
+            }
+            }                 
+    </section>
+</div>

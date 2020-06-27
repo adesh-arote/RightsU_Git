@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="urn:sap-com:document:sap:soap:functions:mc-style" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:n1="urn:sap-com:document:sap:rfc:functions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" targetNamespace="urn:sap-com:document:sap:soap:functions:mc-style" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation>
+    <sidl:sidl xmlns:sidl="http://www.sap.com/2007/03/sidl" />
+  </wsdl:documentation>
+  <wsp:UsingPolicy wsdl:required="true" />
+  <wsp:Policy wsu:Id="IF_IF_ZPS_WEB_SERV_WBS_DATES">
+    <sapsession:Session xmlns:sapsession="http://www.sap.com/webas/630/soap/features/session/">
+      <sapsession:enableSession>false</sapsession:enableSession>
+    </sapsession:Session>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="OP_IF_OP_ZpsWbsDatesForWebServ">
+    <sapcomhnd:enableCommit xmlns:sapcomhnd="http://www.sap.com/NW05/soap/features/commit/">false</sapcomhnd:enableCommit>
+    <sapblock:enableBlocking xmlns:sapblock="http://www.sap.com/NW05/soap/features/blocking/">true</sapblock:enableBlocking>
+    <saptrhnw05:required xmlns:saptrhnw05="http://www.sap.com/NW05/soap/features/transaction/">no</saptrhnw05:required>
+    <saprmnw05:enableWSRM xmlns:saprmnw05="http://www.sap.com/NW05/soap/features/wsrm/">false</saprmnw05:enableWSRM>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" targetNamespace="urn:sap-com:document:sap:rfc:functions">
+      <xsd:simpleType name="char100">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="100" />
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="char24">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="24" />
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="char4">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="4" />
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="date10">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="10" />
+          <xsd:pattern value="\d\d\d\d-\d\d-\d\d" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:schema>
+    <xsd:schema xmlns:n0="urn:sap-com:document:sap:rfc:functions" attributeFormDefault="qualified" targetNamespace="urn:sap-com:document:sap:soap:functions:mc-style">
+      <xsd:import namespace="urn:sap-com:document:sap:rfc:functions" />
+      <xsd:complexType name="ZpsWebWbsDates">
+        <xsd:sequence>
+          <xsd:element name="Posid" type="n0:char24" />
+          <xsd:element name="Begda" type="n0:date10" />
+          <xsd:element name="Endda" type="n0:date10" />
+          <xsd:element name="ZstatusLd" type="n0:char4" />
+          <xsd:element name="Zerror" type="n0:char100" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="TableOfZpsWebWbsDates">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:ZpsWebWbsDates" />
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ZpsWbsDatesForWebServ">
+    <wsdl:part name="LtWbsDates" type="tns:TableOfZpsWebWbsDates" />
+  </wsdl:message>
+  <wsdl:message name="ZpsWbsDatesForWebServResponse">
+    <wsdl:part name="LtWbsDates" type="tns:TableOfZpsWebWbsDates" />
+  </wsdl:message>
+  <wsdl:portType name="ZPS_WEB_SERV_WBS_DATES">
+    <wsdl:documentation>
+      <sapdoc:sapdoc xmlns:sapdoc="urn:sap:esi:documentation">
+        <sapdoc:docitem docURL="http://eccdv:8000/sap/bc/esdt/docu/sd_text?sap-client=500&amp;sd_name=ZPS_WEB_SERV_WBS_DATES" />
+      </sapdoc:sapdoc>
+    </wsdl:documentation>
+    <wsp:Policy>
+      <wsp:PolicyReference URI="#IF_IF_ZPS_WEB_SERV_WBS_DATES" />
+    </wsp:Policy>
+    <wsdl:operation name="ZpsWbsDatesForWebServ">
+      <wsp:Policy>
+        <wsp:PolicyReference URI="#OP_IF_OP_ZpsWbsDatesForWebServ" />
+      </wsp:Policy>
+      <wsdl:input message="tns:ZpsWbsDatesForWebServ" />
+      <wsdl:output message="tns:ZpsWbsDatesForWebServResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

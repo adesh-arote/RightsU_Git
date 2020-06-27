@@ -1,0 +1,169 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+   List<RightsU_Entities.SAP_WBS> objWorkflow_Module = new List<RightsU_Entities.SAP_WBS>();
+    if (ViewData["MyWorkflow"] != "")
+    {
+        objWorkflow_Module = (List<RightsU_Entities.SAP_WBS>)ViewData["MyWorkflow"];
+    }
+}
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        SAP WBS Import Details
+                        <span></span>
+                    </h2>
+
+                </div>
+
+                <div class="search_area">
+                    <table class="table">
+                        <tr>
+
+                            <td style="width:10%; vertical-align:middle;text-align:center;">
+                                Search Text
+                            </td>
+
+                            <td style="width:30%; vertical-align:middle">
+                                <input type="text" name="srchCommon" id="searchCommon1" class="search" style="width:85%" placeholder="Search Text" maxlength="100" />
+                            </td>
+                            @*<td style="width:10%; vertical-align:middle;text-align:center;">
+                                Upload Date:
+                            </td>
+                            <td style="width:10%; vertical-align:middle">
+                                <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealFrmDt_Search" id="txtfrom" placeholder="From" title="From" />
+                            </td>
+                            <td style="width:3%; vertical-align:middle;text-align:center;">
+                                To
+                            </td>
+
+                            <td style="width:10%; vertical-align:middle">
+                                <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealToDt_Search" id="txtto" placeholder="To" title="To" />
+                            </td>*@
+
+                            <td>
+                                &nbsp;&nbsp;
+                                <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick11()">&nbsp;
+                                <input type="button" id="btnShowAll" class="button" value=" Back To List" onclick="btnShowAll_OnClick()">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                                   onchange="txtPageSize_OnChange()">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAdditionalExpenseCode" value="0" />
+                            <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                            @*<div id="divSAP_WBS_Import_List" class="deal clearfix">
+                            </div>
+                            <div id="divSAP_WBS_Import_ListDetails" class="deal clearfix">
+                            </div>*@
+                            <table class="table table-bordered table-hover" id="divSAP_WBS_Import_List">
+                                <thead>
+                                    <tr>
+                                        <th style="width:5%;">Row.No</th>
+                                        <th style="width:5%;">Error Codes</th>
+                                        <th style="width:15%;">WBS Code</th>
+                                        <th style="width:25%;">WBS Description</th>
+                                        <th style="width:10%;">Studio/Vendor</th>
+                                        <th style="width:10%;">Original/Dubbed</th>
+                                        <th style="width:10%;">Short ID</th>
+                                        <th style="width:10%;">Status</th>
+                                        <th style="width:10%;">Sport Type</th>
+                                    </tr>
+                                </thead>
+
+
+                                <tbody>
+
+                                    @{
+                                        int counter = 0;
+                                    }
+                                    @foreach (var item in objWorkflow_Module)
+                                    {
+                                        counter = counter + 1;
+
+                                        <tr>
+                                            <td align="center">
+                                                @counter
+                                            </td>
+                                            <td></td>
+                                            <td align="center">
+                                                @item.WBS_Code
+                                            </td>
+                                            <td align="center">
+                                                @item.WBS_Description
+                                            </td>
+                                            <td align="center">
+                                                @item.Studio_Vendor
+                                            </td>
+                                            <td>
+                                                @item.Original_Dubbed
+                                            </td>
+                                            <td align="center">
+                                                @item.Short_ID
+                                            </td>
+                                            <td>
+                                                @item.Status
+                                            </td>
+                                            <td>
+                                                @item.Sport_Type
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

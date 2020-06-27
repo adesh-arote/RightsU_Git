@@ -1,0 +1,269 @@
+﻿@model List<RightsU_Entities.USP_Schedule_AsRun_Report_Result>
+
+@using UTOFrameWork.FrameworkClasses
+@{ 
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+
+    var DMCode = $('#idDMCode').val();
+    //var lstTitle = [{ Title_Code: '', Deal_Code: '', episode_No: '', Deal_Type: '' }];
+
+    //$('#chkAll').on("click", function () {
+    function checkAll() {
+        lstTitle = [{ Title_Code: '', Deal_Code: '', episode_No: '', Deal_Type: '' }];
+        //debugger;
+        var IsCheck = $('#chkAll').prop("checked");
+        $('.checkboxAll').prop('checked', IsCheck);
+        if ($('#chkAll').prop("checked")) {
+            var x = document.getElementsByClassName("checkboxAll"); x;
+            var i;
+            for (i = 0; i < x.length; i++) {
+                selectCurrent(x[i].id);
+            }
+        }
+        $('.txtMaptoDeal').prop('disabled', !IsCheck);
+        $('.EpisodeNo').prop('disabled', !IsCheck);
+    }
+    //});
+    
+    $('.checkboxAll').on("click", function () {
+        debugger;
+        if ($('.checkboxAll:checked').length == $('.checkboxAll').length) {
+            $("#chkAll").prop("indeterminate", false);
+            $('#chkAll').prop('checked', true);
+        } else {
+            if ($('.checkboxAll:checked').length  > 0) {
+                $("#chkAll").prop("indeterminate", true);
+            }
+            else { $("#chkAll").prop("indeterminate", false);}
+            $('#chkAll').prop('checked', false);
+        }
+        var IsCheck = $(this).prop('checked');
+        $('.txtMaptoDeal').attr('required', false)
+        $(this).parents('tr').find('.txtMaptoDeal').prop('disabled', !IsCheck);
+
+        $('#hdnADMC').val($(this).get(0).id.slice(4));
+        //var a = $('#hdnADMC').val();
+        //a = a +','+ $(this).get(0).id.slice(4)
+    });
+
+    //function selectCurrent(chkBox) {
+        
+    //    debugger;
+    //    var chkBoxId = chkBox;
+    //    var TitleCode = (chkBoxId).split('_')[1];
+    //    var DealCode = (chkBoxId).split('_')[2];
+    //    var DealType = (chkBoxId).split('_')[3];
+    //    var EpisodeNo = (chkBoxId).split('_')[4];
+
+    //    var txtDealTitles = document.getElementById(chkBoxId.replace('chk_', 'Mapped_Deal_Title_Code_'));
+    //    var txtEpisodeNo = document.getElementById(chkBoxId.replace('chk_', 'Episode_No_'));
+    //    var chkIgnore = document.getElementById(chkBoxId.replace('chk_', 'chkIgnore_'))
+
+    //    var deleteOrAddlstTitle = [{ Title_Code: TitleCode, Deal_Code: DealCode, episode_No: EpisodeNo, Deal_Type: DealType }];
+
+    //    if ($('#'+chkBox).prop("checked")) {
+    //        $(txtDealTitles).removeAttr("disabled");
+    //        $(txtEpisodeNo).removeAttr("disabled");
+           
+    //            lstTitle.push(
+    //                { Title_Code: TitleCode, Deal_Code: DealCode, episode_No: EpisodeNo, Deal_Type: DealType }
+    //            );
+    //         }
+    //    else {
+    //        $(chkIgnore).prop('checked', false);
+    //        $(txtDealTitles).val('');
+    //        $(txtDealTitles).attr("disabled", "disabled");
+    //        $(txtEpisodeNo).attr("disabled", "disabled");
+    //        for (var i = 1; i < lstTitle.length; i++) {
+                
+    //            if (lstTitle[i].Deal_Code == deleteOrAddlstTitle[0].Deal_Code && lstTitle[i].Title_Code == deleteOrAddlstTitle[0].Title_Code
+    //                && lstTitle[i].episode_No == deleteOrAddlstTitle[0].episode_No && lstTitle[i].Deal_Type == deleteOrAddlstTitle[0].Deal_Type) {
+    //                lstTitle.splice(i, 1);
+    //            }
+    //        }
+    //    }
+    //}
+    function selectCurrent(chkBox) {
+        debugger;
+        var chkBoxId = chkBox.id;
+
+        var txtDealTitles = document.getElementById(chkBoxId.replace('chk_', 'Mapped_Deal_Title_Code_'));
+        var txtEpisodeNo = document.getElementById(chkBoxId.replace('chk_', 'Episode_No_'));
+        var chkIgnore = document.getElementById(chkBoxId.replace('chk_', 'chkIgnore_'))
+        if ($(chkBox).prop("checked")) {
+            $(txtDealTitles).removeAttr("disabled");
+            $(txtEpisodeNo).removeAttr("disabled");
+        }
+        else {
+            $(chkIgnore).prop('checked', false);
+            $(txtDealTitles).val('');
+            $(txtDealTitles).attr("disabled", "disabled");
+            $(txtEpisodeNo).attr("disabled", "disabled");
+        }
+    }
+    function SelectIgnore(chkBox) {
+        debugger;
+        var chkBoxId = chkBox.id;
+        var txtDealTitles = document.getElementById(chkBoxId.replace('chkIgnore_', 'Mapped_Deal_Title_Code_'));
+        var txtEpisodeNo = document.getElementById(chkBoxId.replace('chkIgnore_', 'Episode_No_'));
+        var chk = document.getElementById(chkBoxId.replace('chkIgnore_', 'chk_'));
+
+        if ($(chkBox).prop("checked")) {
+            $(txtDealTitles).val('');
+            $(chk).prop('checked', true);
+            $(txtDealTitles).attr("disabled", true);
+            $(txtEpisodeNo).attr("disabled", "disabled");
+        }
+        else {
+            $(chk).removeAttr("disabled");
+            $(chk).prop('checked', true);
+            if ($(chk).prop('checked') == true) {
+                $(txtDealTitles).attr("disabled", false);
+                $(txtDealTitles).attr("required", false);
+                $(txtEpisodeNo).attr("disabled", false);
+            }
+        }
+    }
+    function ValidateEpisodeNo(obj) {
+        debugger;
+        var gvid = obj.id;
+        var episodeStart = $('#lblEpisodeStart').val();
+        var episodeEnd = $('#lblEpisodeEnd').val();
+        var txtEpisodeNo = document.getElementById(gvid.replace('Episode_No_', 'Episode_No_'));
+        var txtEpisode = $(txtEpisodeNo).val();
+        if (txtEpisode < episodeStart || txtEpisode > episodeEnd) {
+            showAlert("E", "Please enter episode number between " + episodeStart + " and " + episodeEnd);
+        }
+    }
+</script>
+
+<style>
+    #scheduleRun:hover {
+        text-decoration: underline;
+        color: blue;
+        font-weight: bold;
+    }
+</style>
+
+
+<table class="table table-bordered table-hover" id="div_List_RightsUsageDetails">
+    <thead>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <th style="width:3%"></th>
+                <th style="width:10%;">@objMessageKey.AgreementNo</th>
+                <th style="width:10%;">@objMessageKey.Title</th>
+                <th style="width:10%;">@objMessageKey.RightsPeriod</th>
+                <th style="width:15%;">@objMessageKey.ScheduleRun</th>
+
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <th style="width:3% !important"><input id="chkAll" type="checkbox" onchange="checkAll()" /></th>
+                <th style="width:10%;">@objMessageKey.AgreementNo</th>
+                <th style="width:40%;">@objMessageKey.Title</th>
+                @*<th style="width:10%;">@objMessageKey.EpisodeNo</th>*@
+                <th style="width:17%;">@objMessageKey.RightsPeriod</th>
+                <th style="width:10%;">@objMessageKey.ScheduleRun</th>
+
+            </tr>
+        }
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string checkid = @item.Title_Code+"_"+@item.Deal_Code+"_" + @item.Deal_Type + "_" + @item.Episode_No;
+                <tr>
+                    <td style="text-align:center">
+                        <input id="chk_@item.Acq_Deal_movie_code" type="checkbox" name="chkType" class="checkboxAll" onchange="selectCurrent(this);" value="@item.Acq_Deal_movie_code" />
+                       @* <input id="chk_@checkid" type="checkbox" name="chkType" class="checkboxAll" onchange="selectCurrent(this.id);" value="@item.Title_Code" />*@
+                    </td>
+                    <td>
+                        @item.Agreement_No
+                    </td>
+                    <td align="center">
+                        @item.Title_Name
+                    </td>
+                    @*<td align="center">
+                       @item.Episode_No
+                    </td>*@
+                    <td align="center">
+                        @item.Rights_Period
+                    </td>
+                    <td align="center">
+                        @if (item.Provision_Run > 0)
+                        {
+                            <a id="scheduleRun" href="#" 
+                               onclick="SearchScheduleRunReport('@item.Acq_Deal_movie_code',
+                                                                   '@item.Title_Code', 
+                                                                   '@item.Deal_Code', 
+                                                                   '@item.Deal_Type', 
+                                                                   '@item.Episode_No', 
+                                                                   '@item.Agreement_No',
+                                                                   '@item.Title_Name',
+                                                                   '@item.Rights_Period'
+                                                               )">
+                                <span>@item.Provision_Run</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span>@item.Provision_Run</span>
+                        }
+                        @*<input type="hidden" id="idDMCode" value="@item.Title_Code" />*@
+                        <input type="hidden" id="idDMCode" value="@item.Acq_Deal_movie_code" />
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="6">
+                    <div style="text-align:right;">
+
+                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                        {
+                            <input type="button" id="btnExport" class="button" value="Export To Excel" onclick="ExportToExcel(DMCode)" />
+                            @*<input type="button" id="btnExport" class="button" value="Export To Excel" onclick="ExportToExcel(lstTitle)">*@
+                            @*<label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save" title="Save to Excel">
+                                    @using (Html.BeginForm("ExportToExcel", "Rights_Usage_Report"))
+                                    {
+                                        <input type="submit" style="display: none" id="btnExportToExcel" />
+                                        <input type="hidden" value="" id="hdnADMC" name="Acq_Deal_Movie_Code" />
+                                        <input type="hidden" value="@ViewBag.txtfrom" id="hdnStartDate" name="Start_Date" />
+                                        <input type="hidden" value="@ViewBag.txtto" id="hdnEndDate" name="End_Date" />
+                                        <input type="hidden" value="@ViewBag.channelArray" id="hdnChannnel" name="Channel" />
+                                        <input type="hidden" value="@ViewBag.runType" id="hdnRunType" name="Run_Type" />
+
+                                        <input type="hidden" name="DealTypeC" value="0" id="DealTypeC" />
+                                    }
+                                </label>*@
+                            <input type="hidden" value="" id="hdnADMC" name="Acq_Deal_Movie_Code" />
+                        }
+
+                    </div>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+
+
+    </tbody>
+
+</table>
+<br />
+

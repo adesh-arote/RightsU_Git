@@ -1,0 +1,606 @@
+﻿@model RightsU_Entities.Acq_Deal_Sport_Monetisation_Ancillary
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@using RightsU_Entities
+<script type="text/javascript">
+    var Mode = '@ViewBag.Mode';
+    var acqDealSportMonetisationAncillaryCode_G = parseInt('@Model.Acq_Deal_Sport_Monetisation_Ancillary_Code')
+
+    var URL_BindMonetisation = '@Url.Action("BindMonetisation", "Acq_Sport_Ancillary")'
+
+    $(document).ready(function () {
+        if (acqDealSportMonetisationAncillaryCode_G > 0 && Mode != "V" && Mode != "APRV") {
+            var txtRemark = document.getElementById('Remarks');
+            countChar(txtRemark);
+        }
+
+        $('#txtRightPerMatch1').numeric({ maxDigits: 3 });
+    });
+
+    function createMonetisationRow(x) {
+        if (Mode != 'V' && Mode != 'APRV' && Mode != "EWOA") {
+            var monetisationCount = parseInt($('#hdnMonetizationTypeId').val()) + 1;
+            var selectedValueArray = '';
+
+            if ($('#ddlMonetizationType' + (monetisationCount - 1)).val() === null) {
+                showAlert('E', "@objMessageKey.Pleaseselectmonetisationtype");
+                return;
+            }
+
+            if ($('#rdoMonetisationDefine' + (monetisationCount - 1)).is(':checked') && parseInt($('#txtRightPerMatch' + (monetisationCount - 1)).val()) < 0) {
+                showAlert('E', "@objMessageKey.PleaseenterRightspermatchgreaterthanzero");
+                return;
+            }
+
+            $(x).remove();
+
+            $('#tblMonetisation tr').each(function (index) {
+                var ddl = $(this).find(".DDLMonetisation");
+                if (ddl.length != 0) {
+                    var sel = $(ddl[0]).val();
+
+                    if (sel != null) {
+                        if (selectedValueArray === '')
+                            selectedValueArray = sel;
+                        else
+                            selectedValueArray = selectedValueArray.concat(sel);
+                    }
+                }
+            });
+
+            var ddl = $('#ddlMonetizationType1').clone();
+
+            $(ddl).find("option").each(function () {
+                if ($.inArray(this.value, selectedValueArray) != -1) {
+                    $(this).remove();
+                }
+            });
+
+            var ddloption = ddl.html();
+            $('#tblMonetisation tr').find('.DDLMonetisation').prop('disabled', true)[0].sumo.reload();
+
+            var txt = "<tr id='trMonetiztionTypeStatic" + monetisationCount + "'>";
+            txt += "<td style='width:50%;'>";
+            txt += "<div class='divMonetizationType" + monetisationCount+ "' style='width:95%!important'>"
+            txt += "<select name='ddlMonetizationType" + monetisationCount + "' id='ddlMonetizationType" + monetisationCount + "' class='DDLMonetisation' multiple='multiple'>" + ddloption + "</select></div></td>";
+            txt += "<td style='font-size:12px;'>";
+            txt += "<label class='radio-inline'><input type='radio' name='rightsPerMatch" + monetisationCount + "' id='chkMonetisationUnlimited1' value='Unlimited' onclick='handleClick(this, txtRightPerMatch" + monetisationCount + ");'/>Unlimited</label>"
+            txt += "<label class='radio-inline'><input type='radio' name='rightsPerMatch" + monetisationCount + "' id='rdoMonetisationUndefine1' value='Not Defined' onclick='handleClick(this, txtRightPerMatch" + monetisationCount + ");'/>Not Defined</label>"
+            txt += "<label class='radio-inline'><input type='radio' name='rightsPerMatch" + monetisationCount + "' id='rdoMonetisationDefine1' value='Defined' onclick='handleClick(this, txtRightPerMatch" + monetisationCount + ");'/>Defined</label>"
+            //txt += "<input type='checkbox' id='chkMonetisationUnlimited' onclick='handleClick(this, txtRightPerMatch" + monetisationCount + ");'>Unlimited"
+            txt += "&nbsp;<input type='text' id='txtRightPerMatch" + monetisationCount + "' onKeyPress='return checkNumbers(this, true, 3, 0);'/>";
+            txt += "&nbsp;<input type='button' id='btnRemove' value='X' onclick='removeMonetisationRow(trMonetiztionTypeStatic" + monetisationCount + ")' />";
+            txt += "&nbsp;<input id='btnAddMonetype' type='button' value='+' onclick='createMonetisationRow(this);' /></td></tr>";
+            $('#tblMonetisation').append(txt);
+            $("#txtRightPerMatch" + monetisationCount).numeric({ maxDigits: 3 });
+
+            // var prevddlVal = $('#ddlMonetizationType' + (monetisationCount - 1)).val();
+            //$('#ddlMonetizationType' + monetisationCount).find("option").each(function () {
+            //    if ($.inArray(this.value, selectedValueArray) != -1)
+            //        $(this).remove();
+            //})
+
+            $('#ddlMonetizationType' + monetisationCount).SumoSelect();
+            //$('.DDLMonetisation').chosen('select');
+            $('#hdnMonetizationTypeId').val(monetisationCount);
+
+            //if ($('#tblMonetisation tr').length > 5) {
+            //    $('#divMonetisationType').css("height", "196px");
+            //    $('#divMonetisationType').css("overflow-y", "auto");
+            //}
+            //else {
+            //    $('#divMonetisationType').css("height", "auto");
+            //    $('#divMonetisationType').css("overflow-y", "inherit");
+            //}
+        }
+    }
+    function removeMonetisationRow(row) {
+        if (Mode != 'V' && Mode != 'APRV' && Mode != "EWOA") {
+            $(row).remove();
+            var $tr = $('#tblMonetisation tr:last');//after remove take last row
+            var monetisationCount = parseInt($('#hdnMonetizationTypeId').val()) - 1;
+            $('#hdnMonetizationTypeId').val(monetisationCount);
+            $('#tblMonetisation tr:last').find('.DDLMonetisation').prop('disabled', false)[0].sumo.reload();
+
+            //Finding secod column in previous row and add + button
+            if (document.getElementById('btnAddMonetype') == null)
+                $tr.find('td:nth-child(2)').append("<input id='btnAddMonetype' type='button' value='+' onclick='createMonetisationRow(this);' />");
+        }
+    }
+    function setBroadCasterValue() {
+        debugger
+        var isReturnVal = true;
+        if (Mode != 'V' && Mode != 'APRV' && Mode != "EWOA") {
+            $('#hdnMonetisationTypeList').val('');
+            $('#tblMonetisation tr').each(function (index) {
+                var ddl = $(this).find(".DDLMonetisation");
+
+                if (ddl.length != 0) {
+                    debugger
+                    var sel = $(ddl[0]).val();
+
+                    if (sel != null) {
+                        var txtValue = $(this).find("input[type='text']")[1];
+
+                        for (var i = 0 ; i < sel.length ; i++) {
+                            if ($('#hdnMonetisationTypeList').val() == '')
+                                $('#hdnMonetisationTypeList').val(sel[i] + '#' + $(txtValue).val());
+                            else
+                                $('#hdnMonetisationTypeList').val($('#hdnMonetisationTypeList').val() + '~' + sel[i] + '#' + $(txtValue).val());
+                        }
+                    }
+                }
+            })
+
+            var titles = $('#lstMonetizationTitle').val();
+            $("select[ID*='ddlMonetizationType']").each(function () {
+                debugger
+               
+                    if($('#' + this.id).val() == null)
+                    {
+                        var divId = this.id.replace("ddlMonetizationType", "divMonetizationType");
+                        $('.'+divId).addClass("required");
+                        isReturnVal = false;
+                    }
+            });
+            //if ($('#ddlMonetizationType1').val() == null) {
+            //    $('#divMonetizationType').addClass("required");
+            //    return false;
+            //}
+            if (titles === null) {
+                showAlert('E', '@objMessageKey.Pleaseselecttitle');
+                isReturnVal =  false;
+            }
+            
+            return isReturnVal;
+          
+        }
+    }
+    function setMonetisationOnEdit() {
+        debugger
+        if (Mode != 'V' && Mode != 'APRV' && Mode != "EWOA") {
+            $('#btnAddMonetype').remove();
+            var monetisationTypeList = $('#hdnMonetisationTypeList').val();
+            var monetisationTypeCount = parseInt($('#hdnMonetizationTypeId').val());
+
+            if (monetisationTypeCount > 1) {
+                var monetisationTypeArr = $('#hdnMonetisationTypeList').val().split('~');
+                var monType = monetisationTypeArr[0].split('#');
+                $('#ddlMonetizationType1').val(monType[0]);
+                $('#txtRightPerMatch1').val(monType[1]);
+
+                if (monType[1] === '-1') {
+                    $('#chkMonetisationUnlimited1').prop('checked', true);
+                    $('#txtRightPerMatch1').prop('disabled', true);
+                }
+                else {
+                    if (monType[1] === '-2') {
+                        $('#rdoMonetisationUndefine1').prop('checked', true);
+                        $('#txtRightPerMatch1').prop('disabled', true);
+                    }
+                    else {
+                        $('#rdoMonetisationDefine1').prop('checked', true);
+                        $('#txtRightPerMatch1').prop('disabled', false);
+                    }
+                }
+
+                for (var i = 1; i < monetisationTypeCount ; i++) {
+                    var ddl = $('#ddlMonetizationType' + i).html()
+                    monType = monetisationTypeArr[i].split('#');
+                    var txt = "<tr id='trMonetiztionTypeStatic" + (i + 1) + "'>";
+                    txt += "<td style='width:50%;'>";
+                    txt += "<div class='divMonetizationType" + (i + 1) + "' style='width:95%!important'>"
+                    txt += "<select name='ddlMonetizationType" + (i + 1) + "' id='ddlMonetizationType" + (i + 1) + "' class='DDLMonetisation' multiple='multiple'>" + ddl + "</select></div></td>";
+                    txt += "<td style='font-size:12px;'>";
+                    txt += "<label class='radio-inline'><input type='radio' name='rightsPerMatch" + (i + 1) + "' id='chkMonetisationUnlimited" + (i + 1) + "' value='Unlimited' onclick='handleClick(this, txtRightPerMatch" + (i + 1) + ");'/>Unlimited</label>"
+                    txt += "<label class='radio-inline'><input type='radio' name='rightsPerMatch" + (i + 1) + "' id='rdoMonetisationUndefine" + (i + 1) + "' value='Not Defined' onclick='handleClick(this, txtRightPerMatch" + (i + 1) + ");'/>Not Defined</label>"
+                    txt += "<label class='radio-inline'><input type='radio' name='rightsPerMatch" + (i + 1) + "' id='rdoMonetisationDefine" + (i + 1) + "' value='Defined' onclick='handleClick(this, txtRightPerMatch" + (i + 1) + ");'/>Defined</label>"
+                    //txt += "<input type='checkbox' id='chkMonetisationUnlimited" + (i + 1) + "' onclick='handleClick(this, txtRightPerMatch" + (i + 1) + ");'>Unlimited"
+                    txt += "&nbsp;<input type='text' id='txtRightPerMatch" + (i + 1) + "' onKeyPress='return checkNumbers(this, true, 3, 0);'/>";
+                    txt += "&nbsp;<input type='button' id='btnRemove' value='X' onclick='removeMonetisationRow(trMonetiztionTypeStatic" + (i + 1) + ")' /> </td></tr>";
+                    $('#tblMonetisation').append(txt);
+                    $("#txtRightPerMatch" + (i + 1)).numeric({ maxDigits: 3 });
+                    var prevddlVal = $('#ddlMonetizationType' + i).val();
+                    $('#ddlMonetizationType' + (i + 1)).SumoSelect();
+                    $('#ddlMonetizationType' + (i + 1)).find("option").each(function () {
+                        if ($.inArray(this.value, prevddlVal) != -1) {
+                            $(this).remove();
+                        }
+                    })
+
+                    $('#ddlMonetizationType' + (i + 1)).val(monType[0])[0].sumo.reload();
+                    $('#txtRightPerMatch' + (i + 1)).val(monType[1]);
+
+                    if (monType[1] === '-1') {
+                        $('#chkMonetisationUnlimited' + (i + 1)).prop('checked', true);
+                        $('#txtRightPerMatch' + (i + 1)).prop('disabled', true);
+                    }
+                    else {
+                        if (monType[1] === '-2') {
+                            $('#rdoMonetisationUndefine' + (i + 1)).prop('checked', true);
+                            $('#txtRightPerMatch' + (i + 1)).prop('disabled', true);
+                        }
+                        else {
+                            $('#rdoMonetisationDefine' + (i + 1)).prop('checked', true);
+                            $('#txtRightPerMatch' + (i + 1)).prop('disabled', false);
+                        }
+                    }
+                }
+            }
+            else {
+                var monetisationTypeArr = $('#hdnMonetisationTypeList').val().split('~');
+                var monType = monetisationTypeArr[0].split('#');
+                $('#ddlMonetizationType1').val(monType[0]);
+                $('#txtRightPerMatch1').val(monType[1]);
+
+                if (monType[1] === '-1') {
+                    $('#chkMonetisationUnlimited1').prop('checked', true);
+                    $('#txtRightPerMatch1').prop('disabled', true);
+                }
+                else {
+                    if (monType[1] === '-2') {
+                        $('#rdoMonetisationUndefine1').prop('checked', true);
+                        $('#txtRightPerMatch1').prop('disabled', true);
+                    }
+                    else {
+                        $('#rdoMonetisationDefine1').prop('checked', true);
+                        $('#txtRightPerMatch1').prop('disabled', false);
+                    }
+                }
+            }
+
+            // $('#tblMonetisation .DDLMonetisation').chosen();
+            $('#tblMonetisation select').prop('disabled', true);
+            $('#tblMonetisation select:last').prop('disabled', false);
+            $("select[ID*='ddlMonetizationType']").each(function () {
+                //$('#' + this.id).SumoSelect();
+                try {
+                    $('#' + this.id)[0].sumo.reload();
+                }
+                catch (err) {
+                }
+            });
+            setChosenWidth('#tblMonetisation select', '100%');
+            $('#tblMonetisation tr:last').find('td:nth-child(2)').append('&nbsp;<input id="btnAddMonetype" type="button" value="+" onclick="createMonetisationRow(this);" />');
+            //$('.chosen-select').chosen('select');
+
+            //if ($('#tblMonetisation tr').length > 5) {
+            //    $('#divMonetisationType').css("height", "196px");
+            //    $('#divMonetisationType').css("overflow-y", "auto");
+            //}
+            //else {
+            //    $('#divMonetisationType').css("height", "auto");
+            //    $('#divMonetisationType').css("overflow-y", "inherit");
+            //}
+        }
+    }
+    function handleClick(cb, textbox) {
+        if (cb.value == 'Unlimited') {
+            $(textbox).val('-1');
+            $(textbox).prop('disabled', true);
+        }
+        else {
+            if (cb.value == 'Not Defined') {
+                $(textbox).val('-2');
+                $(textbox).prop('disabled', true);
+            }
+            else {
+                $(textbox).val('');
+                $(textbox).removeAttr('disabled');
+            }
+        }
+    }
+    function OnMonetisationSaveSuccess(message) {
+        if (Mode != 'V' && Mode != 'APRV' && Mode != "EWOA") {
+            $('#popSportMoneAncillary').modal('hide');
+            $('div.modal-backdrop').hide();
+            var type = $(":radio[name=rdoMoneDisplayType]:checked").val();
+            var arrTitles = '';
+
+            if ($('#lblDisplayMonetisationTitle').val() != null)
+                arrTitles = $('#lblDisplayMonetisationTitle').val().join(',');
+
+            $.ajax({
+                type: "POST",
+                url: URL_BindMonetisation,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    displayType: type,
+                    selectedTitle: arrTitles
+                }),
+                success: function (result) {
+                    $('#hdnAcqDealSportMoneAncillaryCode').val('');
+                    $('#divMonetisation').html(result);
+                    initializeChosen();
+                    initializeExpander();
+                    $('#lblDisplayMonetisationTitle').val(arrTitles.split(','))[0].sumo.reload();
+                    $('input[name=rdoMoneDisplayType][value=' + type + ']').prop('checked', true);
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+
+            CallFromDeleted = '';
+            showAlert('S', message, "OK");
+        }
+    }
+</script>
+<style>
+    .form_wrapper {
+        max-width: 900px !important;
+    }
+</style>
+
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        @if (ViewBag.Mode != "V" && ViewBag.Mode != "APRV" && ViewBag.Mode != "EWOA")
+        {
+            using (Ajax.BeginForm("SaveMonetisation", "Acq_Sport_Ancillary", new AjaxOptions { OnSuccess = "OnMonetisationSaveSuccess" }, new { id = "frmMonetisation", @class = "form" }))
+            {
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>
+                                    ×
+                                </span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            @if (Model.Acq_Deal_Sport_Monetisation_Ancillary_Code > 0)
+                            {
+                                <h2>@objMessageKey.EditSportsAncillaryMonetisation</h2>
+                            }
+                            else
+                            {
+                                <h2>@objMessageKey.AddSportsAncillaryMonetisation</h2>
+                            }
+                        </div>
+                        <div class="modal_block">
+                            <ul id="divSportAncMone">
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.Titles</label>
+                                    <div id="divlstMonetizationTitle">
+                                        @Html.ListBox("lstMonetizationTitle", ViewBag.MoneTitleList as MultiSelectList)
+                                    </div>
+                                    @Html.HiddenFor(m => Model.Acq_Deal_Sport_Monetisation_Ancillary_Code)
+                                    @Html.Hidden("DisplayType", (string)ViewBag.DisplayType)
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.RighttoAppointSponsors:</label><br />
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>@objMessageKey.BroadcastSponsor</th>
+                                                <th>@objMessageKey.TitleBroadcastSponsor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width: 50%">
+                                                    <label class="radio-inline">
+                                                        @Html.RadioButtonFor(mbox => Model.Appoint_Broadcast_Sponsor, "Y", new { @checked = "true" })@objMessageKey.Yes
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        @Html.RadioButtonFor(mbox => Model.Appoint_Broadcast_Sponsor, "N")@objMessageKey.NO
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="radio-inline">
+                                                        @Html.RadioButtonFor(mbox => Model.Appoint_Title_Sponsor, "Y", new { @checked = "true" })@objMessageKey.Yes
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        @Html.RadioButtonFor(mbox => Model.Appoint_Title_Sponsor, "N")@objMessageKey.NO
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.MonetisationTypes:</label><br />
+                                    <div id="divMonetisationType">
+                                        <table id="tblMonetisation" class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>@objMessageKey.Types</th>
+                                                    <th>@objMessageKey.RightsperMatch</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr id="trMonetiztionTypeStatic1">
+                                                    <td style="width: 50%;">
+                                                        <div id="divMonetizationType" style="width:95%!important">
+                                                            @Html.ListBox("ddlMonetizationType1", ViewBag.MoneTypeList as MultiSelectList, new { @class = "DDLMonetisation" })
+                                                            @Html.Hidden("hdnMonetizationTypeId", (string)ViewBag.hdnMonetizationTypeId)
+                                                            @Html.Hidden("hdnMonetisationTypeList", (string)ViewBag.hdnMonetisationTypeList)
+                                                        </div>
+                                                    </td>
+                                  
+                                    <td id="tdMonetisationRightPerMatch1">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="rightsPerMatch1" id="chkMonetisationUnlimited1" value="Unlimited" onclick='handleClick(this, txtRightPerMatch1);' />@objMessageKey.Unlimited
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="rightsPerMatch1" id="rdoMonetisationUndefine1" value="Not Defined" onclick='handleClick(this, txtRightPerMatch1);' />@objMessageKey.NotDefined
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="rightsPerMatch1" id="rdoMonetisationDefine1" value="Defined" onclick='handleClick(this, txtRightPerMatch1);' />@objMessageKey.Defined
+                                        </label>
+                                        @Html.TextBox("txtRightPerMatch1", (string)ViewBag.RightPerMatch, new { @class = "text" })
+                                        <input id="btnAddMonetype" type="button" value="+" onclick="createMonetisationRow(this);" />
+                                    </td>
+                                    </tr>
+                                        </tbody>
+                                    </table>
+                        </div>
+                            </li>
+                                <li class="clearfix">
+                                    <div class="divBlock">
+                                        <div class="bold small_title" style="padding-right: 320px;">@objMessageKey.Remarks</div>
+                                        <div style="">&nbsp;&nbsp;</div>
+                                        <div id="CharNum" class="charNum" style="float: right;">0/4000</div>
+                                    </div>
+                                    @Html.TextAreaFor(m => Model.Remarks, new { @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+                                </li>
+                        </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li>
+                                            <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return setBroadCasterValue();" />
+                                        </li>
+                                        <li>
+                                            <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return closeMonetisation();" />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            }
+        }
+        else
+        {
+            <form class="form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>
+                                    ×
+                                </span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.ViewSportsAncillaryMonetisation</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul>
+                                <li class="">
+                                    <label class="bold">@objMessageKey.Titles</label>
+                                    <div class="expandable">
+                                        @{
+                                            int SelectedTitleCode = Convert.ToInt32(ViewBag.DetailTitleCode);
+                                            string titleName = string.Empty;
+
+                                            if (SelectedTitleCode != 0)
+                                            {
+                                                titleName = string.Join(",", Model.Acq_Deal_Sport_Monetisation_Ancillary_Title.Where(t => t.Title_Code == SelectedTitleCode).Select(t => t.Title.Title_Name));
+                                            }
+                                            else
+                                            {
+                                                titleName = string.Join(",", Model.Acq_Deal_Sport_Monetisation_Ancillary_Title.Select(t => t.Title.Title_Name));
+                                            }
+                                        }
+                                        @titleName
+                                    </div>
+                                </li>
+                                <li class="">
+                                    <label class="bold">@objMessageKey.RighttoAppointSponsors:</label><br />
+                                    <table class=" table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>@objMessageKey.BroadcastSponsor</th>
+                                                <th>@objMessageKey.TitleBroadcastSponsor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width: 50%">
+                                                    @if (Model.Appoint_Broadcast_Sponsor == "Y")
+                                                    {
+                                                        @:@objMessageKey.Yes
+                                                    }
+                                                    else
+                                                    {
+                                                        @:@objMessageKey.NO
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (Model.Appoint_Title_Sponsor == "Y")
+                                                    {
+                                                        @:@objMessageKey.Yes
+                                                    }
+                                                    else
+                                                    {
+                                                        @:@objMessageKey.NO
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+                                <li class="">
+                                    <label class="bold">@objMessageKey.MonetisationTypes:</label><br />
+                                    <div>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>@objMessageKey.Types</th>
+                                                    <th>@objMessageKey.RightsperMatch</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (Acq_Deal_Sport_Monetisation_Ancillary_Type objType in Model.Acq_Deal_Sport_Monetisation_Ancillary_Type)
+                                                {
+                                                    <tr>
+                                                        <td style="width: 50%;">
+                                                            @if (objType.Monetisation_Type_Code != null)
+                                                            {
+                                                                @objType.Monetisation_Type.Monetisation_Type_Name
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (objType.Monetisation_Rights == -1)
+                                                            {
+                                                                @:@objMessageKey.Unlimited
+                                                        }
+                                                            else
+                                                            {
+                                                                if (objType.Monetisation_Rights == -2)
+                                                                {
+                                                                    @:@objMessageKey.NotDefined
+                                                            }
+                                                                else
+                                                                {
+                                                                    @objType.Monetisation_Rights
+                                                                }
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                                <li class="">
+                                    <label class="bold">@objMessageKey.Remarks:</label><br />
+                                    <div class="expandable">
+                                        @Model.Remarks
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return closeMonetisation();" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+                                            }
+    </div>
+    </div>

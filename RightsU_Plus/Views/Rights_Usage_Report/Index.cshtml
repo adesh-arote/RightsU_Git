@@ -1,0 +1,1038 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+
+<script>
+
+    var URL_BindMusicUsageReport = '@Url.Action("BindMusicUsageReport", "Reports")';
+    var URL_BindTitleList = '@Url.Action("BindTitle", "Rights_Usage_Report")';
+
+    var URL_SearchRightsUsageReport = '@Url.Action("SearchRightsUsageReport", "Rights_Usage_Report")';
+    var URL_BindRightsUsageReport = '@Url.Action("BindRightsUsageReport", "Rights_Usage_Report")';
+    var URL_ViewScheduleRun = '@Url.Action("ViewScheduleRun", "Rights_Usage_Report")';
+
+    var URL_SearchScheduleRunReport = '@Url.Action("SearchScheduleRunReport", "Rights_Usage_Report")';
+    var URL_BindScheduleRunReport = '@Url.Action("BindScheduleRunReport", "Rights_Usage_Report")';
+
+    var URL_ExportToExcel = '@Url.Action("ExportToExcel", "Rights_Usage_Report")';
+    var URL_DeleteUploadFile = '@Url.Action("DeleteUploadFile", "Rights_Usage_Report")';
+
+    $(function () {
+        $("#ddlBusinessUnit").change(function () {
+            $('#txtTitle').val('');
+            var businessUnitcode = $("#ddlBusinessUnit").val();
+        });
+    });
+
+    function addNumeric() {
+        $(".episodeRange").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 1
+        });
+    }
+
+    $(document).ready(function () {
+        $('#txtfrom').change(function () {
+            SetMinDt();
+        });
+
+        $('#txtto').change(function () {
+            SetMaxDt();
+        });
+
+        var Count_ChannelList = @Enumerable.Count(ViewBag.ChannelList);
+        if(Count_ChannelList>500)
+        {
+            $('#ddlChannelList').SumoSelect({ selectAll: false });
+        }
+        else{
+            $('#ddlChannelList').SumoSelect({ selectAll: true });
+        }
+
+        var Count_ChannelList = @Enumerable.Count(ViewBag.ChannelList);
+        if(Count_ChannelList>500)
+        {
+            $('#ddlChannelList').SumoSelect({ selectAll: false });
+        }
+        else{
+            $('#ddlChannelList').SumoSelect({ selectAll: true });
+        }
+        addNumeric();
+        
+    });
+
+    function btnShow_OnClick() {
+        var str = "";
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var Content = $('#ddlContentList').val();
+        var EpisodeFrom = $('#episodeFrom').val();
+        var EpisodeTo = $('#episodeTo').val();
+        var Channel = $('#ddlChannelList').val();
+        var TitleType = $('#ddlTitleTypeList').val();
+        var MusicLabel = $('#ddlMusicLabelList').val();
+        var txtfrom = $('#txtfrom').val();
+        var txtto = $('#txtto').val();
+        var StarCast = $('#ddlStarCastList').val();
+        var Genres = $('#ddlGenresList').val();
+        var MusicTheme = $('#ddlMusicThemeList').val();
+
+
+
+        if ($('#txtfrom').val() == '' && $('#txtto').val() != '') {
+            showAlert('E', '@objMessageKey.FromPeriodcannotbeblank');
+            return false;
+        }
+        if ($('#txtfrom').val() != '' && $('#txtto').val() == '') {
+            showAlert('E', '@objMessageKey.ToPeriodcannotbeblank');
+            return false;
+        }
+
+        if ($('#EpisodeFrom').val() == '' && $('#EpisodeTo').val() != '') {
+            showAlert('E', '@objMessageKey.FromPeriodcannotbeblank');
+            return false;
+        }
+        if ($('#EpisodeFrom').val() != '' && $('#EpisodeTo').val() == '') {
+            showAlert('E', '@objMessageKey.ToPeriodcannotbeblank');
+            return false;
+        }
+
+        if ($('#ddlContentList').val() == null && $('#txtfrom').val() == '' && $('#txtto').val() == '' && $('#ddlChannelList').val() == null && $('#ddlTitleTypeList').val() == null && $('#ddlMusicLabelList').val() == null && $('#ddlStarCastList').val() == null && $('#ddlGenresList').val() == null && $('#ddlMusicThemeList').val() == null) {
+            showAlert('E', '@objMessageKey.PleaseSelectatleastonesearchcriteria');
+            return false;
+        }
+
+        if ($('#ddlContentList').val() == null) {
+            Content = "";
+        }
+        if ($('#ddlChannelList').val() == null) {
+            Channel = "";
+        }
+        if ($('#ddlTitleTypeList').val() == null) {
+            TitleType = "";
+        }
+        if ($('#ddlMusicLabelList').val() == null) {
+            MusicLabel = "";
+        }
+        if ($('#ddlStarCastList').val() == null) {
+            StarCast = "";
+        }
+        if ($('#ddlGenresList').val() == null) {
+            Genres = "";
+        }
+
+        if ($('#ddlMusicThemeList').val() == null) {
+            MusicTheme = "";
+        }
+
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindMusicUsageReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                businessUnitcode: businessUnitcode,
+                Content: Content,
+                EpisodeFrom: EpisodeFrom,
+                EpisodeTo: EpisodeTo,
+                Channel: Channel,
+                TitleType: TitleType,
+                MusicLabel: MusicLabel,
+                txtfrom: txtfrom,
+                txtto: txtto,
+                StarCast: StarCast,
+                Genres: Genres,
+                MusicTheme: MusicTheme
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divResult').empty();
+                    $('#divResult').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindRightsUsageReport();
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function checkCurrentAction() {
+
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("I", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("I", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+
+    function isNumeric(e, t) {
+        if (window.event) {
+            var charCode = window.event.keyCode;
+        }
+        else if (e) {
+            var charCode = e.which;
+        }
+        else { return true; }
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function SetMaxDt() {
+        setMinMaxDates('txtfrom', '', $('#txtto').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtto', $('#txtfrom').val(), '');
+    }
+
+    function ClearAll() {
+        debugger;
+        var code = 1;
+        $("#txtfrom,#txtto").val('');
+        //$("#txtEpFrom,#txtEpTo").val('');
+        $("#ddlRunTypeList").val('').trigger("chosen:updated");
+
+        $("#ddlTitle").val('');
+        $('#ddlBusinessUnit').val(code).trigger('chosen:updated');
+        $('#txtTitle').removeClass('required');
+        $('#txtTitle').val('');
+        $("#ddlChannelList").val('')[0].sumo.reload();
+    }
+    ///-----------Rights Usage Report---------------------
+
+    function btnSearch_OnClick() {
+        var txtfrom = $("#txtfrom").val();
+        var txtto = $("#txtto").val();
+        var expiredDeal = $('#chk_expiredDeals').is(":checked");
+        var titleList = $('#txtTitle').val();
+        var channelList = $('#ddlChannelList').val();
+        var runType = $('#ddlRunTypeList').val();
+        var IsShowALl = "N";
+        //var episodeFrom = $('#txtEpFrom').val();
+        //var episodeTo = $('#txtEpTo').val();
+        var episodeFrom = 1;
+        var episodeTo = 1;
+
+        if (episodeFrom == '') { episodeFrom = 0; }
+        if (episodeTo == '') { episodeTo = 0; }
+
+        if (parseInt(episodeFrom) > parseInt(episodeTo) && parseInt(episodeTo) > 0) {
+            $('#txtEpTo').addClass('required');
+            showAlert("E",'@objMessageKey.EpisodeFromcannotbegreaterthenEpisodeTo');
+            return false;
+        }
+
+        if ($('#txtfrom').val() == '' && $('#txtto').val() != '') {
+            showAlert('E', '@objMessageKey.FromPeriodcannotbeblank');
+            return false;
+        }
+        if ($('#txtfrom').val() != '' && $('#txtto').val() == '') {
+            showAlert('E', '@objMessageKey.ToPeriodcannotbeblank');
+            return false;
+        }
+
+        if (txtfrom == '' && txtto == '' && titleList == '' && channelList == null && (runType == 0 || runType == null)) {
+            $('#txtTitle').addClass('required');
+            return false;
+        }
+
+        if (titleList == '') {
+            $('#txtTitle').addClass('required');
+            return false;
+        }
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var businessUnit = $.trim($('#ddlBusinessUnit').val());
+        var txtfrom = $.trim($('#txtfrom').val());
+        var txtto = $.trim($('#txtto').val());
+
+        //if (txtfrom == "" && txtto == "") {
+        //    if (searchText == '') {
+        //        $('#searchCommon,#txtfrom,#txtto').val('');
+        //        $('#searchCommon,#txtfrom,#txtto').attr('required', true)
+        //        return false;
+        //    }
+        //}
+        $("#divTabContent").css("visibility", "initial");
+        SearchRightsUsageReport();
+    }
+
+
+    function SearchRightsUsageReport() {
+        var txtfrom = $("#txtfrom").val();
+        var txtto = $("#txtto").val();
+        var expiredDeal = $('#chk_expiredDeals').is(":checked");
+        var titleList = $('#txtTitle').val();
+        var channelList = $('#ddlChannelList').val();
+        var runType = $('#ddlRunTypeList').val();
+        //var episodeFrom = $('#txtEpFrom').val();
+        //var episodeTo = $('#txtEpTo').val();
+        var episodeFrom = 1;
+        var episodeTo = 1;
+        var IsShowALl = "N";
+        if (episodeFrom == '') { episodeFrom = 0; }
+        if (episodeTo == '') { episodeTo = 0; }
+
+
+        var pageNo = $('#hdnPageNo').val();
+
+        if ($('#txtfrom').val() == null) {
+            txtfrom = "";
+        }
+
+        if ($('#txtto').val() == null) {
+            txtto = "";
+        }
+        if ($('#ddlChannelList').val() == null) {
+            channelList = "";
+        }
+        if ($('#ddlRunTypeList').val() == 0 || $('#ddlRunTypeList').val() == null) {
+            runType = "";
+        }
+
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchRightsUsageReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                txtfrom: txtfrom,
+                txtto: txtto,
+                expiredDeal: expiredDeal,
+                titleList: titleList,
+                channelList: channelList,
+                runType: runType,
+                IsShowALl: IsShowALl,
+                BUCode : $('#ddlBusinessUnit').val(),
+                pageNo: pageNo,
+                EpisodeFrom: episodeFrom,
+                EpisodeTo: episodeTo
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindRightsUsageReport();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindRightsUsageReport() {
+        // $('#grd1').show();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindRightsUsageReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    //$('#div_List_LoginDetailsDetails').empty();
+                    $('#div_List_RightsUsageDetails').empty();
+                    $('#div_List_RightsUsageDetails').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+
+    //-----------Pop up-----------------------------------------------------------
+
+    function SearchScheduleRunReport(AcqDMCode, TitleCode, DealCode, DealType, episodeNo, AgreementNo, TitleName, RightsPeriod) {
+        debugger;
+
+        var txtfrom = $("#txtfrom").val();
+        var txtto = $("#txtto").val();
+        var expiredDeal = $('#chk_expiredDeals').is(":checked");
+        var runType = $('#ddlRunTypeList').val();
+        var channelList = $('#ddlChannelList').val();
+        var pageNo = $('#hdnPageNo').val();
+
+        if ($('#txtfrom').val() == null) {
+            txtfrom = "";
+        }
+
+        if ($('#txtto').val() == null) {
+            txtto = "";
+        }
+        if ($('#ddlChannelList').val() == null) {
+            channelList = "";
+        }
+        if ($('#ddlRunTypeList').val() == 0 || $('#ddlRunTypeList').val() == null) {
+            runType = "";
+        }
+
+        if ($('#hdnTitleCode').val() == "") {
+            TitleCode = 0;
+        }
+       
+        DealCode = 0;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchScheduleRunReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                AcqDMCode: AcqDMCode,
+                Title_Codes: TitleCode,
+                Deal_Code: 0,
+                Deal_Type : DealType,
+                episode_Nos: episodeNo,
+                txtfrom: txtfrom,
+                txtto: txtto,
+                channelList: channelList,
+                expiredDeal: expiredDeal,
+                runType: runType
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    //$('#hdnPageNo').text(1);
+                    //$('#lblRecordCount').text(result.Record_Count);
+                    //$("#hdnRecordCount").val(result.Record_Count);
+                    //SetPaging()
+                    BindScheduleRunReport(TitleCode, DealCode, DealType, AgreementNo, TitleName, RightsPeriod, episodeNo);
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+        $('#idDMCode').val(AcqDMCode);
+    }
+
+    function BindScheduleRunReport(TitleCode, DealCode, DealType,AgreementNo, TitleName, RightsPeriod, episodeNo) {
+        // $('#grd1').show();
+        debugger
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        var titleName = $('#ddlTitle').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindScheduleRunReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                AgreementNo: AgreementNo,
+                TitleName: TitleName,
+                RightsPeriod: RightsPeriod,
+                EpisodeNo: episodeNo,
+                TitleCode: TitleCode,
+                DealCode: DealCode,
+                DealType: DealType
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+
+    function ViewScheduleRun(AcqDMCode, ProgramTitle) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $('#hdnAction').val("");
+        $.ajax({
+            type: "POST",
+            url: URL_ViewScheduleRun,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                AcqDMCode: AcqDMCode,
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+
+                    //BindExchangeRateList(commandName, "");
+                    BindScheduleRunReport();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ClosePopup() {
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+
+    //---------------------------
+
+    //--------Export To Excel----------------------
+
+    @*function ExportToExcel(TitleList, key) {
+        if (key != "Y") {
+            var atLeastOneIsChecked = $('input[name="chkType"]:checked').length > 0;
+
+            if (atLeastOneIsChecked == false) {
+                showAlert('E', '@objMessageKey.PleaseSelectatleastOneRecord ');
+                return false;
+            }
+        }
+
+        var txtfrom = $("#txtfrom").val();
+        var txtto = $("#txtto").val();
+        var expiredDeal = $('#chk_expiredDeals').is(":checked");
+        var runType = $('#ddlRunTypeList').val();
+        if (runType == 0 || runType == null) {
+            runType = "";
+        }
+        var channelList = $('#ddlChannelList').val();
+        if (channelList == null) {
+            channelList = "";
+        }
+        var key = key;
+        var agreement = agreement;
+        var TitleName = TitleName;
+        var RightsPeriod = RightsPeriod;
+        showLoading();
+
+        $.ajax({
+            type: "POST",
+            url: URL_ExportToExcel,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                lstTitle: TitleList,
+                txtfrom: txtfrom,
+                txtto: txtto,
+                channelList: channelList,
+                expiredDeal: expiredDeal,
+                runType: runType
+            }),
+            success: function (result) {
+
+                debugger;
+                if (result.Status == "E") {
+                    showAlert('E', result.Error_Message);
+                    returnVal = false;
+                }
+                else {
+                    var FileName = result.FileName
+                    var host = result.Host
+                    var Url_File_Path = ''
+                    if (host == 'localhost')
+                        Url_File_Path = '/UploadFolder/' + FileName;
+                    else {
+                        var pathName = window.location.pathname;
+                        Url_File_Path = pathName.replace('Rights_Usage_Report/Index', 'UploadFolder') + "/" + FileName;
+                    }
+                    window.location.href = Url_File_Path;
+                    setTimeout("DeleteUploadFile('" + FileName + "')", 5000);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        
+        //window.location.href = URL_ExportToExcel + "?Title_Code=" + TitleCode + "&Deal_Code=" + DealCode + "&Deal_Type=" + DealType + "&episode_No=" + episodeNo
+        //    + "&txtfrom=" + txtfrom + "&txtto=" + txtto + "&channelList=" + channelList + "&expiredDeal=" + expiredDeal + "&runType=" + runType + "&key=" + key +
+        //    "&agreement=" + agreement + "&TitleName=" + TitleName + "&RightsPeriod=" + RightsPeriod;
+        //TitleList.splice(0, 1);
+        //window.location.href = URL_ExportToExcel + "?lstTitle=" + TitleList + "&txtfrom=" + txtfrom + "&txtto=" + txtto + "&channelList=" + channelList + "&expiredDeal=" + expiredDeal + "&runType=" + runType + "&key=" + key +
+        //    "&agreement=" + agreement + "&TitleName=" + TitleName + "&RightsPeriod=" + RightsPeriod;
+        hideLoading();
+
+    }*@
+    function ExportToExcel(DMCode, key, agreement, TitleName, RightsPeriod) {
+        debugger;
+
+        if (key != "Y") {
+            var atLeastOneIsChecked = $('input[name="chkType"]:checked').length > 0;
+
+            if (atLeastOneIsChecked == false) {
+                showAlert('E', 'Please Select atleast One Record ');
+                return false;
+            }
+        }
+
+        var txtfrom = $("#txtfrom").val();
+        var txtto = $("#txtto").val();
+        var expiredDeal = $('#chk_expiredDeals').is(":checked");
+        var runType = $('#ddlRunTypeList').val();
+        if (runType == 0 || runType == null) {
+            runType = "";
+        }
+        var channelList = $('#ddlChannelList').val();
+        if (channelList == null) {
+            channelList = "";
+        }
+
+        var key = key;
+        var agreement = agreement;
+        var TitleName = TitleName;
+        var RightsPeriod = RightsPeriod;
+
+        showLoading();
+
+        window.location.href = URL_ExportToExcel + "?DMCode=" + DMCode + "&txtfrom=" + txtfrom + "&txtto=" + txtto + "&channelList=" + channelList + "&expiredDeal=" + expiredDeal + "&runType=" + runType + "&key=" + key +
+            "&agreement=" + agreement + "&TitleName=" + TitleName + "&RightsPeriod=" + RightsPeriod;
+        hideLoading();
+
+    }
+    function DeleteUploadFile(FileName) {
+        if (FileName != undefined) {
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteUploadFile,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    fileName: FileName
+                }),
+                async: false,
+                success: function (result) {
+                }
+            });
+        }
+    }
+    function PopulateTitle(keyword) {
+        var Type = "";
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        BU_Code : $('#ddlBusinessUnit').val(),
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindTitleList,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "250px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+</script>
+
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+        background-color: #eee;
+    }
+
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 80%;
+    }
+
+    #ddlTitle_chosen {
+        max-width: 80%;
+    }
+
+    #ddlChannelList_chosen {
+        max-width: 83%;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+
+    td {
+        padding: 1px;
+    }
+
+    .chosen-container-multi {
+        max-width: 90%;
+        display: inline-block;
+    }
+
+    #divTabContent {
+        visibility: hidden;
+    }
+
+    #ddlRunTypeList_chosen {
+        max-width: 100% !important;
+    }
+
+    #popup {
+        max-height: 500px;
+        overflow : auto;
+    }
+    .scale_table_block{
+        max-height : 500px;
+        overflow-y : scroll;
+    }
+    
+</style>
+
+
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col" id="grd1">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @objMessageKey.RightsUsageReport
+                        <span></span>
+                    </h2>
+
+                </div>
+
+                <div class="search_area">
+                    <table class="table">
+                        <tr>
+
+                            <td style="text-align:left;width:11% !important">
+                                <b>@objMessageKey.BusinessUnit:</b>
+                            </td>
+                            <td style="width:10% !important">
+                                @Html.DropDownList("BusinessUnit", (List<SelectListItem>)ViewBag.BusinessUnitList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="text-align:left; width: 11%!important">
+                                <b>@objMessageKey.ScheduleDate:</b>
+                            </td>
+                            <td style="width:24% !important">
+                                <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealFrmDt_Search" id="txtfrom" placeholder="@objMessageKey.From" title="@objMessageKey.From" />
+                                &nbsp; <b>@objMessageKey.To</b> &nbsp;
+                                <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealToDt_Search" id="txtto" placeholder="@objMessageKey.To" title="@objMessageKey.To" />
+                            </td>
+                            <td style="width: 10% !important">
+                                <b style="padding-right:16px;">@objMessageKey.RunType: </b>
+                            </td>
+                            <td style="width: 12% !important">
+                                @Html.DropDownList("RunTypeList", (List<SelectListItem>)ViewBag.RunType, new { @id = "ddlRunTypeList", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:15%">
+                                <input type="checkbox" id="chk_expiredDeals" /> @objMessageKey.ShowExpiredDeals
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;width:7% !important">
+                                <b>@objMessageKey.TitleList:</b>
+                            </td>
+                            <td style="width:10% !important">
+                                <input type="text" id="txtTitle" class="search" maxlength="100" style="width:210px" placeholder="@objMessageKey.Content" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                                <input type="hidden" id="hdnTitleCode" value="0" />
+                            </td>
+                            @*<td style="text-align:left;width:7% !important">
+                                <b>@objMessageKey.EpisodeFrom:</b>
+                            </td>
+                            <td style="width:17% !important">
+                                <input type="text" id="txtEpFrom" class="episodeRange" placeholder="@objMessageKey.From" title="@objMessageKey.From" style="width:84px" />
+                                &nbsp; <b>@objMessageKey.To</b> &nbsp;
+                                <input type="text" id="txtEpTo" class="episodeRange" placeholder="@objMessageKey.To" title="@objMessageKey.To" style="width:84px" />
+                            </td>*@
+                            <td style="text-align:left; width:7% !important;">
+                                <b>@objMessageKey.ChannelList:</b>
+                            </td>
+                            <td style="width:15% !important">
+                                @Html.DropDownList("ChannelList", ViewBag.ChannelList as MultiSelectList, new { @id = "ddlChannelList", @multiple = "multiple" })
+                            </td>
+                            <td style="width:10% !important" colspan="2">
+                                &nbsp;&nbsp;
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">&nbsp;
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.Reset" onclick="ClearAll()">
+                            </td>
+
+
+
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="Pagination" class="pagination" style="display:none">
+                        </div>
+                        <span class="pull-right" style="display:none">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                                   onchange="txtPageSize_OnChange()">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container" id="divTabContent">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAdditionalExpenseCode" value="0" />
+                            <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                            <div id="div_List_RightsUsageDetails" class="deal clearfix">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+

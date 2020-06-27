@@ -1,0 +1,426 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @*Syn Deal Index*@
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<style>
+    .navigation_tabs {
+        /* overflow: hidden !important;*/
+        overflow: visible !important;
+    }
+
+    .grid_area {
+        margin-top: 0px !important;
+    }
+</style>
+<script>
+    var clickedOnTab = false;
+    var CurrentTab = null;
+    var RedirectTab = null;
+
+    var pageGeneral = '@GlobalParams.Page_From_General';
+    var pageRights_List = '@GlobalParams.Page_From_Rights';
+    var pageRightsDetailAddEdit = '@GlobalParams.Page_From_Rights_Detail_AddEdit';
+    var pageRightsDetailView = '@GlobalParams.Page_From_Rights_Detail_View';
+    var pagePushback = '@GlobalParams.Page_From_Pushback';
+    var pageRun = '@GlobalParams.Page_From_Run';
+    var pageRunDetailAddEdit = '@GlobalParams.Page_From_Run_Detail_AddEdit';
+    var pageRunDetailView = '@GlobalParams.Page_From_Run_Detail_View';
+    var pageRevenue = '@GlobalParams.Page_From_Cost';
+    var pageCost = '@GlobalParams.Page_From_Cost';
+    var pagePaymentTerm = '@GlobalParams.Page_From_PaymentTerm';
+    var pageMaterial = '@GlobalParams.Page_From_Material';
+    var pageStatusHistory = '@GlobalParams.Page_From_StatusHistory';
+    var pageAttachment = '@GlobalParams.Page_From_Attachment';
+    var dealMode_View = '@GlobalParams.DEAL_MODE_VIEW';
+    var dealMode_Approve = '@GlobalParams.DEAL_MODE_APPROVE';
+    var pageRightsBulkUpdate = '@GlobalParams.Page_From_Rights_Bulk_Update';
+    var currentTabMultiLnag = '@ViewBag.currentTab';
+
+
+    $(document).ready(function () {
+        if ('@ViewBag.currentTab' != "") {
+
+            if (document.location.search == "") {
+                url_page = history.pushState({}, null, window.location.href + "?currentTab=GNR");
+            }
+            else {
+                if (document.location.search.substring(12) !=  '@ViewBag.currentTab')
+                {
+                    if (window.location.href.slice(window.location.href.length - 1) == "#")
+                        url_page = history.pushState({}, null, window.location.href.replace(document.location.search + '#', '') + "?currentTab=" + @ViewBag.currentTab);
+                    else
+                        url_page = history.pushState({}, null, window.location.href.replace(document.location.search, '') + "?currentTab=" + @ViewBag.currentTab);
+                }
+            }
+            $('#hdn_curent_TabFor_MultiLang_Syn').val('@ViewBag.currentTab');
+            if ('@ViewBag.currentTab' == "RGT") {
+                //history.pushState({}, null, window.location.href + "?currentTab=RGT");
+                BindPartialTabs(pageRights_List);
+            }
+            else if ('@ViewBag.currentTab' == "RGT_DTL_AE") {
+                BindPartialTabs(pageRightsDetailAddEdit);
+            }
+            else if ('@ViewBag.currentTab' == "RGT_DTL_VW") {
+                BindPartialTabs(pageRightsDetailView);
+            }
+            else if ('@ViewBag.currentTab' == "PBK") {
+                BindPartialTabs(pagePushback);
+            }
+            else if ('@ViewBag.currentTab' == "RUN") {
+                BindPartialTabs(pageRun);
+            }
+            else if ('@ViewBag.currentTab' == "RUN_DTL_AE") {
+                BindPartialTabs(pageRunDetailAddEdit);
+            }
+            else if ('@ViewBag.currentTab' == "RUN_DTL_VW") {
+                BindPartialTabs(pageRunDetailView);
+            }
+            else if ('@ViewBag.currentTab' == "SPT") {
+                BindPartialTabs(pageSports);
+            }
+            else if ('@ViewBag.currentTab' == "ANC") {
+                BindPartialTabs(pageAncillary);
+            }
+            else if ('@ViewBag.currentTab' == "BGT") {
+                BindPartialTabs(pageBudget);
+            }
+            else if ('@ViewBag.currentTab' == "CST") {
+                BindPartialTabs(pageCost);
+            }
+            else if ('@ViewBag.currentTab' == "PYT") {
+                BindPartialTabs(pagePaymentTerm);
+            }
+            else if ('@ViewBag.currentTab' == "MTR") {
+                BindPartialTabs(pageMaterial);
+            }
+            else if ('@ViewBag.currentTab' == "STH") {
+                BindPartialTabs(pageStatusHistory);
+            }
+            else if ('@ViewBag.currentTab' == "ATT") {
+                BindPartialTabs(pageAttachment);
+            }
+            else if ('@ViewBag.currentTab' == "V") {
+                BindPartialTabs(dealMode_View);
+            }
+            else if ('@ViewBag.currentTab' == "APRV") {
+                BindPartialTabs(dealMode_Approve);
+            }
+            else if ('@ViewBag.currentTab' == "BLK") {
+                BindPartialTabs(pageRightsBulkUpdate);
+            }
+            else if ('@ViewBag.currentTab' == "EWOA") {
+                BindPartialTabs(dealMode_EditWOA);
+            }
+            else if ('@ViewBag.currentTab' == "DGR") {
+                BindPartialTabs(digital_Rights);
+            }
+            else if ('@ViewBag.currentTab' == "GNR") {
+                BindPartialTabs(pageGeneral);
+            }
+        }
+        else
+            BindPartialTabs(pageGeneral);
+    });
+
+    function GetWorkflowStatusFromServer() {
+        debugger;
+        var dealTypeCode = 0;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetWorkflowStatusFromServer", "Syn_General")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.DealWorkflowFlag == "O" || result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_New' ||
+                     result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Ammended') {
+                        $('#divStamp').removeClass().addClass('stampBg approved');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Approved') {
+                        $('#divStamp').removeClass().addClass('stampBg approved');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Waiting') {
+                        $('#divStamp').removeClass().addClass('stampBg pending');
+                    }
+                    else if (result.DealWorkflowFlag == '@GlobalParams.dealWorkFlowStatus_Declined') {
+                        $('#divStamp').removeClass().addClass('stampBg rejected');
+                    }
+                    $('#lblWorkflowStatus').text(result.DealWorkflowStatus);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        return dealTypeCode;
+    }
+
+    function BindTopSynDetails() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTopSynDetails", "Syn_General")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTopBand').empty();
+                    $('#divTopBand').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        fromGeneralTab = "N";
+    }
+
+    function BindPartialTabs(tabName) {
+        debugger;
+        CurrentTab = $.trim(tabName);
+        var URL_PartialView = "";
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").removeAttr("disabled", "disabled").removeClass("active");
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").find("input:button").removeAttr("disabled", "disabled");
+        if (tabName == pageGeneral) {
+            // $("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_General');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_General');
+            URL_PartialView = '@Url.Action("Index", "Syn_General")';
+        }
+        else if (tabName == pageRights_List) {
+
+            //  $("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_Rights');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_Rights');
+            URL_PartialView = '@Url.Action("Index", "Syn_Rights_List")';
+            $("#liRights").attr('disabled', 'disabled').addClass("active");
+            $("#liRights input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageRightsDetailAddEdit) {
+
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_Rights');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_Rights');
+            URL_PartialView = '@Url.Action("Index", "Syn_Rights")';
+            $("#liRights").attr('disabled', 'disabled').addClass("active");
+            $("#liRights input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageRightsBulkUpdate) {
+
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_Rights');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_Rights');
+            URL_PartialView = '@Url.Action("BulkUpdate", "Syn_Rights_List")';
+            $("#liRights").attr('disabled', 'disabled').addClass("active");
+            $("#liRights input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageRightsDetailView) {
+
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_Rights');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_Rights');
+            URL_PartialView = '@Url.Action("View", "Syn_Rights")';
+            $("#liRights").attr('disabled', 'disabled').addClass("active");
+            $("#liRights input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pagePushback) {
+
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_LicensorHoldback');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_LicensorHoldback');
+            URL_PartialView = '@Url.Action("Index", "Syn_Pushback")';
+            $("#liPushback").attr('disabled', 'disabled').addClass("active");
+            $("#liPushback input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageRun) {
+            debugger;
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_RunDefinition');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_RunDefinition');
+            URL_PartialView = '@Url.Action("Index", "Syn_Run_List")';
+            $("#liRun").attr('disabled', 'disabled').addClass("active");
+            $("#liRun input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageRunDetailAddEdit) {
+            debugger
+            //  $("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_RunDefinition');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_RunDefinition');
+            URL_PartialView = '@Url.Action("Index", "Syn_Run")';
+            $("#liRun").attr('disabled', 'disabled').addClass("active");
+            $("#liRun input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageRunDetailView) {
+            debugger
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_RunDefinition');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_RunDefinition');
+            URL_PartialView = '@Url.Action("View", "Syn_Run")';
+            $("#liRun").attr('disabled', 'disabled').addClass("active");
+            $("#liRun input:button").attr('disabled', 'disabled');
+        }
+            @*else if (tabName == pageAncillary) {
+            URL_PartialView = '@Url.Action("Index", "Syn_Ancillary")';
+            $("#liAncillary").addClass("active");
+        }*@
+        else if (tabName == pageRevenue) {
+
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=Login');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?Login');
+            URL_PartialView = '@Url.Action("Index", "Syn_Revenue")';
+            $("#liRevenue").attr('disabled', 'disabled').addClass("active");
+            $("#liRevenue input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pagePaymentTerm) {
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=paymentpay');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?paymentpay');
+            URL_PartialView = '@Url.Action("Index", "Syn_Payment_Term")';
+            $("#liPaymentTerm").attr('disabled', 'disabled').addClass("active");
+            $("#liPaymentTerm input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageMaterial) {
+
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=Login');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_General');
+            URL_PartialView = '@Url.Action("Index", "Syn_Material")';
+            $("#liMaterial").attr('disabled', 'disabled').addClass("active");
+            $("#liMaterial input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageAttachment) {
+
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_Attachments');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_Attachments');
+            URL_PartialView = '@Url.Action("Index", "Syn_Attachment")';
+            $("#liAttachment").attr('disabled', 'disabled').addClass("active");
+            $("#liAttachment input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageStatusHistory) {
+
+            //$("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_StatusHistory');
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_StatusHistory');
+            URL_PartialView = '@Url.Action("Index", "Syn_Status_History")';
+            $("#liStatusHistory").attr('disabled', 'disabled').addClass("active");
+            $("#liStatusHistory input:button").attr('disabled', 'disabled');
+        }
+        $.ajax({
+            type: "POST",
+            url: URL_PartialView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divPartialTabs').empty();
+                    $('#divPartialTabs').html(result);
+                    if (currentTabMultiLnag != "") {
+                        BindTopSynDetails();
+                    }
+                    else if (tabName == pageGeneral) {
+                        BindTopSynDetails();
+                        $("#liGeneral").attr('disabled', 'disabled').addClass("active");
+                        $("#liGeneral input:button").attr('disabled', 'disabled');
+                    }
+                    else
+                        GetWorkflowStatusFromServer();
+                    hideLoading();
+                    initializeTooltip();
+                    initializeDatepicker();
+                    initializeChosen();
+                    initializeExpander();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function SaveApprovalRemarksAndRedirect(tabName) {
+        if (SaveApprovalRemarks()) {
+            BindPartialTabs(tabName);
+        }
+    }
+    function HideAllPopupDiv() {
+        try {
+            FadeOutPopup();
+        }
+        catch (err) {
+        }
+    }
+</script>
+<style>
+    .container .grid_area {
+        height: 80%;
+        margin-top: 0px !important;
+    }
+</style>
+<div class="main_section" onclick="HideAllPopupDiv()">
+    <section class="rightsU_container clearfix">
+        <div class="container syn main_col">
+            <input type="hidden" id="hdn_curent_TabFor_MultiLang_Syn" value="" />
+            <div id="divTopBand">
+            </div>
+            <div id="divPartialTabs">
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddPaymentTerm" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="program_popup">
+                <div>
+                    <div class="form_fields" dir="@objMessageKey.LayoutDirection">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Add Payment Term</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper add_program_popup">
+                                <li>
+                                    <label><b>Payment Term</b></label>
+                                    <input class="form_input" id="Payment_Term_Name" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);" />
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li class="poptalent">
+                                        <a class="btn btn-primary" href="#" onclick="return validate()">@objMessageKey.Save</a>
+                                    </li>
+                                    <li class="poptalent">
+                                        <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

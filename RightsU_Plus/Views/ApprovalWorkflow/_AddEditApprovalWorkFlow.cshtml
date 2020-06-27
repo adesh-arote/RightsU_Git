@@ -1,0 +1,476 @@
+﻿@model List<RightsU_Entities.Workflow>
+@{
+    RightsU_Entities.Workflow objWorkflow = new RightsU_Entities.Workflow();
+    if (ViewData["MyWorkflow"] != "")
+    {
+        objWorkflow = (RightsU_Entities.Workflow)ViewData["MyWorkflow"];
+    }
+}
+<script>
+    var IsCall = 'Y', Command_Name = "";
+    var URL_BindWorkflowSG = '@Url.Action("BindWorkflowSG", "ApprovalWorkflow")';
+    var URL_DeleteWorkflowSG = '@Url.Action("DeleteWorkflowSG", "ApprovalWorkflow")';
+    var URL_AddEditWorkflowSG = '@Url.Action("AddEditWorkflowSG", "ApprovalWorkflow")';
+    var URL_UpdateWorkflowSG = '@Url.Action("UpdateWorkflowSG", "ApprovalWorkflow")';
+    var URL_SaveWorkflowSG = '@Url.Action("SaveWorkflowSG", "ApprovalWorkflow")';
+    var URL_SaveWorkflow = '@Url.Action("SaveWorkflow", "ApprovalWorkflow")';
+    var URL_Cancel_Workflow = '@Url.Action("CancelAddEditWorkflow", "ApprovalWorkflow")';
+    $(document).ready(function () {
+        debugger;
+       
+        showLoading();
+        BindWorkflowSG();
+        $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val());
+        var Status = '@ViewData["Status"]';
+        if (Status == 'A') {
+            $("#btnSave").val("Save");
+        }
+        else if (Status == 'U') {
+            $("#btnSave").val("Save");
+        }
+        $(".numeric").keypress(function () {
+            CheckNumeric(event);
+        });
+
+        hideLoading();
+        $("#Business_Unit_Code").change(function () {
+            debugger;
+            var BUCode = this.value;
+                $("#hdnBUCode").val(BUCode);
+            });   
+    });
+    function checkCurrentAction() {
+
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First")
+            return false;
+        }
+        return true;
+    }
+    function BindWorkflowSG() {
+        var BUCode = 0;
+        if ($('#Business_Unit_Code').val() != "") {
+            BUCode = $('#Business_Unit_Code').val();
+            if (BUCode == undefined) {
+                BUCode = $('#hdnBVCode_View').val();
+            }
+        }
+        var WorkflowCode = $('#hdnWorkflowCode').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindWorkflowSG,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                WorkflowCode: WorkflowCode,
+                BUCode: BUCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divWorkflowSG').empty();
+                    $('#divWorkflowSG').html(result);
+                    jQuery(".chosen").chosen();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function AddEditWorkflowSG(dummyGuid, commandName) {
+        if ($("#Business_Unit_Code").val() != "" || $("#Business_Unit_Code").val() != 0) {
+            if (checkCurrentAction()) {
+                $('#hdnAction').val(commandName)
+                $.ajax({
+                    type: "POST",
+                    url: URL_AddEditWorkflowSG,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        dummyGuid: dummyGuid,
+                        commandName: commandName
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.Status == "S") {
+                                mybutton_counter = 0;
+                                BindWorkflowSG();
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+                });
+            }
+        }
+        else {
+            $('#Business_Unit_Code').attr('required', true)
+        }
+    }
+    var mybutton_counter = 0;
+    function SaveWorkFlowSG() {
+        debugger;
+        if (mybutton_counter > 0) { return false; }
+        
+        if (!Validate_Save_WorkflowSG()) {
+            mybutton_counter = 0;
+            return false;
+        }
+        var Security_Group_Code = $("#Security_Group_Code").val();
+        var formData = new FormData();
+        formData.append("Security_Group_Code", Security_Group_Code);
+        $.ajax({
+            type: "POST",
+            url: URL_SaveWorkflowSG,
+            method: "POST",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        mybutton_counter++;
+                        $('#hdnAction').val("")
+                        BindWorkflowSG();
+                    }
+                    else {
+                        mybutton_counter = 0;
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                mybutton_counter = 0;
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function UpdateWorkFlowSG(dummyGuid) {
+        debugger;
+        if (!Validate_Save_WorkflowSG()) {
+            return false;
+        }
+        var DummyGuid = dummyGuid;
+        var Security_Group_Code_Edit = $("#Security_Group_Code_Edit").val();
+        var formData = new FormData();
+        formData.append("DummyGuid", DummyGuid);
+        formData.append("Security_Group_Code_Edit", Security_Group_Code_Edit);
+
+        $.ajax({
+            type: "POST",
+            url: URL_UpdateWorkflowSG,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindWorkflowSG();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function DeleteWorkFlowSG(dummyGuid, confirmed) {
+        debugger;
+        if (checkCurrentAction()) {
+            if (confirmed) {
+                Command_Name = "";
+                dummyGuid_G = "";
+                $.ajax({
+                    type: "POST",
+                    url: URL_DeleteWorkflowSG,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        dummyGuid: dummyGuid,
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.Status == "S") {
+                                $('#hdnAction').val("");
+                                BindWorkflowSG();
+                            }
+                            else {
+                                showAlert("E", result.Message);
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+                })
+            }
+            else {
+                Command_Name = "DELETE_EXCHANGE_RATE";
+                dummyGuid_G = dummyGuid;
+                showAlert("I", "Are you sure, you want to delete this record ?", "OKCANCEL")
+            }
+        }
+    }
+    function CancelWorkFlowSG() {
+        $('#hdnAction').val("")
+        BindWorkflowSG();
+    }
+    function Validate_Save() {
+        debugger;
+        var returnVal = true;
+        if ($.trim($('#Workflow_Name').val()) == "") {
+            $('#Workflow_Name').val('')
+            $('#Workflow_Name').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Workflow_Remarks').val()) == "") {
+            $('#Workflow_Remarks').val('')
+            $('#Workflow_Remarks').attr('required', true)
+            returnVal = false;
+        }
+        if ($('#hdnStatus').val() == "A") {
+            if ($.trim($('#Business_Unit_Code').val()) == 0) {
+                returnVal = false;
+                $('#Business_Unit_Code').attr('required', true)
+            }
+        }
+        return returnVal;
+    }
+    function Validate_Save_WorkflowSG() {
+        debugger;
+        var returnVal = true;
+        if (($('#Security_Group_Code,#Security_Group_Code_Edit').val()) == 0) {
+            returnVal = false;
+            $('#Security_Group_Code,#Security_Group_Code_Edit').attr('required', true)
+        }
+        return returnVal;
+    }
+    function SaveWorkflow() {
+        if (checkCurrentAction()) {
+            if (!Validate_Save()) {
+                return false;
+            }
+        }
+        else {
+            alert("return false")
+            return false;
+        }
+    }
+    function CheckNumeric(e) {
+        if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) { event.returnValue = false; return false; } }
+    }
+    function CancelSaveDeal() {
+        debugger;
+        Command_Name = "CANCEL_SAVE_DEAL";
+        showAlert("I", 'All unsaved data will be lost, still want to go ahead?', "OKCANCEL");
+    }
+    function handleOk() {
+        debugger;
+        if (Command_Name == "DELETE_EXCHANGE_RATE") {
+            DeleteWorkFlowSG(dummyGuid_G, true);
+        }
+        if (Command_Name == "CANCEL_SAVE_DEAL" || Command_Name == "SAVE_UPDATE_Workflow") {
+
+            var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+            if (recordLockingCode > 0)
+                ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+
+            BindPartialView("LIST", 0)
+        }
+    }
+    function handleCancel() {
+        Command_Name = "";
+        dummyGuid_G = "";
+    }
+    function SaveSuccess(result) {
+        debugger;
+        if (result.Status == "S") {
+            showAlert("S", result.Message);
+            $('#hdnRecodLockingCode').val(0)
+            $('#hdnRecodLockingCode_temp').val(0)
+            BindPartialView("LIST", 0)
+
+        }
+        else {
+            Command_Name = "";
+            showAlert("E", result.Message);
+        }
+    }
+
+</script>
+
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        @if (ViewData["Status"] == "A")
+        {
+            <input type="hidden" id="hdnStatus" name="hdnStatus" value="A" />
+            <span>  Add Approval WorkFlow </span>
+        }
+        else if (ViewData["Status"] == "U")
+        {
+            <input type="hidden" id="hdnStatus" name="hdnStatus" value="U" />
+            <span>  Edit Approval WorkFlow </span>
+        }
+        else if (ViewData["Status"] == "V")
+        {
+            <input type="hidden" id="hdnStatus" name="hdnStatus" value="V" />
+            <span>  View Approval WorkFlow </span>
+        }
+        <span> </span>
+    </h2>
+</div>
+@using (Ajax.BeginForm("SaveWorkflow", "ApprovalWorkflow", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    <table class="table_brif table">
+        <tbody>
+            <tr>
+                <td class="intro">
+                    @if (ViewData["Status"] != "V")
+                    {
+                        <table class="four_column table">
+                            <tr>
+                                <td>Workflow Name :</td>
+                                <td>
+                                    <input type="text" maxlength="150" id="Workflow_Name" name="Workflow_Name" value="@objWorkflow.Workflow_Name" />
+                                    <input type="hidden" id="hdnWorkflowCode" name="Workflow_Code" value="@objWorkflow.Workflow_Code" />
+                                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                                    <input type="hidden" id="hdnBUCode" name="hdnBUCode" value="@objWorkflow.Business_Unit_Code" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Description :</td>
+                                <td>
+                                    <input type="text" maxlength="1000" id="Workflow_Remarks" name="Workflow_Remarks" value="@objWorkflow.Remarks" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Business Unit :</td>
+                                <td id="Business_Unit">
+                                    @if (ViewData["Status"] == "U")
+                                    {
+                                        if (@objWorkflow.Workflow_Role.Count == 0)
+                                        {
+                                            @Html.DropDownList("Business_Unit_Code", TempData["BusinessUnit"] as SelectList, "--Please Select--", new { @class = "form_input chosen-select " })
+
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("Business_Unit_Code", TempData["BusinessUnit"] as SelectList, "--Please Select--", new { @class = "form_input chosen-select ", disabled = "disabled" })
+                                        }
+                                    }
+                                    else if (ViewData["Status"] == "A")
+                                    {
+                                        @Html.DropDownList("Business_Unit_Code", TempData["BusinessUnit"] as SelectList, "--Please Select--", new { @class = "form_input chosen-select" })
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                    else
+                    {
+                        <table class="four_column table">
+                            <tr>
+                                <td>Workflow Name :</td>
+                                <td>
+                                    @objWorkflow.Workflow_Name
+                                    <input type="hidden" id="hdnWorkflowCode" name="Workflow_Code" value="@objWorkflow.Workflow_Code" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Description :</td>
+                                <td>
+                                    @objWorkflow.Remarks
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Business Unit :</td>
+                                <td>
+                                    @objWorkflow.Business_Unit.Business_Unit_Name
+                                    <input type="hidden" id="hdnBVCode_View" name="Workflow_Code" value="@objWorkflow.Business_Unit_Code" />
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    if (ViewData["Status"] != "V")
+    {
+        <div class="right_nav pull-right" style="margin-right:10px">
+            <input type="button" value="Add" onclick="AddEditWorkflowSG('0','ADD')" id="btnAdd" class="btn btn-primary">
+        </div>
+    }
+    <br />
+    <br />
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block">
+            <input type="hidden" id="hdnAction" value="" />
+            <input type="hidden" id="hdnWorkflowSGCode" value="0" />
+            <div id="divWorkflowSG" class="deal clearfix">
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="bottom_action">
+        @if (ViewData["Status"] != "V")
+        {
+            <ul class="form_link_nav clearfix">
+                <li>
+                    <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="return SaveWorkflow()" />
+                </li>
+                <li>
+                    <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal()" />
+                </li>
+            </ul>
+        }
+        else
+        {
+            <ul class="form_link_nav clearfix">
+                <li>
+                    <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="BindPartialView('LIST', 0)" />
+                </li>
+            </ul>
+        }
+    </div>
+}

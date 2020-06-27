@@ -1,0 +1,78 @@
+﻿@model List<RightsU_Entities.SAP_WBS>
+<script type="text/javascript">
+    function RadioCheck(rb,selectedWBSCode) {
+        var gv = document.getElementById("gvWBS");
+        var rbs = gv.getElementsByTagName("input");
+        var row = rb.parentNode.parentNode;
+        $('#SAP_WBS_Code').val(selectedWBSCode);
+        for (var i = 0; i < rbs.length; i++) {
+            if (rbs[i].type == "radio") {
+                if (rbs[i].checked && rbs[i] != rb) {
+                    rbs[i].checked = false;
+                    break;
+                }
+            }
+        }
+    }
+</script>
+@*<style>
+    .modal.scroll input[type=radio] {
+        margin: 10px 2px 0 15px !important;
+    }
+</style>*@
+        <table class="table table-bordered table-hover" id="gvWBS">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">Select</th>
+                    <th style="width: 12%;">WBS Code</th>
+                    <th style="width: 38%;">WBS Description</th>
+                    <th style="width: 10%;">Studio/Vendor</th>
+                    <th style="width: 10%;">Original/Dubbed</th>
+                    <th style="width: 10%;">Short ID</th>
+                    <th style="width: 10%;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        bool isChecked = false;
+                        if (item.SAP_WBS_Code == (int)ViewBag.SelectedWBSCode)
+                        {
+                            isChecked = true;
+                        }
+
+                        <tr>
+                            <td align="center">
+                                <input type="radio" onclick="RadioCheck(this,@item.SAP_WBS_Code);" checked="@isChecked" />
+                            </td>
+                            <td>
+                                @item.WBS_Code
+                            </td>
+                            <td>
+                                @item.WBS_Description
+                            </td>
+                            <td>
+                                @item.Studio_Vendor
+                            </td>
+                            <td>
+                                @item.Original_Dubbed
+                            </td>
+                            <td>
+                                @item.Short_ID
+                            </td>
+                            <td>
+                                @item.Status
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7">No record found </td>
+                    </tr>
+                }
+            </tbody>
+        </table>

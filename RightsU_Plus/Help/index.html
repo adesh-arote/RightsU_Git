@@ -1,0 +1,469 @@
+﻿<!DOCTYPE HTML>
+<html  lang="en">
+<head>
+	<title>RightsU User Manual</title>
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<link rel="icon" type="img/ico" href="img/u-to.ico">
+	<link type="text/css" rel="stylesheet" href="css/UserManual.css">
+	<link href="css/dtree.css" rel="stylesheet" />
+	<script src="js/jquery-2.1.1.min.js"></script>
+	<script src="js/dtree.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		    $(".dTree").dTree();
+		    ChangeFrameset();
+		    function ChangeFrameset() {
+		        debugger;
+		       // alert("str");
+		        var str = location.search.match(/\IntCode\= *([^\&]+)/);
+		        		//alert(str);
+		        var IntCode = 'Login';
+		        if (str != null)
+		            if (str[1] != null)
+		                IntCode = str[1];
+		        //var SiteName = 'http://localhost:49657/Help/'
+		        var SiteName = ''
+		        //alert(IntCode);
+		        switch (IntCode) {
+		            case 'Layout':
+		                location.replace(SiteName + 'Layout.html','main-help');
+		                break;
+
+		            case 'Login':
+		                location.replace(SiteName + 'login.html', 'main_help');
+		                break;
+		            case 'AdditionalExpanse':
+		                location.replace(SiteName + 'Masters/AdditionalExpenses.html', 'main_help',true);
+		                break;
+		            case 'Category':
+		                location.replace(SiteName + 'Masters/Category.html', 'main_help');
+		                break;
+		            case 'ChangePassword':
+		                location.replace(SiteName + 'Settings/ChangePassword.html', 'main_help', true);
+		                break;
+		            case 'AmortRule':
+		                location.replace(SiteName + 'Settings/AmortRule.html', 'main_help', true);
+		                break;
+		            case 'AmortMonthClosing':
+		                location.replace(SiteName + 'Settings/AmortMonthClosing.html', 'main_help', true);
+		                break;
+		            case 'ApprovalWorkflow':
+		                location.replace(SiteName + 'Settings/ApprovalWorkflow.html', 'main_help', true);
+		                break;
+		            case 'AssignWorkflow':
+		                location.replace(SiteName + 'Settings/AssignWorkflow.html', 'main_help', true);
+		                break;
+		            case 'Channel':
+		                location.replace(SiteName + 'Masters/Channel.html', 'main_help');
+		                break;
+		            case 'Commercial':
+		                location.replace(SiteName + 'Masters/Channel_1.htm', 'main_help');
+		                break;
+		            case 'CostType':
+		                location.replace(SiteName + 'Masters/CostType.html', 'main_help');
+		                break;
+		            case 'Country':
+		                location.replace(SiteName + 'Masters/Country.html', 'main_help');
+		                break;
+		            case 'Currency':
+		                location.replace(SiteName + 'Masters/Currency.html', 'main_help');
+		                break;
+		            case 'DocumentType':
+		                location.replace(SiteName + 'Masters/DocumentType.html', 'main_help');
+		                break;
+		            case 'Exception':
+		                location.replace(SiteName + 'Masters/Exception.html', 'main_help');
+		                break;
+		            case 'Genres':
+		                location.replace(SiteName + 'Masters/Genres.html', 'main_help');
+		                break;
+		            case 'GradeMaster':
+		                location.replace(SiteName + 'Masters/GradeMaster.html', 'main_help');
+		                break;
+		            case 'Language':
+		                location.replace(SiteName + 'Masters/Language.html', 'main_help');
+		                break;
+		            case 'LanguageGroup':
+		                location.replace(SiteName + 'Masters/LanguageGroup.html', 'main_help');
+		                break;
+		            case 'Masters':
+		                location.replace(SiteName + 'Masters/Masters.html', 'main_help');
+		                break;
+		            case 'MaterialMedium':
+		                location.replace(SiteName + 'Masters/MaterialMedium.html', 'main_help');
+		                break;
+		            case 'MaterialType':
+		                location.replace(SiteName + 'Masters/MaterialType.html', 'main_help');
+		                break;
+		            case 'Party':
+		                location.replace(SiteName + 'Masters/Party.html', 'main_help');
+		                break;
+		            case 'PaymentTerms':
+		                location.replace(SiteName + 'Masters/PaymentTerms.html', 'main_help');
+		                break;
+		            case 'RightRule':
+		                location.replace(SiteName + 'Masters/RightRule.html', 'main_help');
+		                break;
+		            case 'RoyaltyRecoupment':
+		                location.replace(SiteName + 'Masters/RoyaltyRecoupment.html', 'main_help');
+		                break;
+		            case 'SecurityGroup':
+		                location.replace(SiteName + 'Masters/SecurityGroup.html', 'main_help');
+		                break;
+		            case 'Talent':
+		                location.replace(SiteName + 'Masters/Talent.html', 'main_help');
+		                break;
+		            case 'Territory':
+		                location.replace(SiteName + 'Masters/Territory.html', 'main_help');
+		                break;
+		            case 'User':
+		                location.replace(SiteName + 'Masters/User.html', 'main_help');
+		                break;
+
+		            case 'acq_AmendAfterSyn':
+		                location.replace(SiteName + 'Modules/acq_AmendAfterSyn.html', 'main_help');
+		                break;
+		            case 'acq_Amendment':
+		                location.replace(SiteName + 'Modules/acq_Amendment.html', 'main_help');
+		                break;
+		            case 'acq_Ancillary':
+		                location.replace(SiteName + 'Modules/acq_Ancillary.html', 'main_help');
+		                break;
+		            case 'acq_Attachments':
+		                location.replace(SiteName + 'Modules/acq_Attachments.html', 'main_help');
+		                break;
+		            case 'acq_BacktoVersion':
+		                location.replace(SiteName + 'Modules/acq_BacktoVersion.html', 'main_help');
+		                break;
+		            case 'acq_Budget':
+		                location.replace(SiteName + 'Modules/acq_Budget.html', 'main_help');
+		                break;
+		            case 'acq_Clone':
+		                location.replace(SiteName + 'Modules/acq_Clone.html', 'main_help');
+		                break;
+		            case 'acq_Close Title':
+		                location.replace(SiteName + 'Modules/acq_Close Title.html', 'main_help');
+		                break;
+		            case 'acq_General':
+		                location.replace(SiteName + 'Modules/acq_General.html', 'main_help');
+		                break;
+		            case 'acq_LicensorHoldback':
+		                location.replace(SiteName + 'Modules/acq_LicensorHoldback.html', 'main_help');
+		                break;
+		            case 'acq_Rights':
+		                location.replace(SiteName + 'Modules/acq_Rights.html', 'main_help');
+		                break;
+		            case 'acq_RunDefinition':
+		                location.replace(SiteName + 'Modules/acq_RunDefinition.html', 'main_help');
+		                break;
+		            case 'acq_SendApproval':
+		                location.replace(SiteName + 'Modules/acq_SendApproval.html', 'main_help');
+		                break;
+		            case 'acq_Set Milestone':
+		                location.replace(SiteName + 'Modules/acq_Set Milestone.html', 'main_help');
+		                break;
+		            case 'acq_SportsAncillary':
+		                location.replace(SiteName + 'Modules/acq_SportsAncillary.html', 'main_help');
+		                break;
+		            case 'acq_SportsRights':
+		                location.replace(SiteName + 'Modules/acq_SportsRights.html', 'main_help');
+		                break;
+		            case 'acq_StatusHistory':
+		                location.replace(SiteName + 'Modules/acq_StatusHistory.html', 'main_help');
+		                break;
+		            case 'acq_WorkflowStatus':
+		                location.replace(SiteName + 'Modules/acq_WorkflowStatus.html', 'main_help');
+		                break;
+		            case 'AcquisitionDeal':
+		                location.replace(SiteName + 'Modules/AcquisitionDeal.html', 'main_help');
+		                break;
+		            case 'syn_Amendment':
+		                location.replace(SiteName + 'Modules/syn_Amendment.html', 'main_help');
+		                break;
+		            case 'syn_Attachments':
+		                location.replace(SiteName + 'Modules/syn_Attachments.html', 'main_help');
+		                break;
+		            case 'syn_BacktoVersion':
+		                location.replace(SiteName + 'Modules/syn_BacktoVersion.html', 'main_help');
+		                break;
+		            case 'syn_General':
+		                location.replace(SiteName + 'Modules/syn_General.html', 'main_help');
+		                break;
+		            case 'syn_LicensorHoldback':
+		                location.replace(SiteName + 'Modules/syn_LicensorHoldback.html', 'main_help');
+		                break;
+		            case 'syn_Rights':
+		                location.replace(SiteName + 'Modules/syn_Rights.html', 'main_help');
+		                break;
+		            case 'syn_RunDefinition':
+		                location.replace(SiteName + 'Modules/syn_RunDefinition.html', 'main_help');
+		                break;
+		            case 'syn_SendApproval':
+		                location.replace(SiteName + 'Modules/syn_SendApproval.html', 'main_help');
+		                break;
+		            case 'syn_StatusHistory':
+		                location.replace(SiteName + 'Modules/syn_StatusHistory.html', 'main_help');
+		                break;
+		            case 'syn_WorkflowStatus':
+		                location.replace(SiteName + 'Modules/syn_WorkflowStatus.html', 'main_help');
+		                break;
+		            case 'SyndicationDeals':
+		                location.replace(SiteName + 'Modules/SyndicationDeals.html', 'main_help');
+		                break;
+		            case 'TitleList':
+		                location.replace(SiteName + 'Modules/TitleList.html', 'main_help');
+		                break;
+
+		            case 'AcqDealListReport':
+		                location.replace(SiteName + 'Reports/AcqDealListReport.html', 'main_help');
+		                break;
+		            case 'AcqQueryReport':
+		                location.replace(SiteName + 'Reports/AcqQueryReport.html', 'main_help');
+		                break;
+		            case 'Dashboard':
+		                location.replace(SiteName + 'Reports/Dashboard.html', 'main_help');
+		                break;
+		            case 'DashboardGraphical':
+		                location.replace(SiteName + 'Reports/DashboardGraphical.html', 'main_help');
+		                break;
+		            case 'DealExpiryReport':
+		                location.replace(SiteName + 'Reports/DealExpiryReport.html', 'main_help');
+		                break;
+		            case 'LoggedUsers':
+		                location.replace(SiteName + 'Reports/LoggedUsers.html', 'main_help');
+		                break;
+		            case 'LoginDetailsReports':
+		                location.replace(SiteName + 'Reports/LoginDetailsReports.html', 'main_help');
+		                break;
+		            case 'PA_RightsReport':
+		                location.replace(SiteName + 'Reports/PA_RightsReport.html', 'main_help');
+		                break;
+		            case 'PlatformwiseAcq':
+		                location.replace(SiteName + 'Reports/PlatformwiseAcq.html', 'main_help');
+		                break;
+		            case 'RightsUsageReport':
+		                location.replace(SiteName + 'Reports/RightsUsageReport.html', 'main_help');
+		                break;
+		            case 'RunExceptionReport':
+		                location.replace(SiteName + 'Reports/RunExceptionReport.html', 'main_help');
+		                break;
+		            case 'RunUtilizationReport':
+		                location.replace(SiteName + 'Reports/RunUtilizationReport.html', 'main_help');
+		                break;
+		            case 'SynDealListReport':
+		                location.replace(SiteName + 'Reports/SynDealListReport.html', 'main_help');
+		                break;
+		            case 'SynQueryReport':
+		                location.replace(SiteName + 'Reports/SynQueryReport.html', 'main_help');
+		                break;
+		            case 'TitleAvailability2':
+		                location.replace(SiteName + 'Reports/TitleAvailability2.html', 'main_help');
+		                break;
+		            case 'TitleAvailability3':
+		                location.replace(SiteName + 'Reports/TitleAvailability3.html', 'main_help');
+		                break;
+		            case 'TitleAvailabilityReport':
+		                location.replace(SiteName + 'Reports/TitleAvailabilityReport.html', 'main_help');
+		                break;
+		        }
+
+		    }
+
+		});  
+	</script>
+	<title>Jquery Directory Tree</title>
+
+    <script language="javascript" type="text/javascript">
+
+ 
+    </script>
+
+</head>
+<body>
+<frameset cols='200,*' frameborder='no' border='0' framespacing='0' onload='ChangeFrameset();'> 
+  <frame name='leftmenu_help' scrolling='no' noresize src='leftmenu.htm'>
+  <frame name='main_help' scrolling='auto' src='main.htm'>
+</frameset>
+	<header>
+	</header>
+	<!--<aside>
+		<div class="topImg">
+			<img src="img/rights_u.png">
+		</div>
+		<div class="dTree">
+			<ul>
+				<li><a href="index.html">USER MANUAL</a></li>
+				<li><a href="login.html">Login page</a></li>
+				<li><a href="ForgotPassword.html">Forgot password</a></li>
+				<li><a href="NewUserCreation.html">New User Creation</a></li>
+				<li><a href="Masters.html">Masters</a>
+					<ul>
+						<li><a href="Masters/Currency.html">Currency</a></li>
+						<li><a href="#">Territory</a>
+							<ul>
+								<li><a href="Masters/Territory.html">Territory</a></li>
+								<li><a href="Masters/Country.html">Country</a></li>
+							</ul>
+						</li>
+						<li><a href="Masters/Genres.html">Genres</a></li>
+						<li><a href="Masters/Commercial.html">Commercial</a>
+							<ul>
+								<li><a href="Masters/Category.html">Category</a></li>
+								<li><a href="Masters/Channel.html">Channel</a></li>
+								<li><a href="Masters/Language.html">Language</a></li>
+								<li><a href="Masters/LanguageGroup.html">Language Group</a></li>
+								<li><a href="Masters/Talent.html">Talent</a></li>
+								<li><a href="Masters/AdditionalExpenses.html">Additional Expenses</a></li>
+								<li><a href="Masters/GradeMaster.html">Grade Master</a></li>
+								<li><a href="Masters/RightRule.html">Right Rule</a></li>
+							</ul>
+						</li>
+						<li><a href="Masters/CostType.html">Cost Type</a></li>
+						<li><a href="Masters/DocumentType.html">Document Type</a></li>
+						<li><a href="Masters/Party.html">Party</a></li>
+						<li><a href="Masters/PaymentTerms.html">Payment Terms</a></li>
+						<li><a href="Masters/Material.html">Material</a>
+							<ul>
+								<li><a href="Masters/MaterialMedium.html">Material Medium</a></li>
+								<li><a href="Masters/MaterialType.html">Material Type</a></li>
+							</ul>
+						</li>
+						<li><a href="Masters/UserMgmt.html">User Mgmt</a>
+							<ul>
+								<li><a href="Masters/SecurityGroup.html">Security Group</a></li>
+								<li><a href="Masters/User.html">User</a></li>
+							</ul>
+						</li>
+						<li><a href="Masters/RoyaltyRecoupment.html">Royalty Recoupment</a></li>
+						<li><a href="Masters/Exception.html">Exception</a></li>
+					</ul>
+				</li>
+				<li><a href="#">Modules</a>
+					<ul>
+						<li><a href="Modules/TitleList.html">Title</a></li>
+						<li><a href="Modules/AcquisitionDeal.html">Acquisition Deal</a>
+							<ul>
+								<li><a href="Modules/acq_General.html">General</a></li>
+								<li><a href="Modules/acq_Rights.html">Rights</a></li>
+								<li><a href="Modules/acq_LicensorHoldback.html">Licensor Holdback</a></li>
+								<li><a href="Modules/acq_RunDefinition.html">Run Definition</a></li>
+								<li><a href="Modules/acq_Budget.html">Budget</a></li>
+								<li><a href="Modules/acq_Ancillary.html">Ancillary</a></li>
+								<li><a href="Modules/acq_Attachments.html">Attachments</a></li>
+								<li><a href="Modules/acq_SportsRights.html">Sports Rights</a></li>
+								<li><a href="Modules/acq_SportsAncillary.html">Sports Ancillary</a></li>
+								<li><a href="Modules/acq_StatusHistory.html">Status History</a></li>
+								<li><a href="Modules/acq_WorkflowStatus.html">Workflow Status</a></li>
+								<li><a href="Modules/acq_SendApproval.html">Send For Approval</a></li>
+								<li><a href="Modules/acq_Amendment.html">Amendment</a></li>
+								<li><a href="Modules/acq_AmendAfterSyn.html">Amend After Syndication</a></li>
+								<li><a href="Modules/acq_Set Milestone.html">Set Milestone</a></li>
+								<li><a href="Modules/acq_BacktoVersion.html">Back to Version</a></li>
+								<li><a href="Modules/acq_Clone.html">Renew / Clone</a></li>
+								<li><a href="Modules/acq_Close Title.html">Close Title</a></li>
+							</ul>
+						</li>
+						<li><a href="Modules/SyndicationDeals.html">Syndication Deals</a>
+							<ul>
+								<li><a href="Modules/syn_General.html">General</a></li>
+								<li><a href="Modules/syn_Rights.html">Rights</a></li>
+								<li><a href="Modules/syn_LicensorHoldback.html">Licensor Holdback</a></li>
+								<li><a href="Modules/syn_RunDefinition.html">Run Definition</a></li>
+								<li><a href="Modules/syn_Attachments.html">Attachments</a></li>
+								<li><a href="Modules/syn_StatusHistory.html">Status History</a></li>
+								<li><a href="Modules/syn_WorkflowStatus.html">Workflow Status</a></li>
+								<li><a href="Modules/syn_SendApproval.html">Send for Approval</a></li>
+								<li><a href="Modules/syn_Amendment.html">Amendment</a></li>
+								<li><a href="Modules/syn_BacktoVersion.html">Back to Version</a></li>
+							</ul>
+						</li>	
+						<li><a href="#">Approval List</a>
+							<ul>
+								<li><a href="Modules/ApprovalAcquisition.html">FAQ</a></li>
+								<li><a href="Modules/ApprovalSyndication.html">Contact Info</a></li>
+								<li><a href="Modules/ApprovalBoth.html">Ask an Expert</a></li>
+							</ul>							
+						</li>
+					</ul>
+				</li>
+				<li><a href="Glossary.html">Glossary</a>
+					<ul>
+						<li><a href="#">Descriptions</a>
+							<ul>
+								<li><a href="Glossary/Glossary_AllPlatforms.html">Show All Platforms</a></li>
+								<li><a href="Glossary/Glossary_ReportsUsage.html">Reports and Usage</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Support</a>
+							<ul>
+								<li><a href="Glossary/Glossary_FAQ.html">FAQ</a></li>
+								<li><a href="Glossary/Glossary_ContactInfo.html">Contact Info</a></li>
+								<li><a href="Glossary/Glossary_AskExpert.html">Ask an Expert</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li><a href="Reports.html">Reports</a>
+					<ul>
+						<li><a href="#">Query Report</a>
+							<ul>
+								<li><a href="Reports/AcqQueryReport.html">Acquisition Query</a></li>
+								<li><a href="Reports/SynQueryReport.html">Syndication Query</a></li>
+							</ul>							
+						</li>
+						<li><a href="Reports/Dashboard.html">Dashboard</a></li>
+						<li><a href="Reports/AcqDealListReport.html">Acquisition Deal List</a></li>
+						<li><a href="Reports/SynDealListReport.html">Syndication Deal List</a></li>
+						<li><a href="Reports/LoginDetailsReports.html">Login Details</a></li>
+						<li><a href="Reports/TitleAvailability.html">Title Availability</a></li>
+						<li><a href="Reports/TitleAvailability2.html">Title Availability 2</a></li>
+						<li><a href="Reports/TitleAvailability3.html">Title Availability 3</a></li>
+						<li><a href="Reports/PlatformwiseAcq.html">Platformwise Acquisition</a></li>
+						<li><a href="Reports/PA_RightsReport.html">P&A Rights</a></li>
+						<li><a href="Reports/RightsUsageReport.html">Rights Usage</a></li>
+						<li><a href="Reports/RunUtilizationReport.html">Run Utilization</a></li>
+						<li><a href="Reports/RunExceptionReport.html">Run Exception</a></li>
+						<li><a href="Reports/LoggedUsers.html">Logged in Users</a></li>
+						<li><a href="Reports/DealExpiryReport.html">Deal Expiry</a></li>
+						<li><a href="Reports/DashboardGraphical.html">Dashboard (Graphical)</a></li>
+					</ul>
+				</li>
+				<li><a href="#">IPR</a>
+					<ul>
+						<li><a href="IPR/IPR_Application.html">IPR Application</a></li>
+						<li><a href="IPR/IPR_Country.html">IPR Country</a></li>
+					</ul>
+				</li>
+				<li><a href="#">Upload</a>
+					<ul>
+						<li><a href="Upload/UploadFile1.html">Upload File 1</a></li>
+					</ul>
+				</li>
+				<li><a href="Settings/Settings.html">Settings</a>
+					<ul>
+						<li><a href="Settings/ChangePassword.html">Change Password</a></li>
+						<li><a href="Settings/AmortRule.html">Amort Rule</a></li>
+						<li><a href="Settings/AmortMonthClosing.html">Amort Month Closing</a></li>
+						<li><a href="Settings/ApprovalWorkflow.html">Approval Workflow</a></li>
+						<li><a href="Settings/AssignWorkflow.html">Assign Workflow</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div class="bottomImg">
+			<img src="img/u-to-product-by.gif">
+		</div>
+	</aside>-->
+	<section>
+		<article>
+			<div class="middleText">
+			<h1>RightsU User Manual</h1>
+				<span>Version x.x</span>
+			</div>
+		</article>
+	</section>
+	<footer>
+	</footer>
+</body>
+</html>

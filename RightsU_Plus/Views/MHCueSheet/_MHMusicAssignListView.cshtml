@@ -1,0 +1,136 @@
+﻿@model List<RightsU_Entities.MHCueSheetSong>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+
+}
+<script>
+    $(document).ready(function () {
+        initializeChosen();
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#hdnPageNo").val(@((ViewBag.PageNo ?? 1)));
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        SetPaging();
+        $("input[type='checkbox']").prop("disabled", true);
+    });
+</script>
+<table class="table table-bordered table-hover table-striped" id="tblConsume">
+    <thead>
+        <tr>
+            @if (ViewBag.currentTabName != "CM")
+            {
+                <th><input type="checkbox" id="chkAllOther" /></th>
+            }
+            else
+            {
+                <th align="center">Sr.No.</th>
+            }
+
+            <th>Show Name</th>
+            <th>Episode No</th>
+            <th>Music Track</th>
+            <th>Movie / Album Name</th>
+            <th>Song Type</th>
+            <th>TC In</th>
+            <th>TC Out</th>
+            <th>Duration</th>
+            @if (ViewBag.currentTabName != "CM")
+            {
+                <th>Error Tag</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            string errorcodes = "";
+            int count = 0;
+            bool isApr = false;
+            bool chkDis = false;
+            count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
+            foreach (var item in Model)
+            {
+
+                if (ViewBag.currentTabName != "CM")
+                {
+                    errorcodes = item.ErrorMessage.Replace("~", ",");
+                    errorcodes = errorcodes.TrimStart(',');
+                    errorcodes = errorcodes.TrimEnd(',');
+
+                }
+                if (item.IsApprove != null)
+                {
+                    isApr = item.IsApprove == "Y" ? true : false;
+                    chkDis = item.IsApprove == "Y" ? true : false;
+                }
+                <tr>
+                    <td hidden>@count</td>
+                    @if (ViewBag.currentTabName != "CM")
+                    {
+                        <td align="center">
+                            <input type="hidden" id="hdnMHCSCode_@count" value="@item.MHCueSheetSongCode" />
+                            <input type="hidden" id="hdnMHTitleContentCode_@count" value="@item.TitleContentCode" />
+                            @Html.CheckBox("chkbox", isApr, new { @id = "chkCreateNewOther_" + count, onclick = "onCheckboxCheck(this);", @class = "" + item.MHCueSheetSongCode + "~" + item.IsApprove + "" + item.ErrorMessage })
+                        </td>
+                    }
+                    else
+                    {
+                        <td align="center">@count</td>
+                    }
+
+
+                    <td>@item.TitleName</td>
+                    <td align="center">@item.EpisodeNo</td>
+                    <td>
+                        @item.MusicTrackName
+                        <input type="hidden" class="MusicTrack" id="hdnTrackCode_@count" value="@((item.MusicTitleCode ?? 0))" />
+                    </td>
+                    <td><span id="ddl_txtTrackSearch_@count"></span></td>
+                    <td>@item.SongType</td>
+                    <td>@item.FromTime / @((item.FromFrame < 10 ? "0" + item.FromFrame.ToString() : item.FromFrame.ToString()))</td>
+                    <td>@item.ToTime /  @((item.ToFrame < 10 ? "0" + item.ToFrame.ToString() : item.ToFrame.ToString()))</td>
+                    <td>@item.DurationTime /  @((item.DurationFrame < 10 ? "0" + item.DurationFrame.ToString() : item.DurationFrame.ToString()))</td>
+                    @if (ViewBag.currentTabName != "CM")
+                    {
+                        var errorDesc = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USPMHGetErrorList(errorcodes).FirstOrDefault();
+                        <td><span title="">@errorDesc</span> </td>
+                    }
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            if (ViewBag.currentTabName != "CM")
+            {
+                <tr>
+                    <td colspan="9">No Record Found</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8">No Record Found</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<script>
+
+    $('.MusicTrack').each(function (e) {
+        var CurrentCount = $(this)[0].id.slice(13);
+        var value = $(this)[0].value;
+        var MusicTrackCode = $('#hdnTrackCode_' + CurrentCount).val();
+        if (parseInt(value) > 0) {
+            BindAlbumName(MusicTrackCode, CurrentCount);
+        }
+    });
+
+</script>

@@ -1,0 +1,501 @@
+﻿@model RightsU_Entities.Platform_Group
+@{
+    var a = (string)ViewBag.strListLanguageCodes_Dub;
+
+}
+<script src="~/JS_Core/jquery-ui.js"></script>
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+
+<script>
+    var URL_BindLanguageTreeView_Dub = '@Url.Action("BindLanguageTreeView_Dub", "AvailabilityOld")';
+
+
+    function BindLanguage_Dub() {
+        @*var codes = $("#hdnTVCodes_Dub").val('@a');*@
+        var codes = $("#hdnTVCodes_DubLang_G").val('@a');
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindLanguageTreeView_Dub,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strListLanguageCodes: codes
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                initializeChosen();
+                $('#treeDown_DubLang').empty();
+                $('#treeDown_DubLang').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $(".plusminus").text('-');
+        $('#ddlLanguageGroupNew_Dub').SumoSelect();
+       // $("#ddlLanguageGroupNew_Dub").val('@ViewBag.AvailAllLanguageCode')[0].sumo.reload();
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-weight", 100)
+        $('.SumoSelect .select-all.partial > span i').css("display", "none");
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-size", 12)
+
+        $('#spanTempDub').on('click', function (event) {
+            event.stopImmediatePropagation();
+        });
+
+        $('#DubLangTab').click(function () {
+            debugger;
+
+            $('#accordianDubLanguage').click();
+            $('#hdnDubLanguageType').val('LG');
+
+            var IsFlag_Dubbing = $('#hdnIsFlag_Dubbing').val();
+
+            if (IsFlag_Dubbing == "N")
+            {
+                var selectedCodes = $("#hdnTVCodes_DubLang_G").val();
+                AddEditLanguage_Group_Dub(selectedCodes);
+                $('#hdnIsFlag_Dubbing').val('Y');
+            }
+            else {
+
+            }
+
+        })
+        
+        $(".accordion_head_Dub").click(function () {
+            debugger;
+           
+            if ($('.accordion_body').is(':visible')) {
+                $(".accordion_body").slideUp(300);
+                $(".plusminus").text('+');
+            }
+
+            if ($(this).next(".accordion_body").is(':visible')) {
+                $(this).next(".accordion_body").slideUp(300);
+                $(this).children(".plusminus").text('+');
+            } else {
+                $(this).next(".accordion_body").slideDown(300);
+                $(this).children(".plusminus").text('-');
+            }
+        });
+
+
+        $('#accordianLanguage_Dub').click(function () {
+            var pt = $('#hdnDubLanguageType').val();
+
+            var platformCodes = "";
+            if (pt == "P")
+                platformCodes = $("#hdnTVCodes_DubLang").val();
+            if (pt == "LG")
+                platformCodes = $("#hdnTVCodes_DubLang_G").val();
+
+            var acc = $('#hdnAccordianDub').val();
+
+            if (acc == "N") {
+                BindLanguageGroup_Dub_Details(platformCodes);
+                $('#hdnAccordianDub').val('Y');
+            }
+            else {
+
+            }
+
+
+            //$('#ddlListLanguageGroup_Dub').empty();
+            //$("#ddlListLanguageGroup_Dub").prop('disabled', true)[0].sumo.reload();
+
+        })
+
+        $("#ddlMustHaveLanguage_Dub").attr('disabled', 'disabled');
+
+        $('#lstLLanguageGroupNew_Dub').SumoSelect();
+        //$('#ddlListLanguageGroup_Dub').SumoSelect();
+        $('#ddlMustHaveLanguage_Dub').SumoSelect();
+
+
+
+        $("input:checkbox").on('click', function () {
+            debugger;
+            // in the handler, 'this' refers to the box clicked on
+            var $box = $(this);
+            if ($box.is(":checked")) {
+
+                // the name of the box is retrieved using the .attr() method
+                // as it is assumed and expected to be immutable
+                var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                // the checked state of the group/box on the other hand will change
+                // and the current value is retrieved using .prop() method
+                $(group).prop("checked", false);
+                $box.prop("checked", true);
+            } else {
+                $box.prop("checked", false);
+
+            }
+        });
+
+        $('input[type=checkbox][name=CheckDub]').change(function () {
+            debugger
+            //if (this.value == 'EM') {
+            //    $("#ddlMustHaveLanguage_Dub").prop('disabled', true)[0].sumo.reload();
+            //    //$("#ddlMustHaveLanguage_Dub").attr('disabled', 'disabled');
+            //}
+            //else if (this.value == 'MH') {
+            //    // $("#ddlMustHaveLanguage_Dub").removeAttr('disabled', 'disabled');
+            //    $("#ddlMustHaveLanguage_Dub").prop('disabled', false)[0].sumo.reload();
+            //}
+
+
+            if ($("#chkMustHave_Dub").prop('checked') == true) {
+                $("#ddlMustHaveLanguage_Dub").prop('disabled', false)[0].sumo.reload();
+            }
+
+            else if ($("#chkExactMatch_Sub").prop('checked') == true) {
+                $("#ddlMustHaveLanguage_Dub").prop('disabled', true)[0].sumo.reload();
+                var obj = [];
+                $('option:selected').each(function () {
+                    obj.push($(this).index());
+                });
+
+                for (var i = 0; i < obj.length; i++) {
+                    $('#ddlMustHaveLanguage_Dub')[0].sumo.unSelectItem(obj[i]);
+                }
+               // $("#ddlMustHaveLanguage_Dub").prop('disabled', true)[0].sumo.reload();
+            }
+            else if ($("#chkMustHave_Dub").prop('checked') == false && $("#chkExactMatch_Sub").prop('checked') == false) {
+                $("#ddlMustHaveLanguage_Dub").prop('disabled', true)[0].sumo.reload();
+                var obj = [];
+                $('option:selected').each(function () {
+                    obj.push($(this).index());
+                });
+
+                for (var i = 0; i < obj.length; i++) {
+                    $('#ddlMustHaveLanguage_Dub')[0].sumo.unSelectItem(obj[i]);
+                }
+
+                //$("#ddlMustHaveLanguage_Dub").prop('disabled', true)[0].sumo.reload();
+            }
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css('text-align', 'left');
+
+        });
+
+        $('#ddlLanguageGroupNew_Dub').on('change', function (evt, params) {
+            //$('#lstLLanguageGroupNew_Dub').val('')[0].sumo.reload();
+            $('#chkMustHave_Dub').prop('checked', false);
+            //$('#ddlListLanguageGroup_Dub').empty();
+            //$('#ddlListLanguageGroup_Dub').prop('disabled', false)[0].sumo.reload();
+            $('#ddlMustHaveLanguage_Dub').empty();
+            $('#ddlMustHaveLanguage_Dub').val('')[0].sumo.reload();
+            $('#ddlMustHaveLanguage_Dub').prop('disabled', true)[0].sumo.reload();
+
+        })
+
+        var ojTerr = [];
+        $('#ddlListLanguageGroup_Dub').on('change', function (evt, params) {
+
+            debugger;
+            ojTerr = [];
+            var strHTML = '';
+            var exclusionRegionCode = '';
+            var mustHaveRegionCode = '';
+            var a = "";
+
+            var x = $('#hdnSelectedValues_Dub').val($('#ddlMustHaveLanguage_Dub').val());
+
+            $('#ddlMustHaveLanguage_Dub').empty();
+            $('#ddlListLanguageGroup_Dub option').each(function () {
+                var s = $(this);
+                strHTML = strHTML + s[0].outerHTML;
+            });
+
+            $("#ddlMustHaveLanguage_Dub").html(strHTML);
+
+            $('#ddlListLanguageGroup_Dub option:selected').each(function () {
+                if (exclusionRegionCode == '')
+                    exclusionRegionCode = this.value;
+                else
+                    exclusionRegionCode = exclusionRegionCode + ',' + this.value;
+
+                $('#ddlMustHaveLanguage_Dub option[value="' + this.value + '"]').remove();
+
+
+            });
+
+            var j = x.val().split(',');
+            for (var i = 0; i < j.length; i++) {
+                if (j[i] != exclusionRegionCode) {
+                    ojTerr.push(j[i]);
+                }
+            }
+
+            $('#ddlMustHaveLanguage_Dub').val(exclusionRegionCode);
+            $('#hdnExclusionLangGrpLangCode_Dub').val(exclusionRegionCode);
+            debugger;
+            if (exclusionRegionCode != '')
+                $('#spExclusionCountryCount').html(" (" + exclusionRegionCode.split(',').length + ")");
+            else
+                $('#spExclusionCountryCount').html(' (0)');
+
+            if ($("#ddlMustHaveLanguage_Dub").val() != null) {
+                mustHaveRegionCode = $("#ddlMustHaveLanguage_Dub").val();
+                $('#spMustExactHaveCountryCount').html("(" + mustHaveRegionCode.length + ")");
+            }
+            else
+                $('#spMustExactHaveCountryCount').html('(0)');
+
+            $('#hdnExclusionLangGrpLangCode_Dub').val(exclusionRegionCode);
+            $('#hdnMustHaveLangGrpLangCode_Dub').val(mustHaveRegionCode);
+            $('#hdnIsCriteriaChange').val('Y');
+            debugger;
+            var obj = [];
+            $('#ddlMustHaveLanguage_Dub').siblings('div').find('ul.options > li.opt.selected').each(function () {
+                obj.push(parseInt($.trim($(this)[0].innerText)));
+            });
+
+            $('#hdnMustHaveLangGrpLangCode_Dub').val(obj.join(','));
+            $("#ddlMustHaveLanguage_Dub").val(ojTerr)[0].sumo.reload();
+        });
+
+        var ojCountry = [];
+        $('#lstLLanguageGroupNew_Dub').on('change', function (evt, params) {
+            debugger;
+            ojCountry = [];
+            $('#ddlLanguageGroupNew_Dub').val('').trigger('chosen:updated');
+            //$('#ddlListCountry').empty();
+            //$("#ddlListCountry").prop('disabled', true)[0].sumo.reload();
+            $('#result').text('');
+
+            var strHTML = '';
+            var regionCode = '';
+
+            var x = $('#hdnSelectedValues_Dub').val($('#ddlMustHaveLanguage_Dub').val());
+
+            $('#hdnLangGrpLangCodes_Dub').val('');
+
+            $('#lstLLanguageGroupNew_Dub option:selected').each(function () {
+                debugger;
+                var s = $(this);
+                strHTML = strHTML + s[0].outerHTML;
+                if (regionCode == '')
+                    regionCode = s[0].value;
+                else
+                    regionCode = regionCode + ',' + s[0].value;
+            });
+
+            var j = x.val().split(',');
+            for (var i = 0; i < j.length; i++) {
+                if (j[i] != regionCode) {
+                    ojCountry.push(j[i]);
+                }
+            }
+
+            $('#hdnLangGrpLangCodes_Dub').val(regionCode);
+            $("#ddlMustHaveLanguage_Dub").html(strHTML);
+
+            if ($('#hdnMustHaveLangGrpLangCode_Dub').val() != '') {
+                $("#ddlMustHaveLanguage_Dub").val($('#hdnMustHaveLangGrpLangCode_Dub').val().split(','))[0].sumo.reload();
+
+                if ($("#ddlMustHaveLanguage_Dub").val() != null) {
+                    $('#hdnMustHaveLangGrpLangCode_Dub').val($("#ddlMustHaveLanguage_Dub").val().join(','));
+                    $('#spMustExactHaveCountryCount').html('(' + $('#hdnMustHaveLangGrpLangCode_Dub').val().split(',').length + ')');
+                }
+                else {
+                    $('#hdnMustHaveLangGrpLangCode_Dub').val('');
+                    $('#spMustExactHaveCountryCount').html('(0)');
+                }
+            }
+            else {
+                $("#hdnMustHaveLangGrpLangCode_Dub,#ddlMustHaveLanguage_Dub").val('')[0].sumo.reload();
+                $('#spMustExactHaveCountryCount').html('(0)');
+            }
+
+            if (regionCode != '')
+                $('#spCountryCount').html("(" + regionCode.split(',').length + ")");
+            else
+                $('#spCountryCount').html("(0)");
+            var obj = [];
+            $('#ddlMustHaveLanguage_Dub').siblings('div').find('ul.options > li.opt.selected').each(function () {
+                obj.push(parseInt($.trim($(this)[0].innerText)));
+            });
+            $('#hdnMustHaveLangGrpLangCode_Dub').val(obj.join(','));
+            //$("#ddlMustHaveLanguage_Dub").val()[0].sumo.reload();
+            $("#ddlMustHaveLanguage_Dub").val(ojCountry)[0].sumo.reload();
+
+        });
+
+    })
+    function LoadMoreOptionDubbingPopup() {
+    }
+</script>
+<style>
+    #Tree_Filter_Rights_Platform_DubLang_G {
+        width: 417px;
+    }
+
+    #Rights_Platform_DubLang_G {
+        max-height: 300px !important;
+        overflow-y: auto;
+    }
+
+    #ddlLanguageGroupNew_Dub_chosen {
+        width: 70% !important;
+    }
+
+    #pupupHtml, #pupupHtml1_DubLang, #divMustHave {
+        /*max-height: 300px !important;*/
+        text-align: left !important;
+    }
+
+    #pupupHtml1_DubLang {
+        word-wrap: break-word;
+        overflow: hidden;
+        /*max-height: 100px;
+        overflow-y: auto;*/
+    }
+
+    select#ddlLanguageGroupNew_Dub {
+        width: 100%;
+        max-width: 400px;
+        top: 167px;
+        left: 656px;
+        max-height: 180px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 2147483647;
+    }
+
+    /*.accordion_container {
+        width: 500px;
+    }*/
+
+    .accordion_head_Dub {
+        background-color: #DEDEDE;
+        color: black;
+        cursor: pointer;
+        font-family: arial;
+        font-size: 14px;
+        margin: 0 0 1px 0;
+        padding: 7px 11px;
+        font-weight: bold;
+        width: 429px;
+        text-align: left;
+    }
+
+    .accordion_body {
+        /*background: rgba(211, 211, 211, 0.41);*/
+        width: 429px;
+        padding: 5px;
+        border: 1px dotted black;
+        border-top: 0px;
+    }
+
+        .accordion_body p {
+            padding: 5px 5px;
+            margin: 0px;
+        }
+
+    .plusminus {
+        float: right;
+    }
+
+    #divLanguageGroupDetails {
+        word-wrap: break-word;
+        overflow: hidden;
+        max-height: 100px;
+        overflow-y: auto;
+    }
+
+
+    .morecontent span {
+        display: none;
+    }
+
+    .morelink {
+        display: block;
+    }
+
+    .sumo_ddlLanguageGroupNew_Dub {
+        width: 300px !important;
+    }
+
+    .SumoSelect > .CaptionCont > span {
+        margin-top: 4px;
+        padding-left: 5px;
+    }
+</style>
+
+<div class="scale_table_block">
+    <div class="accordion_container">
+
+        <div class="accordion_head_Dub" id="accordianDubLanguage">
+            Dubbing<span class="plusminus">+</span>
+            <span id="spanTempDub">
+                @Html.ListBox("ddlLanguageGroupNew_Dub", ViewBag.ddlLanguageGroupNew_Dub as MultiSelectList, new { @id = "ddlLanguageGroupNew_Dub", @onchange = "AddEditLanguage_Group_Dub()", @class = "" })
+                @*@Html.DropDownList("ddlLanguageGroupNew_Dub", ViewBag.ddlLanguageGroupNew_Dub as MultiSelectList, new { @id = "ddlLanguageGroupNew_Dub", @onchange = "AddEditLanguage_Group_Dub()", @class = "form_input chosen-select" })*@
+            </span>
+        </div>
+        <div class="accordion_body">
+
+            @*<div id="divLanguageGroupDetails">
+                    <span id="resultLanguage_DubDetails" class="more"></span>
+                </div>*@
+            <div id="pupupHtml1_DubLang">
+                <div id="divTree" class="platform_wrapper">
+                    <div id="treeDown_DubLang" class="treeClass">
+                    </div>
+                    <span id="lblTheatrical" style="display: none;">Theatrical</span>
+                    <input type="hidden" id="hdnTVCodes_DubLang_G" name="hdnTVCodes" />
+                </div>
+            </div>
+        </div>
+        <div class="accordion_head_Dub" id="accordianLanguage_Dub">
+            More Options<span class="plusminus">+</span>
+        </div>
+        <div class="accordion_body" style="display: none;">
+            @*@Html.DropDownList("lstLLanguageGroupNew_Dub", ViewBag.lstLLanguageGroupNew_Dub as MultiSelectList, new { @id = "lstLLanguageGroupNew_Dub", @multiple = "multiple" })*@
+            <table>
+                @*<tr>
+                        <td>
+                            <b>Exclusion</b>
+                            <br />
+                            <select id="ddlListLanguageGroup_Dub" multiple></select>
+                        </td>
+                    </tr>*@
+                <tr>
+                    <td>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="CheckDub" id="chkExactMatch_Dub" value="EM" text="Exact Match" />
+                            <b>Exact Match</b>
+                        </label>
+                        &nbsp;
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="CheckDub" id="chkMustHave_Dub" value="MH" text="Must Have">
+                            <b>Must Have</b>
+                        </label>
+                        <br />
+                        <select id="ddlMustHaveLanguage_Dub" multiple></select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="hdnLangGrpLangCodes_Dub" />
+<input type="hidden" id="hdnExclusionLangGrpLangCode_Dub" />
+<input type="hidden" id="hdnMustHaveLangGrpLangCode_Dub" />
+<input type="hidden" id="hdnSelectedValues_Dub" />

@@ -1,0 +1,191 @@
+﻿@{
+    ViewBag.Title = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script type="text/javascript" >
+
+    $(document).ready(function () {
+        BindGrid(@ViewBag.Query_String_Page_No,'Y');
+       
+    });
+
+    function BindGrid(page_index, ShowAll) {
+        showLoading();
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindGrid", "Amort_Rule")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Rule_No: $("#RuleNo").val(),
+                Rule_Type: $("#RuleType option:selected").val(),
+                PageIndex: page_index,
+                IsShowAll: ShowAll,
+                pageSize: ($('#PageSize').val() == 0 ? 10 : $('#PageSize').val())
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#TitleListGrid").empty();
+                    $("#TitleListGrid").append(result);
+
+                    if ($('.pagination'))
+                        SetPaging();
+
+                    initializeTooltip();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+        initializeExpander();
+    }
+
+    function CallPaging(e) {
+        
+        var key = e.which;
+        if (key == 13) {
+            search(@ViewBag.Query_String_Page_No);
+        }
+    }
+
+    function search(page_no)
+    {
+        
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+       
+        if($('#RuleNo').val() != "" && $('#RuleNo').val() != null)
+            $('#Ruel_No').val($('#RuleNo').val());
+        else
+            $('#Ruel_No').val('');
+
+        if($('#RuleType').val() != "" && $('#RuleType').val() != null)
+            $('#Rule_Type').val($('#RuleType').val());
+        else
+            $('#Rule_Type').val('');
+        BindGrid(page_no, "N");
+    }
+
+    function ShowAll() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $("#Ruel_No").val("");
+        $("#Rule_Type").val("");
+        $("#RuleType").find("option").attr("selected", false);
+        $("#RuleType").val('').trigger("chosen:updated");
+        $("#RuleNo").val("");
+        window.location.href = location.pathname;
+        //BindGrid(0, "Y");
+    }
+
+    function AddAmortRule(command)
+    {
+        
+        showLoading();
+        $.ajax({
+            type:"POST",
+            url:'@Url.Action("AddAmortRule","Amort_Rule")',
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                commandName:command
+            }),
+            success: function (result) {
+                
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                }
+            },
+            error: function (result) { }
+
+        });
+    }
+
+
+</script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+   <style>
+    .top_filter
+    {
+        margin-top: 22px;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col" onclick="$('.leftPanel').css('left', panelHideCss);">
+            <div class="top_area">
+                <h2 class="pull-left">Amort Rule List</h2>
+                <div class="right_nav pull-right">
+                    <ul>
+                        <li>
+                            <input class="button" type="submit" id="btnSearch" title="Search" value="Search" onclick="return search();" />
+                        </li>
+                        <li>
+                            <label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save" title="Save to Excel">
+                                @using (Html.BeginForm("ExportToExcel", "Music_Title"))
+                                {
+                                    <input type="submit" style="display: none" id="btnExportToExcel" />
+                                    @Html.Hidden("Ruel_No")
+                                    @Html.Hidden("Rule_Type")
+                                }
+                            </label>
+                        </li>
+                        <li>
+                            <a class="glyphicon glyphicon-refresh" title="Show All" id="btnShowAll" onclick="ShowAll()"></a>
+                        </li>
+                        <li>
+                            @using (Ajax.BeginForm("AddAmortRule", "Amort_Rule", new { commandName = "Add" }, new AjaxOptions { }))
+                            {
+                                <input type="submit" class="btn btn-primary" data-toggle="modal" title="Add Amort Rule" value="Add Amort Rule" />
+                            }
+                        </li>
+                   
+                    </ul>
+                </div>
+                <div class="top_filter pull-right">
+                 <table class="table">
+                            <tr>
+                            <td> @Html.TextBox("RuleNo") </td>
+                            <td  style="width:150px;">
+                            <select id="RuleType" name="RuleType" class = "form_input chosen-select">
+                             <option value="">  </option>
+                             <option value="R">Run</option>
+                             <option value="P">Period</option>
+                             <option value="O">Other</option>
+                             <option value="C">Premium/Show Premium</option>
+                             </select>
+                            </td>
+                            </tr>
+                        </table>
+                    <input type="text" name="srchCommon" id="txtSearchTitleName" style="display:none;" class="search" onkeypress = "return isAlphaNumeric(event);"
+                                    placeholder="Search by Music Title Name, Title Type" value='@ViewBag.SearchedTitle' />
+
+                </div>
+            </div>
+            <div id="TitleListGrid" runat="server">
+            </div>
+        </div>
+    </section>
+</div>
+@*<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitle" role="dialog" tabindex="-1" aria-hidden="false">
+</div>*@
+

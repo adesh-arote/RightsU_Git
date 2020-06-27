@@ -1,0 +1,1068 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    var panelVisible = false;
+    var RightpanelHideCss = '-350px';
+    var RightpanelShowCss = '0px';
+    var LeftpanelHideCss = '-350px';
+    var LeftpanelShowCss = '0px';
+    var IsCall = 'Y', SearchCommand_G = "", Command_Name_G = "", MusicDealCode = 0;
+    var Deal_Mode_Edit = '@GlobalParams.DEAL_MODE_EDIT',
+        Deal_Mode_Delete = '@GlobalParams.DEAL_MODE_DELETE',
+        Deal_Mode_Amendment = '@GlobalParams.DEAL_MODE_AMENDMENT',
+        Deal_Mode_Approve = '@GlobalParams.DEAL_MODE_APPROVE',
+        Deal_Mode_Rollback = '@GlobalParams.DEAL_MODE_ROLLBACK',
+        Deal_Mode_SendForApproval = '@GlobalParams.DEAL_MODE_SEND_FOR_APPROVAL',
+        Deal_Mode_Approve_NextPage = 'APPROVE_NEXT_PAGE';
+
+    var URL_BindMusicDealList = '@Url.Action("BindMusicDealList", "Music_Deal_List")',
+    URL_BindAdvanceSearch = '@Url.Action("BindAdvanceSearch", "Music_Deal_List")',
+    URL_ButtonEvents = '@Url.Action("ButtonEvents", "Music_Deal_List")',
+    URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Music_Deal_List")',
+    URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Music_Deal_List")',
+    URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")',
+    URL_Release_Lock = '@Url.Action("Release_Lock", "Global")',
+    URL_PopulateTitleNameForAcqDeal = '@Url.Action("PopulateTitleNameForAcqDeal", "Music_Deal_List")';
+
+    URL_Reload_Current_Page = '@Url.Action("Index", "Music_Deal_List")';
+
+    function BindSumoSelectCss() {
+        $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px")
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
+    }
+
+    $(document).ready(function () {
+        if (LayoutDirection_G == 'RTL') {
+            $('.glyphicon-search').css("transform", "rotate(-360deg)");
+            $('#txtApprovalRemark').css('direction', 'rtl');
+            $("#lblApprove").css('text-align', 'right');
+            $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px");
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "RTL");
+        }
+        else
+            $('.glyphicon-search').css("transform", "rotate(-270deg)");
+
+
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+        var lastScrollTop = 0;
+        $(window).scroll(function (event) {
+
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop)
+                $("#pnlSearch").addClass("tinyADSearch")
+            else
+                $("#pnlSearch").removeClass("tinyADSearch")
+
+        });
+        var searchType = '@ViewBag.SearchType'
+        $('#txtPageSize').val('@ViewBag.RecordPerPage');
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        if (searchType == "C") {
+            $('#txtSearchCommon').val('@ViewBag.SearchText');
+            SearchOrShowAll("SEARCH_COMMON", false);
+        }
+        else if (searchType == "A") {
+            BindAdvanceSearch("PGL");
+        }
+        else
+            SearchOrShowAll("", false);
+
+        initializeTooltip();
+        initializeDatepicker();
+        initializeExpander();
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $('#txtStartDate').change(function () {
+            SetMinDt();
+        });
+
+        $('#txtEndDate').change(function () {
+            SetMaxDt();
+        });
+        $('#ddlMusicLabel').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#ddlMusicLabel').each(function () {
+            $(this)[0].sumo.reload();
+        });
+        $('#ddlLicensor').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#ddlLicensor').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+
+        });
+        $('#ddlDealType').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#ddlDealType').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+        });
+
+        $('#ddlShowType').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#ddlShowType').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+        });
+
+        $('#ddlShowName').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#ddlShowName').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+        });
+
+
+        $('#ddlStatus').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#ddlStatus').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "35px");
+        });
+    });
+    function SetMaxDt() {
+        setMinMaxDates('txtStartDate', '', $('#txtEndDate').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtEndDate', $('#txtStartDate').val(), '');
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            SearchOrShowAll(SearchCommand_G, false);
+        else
+            IsCall = 'Y';
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        SearchOrShowAll(SearchCommand_G, false)
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function pageBinding() {
+         SearchOrShowAll(SearchCommand_G, false)
+    }
+    function BindMusicDealList(SearchText, Agreement_No, Title_Code, StartDate, EndDate, Deal_Type_Code, Show_Type_Code, Status_Code, Business_Unit_Code, Workflow_Status,
+        Vendor_Codes, Music_Label_Codes, IsAdvance_Search) {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        var Title_Name = $('#txtTitle').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindMusicDealList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: true,
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                SearchText: SearchText,
+                Agreement_No: Agreement_No,
+                Title_Code: Title_Code,
+                Title_Name: Title_Name,
+                StartDate: StartDate,
+                EndDate: EndDate,
+                Deal_Type_Code: Deal_Type_Code,
+                Show_Type_Code: Show_Type_Code,
+                Status_Code: Status_Code,
+                Business_Unit_Code: Business_Unit_Code,
+                Workflow_Status: Workflow_Status,
+                Vendor_Codes: Vendor_Codes,
+                Music_Label_Codes: Music_Label_Codes,
+                IsAdvance_Search: IsAdvance_Search
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divMusicDealList').empty();
+                    $('#divMusicDealList').html(result);
+                    initializeExpander();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error in BindMusicDealList(): ' + result.responseText);
+            }
+        });
+    }
+    function SearchOrShowAll(commandName, callOnSerach) {
+        debugger;
+        SearchCommand_G = commandName;
+        if (callOnSerach)
+            $('#hdnPageNo').val(1);
+
+        if (commandName == "SHOW_ALL" || commandName == "CLEAR_ALL" || commandName == "") {
+            if (commandName != "") {
+                $('#txtSearchCommon, #txtAgreementNo, #txtStartDate, #txtEndDate, #txtTitle, #hdnTitleCode').val('');
+                SetMinDt();
+                SetMaxDt();
+                $('#ddlWorkflowStatus').val('0').trigger("chosen:updated");
+                $('#ddlDealType').val('')[0].sumo.reload();
+                $('#ddlShowType').val('')[0].sumo.reload();
+                $('#ddlStatus').val('')[0].sumo.reload();
+                $('#ddlLicensor').val('')[0].sumo.reload();
+                $('#ddlMusicLabel').val('')[0].sumo.reload();
+                $('#ddlBusinessUnit').val($("#ddlBusinessUnit option:first-child").val()).trigger("chosen:updated");
+            }
+            if ("RTL" == LayoutDirection_G) {
+                $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+                $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px")
+                $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
+            }
+            SearchCommand_G = ""
+            BindMusicDealList('', '','', null, null, 0, 0, 0, 0, '', '', '', 'N');
+        }
+        else if (commandName == "SEARCH_COMMON") {
+            var SearchText = $.trim($('#txtSearchCommon').val());
+            if (SearchText == "") {
+                $('#txtSearchCommon').val('').attr("required", true);
+            }
+            else {
+                BindMusicDealList(SearchText, '','', null, null, 0, 0, 0, 0, '', '', '', 'N');
+            }
+        }
+        else if (commandName == "SEARCH_ADVANCE") {
+            var isValid = true;
+            var Agreement_No = $.trim($('#txtAgreementNo').val());
+            var Title_Code = $.trim($("#hdnTitleCode").val());
+            var StartDate = $.trim($('#txtStartDate').val());
+            var EndDate = $.trim($('#txtEndDate').val());
+            var Deal_Type_Code = $('#ddlDealType').val();
+            var Show_Type_Code = $('#ddlShowType').val();
+            var Status_Code = $('#ddlStatus').val();
+            var Business_Unit_Code = $('#ddlBusinessUnit').val();
+            var Workflow_Status = $('#ddlWorkflowStatus').val();
+            var Vendor_Codes = $('#ddlLicensor').val();
+            var Music_Label_Codes = $('#ddlMusicLabel').val();
+            var IsAdvance_Search = 'Y';
+
+            if (StartDate != "") {
+                StartDate = new Date(MakeDateFormate(StartDate));
+                if (isNaN(StartDate)) {
+                    // showAlert("E", 'Invalid start date', 'txtStartDate');
+                    showAlert("E", '@objMessageKey.InvalidStartDate', 'txtStartDate');
+                    isValid = false;
+                }
+            }
+            if (EndDate != "") {
+                EndDate = new Date(MakeDateFormate(EndDate));
+                if (isNaN(EndDate)) {
+                    //showAlert("E", 'Invalid start date', 'txtEndDate');
+                    showAlert("E", '@objMessageKey.InvalidStartDate', 'txtEndDate');
+                    isValid = false;
+                }
+            }
+
+            if (Vendor_Codes == null)
+                Vendor_Codes = "";
+            else
+                Vendor_Codes = Vendor_Codes.join(',');
+            if (Music_Label_Codes == null)
+                Music_Label_Codes = "";
+            else
+                Music_Label_Codes = Music_Label_Codes.join(',');
+                     
+            BindMusicDealList('', Agreement_No, Title_Code, StartDate, EndDate, Deal_Type_Code, Show_Type_Code, Status_Code, Business_Unit_Code, Workflow_Status, Vendor_Codes, Music_Label_Codes, 'Y');
+
+
+        }
+    }
+    function BindAdvanceSearch(callFrom) {
+        /*
+            Value fro 'callFrom' parameter.
+            PGL : Called from Page Load $(document).ready event
+            BTC : Called from Button Click (Advance Search Button)
+        */
+
+        if (callFrom == 'BTC')
+            $('#divSearch').slideToggle(400);
+
+        if ("RTL" == LayoutDirection_G) {
+            $('#AdSearch').css("padding-right", "11px");
+            $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px");
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "RTL");
+
+        }
+        else
+            $('#AdSearch').css("padding-right", "0px");
+
+        if (parseInt($("#ddlDealType option").length) == 0) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindAdvanceSearch,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: true,
+                data: JSON.stringify({
+                    CallFrom: callFrom
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#ddlDealType').empty();
+                        $("#ddlShowType").empty();
+                        $('#ddlStatus').empty();
+                        $("#ddlBusinessUnit").empty();
+                        $("#ddlWorkflowStatus").empty();
+                        $("#ddlLicensor").empty();
+                        $("#ddlMusicLabel").empty();
+
+                        $(result.Deal_Type_List).each(function (index, item) {
+                            $("#ddlDealType").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $(result.Show_Type_List).each(function (index, item) {
+                            $("#ddlShowType").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $(result.Status_List).each(function (index, item) {
+                            $("#ddlStatus").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $(result.Business_Unit_List).each(function (index, item) {
+                            $("#ddlBusinessUnit").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $(result.Workflow_Status_List).each(function (index, item) {
+                            $("#ddlWorkflowStatus").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $(result.Vendor_List).each(function (index, item) {
+                            $("#ddlLicensor").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $(result.Music_Label_List).each(function (index, item) {
+                            $("#ddlMusicLabel").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                        $('#ddlBusinessUnit,#ddlWorkflowStatus').trigger("chosen:updated");
+                        $('#ddlDealType')[0].sumo.reload();
+                        $('#ddlShowType')[0].sumo.reload();
+                        $('#ddlStatus')[0].sumo.reload();
+                        $('#ddlLicensor')[0].sumo.reload();
+                        $('#ddlMusicLabel')[0].sumo.reload();
+
+                        if (callFrom == "PGL") {
+                           
+                            $('#txtAgreementNo').val(result.ObjMusicDealSearch.Agreement_No);
+                            $('#hdnTitleCode').val(result.ObjMusicDealSearch.Title_Codes);
+                          //  $('#txtAgreementNo').val(result.ObjMusicDealSearch.Agreement_No);
+                            $('#txtStartDate').val(result.ObjMusicDealSearch.StartDate);
+                            $('#txtEndDate').val(result.ObjMusicDealSearch.EndDate);
+                            //$('#ddlDealType').val(result.ObjMusicDealSearch.Deal_Type_Code).trigger("chosen:updated");
+                            $('#ddlWorkflowStatus').val(result.ObjMusicDealSearch.Workflow_Status).trigger("chosen:updated");
+
+                            if (result.ObjMusicDealSearch.Vendor_Codes != "") {
+                                var arrSelectedVal = result.ObjMusicDealSearch.Vendor_Codes.split(',')
+                                $('#ddlLicensor').val(arrSelectedVal)[0].sumo.reload();
+                            }
+                            if(result.ObjMusicDealSearch.Deal_Type_Code != ""){
+                                var arrSelectedVal = result.ObjMusicDealSearch.Deal_Type_Code.split(',')
+                                $('#ddlDealType').val(arrSelectedVal)[0].sumo.reload();
+                            }
+                            if (result.ObjMusicDealSearch.Status_Code != "") {
+                                var arrSelectedVal = result.ObjMusicDealSearch.Status_Code.split(',')
+                                $('#ddlStatus').val(arrSelectedVal)[0].sumo.reload();
+                            }
+                            if (result.ObjMusicDealSearch.Show_Type_Code != "") {
+                                var arrSelectedVal = result.ObjMusicDealSearch.Show_Type_Code.split(',')
+                                $('#ddlShowType').val(arrSelectedVal)[0].sumo.reload();
+                            }
+
+                            if (result.ObjMusicDealSearch.Music_Label_Codes != "") {
+                                var arrSelectedVal = result.ObjMusicDealSearch.Music_Label_Codes.split(',')
+                                $('#ddlMusicLabel').val(arrSelectedVal)[0].sumo.reload();
+                            }
+
+                            if (result.ObjMusicDealSearch.Business_Unit_Code > 0) {
+                                $('#ddlBusinessUnit').val(result.ObjMusicDealSearch.Business_Unit_Code).trigger("chosen:updated");
+                            }
+
+                            SearchOrShowAll("SEARCH_ADVANCE", false);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error in BindAdvanceSearch() : ' + result.responseText);
+                }
+            });
+        }
+
+
+    }
+    function handleCancel() {
+        Command_Name_G = "";
+        MusicDealCode = 0;
+        HideShow(ID, View_G, 'N');
+    }
+    function handleOk() {
+        if (Command_Name_G == Deal_Mode_Delete || Command_Name_G == Deal_Mode_Rollback) {
+            ButtonEvents();
+        }
+        else if (Command_Name_G == Deal_Mode_Approve || Command_Name_G == Deal_Mode_SendForApproval) {
+            CheckRecordCurrentStatus();
+        }
+    }
+    function Ask_Confirmation(commandName, musicDealCode, Id, View) {
+
+        Command_Name_G = commandName;
+        MusicDealCode = musicDealCode;
+        if (commandName == Deal_Mode_Delete) {
+            showAlert('I', '@objMessageKey.Areyousureyouwanttodeletethisrecord?', 'OKCANCEL');
+
+        }
+        else if (commandName == Deal_Mode_Rollback) {
+            showAlert("I", '@objMessageKey.Areyousureyouwanttorollbackthisrecord?', "OKCANCEL");
+        }
+        else if (commandName == Deal_Mode_Approve) {
+            HideShow(Id, View, 'Y');
+            showAlert("I", '@objMessageKey.Areyousureyouwanttoapprovethisdeal?', "OKCANCEL");
+        }
+        else if (commandName == Deal_Mode_SendForApproval) {
+            HideShow(Id, View, 'Y');
+            showAlert("I", '@objMessageKey.Areyousureyouwanttosendthisdealforapproval?', "OKCANCEL");
+        }
+        else if (commandName == Deal_Mode_Edit || commandName == Deal_Mode_Amendment || commandName == Deal_Mode_Approve_NextPage) {
+            CheckRecordLock();
+        }
+
+        if (LayoutDirection_G == 'RTL') {
+            $('.btn-primary').css('float', 'left');
+        }
+    }
+    function CloseApprovalRemark() {
+        Command_Name_G = "";
+        MusicDealCode = 0;
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0) {
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+            $('#hdnRecodLockingCode').val('0');
+        }
+
+        $('#txtApprovalRemark').val('').removeAttr('required');
+        HideShow(ID, View_G, 'N');
+        $('#popApprovalRemark').modal('hide');
+    }
+    function ButtonEvents() {
+        debugger;
+        var remarks = "";
+        if (Command_Name_G == Deal_Mode_Approve || Command_Name_G == Deal_Mode_SendForApproval) {
+            remarks = $.trim($('#txtApprovalRemark').val());
+            if (remarks == "") {
+                $('#txtApprovalRemark').val('').attr('required', true);
+                return false
+            }
+        }
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_ButtonEvents,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                CommandName: Command_Name_G,
+                Music_Deal_Code: MusicDealCode,
+                ApprovalRemark: remarks,
+                calledByAjax: true
+            }),
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (Command_Name_G != Deal_Mode_SendForApproval && Command_Name_G != Deal_Mode_Approve) {
+                        Command_Name_G = "";
+                        MusicDealCode = 0;
+                    }
+
+                    if (result.Status == "S") {
+                        if (Command_Name_G == Deal_Mode_SendForApproval || Command_Name_G == Deal_Mode_Approve) {
+                            CloseApprovalRemark();
+                        }
+
+                        showAlert("S", result.Message);
+                        SearchOrShowAll(SearchCommand_G, false);
+                    }
+                    else if (result.Status == "E")
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                hideLoading();
+                if (Command_Name_G != Deal_Mode_SendForApproval && Command_Name_G != Deal_Mode_Approve) {
+                    Command_Name_G = "";
+                    MusicDealCode = 0;
+                }
+                alert('Error in ButtonEvents() : ' + result.responseText);
+            }
+        });
+    }
+    function CheckRecordCurrentStatus() {
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordCurrentStatus,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                CommandName: Command_Name_G,
+                Music_Deal_Code: MusicDealCode,
+            }),
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
+
+                        if (Command_Name_G == Deal_Mode_SendForApproval || Command_Name_G == Deal_Mode_Approve) {
+                            $('#txtApprovalRemark').val('').removeAttr('required');
+                            $('#popApprovalRemark').modal();
+                            if (Command_Name_G == Deal_Mode_SendForApproval)
+                                $('#btnSaveApprovalRemark').val('@objMessageKey.SendForApproval');
+                            else
+                                $('#btnSaveApprovalRemark').val('@objMessageKey.Approve');
+                        }
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        return true;
+                    }
+                    else {
+                        Command_Name_G = "";
+                        MusicDealCode = 0;
+                        HideShow(ID, View_G, 'N');
+                        showAlert("E", result.Message);
+                        if (result.BindList == "Y")
+                            SearchOrShowAll(SearchCommand_G, false);
+
+                        return false;
+                    }
+                }
+            },
+            error: function (result) {
+                hideLoading();
+                Command_Name_G = "";
+                MusicDealCode = 0;
+                alert('Error in CheckRecordCurrentStatus() : ' + result.responseText);
+            }
+        });
+    }
+    function CheckRecordLock() {
+        debugger;
+        showLoading();
+        var returnVal = false;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Music_Deal_Code: MusicDealCode
+            }),
+            async: true,
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        debugger;
+                        if (Command_Name_G == Deal_Mode_Edit || Command_Name_G == Deal_Mode_Amendment || Command_Name_G == Deal_Mode_Approve_NextPage) {
+                            var URL = '@Url.Action("ButtonEvents", "Music_Deal_List", new { Music_Deal_Code = "_MusicDealCode_", CommandName = "_CommandName_" })';
+                            URL = URL.replace("_MusicDealCode_", MusicDealCode);
+                            URL = URL.replace("amp;", "");
+                            URL = URL.replace("_CommandName_", Command_Name_G);
+                            window.location.href = URL;
+                        }
+                        else {
+                            $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
+                            Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        }
+                        returnVal = true;
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                        returnVal = false;
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error in CheckRecordLock(): ' + result.responseText);
+                hideLoading();
+                returnVal = false;
+            }
+        });
+        return returnVal;
+    }
+    function togglePanelVisibility2(panelID) {
+        if (LayoutDirection_G == 'RTL') {
+            document.getElementById(panelID).removeAttribute('hidden')
+            $('.leftPanel').css('right', panelHideCss);
+            $('.MoreActionDiv').hide('fast');
+            $(".RightPanel:not(#" + panelID + ")").css("left", LeftpanelHideCss);
+            var panel = document.getElementById(panelID);
+
+            if (panel.style.left == LeftpanelShowCss) {
+                panel.style.left = LeftpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.left = LeftpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+        else {
+            document.getElementById(panelID).removeAttribute('hidden')
+            $('.leftPanel').css('left', panelHideCss);
+            $('.MoreActionDiv').hide('fast');
+            $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelHideCss);
+            var panel = document.getElementById(panelID);
+
+            if (panel.style.right == RightpanelShowCss) {
+                panel.style.right = RightpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.right = RightpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+    }
+    function AllsubmenuHide() {
+        if (LayoutDirection_G == 'RTL') {
+            $('.RightPanel').css('left', LeftpanelHideCss);
+            $('.leftPanel').css('right', panelHideCss);
+            $('#sideNavi').show();
+        }
+        else {
+            $('.RightPanel').css('right', RightpanelHideCss);
+            $('.leftPanel').css('left', panelHideCss);
+            $('.MoreActionDiv').hide('slow');
+            $('#sideNavi').show();
+        }
+    }
+    function HideShow(id, View, IsHide) {
+        ID = id;
+        View_G = View;
+        var childs = $('#' + id + " > a").not('#' + View).map(function () { return this.id })
+
+        $.each(childs, function (key, value) {
+            if (IsHide == 'Y') {
+                $('#' + value).hide();
+            }
+            else {
+                $('#' + value).show();
+            }
+        });
+    }
+
+    function PopulateTitleNameForAcqDeal(keyword) {
+        debugger;
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val();
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    debugger
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Show_Type_Code: $('#ddlShowType').val(),
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_PopulateTitleNameForAcqDeal,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = '@objMessageKey.ResultNotFound';
+                                response($.map(data, function (v, i) {
+                                    debugger
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "285px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+</script>
+<style>
+    li.deal_no {
+        width: 15%;
+    }
+
+    li.deal_desc {
+        width: 20%;
+    }
+
+    li.channels {
+        width: 20%;
+    }
+
+    li.agreement_date {
+        width: 10%;
+    }
+
+    li.deal_status {
+        width: 27%;
+    }
+
+    li.deal_title {
+        width: 15%;
+    }
+
+    li.deal_licensor {
+        width: 23%;
+    }
+
+    li.deal_territory {
+        width: 21.5%;
+    }
+
+    li.deal_period {
+        width: 20%;
+    }
+
+    /*li.deal_action {
+        width: 15%;
+        text-align: right;
+        margin-right: 10px;
+    }*/
+
+    span.not-available, label.not-available {
+        font-style: italic;
+        opacity: 0.5;
+    }
+
+    #sideNavi {
+        position: fixed;
+        right: 32px;
+        top: 20.8%;
+    }
+
+    .tinyADSearch {
+        top: 40px;
+    }
+
+    .SumoSelect {
+        width: 322px;
+    }
+</style>
+
+<div class="main_section" dir="@objMessageKey.LayoutDirection">
+    <section class="rightsU_container clearfix">
+        <div id="sideNavi">
+            <div class="side-navi-item item1" style="top:0px ;width: 46px !important;" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindAdvanceSearch('BTC', 'A');"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+        </div>
+        <div class="RightPanel" id="pnlSearch" hidden="hidden">
+            <div id="AdvanceSearchPanel">
+                <h4>@objMessageKey.AdvanceSearch</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible=true;togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
+                <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+                    <li class="AdSearch">
+                        <label>@objMessageKey.AgreementNo</label><br>
+                        <input type="text" value="" placeholder="@objMessageKey.AgreementNo" maxlength="15" id="txtAgreementNo" style="width: 172px;" />
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.AgreementPeriod</label><br>
+                        <input type="text" class="isDatepicker shortDate" value="" id="txtStartDate" name="txtStartDate" placeholder="From" title="@objMessageKey.From" />
+                        <input type="text" class="isDatepicker shortDate" value="" id="txtEndDate" name="txtEndDate" placeholder="To" title="@objMessageKey.To" />
+                    </li>
+
+                    <li class="AdSearch">
+                        <label>@objMessageKey.DealFor</label><br>
+                        @*<select id="ddlDealType" class="form_input chosen-select" style="width: 174px;"></select>*@
+                        <select id="ddlDealType" class="" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>Show Type</label><br>
+                        <select id="ddlShowType" class="" multiple="multiple"></select>
+                    </li>
+
+                    <li class="AdSearch">
+                        <label>Show Name</label><br>
+                        <input type="text" id="txtTitle" class="search" maxlength="100" style="width:96%;" placeholder="Show Name" onkeyup="PopulateTitleNameForAcqDeal(event)" autocomplete="on" />
+                        <input type="hidden" id="hdnTitleCode" value="0" />
+                    </li>
+
+                    <li class="AdSearch" style="display:@((ViewBag.IsMuciVersionSPN =="Y"? "none" : "block"))">
+                        <label>@objMessageKey.Status</label><br>
+                        <select id="ddlStatus" class="" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.BusinessUnit</label><br>
+                        <select id="ddlBusinessUnit" class="form_input chosen-select" style="width: 174px;"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.WorkflowStatus:</label><br>
+                        <select id="ddlWorkflowStatus" class="form_input chosen-select" style="width: 174px;"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Licensor</label><br>
+                        <select id="ddlLicensor" class="" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.MusicLabel</label><br>
+                        <select id="ddlMusicLabel" class="" multiple="multiple"></select>
+                    </li>
+
+                </ul>
+                <br />
+                <div style="text-align:center;">
+                    <a class="btn-primary" href="#" onclick="SearchOrShowAll('SEARCH_ADVANCE',true);">@objMessageKey.Search</a>
+                    <a class="btn-primary" href="#" onclick="SearchOrShowAll('CLEAR_ALL',true);">@objMessageKey.ClearAll</a>
+                </div>
+            </div>
+        </div>
+        <div class="container acq main_col" onclick="AllsubmenuHide();">
+            <div class="top_area">
+                <h2 class="pull-left">@objMessageKey.MusicDeals</h2>
+                <div class="right_nav pull-right">
+                    <ul>
+                        <li>
+                            <input type="text" id="txtSearchCommon" value="" class="search" style="width:530px !important;"
+                                   placeholder="@objMessageKey.AgreementNo, @objMessageKey.Description, @objMessageKey.PrimaryLicensor, @objMessageKey.MusicLabel, @objMessageKey.Licensee/@objMessageKey.Assignee" />
+                        </li>
+                        <li>
+                            <a class="btn btn-primary" style="cursor: pointer" onclick="SearchOrShowAll('SEARCH_COMMON',true);">@objMessageKey.Search</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="SearchOrShowAll('SHOW_ALL',true);">
+                                <span class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="ShowAll"></span>
+                            </a>
+                        </li>
+
+                        <li>
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAdd + "~"))
+                            {
+                                <a class="btn btn-primary" href="@Url.Action("ButtonEvents", "Music_Deal_List", new { CommandName = GlobalParams.DEAL_MODE_ADD, Music_Deal_Code = 0 })">@objMessageKey.AddDeal</a>
+                            }
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid_area">
+                <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                <div class="paging_area clearfix">
+                    <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                    <span class="pull-left" id="lblRecordCount"></span>
+                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+
+                    <div id="Pagination" class="pagination">
+                    </div>
+                    <span class="pull-right">
+                        @objMessageKey.PageSize:
+                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()"
+                               onblur="setDefaultPaging('txtPageSize')">
+                    </span>
+                </div>
+                <div id="divMusicDealList" class="deal clearfix">
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popApprovalRemark" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="formApprovalRemark">
+                <div class="form_wrapper">
+                    <div class="form_fields acq" style="height:210px;">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="CloseApprovalRemark()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2 id="lblApprove">@objMessageKey.ApprovalRemarks</h2>
+                        </div>
+                        <div style="padding:10px 20px;">
+                            @Html.TextArea("ApproverRemark", new { id = "txtApprovalRemark", @rows = "5", @cols = "20", @maxlength = "4000", @class = "textarea", style = "resize: none" })
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" id="btnSaveApprovalRemark" class="btn btn-primary" value="@objMessageKey.Approve" onclick="ButtonEvents()">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

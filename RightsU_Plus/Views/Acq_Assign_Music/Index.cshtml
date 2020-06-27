@@ -1,0 +1,1727 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RightsU</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
+    <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <style>
+        #searchCommon, #btnAssignMusic
+        {
+            margin-top: -5px;
+        }
+
+        .cls-body-block
+        {
+            max-height: 466px;
+            overflow: auto;
+        }
+
+        .expandable_normal
+        {
+            float: none;
+            line-height: initial;
+            list-style: none;
+            margin: 0;
+        }
+    </style>
+    <script>
+        
+        var IsCallList = 'Y';
+        var IsCallPopup = 'Y';
+        var isAllSelected = false;
+
+        $(document).ready(function () {
+            console.log("Ready Execution Begins : " + new Date().toString())
+            if (@ViewBag.Record_Locking_Code > 0)
+            {
+                var fullUrl = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+                Call_RefreshRecordReleaseTime(@ViewBag.Record_Locking_Code,fullUrl);
+            }
+            
+            Search("", "Y");
+            BindMusicLibraryList();
+            SetPaging('L');
+            addNumeric();
+            console.log("Ready Execution Ends : " + new Date().toString())
+        });
+
+        function addNumeric()
+        {
+            $("input.numeric").numeric({
+                allowMinus   : false,
+                allowThouSep : false,
+                allowDecSep  : false,
+                max:99,
+                min:1
+            });
+
+            $("input.pagingSize").numeric({
+                allowMinus   : false,
+                allowThouSep : false,
+                allowDecSep  : false,
+                max:100,
+                min:1
+            });
+        }
+
+        function initializeExpander_Normal() {
+            if (typeof $.expander !== "undefined") {
+                $.expander.defaults.expandEffect = 'fadeIn';
+                $.expander.defaults.collapseEffect = 'fadeOut';
+
+                $('.expandable_normal').expander({
+                    slicePoint: 50,
+                    expandPrefix: '...',
+                    expandText: '<span>read more</span>',
+                    userCollapseText: '<span>[^]</span>',
+                    //collapseTimer: 0,  // re-collapses after 5 seconds; default is 0, so no re-collapsing
+                });
+            }
+        }
+
+        var COMMAND_NAME = "";
+        var MUSIC_CODE = "";
+        var POPUP_MODE = "";
+
+        function handleOk() {
+            if(COMMAND_NAME == "DELETE")
+            {
+                Delete(MUSIC_CODE);
+                COMMAND_NAME = "";
+                MUSIC_CODE = "";
+            }
+        }
+
+        function handleCancel() {
+            var COMMAND_NAME = "";
+            var MUSIC_CODE = "";
+        }
+
+        function BindMusicLibraryList() {
+            var pageNo = $('#hdnPageNo').val();
+            var recordPerPage = $('#txtPageSize').val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindMusicLibraryList", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    pageNo: pageNo, 
+                    recordPerPage: recordPerPage 
+                }),
+                async:false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#divMusicLibraryList').empty();
+                        $('#divMusicLibraryList').html(result);
+                        initializeExpander();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+
+        }
+
+        function BindPopupMusicError(linkShow, isWarning) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindPopupMusicError", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    linkShow: linkShow
+                }),
+                async:false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        if(isWarning == "N")
+                            $('#lblCommonPopupHeader').text('Error List');
+                        else
+                            $('#lblCommonPopupHeader').text('Warning List');
+
+                        $('#divCommonPopupList').empty();
+                        $('#divCommonPopupList').html(result);
+                        initializeExpander();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+
+        }
+
+        function BindPopupMusicList(linkShow) {
+
+            var pageNo = $('#hdnPopupPageNo').val();
+            var recordPerPage = $('#txtPopupPageSize').val();
+            var mode = POPUP_MODE;
+
+            if(linkShow == "Y")
+                recordPerPage = $('#txtLinkPopupPageSize').val();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindPopupMusicList", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    linkShow: linkShow,
+                    pageNo: pageNo, 
+                    recordPerPage: recordPerPage ,
+                    mode: mode
+                }),
+                async:false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        if(linkShow == 'Y')
+                        {
+                            $('#divPopupLinkShowList').empty();
+                            $('#divPopupLinkShowList').html(result);
+                            BindCheckboxEventForLinkShow();
+                        }
+                        else
+                        {
+                            $('#divPopupMusicList').empty();
+                            $('#divPopupMusicList').html(result);
+                            BindCheckboxEventForAssignMusic();
+                        }
+                        initializeExpander();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+
+        }
+
+        function Search(searchText, showAll)
+        {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Search", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    searchText: searchText,
+                    showAll: showAll
+                }),
+                async:false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        if(result.Status == "S")
+                        {
+                            $('#lblRecordCount').text(result.Record_Count);
+                            $('#hdnPageNo').val(1);
+                            $('#hdnRecordCount').val(result.Record_Count);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function PopupSearch(searchText, linkShow)
+        {
+            var dealMovieCode = 0;
+            var mode = POPUP_MODE;
+            if(linkShow != 'Y')
+                dealMovieCode = $('#ddlDealMovieList').val();               
+            else
+                dealMovieCode = parseInt($('#hdnLinkMusicCode').val());
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PopupSearch", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    searchText: searchText,
+                    dealMovieCode: dealMovieCode,
+                    linkShow: linkShow,
+                    mode: mode
+                }),
+                async:false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        if(result.Status == "S")
+                        {
+                            if(linkShow == 'Y')
+                                $('#lblLinkPopupRecordCount').text(result.Record_Count);
+                            else
+                                $('#lblPopupRecordCount').text(result.Record_Count);
+
+                            $('#hdnPopupPageNo').val(1);
+                            $('#hdnPopupRecordCount').val(result.Record_Count);
+                            if(result.All_Codes != "")
+                                $('#hdnCheckAllCodes').val("," + result.All_Codes + ",")
+                            isAllSelected = false;
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function FillLinkShowDetails()
+        {
+            musicCode = $('#hdnLinkMusicCode').val();               
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("FillLinkShowDetails", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    musicCode: musicCode
+                }),
+                async:false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#lblLinkMusicLibrary').text(result.Music_Library);
+                        $('#lblLinkMusicTitle').text(result.Music_Title);
+                        $('#lblLinkMusicSinger').text(result.Music_Singer);
+                        $('#lblLinkMusicComposer').text(result.Music_Composer);
+                        $('#lblLinkMusicLength').text(result.Music_Length);
+                        $('#lblLinkReleaseYear').text(result.Year_Of_Release);
+                        $('#lblLinkMusicLanguage').text(result.Music_Language);
+                        $('#lblLinkMusicType').text(result.Music_Type);
+                        initializeExpander_Normal();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function SetPaging(pagingFor) {
+
+            var pageNo = 1
+            var recordCount = 0
+            var pagePerBatch = 0
+            var recordPerPage = 0
+
+            if(pagingFor == 'P' || pagingFor == 'LP')
+            {
+                pageNo = parseInt($('#hdnPopupPageNo').val());
+                recordCount = parseInt($('#hdnPopupRecordCount').val());
+                pagePerBatch = parseInt($('#hdnPopupPagePerBatch').val());
+
+                if(pagingFor == 'LP')
+                    recordPerPage = parseInt($('#txtLinkPopupPageSize').val());
+                else
+                    recordPerPage = parseInt($('#txtPopupPageSize').val());
+
+                IsCallPopup = 'N';
+            }
+            else
+            {
+                pageNo = parseInt($('#hdnPageNo').val());
+                recordCount = parseInt($('#hdnRecordCount').val());
+                pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+                recordPerPage = parseInt($('#txtPageSize').val());
+                IsCallList = 'N';
+            }
+
+            var cnt = pageNo * recordPerPage;
+            if (cnt >= recordCount)
+            {
+                var v1 = parseInt(recordCount / recordPerPage);
+                if ((v1 * recordPerPage) == recordCount)
+                    pageNo = v1;
+                else
+                    pageNo = v1 + 1;
+            }
+        
+            if(pageNo == 0)
+                pageNo = 1;
+
+            if(pagingFor == 'P' || pagingFor == 'LP')
+                $('#hdnPopupPageNo').val(pageNo);
+            else
+                $('#hdnPageNo').val(pageNo);
+
+            var index = pageNo - 1;
+            var opt;
+            if(pagingFor == 'P' || pagingFor == 'LP')
+            {
+                opt = { callback: popupPageselectCallback };
+            }
+            else
+            {
+                opt = { callback: pageselectCallback };
+            }
+            opt["items_per_page"] = recordPerPage;
+            opt["num_display_entries"] = pagePerBatch;
+            opt["num"] = 10;
+            opt["prev_text"] = "<<";
+            opt["next_text"] = ">>";
+            opt["current_page"] = index;
+
+            if(pagingFor == 'P')
+                $("#PopupPagination").pagination(recordCount, opt);
+            else if(pagingFor == 'LP')
+                $("#LinkPopupPagination").pagination(recordCount, opt);
+            else
+                $("#Pagination").pagination(recordCount, opt);
+        }
+
+        function pageselectCallback(page_index, jq) {
+            if(!ValidatePageSize('L'))
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCallList == 'Y')
+            {
+                BindMusicLibraryList();
+            }
+            else
+                IsCallList = 'Y';
+        }
+
+        function popupPageselectCallback(page_index, jq) {
+
+            if (IsCallPopup == 'Y')
+            {
+                var musicCode = parseInt($('#hdnLinkMusicCode').val());
+                var linkShow = "N";
+                var pagingFor = "P";
+                if(musicCode > 0)
+                {
+                    linkShow = "Y";
+                    pagingFor = "LP";
+                }
+
+                if(!ValidatePageSize(pagingFor))
+                    return false;
+
+                if(musicCode > 0 && POPUP_MODE != "VIEW")
+                {
+                    if(!ValidateSaveLink("N"))
+                    {
+                        SetPaging('LP');
+                        return false;
+                    }
+                }
+
+                var pageNo = page_index + 1
+                $('#hdnPopupPageNo').val(pageNo);
+                BindPopupMusicList(linkShow);
+            }
+            else
+                IsCallPopup = 'Y';
+        }
+
+        function ValidatePageSize(pagingFor)
+        {
+            var idText = "";
+            if(pagingFor == 'P')
+                idText = "Popup";
+            else if(pagingFor == 'LP')
+                idText = "LinkPopup";
+
+            var recordPerPage = $('#txt' + idText + 'PageSize').val()
+            if($.trim(recordPerPage) != '')
+            {
+                var pageSize = parseInt(recordPerPage);
+                if(pageSize > 0)
+                    return true;
+            }
+
+            $('#txt' + idText + 'PageSize').addClass("required");
+
+            return false
+        }
+
+        function txtPageSize_OnChange(pagingFor)
+        {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            if(!ValidatePageSize(pagingFor))
+                return false;
+
+            if(pagingFor == 'P')
+                BindPopupMusicList("N");
+            else if(pagingFor == 'LP')
+                BindPopupMusicList("Y");
+            else
+                BindMusicLibraryList();
+
+            SetPaging(pagingFor);
+        }
+
+        function txtPageChange_Focus(pagingFor)
+        {
+            if(pagingFor == 'LP' && POPUP_MODE != "VIEW")
+            {
+                if(!ValidateSaveLink("N"))
+                    return false;
+            }
+
+            return true;
+        }
+
+        function Search_Click(showAll, searchFor)
+        {
+            
+            var idText = '';
+            if(searchFor == 'P')
+                idText = 'Popup';
+            else if(searchFor == 'LP')
+            {
+                if(!ValidateSaveLink("N"))
+                    return false;
+
+                idText = 'LinkPopup';
+            }
+
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            if(!ValidatePageSize('L'))
+                return false;
+
+            var searchText = '';
+            if(showAll == "Y")
+            {
+                $('#searchCommon').val('');
+            }
+            else
+            {
+                searchText = $('#txt' + idText + 'Search').val().trim();
+                if(searchText == '')
+                {
+                    searchText = $('#txt' + idText + 'Search').val('');
+                    $('#txt' + idText + 'Search').attr('required', true)
+                    return false;
+                }
+            }
+
+            if(searchFor == 'P')
+            {
+                PopupSearch(searchText, "N");
+                BindPopupMusicList('N');
+            }
+            else if(searchFor == 'LP')
+            {
+                PopupSearch(searchText, "Y");
+                BindPopupMusicList('Y');
+            }
+            else
+            {
+                Search(searchText, showAll);
+                BindMusicLibraryList();
+            }
+            SetPaging(searchFor);
+        }
+
+        function AssignMusic_Click()
+        {
+            if(!ValidatePageSize('L'))
+                return false;
+
+            $('#txtPopupSearch').val('');
+            $('#hdnPopupPageNo').val('1');
+            $('#hdnPopupRecordCount').val('0');
+            $('#txtPopupPageSize').val('5');
+            $("#hdnPopupSelectCodes").val('');
+            $("#hdnCheckAllCodes").val('');
+            $('#hdnLinkMusicCode').val('0');
+
+            ClearPopupSession();
+            isAllSelected = false;
+            BindDealMoviePopup();
+            PopupSearch("", "N");
+            BindPopupMusicList('N');
+            SetPaging('P');
+            if('@objSchema.Deal_Type_Condition' != '@GlobalParams.Deal_Music')
+            {
+                var dealMovieCode = $('#ddlDealMovieList').val();
+                Episode_RowCommand('', 'ADD_EPISODE', dealMovieCode, 'N');
+            }
+
+            $('#divPopAssignMusic').modal();
+        }
+
+        function LinkShow_Click(musicCode)
+        {
+            if(!ValidatePageSize('L'))
+                return false;
+
+            $('#liLinkShow_Save').show()
+            $('#divLinkShow_Search').show()
+            POPUP_MODE = "";
+            $('#txtLinkPopupSearch').val('');
+            $('#hdnPopupPageNo').val('1');
+            $('#hdnPopupRecordCount').val('0');
+            $('#txtPopupPageSize').val('5');
+            $("#hdnPopupSelectCodes").val('');
+            $("#hdnCheckAllCodes").val('');
+            $("#hdnLinkMusicCode").val(musicCode);
+
+            ClearPopupSession();
+            isAllSelected = false;
+            PopupSearch("", "Y");
+            FillLinkShowDetails();
+            BindPopupMusicList('Y');
+            SetPaging('LP');
+            $('#divPopLinkData').modal();
+        }
+
+        function ViewLinkedShow_Click(musicCode)
+        {
+            $('#liLinkShow_Save').hide()
+            $('#divLinkShow_Search').hide()
+            POPUP_MODE = "VIEW";
+            $('#hdnPopupPageNo').val('1');
+            $('#hdnPopupRecordCount').val('0');
+            $('#txtPopupPageSize').val('5');
+            $("#hdnPopupSelectCodes").val('');
+            $("#hdnCheckAllCodes").val('');
+            $("#hdnLinkMusicCode").val(musicCode);
+
+            ClearPopupSession();
+            PopupSearch("", "Y");
+            BindPopupMusicList('Y');
+            FillLinkShowDetails();
+            SetPaging('LP');
+            $('#divPopLinkData').modal();
+        }
+
+        function ClosePopup(popupId)
+        {
+            $('#' + popupId).modal('hide');
+
+            if(popupId == "divPopLinkData")
+            {
+                $('#hdnLinkMusicCode').val('0');
+                $('#divPopupLinkShowList').empty();
+            }
+            else if (popupId == "divPopAssignMusic")
+            {
+                $('#divPopupMusicList').empty();
+            }
+
+            $('#divCommonPopupList').empty();
+
+            if(popupId != "divCommonPopup")
+                ClearPopupSession();
+
+            POPUP_MODE = "";
+        }
+
+        function DealMovieList_OnChange()
+        {
+            var dealMovieCode = $('#ddlDealMovieList').val();
+
+            if('@objSchema.Deal_Type_Condition' != '@GlobalParams.Deal_Music')
+            {
+                Episode_RowCommand('', 'ADD_EPISODE', dealMovieCode, 'N');
+            }
+            var searchText = $('#txtPopupSearch').val().trim();
+            PopupSearch(searchText, "N");
+            SetPaging('P');
+            BindPopupMusicList('N');
+        }
+
+        function SaveAssignedMusic(linkShow)
+        {
+            var selectedMusicCodes = $("#hdnPopupSelectCodes").val();
+            var selectedDealMovieCodes = $('#ddlDealMovieList').val();
+
+            if('@objSchema.Deal_Type_Condition' != '@GlobalParams.Deal_Music')
+            {
+                if(!CheckAnyEpisodeInEdit())
+                    return false
+
+                var addedRowCount = $("[ID*='trItemEpisode_']").length;
+                if(addedRowCount == 0)
+                {
+                    var trID = $("[ID*='trAddEpisode_']")[0].id;
+                    $('#' + trID.replace("trAddEpisode_", "ddlEpisodes_")).addClass("required");
+
+                    showAlert("E", "Please add episode.");
+                    return false;
+                }
+            }
+
+            var arr = selectedMusicCodes.split(',');
+            if(arr.length < 3)
+            {
+                showAlert("E", "Please select music title.");
+                return false;
+            }
+
+            Save(selectedDealMovieCodes, selectedMusicCodes, linkShow)
+        }
+
+        function CheckAnyEpisodeInEdit()
+        {
+            var returnVal = true;
+            
+            var editRowCount = $("[ID*='trEditEpisode_']").length;
+            if(editRowCount > 0)
+            {
+                var trID = $("[ID*='trEditEpisode_']")[0].id;
+                $('#' + trID.replace("trEditEpisode_", "ddlEpisodes_")).addClass("required");
+                showAlert("E", "Please complete edit operation.");
+                returnVal = false;
+            }
+
+            return returnVal
+        }
+
+        function SaveLinkedMusic(linkShow)
+        {
+            var selectedDealMovieCodes = $("#hdnPopupSelectCodes").val();
+            var selectedMusicCodes = $('#hdnLinkMusicCode').val();
+
+            if(ValidateSaveLink("Y"))
+                Save(selectedDealMovieCodes, selectedMusicCodes, linkShow)
+        }
+
+        function ValidateSaveLink(isFinalSave)
+        {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            if(!CheckAnyEpisodeInEdit())
+                return false
+
+            var returnVal = true;
+            $("input[id*='chkMusic']:checkbox:checked").each(function(){
+                var code = $(this).val();
+
+                var addedRowCount = $("[ID*='trItemEpisode_" + code + "']").length;
+                if(addedRowCount == 0)
+                {
+                    returnVal = false;
+
+                    var trID = $("[ID*='trAddEpisode_" + code + "']")[0].id;
+                    $('#' + trID.replace("trAddEpisode_", "ddlEpisodes_")).addClass("required");
+                }
+            });
+
+            if(!returnVal)
+            {
+                showAlert("E", "Please add episode.");
+                return false;
+            }
+
+            if(isFinalSave == "Y")
+            {
+                var arr = $("#hdnPopupSelectCodes").val().split(',');
+                if(arr.length < 3)
+                {
+                    showAlert("E", "Please select music title.");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function Save(selectedDealMovieCodes, selectedMusicCodes, linkShow)
+        {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Save", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    selectedDealMovieCodes: selectedDealMovieCodes,
+                    selectedMusicCodes: selectedMusicCodes,
+                    linkShow: linkShow
+                }),
+                async:false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        if(result.Status == "S" || result.Status == "W")
+                        {
+                            if(result.Status == "S")
+                                showAlert("S", "Music Title successfully Assigned.", "OK");
+
+                            if(linkShow=="Y")
+                                $('#divPopLinkData').modal('hide');
+                            //else
+                            //    $('#divPopAssignMusic').modal('hide');
+
+                            isAllSelected = false;
+                            Search("", "Y");
+                            BindMusicLibraryList();
+                            SetPaging('L');
+
+                            if(result.Status == "W")
+                            {
+
+                                BindPopupMusicError(linkShow, 'Y');
+                                $('#divCommonPopup').modal();
+                            }
+                        }
+                        else if(result.Status == "E")
+                        {
+                            BindPopupMusicError(linkShow, 'N');
+                            $('#divCommonPopup').modal();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function BindDealMoviePopup()
+        {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindDealMoviePopup", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async:false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        $("#ddlDealMovieList").empty();
+                        $.each(result, function () {
+                            $("#ddlDealMovieList").append($("<option />").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlDealMovieList").trigger("chosen:updated");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function BindEpisodeListPopup(dealMovieCode, dummyGuid, linkShow)
+        {
+            var episodeFrom = 0, episodeTo = 0
+            if(linkShow == "Y")
+            {
+                episodeFrom = $("#txtEpisodeFrom_" + dealMovieCode).val();
+                episodeTo = $("#txtEpisodeTo_" + dealMovieCode).val();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindEpisodeListPopup", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dealMovieCode: dealMovieCode,
+                    episodeFrom: episodeFrom, 
+                    episodeTo: episodeTo,
+                    dummyGuid: dummyGuid
+                }),
+                async:false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        $("#ddlEpisodes_" + dealMovieCode).empty();
+                        if(result.Episode_List.length == 0)
+                        {
+                            $('#trAddEpisode_' + dealMovieCode).remove();
+                        }
+                        else
+                        {
+                            $.each(result.Episode_List, function () {
+                                $("#ddlEpisodes_" + dealMovieCode).append($("<option />").val(this.Value).text(this.Text));
+                            });
+
+                            $("#ddlEpisodes_" + dealMovieCode).val(result.Selected_Codes.split(','))
+                            initializeChosen();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function btnBack_Click()
+        {
+            location.href='@Url.Action("Back", "Acq_Assign_Music")';
+        }
+
+        function BindCheckboxEventForAssignMusic() {
+            var arrSelectedCodes = $("#hdnPopupSelectCodes").val().split(',');
+            var allCodes = $("#hdnCheckAllCodes").val();
+
+            var newSelectedCodes = ",";
+            var count = 0;
+            for (i = 0; i < arrSelectedCodes.length; i++) { 
+                var code = arrSelectedCodes[i].trim();
+                if(code != "")
+                {
+                    if(allCodes.indexOf("," + code + ",") > -1)
+                    {
+                        count++;
+                        newSelectedCodes = newSelectedCodes + code + ",";
+                    }
+                }
+            }
+
+            $("#hdnPopupSelectCodes").val(newSelectedCodes);
+
+            var recCount = $('#hdnPopupRecordCount').val();
+            if(count == recCount && recCount > 0)
+                isAllSelected = true;
+
+            if(isAllSelected)
+            {
+                $("input[id*='chkMusic']:checkbox").prop('checked', true);
+                $("#chkAllMusic").prop('checked', true);
+
+                var selectedCodes = $('#hdnCheckAllCodes').val();
+                $("#hdnPopupSelectCodes").val(selectedCodes);
+            }
+            else
+            {
+                var selectedCodes = $("#hdnPopupSelectCodes").val();
+                $("#hdnPopupSelectCodes").val(newSelectedCodes);
+                $("input[id*='chkMusic']:checkbox").each(function(){
+                    var code = $(this).val();
+                    if(selectedCodes.indexOf("," + code + ",") > -1)
+                    {
+                        $(this).prop('checked', true);
+                    }
+                });
+            }
+
+            $("input[id*='chkMusic']:checkbox").click(function () {
+                var code = $(this).val();
+                var selectedCodes = $("#hdnPopupSelectCodes").val().trim();
+                if(selectedCodes == '')
+                    selectedCodes = ","
+                if($(this).is(':checked'))
+                {
+                    selectedCodes = selectedCodes + code + ",";
+                    $("#hdnPopupSelectCodes").val(selectedCodes);
+                }
+                else
+                {
+                    selectedCodes = selectedCodes.replace("," + code + ",", ",");
+                    $("#hdnPopupSelectCodes").val(selectedCodes);
+                }
+
+                var lenSelected = $("#hdnPopupSelectCodes").val().split(',').length;
+                var lenAll = $("#hdnCheckAllCodes").val().split(',').length;
+                isAllSelected = (lenSelected == lenAll);
+                $("#chkAllMusic").prop('checked', isAllSelected);
+            });
+
+            $("#chkAllMusic").click(function () {
+                $("input[id*='chkMusic']:checkbox").prop('checked', $(this).is(':checked'));
+
+                isAllSelected = $(this).is(':checked')
+                $("#hdnPopupSelectCodes").val("");
+                if(isAllSelected)
+                {
+                    var selectedCodes = $('#hdnCheckAllCodes').val();
+                    $("#hdnPopupSelectCodes").val(selectedCodes);
+                }
+            });
+        }
+
+        function BindCheckboxEventForLinkShow() {
+            var arrSelectedCodes = $("#hdnPopupSelectCodes").val().split(',');
+            var allCodes = $("#hdnCheckAllCodes").val();
+
+            var newSelectedCodes = ",";
+            for (i = 0; i < arrSelectedCodes.length; i++) { 
+                var code = arrSelectedCodes[i].trim();
+                if(code != "")
+                {
+                    if(allCodes.indexOf("," + code + ",") > -1)
+                    {
+                        newSelectedCodes = newSelectedCodes + code + ",";
+                    }
+                }
+            }
+
+            $("#hdnPopupSelectCodes").val(newSelectedCodes);
+
+            var selectedCodes = $("#hdnPopupSelectCodes").val();
+            $("#hdnPopupSelectCodes").val(newSelectedCodes);
+            $("input[id*='chkMusic']:checkbox").each(function(){
+                var code = $(this).val();
+                if(selectedCodes.indexOf("," + code + ",") > -1)
+                {
+                    $(this).prop('checked', true);
+                    Episode_RowCommand('', 'ADD_EPISODE', code, 'Y');
+                }
+            });
+            
+
+            $("input[id*='chkMusic']:checkbox").click(function () {
+                var code = $(this).val();
+                var selectedCodes = $("#hdnPopupSelectCodes").val().trim();
+                if(selectedCodes == '')
+                    selectedCodes = ",";
+
+                var musicCode = $('#hdnLinkMusicCode').val();
+
+                if($(this).is(':checked'))
+                {
+                    selectedCodes = selectedCodes + code + ",";
+                    $("#hdnPopupSelectCodes").val(selectedCodes);
+                    Episode_RowCommand('', 'ADD_EPISODE', code, 'Y');
+                }
+                else
+                {
+                    $("#divEpisode_" + code).empty();
+                    selectedCodes = selectedCodes.replace("," + code + ",", ",");
+                    $("#hdnPopupSelectCodes").val(selectedCodes);
+                }
+            });
+        }
+
+        function Episode_RowCommand(dummyGuid, commandName, dealMovieCode, linkShow)
+        {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            var isValid = true;
+            if(dealMovieCode == 0)
+            {
+                dealMovieCode = $('#ddlDealMovieList').val();
+            }
+
+            if(commandName == "ADD_EPISODE")   
+            {
+                BindEpisodeGrid(dealMovieCode, dummyGuid, linkShow);
+                BindEpisodeListPopup(dealMovieCode, dummyGuid, linkShow);
+            }
+            else if(commandName == "SAVE")
+            {
+                if(!CheckAnyEpisodeInEdit())
+                    return false;
+                
+                var arrEpisode = $('#ddlEpisodes_' + dealMovieCode).val();
+                if(arrEpisode == null)
+                {
+                    $('#ddlEpisodes_' + dealMovieCode).addClass("required");
+                    isValid = false;
+                }
+                var noOfPlay = $('#txtNoOfPlay_' + dealMovieCode).val().trim();
+                if(noOfPlay == "")
+                {
+                    $('#txtNoOfPlay_' + dealMovieCode).addClass("required");
+                    isValid = false;
+                }
+
+                var selectedMusicCodes = $("#hdnPopupSelectCodes").val();
+                var selectedDealMovieCodes = $('#ddlDealMovieList').val();
+                if(linkShow != "Y")
+                {
+                    var arr = selectedMusicCodes.split(',');
+                    if(arr.length < 3)
+                    {
+                        showAlert("E", "Please select music title.");
+                        isValid = false;
+                    }
+                }
+                if(isValid)
+                {
+                    if(linkShow != "Y")
+                    {
+                        var selectedEpisode = arrEpisode.toString();
+                        SaveEpisode(dealMovieCode, selectedEpisode, noOfPlay, dummyGuid);
+                        Save(selectedDealMovieCodes, selectedMusicCodes, linkShow)
+                        BindEpisodeGrid(dealMovieCode, dummyGuid, linkShow)
+                        BindEpisodeListPopup(dealMovieCode, dummyGuid, linkShow);
+                        $("#hdnPopupSelectCodes").val("");
+                        $("input[id*='chkMusic']:checkbox").prop('checked', false);
+                        $("#chkAllMusic").prop('checked', false);
+                    }
+                    else
+                    {
+                        var selectedEpisode = arrEpisode.toString();
+                        SaveEpisode(dealMovieCode, selectedEpisode, noOfPlay, dummyGuid);
+                        BindEpisodeGrid(dealMovieCode, dummyGuid, linkShow)
+                        BindEpisodeListPopup(dealMovieCode, dummyGuid, linkShow);
+                    }
+                }
+            }
+            else if(commandName == "UPDATE")
+            {
+                var arrEpisode = $('#ddlEpisodes_' + dealMovieCode).val()
+                if(arrEpisode == null)
+                {
+                    $('#ddlEpisodes_' + dealMovieCode).addClass("required");
+                    isValid = false;
+                }
+
+                var noOfPlay = $('#txtNoOfPlay_' + dealMovieCode).val().trim();
+                if(noOfPlay == "")
+                {
+                    $('#txtNoOfPlay_' + dealMovieCode).addClass("required");
+                    isValid = false;
+                }
+
+                if(isValid)
+                {
+                    var selectedEpisode = arrEpisode.toString();
+                    SaveEpisode(dealMovieCode, selectedEpisode, noOfPlay, dummyGuid);
+                    BindEpisodeGrid(dealMovieCode, '', linkShow)
+                    BindEpisodeListPopup(dealMovieCode, '', linkShow);
+                }
+            }
+            else if(commandName == "EDIT")
+            {
+                if(!CheckAnyEpisodeInEdit())
+                    return false;
+
+                BindEpisodeGrid(dealMovieCode, dummyGuid, linkShow)
+                BindEpisodeListPopup(dealMovieCode, dummyGuid, linkShow);
+            }
+            else if(commandName == "CANCEL")
+            {
+                BindEpisodeGrid(dealMovieCode, '', linkShow)
+                BindEpisodeListPopup(dealMovieCode, '', linkShow);
+            }
+            else if(commandName == "DELETE")
+            {
+                if(!CheckAnyEpisodeInEdit())
+                    return false;
+
+                DeleteEpisode(dealMovieCode, dummyGuid);
+                BindEpisodeGrid(dealMovieCode, '', linkShow)
+                BindEpisodeListPopup(dealMovieCode, '', linkShow);
+            }
+
+            return isValid;
+        }
+
+        function BindEpisodeGrid(dealMovieCode, dummyGuid, linkShow) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindEpisodeGrid", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dealMovieCode: dealMovieCode,
+                    dummyGuid: dummyGuid,
+                    linkShow: linkShow
+                }),
+                async:false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        if(linkShow == 'Y')
+                        {
+                            $('#divEpisode_' + dealMovieCode).empty();
+                            $('#divEpisode_' + dealMovieCode).html(result);   
+                        }
+                        else
+                        {
+                            $('#divEpisode_AssignMusic').empty();
+                            $('#divEpisode_AssignMusic').html(result);
+                        }
+                        addNumeric();
+                        initializeExpander();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+
+        }
+
+        function ClearPopupSession()
+        {
+            $('#divPopupLinkShowList').empty();
+            $('#divPopupMusicList').empty();
+            $('#divCommonPopupList').empty();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ClearPopupSession", "Acq_Assign_Music")',
+                traditional: true,
+                async:false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function SaveEpisode(dealMovieCode, selectedEpisodes, noOfPlay, dummyGuid)
+        {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveEpisode", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dealMovieCode: dealMovieCode,
+                    selectedEpisodes: selectedEpisodes,
+                    noOfPlay: noOfPlay,
+                    dummyGuid: dummyGuid
+                }),
+                async:false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function DeleteEpisode(dealMovieCode, dummyGuid)
+        {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeleteEpisode", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dealMovieCode: dealMovieCode,
+                    dummyGuid: dummyGuid
+                }),
+                async:false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function Ask_Confirmation(musicCode)
+        {
+            COMMAND_NAME = "DELETE";
+            MUSIC_CODE = musicCode;
+            showAlert("I", "Are you sure, you want to delete this record?", "OKCANCEL");
+        }
+
+        function Delete(musicCodes)
+        {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Delete", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    musicCodes: musicCodes
+                }),
+                async:false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        if(result.Status == "S")
+                        {
+                            showAlert("S", "Music Title successfully Deleted.", "OK");
+                            Search("", "Y");
+                            BindMusicLibraryList();
+                            SetPaging('L');
+                        }
+                        else if(result.Status == "E")
+                        {
+                            BindPopupMusicError("N", 'N');
+                            $('#divCommonPopup').modal();
+
+                            //if(result.Message == "")
+                            //{
+                            //    BindPopupMusicError("N", 'N');
+                            //    $('#divCommonPopup').modal();
+                            //}
+                            //else
+                            //{
+                            //    showAlert("E", result.Message);
+                            //}
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function BindEpisodeDetail(musicCodes)
+        {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindEpisodeDetail", "Acq_Assign_Music")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    musicCodes: musicCodes
+                }),
+                async:false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#lblCommonPopupHeader').text('Episodes Detail');
+                        $('#divCommonPopupList').empty();
+                        $('#divCommonPopupList').html(result);
+
+                        $('#divCommonPopup').modal();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+
+        }
+    </script>
+</head>
+<body>
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <form id="frmAcqDeal" method="post">
+                    <div class="top_area">
+                        <div class="title_block dotted_border clearfix">
+                            <h2 class="pull-left">@ViewBag.PageHeader
+                                <span>@ViewBag.PageSubHeader</span>
+                            </h2>
+                        </div>
+                        <table class="table_brif table">
+                            <tbody>
+                                <tr>
+                                    <td class="intro_pic">
+                                        <div class="movie_deal" title="Deal Type - Music Library">
+                                            <div id="musicIcon">
+                                                <span class="glyphicon_Music glyphicon-music"></span>
+                                            </div>
+                                            <span class="strip_song">strip</span>
+                                        </div>
+                                    </td>
+                                    <td class="intro">
+                                        <table class="four_column table">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="td_label">Agreement No.</td>
+                                                    <td>
+                                                        @Html.Label("Agreement_No", (objSchema.Agreement_No + " Version #: VN " + objSchema.Version))
+                                                    </td>
+                                                    <td class="td_label">Agreement Date</td>
+                                                    <td>
+                                                        @Html.Label("Agreement_Date", string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objSchema.Agreement_Date))
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="td_label">Description</td>
+                                                    <td>
+                                                        <div class="expandable">
+                                                            @Html.Label("Deal_Desc", objSchema.Deal_Desc)
+                                                        </div>
+                                                    </td>
+                                                    <td class="td_label">Status</td>
+                                                    <td>
+                                                        @Html.Label("Deal_Tag", objSchema.Status)
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="intro_approved">
+                                        <div class="stampBg approved">
+                                            <h4 title="Workflow Status">
+                                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status)
+                                            </h4>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="grid_area">
+                        <div class="navigation_tabs">
+                            <div class="tabbable">
+                                <ul class="nav nav-tabs nav-tab pull-left">
+                                    <li class="active">
+                                        <a data-toggle="tab" role="tab">Music Library</a>
+                                    </li>
+                                </ul>
+                                <div class="right_nav pull-right">
+                                    <ul>
+                                        <li>
+                                            <input type="text" name="searchCommon" id="searchCommon" placeholder="@ViewBag.Search_PlaceHolder" />
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <span class="glyphicon glyphicon-refresh" title="Show All" onclick="Search_Click('Y', 'L')"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <span class="glyphicon glyphicon-search" title="Search" onclick="Search_Click('N', 'L')"></span>
+                                            </a>
+                                        </li>
+                                        @if (ViewBag.RightForAssignMusic == "Y")
+                                        {
+                                            <li>
+                                                <input type="button" id="btnAssignMusic" class="btn btn-primary" value="Assign Music"
+                                                    onclick="AssignMusic_Click()">
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="tab-content clearfix table-wrapper">
+                                    <div class="tab-pane active">
+                                        <div class="paging_area clearfix">
+                                            <span class="pull-left">Total Records: </span>
+                                            <span class="pull-left" id="lblRecordCount"></span>
+                                            @Html.Hidden("hdnPageNo", 1)
+                                            @Html.Hidden("hdnPagePerBatch", 5)
+                                            @Html.Hidden("hdnRecordCount", 0)
+
+                                            <div id="Pagination" class="pagination">
+                                            </div>
+                                            <span class="pull-right">Page Size:
+                                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange('L')"></span>
+                                        </div>
+                                        <div class="scale_table_block" id="divMusicLibraryList">
+                                        </div>
+                                    </div>
+                                    <div class="bottom_action">
+                                        <ul class="form_link_nav clearfix">
+                                            <li>
+                                                <input type="button" id="btnBack" class="btn btn-primary" value="Back"
+                                                    onclick="btnBack_Click();">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    @Html.Hidden("hdnPopupPageNo", 1)
+    @Html.Hidden("hdnPopupPagePerBatch", 5)
+    @Html.Hidden("hdnPopupRecordCount", 0)
+    @Html.Hidden("hdnPopupSelectCodes", 0)
+    @Html.Hidden("hdnCheckAllCodes", 0)
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="divPopAssignMusic" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form">
+                    <div>
+                        <div class="form_fields acq">
+                            <div class="modal_block modal_header">
+                                <a class="close" onclick="ClosePopup('divPopAssignMusic')">
+                                    <span>X</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>Assign Music</h2>
+                            </div>
+                            <div class="modal_block cls-body-block">
+                                <ul>
+                                    <li>
+                                        <div>
+                                            @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                                            {
+                                                <label id="lblMusicLibrary">Music Library</label>
+                                            }
+                                            <select name="ddlDealMovieList" id="ddlDealMovieList" class="form_input chosen-select" onchange="DealMovieList_OnChange()">
+                                            </select>
+                                        </div>
+                                    </li>
+                                    <hr>
+                                    <li>
+                                        <div class="right_nav pull-left">
+                                            <ul>
+                                                <li>
+                                                    <input type="text" class="musicSearch" id="txtPopupSearch" placeholder="@ViewBag.PopupSearch_PlaceHolder" />
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <span class="glyphicon glyphicon-search" title="Search" onclick="Search_Click('N', 'P')"></span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="paging_area clearfix">
+                                            <span class="pull-left">Total Records: </span>
+                                            <span class="pull-left" id="lblPopupRecordCount">0</span>
+
+                                            <div id="PopupPagination" class="pagination">
+                                            </div>
+                                            <span class="pull-right">Page Size:
+                                            <input type="text" id="txtPopupPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="5" onchange="txtPageSize_OnChange('P')"></span>
+                                        </div>
+                                        <div class="tab-content clearfix table-wrapper scale_table_container" id="divPopupMusicList">
+                                        </div>
+                                    </li>
+                                    @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+                                    {
+                                        <li>
+                                            <div id="divEpisode_AssignMusic">
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                                        {
+                                            <li>
+                                                <input type="button" class="btn btn-primary" value="Assign" onclick="SaveAssignedMusic('N');">
+                                            </li>
+                                        }
+                                        <li>
+                                            <input type="button" class="btn btn-primary" value="Close" onclick="ClosePopup('divPopAssignMusic')">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="divPopLinkData" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="new_syndication_bundle_form">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" onclick="ClosePopup('divPopLinkData')">
+                                <span>X</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Link Show</h2>
+                        </div>
+                        <div class="cls-body-block">
+                            <div class="modal_block">
+                                <table class="four_column table">
+                                    <tr>
+                                        <td>Music Library</td>
+                                        <td>
+                                            <div class="expandable_normal">
+                                                <span id="lblLinkMusicLibrary"></span>
+                                            </div>
+                                            @Html.Hidden("hdnLinkMusicCode", 0)
+                                        </td>
+                                        <td>Music Title</td>
+                                        <td>
+                                            <div class="expandable_normal">
+                                                <span id="lblLinkMusicTitle"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Length (min.)</td>
+                                        <td>
+                                            <span id="lblLinkMusicLength"></span>
+                                        </td>
+                                        <td>Year of Release</td>
+                                        <td>
+                                            <span id="lblLinkReleaseYear"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Singer</td>
+                                        <td>
+                                            <div class="expandable_normal">
+                                                <span id="lblLinkMusicSinger"></span>
+                                            </div>
+                                        </td>
+                                        <td>Music Composer</td>
+                                        <td>
+                                            <div class="expandable_normal">
+                                                <span id="lblLinkMusicComposer"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Language</td>
+                                        <td>
+                                            <div class="expandable_normal">
+                                                <span id="lblLinkMusicLanguage"></span>
+                                            </div>
+                                        </td>
+                                        <td>Title Type</td>
+                                        <td>
+                                            <div class="expandable_normal">
+                                                <span id="lblLinkMusicType"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr>
+                            <div class="modal_block">
+                                <div class="right_nav pull-left" id="divLinkShow_Search">
+                                    <ul>
+                                        <li>
+                                            <input type="text" class="musicSearch" id="txtLinkPopupSearch" placeholder="Agreement No., Deal Type, Show Name, Vendor" />
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <span class="glyphicon glyphicon-search" title="Search" onclick="Search_Click('N', 'LP')"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="paging_area clearfix">
+                                    <span class="pull-left">Total Records: </span>
+                                    <span class="pull-left" id="lblLinkPopupRecordCount">0</span>
+
+                                    <div id="LinkPopupPagination" class="pagination">
+                                    </div>
+                                    <span class="pull-right">Page Size:
+                                    <input type="text" id="txtLinkPopupPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="5" onchange="txtPageSize_OnChange('LP')" onfocus="return txtPageChange_Focus('LP')"></span>
+                                </div>
+                                <div class="tab-content clearfix table-wrapper scale_table_container" id="divPopupLinkShowList">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li id="liLinkShow_Save">
+                                        <input type="button" class="btn btn-primary" value="Link" onclick="SaveLinkedMusic('Y');">
+                                    </li>
+                                    <li>
+                                        <input type="button" class="btn btn-primary" value="Close" onclick="ClosePopup('divPopLinkData')">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="divCommonPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form">
+                    <div>
+                        <div class="form_fields acq">
+                            <div class="modal_block modal_header">
+                                <a class="close" onclick="ClosePopup('divCommonPopup')">
+                                    <span>X</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2 id="lblCommonPopupHeader"></h2>
+
+                            </div>
+                            <div class="modal_block cls-body-block">
+                                <ul>
+                                    <li>
+                                        <div class="tab-content clearfix table-wrapper scale_table_container" id="divCommonPopupList">
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li>
+                                            <input type="button" class="btn btn-primary" value="Close" onclick="ClosePopup('divCommonPopup')">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

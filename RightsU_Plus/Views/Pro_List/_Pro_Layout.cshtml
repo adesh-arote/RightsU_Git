@@ -1,0 +1,268 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<script>
+    var BUCode = '@ViewBag.BUCode';
+
+    $(document).ready(function () {
+        debugger;
+        if (LayoutDirection_G == "RTL") {
+            $('.glyphicon-search').css("transform", "rotate(-360deg)");
+            $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px");
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "RTL");
+        }
+        else
+            $('.glyphicon-search').css("transform", "rotate(-270deg)");
+
+        $('#ddlTitle,#ddlLicensor').SumoSelect();
+        $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+        initializeChosen();
+        $("#ddlBUUnit").change(function () {
+            $("#ddlSrchTitle").find("option").attr("selected", false);
+            $("#ddlSrchTitle").val('')[0].sumo.reload();
+        });
+
+        var searchType = '@ViewBag.SearchType'
+        $('#txtPageSize').val('@ViewBag.RecordPerPage');
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        if (searchType == "C") {
+            $('#txtSearchCommon').val('@ViewBag.SearchText');
+            SearchOrShowAll("SEARCH_COMMON", false);
+        }
+        else if (searchType == "A") {
+            BindAdvanceSearch("PGL");
+        }
+        else
+            SearchOrShowAll("", false);
+
+        initializeTooltip();
+        initializeDatepicker();
+        initializeExpander();
+        // $(".isDatepicker").datepicker({ autoclose: true });
+
+
+        $('#txtStartDate').change(function () {
+            _LayoutSetMinDt();
+        });
+
+        $('#txtEndDate').change(function () {
+            _LayoutSetMaxDt();
+        });
+
+
+    });
+    $('#searchCommon').keypress(function (e) {
+        if (e.keyCode == 13) {
+            btnSearch_OnClick()
+            return false;
+        }
+    });
+
+
+
+    function _LayoutSetMaxDt() {
+        setMinMaxDates('txtStartDate', '', $('#txtEndDate').val());
+    }
+    function _LayoutSetMinDt() {
+        setMinMaxDates('txtEndDate', $('#txtStartDate').val(), '');
+    }
+
+
+    function togglePanelVisibility2(panelID) {
+        debugger;
+        if (LayoutDirection_G == 'RTL') {
+            document.getElementById(panelID).removeAttribute('hidden')
+            $('.leftPanel').css('right', panelHideCss);
+            $('.MoreActionDiv').hide('fast');
+            $(".RightPanel:not(#" + panelID + ")").css("left", LeftpanelHideCss);
+            var panel = document.getElementById(panelID);
+
+            if (panel.style.left == LeftpanelShowCss) {
+                panel.style.left = LeftpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.left = LeftpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+        else {
+            document.getElementById(panelID).removeAttribute('hidden')
+            $('.leftPanel').css('left', panelHideCss);
+            $('.MoreActionDiv').hide('fast');
+            $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelHideCss);
+            var panel = document.getElementById(panelID);
+
+            if (panel.style.right == RightpanelShowCss) {
+                panel.style.right = RightpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.right = RightpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+    }
+
+
+</script>
+<style>
+    .tinyADSearch {
+        top: 40px;
+    }
+
+    .AdSearch {
+        margin-left: 8px;
+        margin-top: 3px;
+    }
+
+    #divReleaseContentList {
+        overflow: auto;
+        max-height: 170px;
+        width: 94%;
+        margin: 3%;
+    }
+
+    #AdvanceSearchPanel {
+        overflow: visible !important;
+        height: 670px;
+    }
+
+    .pagination_popup .current.prev, .pagination .current.next {
+        z-index: -1 !important;
+    }
+
+    #ddlBUUnit_chosen {
+        width: 200px !important;
+        /*text-align : left;*/
+        float: none;
+    }
+
+    .chosen-drop > .chosen-search > .chosen-results > ul > li {
+        white-space: pre !important;
+    }
+
+    .SumoSelect {
+        width: 94% !important;
+    }
+</style>
+
+<div id="sideNavi">
+    <div class="side-navi-item item1" style="top:0px ;width: 46px !important;" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindAdvanceSearch('BTC', 'A');"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+</div>
+<div class="RightPanel" id="pnlSearch" hidden="hidden">
+    <div id="AdvanceSearchPanel">
+        <h4>@objMessageKey.AdvanceSearch</h4>
+        <a class="close" href="#" onclick="javascript: panelVisible=true;togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
+        <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;" dir="@objMessageKey.LayoutDirection">
+            <li class="AdSearch">
+                <label>@objMessageKey.AgreementNo</label><br>
+                <input type="text" value="" placeholder="Agreement No" maxlength="15" id="txtAgreementNo" style="width: 172px;" />
+            </li>
+            <li class="AdSearch">
+                <label>@objMessageKey.AgreementPeriod</label><br>
+                <input type="text" class="isDatepicker shortDate" value="" id="txtStartDate" name="txtStartDate" placeholder="From" title="From" />
+                <input type="text" class="isDatepicker shortDate" value="" id="txtEndDate" name="txtEndDate" placeholder="To" title="To" />
+            </li>
+            <li class="AdSearch">
+                <label>@objMessageKey.DealType</label><br>
+                <select id="ddlDealType" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 174px;"></select>
+            </li>
+            <li class="AdSearch">
+                <label>@objMessageKey.BusinessUnit</label><br>
+                <select id="ddlBusinessUnit" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 174px;"></select>
+            </li>
+            <li class="AdSearch">
+                <label>@objMessageKey.Licensor</label><br>
+                <select id="ddlLicensor" multiple="multiple"></select>
+            </li>
+            <li class="AdSearch">
+                <label>@objMessageKey.Title:</label><br>
+                <select id="ddlTitle" multiple="multiple"></select>
+            </li>
+        </ul>
+        <br />
+        <div style="text-align:center;">
+            <a class="btn-primary" href="#" onclick="SearchOrShowAll('SEARCH_ADVANCE',true);">@objMessageKey.Search</a>
+            <a class="btn-primary" href="#" onclick="SearchOrShowAll('CLEAR_ALL',true);">@objMessageKey.ClearAll</a>
+        </div>
+    </div>
+</div>
+<div class="container acq main_col" id="AllsubmenuHide" onclick="$('.leftPanel').css('left', panelHideCss); AllsubmenuHide()">
+    <div class="top_area">
+        <h2 class="pull-left">@objMessageKey.ProvisionalDeals</h2>
+        <div class="right_nav pull-right">
+            <ul>
+                <li>
+                    <span>
+                        @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "", style = "display:none;" })
+                    </span>
+                </li>
+                <li>
+                    <input type="text" id="txtSearchCommon" value="" class="search" style="width:330px !important;"
+                           placeholder="@objMessageKey.Title, @objMessageKey.AgreementNo, @objMessageKey.Licensor" />
+                </li>
+                <li>
+                    <a class="btn btn-primary" style="cursor: pointer" onclick="SearchOrShowAll('SEARCH_COMMON',true);"> @objMessageKey.Search</a>
+                </li>
+                <li>
+                    <a href="#" onclick="SearchOrShowAll('SHOW_ALL',true);">
+                        <span class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="ShowAll"></span>
+                    </a>
+                </li>
+                <li>
+                    @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAdd + "~"))
+                    {
+                        <a class="btn-primary" onclick="BindPartialView('ADD_DEAL',0)">@objMessageKey.AddDeal</a>
+                    }
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <div class="grid_area">
+        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+        <div class="paging_area clearfix">
+            <span class="pull-left">@objMessageKey.TotalRecords: </span>
+            <span class="pull-left" id="lblRecordCount"></span>
+            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+
+            <div id="Pagination" class="pagination">
+            </div>
+            <span class="pull-right">
+                @objMessageKey.PageSize:
+                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" 
+                       onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+            </span>
+        </div>
+        <div id="dvDealList" class="deal clearfix">
+
+        </div>
+    </div>
+
+    <div id="dvNoRecords" class="grid_area deal clearfix" style="display: none">
+        @objMessageKey.Norecordfound!
+    </div>
+
+</div>

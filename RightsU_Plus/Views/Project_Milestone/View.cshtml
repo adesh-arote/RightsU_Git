@@ -1,0 +1,774 @@
+﻿@model RightsU_Entities.ProjectMilestone
+@using UTOFrameWork.FrameworkClasses;
+@{
+    /**/
+
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css">
+<script type="text/javascript" src="~/JS_Core/jquery.plugin.js"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.timeentry.js"></script>
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+
+<style>
+</style>
+<script>
+    var URL_Cancel = '@Url.Action("Cancel", "Project_Milestone")';
+    var URL_BindPMDetailsList = '@Url.Action("BindPMDetailsList", "Project_Milestone")';
+    var URL_BindPMTitlesList = '@Url.Action("BindPMTitleList", "Project_Milestone")';
+    $(document).ready(function () {
+        debugger;
+        BindPMDetailsList("", "");
+        BindPMTitleList("");
+    });
+
+
+    function AddEditPMDetailsList(commandName, dummyGuid) {
+        $('#hdnAction').val(commandName);
+        BindPMDetailsList(commandName, dummyGuid);
+    }
+    function BindPMDetailsList(commandName, dummyGuid) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPMDetailsList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                commandName: commandName,
+                dummyGuid: dummyGuid
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divBindPMDetailsList').empty();
+                    $('#divBindPMDetailsList').html(result);
+                    var length = $("table tr[id*='trExchangeRate_']").length;
+                    $('#lblRecordCountPopup').text(length);
+                    initializeDatepicker();
+                    initializeTooltip();
+                    //addNumeric();
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function PMDetails_Cancel() {
+        $('#hdnAction').val("");
+        BindPMDetailsList("", "");
+    }
+
+
+
+    function BindPMTitleList(commandName, dummyGuid) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPMTitlesList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                commandName: commandName,
+                dummyGuid: dummyGuid
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divBindPMTitlesList').empty();
+                    $('#divBindPMTitlesList').html(result);
+                    var length = $("table tr[id*='trExchangeRate_']").length;
+                    $('#lblRecordCountPopup').text(length);
+                    initializeDatepicker();
+                    initializeTooltip();
+                    addNumeric();
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function PMTitle_Cancel() {
+        $('#hdnAction').val("");
+        BindPMTitleList("");
+    }
+
+
+    function ValidatePM() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Remarks = $.trim($('#txtRemark').val());
+        var StartDate = $.trim($('#Start_Date').val());
+        var EndDate = $.trim($('#End_Date').val());
+
+        var returnVal = true;
+
+        if ($('#divddlTalent').val() == "") {
+            $('#divddlTalent').addClass('required');
+            returnVal = false;
+        }
+        if ($('#divddlMilestoneNature').val() == "") {
+            $('#divddlMilestoneNature').addClass('required');
+            returnVal = false;
+        }
+        //if (StartDate == "") {
+        //    $('#Start_Date').val('');
+        //    $('#Start_Date').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (EndDate == "") {
+        //    $('#End_Date').val('');
+        //    $('#End_Date').attr('required', true)
+        //    returnVal = false;
+        //}
+
+        if (Remarks == '') {
+            $('#txtRemark').val('');
+            $('#txtRemark').attr('required', true)
+            returnVal = false;
+        }
+
+
+        return returnVal;
+    }
+
+     function Save_Success(result) {
+        hideLoading();
+        if (result == "true") {
+            redirectToLogin();
+        }
+        else {
+            if (result.Status == "S")
+            {
+                CommandName_G = "LIST_PAGE";
+                showAlert("S", result.Message, "OK");
+                CancelSavePMDeal();
+            }
+            else
+            {
+                    showAlert("E", result.Message);
+            }
+        }
+    }
+
+
+
+
+
+    function SetRightPeriod(rightType) {
+        debugger;
+        //if (rightType == YearBased && $('#tabValidity a[href="#tabCal"]').prop("disabled")) {
+        //    return false;
+        //}
+        //else if (rightType == Perpetuity && $('#tabValidity a[href="#tabPerp"]').prop("disabled")) {
+        //    return false;
+        //}
+        //else if (rightType == Milestone && $('#tabValidity a[href="#tabMile"]').prop("disabled")) {
+        //    return false;
+        //}
+        $('#Right_Type').val(rightType);
+        //$('#Original_Right_Type').val(rightType);
+        //if (rightType != YearBased) {
+
+        //    if (rightType == Perpetuity) {
+        //        $('#ROFR_DT').prop("disabled", true);
+        //        $('#ROFR_Days').prop("disabled", true);
+        //        $('#ROFR_DT').val('');
+        //        $('#ROFR_Days').val('');
+        //        $('#ROFR_Code').prop("disabled", true);
+        //        CalculatePerpetuityEndDate();
+        //    }
+        //    else
+        //        $('#ROFR_Code').prop("disabled", false);
+
+        //    if ($('#Milestone_Type_Code').val() == '')
+        //        $('#Milestone_Type_Code').val(1);
+
+        //    if ($('#Milestone_Unit_Type').val() == '')
+        //        $('#Milestone_Unit_Type').val(1);
+        //}
+        //else {
+        //    $('#ROFR_DT').prop("disabled", false);
+        //    $('#ROFR_Days').prop("disabled", false);
+        //    $('#ROFR_Code').prop("disabled", false);
+        //}
+        //$('#ROFR_Code').trigger('chosen:updated');
+    }
+    function CancelSavePMDeal() {
+        debugger;
+        //CommandName_G = "LIST_PAGE";
+        //showAlert("I", 'All Unsaved Data Will Be Lost Still Want To Go Ahead?', "OKCANCEL");
+        window.location.href = URL_Cancel;
+    }
+    //function handleOk() {
+    //    debugger
+    //    if (CommandName_G == "LIST_PAGE") {
+    //        ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+    //        location.href = URL_Cancel;
+    //    }
+    //    if(CommandName_G == "LIST")
+    //    {
+    //        $('#frmMusicDeal').submit();
+    //    }
+    //}
+    //function handleCancel()
+    //{
+    //    CommandName_G = "";
+    //}
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col" onclick="hideChannelCategory()">
+            <div class="top_area">
+                <h2 class="pull-left">
+                    <label>View Project Milestone</label>
+                </h2>
+            </div>
+            @using (Ajax.BeginForm("Save", "Project_Milestone", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmMusicDeal" }))
+            {
+                string ORightType = "";
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">General</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabGeneral">
+                                    <div class="scale_table_block">
+                                        <table class="four_column table" style="margin-top:10px">
+                                            <tbody>
+                                                <tr style="height:35px">
+                                                    <td class="td_label">Deal No</td>
+                                                    <td>
+                                                        <span>@Model.AgreementNo</span>
+                                                    </td>
+                                                    <td>Agreement Type</td>
+                                                    <td>
+                                                        <span>
+                                                            Remake
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Name of the Project</td>
+                                                    <td>
+                                                        <span>@Model.ProjectName</span>
+                                                    </td>
+                                                    <td>Agreement Date</td>
+                                                    <td>
+                                                        @Convert.ToDateTime(Model.AgreementDate).ToString("dd-MMM-yyyy")
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td> Name of the Counter party</td>
+                                                    <td>
+                                                        <div id="divddlTalentName">
+                                                            @Model.Talent.Talent_Name
+                                                        </div>
+                                                    </td>
+                                                    <td>Nature of Deal</td>
+                                                    <td>
+                                                        <div id="divddlMilestoneNatureName">
+                                                            @Model.Milestone_Nature.Milestone_Nature_Name
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>Counter Party Details</td>
+                                                    <td><span>Digital Works</span></td>
+                                                    <td id="look1">Party Type</td>
+                                                    <td id="look2">
+                                                        <span>Own Production</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Term</td>
+                                                    <td>
+                                                        <div id="tabValidity" class="tabbable">
+                                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                                <li class="@(Model.PeriodType == "Y" ? "active" : "")" id="liCal" onclick="SetRightPeriod('Y');">
+                                                                    <a data-toggle="tab" href="#tabCal" role="tab">Year based</a>
+                                                                </li>
+                                                                <li class="@(Model.PeriodType == "M" ? "active" : "")" id="liMile" onclick="SetRightPeriod('M');">
+                                                                    <a data-toggle="tab" href="#tabMile" role="tab">
+                                                                        Milestone based
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                            @Html.Hidden("Right_Type", Model.PeriodType)
+                                                            <div class="tab-content clearfix table-wrapper scale_table_container" style="width:218%;">
+                                                                <div class="tab-pane active scale_table_block active" id="tabCal">
+                                                                    <label>Tentative</label>
+                                                                    <br>
+                                                                    <label>Start Date</label>
+                                                                    @Convert.ToDateTime(Model.StartDate).ToString("dd-MMM-yyyy")
+                                                                    @Model.Term
+                                                                    @Model.Term
+                                                                    <label style="margin-left: 15px">End Date</label>
+                                                                    @Convert.ToDateTime(Model.EndDate).ToString("dd-MMM-yyyy")
+                                                                </div>
+                                                                <div class="@(Model.PeriodType == "M" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabMile">
+                                                                    <ul class="from_to clearfix">
+                                                                        <li class="form_li_sub">
+                                                                            <label>Start Date</label>
+                                                                            @Convert.ToDateTime(Model.StartDate).ToString("dd-MMM-yyyy")
+
+                                                                        </li>
+                                                                        <li class="form_li_sub">
+                                                                            <label>start from</label>
+                                                                            @if (Model.Milestone_Type_Code != null)
+                                                                            {
+                                                                                @Model.Milestone_Type.Milestone_Type_Name;
+                                                                            }
+
+
+
+
+                                                                        </li>
+                                                                        <li class="form_li_sub">
+                                                                            <label>valid for</label>
+
+                                                                        </li>
+                                                                        <li class="form_li_sub">
+                                                                            <label></label>
+                                                                            <br />
+                                                                            @if (Model.Milestone_Unit_Type != null)
+                                                                            {
+                                                                                @Model.Milestone_Unit_Type
+                                                                            }
+
+                                                                        </li>
+                                                                        <li class="form_li_sub">
+                                                                            <label>End Date</label>
+                                                                            @Convert.ToDateTime(Model.EndDate).ToString("dd-MMM-yyyy")
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">Milestone</a>
+                                </li>
+                                <div class="" style="vertical-align:top;line-height:0px !important;margin-left:1077px;">
+                                    @*<input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="AddEditPMDetailsList('ADD', '')" />*@
+                                </div>
+                            </ul>
+                            @*<div class="paging_area clearfix" id="Pg3" style="height:30px !important;line-height:0px !important;padding-left:0.5% !important;">
+                            <span class="pull-left">Total Records: </span>
+                            <span class="pull-left" id="lblRecordCountPopup"></span>
+                            <span class="pull-right" style="vertical-align:top;line-height:0px !important;margin-top:-4px;">
+                                        <input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="AddEditPMDetailsList('ADD', '')" />
+                            </span>
+                        </div>*@
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="scale_table_block">
+                                    <table class="table table-bordered table-hover" style="width:100% !important">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:36%;">Key Events</th>
+                                                <th style="width:10%;">Deadline</th>
+                                                <th style="width:12%;">Release</th>
+                                                <th style="width:27%">Milestone Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            <tr>
+                                                <td>
+                                                    <span>All development deliverables to be submitted by the counter party to RIL</span>
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    01-Dec-2018
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    <lable>2</lable>&nbsp;&nbsp;<label>Days</label>
+                                                </td>
+                                                <td style="">
+                                                    Expired
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">Concept/Prospect Titles</a>
+                                </li>
+                                <div class="" style="vertical-align:top;line-height:0px !important;margin-left:1077px;">
+                                    @*<input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="BindPMTitleList('ADD', '')" />*@
+                                </div>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                @*<div class="scale_table_block" id="divBindPMTitlesList" style="overflow:auto; max-height:500px">
+                            </div>*@
+                                <div class="scale_table_block" id="BookPageTitle">
+                                    <table class="table table-bordered table-hover" id="tblMusicLink">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:6%;">Sr no</th>
+                                                <th style="width:22%;">Title Name</th>
+                                                <th style="width:19%;">Year</th>
+                                                <th style="width:25%;">Language</th>
+                                                <th style="width:20%;">Description</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr id="trExchangeRate">
+                                                <td style="text-align:center;">
+                                                    <span>1</span>
+
+                                                </td>
+
+
+                                                <td style="">
+                                                    Knight and Day
+                                                </td>
+                                                <td style="text-align:center">
+                                                    2008
+                                                </td>
+                                                <td style="">
+                                                    English
+                                                </td>
+                                                <td style="">
+                                                    Remake concept ‘Bang Bang’
+                                                </td>
+                                            </tr>
+                                            <tr id="trExchangeRateNew" style="display:none">
+                                                <td style="text-align:center;">
+                                                    <span>1</span>
+
+                                                </td>
+                                                <td style="">
+                                                    Five Point Someone
+                                                </td>
+                                                <td style="text-align:center">
+                                                    2008
+                                                </td>
+                                                <td style="">
+                                                    English
+                                                </td>
+                                                <td style="">
+                                                    Concept for film making ‘3 Idiots’
+                                                </td>
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">Rights</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabGeneral">
+                                    <div class="scale_table_block">
+                                        <label class="bold">Rights Definition:</label>
+                                        <table class="four_column table style_table">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="width:4%">
+                                                        <Span>Country</Span>
+                                                    </td>
+                                                    <td>
+                                                        India
+                                                    </td>
+
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+
+                                        <table class="four_column table style_table">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="width:6%">Authorized Language</td>
+                                                    <td>
+                                                        English
+                                                    </td>
+                                                </tr>
+                                                <tr></tr>
+                                            </tbody>
+                                        </table>
+
+
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                <li class="active">
+                                                    <a data-toggle="tab" href="" role="tab">Platforms</a>
+                                                </li>
+                                            </ul>
+                                           
+                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                <div class="tab-pane active scale_table_block" id="">
+                                                    <table class="table table-bordered table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Platforms</th>
+                                                                <th>Restriction</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Remake Rights</td>
+                                                                <td>ABC</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div style="width:130%">
+                                            <div class="bold" style="padding-right: 320px;">Remarks</div>
+                                            <div style="float:right">&nbsp;&nbsp;characters left.. </div>
+                                            <div style="float:right" class="charNum">4000</div>
+                                        </div>
+                                        <span>Remarks</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">Cost</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabGeneral">
+                                    <div class="scale_table_block">
+                                        <table class="four_column table style_table">
+                                            <tbody>
+                                               
+                                                <div>
+                                                    <label class="bold" style="padding-right: 31px;">Agreement Cost</label>&nbsp;&nbsp;
+
+                                                    1000.00
+                                                </div>
+
+                                                <div>
+                                                    <label class="bold" style="padding-right:83px;">Currency</label>
+
+                                                    <span class="required" style="width:40%">
+                                                        INR - INR
+                                                     </span>
+                                                 </div>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                <li class="active">
+                                                    <a data-toggle="tab" href="#tabCostHead" role="tab">Cost Head</a>
+                                                </li>
+                                                <li class="">
+                                                    <a data-toggle="tab" href="#tabOverflow" role="tab">Overflow</a>
+                                                </li>
+
+                                            </ul>
+                                          
+                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                <div class="tab-pane active scale_table_block" id="tabCostHead">
+                                                    <table class="table table-bordered table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Cost Type</th>
+                                                                <th>Consumed Amount</th>
+                                                                <th>Budgeted Amount</th>
+                                                                <th>Balanced Amount</th>
+                                                               
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Assignment Cost</td>
+                                                                <td>1,20,000.00 </td>
+                                                                <td>1,20,000.00 </td>
+                                                                <td>0.00</td>
+                                                                
+                                                            </tr>
+                                                           
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+
+                                                <div class="tab-pane scale_table_block" id="tabOverflow">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="optOverflow" id="optOverflow1" onclick="showOverflow(this);" value="1" />
+                                                        Profit Sharing
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="optOverflow" id="optOverflow2" onclick="showOverflow(this);" value="2" />
+                                                        Revenue Sharing
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="optOverflow" id="optOverflow3" onclick="showOverflow(this);" value="3" />
+                                                        NA
+                                                    </label>
+                                                    <table class="table table-bordered table-hover" id="RevenueSharing" style="display:none;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Party</th>
+                                                                <th>Percentage</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Reliance Media Limited</td>
+                                                                <td>
+                                                                   0.00
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Digital Works</td>
+                                                                <td>
+                                                                   0.00
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+
+                                        <div style="width:130%">
+                                            <div class="bold" style="padding-right: 320px;">Remarks</div>
+                                            <div style="float:right">&nbsp;&nbsp;characters left.. </div>
+                                            <div style="float:right" class="charNum">4000</div>
+                                        </div>
+                                        <span>Remarks</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">Status History</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabGeneral">
+                                    <div class="scale_table_block">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="">Status</th>
+                                                    <th class="">Date</th>
+                                                    <th class="">By</th>
+                                                    <th class="">Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Approved</td>
+                                                    <td>03-Dec-2014</td>
+                                                    <td>admin (System Admin)</td>
+                                                    <td>System Migrated Deal</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        @*<li style="margin-top:10px;">
+                        <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="ValidatePM();" />
+                    </li>*@
+                        <li style="margin-top:10px;">
+                            <input type="button" id="btnCancel" class="btn btn-primary" name="CANCEL" value="Cancel" onclick="CancelSavePMDeal()" />
+                        </li>
+                    </ul>
+                </div>
+            }
+        </div>
+    </section>>
+</div>
+
+

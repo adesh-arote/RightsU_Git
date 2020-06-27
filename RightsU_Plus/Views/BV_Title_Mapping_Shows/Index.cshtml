@@ -1,0 +1,571 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<script>
+    var URL_BV_Title_Mapping_ShowsList = '@Url.Action("BindTitleMappingShows", "BV_Title_Mapping_Shows")';
+    var URL_BV_Search_Title_Mapping = '@Url.Action("SearchBVTitleMapping","BV_Title_Mapping_Shows")';
+    var URL_MapData = '@Url.Action("MapData", "BV_Title_Mapping_Shows")';
+    var URL_GetDealTitles = '@Url.Action("GetDealTitles", "BV_Title_Mapping_Shows")';
+    var URL_BindDDL = '@Url.Action("BindDDL", "BV_Title_Mapping_Shows")';
+    var URL_Validate = '@Url.Action("Validate", "BV_Title_Mapping_Shows")';
+    var URL_validateEpisode = '@Url.Action("validateEpisode", "BV_Title_Mapping_Shows")';
+    $(document).ready(function () {
+        addNumeric();
+        SearchBVTitleMapping("");
+        $('input:checkbox.checkbox').change(function (e) {
+            if (!this.checked) {
+                $('#chkAll').prop('checked', false);
+            }
+            if ($('.checkbox:checked:not("#chkAll")').length == $('.checkbox:not("#chkAll")').length) {
+                $('#chkAll').prop('checked', true);
+            }
+        });
+        $('#ddlBVTitle').SumoSelect();
+        $('#ddlBVTitle').each(function () {
+            $(this)[0].sumo.reload();
+        });
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function txtPageSize_OnChange() {
+        debugger;
+
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindBVTitleMappingList()
+        SetPaging();
+    }
+    function pageBinding() {
+        BindBVTitleMappingList()
+        SetPaging();
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y') {
+            BindBVTitleMappingList();
+        }
+        else
+            IsCall = 'Y';
+    }
+    function BindBVTitleMappingList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BV_Title_Mapping_ShowsList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divBVTitleMapping').empty();
+                    $('#divBVTitleMapping').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SearchBVTitleMapping(searchText) {
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_BV_Search_Title_Mapping,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#hdnPageNo').val(1);
+                    $('#lblRecordCount').text(@ViewBag.RecordCount);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindBVTitleMappingList();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ValidatePageSize() {
+        debugger;
+        if (($('.checkboxAll').prop('checked')) && $('.txtMaptoDeal').val() == "" && ($('.checkboxIgnore').prop('checked') == false)) {
+            showAlert('E', "Please select either Ignore or Deal title to Map");
+            return false;
+        }
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var searchText = $('#ddlBVTitle').val();
+        if (searchText == null) {
+            $('#divBVTitle').addClass("required");
+            return false;
+        }
+        else {
+            var searchText = $('#ddlBVTitle').val().join(',');
+        }
+        SearchBVTitleMapping(searchText);
+    }
+    function btnShowAll_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+        $('#hdnPageNo').val(1);
+        $("#ddlBVTitle").find("option").attr("selected", false);
+        $("#ddlBVTitle").val('')[0].sumo.reload();
+        SearchBVTitleMapping("");
+    }
+    function BindDDL() {
+        // showLoading();
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindDDL,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#ddlBVTitle').empty();
+                    $.each(result.BV_Title, function () {
+                        $("#ddlBVTitle").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlBVTitle')[0].sumo.reload();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function Validate_Save() {
+        debugger;
+        var ISValid = 'true';
+        if ($('.checkboxAll:checked:not("#checkAll")').length == 0) {
+            showAlert('E', "Please Check at least one checkbox");
+            return false;
+        }
+        else {
+            debugger;
+            var BVContent = new Array();
+            var tblData = $("#tblBVMappingShows tbody tr");
+            $.each($(tblData), function (index, value) {
+                debugger;
+                var c = index;
+                var counter = 0;
+                var CurrentRow = $(value);
+                var _checkType = $(value).find('input[name="BV_HouseId_Data_Code"]').val();
+                var _ChkAll = $(value).find('input[class="checkboxAll"]').prop('checked');
+                var ChkAll = $(value).find('input[class="checkboxAll"]').val();
+
+                var _MapDealCode = 0;
+                var _EpisodeNo = 0;
+                if (_ChkAll == true) {
+                    var episodeStart = $('#lblEpisodeStart').val();
+                    var episodeEnd = $('#lblEpisodeEnd').val();
+                    var _EpisodeNo = $(value).find('input[name="Episode_No"]').val();
+                    var MappedName = $(value).find('input[name=Title_Name]').val();
+                    if (_EpisodeNo < episodeStart && _EpisodeNo > episodeEnd) {
+                        if (episodeStart != "" && episodeEnd != "" && MappedName != "")
+                            showAlert("E", "BV Title " + MappedName + " Episode should be between " + episodeStart + " to " + episodeEnd);
+
+                        else {
+                            var _MapDealCode = $(value).find('input[name="Mapped_Deal_Title_Code"]').val();
+                            if (MappedName == "")
+                                $('.txtMaptoDeal').attr('required', true)
+                        }
+
+                        ISValid = false;
+                    }
+                    else {
+                        var _IsIgnore = $(value).find('input[class="checkboxIgnore"]').prop('checked');
+                        if (_IsIgnore == false) {
+                            _IsIgnore = "N";
+                            _MapDealCode = $(value).find('input[name="Mapped_Deal_Title_Code"]').val();
+                            var _EpisodeNo = $(value).find('input[name="Episode_No"]').val();
+                            var MappedName = $(value).find('input[name=Title_Name]').val();
+                        }
+                        else {
+                            _IsIgnore = "Y";
+                        }
+                        if (ChkAll) {
+                            if (_ChkAll == true) {
+                                counter++;
+                                if ((_MapDealCode == "0" || _MapDealCode == "") && _IsIgnore == "N" && _EpisodeNo != "") {
+                                    ISValid = false;
+                                    $('.txtMaptoDeal').attr('required', true)
+                                    return false;
+                                }
+                                else if (MappedName == "" && _IsIgnore == "N") {
+                                    $('.txtMaptoDeal').attr('required', true)
+                                    ISValid = false;
+                                }
+                            }
+                        }
+                        if (ISValid) {
+                            debugger;
+                            BVContent.push({
+                                IsIgnore: _IsIgnore, Title_Code: _MapDealCode, BV_HouseId_Data_Code: _checkType,
+                                Episode_No: _EpisodeNo, Is_Mapped: _ChkAll, BV_Title: MappedName
+                            });
+                        }
+                    }
+                }
+            });
+            if (ISValid) {
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: URL_MapData,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        lst: BVContent
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.status == "S") {
+                                showAlert('S', result.Message);
+                            }
+                            else {
+                                showAlert('E', result.Message);
+                            }
+                            if (result.valid == false) {
+                                $('#chk_' + result.code).prop('checked', true);
+                                $('#Mapped_Deal_Title_Code_' + result.BV_Code).val('');
+                            }
+                            else {
+                                SetPaging();
+                                BindBVTitleMappingList();
+                                BindDDL();
+                                hideLoading();
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+                });
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+    }
+    function GetTitles(obj) {
+        debugger;
+        var gvid = obj.id;
+        var lblScheduleDate = document.getElementById(gvid.replace('Mapped_Deal_Title_Code_', 'SheduleDate_'));
+        var lblScheduleTime = document.getElementById(gvid.replace('Mapped_Deal_Title_Code_', 'SheduleTime_'));
+        var lblDealTitleCode = document.getElementById(gvid.replace('txtDealTitles', 'lblDealTitleCode'));
+        var lblEpisodeStart = document.getElementById(gvid.replace('txtDealTitles', 'lblEpisodeStart'));
+        var lblEpisodeEnd = document.getElementById(gvid.replace('txtDealTitles', 'lblEpisodeEnd'));
+        var scheduleDate_Time = lblScheduleDate.value + ' ' + lblScheduleTime.value;
+        var hdntitlecode = document.getElementById(gvid.replace('Mapped_Deal_Title_Code_', 'hdnDealTitleCode_'))
+
+        $("input[id$=" + obj.id + "]").autocomplete({
+
+            source: function (request, response) {
+
+                var param = { keyword: obj.value, scheduleDate_Time: scheduleDate_Time };
+                $.ajax({
+                    url: URL_GetDealTitles,
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        $(gvid).val('');
+                        response($.map(data, function (v, i) {
+
+                            return {
+                                label: v.split('~')[0],
+                                val: v.split('~')[1]
+
+                            }
+
+                        }))
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                        alert("Error" + errorThrown);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                debugger;
+                var test = ui.item.val.split('^');
+
+                if (test[1] != null)
+                    $('#lblEpisodeStart').val(test[1]);
+                else
+                    $('#lblEpisodeStart').val('0');
+
+                if (test[2] != null)
+                    $('#lblEpisodeEnd').val(test[2]);
+                else
+                    $('#lblEpisodeEnd').val('0');
+
+                $(hdntitlecode).val(test[0]);
+            },
+            minLength: 3,
+            open: function (event, ui) {
+                $(".ui-autocomplete").css("position", "absolute");
+                $(".ui-autocomplete").css("max-height", "200px");
+                $(".ui-autocomplete").css("max-width", "250px");
+                $(".ui-autocomplete").css("overflow-y", "auto");
+                $(".ui-autocomplete").css("overflow-x", "hidden");
+                $(".ui-autocomplete").css("z-index", "2147483647");
+            }
+        });
+
+    }
+    function validateEpisode(obj, episodeNo, code) {
+        debugger
+        var mappedDealcode = $('#hdnDealTitleCode_' + code).val();
+        var mappedDealName = $('#Mapped_Deal_Title_Code_' + code).val();
+        var gvid = obj.id;
+        var episodeStart = $('#lblEpisodeStart').val();
+        var episodeEnd = $('#lblEpisodeEnd').val();
+        var txtEpisodeNo = document.getElementById(gvid.replace('Episode_No_', 'Episode_No_'));
+        //var txtEpisode = $(txtEpisodeNo).val();
+        var txtEpisode = $('#Episode_No_' + code).val()
+        if (mappedDealcode != "" && mappedDealName != "") {
+            if (txtEpisode < episodeStart && txtEpisode > episodeEnd) {
+                showAlert("E", "BV Title " + mappedDealName + " Episode should be between " + episodeStart + " to " + episodeEnd);
+                // $('#Mapped_Deal_Title_Code_' + result.BV_Code).val('');
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: URL_validateEpisode,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        episodeNo: episodeNo,
+                        mappedDealcode: mappedDealcode,
+                        mappedDealName: mappedDealName,
+                        code: code
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.valid == true)
+                                MapData();
+                            else {
+                                debugger
+                                $('#chk_' + result.BV_Code).prop('checked', true);
+                                $('#Mapped_Deal_Title_Code_' + result.BV_Code).val('');
+                                showAlert("E", result.Message, "");
+                                return false;
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+                });
+            }
+        }
+    }
+
+    function isNumeric(e, t) {
+        if (window.event) {
+            var charCode = window.event.keyCode;
+        }
+        else if (e) {
+            var charCode = e.which;
+        }
+        else { return true; }
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+</script>
+<style>
+    td {
+        padding: 5px 0px;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+      .sumo_ddlBVTitle {
+        width: 266px;
+    }
+</style>
+
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        BV Title Mapping Shows
+                    </h2>
+                    <div class="right_nav pull-right">
+
+                    </div>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%;text-align:center;vertical-align:middle;">
+                                BV Title :
+                            </td>
+                            <td style="width:25%;">
+                                <div id="divBVTitle" style="width:100%!important">
+                                    @Html.ListBox("ddlBVTitle", ViewBag.BVTitleName as MultiSelectList, new { @class = "", @style = "width:100% !important", @AutoPostBack = true })
+                                </div>
+                            <td>
+                                <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="Show All" onclick="btnShowAll_OnClick()">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" 
+                                   onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')" >
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <div id="divBVTitleMapping" class="deal clearfix">
+
+                            </div>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Map" onclick="return Validate_Save();" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,441 @@
+﻿@{
+    ViewBag.Title = "RunUtilizationReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    var URL_BindTitle = '@Url.Action("BindTitleForRunUtilization", "Reports")';
+    var URL_BindChannel = '@Url.Action("BindChannelForRunUtlization","Reports")';
+    var URL_BindReport = '@Url.Action("BindRunUtilizationReport","Reports")';
+    var URL_ShowHideCluster = '@Url.Action("CountChannelRegion", "Reports")';
+
+    $(function () {
+        $("#ddlBusinessUnit").change(function () {
+            $('#txtTitle').val('');
+            $('#hdnTitleCode').val(0);
+            var BUCode = $('#ddlBusinessUnit').val();
+
+            $.ajax({
+                type: "POST",
+                url: URL_ShowHideCluster,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    BUCode: BUCode
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.count != 0) {
+                            $('#ddlCluster_chosen').show();
+                            $('#lblCluster').show();
+                        }
+                        else {
+                            $('#ddlCluster_chosen').hide();
+                            $('#lblCluster').hide();
+                        }
+
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        });
+    });
+    function btnShow_OnClick() {
+        var titleList = $('#txtTitle').val();
+        var ChannelCodes = $('#txtChannel').val();
+        var str = "", strChannels = "", strYear = "", strSubDeal = "", strParamExpandOrCollapse = "", strRunType = "";
+        if (titleList == 0) {
+            showAlert('E', '@objMessageKey.Pleaseselectatleastonetitle');
+            return false;
+        }
+
+
+        if ( ChannelCodes == 0) {
+            ChannelCodes = "";
+        }
+
+        var year = $("input:radio:checked").val();
+        if (year == 'CY') {
+            strYear = 'N';
+        }
+        else {
+            strYear = 'Y';
+        }
+        var subDeal = $('#chkExpiryDeal').is(':checked');
+        if (subDeal == true) {
+            subDeal = "Y";
+        }
+        else {
+            subDeal = "N";
+        }
+        if (year == 'EA' || strYear == 'N') {
+            strParamExpandOrCollapse = "Expand";
+        }
+        else {
+            strParamExpandOrCollapse = "Collapse";
+        }
+        if ($('#ddlRunType').val() == '0') {
+            strRunType = "";
+        }
+        else {
+            strRunType = $('#ddlRunType').val();
+        }
+        var SelectedCluster = $('#ddlCluster').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleCodes: titleList,
+                ChannelCodes: ChannelCodes,
+                AllYears: strYear,
+                ParamExpandOrCollapse: strParamExpandOrCollapse,
+                RunType: strRunType,
+                IsDealExpire: subDeal,
+                ClusterCode: SelectedCluster,
+                BU_Code: $('#ddlBusinessUnit').val(),
+                BUName: $('#ddlBusinessUnit  option:selected').text()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divResult').empty();
+                    $('#divResult').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function Clear() {
+        debugger;
+        var code = 1;
+        $("#ddlRunType").val("");
+        $("#ddlBusinessUnit").val(code).trigger('chosen:updated');
+        $("#ddlRunType").val('').trigger('chosen:updated');
+        //$('#ddlTitle')[0].sumo.unSelectAll();
+        $('#txtChannel,#txtTitle').val('');
+        $('#chkExpiryDeal').prop("checked", false);
+        $('#hdnChannelCode,#hdnTitleCode').val(0);
+    }
+    function PopulateChannel(keyword) {
+        var Type = "";
+        if ($('#txtChannel').val().length == "0") {
+            $('#hdnChannelCode').val(0);
+        }
+
+        var ClusterCode = $('#ddlCluster').val();
+        if (ClusterCode == "" || ClusterCode == undefined) {
+            ClusterCode = 0;
+        }
+
+            var selectedtxt = $('#txtChannel').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtChannel").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        ClusterCode: ClusterCode,
+                        keyword: $('#txtChannel').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindChannel,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtChannel').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtChannel').removeClass('loader');
+                                    return {
+                                        label: v.Channel_Name,
+                                        val: v.Channel_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnChannelCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnChannelCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else
+                    {
+                        $('#txtChannel').val("");
+                        return false;
+                    }
+                    },
+
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "350px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+    function PopulateTitle(keyword) {
+        var Type = "";
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        BU_Code: $('#ddlBusinessUnit').val(),
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindTitle,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else
+                    {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "350px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 70%;
+    }
+
+    #ddlRunType_chosen {
+        max-width: 70%;
+    }
+
+    #ddlCluster_chosen {
+        max-width: 70%;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <h2>@objMessageKey.RunsUtilizationReport</h2>
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td>
+                            <div>
+                                <table align="center" border="0" cellpadding="2" cellspacing="0" style="width: 100%; vertical-align: top;">
+                                    <tr>
+                                        <td class="searchborder" style="width: 10%;">
+                                            @objMessageKey.BusinessUnit
+                                        </td>
+                                        <td class="searchborder" style="width:25%;">
+                                            @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                                        </td>
+                                        <td class="searchborder" style="width: 10%;"> @objMessageKey.Title</td>
+                                        <td class="searchborder" style="width: 28%;">
+                                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:295px" placeholder="@objMessageKey.Title" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                                            <input type="hidden" id="hdnTitleCode" value="0" />
+                                        </td>
+
+                                        <td style="width: 30%;">
+                                            <input type="checkbox" id="chkExpiryDeal" name="ExpiryDeal" /> <text>@objMessageKey.ExcludeExpiredDeal</text>
+                                            <span style="padding-left:2%;"></span>
+                                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
+                                            <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+
+                                        <td class="searchborder">
+                                            @objMessageKey.RunType
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("RunType", (List<SelectListItem>)ViewBag.RunType, new { @id = "ddlRunType", @class = "form_input chosen-select" })
+                                        </td>
+                                        <td>@objMessageKey.Channel</td>
+                                        <td>
+                                            <input type="text" id="txtChannel" class="search" maxlength="100" style="width:295px" placeholder="@objMessageKey.Channel" onkeyup="PopulateChannel(event)" autocomplete="on" />
+                                            <input type="hidden" id="hdnChannelCode" value="0" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        @if (@ViewBag.count != 0)
+                                        {
+                                            <td>
+                                                <label id="lblCluster">@objMessageKey.Cluster</label>
+                                            </td>
+                                            <td>
+                                                @Html.DropDownList("ClusterList", (List<SelectListItem>)ViewBag.ClusterList, "Please Select", new { @id = "ddlCluster", @class = "form_input chosen-select" })
+                                            </td>
+                                        }
+                                        <td colspan="2">
+                                            <input type="radio" name="year" id="rbCurrentYear" value="CY" /><text>&nbsp;&nbsp; @objMessageKey.CurrentYear &nbsp;&nbsp;</text>
+                                            <input type="radio" name="year" id="rbExpandAll" value="EA" /><text>&nbsp;&nbsp; Expand All &nbsp;&nbsp;</text>
+                                            <input type="radio" name="year" id="rbNA" checked="checked" value="N" />&nbsp;&nbsp; @objMessageKey.NA &nbsp;&nbsp;
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

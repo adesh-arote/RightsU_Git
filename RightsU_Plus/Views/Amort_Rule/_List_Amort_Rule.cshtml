@@ -1,0 +1,172 @@
+﻿@model List<RightsU_Entities.USP_List_Amort_Rule_Result>
+@using UTOFrameWork.FrameworkClasses;
+@using System.Configuration;
+@{
+    Layout = null;
+}
+
+<script type="text/javascript">
+    var IsCall = 'Y';
+    $(document).ready(function(){
+        addNumeric();
+    });
+    function SetPaging() {
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] =@(Convert.ToInt32(ViewBag.PageSize) == 0 || ViewBag.PageSize == null ? 10 : ViewBag.PageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $(".pagination").pagination(recordCnt, opt);
+    }
+    $('.expandable').expander({
+        slicePoint: 50,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    function pageselectCallback(page_index, jq) {
+        if (IsCall == 'Y') {
+            BindGrid(page_index);
+            $("#hdnPageIndex").val(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+    function addNumeric() {
+        $("input.pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 100,
+            min: 1
+        });
+    }
+</script>
+
+<div class="paging_area clearfix">
+    <input type="hidden" id="hdnPageIndex" />
+    <span class="pull-left">Total Records:  @ViewBag.RecordCount</span>
+    <div class="pagination"></div>
+    <span class="pull-right">Page Size :
+        <input id="PageSize" type="text" class="smallTextBox pagingSize" required onfocusout="setPegSize(@ViewBag.Query_String_Page_No);" onkeypress="return isNumber(event);" maxlength="3" value="@(Convert.ToInt32(ViewBag.PageSize) == 0 || ViewBag.PageSize == null ? 10 : ViewBag.PageSize)"/>
+    </span>
+</div>
+
+@{
+    int counter = 0;
+    @Html.Hidden("hdnRowNum", new { @id = "hdnRowNum" })
+   
+    foreach (var item in Model)
+    {
+        counter += 1;
+    <div class="grid_area clearfix">
+        <table class="grid_item active">
+            <tr>
+                <td class="AmortRule_Desc">
+                    <h4 class="Rule_Type" data-toggle="tooltip" title="Rule Type">@Html.Label("Rule_Type", item.Rule_Type)</h4>
+                    @Html.Hidden("hdnAmortCode", item.Amort_Rule_Code, new { id = counter + "_hdnAmortCode" })
+                    <ul>
+                        <li>
+                            <h5 class="Period_For"  >
+                                    @*@if(item.Period_For=="A")
+                                    {<span title="Period For">Amongst the Rights Period</span>}
+                                    else if (item.Period_For == "M" || item.Period_For == "D") 
+                                    {<span title="Period For">Defined Manually</span>}
+                                    else if (item.Period_For == "E")
+                                    {<span title="Period For">Equally Distribute</span>}
+                                    else
+                                         {<span title="Period For">@item.Period_For</span>}    *@   
+                                <span title="Period For">@item.Period_For</span>                                   
+                                                                                       
+                            </h5>
+
+                        </li>
+                        <li><span class="seperator">| </span></li>
+                        <li>
+                            <h5 class="Year_Type">
+                                @if (item.Year_Type == null || item.Year_Type.Trim() == string.Empty)
+                                {
+                                    <span title="Year Type">NA</span>
+                                }
+                                else
+                                {
+                                   <span title="Year Type">@item.Year_Type</span>
+                                }
+                            </h5>
+                        </li>
+
+                    </ul>
+                </td>
+                <td class="AmortRule_No">
+                    <ul>
+                    <li class="expandable">
+                        <h5 class="Rule_No">
+                            @*@Html.Label("Rule_No", item.Rule_No)*@
+                            <span title="Rule No.">@item.Rule_No</span>
+                        </h5>
+                    </li>
+                        
+                        </ul>
+                </td>
+                <td class="AmortRule_Description">
+                    <ul>
+                    <li class="expandable">
+                        <h5 class="Rule_Desc">
+                            @*@Html.Label("Rule_Desc", item.Rule_Desc)*@
+                            <span title="Rule Description">@item.Rule_Desc</span>
+                        </h5>
+                    </li>
+                        </ul>
+                </td>
+
+                <td class="Amort_action">
+                    @if (item.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
+                    {
+                        <a title="View" id="view" href="@Url.Action("ShowAmort", "Amort_Rule")" class="glyphicon glyphicon-eye-open" onclick="EditAmort(@counter)"></a>
+                    }
+
+                    @if (item.Is_Active == "Y")
+                    {
+                        if (item.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForEdit + ","))
+                        {
+                        @*<label class = "glyphicon glyphicon-pencil" for="EditButton" title="Edit" >
+                                <input type="submit" style="display:none" id="EditButton" onclick="EditAmort(@counter)" />
+                                        
+                           </label>
+                            @Html.ActionLink(" ", "Edit", "Amort_Rule", new { id = item.Amort_Rule_Code}, new { @class = "glyphicon glyphicon-pencil", @title = "Edit",onclick="EditAmort(@counter)" })
+                           *@
+                        <a title="Edit" id="edit" href="@Url.Action("Edit", "Amort_Rule")" class="glyphicon glyphicon-pencil" onclick="EditAmort(@counter)"></a>
+                        }
+                        if (item.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForDeactivate + ","))
+                        {
+<a title="Deactivate" id="Deactivate" href="#" class="glyphicon glyphicon-thumbs-down" onclick="Ask_Confirmation('@item.Amort_Rule_Code', '@counter','Y')"></a>
+                        }
+                    }
+
+                    else
+                    {
+                        if (item.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForActivate + ","))
+                        {
+<a title="Activate" id="Activate" href="#" class="glyphicon glyphicon-thumbs-up" onclick="Ask_Confirmation('@item.Amort_Rule_Code','@counter','N')"></a>
+                        }
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+    }
+}

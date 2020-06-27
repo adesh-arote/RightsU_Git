@@ -1,0 +1,69 @@
+﻿@model RightsU_Entities.Territory
+@{
+     MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    @if (Model.Territory_Code > 0)
+    {
+        <h2>@objMessageKey.EditTerritoryDetails</h2>
+    }
+    else
+    {
+        <h2>@objMessageKey.AddTerritoryDetails</h2>
+    }
+</div>
+@using (Ajax.BeginForm("SaveTerritory", "Territory", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    <div class="modal_block sty" style="margin-left: 10px;margin-right: 10px;">
+        <table class="add_title_popup">
+            <tr>
+                <td style="width:25%"><b>@objMessageKey.TerritoryName</b></td>
+                <td style="width:75%">
+                    <input type="text" id="txtTerritoryName" name="Territory_Name" value="@Model.Territory_Name" placeholder="@objMessageKey.TerritoryName" maxlength="100" class="form-control input-sm" style="width:95%" />
+                    <input type="hidden" id="hdnTerritoryCode" name="Territory_Code" value="@Model.Territory_Code" />
+                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                </td>
+            </tr>
+            <tr>
+                <td><b>@objMessageKey.Theatrical</b></td>
+                <td>
+                    @if ((Model.Is_Thetrical ?? "N") == "Y")
+                    {
+                        <input type="checkbox" id="chkTheatrical" value="Y" name="IsTheatrical" checked="checked" onchange="Theatrical_OnChange()" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="chkTheatrical" name="IsTheatrical" onchange="Theatrical_OnChange()" />
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td><b>@objMessageKey.Country</b></td>
+                <td>
+                    <div id="divCountry" style="width:385px">
+                        @Html.DropDownList("ddlCountry", ViewBag.CountryList as MultiSelectList, new { @id = "ddlCountry", @multiple = "multiple" })
+                    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal_block_full" style="margin-top: 10px;">
+        <div class="form_links">
+            <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                <li>
+                    <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return ValidateSave()"/>
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                </li>
+            </ul>
+        </div>
+    </div>
+}

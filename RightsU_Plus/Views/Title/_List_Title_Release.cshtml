@@ -1,0 +1,305 @@
+﻿@model List<RightsU_Entities.Title_Release>
+@{
+        MessageKey objMessageKey = new MessageKey();
+        if (Session["objMessageKey"] != null)
+        {
+            objMessageKey = (MessageKey)Session["objMessageKey"];
+        }
+        LoginEntity objLoginEntity = new LoginEntity();
+        if (Session["objLoginEntity"] != null)
+        {
+            objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+        }
+}
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<style>
+     #Tree_Filter_Rights_Platform {   
+        width:560px;
+        position:relative!important;
+        margin-left: 0px;
+        margin-top: 0px;
+    }
+    #Rights_Platform{
+        margin:0px 0px 0px 0px!important;
+    }
+    #tableTitleRel th {
+        text-align: left;
+    }
+
+    #tableTitleRel tr:nth-child(2n) {
+        border-bottom: 1px dotted #666;
+    }
+
+
+    .expandable li {
+        float: none;
+        line-height: initial;
+        list-style: none;
+        margin: 0;
+    }
+
+        .expandable li:before {
+            content: "\0BB \020";
+        }
+        #tableTitleRel th {
+    text-align: left;
+}
+
+</style>
+<script>
+    $(document).ready(function(){
+        if ('RTL' == '@objMessageKey.LayoutDirection')
+        {
+            $('.tableTitleRTL').css("text-align-last", "right");
+            $('.PopGender').css("float", "Right");
+        }
+        else
+        {
+            $('.tableTitleRTL').css("text-align-last", "left");
+            $('.PopGender').css("float", "left");
+        }
+
+        $('.expandable').expander({
+            slicePoint: 20,
+            expandPrefix: '',
+            expandText: '...read more',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    });
+</script>
+@using RightsU_BLL
+@{
+    foreach (var item in Model)
+    {
+        var Platform_List = new Title_Release_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Title_Release_Code == item.Title_Release_Code).Select(p => p).ToList()
+            .Join(new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Is_Active == "Y").ToList(), x => x.Platform_Code, y => y.Platform_Code, (x, y) => new { y.Platform_Code, y.Platform_Name })
+            .ToList();
+
+        var Territory_List = new Title_Release_Region_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Title_Release_Code == item.Title_Release_Code).Select(p => p).ToList()
+            .Join(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Is_Active == "Y").ToList(), x => x.Territory_Code, y => y.Territory_Code, (x, y) => new { y.Territory_Code, y.Territory_Name }).ToList();
+
+        var Country_List = new Title_Release_Region_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Title_Release_Code == item.Title_Release_Code).Select(p => p).ToList()
+            .Join(new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Is_Active == "Y").ToList(), x => x.Country_Code, y => y.Country_Code, (x, y) => new { y.Country_Code, y.Country_Name }).ToList();
+        <div class="rights_table_block">
+            <table class="table style_table" id="tableTitleRel">
+                <tbody>
+                    <tr class="tableTitleRTL">
+                        <th class="first_td">@objMessageKey.Platform</th>
+                        <th class="second_td">@objMessageKey.Region</th>
+                        <th class="third_td">@objMessageKey.ReleaseType</th>
+                        <th class="four_td">@objMessageKey.ReleaseDate</th>
+                        <td class="five_td" rowspan="2">
+
+                            @*<a title="View" class="glyphicon glyphicon-eye-open"></a>*@
+                            <a title="Edit" class="glyphicon glyphicon-pencil" id="btnEditTitleRelease" onclick="Edit(@item.Title_Release_Code)"></a>
+                            <a title="Delete" class="glyphicon glyphicon-trash" id="btnDeleteTitleRelease" onclick="Delete(@item.Title_Release_Code)"></a>
+                            @*<a title="Delete" class="glyphicon glyphicon-trash " href="#"></a>*@
+
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="expandable">
+                                <ul>
+
+                                    @foreach (var item_Platform in Platform_List)
+                                    {
+
+                                        <li>
+                                            @item_Platform.Platform_Name
+                                            @*@Html.Label("", item_Platform.Platform_Name)*@
+                                            @*@Html.Raw(item_Platform.Platform_Name.Replace("~", "</li><li>"))*@
+                                        </li>
+
+                                    }
+                                </ul>
+
+                            </div>
+                        </td>
+                        <td>
+                            <div class="expandable">
+
+                                @(item.Release_Type == "W" ? "World" : (item.Release_Type == "T" ? "Territory" : "Country"))
+
+                            </div>
+                        </td>
+                        <td>
+                            <div class="expandable">
+
+                                @if (Territory_List.Count > 0)
+                                {
+                                    string strRelease = "";
+                                    strRelease = string.Join(", ", Territory_List.Select(s => s.Territory_Name));
+                                    @strRelease
+                                }
+                                @if (Country_List.Count > 0)
+                                {
+                                    string strRelease = "";
+                                    strRelease = string.Join(", ", Country_List.Select(s=>s.Country_Name));
+                                    @strRelease
+                                }
+                                @if (Territory_List.Count == 0 && Country_List.Count == 0)
+                                {
+                                    @Html.Label("", "World")
+
+                                }
+                            </div>
+
+                        </td>
+                        <td>
+                            <div class="expandable">
+
+                                @Html.Label("", Convert.ToDateTime(item.Release_Date).ToShortDateString())
+                                
+                            </div>
+
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+    <input type="hidden" id="hdnTitleReleaseCode" value="0" />
+}
+
+<script>
+
+    function SetPaging() {
+        var PageNo = @ViewBag.TitleReleasePageNo, recordCnt = @ViewBag.TitleReleaseCount;
+        IsCall = 'N';
+        PageNo = PageNo - 1;
+        var opt = { callback: pageselectCallback};
+        opt["items_per_page"] = 10;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $(".pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if (IsCall == 'Y')
+            BindTitleList(@ViewBag.TitleReleasePageNo);
+        else
+            IsCall = 'Y';
+    }
+    function Edit(id) {
+        $('#popAddTitleRelease').modal();
+        $('#popAddTitleRelease .modal_header h2').text('Edit Title Release');
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetTitleRelease", "Title")',
+            data: { Title_Release_Code: id },
+            async: false,
+            success: function (result) {
+                $('#Rel_Date').val(result.TitleList[0].Release_Date);
+                var j = $('input[name="Rel_Type"]');
+                var rel_Type = result.TitleList[0].Release_Type;
+                $.each(j, function (index, value) {
+                    if (value.value == result.TitleList[0].Release_Type)
+                        value.checked = true;
+                    else
+                        value.checked = false;
+
+                });
+                $('#hdnTitleReleaseCode').val(id);
+                var t = result["TerritoryList"][0].items;
+                var platForm = result["PlatformList"][0].items;
+                var arryTerr = [];
+                var arrCountry = [];
+                var arrPlatform = [];
+                var strPlatform = '';
+                $.each(t, function (index, value) {
+                    debugger;
+                    if (value["Territory_Code"] != null) {
+                        arryTerr.push(value["Territory_Code"]);
+                    }
+                    else if (value["Country_Code"] != null) {
+                        arrCountry.push(value["Country_Code"]);
+                    }
+                });
+
+                $.each(platForm, function (index, value) {
+                    if (value["Platform_Code"] != null) {
+                        arrPlatform.push(value["Platform_Code"]);
+                    }
+                });
+
+                var i = "";
+                var j = "";
+                if (arryTerr.length > 0)
+                    i = arryTerr.toString();
+                else if (arrCountry.length > 0)
+                    j = arrCountry.toString();
+
+                if (rel_Type == "C") //Country
+                {
+                    $('#rdWorld').parents('li').next().show();
+                    $('#ddlCountry_TitleRel_chosen').show();
+                    $('#ddlTerritory_TitleRel_chosen').hide();
+                    $('#ddlCountry_TitleRel').val(arrCountry).trigger('chosen:updated');
+                }
+                else if (rel_Type == "T") // Territory
+                {
+                    $('#rdWorld').parents('li').next().show();
+                    $('#ddlCountry_TitleRel_chosen').hide();
+                    $('#ddlTerritory_TitleRel_chosen').show();
+                    $('#ddlTerritory_TitleRel').val(arryTerr).trigger('chosen:updated');
+                }
+                else if (rel_Type == "W") // World
+                {
+                    $('#rdWorld').parents('li').next().hide();
+                    $('#ddlCountry_TitleRel_chosen,#ddlTerritory_TitleRel_chosen').hide();
+                }
+
+
+                //strPlatform = arrPlatform.toString();
+
+
+
+                var data = CheckHoldBack();
+                // var PlatformCodeFromTitleRelease = '@ViewBag.TitleReleaseHoldbackCode';
+                //$("#hdnTVCodes").val(data);
+                if (data.length == 0 || data == '') {
+                    //arrPlatform.push(data);
+                    $('#hdnTVCodes').val(arrPlatform.toString());
+                    $("#hdnSelectedPlatforms").val(arrPlatform.toString());
+                    BindPlatformTree();
+                    $("#Rights_Platform").fancytree("disable");
+                    $('input[name="Rel_Type"]').prop('disabled', true);
+                    //$('#rdWorld').prop('checked', true);
+                    //$('#rdWorld').parents('li').next().hide();
+                }
+                else if(data.length > 0){
+                    strPlatform = arrPlatform.toString();
+                    for (var i = 0; i < data.length; i++) {
+                        arrPlatform.push(parseInt(data[i]));
+                    }
+                    //arrPlatform.push(parseInt(data.toString()));
+                    $('#hdnTVCodes').val(arrPlatform.toString());
+                    $("#hdnSelectedPlatforms").val(strPlatform);
+                    BindPlatformTree();
+                    $("#Rights_Platform").fancytree("enable");
+                    $('input[name="Rel_Type"]').prop('disabled', false);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function Delete(titleReleaseCode)
+    {
+        debugger;
+        Command_Name = "TITLE_RELEASE_DELETE";
+        TitleReleaseCode = titleReleaseCode;
+        showAlert("I", "@objMessageKey.DeactivateConfirmationMessage", "OKCANCEL");
+    }
+</script>

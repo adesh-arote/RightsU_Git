@@ -1,0 +1,32 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Validate_Rights_Duplication_UDT>
+<div>
+    <span class="textFont divSearch_ErrorPopup_textFont">Title : </span>
+    <table class="table table-bordered table-hover" style="display: table;" id="tblMileStone">
+        <tr>
+            <th class="movie">Title Name</th>
+            <th>Platform</th>
+            <th>Agreement No</th>
+            <th>Period</th>
+            <th>Region</th>
+            <th>Title Language</th>
+            <th>Subtitling</th>
+            <th>Dubbing</th>
+        </tr>
+        @{
+            foreach (var objAcqList in Model)
+            {
+            <tr>
+                <td>@objAcqList.Title_Name</td>
+                <td>@objAcqList.Platform_Name</td>
+                <td>@objAcqList.Agreement_No</td>
+                <td>@objAcqList.Right_Start_Date</td>
+                <td>@objAcqList.Country_Name</td>
+                <td>@objAcqList.Is_Title_Language_Right</td>
+                <td>@objAcqList.Subtitling_Language</td>
+                <td>@objAcqList.Dubbing_Language</td>
+            </tr>
+            }
+        }
+
+    </table>
+</div>

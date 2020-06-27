@@ -1,0 +1,528 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Cost_Costtype_Episode>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        $("#Episode_From_Edit,#Episode_To_Edit,#Episode_From,#Episode_To").keypress(function(e) {
+             
+            if (e.which === 43 || e.which === 45) {
+                e.preventDefault();
+            }
+        });
+         
+        // var a = parseFloat(@GlobalParams.CurrencyFormat(Convert.ToDouble(ViewBag.Sum)));
+        var a = @ViewBag.Sum;
+        if (parseFloat($("#hdnTotalAmt").val()) == a) {
+            $("#note").hide();
+            $("#btn_ClseEC").attr("disabled", false);
+        }
+        else if (a == 0) {
+            $("#note").hide();
+            $("#btn_ClseEC").attr("disabled", false);
+        }
+        else {
+            $("#note").show();
+            $("#btn_ClseEC").attr("disabled", true);
+        }
+        $("#Episode_From_Edit").bind('keyup mouseup', function () {
+            $("#Episode_To_Edit").attr({
+                "min": $("#Episode_From_Edit").val()
+            });
+        });
+        $("#Episode_From").bind('keyup mouseup', function () {
+            $("#Episode_To").attr({
+                "min": $("#Episode_From").val()
+            });
+        });
+        $(".numeric_Amount").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: true,
+            max: parseFloat($('#hdnTotalAmt').val()),
+            min: 0.1
+        });
+
+        var perct = 100;
+        var perct_min = 0.1;
+        $(".percentage_view").each(function () {
+            debugger;
+            var value = $(this).val();
+            if (!isNaN(value) && value.length != 0) {
+                perct -= parseFloat(value);
+            }
+        });
+        $(".numeric_Frame").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: true,
+            max: perct,
+            min: perct_min
+        });
+        $('input:radio[name="Duration"]').change(function () {
+            debugger;
+            if ($(this).val() == 'P') {
+                calculatePrice();
+                $("#Percentage").attr("readonly", false);
+                $("#Amount").attr("readonly", true);
+            } else {
+                calculatePerc();
+                $("#Percentage").attr("readonly", true);
+                $("#Amount").attr("readonly", false);
+            }
+            $('#hdnRadioButtonChecked').val($(this).val())
+        });
+        $('input:radio[name="Duration_Edit"]').change(function () {
+            debugger;
+            if ($(this).val() == 'P') {
+                calculatePrice_Edit();
+                $("#Percentage_Edit").attr("readonly", false);
+                $("#Amount_Edit").attr("readonly", true);
+            } else {
+                calculatePerc_Edit();
+                $("#Percentage_Edit").attr("readonly", true);
+                $("#Amount_Edit").attr("readonly", false);
+            }
+            $('#hdnRadioButtonChecked_Edit').val($(this).val())
+        });
+    });
+    var $percentage = $("input[name='percentage']").on("input", calculatePrice),
+    $discount = $("input[name='amount']").on("input", calculatePerc);
+    function calculatePrice() {
+        debugger; 
+        var percentage = $('#Percentage').val();
+        var price = $("#hdnTotalAmt").val();
+        price = price.replace(/,/g, '');
+        var calcPrice = (price - (price * percentage / 100)).toFixed(2);
+        calcPrice = price - calcPrice;
+        $discount.val(calcPrice.toFixed(2));
+    }
+    function calculatePerc() {
+        debugger;
+        var discount = $('#Amount').val();
+        discount = discount.replace(/,/g, '');
+        var price = $("#hdnTotalAmt").val();
+        price = price.replace(/,/g, '');
+        var calcPerc = 100 - (discount * 100 / price);
+        calcPerc = 100 - calcPerc;
+        $percentage.val(calcPerc.toFixed(2));
+    }
+    var $percentage_Edit = $("input[name='percentage_Edit']").on("input", calculatePrice_Edit),
+    $discount_Edit = $("input[name='amount_Edit']").on("input", calculatePerc_Edit);
+
+    function calculatePrice_Edit() {
+        debugger;
+        var percentage = $('#Percentage_Edit').val();
+        percentage = percentage.replace(/,/g, '');
+        var price = $("#hdnTotalAmt").val();
+        price = price.replace(/,/g, '');
+        var calcPrice = (price - (price * percentage / 100)).toFixed(2);
+        calcPrice = price - calcPrice;
+        $discount_Edit.val(calcPrice.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+        //$discount_Edit.val(calcPrice.toFixed(2));
+    }
+    function calculatePerc_Edit() {
+        debugger;
+        var discount = $('#Amount_Edit').val();
+        discount = discount.replace(/,/g, '');
+        var price = $("#hdnTotalAmt").val();
+        price = price.replace(/,/g, '');
+        var calcPerc = 100 - (discount * 100 / price);
+        calcPerc = 100 - calcPerc;
+        $percentage_Edit.val(calcPerc.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    }
+
+    $('.expand_Remarks').expander({
+        slicePoint: 45,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+
+<div class="tableScroll_CML" style="max-height: 250px!important;">
+    <table class="table table-bordered table-hover" id="tblEpisodeCost">
+        <thead>
+            <tr>
+                <th style=" width:15%;text-align:center">
+                    @objMessageKey.FromEpisode
+                </th>
+                <th style="width:15%;text-align:center">@objMessageKey.ToEpisode</th>
+                <th style="width:30%;text-align:center">@objMessageKey.Percentage / @objMessageKey.Amount</th>
+                <th style="width:30%;text-align:center">@objMessageKey.Remarks</th>
+                @if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    <th style="width:10%;text-align:center">@objMessageKey.Action</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if(TempData["Action"] == "AddEpisodeCost")
+            {
+                <tr>
+                    <td>
+                        <input type="number" id="Episode_From" step="1" min="@Convert.ToInt32(TempData["esp_start"])" max="@Convert.ToInt32(TempData["esp_end"])" style="width:90% " />
+                    </td>
+                    <td>
+                        <input type="number" id="Episode_To" step="1" min="@Convert.ToInt32(TempData["esp_start"])" max="@Convert.ToInt32(TempData["esp_end"])" style="width:90% " />
+                    </td>
+                    <td align="center">
+                        @Html.RadioButton("Duration", "P", true, new { style = "cursor: pointer;" }) &nbsp; @objMessageKey.Percentage &nbsp;
+                        @Html.RadioButton("Duration", "A", new { style = "cursor: pointer;" }) &nbsp;  @objMessageKey.Amount &nbsp;
+                        <input type="hidden" id="hdnRadioButtonChecked" value="P" />
+                        <br />
+                        <input type="text" id="Percentage" class="numeric numeric_Frame" name="percentage" value="@GlobalParams.CurrencyFormat(Convert.ToDouble(TempData["TotalPercent_remain"]))" />
+                        <input type="text" id="Amount" class="price numeric numeric_Amount" value="@GlobalParams.CurrencyFormat(Convert.ToDouble(TempData["TotalSum_remain"]))"  name="amount" readonly />
+                    </td>
+                    <td>
+                        <textarea id="Remarks" style="width:100%"></textarea>
+                    </td>
+                    <td align="center">
+                        <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveUpdateEpisodeCost('')"></a>
+                        <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelEpisodeCost()"></a>
+                    </td>
+                </tr>
+            }
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    if (TempData["Action"] == "EditEpisodeCost" && item.Dummy_Guid == TempData["idEpisodeCost"])
+                    {
+                        <tr>
+                            <td>
+                                <input type="number" id="Episode_From_Edit" value="@item.Episode_From" step="1" min="@Convert.ToInt32(TempData["esp_start"])" max="@Convert.ToInt32(TempData["esp_end"])" style="width:90% " />
+                            </td>
+                            <td>
+                                <input type="number" id="Episode_To_Edit" value="@item.Episode_To" step="1" min="@Convert.ToInt32(TempData["esp_start"])" max="@Convert.ToInt32(TempData["esp_end"])" style="width:90% " />
+                            </td>
+                            <td align="center">
+                                @Html.RadioButton("Duration_Edit", "P", item.Amount_Type == "P", new { style = "cursor: pointer;" }) &nbsp; @objMessageKey.Percentage &nbsp;
+                                @Html.RadioButton("Duration_Edit", "A", item.Amount_Type == "A", new { style = "cursor: pointer;" }) &nbsp;  @objMessageKey.Amount &nbsp;
+                                <input type="hidden" id="hdnRadioButtonChecked_Edit" value="@item.Amount_Type" />
+                                <br />
+                                @if (item.Amount_Type == "P")
+                                {
+                                    <input type="text" id="Percentage_Edit" class="numeric numeric_Frame" name="percentage_Edit" value="@Math.Round(decimal.Parse(item.Percentage.ToString()), 2)" />
+                                    <input type="text" id="Amount_Edit" class="price numeric numeric_Amount" name="amount_Edit" value="@GlobalParams.CurrencyFormat(Convert.ToDouble(item.Amount))" readonly />
+                                }
+                                else
+                                {
+                                    <input type="text" id="Percentage_Edit" class="numeric numeric_Frame" name="percentage_Edit" value="@Math.Round(decimal.Parse(item.Percentage.ToString()), 2)" readonly />
+                                    <input type="text" id="Amount_Edit" class="price numeric numeric_Amount" name="amount_Edit" value="@GlobalParams.CurrencyFormat(Convert.ToDouble(item.Amount))" />
+                                }
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(model => item.Remarks, new { id = "Remarks_Edit", style = "width:100% " })
+                                <input type="hidden" id="hdn_dummyGuid" value="@item.Dummy_Guid" />
+
+                            </td>
+                            <td align="center">
+                                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveUpdateEpisodeCost('@item.Dummy_Guid')"></a>
+                                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelEpisodeCost()"></a>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            @{
+                        var a = Math.Round(decimal.Parse(item.Percentage.ToString()), 2);
+                            }
+                            <td align="center">@item.Episode_From</td>
+                            <td align="center">@item.Episode_To</td>
+                            <td>
+                                @Html.Label("BudgetedAmt", GlobalParams.CurrencyFormat(Convert.ToDouble(item.Amount))) ( @a %)
+                                <input type="hidden" class="price" value="@GlobalParams.CurrencyFormat(Convert.ToDouble(item.Amount))" />
+                                <input type="hidden" class="percentage_view" value="@a" />
+                            </td>
+                            <td class="expand_Remarks">@item.Remarks</td>
+                            @if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                <td align="center">
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditEpisodeCost_List('@item.Dummy_Guid','EDIT')"></a>
+                                    <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteEpisodeCost_List('@item.Dummy_Guid')"></a>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            }
+            else
+            {
+                if (TempData["Action"] != "AddEpisodeCost")
+                {
+                    <tr>
+                        <td colspan="6">@objMessageKey.Norecordfound</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div class="pull-right"><b>@objMessageKey.TotalAmount: </b>@GlobalParams.CurrencyFormat(Convert.ToDouble(ViewBag.Sum))</div>
+<input type="hidden" id="hdnSum" value="@GlobalParams.CurrencyFormat(Convert.ToDouble(ViewBag.Sum))" />
+<script>
+
+    var Command_Name = "";
+    var Dummy_Guid = "";
+    var URL_SaveUpdateEpisodeCost = '@Url.Action("SaveUpdateEpisodeCost", "Acq_Cost")';
+    var URL_DeleteEpisodeCost_List = '@Url.Action("DeleteEpisodeCost_List", "Acq_Cost")';
+
+    function SaveUpdateEpisodeCost(dummyGuid) {
+        var sum = 0;
+        $(".price").each(function () {
+            var value = $(this).val();
+            if (!isNaN(value) && value.length != 0) {
+                sum += parseFloat(value);
+            }
+        });
+        
+        var a = parseFloat($('#hdnTotalAmt').val());
+        var b = sum;
+        if (a >= b) {
+            var formData = new FormData();
+            if (dummyGuid == "") {
+                if (!Validate_Save()) {
+                    return false;
+                }
+                var AcqDealCostTypeCode = parseInt($('#hdnAcqDealCostTypeCode').val());
+                var rowIndex = parseInt($('#hdnrowIndex').val());
+                var Key = "ADD";
+                var Episode_From = parseInt($('#Episode_From').val());
+                var Episode_To = parseInt($('#Episode_To').val());
+                var RadioButtonChecked = $('#hdnRadioButtonChecked').val();
+                var Percentage = $('#Percentage').val();
+                var Amount = $('#Amount').val();
+                var Remarks = $('#Remarks').val();
+                formData.append("Episode_From", Episode_From);
+                formData.append("Episode_To", Episode_To);
+                formData.append("RadioButtonChecked", RadioButtonChecked);
+                formData.append("Percentage", Percentage);
+                formData.append("Amount", Amount);
+                formData.append("Remarks", Remarks);
+                formData.append("Key", Key);
+                formData.append("AcqDealCostTypeCode", AcqDealCostTypeCode);
+                formData.append("rowIndex", rowIndex);
+            }
+            else {
+                if (!Validate_Update()) {
+                    return false;
+                }
+                var AcqDealCostTypeCode = parseInt($('#hdnAcqDealCostTypeCode').val());
+                var rowIndex = parseInt($('#hdnrowIndex').val());
+                var Key = "EDIT";
+                var dummy_Guid = $('#hdn_dummyGuid').val();
+                var Episode_From = parseInt($('#Episode_From_Edit').val());
+                var Episode_To = parseInt($('#Episode_To_Edit').val());
+                var RadioButtonChecked = $('#hdnRadioButtonChecked_Edit').val();
+                var Percentage = $('#Percentage_Edit').val();
+                var Amount = $('#Amount_Edit').val();
+                var Remarks = $('#Remarks_Edit').val();
+                formData.append("Episode_From_Edit", Episode_From);
+                formData.append("Episode_To_Edit", Episode_To);
+                formData.append("RadioButtonChecked_Edit", RadioButtonChecked);
+                formData.append("Percentage_Edit", Percentage);
+                formData.append("Amount_Edit", Amount);
+                formData.append("Remarks_Edit", Remarks);
+                formData.append("Key", Key);
+                formData.append("dummy_Guid", dummy_Guid);
+                formData.append("AcqDealCostTypeCode", AcqDealCostTypeCode);
+                formData.append("rowIndex", rowIndex);
+            }
+            $.ajax({
+                type: "POST",
+                url: URL_SaveUpdateEpisodeCost,
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result == "true")
+                        redirectToLogin();
+                    else {
+                        if (result.Status == "S") {
+                            if (result.Warning != "") {
+                                showAlert("E", "@objMessageKey.Episodeisoverlappinmg");
+                            }
+                            $('#hdnAction').val("")
+                            BindEpisodeCostView();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            showAlert("E", "@objMessageKey.TotalAmountisexceedingtheactualamount");
+            return false;
+        }
+
+    }
+    function DeleteEpisodeCost_List(dummyGuid, confirmed) {
+        if (checkCurrentAction()) {
+            $(".EpisodicCostHead").css({"z-index": "1039"});
+            if (confirmed) {
+                var formData = new FormData();
+                var AcqDealCostTypeCode = parseInt($('#hdnAcqDealCostTypeCode').val());
+                var rowIndex = parseInt($('#hdnrowIndex').val());
+                formData.append("dummy_Guid", dummyGuid);
+                formData.append("AcqDealCostTypeCode", AcqDealCostTypeCode);
+                formData.append("rowIndex", rowIndex);
+
+                $.ajax({
+                    type: "POST",
+                    url: URL_DeleteEpisodeCost_List,
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function (result) {
+                        $(".EpisodicCostHead").css({"z-index": "1041"});
+                        if (result == "true")
+                            redirectToLogin();
+                        else {
+                            if (result.Status == "S") {
+                                BindEpisodeCostView();
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+                });
+            }
+            else {
+                event.preventDefault();
+                Command_Name = "DELETE_EPISODE_COST";
+                Dummy_Guid = dummyGuid;
+                showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL")
+            }
+        }
+    }
+    function handleCancel() {
+        $(".EpisodicCostHead").css({"z-index": "1041"});
+        $('#hdnAction').val("");
+        Command_Name = "";
+        Dummy_Guid = "";
+    }
+    function CancelEpisodeCost() {
+        $('#hdnAction').val("")
+        BindEpisodeCostView();
+    }
+    function CheckNumeric(e) {
+        if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) { event.returnValue = false; return false; } }
+    }
+    function Validate_Save() {
+         
+        var returnVal = true;
+        if ($.trim($('#Episode_From').val()) == ""|| parseInt($.trim($('#Episode_From').val())) == 0) {
+            $('#Episode_From').val('')
+            $('#Episode_From').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Episode_To').val()) == ""|| parseInt($.trim($('#Episode_To').val())) == 0) {
+            $('#Episode_To').val('')
+            $('#Episode_To').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Percentage').val()) == "") {
+            $('#Percentage').val('')
+            $('#Percentage').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Amount').val()) == "") {
+            $('#Amount').val('')
+            $('#Amount').attr('required', true)
+            returnVal = false;
+        }
+
+
+        var Episode_From = parseInt($('#Episode_From').val());
+        var Episode_To = parseInt($('#Episode_To').val());
+        var Episode_Starts_From = parseInt($('#hdnEpisode_Starts_From').val());
+        var Episode_End_To = parseInt($('#hdnEpisode_End_To').val());
+        if (Episode_From != "") {
+            if (Episode_From >= Episode_Starts_From && Episode_From <= Episode_End_To) {
+                if (Episode_To != "") {
+                    if (Episode_To >= Episode_Starts_From && Episode_To <= Episode_End_To) {
+                        if (Episode_From > Episode_To) {
+                            showAlert('E', "@objMessageKey.EpisodeFromshouldbeislessthanepisodeto")
+                            returnVal = false;
+                        }
+                    }
+                    else {
+                        showAlert('E', "@objMessageKey.EpisodeToshouldbebetweenactualcosttypeepisode")
+                        returnVal = false;
+                    }
+                }
+            }
+            else {
+                showAlert('E', "@objMessageKey.EpisodeFromshouldbebetweenactualcosttypeepisode")
+                returnVal = false;
+            }
+        }
+        return returnVal;
+    }
+    function Validate_Update() {
+         
+        var returnVal = true;
+        if ($.trim($('#Episode_From_Edit').val()) == "" || parseInt($.trim($('#Episode_From_Edit').val())) == 0) {
+            $('#Episode_From_Edit').val('')
+            $('#Episode_From_Edit').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Episode_To_Edit').val()) == ""|| parseInt($.trim($('#Episode_To_Edit').val())) == 0) {
+            $('#Episode_To_Edit').val('')
+            $('#Episode_To_Edit').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Percentage_Edit').val()) == "") {
+            $('#Percentage_Edit').val('')
+            $('#Percentage_Edit').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Amount_Edit').val()) == "") {
+            $('#Amount_Edit').val('')
+            $('#Amount_Edit').attr('required', true)
+            returnVal = false;
+        }
+        var Episode_From = parseInt($('#Episode_From_Edit').val());
+        var Episode_To = parseInt($('#Episode_To_Edit').val());
+        var Episode_Starts_From = parseInt($('#hdnEpisode_Starts_From').val());
+        var Episode_End_To = parseInt($('#hdnEpisode_End_To').val());
+        if (Episode_From != "") {
+            if (Episode_From >= Episode_Starts_From && Episode_From <= Episode_End_To) {
+                if (Episode_To != "") {
+                    if (Episode_To >= Episode_Starts_From && Episode_To <= Episode_End_To) {
+                        if (Episode_From > Episode_To) {
+                            showAlert('E', "@objMessageKey.EpisodeFromshouldbeislessthanepisodeto")
+                            returnVal = false;
+                        }
+                    }
+                    else {
+                        showAlert('E', "@objMessageKey.EpisodeToshouldbebetweenactualcosttypeepisode")
+                        returnVal = false;
+                    }
+                }
+            }
+            else {
+                showAlert('E', "@objMessageKey.EpisodeFromshouldbebetweenactualcosttypeepisode")
+                returnVal = false;
+            }
+        }
+        return returnVal;
+    }
+
+
+</script>

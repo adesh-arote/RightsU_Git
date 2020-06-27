@@ -1,0 +1,655 @@
+﻿/*CommonRTL.css for Right To Left Design in Rights Management System
+    Aditya Bandivadekar
+    7 Jul 2017
+*/
+
+
+body {
+    font-family: "Open Sans",Verdana,Arial,sans-serif;
+    background-color: #fff;
+    color: #666;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-size: 13px;
+    overflow-x: hidden !important;
+
+}
+.header-nav {
+    padding: 8px 90px 0px 8px;
+    width: 100%;
+    height: 70px;
+    position: fixed;
+    top: 0;
+    z-index: 95;
+    /* overflow-y: hidden; */
+    background-color: #2b64a5;
+    transition: 500ms;
+}
+
+.pull-left {
+    float: right !important;
+    padding-right: 12px !important;
+}
+
+.pull-right {
+    float: left !important;
+}
+
+.navbar-custom-menu {
+    float: left !important;
+}
+
+.leftPanel {
+    background-color: #777;
+    width: 280px;
+    max-height: 100%;
+    bottom: 35px;
+    top: 70px;
+    position: fixed;
+    z-index: 98;
+    box-shadow: 6px 0px 10px rgba(0,0,0,0.3);
+    -moz-box-shadow: 6px 0px 10px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 6px 0px 10px rgba(0,0,0,0.3);
+    transition: all 0.25s linear;
+    -o-transition: all 0.25s linear;
+    -moz-transition: all 0.25s linear;
+    -webkit-transition: all 0.25s linear;
+    left: auto !important;
+    right: -220px;
+    direction: rtl;
+    overflow: auto;
+}
+
+.user-menu {
+    float: right !important;
+}
+
+.close {
+    float: left;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .3;
+    padding-left: 28px;
+}
+
+.Reviewclose {
+    position: relative;
+    top: -21px;
+    right: 250px;
+    color: inherit;
+}
+
+.navigation {
+    position: fixed;
+    top: 0;
+    left: auto;
+    right: 0px;
+    width: 74px;
+    height: 100%;
+    font-size: 30px;
+    border-right: 1px solid rgba(0,0,0,0.3);
+    background: transparent url(../Images/bg-sidemenu.jpg) left top repeat;
+    z-index: 99;
+    text-align: center;
+}
+
+.container {
+    width: 95%;
+    margin: 0 auto;
+    padding: 10px 80px 55px 0px !important;
+}
+
+.rightPannel {
+    border-color: #eee;
+    right: auto;
+    left: auto;
+    top: 36px;
+    width: 217px;
+    position: absolute;
+    height: inherit;
+    z-index: 99;
+    background-color: #f3f3f3;
+    border: 1px solid #000000;
+    direction: rtl;
+    text-align: right;
+}
+
+.NotifyEmailPanel {
+    border-color: #eee;
+    right: auto;
+    left: auto;
+    top: 36px;
+    width: 217px;
+    position: absolute;
+    height: inherit;
+    z-index: 99;
+    background-color: #f3f3f3;
+    border: 1px solid #000000;
+    direction: rtl;
+    text-align: right;
+}
+
+    .NotifyEmailPanel:before {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 0;
+        height: 0;
+        color: transparent;
+        border: 10px solid black;
+        border-color: transparent transparent #f3f3f3;
+        margin-top: -20px;
+        margin-right: 196px;
+    }
+
+/*.rightPannel:before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+    color: transparent;
+    border: 10px solid black;
+    border-color: transparent transparent #949494;
+    margin-top: -20px;
+    margin-right: 196px;
+}*/
+
+.rightPannel:before {
+    content: '';
+    display: block;
+    position: fixed;
+    width: 0;
+    height: 0;
+    color: transparent;
+    border: 11px solid black;
+    border-color: transparent transparent #ffffff;
+    margin-top: -26px;
+    margin-right: 221px;
+}
+
+
+.right_nav li {
+    float: right;
+    list-style-type: none;
+    margin: 0 7px;
+}
+
+.pagination {
+    float: left !important;
+    margin-top: 0px;
+    display: flex;
+}
+
+.leftPanel ul > li.has-sub > a:after {
+    right: auto;
+    position: absolute;
+    left: 26px;
+    top: 12px;
+    z-index: 5;
+    display: block;
+    height: 10px;
+    width: 2px;
+    background: #ffffff;
+    content: "";
+    -webkit-transition: all 0.1s ease-out;
+    -moz-transition: all 0.1s ease-out;
+    -ms-transition: all 0.1s ease-out;
+    -o-transition: all 0.1s ease-out;
+    transition: all 0.1s ease-out;
+}
+
+.leftPanel ul > li.has-sub > a:before {
+    right: auto;
+    position: absolute;
+    left: 22px;
+    top: 16px;
+    display: block;
+    width: 10px;
+    height: 2px;
+    background: #ffffff;
+    content: "";
+    -webkit-transition: all 0.1s ease-out;
+    -moz-transition: all 0.1s ease-out;
+    -ms-transition: all 0.1s ease-out;
+    -o-transition: all 0.1s ease-out;
+    transition: all 0.1s ease-out;
+}
+
+.grid_item li {
+    list-style: none;
+    float: right !important;
+}
+
+.grid_item h4 {
+    list-style: none;
+    float: right !important;
+}
+
+.deal .grid_item {
+    float: left;
+    width: 101%;
+    border-left: 4px solid #2b64a5;
+    margin-bottom: 10px;
+}
+
+
+span.deal_version {
+    width: 30%;
+    text-align: left;
+    float: left;
+    font-size: 0.9em;
+    margin: 2px 0;
+    padding-right: 12px;
+}
+
+li.deal_licensor {
+    width: 23%;
+    padding-right: 18px;
+}
+
+li.deal_title {
+    width: 15%;
+    padding-right: 14px;
+}
+
+span.deal_workflow_status {
+    width: 42%;
+    text-align: left;
+    float: left;
+    font-size: 0.85em;
+    line-height: normal;
+    margin: 3px -5px;
+}
+
+li.deal_action {
+    width: 15%;
+    text-align: left;
+    margin-right: 5%;
+}
+
+#tabRightRule, #divLinkShowList, #tabstatusHistory, #tabRights, #tabGeneral, #TitleListGrid {
+    direction: rtl;
+}
+
+#sideNavi {
+    top: 18.8%;
+    left: 40px !important;
+    right: auto !important;
+    direction: rtl !important;
+    unicode-bidi: bidi-override !important;
+    flex: auto;
+    transform: rotate(179deg);
+}
+
+.form_links li {
+    float: right;
+    list-style-type: none;
+    margin-right: 10px;
+}
+
+td a.glyphicon {
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+}
+
+.TN {
+    float: left !important;
+}
+
+.emailPNL {
+    background-color: #e2dfdf;
+    width: 215px !important;
+}
+
+.table_brif {
+    border-bottom: 0 none;
+    margin-top: 12px;
+    direction: rtl;
+}
+
+.bottom_action li {
+    float: right;
+    list-style: none;
+    padding: 0 5px;
+}
+
+#divBack {
+    float: right;
+}
+
+.modal_block {
+    direction: rtl;
+}
+
+table, .table {
+    width: 100%;
+    padding: 1%;
+    direction: rtl;
+}
+
+span.read-more, span.read-less {
+    color: #2b64a5;
+    font-weight: 100;
+    float: left;
+}
+
+.nav-tab li {
+    position: relative;
+    float: right;
+    margin-right: 15px;
+    margin-bottom: 0 !important;
+}
+
+#commonSearch, #tabNotAired .pull-right {
+    direction: rtl;
+}
+
+.radio-inline, .checkbox-inline {
+    display: inline-block;
+    padding-right: 15px;
+    margin: 0 2px 0 5px;
+    font-size: 12px;
+    vertical-align: middle;
+    cursor: pointer;
+    float: right;
+}
+
+#RowAired .dashboard:first-child {
+    margin-top: 25px;
+    float: right;
+    margin-right: -6%;
+}
+
+#RowAired .dashboard:last-child {
+    margin-left: 0;
+    margin-top: 2%;
+}
+
+form label, .form label {
+    margin-bottom: 6px;
+    word-break: break-all;
+    float: none;
+}
+
+#hdnIgnoreOverride + label.radio-inline > input {
+    position: relative;
+    margin: 2px 0px 0px 2px;
+    top: 2px;
+}
+
+#new_syndication_bundle_form .close {
+    padding-left: 2px;
+}
+/*.meny-right .meny-arrow {
+    right: -11px !important;
+    top: 50%;
+    margin-top: -16px;
+    border-left: 16px solid #333;
+    transform: rotate(121deg) !important;
+}
+ .meny-arrow-right {
+        right: -24px !important;
+        transform: rotate(121deg) !important;
+    }
+  .meny-arrow {
+        position: absolute;
+        z-index: 10;
+        border: 10px solid transparent;
+        -webkit-transition: opacity 0.4s ease 0.4s;
+        -moz-transition: opacity 0.4s ease 0.4s;
+        -ms-transition: opacity 0.4s ease 0.4s;
+        -o-transition: opacity 0.4s ease 0.4s;
+        transition: opacity 0.4s ease 0.4s;
+    }*/
+#divSearch > ul > li {
+    float: right !important;
+    min-height: 56px;
+    list-style-type: none;
+    padding: 0 3px;
+    text-align: right !important;
+}
+
+.paging_area {
+    border-bottom: 1px dotted #777;
+    height: 36px;
+    direction: rtl;
+}
+
+.slider-menu--has-children > .slider-menu__link:before {
+    float: left;
+    content: "";
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin-top: 8px;
+    transition: transform .2s, margin-top .2s;
+    -moz-mask-image: url('arrow.svg');
+    -webkit-mask-image: url('arrow.svg');
+    mask-image: url('arrow.svg');
+    -moz-mask-size: cover;
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    background-color: #252525;
+}
+
+#divUpload > ul > li {
+    float: right !important;
+    min-height: 32px;
+    list-style-type: none;
+    padding: 0 3px;
+}
+
+.alert {
+    text-align: right;
+    position: fixed;
+    width: 80%;
+    bottom: 30px;
+    max-height: 140px;
+    padding: 15px;
+    margin: 0 0 20px 22px;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    overflow-y: auto;
+    font-size: 1.1em;
+    z-index: 1053;
+    color: rgba(0,0,0,0.6);
+    text-shadow: 0 1px 0 rgba(255,255,255,.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25),0 0px 15px rgba(0,0,0,.3);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.25),0 0px 15px rgba(0,0,0,.3);
+}
+
+    .alert > .btn.btn-primary {
+        float: left !important;
+        margin: 0px 10px 0px 0px;
+        background-color: rgba(0,0,0,0.2);
+    }
+
+.container .grid_area {
+    height: 80%;
+    margin-top: 10px;
+    direction: rtl;
+}
+
+.slider-menu--has-children > .slider-menu__link:before {
+    float: left !important;
+    content: "";
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin-top: 8px;
+    transition: transform .2s, margin-top .2s;
+    -moz-mask-image: url('arrow.svg');
+    -webkit-mask-image: url('arrow.svg');
+    mask-image: url('arrow.svg');
+    -moz-mask-size: cover;
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    background-color: #252525;
+    transform: rotate(180deg);
+}
+
+#spnRemarkLength {
+    float: left;
+}
+
+.tabbable .AddDealTile {
+    margin-right: 910px !important;
+    margin-top: -11px;
+}
+
+.RunDef {
+    float: left;
+}
+
+#lblStartDate {
+    float: right;
+}
+
+#liVersion {
+    list-style-type: none;
+    margin-right: 670px;
+}
+
+.radio input[type=radio], .radio-inline input[type=radio], .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox] {
+    position: absolute;
+    cursor: pointer;
+    margin: 3px -14px 0 -15px;
+}
+
+#popAddDealMovie .modal_block .close {
+    padding-left: 2px;
+}
+
+#btnSearchTitle {
+    margin-right: 40px;
+}
+
+#AddChannelrundef {
+    float: left;
+}
+
+.modal_block .close {
+    padding-left: 2px;
+}
+
+#tabNotAired .radio-inline {
+    margin-left: -12px;
+}
+
+#rbtNotAired, #rbtAired {
+    position: relative;
+    margin: 2px 0 0 2px;
+    top: 2px;
+}
+ @media (min-width:992px)
+ {
+	 .col-md-1,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-md-10,.col-md-11,.col-md-12{
+		 float:right;
+	 }
+	 .col-md-12{width:100%;}
+	 .col-md-11{width:91.66666667%;}
+	 .col-md-10{width:83.33333333%;}
+	 .col-md-9{width:75%;}
+	 .col-md-8{width:66.66666667%;}
+	 .col-md-7{width:58.33333333%;}
+	 .col-md-6{width:50%;}
+	 .col-md-5{width:41.66666667%;}
+	 .col-md-4{width:33.33333333%;}
+	 .col-md-3{width:25%;}
+	 .col-md-2{width:16.66666667%;}
+	 .col-md-1{width:8.33333333%;}
+	 .col-md-pull-12{right:100%;}
+	 .col-md-pull-11{right:91.66666667%;}
+	 .col-md-pull-10{right:83.33333333%;}
+	 .col-md-pull-9{right:75%;}
+	 .col-md-pull-8{right:66.66666667%;}
+	 .col-md-pull-7{right:58.33333333%;}
+	 .col-md-pull-6{right:50%;}
+	 .col-md-pull-5{right:41.66666667%;}
+	 .col-md-pull-4{right:33.33333333%;}
+	 .col-md-pull-3{right:25%;}
+	 .col-md-pull-2{right:16.66666667%;}
+	 .col-md-pull-1{right:8.33333333%;}
+	 .col-md-pull-0{right:auto;}
+	 .col-md-push-12{left:100%;}
+	 .col-md-push-11{left:91.66666667%;}
+	 .col-md-push-10{left:83.33333333%;}
+	 .col-md-push-9{left:75%;}
+	 .col-md-push-8{left:66.66666667%;}
+	 .col-md-push-7{left:58.33333333%;}
+	 .col-md-push-6{left:50%;}
+	 .col-md-push-5{left:41.66666667%;}
+	 .col-md-push-4{left:33.33333333%;}
+	 .col-md-push-3{left:25%;}
+	 .col-md-push-2{left:16.66666667%;}
+	 .col-md-push-1{left:8.33333333%;}
+	 .col-md-push-0{left:auto;}
+	 .col-md-offset-12{margin-left:100%;}
+	 .col-md-offset-11{margin-left:91.66666667%;}
+	 .col-md-offset-10{margin-left:83.33333333%;}
+	 .col-md-offset-9{margin-left:75%;}
+	 .col-md-offset-8{margin-left:66.66666667%;}
+	 .col-md-offset-7{margin-left:58.33333333%;}
+	 .col-md-offset-6{margin-left:50%;}
+	 .col-md-offset-5{margin-left:41.66666667%;}
+	 .col-md-offset-4{margin-left:33.33333333%;}
+	 .col-md-offset-3{margin-left:25%;}
+	 .col-md-offset-2{margin-left:16.66666667%;}
+	 .col-md-offset-1{margin-left:8.33333333%;}
+	 .col-md-offset-0{margin-left:0;}
+ }
+  
+
+ ul.fancytree-container {
+    font-size: 10pt;
+    white-space: nowrap;
+    padding: 3px;
+    margin: 0;
+    background-color: white;
+    border: 1px dotted gray;
+    overflow: auto;
+  min-height:100%;
+    position: relative;
+}
+    ul.fancytree-container ul {
+        padding: 0 16px 0 0;
+        margin: 0;
+    }
+    ul.fancytree-container li {
+        list-style-image: none;
+        list-style-position: outside;
+        list-style-type: none;
+        -moz-background-clip: border;
+        -moz-background-inline-policy: continuous;
+        -moz-background-origin: padding;
+        background-attachment: scroll;
+        background-color: transparent;
+        background-position: 0px 0px;
+        background-repeat: repeat-y;
+        background-image: none;
+        margin: 0;
+    }
+.modal_block .treeClass ul li{
+    margin-bottom: 0;
+}
+ul.fancytree-container li.fancytree-lastsib {
+    background-image: none;
+}
+ul.fancytree-no-connector > li {
+    background-image: none;
+}
+.ui-fancytree-disabled ul.fancytree-container {
+    opacity: 0.5;
+    background-color: silver;
+}
+.SumoSelect > .optWrapper > .options li label{
+    text-align:right;
+}

@@ -1,0 +1,780 @@
+﻿@model RightsU_Entities.Acq_Deal_Sport_Sales_Ancillary
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<style>
+    .SumoSelect,#divlstSalesTitle{
+        width:200px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        loadAutoComplete();
+        @if (Model.Acq_Deal_Sport_Sales_Ancillary_Code > 0 && ViewBag.Mode != "V" && ViewBag.Mode != "APRV" && ViewBag.Mode != "EWOA")
+        {
+            <text>
+        var txtRemark = document.getElementById('Remarks');
+        countChar(txtRemark);
+        </text>
+        }
+        $(":radio[name=FRO_Given_Official_Sponsor]").change(function () {
+            debugger;
+            if ($(this).val() === 'N') {
+                $('#Official_FRO_No_of_Days').val('');
+                $('#Official_FRO_Validity').val('');
+                $("#Official_FRO_No_of_Days").prop('disabled', true);
+                $("#Official_FRO_Validity").prop('disabled', true);
+            }
+            else {
+                $("#Official_FRO_No_of_Days").removeAttr('disabled');
+                $("#Official_FRO_Validity").removeAttr('disabled');
+            }
+        });
+
+        $(":radio[name=FRO_Given_Title_Sponsor]").change(function () {
+            if ($(this).val() === 'N') {
+                $('#Title_FRO_No_of_Days').val('');
+                $('#Title_FRO_Validity').val('');
+                $("#Title_FRO_No_of_Days").prop('disabled', true);
+                $("#Title_FRO_Validity").prop('disabled', true);
+            }
+            else {
+                $("#Title_FRO_No_of_Days").removeAttr('disabled');
+                $("#Title_FRO_Validity").removeAttr('disabled');
+            }
+        });
+
+        $(":radio[name=Last_Matching_Rights_Official_Sponsor]").change(function () {
+            if ($(this).val() === 'N') {
+                $('#Official_Last_Matching_Rights_Validity').val('');
+                $("#Official_Last_Matching_Rights_Validity").prop('disabled', true);
+            }
+            else
+                $("#Official_Last_Matching_Rights_Validity").removeAttr('disabled');
+        });
+
+        $(":radio[name=Last_Matching_Rights_Title_Sponsor]").change(function () {
+            if ($(this).val() === 'N') {
+                $('#Title_Last_Matching_Rights_Validity').val('');
+                $("#Title_Last_Matching_Rights_Validity").prop('disabled', true);
+            }
+            else
+                $("#Title_Last_Matching_Rights_Validity").removeAttr('disabled');
+        });
+
+        $('#Title_FRO_No_of_Days').numeric({ maxDigits: 3 });
+        $('#Title_FRO_Validity').numeric({ maxDigits: 3 });
+        $('#Official_FRO_No_of_Days').numeric({ maxDigits: 3 });
+        $('#Official_FRO_Validity').numeric({ maxDigits: 3 });
+        $('#Title_Last_Matching_Rights_Validity').numeric({ maxDigits: 3 });
+        $('#Official_Last_Matching_Rights_Validity').numeric({ maxDigits: 3 });
+    });
+
+    function loadAutoComplete() {
+        $.ajax({
+            url: '@Url.Action("GetSponsorName", "Acq_Sport_Ancillary")',
+            dataType: "json",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if (data == "true") {
+                    redirectToLogin();
+                }
+                $("input:text[id^='txtSponsor']").on("focus.autocomplete", null, function () {
+                    $(this).autocomplete({
+                        source: data,
+                        minLength: 0,
+                        delay: 0
+                    });
+
+                    $(this).autocomplete("search");
+                });
+
+                $("input:text[id^='txtOfficial']").on("focus.autocomplete", null, function () {
+                    $(this).autocomplete({
+                        source: data,
+                        minLength: 0,
+                        delay: 0
+                    });
+
+                    $(this).autocomplete("search");
+                });
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var err = eval("(" + XMLHttpRequest.responseText + ")");
+                alert(err.Message)
+                // console.log("Ajax Error!");  
+            }
+        });
+
+
+    }
+
+    function createtextbox(x) {
+        $(x).remove();
+        var sponsorId = parseInt($('#hdnSponsorId').val()) + 1;
+        var txt = "<br id='brs" + sponsorId + "'/><input id='txtSponsor" + sponsorId + "' type='text' style='width:186px;'>";
+        txt += "</input>";
+        txt += "<input type='button' value='X' onclick='hideControl(this,txtSponsor" + sponsorId + ",brs" + sponsorId + ")'/>";
+        txt += "<input id='btnAddTexSpo' type='button' value='+' onclick='createtextbox(this);' />";
+        $("#sponsorlist").append(txt);
+        $('#hdnSponsorId').val(sponsorId);
+        if ($("#sponsorlist").find('input[type="text"]').length > 3) {
+            $("#sponsorlist").css("overflow-y", "auto");
+            $("#sponsorlist").css("height", "63px");
+        }
+        else {
+            $("#sponsorlist").css("overflow-y", "hidden");
+            $("#sponsorlist").css("height", "auto");
+        }
+        loadAutoComplete();
+    }
+
+    function Updatesponsorlist(id) {
+        var Mode = '@ViewBag.Mode'
+        if (Mode != 'V' && Mode != 'APRV' && Mode != 'EWOA') {
+            var txtValue = $('#' + id.id).val();
+            var listValue = $('#hdnSponserlist').val();
+            var arr = listValue.split('~');
+            if (listValue == '')
+                $('#hdnSponserlist').val($('#' + id.id).val());
+            else {
+                if ($.inArray(txtValue, arr) == -1) {
+                    $('#hdnSponserlist').val(listValue + '~' + txtValue);
+                }
+            }
+        }
+    }
+
+    function createtextboxOfficial(x) {
+        $(x).remove();
+        var sponsorId = parseInt($('#hdnOfficialId').val()) + 1;
+        var txt = "<br id='bro" + sponsorId + "'/><input id='txtOfficial" + sponsorId + "' type='text' style='width:186px;'>";
+        txt += "</input>";
+        txt += "<input type='button' value='X' onclick='hideControl(this,txtOfficial" + sponsorId + ",bro" + sponsorId + ")'/>"
+        txt += "<input id='btnAddtxtOff' type='button' value='+' onclick='createtextboxOfficial(this);' />";
+        $("#officiallist").append(txt);
+        $('#hdnOfficialId').val(sponsorId);
+        if ($("#officiallist").find('input[type="text"]').length > 3) {
+            $("#officiallist").css("overflow-y", "auto");
+            $("#officiallist").css("height", "63");
+        }
+        else {
+            $("#officiallist").css("overflow-y", "hidden");
+            $("#officiallist").css("height", "auto");
+        }
+        loadAutoComplete();
+    }
+
+    function UpdateOfficiallist(id) {
+        var Mode = '@ViewBag.Mode'
+        if (Mode != 'V' && Mode != 'APRV' && Mode != 'EWOA') {
+            var txtValue = $('#' + id.id).val();
+            var listValue = $('#hdnOfficiallist').val();
+            var arr = listValue.split('~');
+            if (listValue == '')
+                $('#hdnOfficiallist').val(txtValue);
+            else {
+                if ($.inArray(txtValue, arr) == -1)
+                    $('#hdnOfficiallist').val(listValue + '~' + txtValue);
+            }
+        }
+    }
+
+    function hideControl(button, textbox, br) {
+        $(button).remove();
+        $(br).remove();
+        $(textbox).val("");
+        $(textbox).remove();
+        if ($("#sponsorlist").find('input[type="text"]').length > 3) {
+            $("#sponsorlist").css("overflow-y", "auto");
+            $("#sponsorlist").css("height", "63px");
+        }
+        else {
+            $("#sponsorlist").css("overflow-y", "hidden");
+            $("#sponsorlist").css("height", "auto");
+        }
+        if ($("#officiallist").find('input[type="text"]').length > 3) {
+            $("#officiallist").css("overflow-y", "auto");
+            $("#officiallist").css("height", "63");
+        }
+        else {
+            $("#officiallist").css("overflow-y", "hidden");
+            $("#officiallist").css("height", "auto");
+        }
+    }
+
+    function getsponsorlist() {
+        debugger;
+        var Mode = '@ViewBag.Mode'
+        if (Mode != 'V' && Mode != 'APRV') {
+            var titles = $('#lstSalesTitle').val();
+            if (titles === null) {
+                $('#divlstSalesTitle').addClass('required');
+                return false;
+            }
+
+            $('#hdnSponserlist').val('');
+            $('#hdnOfficiallist').val('');
+            $('#sponsorlist').find("input[type='text']").each(function (index) {
+                //get value
+                var val = $(this).val();
+                if (val != '') {
+
+                    var listValue = $('#hdnSponserlist').val();
+                    var arr = listValue.split('~');
+                    if (listValue == '')
+                        $('#hdnSponserlist').val(val);
+                    else {
+                        if ($.inArray(val, arr) == -1) {
+                            $('#hdnSponserlist').val(listValue + '~' + val);
+                        }
+                    }
+                }
+            });
+
+            $('#officiallist').find("input[type='text']").each(function (index) {
+                //get value
+                var val = $(this).val();
+                if (val != '') {
+
+                    var listValue = $('#hdnOfficiallist').val();
+                    var arr = listValue.split('~');
+                    if (listValue == '')
+                        $('#hdnOfficiallist').val(val);
+                    else {
+                        if ($.inArray(val, arr) == -1) {
+                            $('#hdnOfficiallist').val(listValue + '~' + val);
+                        }
+                    }
+                }
+            });
+            return true;
+        }
+        else
+            return false;
+    }
+
+    function OnFCTSaveSuccess(message) {
+        $('#popSportSalesAncillary').modal('hide');
+        $('div.modal-backdrop').hide();
+        var type = $(":radio[name=rdoSalesDisplayType]:checked").val();
+        var arrTitles = ''
+        if ($('#lblDisplaySalesTitle').val() != null)
+            arrTitles = $('#lblDisplaySalesTitle').val().join(',');
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindSales", "Acq_Sport_Ancillary")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                displayType: type,
+                selectedTitle: arrTitles
+            }),
+            success: function (result) {
+                $('#hdnAcqDealSportSalesAncillaryCode').val('');
+                $('#divSales').html(result);
+                initializeChosen();
+                initializeExpander();
+                $('#lblDisplaySalesTitle').val(arrTitles.split(',')).trigger("chosen:updated");
+                $('input[name=rdoSalesDisplayType][value=' + type + ']').prop('checked', true);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        CallFromDeleted = '';
+        showAlert('S', message, "OK");
+    }
+
+</script>
+<style>
+    .SumoSelect,#divlstSalesTitle{
+        width : 94% !important;
+    }
+     #divlstSalesTitle > div{
+        width : 100% !important;
+    }
+     .form_wrapper{
+         max-width : 900px !important;
+     }
+  
+</style>
+
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        @if (ViewBag.Mode != "V" && ViewBag.Mode != "APRV" && ViewBag.Mode != "EWOA")
+        {
+            using (Ajax.BeginForm("SaveSales", "Acq_Sport_Ancillary", new AjaxOptions { OnSuccess = "OnFCTSaveSuccess" }, new { id = "frmSales", @class = "form" }))
+            {
+            <div class="form_wrapper">
+                <div class="form_fields acq">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×
+                            </span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        @if (Model.Acq_Deal_Sport_Sales_Ancillary_Code > 0)
+                        { 
+                            <h2>@objMessageKey.EditSportsAncillarySales</h2>
+                        }
+                        else
+                        {
+                            <h2>@objMessageKey.AddSportsAncillarySales</h2>
+                        }
+                    </div>
+                    <div class="modal_block">
+                        <ul id="divSportAncMrkt">
+                            <li class="clearfix">
+                                <label class="bold">@objMessageKey.Titles</label>
+                                <div id="divlstSalesTitle">
+                                    @Html.ListBox("lstSalesTitle", ViewBag.SalesTitleList as MultiSelectList)
+                                </div>
+                                @Html.HiddenFor(m => Model.Acq_Deal_Sport_Sales_Ancillary_Code)
+                                @Html.Hidden("DisplayType", (string)ViewBag.DisplayType)
+                            </li>
+                            <li class="clearfix">
+                                <label class="bold">@objMessageKey.Sponsor:</label><br />
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>@objMessageKey.TitleSponsor</th>
+                                            <th>@objMessageKey.OfficialSponsor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="vertical-align: top;">
+                                                <div id="sponsorlist">
+                                                    <input id="txtSponsor1" type="text" class="text" onblur="Updatesponsorlist(this)" /><input id="btnAddTexSpo" type="button" value="+" onclick="createtextbox(this);" />
+                                                    @Html.Hidden("hdnSponsorId", (string)ViewBag.hdnSponsorId)
+                                                    @Html.Hidden("hdnSponserlist", (string)ViewBag.hdnSponserlist)
+                                                </div>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                                <div id="officiallist">
+                                                    <input id="txtOfficial1" type="text" class="text" onblur="UpdateOfficiallist(this)" /><input id="btnAddtxtOff" type="button" value="+" onclick="createtextboxOfficial(this);" />
+                                                    @Html.Hidden("hdnOfficialId", (string)ViewBag.hdnOfficialId)
+                                                    @Html.Hidden("hdnOfficiallist", (string)ViewBag.hdnOfficiallist)
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </li>
+                            <li class="clearfix">
+                                <label class="bold">@objMessageKey.WhetherFROToGiven:</label><br />
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">@objMessageKey.Sponsor</th>
+                                            <th rowspan="2">@objMessageKey.WhetherFROToGiven</th>
+                                            <th colspan="2">@objMessageKey.Validity</th>
+                                        </tr>
+                                        <tr>
+                                            <th>@objMessageKey.NoofdaysbeforetheTournament</th>
+                                            <th style="width: 120px;">@objMessageKey.ValidityofFRO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 110px;">@objMessageKey.TitleSponsor
+                                            </td>
+                                            <td>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.FRO_Given_Title_Sponsor, "Y", new { @checked = "true" })&nbsp;@objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.FRO_Given_Title_Sponsor, "N")&nbsp;@objMessageKey.NO                                                </label>
+                                            </td>
+                                            <td style="text-align: center;">
+                                                @Html.TextBoxFor(mbox => Model.Title_FRO_No_of_Days, new { @class = "text smallTextBox" })
+                                                &nbsp;@objMessageKey.Days
+                                            </td>
+                                            <td style="text-align: center;">
+                                                @Html.TextBoxFor(mbox => Model.Title_FRO_Validity, new { @class = "text smallTextBox" })
+                                                &nbsp;@objMessageKey.Days
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 110px;">@objMessageKey.OfficialSponsor</td>
+                                            <td>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.FRO_Given_Official_Sponsor, "Y", new { @checked = "true" })&nbsp;@objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.FRO_Given_Official_Sponsor, "N")&nbsp;@objMessageKey.NO
+                                                </label>
+                                            </td>
+                                            <td style="text-align: center;">
+                                                @Html.TextBoxFor(mbox => Model.Official_FRO_No_of_Days, new { @class = "text smallTextBox" })
+                                                &nbsp;@objMessageKey.Days
+                                            </td>
+                                            <td style="text-align: center;">
+                                                @Html.TextBoxFor(mbox => Model.Official_FRO_Validity, new { @class = "text smallTextBox" })
+                                                &nbsp;@objMessageKey.Days
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </li>
+
+                            <li class="clearfix">
+                                <label class="bold">@objMessageKey.PriceProtection:</label><br />
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>@objMessageKey.TitleSponsor</th>
+                                            <th>@objMessageKey.OfficialSponsor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 145px;">
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.Price_Protection_Title_Sponsor, "Y", new { @checked = "true" })&nbsp;@objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.Price_Protection_Title_Sponsor, "N")&nbsp;@objMessageKey.NO
+                                                </label>
+                                            </td>
+                                            <td style="width: 145px;">
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.Price_Protection_Official_Sponsor, "Y", new { @checked = "true" })&nbsp;@objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.Price_Protection_Official_Sponsor, "N")&nbsp;@objMessageKey.NO
+
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </li>
+
+                            <li class="clearfix">
+                                <label class="bold">@objMessageKey.LastMatchingRight:</label><br />
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>@objMessageKey.Sponsor</th>
+                                            <th>@objMessageKey.LastMatchingRight</th>
+                                            <th>@objMessageKey.ValidityofLastMatchingRight</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>@objMessageKey.TitleSponsor
+                                            </td>
+                                            <td>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.Last_Matching_Rights_Title_Sponsor, "Y", new { @checked = "true" })&nbsp;@objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.Last_Matching_Rights_Title_Sponsor, "N")&nbsp;@objMessageKey.NO
+                                                </label>
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Title_Last_Matching_Rights_Validity, new { @class = "text" })
+                                                &nbsp;@objMessageKey.Days
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>@objMessageKey.OfficialSponsor
+                                            </td>
+                                            <td>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.Last_Matching_Rights_Official_Sponsor, "Y", new { @checked = "true" })&nbsp;@objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(mbox => Model.Last_Matching_Rights_Official_Sponsor, "N")&nbsp;@objMessageKey.NO
+                                                </label>
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Official_Last_Matching_Rights_Validity, new { @class = "text" })
+                                                &nbsp;@objMessageKey.Days
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </li>
+                            <li class="clearfix">
+                                <div class="divBlock">
+                                    <div class="bold small_title" style="padding-right: 320px;">@objMessageKey.Excludedcategoriesofsponsorsandothercriticalinformation:</div>
+                                    <div style="">&nbsp;&nbsp;</div>
+                                    <div id="CharNum" class="charNum" style="float: right;">0/4000</div>
+                                </div>
+                                @Html.TextAreaFor(m => Model.Remarks, new { @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return getsponsorlist();" />
+                                </li>
+                                <li>
+                                    <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return closeSales();" />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        }
+        else
+        {
+            <form class="form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×
+                                </span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.ViewSportsAncillarySales</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper">
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.Titles</label>
+                                    <div class="expandable">
+                                          @{
+                                                int SelectedTitleCode = Convert.ToInt32(ViewBag.DetailTitleCode);
+                                                string titleName = string.Empty;
+                                                if (SelectedTitleCode != 0)
+                                                {
+                                                    titleName = string.Join(",", Model.Acq_Deal_Sport_Sales_Ancillary_Title.Where(t => t.Title_Code == SelectedTitleCode).Select(t => t.Title.Title_Name));
+                                                }
+                                                else
+                                                {
+                                                    titleName = string.Join(",", Model.Acq_Deal_Sport_Sales_Ancillary_Title.Select(t => t.Title.Title_Name));
+                                                }
+                                            }
+                                        @titleName
+                                    </div>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.Sponsor:</label><br />
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>@objMessageKey.TitleSponsor</th>
+                                                <th>@objMessageKey.OfficialSponsor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="vertical-align: top;">
+                                                    <div class="expandable">
+                                                        @string.Join(",", Model.Acq_Deal_Sport_Sales_Ancillary_Sponsor.Where(s => s.Sponsor_Type == "T").Select(s => s.Sponsor.Sponsor_Name))
+                                                    </div>
+                                                </td>
+                                                <td style="vertical-align: top;">
+                                                    <div class="expandable">
+                                                        @string.Join(",", Model.Acq_Deal_Sport_Sales_Ancillary_Sponsor.Where(s => s.Sponsor_Type == "O").Select(s => s.Sponsor.Sponsor_Name))
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.WhetherFROToGiven:</label><br />
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="2">@objMessageKey.Sponsor</th>
+                                                <th rowspan="2">@objMessageKey.WhetherFROToGiven</th>
+                                                <th colspan="2">@objMessageKey.Validity</th>
+                                            </tr>
+                                            <tr>
+                                                <th>@objMessageKey.NoofdaysbeforetheTournament</th>
+                                                <th>@objMessageKey.ValidityofFRO</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width: 110px;">@objMessageKey.TitleSponsor
+                                                </td>
+                                                <td style="width: 145px;">
+                                                    @if (Model.FRO_Given_Title_Sponsor == "Y")
+                                                    { 
+                                                        @:@objMessageKey.Yes 
+                                                        }
+                                                    else
+                                                    {
+                                                        @:@objMessageKey.NO
+                                                    }
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    @if (Model.Title_FRO_No_of_Days != null)
+                                                    {
+                                                        @Model.Title_FRO_No_of_Days
+                                                        <text> &nbsp;@objMessageKey.Days</text>
+                                                    }
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    @if (Model.Title_FRO_Validity != null)
+                                                    {
+                                                        @Model.Title_FRO_Validity
+                                                        <text> &nbsp;@objMessageKey.Days</text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 110px;">@objMessageKey.OfficialSponsor
+                                                </td>
+                                                <td style="width: 145px;">
+                                                    @if (Model.FRO_Given_Official_Sponsor == "Y")
+                                                    { 
+                                                        @:@objMessageKey.Yes 
+                                                        }
+                                                    else
+                                                    {
+                                                        @:@objMessageKey.NO
+                                                    }
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    @if (Model.Official_FRO_No_of_Days != null)
+                                                    {
+                                                        @Model.Official_FRO_No_of_Days
+                                                        <text> &nbsp;@objMessageKey.Days </text>
+                                                    }
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    @if (Model.Official_FRO_No_of_Days != null)
+                                                    {
+                                                        @Model.Official_FRO_Validity
+                                                        <text> &nbsp;@objMessageKey.Days </text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.PriceProtection:</label><br />
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>@objMessageKey.TitleSponsor</th>
+                                                <th>@objMessageKey.OfficialSponsor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width: 145px;">
+                                                    @if (Model.Price_Protection_Title_Sponsor == "Y" && !string.IsNullOrEmpty(Model.Price_Protection_Title_Sponsor))
+                                                    { 
+                                                        @:@objMessageKey.Yes 
+                                                        }
+                                                    else
+                                                    {
+                                                        @:@objMessageKey.NO
+                                                         }
+                                                </td>
+                                                <td style="width: 145px;">
+                                                    @if (Model.Price_Protection_Official_Sponsor == "Y" && !string.IsNullOrEmpty(Model.Price_Protection_Official_Sponsor))
+                                                    { 
+                                                        @:@objMessageKey.Yes 
+                                                        }
+                                                    else
+                                                    {
+                                                        @:@objMessageKey.NO
+                                                         }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.LastMatchingRight:</label><br />
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>@objMessageKey.Sponsor</th>
+                                                <th>@objMessageKey.LastMatchingRight</th>
+                                                <th>@objMessageKey.ValidityofLastMatchingRight</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>@objMessageKey.TitleSponsor
+                                                </td>
+                                                <td>
+                                                    @if (Model.Last_Matching_Rights_Title_Sponsor == "Y")
+                                                    { 
+                                                        @:@objMessageKey.Yes
+                                                         }
+                                                    else
+                                                    { @:@objMessageKey.NO
+                                                        }
+                                                </td>
+                                                <td>
+                                                    @if (Model.Title_Last_Matching_Rights_Validity != null)
+                                                    {
+                                                        @Model.Title_Last_Matching_Rights_Validity
+                                                        <text> &nbsp;@objMessageKey.Days </text>
+                                                    }
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>@objMessageKey.OfficialSponsor
+                                                </td>
+                                                <td>
+                                                    @if (Model.Last_Matching_Rights_Official_Sponsor == "Y")
+                                                    { 
+                                                        @:@objMessageKey.Yes
+                                                         }
+                                                    else
+                                                    { @:@objMessageKey.NO
+                                                        }
+                                                </td>
+                                                <td>
+                                                    @if (Model.Official_Last_Matching_Rights_Validity != null)
+                                                    {
+                                                        @Model.Official_Last_Matching_Rights_Validity
+                                                        <text> &nbsp;@objMessageKey.Days</text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.Excludedcategoriesofsponsorsandothercriticalinformation:</label><br />
+                                    <div class="expandable">
+                                        @Model.Remarks
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return closeSales();" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        }
+    </div>
+</div>

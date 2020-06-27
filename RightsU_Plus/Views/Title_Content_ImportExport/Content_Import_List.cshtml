@@ -1,0 +1,453 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_DM_Master_Import_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+@*<link href="~/CSS/bootstrap.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />*@
+@using UTOFrameWork.FrameworkClasses;
+<table class="table table-bordered table-hover" id="tblDMImport" dir="@objMessageKey.LayoutDirection">
+    <thead>
+        <tr>
+            <th style="width:30%;">File Name</th>
+            <th style="width:10%;">Uploaded By</th>
+            <th style="width:18%;">Uploaded On</th>
+            <th style="width:10%;">Status</th>
+            <th style="width:22%;">Status Bar</th>
+            <th style="width:10%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Count() > 0)
+        {
+            string strsuccess = "Success", strError = "Error", strConflict = "Resolve conflict", strProceed = "Proceed", strWorking = "In Process", strInProcess = "In Process", strContantIssue = "There is some issue. Contact the administrator";
+            double Completion = 0, ErrorCompletion = 0, ConflictCompletion = 0, IgnoreCompletion = 0, WaitingCompletion = 0;
+
+            foreach (var item in Model)
+            {
+
+                Completion = (Convert.ToDouble(item.SuccessCount) / Convert.ToDouble(item.TotalCount)) * 100;
+                ErrorCompletion = (Convert.ToDouble(item.ErrorCount) / Convert.ToDouble(item.TotalCount)) * 100;
+                ConflictCompletion = (Convert.ToDouble(item.ConflictCount) / Convert.ToDouble(item.TotalCount)) * 100;
+                IgnoreCompletion = (Convert.ToDouble(item.IgnoreCount) / Convert.ToDouble(item.TotalCount)) * 100;
+                WaitingCompletion = (Convert.ToDouble(item.WaitingCount) / Convert.ToDouble(item.TotalCount)) * 100;
+                <tr>
+                    <td>@item.File_Name</td>
+                    <td align="center">@item.UserName</td>
+                    <td align="center">@item.Uploaded_Date</td>
+                    <td align="center">
+                        <div class="deal_status clsTdStatus_@item.DM_Master_Import_Code">
+                            @if (item.Status == "N" || item.Status == "I")
+                            {
+                                @strInProcess
+                            }
+                            @if (item.Status == "S")
+                            {
+                                @strsuccess
+                            }
+                            @if (item.Status == "E")
+                            {
+                                @strError
+                            }
+                            @if (item.Status == "R")
+                            {
+                                @strConflict
+                            }
+                            @if (item.Status == "P")
+                            {
+                                @strProceed
+                            }
+                            @if (item.Status == "W")
+                            {
+                                @strWorking
+                            }
+                            @if (item.Status == "T")
+                            {
+                                @strContantIssue
+                            }
+                        </div>
+
+                    </td>
+                    <td align="left">
+
+                        <div class="progress">
+                            <div class="ABC" id="statusbar_@item.DM_Master_Import_Code">
+                                @*<span class="progressbar-back-text" style="z-index:8;">@SuccessCount / @TotalCount</span>*@
+                                <div title="Proper Records" id="Success_@item.DM_Master_Import_Code" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: @Completion%;" aria-valuenow="@item.SuccessCount" aria-valuemin="0" aria-valuemax="@item.TotalCount">@item.SuccessCount</div>
+                                <div title="Ignored Records" id="Ignored_@item.DM_Master_Import_Code" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:@IgnoreCompletion%" aria-valuenow="@item.IgnoreCount" aria-valuemin="0" aria-valuemax="@item.TotalCount">@item.IgnoreCount</div>
+                                <div title="Error Records" id="Error_@item.DM_Master_Import_Code" data-placement="top" class="progress-bar bg-danger" role="progressbar" style="width:@ErrorCompletion%" aria-valuenow="@item.ErrorCount" aria-valuemin="0" aria-valuemax="@item.TotalCount">@item.ErrorCount</div>
+                                <div title="Conflict Records" id="Conflict_@item.DM_Master_Import_Code" class="progress-bar bg-warning" role="progressbar" style="width:@ConflictCompletion%" data-placement="top" aria-valuenow="@item.ConflictCount" aria-valuemin="0" aria-valuemax="@item.TotalCount">@item.ConflictCount</div>
+                                <div title="No Error Records" id="NoError_@item.DM_Master_Import_Code" class="progress-bar" role="progressbar" data-placement="top" style="width: @WaitingCompletion%" aria-valuenow="@item.WaitingCount" aria-valuemin="0" aria-valuemax="@item.TotalCount">@item.WaitingCount</div>
+
+                            </div>
+                        </div>
+
+                        <span title="Total Records">(@item.TotalCount)</span>
+                    </td>
+                    <td align="center" class="deal_action clsTdAction_@item.DM_Master_Import_Code@item.Status">
+
+                        @if (item.Status == "S" || item.Status == "E" || item.Status == "R")
+                        {
+                            <a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="@("window.location.href='" + @Url.Action("BindContentView", "Title_Content_ImportExport", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = ViewBag.FileType }) + "'");"></a>
+                        }
+                        @*@if (item.Status == "E")
+                        {
+                            <a title="View Error" class="glyphicon glyphicon-exclamation-sign" style="cursor: pointer;" onclick="BindContentError(0,@item.DM_Master_Import_Code,'@ViewBag.FileType')"></a>
+                        }*@
+                        @if (item.Status == "R")
+                        {
+                            <a title="Resolve Conflict" class="glyphicon glyphicon-link" style="cursor: pointer;" onclick="@("window.location.href='" + @Url.Action("BindDMMasterLog", "Title_Content_ImportExport", new { DM_Import_Master_Code = item.DM_Master_Import_Code, fileType =ViewBag.FileType }) + "'");"></a>
+                        }
+                        @if (item.Status == "P")
+                        {
+                            <input type="button" value="Proceed" class="btn btn-primary" id="btnProceed" onclick="@("window.location.href='" + @Url.Action("BindProceed", "Title_Content_ImportExport", new { DM_Import_Master_Code = item.DM_Master_Import_Code, fileType = ViewBag.FileType }) + "'");" />
+                        }
+                        @if (item.Status == "T")
+                        {
+                            <a title="There is some issue. Contact the administrator" class="glyphicon glyphicon-exclamation-sign" style="cursor: pointer;"></a>
+                        }
+                        <img id="imgLoading_@item.DM_Master_Import_Code" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
+
+                    </td>
+
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<script>
+    $(document).ready(function () {
+        $('.progress .progress-bar').progressbar({ display_text: 'center', use_percentage: false });
+
+        initializeTooltip()
+    //if ($('#Pagination'))
+    //    SetTitlePaging();
+    var v = '@ViewBag.Message';
+    var s = '@ViewBag.status';
+    if (v != '') {
+        if (s == 'S') {
+            showAlert("S", v);
+        }
+        else if (s == 'E') {
+            showAlert("E", v);
+        }
+        }
+        $("#lblTotal").text(@ViewBag.RecordCount);
+    addNumeric();
+    //if (v != '') {
+    //    showAlert("a", v);
+    //}
+        initializeTooltip();
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function PopulateContentGrid(PageNo) {
+        var txtP = $('#txtPageSize').val();
+        var FilterBy = $('#ddlFilterBy').val();
+        if (txtP == null)
+            txtP = 10;
+        showLoading();
+        $.ajax({
+
+            type: "POST",
+            url: '@Url.Action("PopulateContentGrid", "Title_Content_ImportExport")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                txtPageSize: txtP,
+                PgNo: PageNo,
+                FilterBy:FilterBy
+            }),
+            success: function (result) {
+                $('#gvArea').html(result);
+                SetTitlePaging();
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+    function SetTitlePaging() {
+        var txtPageSize = $('#txtPageSize').val();
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback1 };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function pageselectCallback1(page_index, jq) {
+        $('#hdnPageNo').val(page_index);
+        if (IsCall == 'Y') {
+            PopulateContentGrid(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+    function Page_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            PopulateContentGrid('0');
+
+            SetTitlePaging();
+        }
+        else
+            return false;
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val();
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    @*function Page_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            PopulateTitleGrid('0');
+
+            SetTitlePaging();
+        }
+        else
+            return false;
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val();
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var PageNo, recordCnt;
+        var txtPageSize = $('#txtPageSize').val();
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $(".pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        $("#hdnPageNo").val(page_index);
+        if (IsCall == 'Y') {
+            PopulateMusicGrid(page_index)
+        }
+        else
+            IsCall = 'Y';
+    }*@
+</script>
+<style>
+    .progress {
+        display: inline;
+        position: relative;
+        margin-bottom: 8px;
+        border-radius: 0px;
+        width: 175px;
+        /*height: 20px;
+
+            overflow: hidden;
+            background-color: #f5f5f5;
+
+            -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1)*/
+    }
+
+    .ABC {
+        display: inline-flex;
+        /* position: relative; */
+        margin-bottom: 8px;
+        /* border-radius: 0px; */
+        width: 175px;
+        /* height: 20px; */
+        /* overflow: hidden; */
+        /* background-color: #f5f5f5; */
+        /* -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); */
+        /* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); */
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-top-right-radius: 4px;
+        border-top-left-radius: 4px;
+    }
+
+    .progress-bar {
+        float: left;
+        width: 0;
+        height: 100%;
+        font-size: 12px;
+        line-height: 20px;
+        color: #fff;
+        text-align: center;
+        background-color: #428bca;
+        -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+        /*-webkit-transition: width .6s ease;
+        transition: width .6s ease*/
+    }
+
+    /*.progress-striped .progress-bar {
+        background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-size: 40px 40px
+    }*/
+
+    /*.progress.active .progress-bar {
+        -webkit-animation: progress-bar-stripes 2s linear infinite;
+        animation: progress-bar-stripes 2s linear infinite
+    }*/
+    .progress-striped .progress-bar-success {
+        background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)
+    }
+
+    .progress-striped .progress-bar-info {
+        background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)
+    }
+
+    .progress-striped .progress-bar-warning {
+        background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)
+    }
+
+    .progress-striped .progress-bar-danger {
+        background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)
+    }
+
+    .progress-bar {
+        background-color: #f5f5f5;
+    }
+
+    .bg-success {
+        background-color: #5cb85c;
+    }
+
+    .bg-info {
+        background-color: #eaea21;
+    }
+
+    .bg-danger {
+        background-color: #d9534f;
+    }
+
+    .bg-warning {
+        background-color: #f0ad4e;
+    }
+
+    .progress .progress-bar {
+        position: relative;
+        overflow: hidden;
+        line-height: 20px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        float: left;
+        font-size: 12px;
+        color: black;
+        text-align: center;
+    }
+
+    .progress .progressbar-back-text {
+        position: absolute;
+        height: 100%;
+        font-size: 12px;
+        line-height: 20px;
+        text-align: center;
+        z-index: 999;
+        color: black;
+        font-weight: bold;
+    }
+
+    .ui-widget-content {
+        border: 0px !important;
+    }
+
+    #tblDMImport th {
+        text-align: center;
+    }
+
+    .tooltip.right {
+        position: absolute;
+        z-index: 999
+    }
+
+    .ui-corner-all, .ui-corner-bottom, .ui-corner-left, .ui-corner-bl {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+    }
+</style>

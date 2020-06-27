@@ -1,0 +1,432 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+@*<script src="~/JS_Core/jquery-ui.js"></script>*@
+
+<script>
+    var platformCodes_G = " ";
+    var platformCodes_GP = " ";
+    var moduleCode_G = "";
+    var URL_BindPlatformAcqusionReport = '@Url.Action("BindPlatformAcquisition", "Reports")';
+    var URL_BindTitleForPlAcq = '@Url.Action("BindTitleForPlAcq", "Reports")';
+
+    var URL_BindPlatformTreeView = '@Url.Action("BindPlatformTreeView", "Reports")';
+    var URL_BindPlatformPopup = '@Url.Action("BindPlatformPopup", "Reports")';
+    var URL_BindPlatformGroup = '@Url.Action("BindPlatformGroup", "Reports")';
+
+    $(document).ready(function () {
+        $("#chk_restrictionRmk").prop("checked", true);
+    });
+
+    $(function () {
+        moduleCode_G = @ViewBag.code;
+        $("#ddlBusinessUnit").change(function () {
+            $("#hdnTitleCode").val('0');
+            $('#txtTitle').val('');
+        });
+    });
+
+    function btnShow_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal=true;
+        var str = "";
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var expiredDeal = $('#chk_expiredDeals').is(":checked");
+        var subDeal = $('#chk_includeSubDeals').is(":checked");
+        var restrictionRmk = $('#chk_restrictionRmk').is(":checked");
+        var titleList = $('#txtTitle').val();
+        var platformCodes = platformCodes_G;
+        if($('#txtTitle').val() == ""){
+            $('#txtTitle').attr("required","true");
+            returnVal = false;
+        }
+            
+        if(returnVal)
+        {
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformAcqusionReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    businessUnitcode: businessUnitcode,
+                    titleCodes: titleList,
+                    platformCodes: platformCodes,
+                    isExpiredDeal: expiredDeal,
+                    isSubDeal : subDeal,
+                    isRestRmk : restrictionRmk,
+                    ModuleCode : moduleCode_G,
+                    dateformat: $('#ddlDateFormat').val(),
+
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function ClosePopup() {
+        platformCodes_G = $("#hdnTVCodes").val();
+        platformCodes_GP = $("#hdnPGCode").val();
+        var selectedPlatform = $('#Rights_PlatformplatformCnt').text();
+        if (selectedPlatform.trim() == "")
+            selectedPlatform= '0';
+        $('#selectedPlatofrms').text('');
+        $('#selectedPlatofrms').text("@objMessageKey.SelectedPlatforms: "+selectedPlatform);
+
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+
+    }
+    function PopulateTitleNameForPlAcq(keyword) {
+        if ($('#txtTitle').val().length == "0")
+        {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        BU_Code : $('#ddlBusinessUnit').val(),
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindTitleForPlAcq,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = '@objMessageKey.ResultNotFound';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else
+                    {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "285px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+    function BindPlatformPopup() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformPopup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+                $('#popup').modal();
+            },
+            error: function (result) { }
+        });
+    }
+    function BindPlatform() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SelectedPlatform: $('#hdnTVCodes').val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divTree').empty();
+                $('#divTree').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+    function TabChange(tabName) {
+        $('#hdnTabName').val(tabName);
+        $('#hdnTVCodes').val('');
+        if (tabName == 'P') {
+            //$('#ddlPFGroup').val(null);
+            $('#divDdlPG').hide();
+            BindPlatform();
+        }
+        else {
+            $('#divDdlPG').show();
+            ddlPFGroup_Change();
+        }
+    }
+    function BindPlatformGroup() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                PlatformGroupCode: $('#ddlPFGroup').val(),
+                //SelectedCodes: $('#hdnTVCodes').val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#divTree').empty();
+                    $('#divTree').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ddlPFGroup_Change()
+    {
+        debugger;
+        var pgCode = $('#ddlPFGroup').val();
+        if(pgCode != null && pgCode != "")
+        {
+            $('#hdnPGCode').val(pgCode);
+            BindPlatformGroup();
+        }
+        else
+        {
+            $('#hdnPGCode').val("");
+            $('#divTree').empty();
+        }
+    }
+
+</script>
+<style>
+        #Tree_Filter_Rights_Platform {   
+        position:relative!important;
+    }
+    #Rights_Platform{
+        margin:0px 0px 0px 0px!important;
+    }
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 70%;
+    }
+    #popupFade {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+
+    .sumo_TitleList {
+        width: 305px;
+    }
+     #ddlPFGroup_chosen
+        {
+            width:100% !important;
+        }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            @if (@ViewBag.Code == UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPlatformwiseAcquisition.ToString())
+            {
+                <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.PlatformwiseAcquisitionReport</h2>
+            }
+            else
+            {
+                <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.DigitalTitleReport</h2>
+            }
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td style="width:10%; vertical-align:top;"><label class="bold">@objMessageKey.BusinessUnit</label></td>
+                        <td style="width:30%; vertical-align:top;">
+                            @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                        </td>
+                        <td style="width:17%;">
+                            <input type="checkbox" id="chk_expiredDeals" /> @objMessageKey.IncludeExpiredDeals
+                            <br />
+                            <input type="checkbox" id="chk_includeSubDeals" /> @objMessageKey.IncludeSubDeals
+                            @{
+                                string strRemark = objMessageKey.IncludeRestrictionRemark;
+                            }
+                            @if (ViewBag.Report_RestrictionRMK == "Y")
+                            { 
+                                <br />
+                                <input type="checkbox" id="chk_restrictionRmk" /> @strRemark
+                            }
+                        </td>
+                        <td style="width:8%; vertical-align:top;"><b>@objMessageKey.DateFormat</b>
+                           
+                        </td>
+                        <td style="width:17%; vertical-align:top;">
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="bold">@objMessageKey.Title</label>
+                        </td>
+                        <td>
+                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:285px" placeholder="@objMessageKey.Title" onkeyup="PopulateTitleNameForPlAcq(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnTitleCode" value="0" />
+                        </td>
+                        <td>
+                            @if (@ViewBag.Code == UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPlatformwiseAcquisition.ToString())
+                            {
+                                <a title="@objMessageKey.SelectPlatforms" class="glyphicon glyphicon-flash" style="cursor: pointer;" onclick="BindPlatformPopup()"></a> <span id="selectedPlatofrms">@objMessageKey.SelectedPlatforms: 0</span>
+                            }
+                            <input type="hidden" id="hdnTabName" value="P" />
+                            <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                            <input type="hidden" id="hdnPGCode" name="hdnPGCode" value="" />
+                        </td>
+                        <td>
+                          
+                        </td>
+                        <td style="width:20%;">
+                           
+                        <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                         </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>

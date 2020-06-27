@@ -1,0 +1,119 @@
+﻿@using RightsU_Entities
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@model List<USP_Audit_Log_Report_for_Territory_and_Language_Group_Result>
+<div class="tab-pane" id="tabMusic">
+    <div class="search_area" style="background-color: #eee; padding:5px;">
+        <table class="table">
+            <tr>
+                <td style="width:10%;text-align:center;vertical-align:middle;">
+                    @objMessageKey.SearchText :
+                </td>
+                <td style="width:38%;">
+                    <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" value='@ViewBag.SearchText' />
+                </td>
+                <td>
+                    <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                    <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="grid_area">
+        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+        <div class="paging_area clearfix">
+            <span class="pull-left">@objMessageKey.TotalRecords:</span>
+            <span class="pull-left" id="lblRecordCount">@ViewBag.RecordCount</span>
+            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+            <div id="Pagination" class="pagination">
+            </div>
+            <span class="pull-right">
+                @objMessageKey.PageSize:
+                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onkeypress="return isNumeric(event,this);">
+                <input type="hidden" id="hdnPageSize" name="hdnPageSize" value="10" />
+            </span>
+        </div>
+        <div class="tab-content clearfix table-wrapper scale_table_container">
+            <div class="scale_table_block">
+                <input type="hidden" id="hdnCurrencyCode" value="0" />
+                <input type="hidden" id="hdnRecodLockingCode_temp" name="hdnRecodLockingCode" value="0" />
+                <div id="divTerritoryList" class="deal clearfix">
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th style="text-align:center;width:15%;">@objMessageKey.AgreementNo.</th>
+                            <th style="text-align:center;width:10%;">@objMessageKey.AffectedDate</th>
+                            <th style="text-align:center;width:20%;">@objMessageKey.Territory</th>
+                            <th style="text-align:center;width:45%;">@objMessageKey.Country</th>
+                            <th style="text-align:center;width:10%;">@objMessageKey.User</th>
+                        </tr>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td style="text-align:center;">
+                                        @item.Agreement_No
+                                    </td>
+                                    <td style="text-align:center;">
+                                        @item.Affected_Dates
+                                    </td>
+                                    <td>
+                                        @item.Territory_Name
+                                    </td>
+                                    <td>
+                                        @item.Country_Names
+                                    </td>
+                                    <td style="text-align:center;">
+                                        @item.UserName
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+                <div id="divLanguageList" class="deal clearfix">
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th style="text-align:center;width:15%;">@objMessageKey.AgreementNo.</th>
+                            <th style="text-align:center;width:10%;">@objMessageKey.AffectedDate</th>
+                            <th style="text-align:center;width:20%;">@objMessageKey.LanguageGroup</th>
+                            <th style="text-align:center;width:45%;">@objMessageKey.Language</th>
+                            <th style="text-align:center;width:10%;">@objMessageKey.User</th>
+                        </tr>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td style="text-align:center;">
+                                        @item.Agreement_No
+                                    </td>
+                                    <td style="text-align:center;">
+                                        @item.Affected_Dates
+                                    </td>
+                                    <td>
+                                        @item.Language_Group_Name
+                                    </td>
+                                    <td>
+                                        @item.Language_Names
+                                    </td>
+                                    <td style="text-align:center;">
+                                        @item.UserName
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

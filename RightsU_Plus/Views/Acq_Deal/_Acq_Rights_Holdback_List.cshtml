@@ -1,0 +1,96 @@
+﻿@model ICollection<RightsU_Entities.Acq_Deal_Rights_Holdback>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<div class="tab-pane active scale_table_block" id="tabHoldback">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>@objMessageKey.HoldbackOn</th>
+                <th style="width: 125px;">@objMessageKey.Region</th>
+                <th>@objMessageKey.Language</th>
+                <th>@objMessageKey.HoldbackType</th>
+                <th>@objMessageKey.HoldbackDate/@objMessageKey.Period</th>
+                <th>@objMessageKey.HoldbackComment</th>
+                <th>@objMessageKey.Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.CommandName_HB == "ADD")
+            {
+                using (Html.BeginForm("Save_Holdback", "Acq_Rights", "", FormMethod.Post))
+                {
+                <tr>
+                    <td>
+                        @Html.ListBox("lbTerritory_List_HB", ViewBag.Territory_List_HB as MultiSelectList, new { @class = "form_input chosen-select" })
+                    </td>
+                    <td>
+                        <label class="checkbox-inline">
+                            @Html.CheckBox("chk_Is_Title_Language_Right", (Model.Select(i => i.Is_Title_Language_Right) != null && (Model.Where(i => i.Is_Title_Language_Right == "Y").Count()) > 0 ? true : false))
+                            @Html.Hidden("Is_Title_Language_Right")
+                            @objMessageKey.TitleLanguage
+                        </label>
+                        <br />
+                        <label>@objMessageKey.SUB</label>
+                        @Html.ListBox("lb_Sub_Language_List_HB", ViewBag.SL_List_HB as MultiSelectList, new { @class = "form_input chosen-select" })
+                        <label>@objMessageKey.DUB</label>
+                        @Html.ListBox("lb_Dub_Language_List_HB", ViewBag.DL_List_HB as MultiSelectList, new { @class = "form_input chosen-select" })
+                    </td>
+                    <td>
+                        <div>
+                            <label class="radio-inline">
+                                <input type="radio" name="optHBType" id="rdoHBRelease" value="C"
+                                    onclick="$('#divHBTypeDate').hide(); $('#divHBTypeRelease').show()" />
+                                @objMessageKey.Release
+                            </label>
+                            <br>
+                            <label class="radio-inline">
+                                <input type="radio" name="optHBType" id="rdoDate" value="T" checked
+                                    onclick="$('#divHBTypeRelease').hide(); $('#divHBTypeDate').show()" />
+                                @objMessageKey.Date
+                            </label>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="divHBTypeRelease">
+                            @objMessageKey.After:
+                            <input type="text" class="smallTextBox" value="">
+                            <select class="form_input chosen-select">
+                                <option>@objMessageKey.Days</option>
+                                <option>@objMessageKey.weeks</option>
+                                <option>@objMessageKey.Months</option>
+                                <option>@objMessageKey.Years</option>
+                            </select>
+                            <br>
+                            on
+						<select class="form_input chosen-select">
+                            <option>@objMessageKey.Theatrical</option>
+                        </select>
+                        </div>
+                        <div id="divHBTypeDate" style="display: none">
+                            @Html.TextBox("Due_Date", "", new { @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY", style = "width:100px;" })
+                        </div>
+                    </td>
+                    <li class="modal_block">
+                        <div class="divBlock">
+                            <div class="bold" style="padding-right: 320px;">@objMessageKey.Remarks</div>
+                            <div style="">&nbsp;&nbsp;</div>
+                            <div id="CharNum_HB" class="charNum" style="float: right;">0/4000</div>
+                        </div>
+                        @*@Html.TextAreaFor(m => Model.Acq_Deal_Rights_Holdback.Select(av => av.Holdback_Comment), new { @id = "txtRemarks_HB", @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })*@
+                    </li>
+                    <td align="center">
+                        @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Save" />*@
+                        <a title="" href="#" class="glyphicon glyphicon-ok-circle" data-original-title="Save"></a>
+                        <a title="" href="#" class="glyphicon glyphicon-remove-circle"></a>
+                    </td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

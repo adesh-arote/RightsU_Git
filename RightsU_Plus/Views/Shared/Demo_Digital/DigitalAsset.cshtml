@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "DigitalAsset";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Navigation - Demo 2 | Codrops</title>
+    <meta name="description" content="Circular Navigation Styles - Building a Circular Navigation with CSS Transforms | Codrops " />
+    <meta name="keywords" content="css transforms, circular navigation, round navigation, circular menu, tutorial" />
+    <meta name="author" content="Sara Soueidan for Codrops" />
+
+    <link href="~/Custom_Scripts/Custom_CSS/component2.css" rel="stylesheet" />
+    <link href="~/Custom_Scripts/Custom_CSS/demo.css" rel="stylesheet" />
+    <link href="~/Custom_Scripts/Custom_CSS/normalize.css" rel="stylesheet" />
+
+    <script src="~/Custom_Scripts/modernizr-2.6.2.min.js"></script>
+    <script src="~/Custom_Scripts/polyfills.js"></script>
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-7243260-2']);
+        _gaq.push(['_trackPageview']);
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <style>
+        footer {
+            font-size: 14px !important;
+        }
+
+        #cdawrap {
+            display: none;
+        }
+    </style>
+
+
+
+</head>
+<body id="mainbody">
+    <div class="container">
+        <!-- Top Navigation -->
+        <!-- <header> -->
+        <!-- <h1>Circular Navigation <span>Building a Circular Navigation with CSS Transforms</span></h1>	 -->
+        <!-- <nav class="codrops-demos"> -->
+        <!-- <a href="index.html">Demo 1</a> -->
+        <!-- <a class="current-demo" href="index2.html">Demo 2</a> -->
+        <!-- <a href="interactivedemo/index.html">Intractive demo</a> -->
+        <!-- </nav> -->
+        <!-- </header> -->
+        <div class="component">
+            <!-- <h2>Celery swiss chard melon</h2> -->
+            <!-- Start Nav Structure -->
+            <button class="cn-button" id="cn-button" style="cursor:default;">
+                <img id="imgDigital" style="border-radius:90px;" src="~/UploadFolder/Digital_Media.jpg" />
+            </button>
+            <div class="cn-wrapper" id="cn-wrapper">
+                <ul>
+                    <li style="transform: rotate(1deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(15deg) skew(60deg) !important;z-index:10;" onclick="location.href = '@Url.Action("DigitalAsset", "Digital_Rights")'"><a href="#"><span style="transform:rotate(90deg);padding-left:20px;">Digital Asset</span></a></li>
+                    <li style="transform: rotate(30deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(61deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(75deg) skew(60deg) !important;z-index: 3;"><a href="#"><span style="transform:rotate(90deg);padding-left:15px;">Reports</span></a></li>
+                    <li style="transform: rotate(90deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(121deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(135deg) skew(60deg) !important;z-index: 3;"><a href="#"><span style="transform:rotate(-90deg); padding-right:28px;">Avail</span></a></li>
+                    <li style="transform: rotate(150deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(181deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(195deg) skew(60deg) !important;z-index: 3;" onclick="location.href = '@Url.Action("ConsumptionReport", "Digital_Rights")'"><a href="#"><span style="transform:rotate(-90deg);padding-right:15px;">Consumption&nbsp;&nbsp;</span></a></li>
+                    <li style="transform: rotate(210deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(241deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(255deg) skew(60deg) !important;z-index: 3;"><a href="#"><span style="transform:rotate(90deg);padding-left:18px;">Analytics</span></a></li>
+                    <li style="transform: rotate(270deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(301deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <li style="transform: rotate(315deg) skew(60deg) !important;z-index: 3;" onclick="location.href = '@Url.Action("SchedulingInstruction", "Digital_Rights")'"><a href="#"><span style="transform:rotate(90deg)">Schedule<br />Instruction</span></a></li>
+                    <li style="transform: rotate(330deg) skew(60deg) !important;"><a href="#"><span></span></a></li>
+                    <!-- <li><a href="#"><span>Follow</span></a></li> -->
+                </ul>
+            </div>
+            <!-- End of Nav Structure -->
+        </div>
+
+    </div><!-- /container -->
+    <!-- For the demo ad only -->
+    <script src="http://tympanus.net/codrops/adpacks/demoad.js"></script>
+    <script src="~/Custom_Scripts/demo2.js"></script>
+</body>
+</html>

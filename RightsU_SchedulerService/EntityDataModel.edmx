@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RightsU_PlusModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Scheduler_Log">
+          <Key>
+            <PropertyRef Name="Scheduler_Log_Code" />
+          </Key>
+          <Property Name="Scheduler_Log_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Request_Type" Type="varchar(max)" />
+          <Property Name="Request_Uri" Type="varchar(max)" />
+          <Property Name="Request_DateTime" Type="datetime" />
+          <Property Name="Response_JSON" Type="varchar(max)" />
+          <Property Name="Request_JSON" Type="varchar(max)" />
+          <Property Name="Error_Message" Type="varchar(max)" />
+          <Property Name="Record_Status" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="SchedulerConfig">
+          <Key>
+            <PropertyRef Name="SchedulerConfigOrder" />
+          </Key>
+          <Property Name="SchedulerConfigOrder" Type="int" Nullable="false" />
+          <Property Name="ModuleName" Type="varchar" MaxLength="100" />
+          <Property Name="BaseAddress" Type="varchar" MaxLength="500" />
+          <Property Name="RequestUri" Type="varchar" MaxLength="500" />
+          <Property Name="IsActive" Type="char" MaxLength="1" />
+          <Property Name="MethodType" Type="varchar" MaxLength="50" />
+          <Property Name="Batch" Type="int" />
+        </EntityType>
+        <EntityType Name="SchedulerRights">
+          <Key>
+            <PropertyRef Name="SchedulerRightId" />
+          </Key>
+          <Property Name="SchedulerRightId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="assetId" Type="int" />
+          <Property Name="channelId" Type="varchar" MaxLength="1000" />
+          <Property Name="rightsStartDate" Type="varchar" MaxLength="50" />
+          <Property Name="rightsEndDate" Type="varchar" MaxLength="50" />
+          <Property Name="yearNo" Type="int" />
+          <Property Name="availableRun" Type="int" />
+          <Property Name="consumptionRun" Type="int" />
+          <Property Name="runType" Type="char" MaxLength="1" />
+          <Property Name="runDef" Type="char" MaxLength="1" />
+          <Property Name="rightsRuleName" Type="varchar" MaxLength="1000" />
+          <Property Name="playPerRightsRule" Type="int" />
+          <Property Name="duration" Type="int" />
+          <Property Name="repeatPerRightsRule" Type="int" />
+          <Property Name="timeLag" Type="time" Precision="7" />
+          <Property Name="CreateOn" Type="datetime" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="Acq_Deal_Code" Type="int" />
+          <Property Name="Acq_Deal_Run_Code" Type="int" />
+          <Property Name="isArchive" Type="char" MaxLength="1" />
+          <Property Name="RecordStatus" Type="char" MaxLength="1" />
+          <Property Name="ProcessingOn" Type="datetime" />
+          <Property Name="ErrorMessage" Type="nvarchar(max)" />
+          <Property Name="Is_First_Air" Type="int" />
+        </EntityType>
+        <EntityType Name="Title">
+          <Key>
+            <PropertyRef Name="Title_Code" />
+          </Key>
+          <Property Name="Title_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Original_Title" Type="nvarchar" MaxLength="250" />
+          <Property Name="Title_Name" Type="nvarchar" MaxLength="500" />
+          <Property Name="Title_Code_Id" Type="varchar" MaxLength="50" />
+          <Property Name="Synopsis" Type="nvarchar" MaxLength="4000" />
+          <Property Name="Original_Language_Code" Type="int" />
+          <Property Name="Title_Language_Code" Type="int" />
+          <Property Name="Year_Of_Production" Type="int" />
+          <Property Name="Duration_In_Min" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Deal_Type_Code" Type="int" />
+          <Property Name="Grade_Code" Type="int" />
+          <Property Name="Reference_Key" Type="int" />
+          <Property Name="Reference_Flag" Type="char" MaxLength="1" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_UpDated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+          <Property Name="Title_Image" Type="varchar" MaxLength="2000" />
+          <Property Name="Music_Label_Code" Type="int" />
+          <Property Name="Program_Code" Type="int" />
+        </EntityType>
+        <Function Name="USP_Acq_Assets_Model" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="callFor" Type="char" Mode="In" />
+          <Parameter Name="BatchSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Acq_Rights_Model" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="RightsU_PlusModelStoreContainer">
+          <EntitySet Name="Scheduler_Log" EntityType="Self.Scheduler_Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SchedulerConfig" EntityType="Self.SchedulerConfig" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SchedulerRights" EntityType="Self.SchedulerRights" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title" EntityType="Self.Title" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RightsU_PlusModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="RightsU_PlusEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="SchedulerConfigs" EntityType="RightsU_PlusModel.SchedulerConfig" />
+          <FunctionImport Name="USP_Acq_Rights_Model" ReturnType="Collection(RightsU_PlusModel.USP_Acq_Rights_Model_Result)" />
+          <FunctionImport Name="USP_Acq_Assets_Model" ReturnType="Collection(RightsU_PlusModel.USP_Acq_Assets_Model_Result)">
+            <Parameter Name="callFor" Mode="In" Type="String" />
+            <Parameter Name="BatchSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="Titles" EntityType="RightsU_PlusModel.Title" />
+          <EntitySet Name="Scheduler_Log" EntityType="RightsU_PlusModel.Scheduler_Log" />
+          <EntitySet Name="SchedulerRights" EntityType="RightsU_PlusModel.SchedulerRight" />
+        </EntityContainer>
+        <EntityType Name="SchedulerConfig">
+          <Key>
+            <PropertyRef Name="SchedulerConfigOrder" />
+          </Key>
+          <Property Name="SchedulerConfigOrder" Type="Int32" Nullable="false" />
+          <Property Name="ModuleName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="BaseAddress" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="RequestUri" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="MethodType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Batch" Type="Int32" />
+        </EntityType>
+        <ComplexType Name="USP_Acq_Assets_Model_Result">
+          <Property Type="String" Name="title" Nullable="true" MaxLength="2000" />
+          <Property Type="String" Name="seasonName" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="seasonNo" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="programType" Nullable="false" />
+          <Property Type="Int32" Name="episodeNo" Nullable="false" />
+          <Property Type="String" Name="genre" Nullable="true" MaxLength="100" />
+          <Property Type="Decimal" Name="duration" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="String" Name="language" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="medaiId" Nullable="false" />
+          <Property Type="String" Name="mediaStatus" Nullable="true" MaxLength="12" />
+          <Property Type="String" Name="censorship" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="banner" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="contentType" Nullable="false" />
+          <Property Type="String" Name="subType" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="trp" Nullable="true" MaxLength="1" />
+          <Property Type="Decimal" Name="Title_Duration" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="Int32" Name="Title_Code" Nullable="false" />
+          <Property Type="Int32" Name="C_id" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="USP_Acq_Rights_Model_Result">
+          <Property Type="Int32" Name="C_id" Nullable="false" />
+          <Property Type="Int32" Name="assetId" Nullable="true" />
+          <Property Type="String" Name="channelId" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="rightsStartDate" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="rightsEndDate" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="availableRun" Nullable="true" />
+          <Property Type="Int32" Name="consumptionRun" Nullable="false" />
+          <Property Type="String" Name="runType" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="rightsRuleName" Nullable="true" MaxLength="1000" />
+          <Property Type="Int32" Name="duration" Nullable="true" />
+          <Property Type="Int32" Name="repeatPerRightsRule" Nullable="true" />
+          <Property Type="Int32" Name="timeLag" Nullable="true" />
+          <Property Type="Int32" Name="deleteFlag" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="Title">
+          <Key>
+            <PropertyRef Name="Title_Code" />
+          </Key>
+          <Property Name="Title_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Original_Title" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Title_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Title_Code_Id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Synopsis" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="Original_Language_Code" Type="Int32" />
+          <Property Name="Title_Language_Code" Type="Int32" />
+          <Property Name="Year_Of_Production" Type="Int32" />
+          <Property Name="Duration_In_Min" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Deal_Type_Code" Type="Int32" />
+          <Property Name="Grade_Code" Type="Int32" />
+          <Property Name="Reference_Key" Type="Int32" />
+          <Property Name="Reference_Flag" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_UpDated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <Property Name="Title_Image" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="Music_Label_Code" Type="Int32" />
+          <Property Name="Program_Code" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Scheduler_Log">
+          <Key>
+            <PropertyRef Name="Scheduler_Log_Code" />
+          </Key>
+          <Property Name="Scheduler_Log_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Request_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Request_Uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Request_DateTime" Type="DateTime" Precision="3" />
+          <Property Name="Response_JSON" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Request_JSON" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Error_Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Record_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SchedulerRight">
+          <Key>
+            <PropertyRef Name="SchedulerRightId" />
+          </Key>
+          <Property Name="SchedulerRightId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="assetId" Type="Int32" />
+          <Property Name="channelId" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="rightsStartDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="rightsEndDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="yearNo" Type="Int32" />
+          <Property Name="availableRun" Type="Int32" />
+          <Property Name="consumptionRun" Type="Int32" />
+          <Property Name="runType" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="runDef" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="rightsRuleName" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="playPerRightsRule" Type="Int32" />
+          <Property Name="duration" Type="Int32" />
+          <Property Name="repeatPerRightsRule" Type="Int32" />
+          <Property Name="timeLag" Type="Time" Precision="7" />
+          <Property Name="CreateOn" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="Acq_Deal_Code" Type="Int32" />
+          <Property Name="Acq_Deal_Run_Code" Type="Int32" />
+          <Property Name="isArchive" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="RecordStatus" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="ProcessingOn" Type="DateTime" Precision="3" />
+          <Property Name="ErrorMessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Is_First_Air" Type="Int32" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RightsU_PlusModelStoreContainer" CdmEntityContainer="RightsU_PlusEntities">
+          <EntitySetMapping Name="SchedulerConfigs">
+            <EntityTypeMapping TypeName="RightsU_PlusModel.SchedulerConfig">
+              <MappingFragment StoreEntitySet="SchedulerConfig">
+                <ScalarProperty Name="Batch" ColumnName="Batch" />
+                <ScalarProperty Name="MethodType" ColumnName="MethodType" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="RequestUri" ColumnName="RequestUri" />
+                <ScalarProperty Name="BaseAddress" ColumnName="BaseAddress" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="SchedulerConfigOrder" ColumnName="SchedulerConfigOrder" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Acq_Rights_Model" FunctionName="RightsU_PlusModel.Store.USP_Acq_Rights_Model">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_PlusModel.USP_Acq_Rights_Model_Result">
+                <ScalarProperty Name="C_id" ColumnName="_id" />
+                <ScalarProperty Name="assetId" ColumnName="assetId" />
+                <ScalarProperty Name="channelId" ColumnName="channelId" />
+                <ScalarProperty Name="rightsStartDate" ColumnName="rightsStartDate" />
+                <ScalarProperty Name="rightsEndDate" ColumnName="rightsEndDate" />
+                <ScalarProperty Name="availableRun" ColumnName="availableRun" />
+                <ScalarProperty Name="consumptionRun" ColumnName="consumptionRun" />
+                <ScalarProperty Name="runType" ColumnName="runType" />
+                <ScalarProperty Name="rightsRuleName" ColumnName="rightsRuleName" />
+                <ScalarProperty Name="duration" ColumnName="duration" />
+                <ScalarProperty Name="repeatPerRightsRule" ColumnName="repeatPerRightsRule" />
+                <ScalarProperty Name="timeLag" ColumnName="timeLag" />
+                <ScalarProperty Name="deleteFlag" ColumnName="deleteFlag" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Acq_Assets_Model" FunctionName="RightsU_PlusModel.Store.USP_Acq_Assets_Model" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_PlusModel.USP_Acq_Assets_Model_Result">
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="seasonName" ColumnName="seasonName" />
+                <ScalarProperty Name="seasonNo" ColumnName="seasonNo" />
+                <ScalarProperty Name="programType" ColumnName="programType" />
+                <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
+                <ScalarProperty Name="genre" ColumnName="genre" />
+                <ScalarProperty Name="duration" ColumnName="duration" />
+                <ScalarProperty Name="language" ColumnName="language" />
+                <ScalarProperty Name="medaiId" ColumnName="medaiId" />
+                <ScalarProperty Name="mediaStatus" ColumnName="mediaStatus" />
+                <ScalarProperty Name="censorship" ColumnName="censorship" />
+                <ScalarProperty Name="banner" ColumnName="banner" />
+                <ScalarProperty Name="contentType" ColumnName="contentType" />
+                <ScalarProperty Name="subType" ColumnName="subType" />
+                <ScalarProperty Name="trp" ColumnName="trp" />
+                <ScalarProperty Name="Title_Duration" ColumnName="Title_Duration" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="C_id" ColumnName="_id" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Titles">
+            <EntityTypeMapping TypeName="RightsU_PlusModel.Title">
+              <MappingFragment StoreEntitySet="Title">
+                <ScalarProperty Name="Program_Code" ColumnName="Program_Code" />
+                <ScalarProperty Name="Music_Label_Code" ColumnName="Music_Label_Code" />
+                <ScalarProperty Name="Title_Image" ColumnName="Title_Image" />
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_UpDated_Time" ColumnName="Last_UpDated_Time" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Reference_Flag" ColumnName="Reference_Flag" />
+                <ScalarProperty Name="Reference_Key" ColumnName="Reference_Key" />
+                <ScalarProperty Name="Grade_Code" ColumnName="Grade_Code" />
+                <ScalarProperty Name="Deal_Type_Code" ColumnName="Deal_Type_Code" />
+                <ScalarProperty Name="Duration_In_Min" ColumnName="Duration_In_Min" />
+                <ScalarProperty Name="Year_Of_Production" ColumnName="Year_Of_Production" />
+                <ScalarProperty Name="Title_Language_Code" ColumnName="Title_Language_Code" />
+                <ScalarProperty Name="Original_Language_Code" ColumnName="Original_Language_Code" />
+                <ScalarProperty Name="Synopsis" ColumnName="Synopsis" />
+                <ScalarProperty Name="Title_Code_Id" ColumnName="Title_Code_Id" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+                <ScalarProperty Name="Original_Title" ColumnName="Original_Title" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Scheduler_Log">
+            <EntityTypeMapping TypeName="RightsU_PlusModel.Scheduler_Log">
+              <MappingFragment StoreEntitySet="Scheduler_Log">
+                <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
+                <ScalarProperty Name="Error_Message" ColumnName="Error_Message" />
+                <ScalarProperty Name="Request_JSON" ColumnName="Request_JSON" />
+                <ScalarProperty Name="Response_JSON" ColumnName="Response_JSON" />
+                <ScalarProperty Name="Request_DateTime" ColumnName="Request_DateTime" />
+                <ScalarProperty Name="Request_Uri" ColumnName="Request_Uri" />
+                <ScalarProperty Name="Request_Type" ColumnName="Request_Type" />
+                <ScalarProperty Name="Scheduler_Log_Code" ColumnName="Scheduler_Log_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SchedulerRights">
+            <EntityTypeMapping TypeName="RightsU_PlusModel.SchedulerRight">
+              <MappingFragment StoreEntitySet="SchedulerRights">
+                <ScalarProperty Name="Is_First_Air" ColumnName="Is_First_Air" />
+                <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
+                <ScalarProperty Name="ProcessingOn" ColumnName="ProcessingOn" />
+                <ScalarProperty Name="RecordStatus" ColumnName="RecordStatus" />
+                <ScalarProperty Name="isArchive" ColumnName="isArchive" />
+                <ScalarProperty Name="Acq_Deal_Run_Code" ColumnName="Acq_Deal_Run_Code" />
+                <ScalarProperty Name="Acq_Deal_Code" ColumnName="Acq_Deal_Code" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="CreateOn" ColumnName="CreateOn" />
+                <ScalarProperty Name="timeLag" ColumnName="timeLag" />
+                <ScalarProperty Name="repeatPerRightsRule" ColumnName="repeatPerRightsRule" />
+                <ScalarProperty Name="duration" ColumnName="duration" />
+                <ScalarProperty Name="playPerRightsRule" ColumnName="playPerRightsRule" />
+                <ScalarProperty Name="rightsRuleName" ColumnName="rightsRuleName" />
+                <ScalarProperty Name="runDef" ColumnName="runDef" />
+                <ScalarProperty Name="runType" ColumnName="runType" />
+                <ScalarProperty Name="consumptionRun" ColumnName="consumptionRun" />
+                <ScalarProperty Name="availableRun" ColumnName="availableRun" />
+                <ScalarProperty Name="yearNo" ColumnName="yearNo" />
+                <ScalarProperty Name="rightsEndDate" ColumnName="rightsEndDate" />
+                <ScalarProperty Name="rightsStartDate" ColumnName="rightsStartDate" />
+                <ScalarProperty Name="channelId" ColumnName="channelId" />
+                <ScalarProperty Name="assetId" ColumnName="assetId" />
+                <ScalarProperty Name="SchedulerRightId" ColumnName="SchedulerRightId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

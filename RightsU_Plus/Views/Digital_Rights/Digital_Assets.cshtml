@@ -1,0 +1,925 @@
+﻿@{
+    ViewBag.Title = "Digital_Assets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script>
+    $(document).ready(function () {
+        $('#editDigitalRights').click(function () {
+            $('#digitalRightsDiv').hide();
+            $('#viewDigitalRightsDiv').hide();
+            $('#editDigitalRightsDiv').show();
+        });
+
+        $('#viewDigitalRights,#viewDigitalRightsname,#viewDigitalRightsimg').click(function () {
+            debugger;
+            $('#digitalRightsDiv').hide();
+            $('#viewDigitalRightsDiv').show();
+            $('#editDigitalRightsDiv').hide();
+        });
+
+    })
+</script>
+<link rel="icon" type="image/ico" href="../img/u-to.ico">
+
+<link href="~/CSS/common.css" rel="stylesheet" />
+<link href="~/CSS/responsive.css" rel="stylesheet" media="screen and (max-width:960px) and (max-height:640px)" />
+<link href="~/CSS/chosen.min.css" rel="stylesheet" />
+
+
+<script src="~/Scripts/jquery-3.0.0.min.js"></script>
+<script src="~/JS_Core/jquery-ui.min.js"></script>
+<script src="~/JS_Core/chosen.jquery.min.js"></script>
+<script src="~/JS_Core/common.concat.js"></script>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        $('.nav-toggle').click(function () {
+            debugger;
+            var collapse_content_selector = $(this).attr('href');
+            var toggle_switch = $(this);
+            if ($(this).hasClass('glyphicon-triangle-top')) {
+                toggle_switch.removeClass("glyphicon-triangle-top");
+                toggle_switch.addClass("glyphicon-triangle-bottom");
+            }
+            else {
+                toggle_switch.removeClass("glyphicon-triangle-bottom");
+                toggle_switch.addClass("glyphicon-triangle-top");
+            }
+            $(collapse_content_selector).toggle(function () {
+            });
+        });
+
+        $("#collapse").click(function () {
+            debugger;
+            $(".rightPannel").slideDown("slow", function () {
+            });
+        });
+
+        $("#collapse1").mouseover(function () {
+
+            $(".rightPannel").slideDown("slow", function () {
+            });
+            $(".rightPanneltoggle").slideDown("slow", function () {
+            });
+        });
+
+
+
+        $(".container,.navigation").mouseover(function () {
+            $(".rightPannel").slideUp("slow", function () {
+            });
+
+            $(".rightPanneltoggle").slideUp("slow", function () {
+            });
+        });
+
+
+        var lastScrollTop = 0;
+        $(window).scroll(function (event) {
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop) {
+                // downscroll code
+                $("#akshay").removeClass("rightPannel")
+                $("#akshay").addClass("rightPanneltoggle")
+            } else {
+                // upscroll code
+                $("#akshay").addClass("rightPannel")
+                $("#akshay").removeClass("rightPanneltoggle")
+            }
+        });
+    });
+</script>
+<style>
+    #collapse1 {
+        cursor: pointer;
+    }
+
+    .rightPannel {
+        position: absolute;
+        right: 3px;
+        top: 72px;
+        width: 217px;
+        /*height:440px;
+            max-height:440px;*/
+        height: inherit;
+        z-index: 99;
+        background-color: #f3f3f3;
+        border: 1px solid #000000;
+    }
+
+        .rightPannel ul {
+            list-style-type: none;
+        }
+
+            .rightPannel ul li {
+                padding: 10px;
+                border-bottom: 1px solid #dddddd;
+                font-size: 14px;
+                cursor: pointer;
+                vertical-align: middle;
+            }
+
+                .rightPannel ul li span {
+                    vertical-align: middle;
+                    display: inline-block;
+                }
+
+        .rightPannel > ul {
+            /*border-top: 1px solid #aaa;*/
+        }
+
+            .rightPannel > ul > li:hover {
+                background-color: rgba(0,0,0,0.1);
+            }
+
+        .rightPannel ul ul {
+            display: none;
+        }
+
+        .rightPannel > ul > li > a {
+            vertical-align: middle;
+            padding-left: 8px;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 13px;
+            color: #000;
+            -webkit-transition: color .2s ease;
+            -o-transition: color .2s ease;
+            transition: color .2s ease;
+        }
+
+        .rightPannel ul ul li a {
+            padding: 5px 22px;
+            z-index: 2;
+            font-size: 13px;
+            text-decoration: none;
+            color: #3a3636;
+            /*border-top: 1px solid #aaa;
+        background: rgba(0,0,0,0.2);*/
+            -webkit-transition: color .2s ease;
+            -o-transition: color .2s ease;
+            transition: color .2s ease;
+        }
+
+        .rightPannel ul ul li:hover {
+            background-color: #ffffff;
+        }
+
+
+
+
+    .rightPanneltoggle ul {
+        list-style-type: none;
+    }
+
+        .rightPanneltoggle ul li {
+            padding: 10px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 14px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+            .rightPanneltoggle ul li span {
+                vertical-align: middle;
+                display: inline-block;
+            }
+
+    .rightPanneltoggle > ul {
+        /*border-top: 1px solid #aaa;*/
+    }
+
+        .rightPanneltoggle > ul > li:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+    .rightPanneltoggle ul ul {
+        display: none;
+    }
+
+    .rightPanneltoggle > ul > li > a {
+        vertical-align: middle;
+        padding-left: 8px;
+        cursor: pointer;
+        z-index: 2;
+        font-size: 13px;
+        color: #000;
+        -webkit-transition: color .2s ease;
+        -o-transition: color .2s ease;
+        transition: color .2s ease;
+    }
+
+    .rightPanneltoggle ul ul li a {
+        padding: 5px 22px;
+        z-index: 2;
+        font-size: 13px;
+        text-decoration: none;
+        color: #3a3636;
+        /*border-top: 1px solid #aaa;
+        background: rgba(0,0,0,0.2);*/
+        -webkit-transition: color .2s ease;
+        -o-transition: color .2s ease;
+        transition: color .2s ease;
+    }
+
+    .rightPanneltoggle ul ul li:hover {
+        background-color: #ffffff;
+    }
+
+    .rightPanneltoggle {
+        position: fixed;
+        right: 3px;
+        top: 40px;
+        width: 217px;
+        /*height:440px;
+            max-height:440px;*/
+        height: inherit;
+        z-index: 99;
+        background-color: #f3f3f3;
+        border: 1px solid #000000;
+    }
+
+
+
+
+
+    .leftPanel ul ul li a:hover {
+        color: #ffffff;
+    }
+
+    .leftPanel ul ul > li.has-sub > a:after {
+        top: 16px;
+        right: 26px;
+        background: #dddddd;
+    }
+
+    .leftPanel ul ul > li.has-sub > a:before {
+        top: 20px;
+        background: #dddddd;
+    }
+
+    #ProfileName {
+        background-color: #949494;
+    }
+
+        #ProfileName a {
+            color: #ffffff;
+        }
+</style>
+
+
+
+
+
+<div class="main_section" id="digitalRightsDiv">
+    <div class="container acq main_col">
+        <div class="top_area">
+            <h2 class="pull-left">Digital Assets</h2>
+            <div class="right_nav pull-right">
+                <ul>
+                    <li>
+                        <input type="text" class="search" placeholder="Search" />
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="glyphicon glyphicon-floppy-save" title="Save to Excel"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="glyphicon glyphicon-refresh" title="Show All"></span>
+                        </a>
+                    </li>
+                    <!--<li>
+                        <a class="btn-primary" href="#" data-target="#popAddTitle" data-toggle="modal">Add Title</a>
+                    </li>-->
+                </ul>
+            </div>
+        </div>
+        <div class="paging_area clearfix">
+            <span class="pull-left">Total Records: 152</span>
+            <div id="Pagination" class="pagination"><span class="current prev">&lt;&lt;</span><span class="current">1</span><span class="current next">&gt;&gt;</span></div>
+            @*<ul class="pagination pull-right">
+                <li class="disabled">
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="active"><a href="Title_List.htm">1</a></li>
+                <li><a href="Title_List1.htm">2</a></li>
+                <li><a href="Title_List2.htm">3</a></li>
+                <li><a href="Title_List3.htm">4</a></li>
+                <li><a href="Title_List4.htm">5</a></li>
+                <li>
+                    <a href="Title_List1.htm" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>*@
+            <span class="pull-right">
+                Page Size:
+                <input type="text" class="smallTextBox" value="6">
+            </span>
+        </div>
+        <div class="grid_area clearfix">
+            <div>
+                <table class="grid_item active">
+                    <tr>
+                        <td class="title_logo">
+                            <a id="viewDigitalRightsimg">
+                                
+                                <img src="~/UploadFolder/Rowdy Badshsh.jpg" />
+                            </a>
+                        </td>
+                        <td class="title_descriptn">
+                            <h4 class="title_name" data-toggle="tooltip" title="Movie Name"><a id="viewDigitalRightsname">Rowdy Badshah</a></h4>
+                            <ul>
+                                <li>
+                                    <h5 class="title_code" title="Movie Code">0001</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_lang" title="Language">Hindi</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_country" title="Country of Origin">India</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_credits">
+                            <h5 class="title_cast" title="Key Star Cast">Jr.NTR, Kajal Agarwal</h5>
+                            <ul>
+                                <li>
+                                    <h5 class="title_director" title="Directed By">Sreenu Vaitala</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_action">
+                            <a title="View" data-placement="left" class="glyphicon glyphicon-eye-open" id="viewDigitalRights"></a>
+                            <br />
+                            <a title="Edit" data-placement="left" class="glyphicon glyphicon-pencil" id="editDigitalRights"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <div>
+                <table class="grid_item active">
+                    <tr>
+                        <td class="title_logo">
+                            <img src="~/UploadFolder/duplicate.jpg" />
+                        </td>
+                        <td class="title_descriptn">
+                            <h4 class="title_name" data-toggle="tooltip" title="Movie Name"><a href="#">Duplicate</a></h4>
+                            <ul>
+                                <li>
+                                    <h5 class="title_code" title="Movie Code">0002</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_lang" title="Language">Hindi</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_country" title="Country of Origin">India</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_credits">
+                            <h5 class="title_cast" title="Key Star Cast">Juhi Chawla, Sharukh Khan</h5>
+                            <ul>
+                                <li>
+                                    <h5 class="title_producer" title="Produced By"></h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_director" title="Directed By">Mahesh Bhatt</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_action">
+                            <a title="View" data-placement="left" href="#" class="glyphicon glyphicon-eye-open"></a>
+                            <br />
+                            <a title="Edit" data-placement="left" href="#" class="glyphicon glyphicon-pencil"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br/>
+            <div>
+                <table class="grid_item active">
+                    <tr>
+                        <td class="title_logo">
+                            <img src="~/UploadFolder/Ki and Ka Hindi Movie.jpg" />
+                        </td>
+                        <td class="title_descriptn">
+                            <h4 class="title_name" data-toggle="tooltip" title="Movie Name"><a href="#">Ki & Ka</a></h4>
+                            <ul>
+                                <li>
+                                    <h5 class="title_code" title="Movie Code">0003</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_lang" title="Language">Hindi</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_country" title="Country of Origin">India</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_credits">
+                            <h5 class="title_cast" title="Key Star Cast">Arjun Kapoor, Kareena Kapoor Khan</h5>
+                            <ul>
+                                <li>
+                                    <h5 class="title_director" title="Directed By">R Balki</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_action">
+                            <a title="View" data-placement="left" href="#" class="glyphicon glyphicon-eye-open"></a>
+                            <br />
+                            <a title="Edit" data-placement="left" href="#" class="glyphicon glyphicon-pencil"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <div>
+                <table class="grid_item active">
+                    <tr>
+                        <td class="title_logo">
+                            <img src="~/UploadFolder/Sasural-Simar-Ka-poster.jpg" />
+                        </td>
+                        <td class="title_descriptn">
+                            <h4 class="title_name" data-toggle="tooltip" title="Movie Name"><a href="#">Sasural Simar Ka</a></h4>
+                            <ul>
+                                <li>
+                                    <h5 class="title_code" title="Movie Code">0004</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_lang" title="Language">Hindi</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_country" title="Country of Origin">India</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_credits">
+                            <h5 class="title_cast" title="Key Star Cast">Dipika Kakar, Avika Gor, Manish Raisinghan</h5>
+                            <ul>
+                                <li>
+                                    <h5 class="title_director" title="Directed By">Pawan Kumar Marut</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_action">
+                            <a title="View" data-placement="left" href="#" class="glyphicon glyphicon-eye-open"></a>
+                            <br />
+                            <a title="Edit" data-placement="left" href="#" class="glyphicon glyphicon-pencil"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <div>
+                <table class="grid_item active">
+                    <tr>
+                        <td class="title_logo">
+                            <img src="~/UploadFolder/motu_patlu-index.png" />
+                        </td>
+                        <td class="title_descriptn">
+                            <h4 class="title_name" data-toggle="tooltip" title="Movie Name"><a href="#">Motu Patlu</a></h4>
+                            <ul>
+                                <li>
+                                    <h5 class="title_code" title="Movie Code">0005</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_lang" title="Language">Hindi</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_country" title="Country of Origin">India</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_credits">
+                            <h5 class="title_cast" title="Key Star Cast"></h5>
+                            <ul>
+                                <li>
+                                    <h5 class="title_director" title="Directed By">Suhas Kadav</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_action">
+                            <a title="View" data-placement="left" href="#" class=" glyphicon glyphicon-eye-open"></a>
+                            <br />
+
+                            <a title="Edit" data-placement="left" href="#" class=" glyphicon glyphicon-pencil"></a>
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <div>
+                <table class="grid_item active">
+                    <tr>
+                        <td class="title_logo">
+                            <img src="~/UploadFolder/jhalak.jpg" />
+                        </td>
+                        <td class="title_descriptn">
+                            <h4 class="title_name" data-toggle="tooltip" title="Movie Name"><a href="#">Jhalak Dikhla Jaa-8</a></h4>
+                            <ul>
+                                <li>
+                                    <h5 class="title_code" title="Movie Code">0006</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_lang" title="Language">Hindi</h5>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="title_country" title="Country of Origin">India</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_credits">
+                            <h5 class="title_cast" title="Key Star Cast">Shahid Kapoor, Karan Johar, Ganesh Hegde, Lauren Gottlieb</h5>
+                            <ul>
+                                <li>
+                                    <h5 class="title_director" title="Directed By">S.A.Chandrashekharam</h5>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="title_action">
+                            <a title="View" data-placement="left" href="#" class="glyphicon glyphicon-eye-open"></a>
+                            <br />
+                            <a title="Edit" data-placement="left" href="#" class="glyphicon glyphicon-pencil"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="main_section " id="editDigitalRightsDiv" style="display:none;">
+    <div class="container acq main_col">
+        <div class="top_area">
+            <div class="title_block dotted_border clearfix">
+                <h2 class="pull-left">
+                    View Title -
+                    <span>Rowdy Badshah</span>
+                </h2>
+                <div class="right_nav pull-right">
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="glyphicon glyphicon-envelope"></span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <table class="table_brif table">
+                <tbody>
+                    <tr>
+                        <td class="intro_pic">
+                            <div>
+                                <img src="~/UploadFolder/Rowdy Badshsh.jpg" />
+                                
+                            </div>
+                        </td>
+                        <td class="intro">
+                            <table class="four_column table">
+                                <tr>
+                                    <td>Title Type</td>
+                                    <td>Movie</td>
+                                    <td>Year of Release</td>
+                                    <td>2013</td>
+                                </tr>
+                                <tr>
+                                    <td>Title</td>
+                                    <td>Rowdy Badshah</td>
+                                    <td>Original Title</td>
+                                    <td>Rowdy Badshah</td>
+                                </tr>
+                                <tr>
+                                    <td>Title Language</td>
+                                    <td>Hindi</td>
+                                    <td>Original Language</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Producer Name</td>
+                                    <td></td>
+                                    <td>Director Name</td>
+                                    <td>Sreenu Vaitala</td>
+                                </tr>
+                                <tr>
+                                    <td>Country of Origin</td>
+                                    <td>India</td>
+                                    <td>Title Genres</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Key Star Cast</td>
+                                    <td colspan="3">Jr.NTR, Kajal Agarwal</td>
+                                </tr>
+                                <tr>
+                                    <td>Synopsis</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="title_custom_fields" style="display:none;">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="custom_col_name">Column Name</th>
+                        <th class="custom_col_key">Column Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Music Composer</td>
+                        <td>Jatin-Lalit</td>
+                    </tr>
+                    <tr>
+                        <td>Original / Dubbed</td>
+                        <td>Original</td>
+                    </tr>
+                    <tr>
+                        <td>Program Category</td>
+                        <td>Hindi Movie</td>
+                    </tr>
+                    <tr>
+                        <td>Colour or B&W</td>
+                        <td>Colour</td>
+                    </tr>
+                    <tr>
+                        <td>CBFC Rating</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Banner</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="title_custom_fields">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="custom_col_name">Digital Details</th>
+                        <th></th>
+                        <!--<th class="custom_col_key">Column Value</th>-->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Content Type</td>
+                        <td>
+                            <span class="required">
+                                <select name="ddlBusinessUnit" id="ddlBusinessUnit" class="form_input chosen-select">
+                                    <option value="0">- - - Please Select  - - -</option>
+                                    <option value="1">Premium</option>
+                                    <option selected="selected" value="2">Non Premium</option>
+                                </select>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Viewership</td>
+                        <td>
+                            <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select" multiple>
+                                <option selected="selected" value="1">Gen X</option>
+                                <option value="1">Gen Y</option>
+                                <option value="2">Millionaire</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Keywords</td>
+                        <td>
+                            <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select" multiple>
+                                <option selected="selected" value="1">Action</option>
+                                <option value="1">comedy</option>
+                                <option value="2">2016</option>
+                                <option value="3">amitabh</option>
+                                <option value="4">Bacchan</option>
+                                <option value="5">Angry</option>
+                                <option value="6">Young</option>
+                                <option value="7">Man</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Digital Theme</td>
+                        <td>
+                            <select name="ddlBusinessUnit" id="ddlBusinessUnit" class="form_input chosen-select" multiple>
+                                <option value="0">- - - Please Select  - - -</option>
+                                <option selected="selected" value="1">Action</option>
+                                <option value="2">Comedy</option>
+                                <option value="3">Thriller</option>
+                                <option value="4">Romantic</option>
+                                <option value="2">Drama</option>
+                                <option value="6">Kids</option>
+                                <option value="6">Dance</option>
+                                <option value="6">Entertainment</option>
+                                <option value="6">Reality</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bottom_action">
+            <ul class="form_link_nav clearfix">
+                <li>
+                    <a class="btn btn-primary" onclick="location.href = '@Url.Action("DigitalAsset", "Digital_Rights")'">Back</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div id="viewDigitalRightsDiv" class="main_section" style="display:none;">
+    <div class="container acq main_col">
+        <div class="top_area">
+            <div class="title_block dotted_border clearfix">
+                <h2 class="pull-left">
+                    View Title -
+                    <span>Rowdy Badshah</span>
+                </h2>
+                <div class="right_nav pull-right">
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="glyphicon glyphicon-envelope"></span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <table class="table_brif table">
+                <tbody>
+                    <tr>
+                        <td class="intro_pic">
+                            <div>
+                                <img src="~/UploadFolder/Rowdy Badshsh.jpg" />
+                            </div>
+                        </td>
+                        <td class="intro">
+                            <table class="four_column table">
+                                <tr>
+                                    <td>Title Type</td>
+                                    <td>Movie</td>
+                                    <td>Year of Release</td>
+                                    <td>2013</td>
+                                </tr>
+                                <tr>
+                                    <td>Title</td>
+                                    <td>Rowdy Badshah</td>
+                                    <td>Original Title</td>
+                                    <td>Rowdy Badshah</td>
+                                </tr>
+                                <tr>
+                                    <td>Title Language</td>
+                                    <td>Hindi</td>
+                                    <td>Original Language</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Producer Name</td>
+                                    <td></td>
+                                    <td>Director Name</td>
+                                    <td>Sreenu Vaitala</td>
+                                </tr>
+                                <tr>
+                                    <td>Country of Origin</td>
+                                    <td>India</td>
+                                    <td>Title Genres</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Key Star Cast</td>
+                                    <td colspan="3">Jr.NTR, Kajal Agarwal</td>
+                                </tr>
+                                <tr>
+                                    <td>Synopsis</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="title_custom_fields" style="display:none;">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="custom_col_name">Column Name</th>
+                        <th class="custom_col_key">Column Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Music Composer</td>
+                        <td>Jatin-Lalit</td>
+                    </tr>
+                    <tr>
+                        <td>Original / Dubbed</td>
+                        <td>Original</td>
+                    </tr>
+                    <tr>
+                        <td>Program Category</td>
+                        <td>Hindi Movie</td>
+                    </tr>
+                    <tr>
+                        <td>Colour or B&W</td>
+                        <td>Colour</td>
+                    </tr>
+                    <tr>
+                        <td>CBFC Rating</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Banner</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="title_custom_fields">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="custom_col_name">Digital Details</th>
+                        <th class="custom_col_name"></th>
+                        <!--<th class="custom_col_key">Column Value</th>-->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Content Type</td>
+                        <td>Non Premium</td>
+                    </tr>
+                    <tr>
+                        <td>Viewership</td>
+                        <td>Gen X</td>
+                    </tr>
+                    <tr>
+                        <td>Keywords</td>
+                        <td>
+                            Rowdy, Badshah
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Digital Theme</td>
+                        <td>Action Comedy Thriller</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bottom_action">
+            <ul class="form_link_nav clearfix">
+                <li>
+                    <a class="btn btn-primary" onclick="location.href = '@Url.Action("DigitalAsset", "Digital_Rights")'">Back</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

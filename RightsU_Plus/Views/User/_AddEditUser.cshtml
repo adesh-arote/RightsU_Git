@@ -1,0 +1,365 @@
+﻿@model RightsU_Entities.User
+@using UTOFrameWork.FrameworkClasses;
+@{
+   
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    var URL_BindUserConfiguration = '@Url.Action("BindUserConfiguration", "User")';
+    var URL_BindSecurityGroup = '@Url.Action("BindUSerSecurityGroup", "User")';
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.modal_header .close').css("padding-left", "0px");
+        }
+        BindUserConfiguration(@Model.Users_Code, "GI");
+        $('#ulalternate > li > a').on('click', function () {
+            debugger
+            TabChange($(this).data('tabname'));
+            //var prevElm = $(this).parents('#ulalternate').find('li.active');
+            //if (!IsValidForTab) {
+            //    $(this).removeClass('active');
+            //    $(prevElm).addClass('active');
+            //    IsValidForTab = true;
+            //    return false;
+            //}
+        });
+        $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val());
+    })
+    function TabChange(tabName) {
+        debugger
+
+        //BindUserConfiguration(@Model.Users_Code, tabName);
+        if (tabName == "GI") {
+            debugger
+            $('#divSecurityGroup').hide();
+            $('#divUsersConfiguration').hide();
+            $('#divEmailNotification').hide();
+            $('#divGeneral').show();
+        }
+        else if (tabName == "SG") {
+            $('#divGeneral').hide();
+            $('#divUsersConfiguration').hide();
+            $('#divEmailNotification').hide();
+            $('#divSecurityGroup').show();
+        }
+        else if (tabName == "UC") {
+            $('#divGeneral').hide();
+            $('#divSecurityGroup').hide();
+            $('#divEmailNotification').hide();
+            $('#divUsersConfiguration').show();
+        }
+        else if (tabName == "EN") {
+            $('#divGeneral').hide();
+            $('#divSecurityGroup').hide();
+            $('#divUsersConfiguration').hide();
+            $('#divEmailNotification').show();
+        }
+    }
+    function BindUserConfiguration(userCode, TabName) {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        @*var titleCode = @Model.Title_Code;
+            var mode = '@ViewBag.CommandName';
+            var dierction = '@ViewBag.Direction';*@
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_BindUserConfiguration,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                UserCode: userCode,
+                TabName: TabName
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    $("#divData").empty();
+                    $("#divData").append(result);
+                    if (TabName == "GI") {
+                        $('#divSecurityGroup').hide();
+                        $('#divUsersConfiguration').hide();
+                        $('#divEmailNotification').hide();
+                        $('#ddlBusinessUnit').SumoSelect();
+                        $('#ddlBusinessUnit')[0].sumo.reload();
+                    }
+                    initializeTooltip();
+                    initializeChosen();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+    }
+    @*function BindSecurityGroup() {
+
+        $("#hdnTVCodes").val('@ViewBag.strModule_right_Code');
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: "",
+                SecurityGroupCode: $("#hdnTVCodes").val()
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#tree').html(result);
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }*@
+
+
+    function OnChecked() {
+        debugger;
+        if (document.getElementById("ProductionHouseUser").checked) {
+            $('#ddlVendors').prop('disabled', false).trigger("chosen:updated");
+        }
+        else {
+            $('#ddlVendors').prop('disabled', true).trigger("chosen:updated");
+        }
+    }
+</script>
+
+<style>
+    #ddlSecurityGroup_chosen {
+        width: 50% !important;
+    }
+
+    #ddlBusinessUnit {
+        width: 50% !important;
+    }
+
+    #divddlBusinessUnit > div {
+        width: 100% !important;
+    }
+
+    #divddlBusinessUnit {
+        width: 50% !important;
+    }
+
+    #ddlLanguage_chosen {
+        width: 50% !important;
+    }
+
+    #ddlVendors_chosen {
+        width: 50% !important;
+    }
+</style>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    @if (Model.Users_Code > 0)
+    {
+        <h2>Edit User Details</h2>
+        @Html.HiddenFor(m => Model.Users_Code)
+    }
+    else
+    {
+        <h2>Add User Details</h2>
+    }
+</div>
+<div>
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable" id="divAlternateConfig" style="padding:10px!important">
+                <input type="hidden" id="hdnTabName" value="TA" />
+                <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                    <li class="active" id="tabGeneral">
+                        <a data-toggle="tab" role="tab" data-tabname="GI" data-configitem="0">General Information</a>
+                    </li>
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForUserConfigurationTab + "~"))
+                    {
+                        <li id="tabSecurityGroup">
+                            <a data-toggle="tab" role="tab" data-tabname="SG" data-configitem="0">Security Group</a>
+                        </li>
+                        <li id="tabDashboard">
+                            <a data-toggle="tab" role="tab" data-tabname="UC" data-configitem="0">Dashboard Configuration</a>
+                        </li>
+                        <li id="tabEmailNotification">
+                            <a data-toggle="tab" role="tab" data-tabname="EN" data-configitem="0">Email Notification</a>
+                        </li>
+                    }
+                </ul>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div id="divData"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*@using (Ajax.BeginForm("SaveUser", "User", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+    {
+        <div class="modal_block modal_header">
+            <a class="close" onclick="ClosePopup()">
+                <span>X</span>
+                <span class="sr-only">Close</span>
+            </a>
+            @if (Model.Users_Code > 0)
+            {
+                <h2>Edit User Details</h2>
+                @Html.HiddenFor(m => Model.Users_Code)
+            }
+            else
+            {
+                <h2>@objMessageKey.EditUserDetails</h2>
+            }
+        </div>
+
+                    <div class="modal_block">
+                        <table class="add_title_popup">
+                            <tr>
+                                <td style="width:20%"><b>@objMessageKey.LoginName</b></td>
+                                <td>
+                                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                                    <input type="text" id="txtLoginName" value="@Model.Login_Name" name="Login_Name" placeholder="@objMessageKey.LoginName" class="form-control input-sm" style="width:50%" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>@objMessageKey.FirstName</b></td>
+                                <td>
+                                    <input type="text" id="txtFirstName" value="@Model.First_Name" name="First_Name" placeholder="@objMessageKey.FirstName" class="form-control input-sm" style="width:50%" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>@objMessageKey.MiddleName</b>
+                                </td>
+                                <td>
+                                    <input type="text" id="txtMiddleName" value="@Model.Middle_Name" name="Middle_Name" placeholder="@objMessageKey.MiddleName" class="form-control input-sm" style="width:50%" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>@objMessageKey.LastName</b>
+                                </td>
+                                <td>
+                                    <input type="text" id="txtLastName" value="@Model.Last_Name" name="Last_Name" placeholder="@objMessageKey.LastName" class="form-control input-sm" style="width:50%" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>@objMessageKey.EmailId</b>
+                                </td>
+                                <td>
+                                    <input type="text" id="txtEmailId" value="@Model.Email_Id" name="Email_Id" placeholder="@objMessageKey.EmailId" class="form-control input-sm" style="width:50%" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>@objMessageKey.SecurityGroup</b>
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(m => Model.Security_Group_Code, ViewBag.SecurityGroup as SelectList, "Select", new { @id = "ddlSecurityGroup", @class = "form_input chosen-select" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>@objMessageKey.BusinessUnit</b>
+                                </td>
+                                <td>
+                                    <div id="divddlBusinessUnit">
+                                        @Html.DropDownList("ddlBusinessUnit", ViewBag.BusinessUnitList as MultiSelectList, new { @id = "ddlBusinessUnit", @multiple = "multiple" })
+                                    </div>
+                                </td>
+                            </tr>
+                            @if (ViewBag.parmValue == "Y")
+                            {
+                                <tr>
+                                    <td>
+                                        <b>@objMessageKey.Language</b>
+                                    </td>
+                                    <td>
+                                        @Html.DropDownListFor(m => Model.System_Language_Code, ViewBag.Language as SelectList, "Select", new { @id = "ddlLanguage", @class = "form_input chosen-select" })
+                                    </td>
+                                </tr>
+                            }
+                            @if (ViewBag.AllowUSer == "Y")
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        @if (Model.Users_Code > 0)
+                                        {
+                                            @Html.RadioButton("IsLDAPUser", "Y", Model.IsLDAPUser == "Y") <span> @objMessageKey.Domain&nbsp;</span>
+                                            @Html.RadioButton("IsLDAPUser", "N", Model.IsLDAPUser == "N") <span> @objMessageKey.NonDomain</span>
+                                        }
+                                        else
+                                        {
+                                            <label><input type="radio" name="IsLDAPUser" value="Y" checked />@objMessageKey.Domain&nbsp;</label>
+                                            <label><input type="radio" name="IsLDAPUser" value="N" />@objMessageKey.NonDomain</label>
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                            @if (ViewBag.isProdHouse)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        @Html.CheckBox("ProductionHouseUser", Convert.ToInt32(ViewBag.Vendor_Code) > 0 && Convert.ToInt32(ViewBag.Vendor_Code) != null ? true : false, new { @onclick = "OnChecked()" })@objMessageKey.ProductionHouseUser
+                                    </td>
+                                </tr>
+                                <tr id="divddlVendor">
+                                    <td></td>
+                                    <td>
+                                        @{
+                                            var VendorCode = Convert.ToInt32(ViewBag.Vendor_Code);
+                                        }
+
+                                        @if (VendorCode > 0)
+                                        {
+                                            @Html.DropDownList("ddlVendors", ViewBag.Vendor as SelectList, "Select", new { @id = "ddlVendors", @class = "form_input chosen-select" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("ddlVendors", ViewBag.Vendor as SelectList, "Select", new { @id = "ddlVendors", @disabled = true, @class = "form_input chosen-select" })
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+
+                    </div>
+        <div class="modal_block_full">
+            <div class="form_links">
+                <ul class="modal_block clearfix" style="padding-left:10; padding-top: 0px;">
+                    <li>
+                        <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return Validate_Save();" />
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }*@

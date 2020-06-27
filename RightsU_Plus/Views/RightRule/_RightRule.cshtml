@@ -1,0 +1,99 @@
+﻿@model List<RightsU_Entities.Right_Rule>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $('.expand_Right_Rule_Name').expander({
+        slicePoint: 40,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:30%;">@objMessageKey.RightRuleName</th>
+            <th style="width:12%;">@objMessageKey.StartTime</th>
+            <th style="width:12%;">@objMessageKey.PlayPerDay</th>
+            <th style="width:12%;">@objMessageKey.DurationofDay</th>
+            <th style="width:12%;">@objMessageKey.NoofRepeat</th>
+            <th style="width:12%;">@objMessageKey.Status</th>
+            <th style="width:12%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active, strBaseCurrency = "No";
+
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                <tr>
+                    <td>
+                        <span class="expand_Right_Rule_Name">@item.Right_Rule_Name</span>
+                    </td>
+                    <td>
+                        @if (@item.IS_First_Air == true)
+                        {
+                            <span>@objMessageKey.FromFirstAir</span>
+                        }
+                        else
+                        {
+                            <span>@item.Start_Time</span>
+                        }
+                    </td>
+                    <td style="text-align:center;">
+                        <span>@item.Play_Per_Day</span>
+                    </td>
+                    <td style="text-align:center;">
+                        <span>@item.Duration_Of_Day</span>
+                    </td>
+                    <td style="text-align:center;">
+                        <span>@item.No_Of_Repeat</span>
+                    </td>
+                    <td style="text-align:center;">
+                        <span>@strActive</span>
+                    </td>
+                    <td style="text-align:center;">
+                        @if (item.Is_Active == "Y")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+
+                                <a title="@objMessageKey.Edit" style="cursor: pointer;" class="glyphicon glyphicon-pencil" onclick="CheckRecordLock('EDIT',@item.Right_Rule_Code)"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActivateDeactivateRightRule(@item.Right_Rule_Code, 'N')"></a>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.CannoteditthisRightRuleasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivateRightRule(@item.Right_Rule_Code, 'Y')"></a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

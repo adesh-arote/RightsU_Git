@@ -1,0 +1,180 @@
+﻿<script type="text/javascript">
+    $('#selecctall').click(function (event) {  //on click                         
+        var counter = 0;
+        if (this.checked) { // check select status
+            $('.checkbox_Select_All').each(function () { //loop through each checkbox
+                this.checked = true;  //select all checkboxes with class "checkbox_Select_All"                                                               
+            });
+            $('.ISCheck').each(function () {
+                $(this).prop('value', true);
+                var obj = $('#chk_' + counter)[0];
+                Count_No_Of_Selected_Rows('A', obj, counter);
+                counter = parseInt(counter) + 1;
+            });
+            //ISCheck            
+        }
+        else {
+            $('.checkbox_Select_All').each(function () { //loop through each checkbox
+                this.checked = false; //deselect all checkboxes with class "checkbox_Select_All"                                       
+            });
+            $('.modal_block').find('input[type=radio][disabled=disabled]').removeAttr('disabled');
+            $('.ISCheck').each(function () {
+                $(this).prop("value", false);
+                var obj = $('#chk_' + counter)[0];
+                Count_No_Of_Selected_Rows('A', obj, counter);
+                counter = parseInt(counter) + 1;
+            });
+        }
+        $('#lbl_No_of_Selected_Rows').text($("input.checkbox_Select_All[type=checkbox]:checked").length);
+        $("#txt_Channel_Program_Search").removeAttr('required');
+    });
+    function Count_No_Of_Selected_Rows(CallFrom, obj, Counter) {
+        $('#lbl_No_of_Selected_Rows').text($("input.checkbox_Select_All[type=checkbox]:checked").length);
+        if (CallFrom != 'A')
+            Check_UnCheck_All();
+        if (CallFrom == 'C' || CallFrom == 'A') {
+            $("#txt_Channel_Program_Search").removeAttr('required');
+            var Selected_UnSelected_Run_Shows_Value = $('#hdn_Acq_Deal_Run_Shows_Code_' + Counter).val();
+            var Selected_UnSelected_Movie_Code = $('#hdn_Acq_Deal_Movie_Code_' + Counter).val();//hdn_Check_Movie_Code                        
+            var Selected_UnSelected_Title_Code = $('#hdn_Title_Code_' + Counter).val();
+            if (obj.checked) {
+                $('#hdn_Is_Select_' + Counter).val(true);
+                var Selected_Run_Value = Selected_UnSelected_Run_Shows_Value;
+                var str_Run_Code = Selected_UnSelected_Run_Shows_Value;
+                if ($('#hdn_UnCheck_Run_Shows_Code') != null && $('#hdn_UnCheck_Run_Shows_Code').val() != undefined && $('#hdn_UnCheck_Run_Shows_Code').val() != '') {
+                    var arr_Run = $('#hdn_UnCheck_Run_Shows_Code').val().split(',');
+                    arr_Run = jQuery.grep(arr_Run, function (a) {
+                        return a !== Selected_Run_Value;
+                    });//.join(',')
+                    str_Run_Code = arr_Run.join(',');
+                }
+                $('#hdn_UnCheck_Run_Shows_Code').val(str_Run_Code);
+
+                var Selected_Movie = Selected_UnSelected_Movie_Code;
+                var arr_Movie = $('#hdn_Check_Movie_Code').val().split(',');
+                arr_Movie.push(Selected_Movie);
+                var str_Movie_Code = arr_Movie.join(',');
+                $('#hdn_Check_Movie_Code').val(str_Movie_Code);
+
+                
+                var Selected_Title = Selected_UnSelected_Title_Code;
+                var arr_Title = $('#hdn_Selected_Title_Codes').val().split(',');
+                arr_Title.push(Selected_Title);
+                var str_Title_Code = arr_Title.join(',');
+                $('#hdn_Selected_Title_Codes').val(str_Title_Code);
+
+            }
+            else {
+                $('#hdn_Is_Select_' + Counter).val(false);
+                var Selected_Run_Value = Selected_UnSelected_Run_Shows_Value;
+                var arr_Run = $('#hdn_UnCheck_Run_Shows_Code').val().split(',');
+                arr_Run.push(Selected_Run_Value);
+                var str_Run_Code = arr_Run.join(',');
+                $('#hdn_UnCheck_Run_Shows_Code').val(str_Run_Code);
+
+                if ($('#hdn_Check_Movie_Code') != null && $('#hdn_Check_Movie_Code').val() != undefined) {
+                    debugger;
+                    var arr_Movie = $('#hdn_Check_Movie_Code').val().split(',');
+                    var str_Movie_Code = Selected_UnSelected_Movie_Code;
+                    arr_Movie = jQuery.grep(arr_Movie, function (m) {
+                        return m !== Selected_UnSelected_Movie_Code;
+                    });//.join(',')
+                    str_Movie_Code = arr_Movie.join(',');
+                    $('#hdn_Check_Movie_Code').val(str_Movie_Code);
+                }
+                if ($('#hdn_Selected_Title_Codes') != null && $('#hdn_Selected_Title_Codes').val() != undefined) {
+                    debugger;
+                    var arr_Title = $('#hdn_Selected_Title_Codes').val().split(',');
+                    var str_Title_Code = Selected_UnSelected_Title_Code;
+                    arr_Title = jQuery.grep(arr_Title, function (m) {
+                        return m !== Selected_UnSelected_Title_Code;
+                    });//.join(',')
+                    str_Title_Code = arr_Title.join(',');
+                    $('#hdn_Selected_Title_Codes').val(str_Title_Code);
+                }
+            }
+        }
+    }
+    function Check_UnCheck_All() {
+        $('.checkbox_Select_All').each(function () {
+            if (this.checked) {
+                $('#selecctall').prop('checked', true);
+            }
+            else {
+                $('#selecctall').prop('checked', false);
+                return false;
+            }
+        });
+    }
+    function RemoveAttr() {
+        $("#txt_Channel_Program_Search").removeAttr('required');
+        return true;
+    }
+    $(document).ready(function () {
+        initializeExpander();
+    });
+</script>
+@model List<RightsU_Entities.USP_Search_Run_Shows_Result>
+<table class="table table-bordered table-hover" id="tbl_List_Link_Shows">
+    @{
+        var Opt = (string)ViewBag.DataFor;
+    }
+    @Html.Hidden("hdn_Data_For", Opt)
+    @if (Model.Count() != 0)
+    {
+        <thead>
+            <tr>
+
+                @if (ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW)
+                {
+                    <th>
+                        <input type="checkbox" style="margin: auto;" id="selecctall" />
+                    </th>
+                }
+                <th>Show Name</th>
+                <th>Channel</th>
+                <th style='display:@(Model.FirstOrDefault().Agreement_No != "" ? "block" : "none")'>Agreement No.</th>
+            </tr>
+        </thead>
+        
+        <tbody id="tbody_link_Shows">
+            @{
+                int counter = 0;
+                foreach (var item in Model)
+                {
+                <tr>
+                    @if (ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW)
+                    {
+                        <td style="text-align: center;">
+                            @Html.CheckBox("[" + counter + "].Is_Select", (item.Is_Select != null && item.Is_Select == "Y") ? true : false, new { @onclick = "Count_No_Of_Selected_Rows('C',this," + @counter + ");", @class = "checkbox_Select_All", style = "margin:auto", @id = "chk_" + counter })
+                        </td>
+                    }
+                    <td>
+                        <div class="expandable">
+                            @Html.DisplayFor(i => item.Title_Name)
+                        </div>
+                        @Html.Hidden("[" + counter + "].Is_Select", (item.Is_Select != null && item.Is_Select == "Y") ? true : false, new { @id = "hdn_Is_Select_" + counter, @class = "ISCheck" })
+                        @Html.Hidden("[" + counter + "].Acq_Deal_Run_Shows_Code", item.Acq_Deal_Run_Shows_Code, new { @id = "hdn_Acq_Deal_Run_Shows_Code_" + counter })
+                        @Html.Hidden("[" + counter + "].Acq_Deal_Code", item.Acq_Deal_Code, new { @id = "hdn_Acq_Deal_Code_" + counter })
+                        @Html.Hidden("[" + counter + "].Agreement_No", item.Agreement_No, new { @id = "hdn_Agreement_No_" + counter })
+                        @Html.Hidden("[" + counter + "].Title_Code", item.Title_Code, new { @id = "hdn_Title_Code_" + counter })
+                        @Html.Hidden("[" + counter + "].Episode_From", item.Episode_From, new { @id = "hdn_Episode_From_" + counter })
+                        @Html.Hidden("[" + counter + "].Episode_To", item.Episode_To, new { @id = "hdn_Episode_To_" + counter })
+                        @Html.Hidden("[" + counter + "].Acq_Deal_Movie_Code", item.Acq_Deal_Movie_Code, new { @id = "hdn_Acq_Deal_Movie_Code_" + counter })
+                        @Html.Hidden("[" + counter + "].Acq_Deal_Run_Code", item.Acq_Deal_Run_Code, new { @id = "hdn_Acq_Deal_Run_Code_" + counter })
+                    </td>
+                    <td>
+                        <div class="expandable">
+                            @Html.DisplayFor(i => item.Channel_Name)
+                        </div>
+                    </td>
+                    <td style='display:@(item.Agreement_No != "" ? "block" : "none")'>
+                        @Html.DisplayFor(i => item.Agreement_No)
+                    </td>
+                </tr>
+                    counter += 1;
+                }
+            }
+        </tbody>
+    }
+</table>

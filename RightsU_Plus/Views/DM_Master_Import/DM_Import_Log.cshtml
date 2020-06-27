@@ -1,0 +1,96 @@
+﻿@model List<RightsU_Entities.DM_Master_Log>
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#hdnPageNo").val(@((ViewBag.PageNo ?? 1)));
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        SetPaging();
+    });
+</script>
+
+<div class="scale_table_block">
+    <table class="table table-bordered table-hover" id="tblMasterLogData">
+        <thead>
+            <tr>
+                <th style="width:25%;">Name </th>
+                @if (ViewBag.TabName == "TA")
+                {
+                    <th style="width:20%;">Roles</th>
+                }
+                @if (ViewBag.TabName != "TL" && ViewBag.TabName != "TT" && ViewBag.TabName != "PC" && ViewBag.TabName != "OL")
+                {
+                    <th style="width:20%;"><input type="checkbox" id="chkAll" /> Create New </th>
+                }
+                <th style="width:20%;">Map Data</th>
+                <th style="width:15%;"><input type="checkbox" id="IgnoreAll" /> Exclude</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        @if (ViewBag.TabName == "TA")
+                        {
+                            <td align="center">@item.Roles</td>
+                        }
+                        @if (ViewBag.TabName != "TL" && ViewBag.TabName != "TT" && ViewBag.TabName != "PC" && ViewBag.TabName != "OL")
+                        {
+                            <td align="center">
+                                @if (item.IsIgnore)
+                                {
+                                    <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" disabled="disabled" />
+                                }
+                               else if (item.Is_Create_New)
+                                {
+                                    <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" checked="checked" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" />
+                                }
+                               
+                                
+                            </td>
+                        }
+                        <td align="center">
+                            @if (item.IsIgnore)
+                            {
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" disabled="disabled" />
+
+                            }
+                            else if (item.Is_Create_New)
+                            {
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" disabled="disabled" />
+                            }
+                            else if(!item.Is_Create_New)
+                            {
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" />
+                            }
+                            
+                           
+                            <input type="hidden" id="hdnMappedCode_@item.DM_Master_Log_Code" name="MappedCode" value="@item.Mapped_Code" />
+                            <input type="hidden" id="hdnMasterLogCode_@item.DM_Master_Log_Code" value="@item.DM_Master_Log_Code" />
+                        </td>
+                        <td align="center">
+                           @if (item.IsIgnore)
+                           {
+                            <input type="checkbox" id="chkIsIgnore_@item.DM_Master_Log_Code" checked="checked" />
+                           }
+                           else
+                           {
+                            <input type="checkbox" id="chkIsIgnore_@item.DM_Master_Log_Code" />
+                           }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

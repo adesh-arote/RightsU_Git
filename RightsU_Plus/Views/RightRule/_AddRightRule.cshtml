@@ -1,0 +1,209 @@
+﻿@model RightsU_Entities.Right_Rule
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('#btnCancel').css("float", "right");
+            $('#btnSave').css("float", "right");
+        }
+        $('input:checkbox.checkbox').change(function (e) {
+            if ($('#chkFirstAir').is(":checked")) {
+                $('#Start_Time').attr('disabled', true);
+            }
+            else {
+                $('#Start_Time').attr('disabled', false);
+            }
+        });
+        $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val())
+    });
+
+
+    function Save_Success(result) {
+        if (result.Status == "S") {
+            showAlert("S", result.Message);
+            BindPartialView('LIST', 0);
+        }
+        else {
+
+        }
+    }
+    function isNumeric(e, t) {
+        if (window.event) {
+            var charCode = window.event.keyCode;
+        }
+        else if (e) {
+            var charCode = e.which;
+        }
+        else { return true; }
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+</script>
+@using (Ajax.BeginForm("SaveRuleRight", "RightRule", new AjaxOptions() { OnSuccess = "Save_Success" }))
+{
+
+    <div class="">
+        <div class="title_block dotted_border clearfix">
+            <h2 class="pull-left">
+                @if (@Model.Right_Rule_Code > 0)
+                {
+                    <text>@objMessageKey.EditRightRuleDetails</text>
+                }
+                else
+                {
+                    <text> @objMessageKey.AddRightRuleDetails </text>
+                }
+                <span></span>
+            </h2>
+            <div class="right_nav pull-right">
+                <ul>
+                    <li>
+
+                    </li>
+                </ul>
+            </div>
+            <div class="right_nav pull-right">
+            </div>
+        </div>
+
+        <div class="grid_area">
+            <div style="border-bottom: 1px dotted #777; display:none;"></div>
+
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="scale_table_block">
+                    <input type="hidden" id="hdnTalentCode" value="0" />
+                    <div id="divAddRightRule" class="deal clearfix">
+
+                        <table class="table table-bordered table-hover">
+
+                            <tr>
+                                <td width="33%">
+                                   @objMessageKey.RightRuleName
+                                </td>
+                                <td width="67%">
+
+                                    <input type="hidden" name="Right_Rule_Code" value="@Model.Right_Rule_Code" />
+                                    <input type="text" id="Right_Rule_Name" name="Right_Rule_Name" value="@Model.Right_Rule_Name" style="width:300px;" maxlength="100" />
+                                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @objMessageKey.DayStartTime
+                                </td>
+                                <td>
+                                    @if (@Model.IS_First_Air == true)
+                                    {
+                                        <input type="time" id="Start_Time" disabled="disabled" name="Start_Time" value="@Model.Start_Time" style="width:300px;height: 30px;" onkeypress="return isNumeric(event, this);" /><span style="padding-left:1%"></span>
+                                        <input type="checkbox" class="checkbox" checked="checked" name="chkFromFirstAir" style="display:inline;vertical-align:middle;" id="chkFirstAir" /> <text>@objMessageKey.FromFirstAir</text>
+                                    }
+                                    else
+                                    {
+                                        <input type="time" id="Start_Time" name="Start_Time" value="@Model.Start_Time" style="width:300px;height: 30px;" onkeypress="return isNumeric(event, this);" /><span style="padding-left:1%"></span>
+                                        <input type="checkbox" class="checkbox" name="chkFromFirstAir" style="display:inline;vertical-align:middle;" id="chkFirstAir" /> <text>@objMessageKey.FromFirstAir</text>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @objMessageKey.PlayPerDay
+                                </td>
+                                <td>
+                                    <input type="text" id="Play_Per_Day" name="Play_Per_Day" value="@Model.Play_Per_Day" style="width:300px;" onkeypress="return isNumeric(event, this);" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @objMessageKey.DurationofDay (in Hrs)
+                                </td>
+                                <td>
+                                    <input type="text" id="Duration_Of_Day" name="Duration_Of_Day" value="@Model.Duration_Of_Day" style="width:300px;" onkeypress="return isNumeric(event, this);" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @objMessageKey.NoofRepeat
+                                </td>
+                                <td>
+                                    <input type="text" id="No_Of_Repeat" name="No_Of_Repeat" value="@Model.No_Of_Repeat" style="width:300px;" onkeypress="return isNumeric(event, this);" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @objMessageKey.ShortKey
+                                </td>
+                                <td>
+                                    <input type="text" id="Short_Key" name="Short_Key" value="@Model.Short_Key" style="width:300px;" onkeypress="return isNumeric(event, this);" />
+                                </td>
+                            </tr>
+                        </table>
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ul style="line-height:0px;vertical-align:middle;padding-top:10px;">
+
+            <input type="submit" class="btn btn-primary" style=" margin-left: 5px" value="@objMessageKey.Save" onclick="return validate();" id="btnSave" />
+            <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="BindPartialView('LIST',0)" id="btnCancel" />
+        </ul>
+    </div>
+
+}
+<script>
+    function validate() {
+        debugger;
+        var recordCode = $.trim($('#hdnRecodLockingCode').val())
+        var rightRuleName = $.trim($('#Right_Rule_Name').val());
+        var dayStartTime = $.trim($('#Start_Time').val());
+        var playPerday = $.trim($('#Play_Per_Day').val());
+        var durationOfDay = $.trim($('#Duration_Of_Day').val());
+        var noOfRepeat = $.trim($('#No_Of_Repeat').val());
+        var shortKey = $.trim($('#Short_Key').val());
+        var retrunmsg = true;
+        if (rightRuleName == '') {
+            $('#Right_Rule_Name').val('');
+            $('#Right_Rule_Name').attr('required', true)
+            retrunmsg = false;
+        }
+        if (!$('#chkFirstAir').is(":checked")) {
+            if (dayStartTime == '') {
+                $('#Start_Time').val('');
+                $('#Start_Time').attr('required', true)
+                retrunmsg = false;
+            }
+        }
+        if (playPerday == '') {
+            $('#Play_Per_Day').val('');
+            $('#Play_Per_Day').attr('required', true)
+            retrunmsg = false;
+        }
+        if (durationOfDay == '') {
+            $('#Duration_Of_Day').val('');
+            $('#Duration_Of_Day').attr('required', true)
+            retrunmsg = false;
+        }
+        if (noOfRepeat == '') {
+            $('#No_Of_Repeat').val('');
+            $('#No_Of_Repeat').attr('required', true)
+            retrunmsg = false;
+        }
+        if (shortKey == '') {
+            $('#Short_Key').val('');
+            $('#Short_Key').attr('required', true)
+            retrunmsg = false;
+        }
+        return retrunmsg;
+    }
+</script>

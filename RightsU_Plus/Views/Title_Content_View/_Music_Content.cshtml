@@ -1,0 +1,41 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }   
+}
+<div class="tab-pane" id="tabMusic">
+    <div class="scale_table_block">
+        <table class="table">
+            <tr>
+                <td style="width:40%;">
+                    <input type="text" style="width:100%" id="txtSearchText" placeholder="@objMessageKey.MusicTrack, @objMessageKey.MovieName, @objMessageKey.MusicLabel" value='@ViewBag.searchText'>
+                </td>
+                <td>
+                    <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch" onclick="SearchMusicList(false)"> &nbsp;&nbsp;
+                    <input type="button" class="button" value="@objMessageKey.ShowAll" id="btnShowAll" onclick="SearchMusicList(true)">
+                </td>
+            </tr>
+            <tr>
+
+        </table>
+        <div class="paging_area clearfix" style="height:31px !important;">
+            <span class="pull-left">@objMessageKey.TotalRecords: </span>
+            <span class="pull-left" id="lblRecordCount"></span>
+            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+            <div id="Pagination" class="pagination">
+            </div>
+            <span class="pull-right">
+                @objMessageKey.PageSize:
+                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                       onkeypress="return isNumberKey(event)" onchange="txtPageSize_OnChange()" onfocus="checkCurrentAction()">
+            </span>
+        </div>
+    </div>
+    <div class="scale_table_block" id="divMusicList">
+    </div>
+</div>

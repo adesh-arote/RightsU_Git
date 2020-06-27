@@ -1,0 +1,85 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Run_Yearwise_Run>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@if (Model != null)
+{
+    <td></td>
+    <td colspan="3">
+        <table id="tblYearWiseRun" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th width="60%">@objMessageKey.Period</th>
+                    <th width="40%">@objMessageKey.Run</th>
+                    @*<th width="30%">Scheduled Run</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        @if (Model.ElementAt(i).Start_Date != null && Model.ElementAt(i).End_Date != null)
+                        {
+                        
+                            System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("ar-AE");
+                       
+                            if(objMessageKey.LayoutDirection == "RTL"){
+                                <td align="center">@Model.ElementAt(i).Start_Date.Value.ToString("dd MMM yyyy",cultureinfo)	TO  @Model.ElementAt(i).End_Date.Value.ToString("dd MMM yyyy",cultureinfo)</td>
+                        }
+                            else { 
+                                <td align="center">@Model.ElementAt(i).Start_Date.Value.ToString("dd MMM yyyy")	TO  @Model.ElementAt(i).End_Date.Value.ToString("dd MMM yyyy")</td>
+                        }
+                            <td align="center">
+                                @Html.TextBox("[" + i + "].No_Of_Runs", Model.ElementAt(i).No_Of_Runs, new { @class = "numbertext text" })
+                                @Html.Hidden("[" + i + "].Start_Date_Str", Model.ElementAt(i).Start_Date.Value.ToString("dd/MM/yyyy"))
+                                @Html.Hidden("[" + i + "].End_Date_Str", Model.ElementAt(i).End_Date.Value.ToString("dd/MM/yyyy"))
+                                @Html.Hidden("[" + i + "].Acq_Deal_Run_Yearwise_Run_Code", Model.ElementAt(i).Acq_Deal_Run_Yearwise_Run_Code)
+                                @Html.Hidden("[" + i + "].Acq_Deal_Run_Code", Model.ElementAt(i).Acq_Deal_Run_Code)
+                            </td>
+                        }
+                        else
+                        {
+                            <td align="center">Year @Model.ElementAt(i).Year_No</td>
+                            <td align="center">
+                                @Html.TextBox("[" + i + "].No_Of_Runs", Model.ElementAt(i).No_Of_Runs, new { @class = "numbertext text" })
+                                @Html.Hidden("[" + i + "].Year_No", Model.ElementAt(i).Year_No)
+                                @Html.Hidden("[" + i + "].Acq_Deal_Run_Yearwise_Run_Code", Model.ElementAt(i).Acq_Deal_Run_Yearwise_Run_Code)
+                                @Html.Hidden("[" + i + "].Acq_Deal_Run_Code", Model.ElementAt(i).Acq_Deal_Run_Code)
+                            </td>
+                        }
+                        @*<td align="center">
+                            @((Model.ElementAt(i).No_Of_Runs_Sched != null) ? Model.ElementAt(i).No_Of_Runs_Sched : 0)
+                            @Html.Hidden("[" + i + "].No_Of_Runs_Sched", (Model.ElementAt(i).No_Of_Runs_Sched != null) ? Model.ElementAt(i).No_Of_Runs_Sched : 0)
+                        </td>*@
+                        @Html.Hidden("[" + i + "].No_Of_Runs_Sched", (Model.ElementAt(i).No_Of_Runs_Sched != null) ? Model.ElementAt(i).No_Of_Runs_Sched : 0)
+                    </tr> 
+                }
+                @*@for (int i = 0; i < Model; i++)
+                {
+        <tr>
+            <td>	TO </td>
+            <td>
+                @Html.TextBox("[" + i + "].No_Of_Runs", Model.ElementAt(i).No_Of_Runs , new { @class = "numbertext text" })
+                @Html.Hidden("[" + i + "].ChannelNames", Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                <input class="numbertext" type="text" id="_' + index + '_No_Of_Runs"' + ' name="[' + index + '].No_Of_Runs" value="' + $.trim(noOfRuns) + '" class="text" size="15" maxlength="35">
+                </input>'
+                <input type="Hidden" id="_' + index + '_Start_Date_Str"' + ' name="[' + index + '].Start_Date_Str" value="' + $.trim(startDate) + '"></input>
+                <input type="Hidden" id="_' + index + '_End_Date_Str"' + ' name="[' + index + '].End_Date_Str" value="' + $.trim(endDate) + '"></input>
+                <input type="Hidden" id="_' + index + '_Acq_Deal_Run_Yearwise_Run_Code"' + ' name="[' + index + '].Acq_Deal_Run_Yearwise_Run_Code" value="' + $.trim(Acq_Deal_Run_Yearwise_Run_Code) + '"></input>
+                <input type="Hidden" id="_' + index + '_Acq_Deal_Run_Code"' + ' name="[' + index + '].Acq_Deal_Run_Code" value="' + $.trim(acqDealRunCode) + '"></input>
+                </td>
+        </tr>
+        }*@
+            </tbody>
+
+        </table>
+    </td>
+}
+else
+{
+    @Html.Display("Invalid")
+}

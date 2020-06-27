@@ -1,0 +1,344 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/JS_Core/jquery.mark.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    var IsCall = 'Y';
+    var URL_DropDownSelection = '@Url.Action("DropDownSelection", "RUBVMapping")';
+    var URL_BindTable = '@Url.Action("BindTable", "RUBVMapping")';
+    var URL_MapReferenceKey = '@Url.Action("MapReferenceKey", "RUBVMapping")';
+    $(document).ready(function () {
+         addNumeric();
+        ddselection(0);
+        $(".navigation_tabs").css('visibility', 'hidden');
+        $(".grid_area").css('visibility', 'hidden');
+    });
+
+    function ddselection(seldd) {
+          $("#Broadviewoption").change(function () {
+            $(".navigation_tabs").css('visibility', 'visible');
+            $(".grid_area").css('visibility', 'visible');
+            debugger;
+            $("#hdnCurrentDVal").val($(this).val());
+            var seldd = $(this).val();
+            if ($(this).val() == 'M') {
+                $("#tab2").css('display', 'none');
+                $("#tab3").css('display', 'none');
+                $("#tab4").css('display', 'none');
+                $("#mapbtn").css('display', '');
+
+            }
+            else if($(this).val() == "0") {
+                $(".navigation_tabs").css('visibility', 'hidden');
+                $(".grid_area").css('visibility', 'hidden');
+
+            }
+            else {
+                $("#tab2").css('display', '');
+                $("#tab3").css('display', '');
+                $("#tab4").css('display', '');
+                $("#mapbtn").css('display', 'none');
+            }                                  
+                        $('li').removeClass('active');
+                        $("#liAsset").addClass('active');
+                        tabchange('Asset');
+                        });
+    }
+    function bindTable(selectedoption) {
+         $('#hdnCurrentTab').val(selectedoption);
+
+        var selectedvalue = $("#hdnCurrentDVal").val();
+        var pageno = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        var recordCount = parseInt($('#hdnRecordCount').val());
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_BindTable,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                selectedValue:selectedvalue,
+                pageNo: pageno,
+                recordPerPage: recordPerPage,
+                selectedOption: selectedoption
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#divtablerecords').empty();
+                    $('#divtablerecords').html(result);
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+         IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+        $("#lblTotalRecords").text($('#hdnRecordCount').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+                if (pageNo == 0)
+            pageNo = 1;
+                var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+           if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            bindTable($('#hdnCurrentTab').val());
+        else
+            IsCall = 'Y';
+    }
+
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        bindTable($('#hdnCurrentTab').val())
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        return false
+    }
+    function mapbvid() {        
+            var pageno = $('#hdnPageNo').val();
+            var recordPerPage = $('#txtPageSize').val();
+            var recordCount = parseInt($('#hdnRecordCount').val());
+            var c = 0;
+            var validvalue;
+            var ruidarray = [];
+            var bvidarray = [];
+            var IsValid = true;
+            var selectedoption = $('#hdnCurrentTab').val();
+
+            if ($("input[name='checkbox1']").is(":checked")) {
+                var result = $("input[name='checkbox1']:checked");
+
+                if (result.length > 0) {
+                    result.each(function () {
+                        ruidarray[c] = $(this).val();
+                        var validvalue = $("#txtbvid_" + ruidarray[c]).val();
+
+                        if (!($("#txtbvid_" + ruidarray[c]).val().indexOf(' ') >= 0)) {
+
+                            if (validvalue == null || validvalue == 0) {
+                                showAlert("E", "Please fill BVID's for ticked checkboxes");
+                                $("#txtbvid_" + ruidarray[c]).attr("required", true);
+                                IsValid = false;
+                            }
+                        }
+                        else {
+                            showAlert("E", "BVID's cannot contain spaces");
+                            $("#txtbvid_" + ruidarray[c]).attr("required", true);
+                            IsValid = false;
+                        }
+                        bvidarray[c] = $("#txtbvid_" + ruidarray[c]).val();
+                        c++;
+                    });
+                }
+                 if (IsValid) {
+                     showLoading();
+                    $.ajax({
+                        type: "POST",
+                        url: URL_MapReferenceKey,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "html",
+                        data: JSON.stringify({
+                            ruidArray: ruidarray,
+                            bvidArray: bvidarray,
+                            selectedOption: selectedoption,
+                            pageNo: pageno,
+                            recordPerPage: recordPerPage
+                        }),
+                        success: function (result) {
+
+                            $('#divtablerecords').empty();
+                            $('#divtablerecords').html(result);
+                            showAlert("I", "Records updated successfully");
+                            hideLoading();
+                        },
+                        error: function (result) {
+                            alert("Error:" + result.responseText);
+                        }
+                    });
+                }            
+            }
+            else {
+                alert("No checkboxes checked");
+            }
+        }    
+    function tabchange(tabname) {
+         $('#hdnPageNo').val(1);
+        bindTable(tabname);
+    }
+    function handlemap(){
+        showAlert("I", 'Are you sure, you want to map thesse IDs?',"OKCANCEL");
+      }
+    function handleOk(){
+        mapbvid();
+    }
+    function handleCancel() {
+
+    }   
+</script>
+
+
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        RightsU-BroadView Integration
+                        <span> </span>
+
+                    </h2>
+                </div>
+
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:15%; vertical-align: middle;text-align:left;">
+                                @Html.DropDownList("BroadviewOption", new List<SelectListItem>
+{
+    new SelectListItem { Text = "Select Option",Value="0"},
+    new SelectListItem { Text = "Error",Value="E"},
+    new SelectListItem { Text="Mapping",Value="M"},
+    new SelectListItem { Text="Pending/Inprocess",Value="P" }
+
+        }, new { @id = "Broadviewoption" })
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+
+                        <span class="pull-left" id="lblTotal"></span>
+                        <input type="hidden" id="hdnMappedCount" value="0" />
+                        <input type="hidden" id="hdnCurrentTab" value="Asset" />
+                        <input type="hidden" id="hdnCurrentDVal" value="" />
+
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
+                                <li id="liAsset">
+                                    <a data-toggle="tab" role="tab" id="tab1" data-value="Asset" onclick="javascript: panelVisible = true; tabchange('Asset');">Asset</a>
+                                </li>
+                                <li id="liDeal">
+                                    <a data-toggle="tab" role="tab" id="tab2" data-value="Deal" onclick="javascript: panelVisible = true; tabchange('Deal');">Deal</a>
+                                </li>
+                                <li id="liContent">
+                                    <a data-toggle="tab" role="tab" id="tab3" data-value="Content" onclick="javascript: panelVisible = true; tabchange('Content');">Content</a>
+                                </li>
+                                <li id="liRights">
+                                    <a data-toggle="tab" role="tab" id="tab4" data-value="Rights" onclick="javascript: panelVisible = true; tabchange('Rights');">Rights</a>
+                                </li>
+                                <li id="liLicensor">
+                                    <a data-toggle="tab" role="tab" id="tab5" data-value="Licensor" onclick="javascript: panelVisible = true; tabchange('License');">Licensor</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="paging_area clearfix">
+                                    <span class="pull-left">@objMessageKey.TotalRecords: <label type="label" id="lblTotalRecords"></label></span>
+                                    <span class="pull-left" id="lblRecordCount"></span>
+                                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="" />
+                                    <div id="Pagination" class="pagination">
+                                    </div>
+                                    <span class="pull-right">
+                                        @objMessageKey.PageSize:
+                                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                                               onchange="txtPageSize_OnChange()" onfocus="checkCurrentAction()" onblur="setDefaultPaging('txtPageSize')">
+                                    </span>
+                                </div>
+                                <div class="scale_table_block">
+                                    <input type="hidden" id="hdnGenresCode" value="0" />
+                                    <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                                    <div id="divtablerecords">
+                                    </div>
+                                </div>
+                                <input type="button" class="btn btn-primary" id="mapbtn" value="Map" style="display:none" onclick="handlemap()">
+                            </div>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+               
+        </div>
+    </section>
+   
+</div>

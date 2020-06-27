@@ -1,0 +1,565 @@
+﻿@*@using UTOFrameWork.FrameworkClasses*@
+@model RightsU_Entities.Upload_Files
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var IsCall = 'Y', Command_Name = "";
+    var URL_BindSAP_WBS_ExportList = '@Url.Action("BindSAP_WBS_ExportList", "SAP_WBS_Export")';
+    var URL_SearchSAP_WBS_Export = '@Url.Action("SearchSAP_WBS", "SAP_WBS_Export")';
+    var URL_BindPartialPages = '@Url.Action("BindSAP_WBS_ExportList", "SAP_WBS_Export")';
+
+    var URL_SearchSAP_WBS_ExportDetails = '@Url.Action("SearchSAP_WBSDetails", "SAP_WBS_Export")';
+
+
+    //----------------------------------------------------------------------------------------
+
+    var URL_SearchSAP_WBS_Export_Details = '@Url.Action("SearchSAP_WBS_Details", "SAP_WBS_Export")';
+    var URL_BindSAP_WBS_ExportList_Details = '@Url.Action("BindSAP_WBS_ExportList_Details", "SAP_WBS_Export")';
+    //----------------------------------------------------------------------------------------
+    $(document).ready(function () {
+        debugger;
+        addNumeric();
+        SearchSAP_WBS_Export("");
+        //$('#searchCommon,#txtfrom,#txtto').keypress(function (e) {
+        //    if (e.keyCode == 13) {
+        //        btnSearch_OnClick()
+        //        return false;
+        //    }
+        //});
+
+        $('.common').keypress(function (e) {
+            debugger;
+            if (e.keyCode == 13) {
+                btnSearch_OnClick();
+                return false;
+            }
+        });
+
+        //$('#searchCommon1').keypress(function (e) {
+        //    if (e.keyCode == 13) {
+        //        btnSearch_OnClick_Details();
+        //        return false;
+        //    }
+        //});
+
+       
+
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y') {   
+            SearchSAP_WBS_Export("");
+           // BindSAP_WBS_ExportList(0);
+        }
+        else
+            IsCall = 'Y';
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        BindSAP_WBS_ExportList(0)
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var searchText = $.trim($('#searchCommon').val());
+        var txtfrom = $.trim($('#txtfrom').val());
+        var txtto = $.trim($('#txtto').val());
+
+        $("#hdn_SearchCommon").val(searchText);
+        $("#hdn_txtFrom").val(txtfrom);
+        $("#hdn_txtTo").val(txtto);
+
+        if (txtfrom == "" && txtto == "") {
+            if (searchText == '') {
+                $('#searchCommon,#txtfrom,#txtto').val('');
+                $('#searchCommon,#txtfrom,#txtto').attr('required', true)
+                return false;
+            }
+        }
+        SearchSAP_WBS_Export(searchText);
+    }
+
+
+
+    function btnShowAll_OnClick() {
+        if (!ValidatePageSize())
+            return false;
+        $('#hdn_SearchCommon,#hdn_txtFrom,#hdn_txtTo').val('');
+        $('#hdnPageNo').val(1);
+        $('#searchCommon,#txtfrom,#txtto').attr('required', false)
+        $('#searchCommon,#txtfrom,#txtto').val('');
+        SearchSAP_WBS_Export("");
+    }
+    function BindSAP_WBS_ExportList(sapWbsCode, commandName) {
+        debugger;
+
+        $('#grd1').show();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindSAP_WBS_ExportList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                Language_Code: sapWbsCode,
+                commandName: commandName
+
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divSAP_WBS_Export_ListDetails').empty();
+                    $('#divSAP_WBS_Export_List').empty();
+                    $('#divSAP_WBS_Export_List').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+
+    function SearchSAP_WBS_Export(searchText) {
+        debugger;
+        $("#searchCommon").val($("#hdn_SearchCommon").val());
+        $("#txtto").val($("#hdn_txtTo").val());
+        $("#txtfrom").val($("#hdn_txtFrom").val());
+
+        var pageNo = $('#hdnPageNo').val();
+        //$("#txtfrom").val(txtfrom);
+        //$("#txtto").val(txtto);
+
+        if ($("#hdn_SearchCommon").val() != "")
+            searchText = $("#hdn_SearchCommon").val();
+
+        if ($("#hdn_txtFrom").val() != "")
+            txtfrom = $("#hdn_txtFrom").val();
+
+        if ($("#txtto").val() != "")
+            txtto = $("#txtto").val();
+
+        debugger;
+        $("#searchCommon").val(searchText);
+        var txtfrom = $("#txtfrom").val();
+        var txtto = $("#txtto").val();
+        // $("#txtto").val(txtto);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchSAP_WBS_Export,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                txtfrom: txtfrom,
+                txtto: txtto,
+                pageNo:pageNo
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindSAP_WBS_ExportList(0);
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindPartialView(key, ChannelCode) {
+        debugger
+        //if (key == "ADD" || key == "EDIT") {
+        //    Search = $('#searchCommon').val();
+        //    $('#hdnSearch').val($('#searchCommon').val());
+
+        //}
+        $('#grd1').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                commandName: key,
+                Language_Code: ChannelCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    $('#divSAP_WBS_Export_List').empty();
+                    $('#divSAP_WBS_Export_ListDetails').empty();
+                    $('#divSAP_WBS_Export_ListDetails').html(result);
+
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    //===================Details Partial View============================================================
+
+
+    function BindSAP_WBS_ExportList_Details(sapWbsCode, commandName) {
+        debugger;
+
+        $('#grd1').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindSAP_WBS_ExportList_Details,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                Language_Code: sapWbsCode,
+                commandName: commandName
+
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    // $('#divSAP_WBS_Export_ListDetails').empty();
+                    $('#divSAP_WBS_Export_List').empty();
+                    $('#divSAP_WBS_Export_ListDetails').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function btnSearch_OnClick_Details() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var searchText = $.trim($('#searchCommon1').val());
+        var txtfrom = $.trim($('#txtfrom').val());
+        var txtto = $.trim($('#txtto').val());
+
+        if (txtfrom == "" && txtto == "") {
+            if (searchText == '') {
+                $('#searchCommon1,#txtfrom,#txtto').val('');
+                $('#searchCommon1,#txtfrom,#txtto').attr('required', true)
+                return false;
+            }
+        }
+        SearchSAP_WBS_Export_Details(searchText);
+    }
+
+
+
+    function SearchSAP_WBS_Export_Details(searchText) {
+        debugger;
+        $("#searchCommon1").val(searchText);
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchSAP_WBS_Export_Details,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+
+
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindSAP_WBS_ExportList_Details();
+                    //  BindPartialView_Detail('VIEW')
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+
+    function BindPartialView_Detail() {
+        debugger
+        //if (key == "ADD" || key == "EDIT") {
+        //    Search = $('#searchCommon').val();
+        //    $('#hdnSearch').val($('#searchCommon').val());
+
+        //}
+        $('#grd1').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+
+            url: URL_BindPartialPages_Detail,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                commandName: key,
+                Language_Code: ChannelCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    $('#divSAP_WBS_Export_List').empty();
+                    $('#divSAP_WBS_Export_ListDetails').empty();
+                    $('#divSAP_WBS_Export_ListDetails').html(result);
+
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function btnShowAll_OnClick_Details() {
+        if (!ValidatePageSize())
+            return false;
+
+        $('#searchCommon1,#txtfrom,#txtto').attr('required', false)
+        $('#searchCommon1,#txtfrom,#txtto').val('');
+        SearchSAP_WBS_Export_Details("");
+    }
+
+    //===================================================================================================
+</script>
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+        background-color: #eee;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col" id="grd1" style="display:none">
+            <div class="">
+
+                @if (Convert.ToInt32(ViewBag.Code) == 125)
+                {
+                    <div class="title_block dotted_border clearfix">
+                        <h2 class="pull-left">
+                            BV WBS Export
+                            <span></span>
+                        </h2>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="title_block dotted_border clearfix">
+                        <h2 class="pull-left">
+                            SAP WBS Export
+                            <span></span>
+                        </h2>
+
+                    </div>
+                }
+
+                <div class="search_area">
+                    <table class="table">
+                        <tr>
+
+                            <td style="width:10%; vertical-align:middle;text-align:center;">
+                                File Name
+                            </td>
+
+                            <td style="width:30%; vertical-align:middle">
+
+                                <input type="text" name="srchCommon" id="searchCommon" class="search common" style="width:85%" placeholder="File Name" maxlength="100" />
+                            </td>
+                            <td style="width:10%; vertical-align:middle;text-align:center;">
+                                Upload Date:
+                            </td>
+                            <td style="width:10%; vertical-align:middle">
+                                <input type="text" class="isDatepicker shortDate common" value="@ViewBag.DealFrmDt_Search" id="txtfrom" placeholder="From" title="From" />
+                            </td>
+                            <td style="width:3%; vertical-align:middle;text-align:center;">
+                                To
+                            </td>
+
+                            <td style="width:10%; vertical-align:middle">
+                                <input type="text" class="isDatepicker shortDate common" value="@ViewBag.DealToDt_Search" id="txtto" placeholder="To" title="To" />
+                            </td>
+
+                            <td>
+                                &nbsp;&nbsp;
+                                <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">&nbsp;
+                                <input type="button" id="btnShowAll" class="button" value="Show All" onclick="btnShowAll_OnClick()">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                                   onchange="txtPageSize_OnChange()">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAdditionalExpenseCode" value="0" />
+                            <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                            <div id="divSAP_WBS_Export_List" class="deal clearfix">
+                            </div>
+                            @*<div id="divSAP_WBS_Export_ListDetails" class="deal clearfix">
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="divSAP_WBS_Export_ListDetails" class="deal clearfix">
+        </div>
+        <input type="hidden" value="" id="hdn_SearchCommon" />
+        <input type="hidden" value="" id="hdn_txtFrom" />
+        <input type="hidden" value="" id="hdn_txtTo" />
+    </section>
+</div>
+

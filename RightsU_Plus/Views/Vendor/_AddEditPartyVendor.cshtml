@@ -1,0 +1,936 @@
+﻿@model List<RightsU_Entities.Vendor>
+@{
+    //  Layout = "~/Views/Shared/_Layout.cshtml";
+    RightsU_Entities.Vendor objVendor = new RightsU_Entities.Vendor();
+    List<RightsU_Entities.Role> objRole = new List<RightsU_Entities.Role>();
+    List<int?> lstAType = new List<int?>();
+    List<int?> lstSType = new List<int?>();
+    if (ViewData["MyVendor"] != "")
+    {
+        objVendor = (RightsU_Entities.Vendor)ViewData["MyVendor"];
+    }
+    if (ViewData["Role"] != "" && ViewData["Role"] != null)
+    {
+        objRole = (List<RightsU_Entities.Role>)ViewData["Role"];
+    }
+    if (ViewData["ListSType"] != "")
+    {
+        lstSType = (List<int?>)ViewData["ListSType"];
+    }
+    if (ViewData["ListAType"] != "")
+    {
+        lstAType = (List<int?>)ViewData["ListAType"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var IsCall = 'Y', Command_Name = "" , Mode_G = '@ViewBag.Mode';
+    var URL_BindVendorContact = '@Url.Action("BindVendorContact", "Vendor")';
+    var URL_DeleteVendorContact = '@Url.Action("DeleteVendorContact", "Vendor")';
+    var URL_AddEditVendorContact = '@Url.Action("AddEditVendorContact", "Vendor")';
+    var URL_UpdateVendorContact = '@Url.Action("UpdateVendorContact", "Vendor")';
+    var URL_SaveVendorContact = '@Url.Action("SaveVendorContact", "Vendor")';
+    var URL_SaveVendor = '@Url.Action("SaveVendor", "Vendor")';
+    var URL_Cancel_Vendor = '@Url.Action("CancelAddEditVendor", "Vendor")';
+    var URL_AddPartyMasterName = '@Url.Action("Save_Party_Master", "Vendor")';
+
+    $(document).ready(function () {
+        initializeChosen();
+        showLoading();
+        BindVendorContact();
+        $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val());
+
+        $("#Country,#Theatrical").chosen();
+        var Status = '@ViewData["Status"]';
+        if (Status == 'A') {
+            $("#btnSave").val("@objMessageKey.Save");
+        }
+        else if (Status == 'U') {
+            $("#btnSave").val("@objMessageKey.Save");
+        }
+        $(".numeric").keypress(function () {
+            CheckNumeric(event);
+        });
+        $('.alphaNumeric').keypress(function (e) {
+            debugger;
+            var regex = new RegExp("^[a-zA-Z0-9 ]+$");
+            var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+            if (regex.test(str)) {
+                return true;
+            }
+            e.preventDefault();
+            return false;
+        });
+        hideLoading();
+    });
+    function AddPartyMaster() {
+        $("#Program_Name").val('');
+        $("#popAddProgram").modal();
+    }
+    function validatePartyMaster() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Party_Master_Name = $.trim($("#Party_Master_Name").val());
+        if (Party_Master_Name == "") {
+            $("#Party_Master_Name").val('');
+            $("#Party_Master_Name").attr('required', true);
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_AddPartyMasterName,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Party_Master_Name: Party_Master_Name
+            }),
+            success: function (result) {
+
+                if (result.Status == "S") {
+                    showAlert("S", result.Message);
+                    $("#popAddProgram").modal('hide');
+                    $('#Party_Group_Code').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                    $('#Party_Group_Code').trigger("chosen:updated");
+
+                }
+                else {
+                    showAlert("E", result.Message);
+                    ("#popAddProgram").modal();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+    function checkCurrentAction() {
+
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("I", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("I", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+    function BindVendorContact() {
+        debugger;
+        var VendorCode = $('#hdnVendorCode').val();
+        //var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindVendorContact,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                VendorCode: VendorCode,
+                Mode : Mode_G
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divVendorContact').empty();
+                    $('#divVendorContact').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function DeleteVendorContact(dummyGuid, confirmed) {
+        debugger;
+        if (checkCurrentAction()) {
+            if (confirmed) {
+                Command_Name = "";
+                dummyGuid_G = "";
+                $.ajax({
+                    type: "POST",
+                    url: URL_DeleteVendorContact,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        dummyGuid: dummyGuid,
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.Status == "S") {
+                                $('#hdnAction').val("");
+                                BindVendorContact();
+                            }
+                            else {
+                                showAlert("E", result.Message, "OK");
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+                })
+            }
+            else {
+                Command_Name = "DELETE_EXCHANGE_RATE";
+                dummyGuid_G = dummyGuid;
+                showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL")
+            }
+        }
+    }
+    function EditVendorContact(dummyGuid, commandName) {
+        debugger;
+        if (checkCurrentAction()) {
+            $('#hdnAction').val(commandName)
+            $.ajax({
+                type: "POST",
+                url: URL_EditVendorContact,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dummyGuid: dummyGuid
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            BindVendorContact();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function AddVendorContact(commandName) {
+        debugger;
+        if (checkCurrentAction()) {
+            $('#hdnAction').val(commandName)
+            $.ajax({
+                type: "POST",
+                url: URL_AddVendorContact,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: '',
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            BindVendorContact();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function AddEditVendorContact(dummyGuid, commandName) {
+        if (checkCurrentAction()) {
+            $('#hdnAction').val(commandName)
+            $.ajax({
+                type: "POST",
+                url: URL_AddEditVendorContact,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dummyGuid: dummyGuid,
+                    commandName: commandName
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            BindVendorContact();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function UpdateVendorContact(dummyGuid) {
+        debugger;
+        if (!Validate_Save_VendorContact()) {
+            return false;
+        }
+        var DummyGuid = dummyGuid;
+        var Department = $("#Department_Edit").val();
+        var Email = $("#Email_Edit").val();
+        var Phone_No = $("#Phone_No_Edit").val();
+        var Contact_Name = $("#Contact_Name_Edit").val();
+        var formData = new FormData();
+        formData.append("DummyGuid", DummyGuid);
+        formData.append("Department", Department);
+        formData.append("Email", Email);
+        formData.append("Phone_No", Phone_No);
+        formData.append("Contact_Name", Contact_Name);
+        $.ajax({
+            type: "POST",
+            url: URL_UpdateVendorContact,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindVendorContact();
+                    }
+                    else {
+                        showAlert("E", result.Message, "OK");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function SaveVendorContact() {
+        debugger;
+        if (!Validate_Save_VendorContact()) {
+            return false;
+        }
+
+        var Department = $("#Department").val();
+        var Email = $("#Email").val();
+        var Phone_No = $("#Phone_No").val();
+        var Contact_Name = $("#Contact_Name").val();
+        var formData = new FormData();
+        formData.append("Department", Department);
+        formData.append("Email", Email);
+        formData.append("Phone_No", Phone_No);
+        formData.append("Contact_Name", Contact_Name);
+        $.ajax({
+            type: "POST",
+            url: URL_SaveVendorContact,
+            method: "POST",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("")
+                        BindVendorContact();
+                    }
+                    else {
+                        showAlert("E", result.Message, "OK");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function CancelVendorContact() {
+        $('#hdnAction').val("")
+        BindVendorContact();
+    }
+    function SaveVendor() {
+        debugger;
+        if (checkCurrentAction()) {
+
+            if (!Validate_Save()) {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    function Validate_Save() {
+        debugger;
+        var returnVal = true;
+        $("#Party_Master_Name").attr('required', false);
+        if ($.trim($('#Vendor_Name').val()) == "") {
+            $('#Vendor_Name').val('')
+            $('#Vendor_Name').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Vendor_Addr').val()) == "") {
+            $('#Vendor_Addr').val('')
+            $('#Vendor_Addr').attr('required', true)
+            returnVal = false;
+        }
+        //if ($.trim($('#Vendor_PhNo').val()) == "") {
+        //    $('#Vendor_PhNo').val('')
+        //    $('#Vendor_PhNo').attr('required', true)
+        //    returnVal = false;
+        //}
+        if ($('#ddlRoleList').val() == null) {
+            $('#divddlRoleList').addClass("required");
+            returnVal = false;
+        }
+        if (document.getElementById("ProductionHouseUser").checked)
+        {
+            if ($.trim($('#txtShortCode').val()) == "" && '@ViewBag.AllowShortCode' == "Y") {
+                $('#txtShortCode').val('');
+                $('#txtShortCode').attr('required', true);
+                returnVal = false;
+            }
+        }
+
+        return returnVal;
+    }
+    function Validate_Save_VendorContact() {
+        var returnVal = true;
+        var pattern = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
+        //if ($.trim($('#Department_Edit,#Department').val()) == "") {
+        //    $('#Department_Edit,#Department').val('')
+        //    $('#Department_Edit,#Department').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if ($.trim($('#Email_Edit,#Email').val()) == "") {
+        //    $('#Email_Edit,#Email').val('')
+        //    $('#Email_Edit,#Email').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "") {
+        //    $('#Phone_No_Edit,#Phone_No').val('')
+        //    $('#Phone_No_Edit,#Phone_No').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if ($.trim($('#Contact_Name_Edit,#Contact_Name').val()) == "") {
+        //    $('#Contact_Name_Edit,#Contact_Name').val('')
+        //    $('#Contact_Name_Edit,#Contact_Name').attr('required', true)
+        //    returnVal = false;
+        //}
+
+        if (($.trim($('#Email_Edit,#Email').val()) == "") && ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "")) {
+            $('#Email_Edit,#Email').val('')
+            $('#Email_Edit,#Email').attr('required', true)
+            $('#Phone_No_Edit,#Phone_No').val('')
+            $('#Phone_No_Edit,#Phone_No').attr('required', true)
+            returnVal = false;
+        }
+
+        if ($.trim($('.email').val()) != "") {
+            debugger;
+            if (!pattern.test($('.email').val())) {
+                debugger;
+                $('#Email_Edit,#Email').addClass("required");
+                //  $('#Email_Edit,#Email').attr('required', true)
+                // showAlert('e', 'Please enter valid email id and it should be unique .');
+                return false;
+            }
+        }
+        return returnVal;
+    }
+    function CheckNumeric(e) {
+        if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) { event.returnValue = false; return false; } }
+    }
+    function CancelSaveDeal() {
+        Command_Name = "CANCEL_SAVE_DEAL";
+        showAlert("I", '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead?', "OKCANCEL");
+    }
+    function handleOk() {
+        if (Command_Name == "DELETE_EXCHANGE_RATE") {
+            DeleteVendorContact(dummyGuid_G, true);
+        }
+        if (Command_Name == "CANCEL_SAVE_DEAL" || Command_Name == "SAVE_UPDATE_VENDOR") {
+
+            var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+            if (recordLockingCode > 0)
+                ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+
+            BindPartialView("LIST", 0)
+            //window.location.href = URL_Cancel_Vendor;
+        }
+    }
+    function cancelView() {
+        BindPartialView("LIST", 0)
+    }
+    function handleCancel() {
+        Command_Name = "";
+        dummyGuid_G = "";
+    }
+    function SaveSuccess(result) {
+        debugger;
+        if (result.Status == "S") {
+            showAlert("S", result.Message);
+            $('#hdnRecodLockingCode').val(0)
+            $('#hdnRecodLockingCode_temp').val(0)
+            BindPartialView("LIST", 0)
+
+        }
+        else {
+            Command_Name = "";
+            showAlert("E", result.Message, "OK");
+        }
+    }
+    function OnChecked() {
+        debugger;
+        if (document.getElementById("ProductionHouseUser").checked)
+        {
+            $('#txtShortCode').prop('disabled', false);
+        }
+        else {
+            $('#txtShortCode').prop('disabled', true);
+        }
+
+    }
+</script>
+
+<style>
+    #ddlPartyCategory_chosen {
+        width: 100% !important;
+    }
+
+    .SumoSelect, #divddlRoleList {
+        width: 100% !important;
+    }
+
+    .sumo_Country {
+        width: 95% !important;
+    }
+
+    #divddlRoleList > div {
+        width: 100% !important;
+    }
+
+    #Party_Group_Code_chosen {
+        width: 92% !important;
+    }
+</style>
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        @if (ViewData["Status"] == "A")
+        {
+            <span>  @objMessageKey.AddPartyDetails </span>
+        }
+        else if (ViewData["Status"] == "U")
+        {
+            <span>  @objMessageKey.EditPartyDetails</span>
+        }
+        else
+        {
+            <span> @objMessageKey.ViewPartyDetails </span>
+        }
+        <span> </span>
+    </h2>
+</div>
+@using (Ajax.BeginForm("SaveVendor", "Vendor", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    <table class="table_brif table">
+        <tbody>
+            <tr>
+                <td class="intro">
+                    <table class="four_column table">
+                        <tr>
+                            <td style="width:3%;">@objMessageKey.PartyName</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.Vendor_Name</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_Name" name="Vendor_Name" value="@objVendor.Vendor_Name" maxlength="100" />
+                                }
+                                <input type="hidden" id="hdnVendorCode" name="VendorCode" value="@objVendor.Vendor_Code" />
+                                <input type="hidden" id="hdnTypeCode" name="Type" value="@objVendor.Vendor_Code" />
+                                <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            </td>
+                            <td>@objMessageKey.PartyCategory</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+
+                                    <span>
+                                        @if (objVendor.Party_Category != null)
+                                        {
+                                            @objVendor.Party_Category.Party_Category_Name
+                                        }
+                                    </span>
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("ddlPartyCategory", ViewBag.PartyCategory as SelectList, "Select", new { @id = "ddlPartyCategory", @class = "form_input chosen-select" })
+
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @objMessageKey.Address
+                            </td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.Address</span>
+                                }
+                                else
+                                {
+                                    <textarea style="width: 95%;" name="Vendor_Addr" id="Vendor_Addr" maxlength="250">@objVendor.Address</textarea>
+                                }
+                            </td>
+                            <td>
+                                @objMessageKey.PhoneNo.<br /><hr style="visibility:hidden" /> @objMessageKey.FaxNo.
+
+                            </td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.Phone_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_PhNo" name="Vendor_PhNo" class="numeric" maxlength="20" value="@objVendor.Phone_No" style="width:100%;" />
+                                }
+                                <br />
+                                <hr style="visibility:hidden" />
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.Fax_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_FaxNo" name="Vendor_FaxNo" class="numeric" maxlength="20" value="@objVendor.Fax_No" style="width: 100%;" />
+                                }
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>@objMessageKey.GSTNo</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.GST_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_GSTNo" name="Vendor_GSTNo" class="numeric" maxlength="50" value="@objVendor.GST_No" />
+                                }
+                            </td>
+                            <td>@objMessageKey.STNo.</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.ST_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_STNo" name="Vendor_STNo" class="numeric" maxlength="20" value="@objVendor.ST_No" style="width: 100%;" />
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@objMessageKey.VATNo.</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.VAT_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_VATNo" name="Vendor_VATNo" class="numeric" maxlength="20" value="@objVendor.VAT_No" />
+                                }
+                            </td>
+                            <td>@objMessageKey.TINNo.</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.TIN_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_TINNo" name="Vendor_TINNo" class="alphaNumeric" maxlength="20" value="@objVendor.TIN_No" style="width: 100%;" />
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@objMessageKey.PANNO.</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.PAN_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_PANNo" name="Vendor_PANNo" class="alphaNumeric" maxlength="20" value="@objVendor.PAN_No" />
+                                }
+                            </td>
+                            <td>
+                                @objMessageKey.CSTNo.
+                            </td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.CST_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_CSTNo" name="Vendor_CSTNo" class="alphaNumeric" maxlength="20" value="@objVendor.CST_No" style="width:100%;" />
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @objMessageKey.CINNo.
+                            </td>
+
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <span>@objVendor.CIN_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Vendor_CINno" name="Vendor_CINno" class="alphaNumeric" maxlength="20" value="@objVendor.CIN_No" style="width: 95%;" />
+                                }
+
+                            </td>
+                            <td>
+                                @objMessageKey.Type
+                            </td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    string Type = string.Join(",", @objVendor.Vendor_Role.Select(c => c.Role.Role_Name).ToList());
+                                    <span>@Type</span>
+                                }
+                                else
+                                {
+                                    <div id="divddlRoleList">
+                                        @Html.DropDownList("RoleList", TempData["RoleList"] as IEnumerable<SelectListItem>, new { @id = "ddlRoleList", multiple = "multiple" })
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@objMessageKey.Country</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    string country = string.Join(",", @objVendor.Vendor_Country.Where(w => w.Is_Theatrical == "N").Select(c => c.Country.Country_Name).ToList());
+                                    <span>@country</span>
+                                }
+                                else
+                                {
+                                    @Html.ListBox("Country", TempData["Country"] as IEnumerable<SelectListItem>, new { @id = "ddlCountry", multiple = "multiple" })
+                                }
+                            </td>
+                            <td>@objMessageKey.Theatrical</td>
+                            <td>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    string theritical = string.Join(",", @objVendor.Vendor_Country.Where(w => w.Is_Theatrical == "Y").Select(c => c.Country.Country_Name).ToList());
+                                    <span>@theritical</span>
+                                }
+                                else
+                                {
+                                    @Html.ListBox("Theatrical", TempData["Theatrical"] as IEnumerable<SelectListItem>, new { @id = "ddlTheatrical", multiple = "multiple" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            @if (ViewBag.isProdHouse == true && ViewBag.AllowShortCode == "Y")
+                            {
+
+                                <td>
+                                    @Html.CheckBox("ProductionHouseUser", @objVendor.Short_Code != null ? true : false, new { @id = "ProductionHouseUser", @onclick = "OnChecked()" })@objMessageKey.ProductionHouseUser
+
+                                </td>
+
+                                if (@objVendor.Vendor_Code > 0)
+                                {
+                                    if (@objVendor.Short_Code != null)
+                                    {
+                                        <td>
+                                            @Html.TextBox("Short_Code", @objVendor.Short_Code, new { @id = "txtShortCode", @class = "alphaNumeric", @maxlength = "4" })
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @Html.TextBox("Short_Code", @objVendor.Short_Code, new { @id = "txtShortCode", @class = "alphaNumeric", @maxlength = "4", @disabled = true })
+                                        </td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td>
+                                        @Html.TextBox("Short_Code", @objVendor.Short_Code, new { @id = "txtShortCode", @class = "alphaNumeric", @maxlength = "4", @disabled = true })
+                                    </td>
+                                }
+                            }
+                            @if (ViewBag.IsAllowPartyMaster == "Y")
+                            {
+                                if (ViewBag.Mode == "V")
+                                {
+                                    <td>Party Group</td>
+                                    <td>
+                                        @if (objVendor.Party_Group_Code != null)
+                                        {
+                                            @objVendor.Party_Group.Party_Group_Name
+                                        }
+                                        else
+                                        {
+                                            <span>NA</span>
+                                        }
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>Party Group</td>
+                                    <td>
+                                        @Html.DropDownList("Party_Group_Code", (List<SelectListItem>)ViewBag.PartyMasterList, new { @id = "Party_Group_Code", @class = "form_input chosen-select" })
+                                        @*@Html.DropDownList("Party_Group_Code", ViewBag.PartyMasterList as SelectList, new { @class = "form_input chosen-select" })*@
+                                        <a class="red_icon glyphicon glyphicon-plus" title="Add Party Group" onclick="AddPartyMaster();" />
+                                    </td>
+                                }
+
+                            }
+
+                        </tr>
+
+
+
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="search_area" style="background-color:#eee">
+        <table class="table">
+            <tr>
+                <td style="width:15%; line-height:26px">
+                    <h4 class="pull-left">@objMessageKey.PartyContacts</h4>
+                </td>
+
+                <td class="right_nav pull-right" style="margin-right:10px">
+                    @if (ViewBag.Mode != "V")
+                    {
+                        <input type="button" value="@objMessageKey.Add" onclick="AddEditVendorContact('0','ADD')" id="btnAdd" class="btn btn-primary">
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block">
+            <input type="hidden" id="hdnAction" value="" />
+            <input type="hidden" id="hdnVendorContactCode" value="0" />
+            <div id="divVendorContact" class="deal clearfix">
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+
+            @if (ViewBag.Mode != "V")
+            {
+                <li>
+                    <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SaveVendor();" />
+                </li>
+                <li>
+                    <input type="button" id="btnCancel" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="CancelSaveDeal()" />
+                </li>
+            }
+            else
+            {
+                <li>
+                    <input type="button" id="btnCancel" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="cancelView()" />
+                </li>
+            }
+
+        </ul>
+    </div>
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddProgram" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="program_popup">
+                    <div>
+                        <div class="form_fields" dir="@objMessageKey.LayoutDirection">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>Add Party Master</h2>
+                            </div>
+                            <div class="modal_block">
+                                <ul class="form_fields_wrapper add_program_popup">
+                                    <li>
+                                        <label><b>Party Master</b></label>
+                                        <input class="form_input" id="Party_Master_Name" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);" />
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" onclick="return validatePartyMaster()">@objMessageKey.Save</a>
+                                        </li>
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

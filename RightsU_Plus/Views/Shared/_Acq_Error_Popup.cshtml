@@ -1,0 +1,186 @@
+﻿@model IEnumerable<RightsU_Entities.Acq_Deal_Rights_Error_Details>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript">
+    var IsCall = 'Y';
+    var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+    $(document).ready(function () {
+        debugger
+        $('#lbTitle_ErrorPopup').SumoSelect();
+        $('#txtPageSizeErrPop').val('@ViewBag.PageSize');
+        $('#txtPageSizeErrPop').numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 3,
+            maxDecimalPlaces: 0
+        });
+        if ($("#lbTitle_ErrorPopup").val() != null)
+            $("#hdnSearchTitles").val($("#lbTitle_ErrorPopup").val().join(','));
+        if ($('#PaginationErrPop'))
+            SetPaging();
+    });
+
+    function SetPaging() {
+    debugger
+        var PageNo, recordCnt;
+        IsCall = 'N';
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = '@ViewBag.PageSize';
+        opt["num_display_entries"] = 5;
+        opt["num"] = '@ViewBag.PageSize';
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#PaginationErrPop").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+    debugger
+        $("#hdnPageIndex").val(page_index);
+
+        if (IsCall == 'Y')
+            Show_Error_Popup($("#hdnSearchTitles").val(), $('#txtPageSizeErrPop').val(), page_index, $('#hdnAcqDealCode').val());
+        else
+            IsCall = 'Y';
+    }
+
+    function SearchResult() {
+        debugger;
+        $("#hdnSearchTitles").val('');
+
+        if ($("#lbTitle_ErrorPopup").val() != null)
+            $("#hdnSearchTitles").val($("#lbTitle_ErrorPopup").val().join(','));
+
+        Show_Error_Popup($("#hdnSearchTitles").val(), $('#txtPageSizeErrPop').val(), 0, $('#hdnAcqDealCode').val());
+    }
+
+    function applyPaging() {
+        debugger;
+        if ($('#txtPageSizeErrPop').val() == '' || parseInt($('#txtPageSizeErrPop').val()) == 0) {
+            //showAlert('E', 'Please enter valid page size');
+            $('#txtPageSizeErrPop').addClass('required');
+            return false;
+        }
+        else
+            Show_Error_Popup($("#hdnSearchTitles").val(), $('#txtPageSizeErrPop').val(), 0, $('#hdnAcqDealCode').val());
+    }
+    function pageBinding() {
+        debugger;
+        Show_Error_Popup($("#hdnSearchTitles").val(), $('#txtPageSizeErrPop').val(), 0, $('#hdnAcqDealCode').val());
+    }
+
+    function OnErrorTypeChanged() {
+        debugger;
+        $("#hdnSearchTitles").val('');
+        Show_Error_Popup($("#hdnSearchTitles").val(), $('#txtPageSizeErrPop').val(), 0, $('#hdnAcqDealCode').val());
+    }
+</script>
+<style>
+    /*#lbTitle_ErrorPopup_chosen {
+        width:84% !important;
+    }*/
+    .sumo_lbTitle_ErrorPopup {
+        width: 694px !important;
+    }
+
+    .modal-open {
+        overflow: scroll !important;
+        overflow-x: hidden !important;
+        padding-right: 1px !important;
+    }
+    .pagination .current.prev, .pagination .current.next {
+        z-index: 1 !important;
+    }
+</style>
+
+@Html.DropDownList("ddlErrorType", ViewBag.ErrorRecord as MultiSelectList, new { @class = "form_input chosen-select", @onchange = "OnErrorTypeChanged()" })
+<br />
+<br />
+<span>@objMessageKey.Title: </span>
+@Html.Hidden("hdnSearchTitles")
+@Html.Hidden("hdnPageIndex")
+@Html.ListBox("lbTitle_ErrorPopup", ViewBag.SearchTitles as MultiSelectList, new { @multiple = "multiple" })
+<input type="button" id="btnSearch" class="button" style="margin-top: -10px;" value="@objMessageKey.Search" onclick="return SearchResult();" />
+<br />
+<br />
+<div class="paging_area clearfix">
+    <span class="pull-left">@objMessageKey.TotalRecords: @ViewBag.RecordCount</span>
+    <div id="PaginationErrPop" class="pagination"></div>
+    <span class="pull-right">@objMessageKey.PageSize: @Html.TextBox("txtPageSizeErrPop", 5, new { @onchange = "applyPaging()", @style = "width:35px", @onblur= "setDefaultPaging('txtPageSizeErrPop')" })</span>
+</div>
+
+<div>
+    <table class="table table-bordered table-hover" style="display: table;" id="tblError">
+        <tr>
+            <th class="movie">Title Name</th>
+            <th>Platform</th>
+            <th>Agreement No</th>
+            <th>Period</th>
+            <th>Region</th>
+            <th>Title Language</th>
+            <th>Subtitling</th>
+            <th>Dubbing</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            if (item.Is_Updated == "N")
+            {
+                <tr>
+                    <td width="15%"><div class="expandable">@item.Title_Name</div></td>
+                    <td width="15%">
+                        <div class="expandable">
+                            @item.Platform_Name
+                        </div>
+                    </td>
+                    <td width="12%">
+                        <div class="expandable">@item.Agreement_No</div>
+                    </td>
+                    <td width="8%">
+                        @*<span>@item.Right_Start_Date</span>*@
+                        @if (item.Right_Start_Date != null)
+                        {
+                            @Html.Label(item.Right_Start_Date.Value.ToString("dd MMM yyyy"))
+                        }
+                        @if (item.Right_End_Date != null)
+                        {
+                            @: To
+                            @*@item.Right_End_Date*@
+                            @Html.Label(item.Right_End_Date.Value.ToString("dd MMM yyyy"))
+                        }
+                    </td>
+                    <td width="15%">
+                        <div class="expandable">@item.Country_Name.TrimEnd(',')</div>
+                    </td>
+                    <td width="5%">@item.Is_Title_Language_Right</td>
+                    <td width="15%">
+                        <div class="expandable">@item.Subtitling_Language.TrimEnd(',')</div>
+                    </td>
+                    <td width="15%">
+                        <div class="expandable">@item.Dubbing_Language.TrimEnd(',')</div>
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+</div>

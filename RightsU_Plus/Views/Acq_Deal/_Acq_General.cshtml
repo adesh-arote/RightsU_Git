@@ -1,0 +1,723 @@
+﻿@model RightsU_Entities.Acq_Deal
+@using UTOFrameWork.FrameworkClasses
+@using System.Configuration;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    ViewBag.Title = "Index";
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+        if (objSchema.General_PageSize == 0)
+        {
+            objSchema.General_PageSize = 10;
+        }
+
+        if (objSchema.General_PageNo == 0)
+        {
+            objSchema.General_PageNo = 1;
+        }
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    var AutoPush = Model.Is_Auto_Push == null ? "N" : Model.Is_Auto_Push;
+
+}
+
+<style>
+    table tr.deleted {
+        display: none;
+    }
+
+    .radio-inline.dealForOther {
+        width: 46%;
+    }
+
+    .chosen-choices li.search-choice.primary {
+        /* background: #ddd; */
+        color: #2b64a5;
+        font-weight: 700;
+        border: 1px solid #2b64a5;
+    }
+
+    span#subDealNote {
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .unlimitedMusic {
+        color: transparent !important;
+        border: 0px solid !important;
+        background-color: transparent !important;
+    }
+
+    .matchFrom_Sport {
+        border: 0px solid !important;
+        background-color: transparent !important;
+    }
+
+    .four_column td:nth-child(2n) {
+        width: 36% !important;
+    }
+
+    .four_column td:nth-child(2n+1) {
+        width: 14% !important;
+        font-weight: 700 !important;
+    }
+
+    .SumoSelect {
+        width: 337px !important;
+    }
+
+    #divTitle > div {
+        width: 100%;
+    }
+</style>
+
+<script>
+
+    var Deal_Type_Other = @GlobalParams.Deal_Type_Other, Deal_Type_Movie = @GlobalParams.Deal_Type_Movie,
+        Deal_Type_Content = @GlobalParams.Deal_Type_Content, Deal_Type_Event = @GlobalParams.Deal_Type_Event,
+        Deal_Type_Format_Program = @GlobalParams.Deal_Type_Format_Program, Deal_Type_Documentary_Show = @GlobalParams.Deal_Type_Documentary_Show,
+        Deal_Type_Documentary_Film = @GlobalParams.Deal_Type_Documentary_Film,
+        Deal_Type_Sports = @GlobalParams.Deal_Type_Sports, Deal_Type_Music = @GlobalParams.Deal_Type_Music,
+        Deal_Type_ContentMusic = @GlobalParams.Deal_Type_ContentMusic,
+        Deal_Type_ShortFilm = @GlobalParams.Deal_Type_ShortFlim, Deal_Type_Webseries = @GlobalParams.Deal_Type_WebSeries,
+        Deal_Type_Featurette = @GlobalParams.Deal_Type_Featurette, Deal_Type_Cineplay = @GlobalParams.Deal_Type_Cineplay,
+        Deal_Type_Drama_Play = @GlobalParams.Deal_Type_Drama_Play, Deal_Type_Tele_Film = @GlobalParams.Deal_Type_Tele_Film;
+
+    var Role_Assignment = @GlobalParams.RoleCode_Assignment, Role_License = @GlobalParams.RoleCode_License, Role_Own_Production = @GlobalParams.RoleCode_OwnProduction;
+    var Deal_Program = '@GlobalParams.Deal_Program', Deal_Music = '@GlobalParams.Deal_Music',
+        Deal_Movie = '@GlobalParams.Deal_Movie', Sub_Deal_Talent = '@GlobalParams.Sub_Deal_Talent';
+
+    var IsCall = 'Y';
+
+    var txtMovie_Closed_Date, txtClosing_Remarks;
+    var Acq_Deal_Movie_Code, Notes, Title_Type, Dummy_Guid, Row_Index, Command_Name;
+    var episode_From, episode_To, no_Of_Episodes;
+    var Redirect_URL;
+    var Movie_Closed_Date,Closing_Remarks;
+
+    var recordLockingCode = @ViewBag.Record_Locking_Code;
+    var acqDealMovie_Count = @Model.Acq_Deal_Movie.Where(x => x.EntityState != RightsU_Entities.State.Deleted).Count();
+    var isMasterDeal = '@Model.Is_Master_Deal';
+    var generalPageNo = @objSchema.General_PageNo;
+    var generalPageSize = @objSchema.General_PageSize;
+    var generalSearchTitleCodes = '@objSchema.General_Search_Title_Codes';
+
+    var URL_Refresh_Lock =  '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Cancel = '@Url.Action("Cancel", "Acq_General")';
+    var URL_BindTitleGridview = '@Url.Action("BindTitleGridview", "Acq_General")';
+    var URL_BindTopBand = '@Url.Action("BindTopBand", "Acq_General")';
+    var URL_PopulateMasterDealData = '@Url.Action("PopulateMasterDealData", "Acq_General")';
+    var URL_BindTitleLabel = '@Url.Action("BindTitleLabel", "Acq_General")';
+    var URL_BindContactDropDown = '@Url.Action("BindContactDropDown", "Acq_General")';
+    var URL_BindPrimaryContactDetail = '@Url.Action("BindPrimaryContactDetail", "Acq_General")';
+    var URL_BindTitlePopup = '@Url.Action("BindTitlePopup", "Acq_General")';
+    var URL_SearchTitle = '@Url.Action("SearchTitle", "Acq_General")';
+    var URL_SaveTitle = '@Url.Action("SaveTitle", "Acq_General")';
+    var URL_Close_Title = '@Url.Action("Close_Title", "Acq_General")';
+    var URL_SaveTitleListData = '@Url.Action("SaveTitleListData", "Acq_General")';
+    var URL_DeleteTitle = '@Url.Action("DeleteTitle", "Acq_General")';
+    var URL_Replace_Title = '@Url.Action("Replace_Title", "Acq_General")';
+    var URL_Login_Index = '@Url.Action("Index", "Login")';
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_General")';
+
+    var ShowMessage = {
+        "lblForAssignor": '@objMessageKey.Assignor',
+        "lblForLicensor": '@objMessageKey.Licensor',
+        "lblForProducerLineProducer" : '@objMessageKey.ProducerLineProducer',
+        "MsgForAddEdit": '@objMessageKey.PleasecompletetheAddEditfirst',
+        "MsgForPrimLsr": '@objMessageKey.Pleaseselectprimarylicensor',
+        "MsgForAddTitle": '@objMessageKey.Pleaseaddatleastonetitle',
+        "MsgForSelectTitle": '@objMessageKey.Pleaseselectatleastonetitle',
+        "MsgForunsavedData": '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead',
+        "NoOfAppearance": '@objMessageKey.PleaseenterNoofAppearances',
+        "MsgAppearanceComp": '@objMessageKey.NoofAppearancesmustbegreaterthanZero',
+        "NoOfSongs":'@objMessageKey.PleaseenterNoofSongs',
+        "NoOfMatches":'@objMessageKey.PleaseenterNoofMatches',
+        "NoOfEpisode":'@objMessageKey.PleaseenterEpisodeno',
+        "MsgoverlappMatches":'@objMessageKey.OverlappingNoofMatches',
+        "MsgoverlappEpisode": '@objMessageKey.OverlappingEpisodeNo',
+        "NoOfEpisodeComp":'@objMessageKey.EpisodeNocannotbelessthan',
+        "NoofMatchesComp" : '@objMessageKey.NoofMatchescannotbelessthan',
+        "MsgForEpisodeNo" : '@objMessageKey.EpisodeNocannotbegreaterthan',
+        "EpisodeFromTo": '@objMessageKey.EpisodeFromcannotbegreaterthanEpisodeTo',
+        "MatchesFromTo": '@objMessageKey.MatchesFromcannotbegreaterthanNoofMatches',
+        "NoofMatchesgreater0" :'@objMessageKey.NoofMatchesmustbegreaterthanZero',
+        "EpisodeNoComp" : '@objMessageKey.EpisodeNomustbegreaterthanZero',
+        "MsgForDuplicate": '@objMessageKey.NoofSongscannnotbeduplicate',
+        "NoofSongEqual":'@objMessageKey.NoofSongsmustbegreaterthanequalto',
+        "NoofSongsGreaterZero": '@objMessageKey.NoofSongsmustbegreaterthanZero',
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+
+    var parentCode = 0;
+    @if (Model.Deal_Type1 != null)
+        {
+            if (Model.Deal_Type1.Parent_Code != null)
+            {
+                <text>
+    parentCode = @Model.Deal_Type1.Parent_Code;
+    </text>
+            }
+        }
+
+    var vendorCode = 0
+    @if (Model.Vendor_Code != null)
+            {
+                <text>
+    vendorCode = @Model.Vendor_Code;
+    </text>
+            }
+
+
+
+    var vendorCodes = '';
+    @if (Model.Acq_Deal_Licensor.Count() > 0)
+        {
+            <text>
+    vendorCodes = '@(string.Join(",", Model.Acq_Deal_Licensor.Select(s => s.Vendor_Code.ToString())))'
+    </text>
+        }
+
+
+    //$(function(){
+    //    $('#divTitle > d')
+    //});
+
+</script>
+
+<script src="~/JS_Core/Acq_Deal_Gen.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#ddlTitle_Search_List').SumoSelect();
+        $('#ddlTitle_Search_List')[0].sumo.reload();
+        if ($('#isAutoPush').val() == "Y") {
+            $("#no_Auto_Push").css("display",'none');
+        }
+
+    });
+    function hideStarCast()
+    {
+        $('.MoreActionDiv').hide('slow');
+    }
+   
+</script>
+
+@*<script src="~/JS_Core/common.concat.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
+
+@using (Ajax.BeginForm("Save", "Acq_General", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmGeneral" }))
+{
+
+    <div class="grid_area" id="no_Auto_Push">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabGeneral">
+                        <div class="scale_table_block" onclick="hideStarCast();">
+                            <table class="four_column table style_table">
+                                <tbody>
+                                    <tr>
+                                        <td>@objMessageKey.DealType</td>
+                                        <td>
+                                            <input type="hidden" name="isAutoPush" id="isAutoPush" value="@AutoPush" />
+                                            <input type="hidden" id="Acq_Deal_Code" name="Acq_Deal_Code" value="@Model.Acq_Deal_Code" />
+                                            @foreach (var item in ViewBag.Master_Sub_Deal_Type_List)
+                                            {
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(m => Model.Is_Master_Deal, (object)item.Value, new { id = "rblIsMasterDeal" + item.Value, onchange = "rblIsMasterDeal_OnChange()" })@item.Text
+                                                </label>
+                                            }
+                                            <input type="hidden" id="hdnIs_Master_Deal" name="hdnIs_Master_Deal" value="@Model.Is_Master_Deal" />
+                                        </td>
+                                        <td>@objMessageKey.MasterDealToLink</td>
+                                        <td>
+                                            <span>
+                                                <select name="Master_Deal_Movie_Code_ToLink" id="ddlMaster_Deal_List" class="form_input chosen-select" onchange="PopulateMasterDealData()"></select>
+                                            </span>
+                                            <input type="hidden" id="hdnMaster_Deal_Movie_Code" name="hdnMaster_Deal_Movie_Code" />
+                                            <input type="hidden" id="hdnPreviousADMCode" name="hdnPreviousADMCode" value="0" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@objMessageKey.ModeofAcquisition</td>
+                                        <td>
+                                            @foreach (var item in ViewBag.Mode_Acquisition_list)
+                                            {
+                                                <label class="radio-inline">
+                                                    @Html.RadioButtonFor(m => Model.Role_Code, (object)item.Value, new { @id = "rbMode_Acquisition_" + item.Value, @onclick = "ChangeLabelName()" })@item.Text
+                                                </label>
+                                            }
+                                        </td>
+                                        <td>@objMessageKey.YearDefinition</td>
+                                        <td>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => Model.Year_Type, "FY", new { @id = "rblYear_Def_1" })@objMessageKey.FYAprMar
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => Model.Year_Type, "CY", new { @id = "rblYear_Def_2" })@objMessageKey.JanDec
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => Model.Year_Type, "DY", new { @id = "rblYear_Def_3" })@objMessageKey.DealYear
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@objMessageKey.DealFor</td>
+                                        <td>
+                                            <div id="optDealFor">
+                                                @foreach (var item in ViewBag.Deal_For_List)
+                                                {
+                                                    <label class="radio-inline">
+                                                        @Html.RadioButtonFor(m => Model.Deal_Type_Code, (object)item.Value, new
+                                                   {
+                                                       @id = "rblDeal_For_" + item.Value,
+                                                       onclick = "rblDeal_For_OnChange()"
+                                                   })@item.Text
+                                            </label>
+                                                }
+                                                <label class="radio-inline dealForOther">
+                                                    @if (ViewBag.Other_Deal_Type_List != null)
+                                                    {
+                                                        @Html.DropDownListFor(m => Model.Deal_Type_Code, (List<SelectListItem>)ViewBag.Other_Deal_Type_List, new { @id = "ddlOther", @class = "form_input chosen-select", @onchange = "ddlOther_OnChange()" })
+                                                        <input type="hidden" id="hdnDeal_Type_Code" name="hdnDeal_Type_Code" />
+                                                    }
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td>@objMessageKey.Currency</td>
+                                        <td>
+                                            <span>
+                                                <select name="Currency_Code" id="ddlCurrency" class="form_input chosen-select"></select>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@objMessageKey.Licensee/ @objMessageKey.Assignee</td>
+                                        <td>
+                                            <span>
+                                                <select name="Entity_Code" id="ddlLicensee" class="form_input chosen-select"></select>
+                                            </span>
+                                        </td>
+                                        <td>@objMessageKey.BusinessUnit</td>
+                                        @if (Model.Is_Auto_Push != "Y")
+                                        {
+                                            <td>
+                                                <span>
+                                                    <select name="Business_Unit_Code" id="ddlBusinessUnit" class="form_input chosen-select"></select>
+                                                </span>
+                                            </td>
+                                        }
+
+                                    </tr>
+                                    <tr>
+                                        <td><span id="lblLicensor">@objMessageKey.Assignor</span></td>
+                                        <td>
+                                            <span>
+                                                <select name="Licensor_List" id="ddlLicensor" class="form_input chosen-select" multiple="multiple"></select>
+                                            </span>
+                                            <input type="hidden" id="hdnVendorCodes" name="hdnVendorCodes" />
+                                            <input type="hidden" id="hdnPrimaryVendorCode" name="hdnPrimaryVendorCode" />
+                                        </td>
+                                        <td>@objMessageKey.Category</td>
+                                        <td>
+                                            <span>
+                                                <select name="Category_Code" id="ddlCategory" class="form_input chosen-select"></select>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@objMessageKey.PrimaryContact</td>
+                                        <td>
+                                            <select name="Vendor_Contacts_Code" id="ddlContact" class="form_input chosen-select" onchange="ddlContact_OnChange()"></select>
+                                        <td>@objMessageKey.ReferenceNo.</td>
+                                        <td>
+                                            <input type="text" name="Ref_No" id="txtReference_No" class="textbox" maxlength="50" value="@Model.Ref_No" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@objMessageKey.Phone</td>
+                                        <td>
+                                            @if (ViewBag.Vendor_Phone != null)
+                                            {
+                                                <span id="lblPhone">@ViewBag.Vendor_Phone</span>
+                                            }
+                                        </td>
+                                        <td>@objMessageKey.Email</td>
+                                        <td>
+                                            @if (ViewBag.Vendor_Email != null)
+                                            {
+                                                <span id="lblEmail">@ViewBag.Vendor_Email</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (Model.Is_Auto_Push != "Y")
+                        {
+                            <div class="scale_table_block" id="movieSearchBand" onclick="hideStarCast()">
+                                <table class="table style_table">
+                                    <tr>
+                                        <td class="bold" style="width: 15%;"><span id="lblTitleLabel"></span><span id="lblTitleCount"></span></td>
+                                        <td class="bold" style="width: 10%; text-align: right;">@objMessageKey.Titles:</td>
+                                        <td style="width: 50%;">
+                                            @if (ViewBag.Title_Search_List != null)
+                                            {
+                                                @Html.DropDownList("Title_Search_List", (List<SelectListItem>)ViewBag.Title_Search_List, new { @id = "ddlTitle_Search_List", @multiple = "multiple", @onchange = "ddlTitle_Search_List_OnChange()" });
+                                            }
+
+                                        </td>
+                                        <td style="width: 10%;">
+                                            <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearchTitle_Click()">
+                                        </td>
+                                        <td style="width: 10%; text-align: right">
+                                            @if (ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_ADD || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_CLONE)
+                                            {
+                                                <input type="button" id="btnAddTitle" class="btn btn-primary" disabled="disabled" value="@objMessageKey.Add" onclick="btnAddTitle_OnClick()">
+                                            }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="paging_area clearfix" onclick="hideStarCast()">
+                                <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                                <span class="pull-left" id="lblTitleSearchCount"></span>
+                                <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                                <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                                <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                                <div id="Pagination" class="pagination">
+                                </div>
+                                <span class="pull-right">
+                                    @objMessageKey.PageSize:
+                                    <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                                </span>
+                            </div>
+                            <div class="scale_table_block" id="subDealMovie">
+                            </div>
+                        }
+                        <div class="scale_table_block" onclick="hideStarCast()">
+                            <div class="divBlock">
+                                <div class="bold" style="padding-right: 87%;">@objMessageKey.Remarks</div>
+                                <div class="charNum">4000</div>
+                            </div>
+                            @Html.TextAreaFor(m => Model.Remarks, new { @id = "txtRemark", @class = "textarea", @row = "2", @cols = "20", @onkeyup = "countChar(this)" })
+                        </div>
+                    </div>
+                    @if (Model.Is_Auto_Push != "Y")
+                    {
+                        <div class="bottom_action" onclick="hideStarCast()">
+                            <ul class="form_link_nav clearfix">
+                                <li>
+                                    <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return ValidateSave()">
+                                    <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+                                    @if (objSchema.Deal_Workflow_Flag == GlobalParams.DEAL_MODE_REOPEN || objSchema.Mode == GlobalParams.DEAL_MODE_REOPEN)
+                                    {
+                                        <input type="submit" id="btnSaveApproveDeal" class="btn btn-primary" value="@objMessageKey.SaveApprove" onclick="return ValidateSave()">
+                                    }
+                                    <input type="hidden" id="hdnAgreementDate" name="hdnAgreementDate" />
+                                    <input type="hidden" id="hdnDealDesc" name="hdnDealDesc" />
+                                    <input type="hidden" id="hdnDealTagStatusCode" name="hdnDealTagStatusCode" />
+                                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                </li>
+                                <li>
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="CancelSaveDeal();">
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- -------------------------------END OF LINE------------------------------- -->
+    if (Model.Is_Auto_Push == "Y")
+    {
+        <div class="grid_area">
+            <div class="navigation_tabs">
+                <div class="tabbable">
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="tab-pane active" id="tabGeneral">
+                            <div class="scale_table_block" onclick="hideStarCast()">
+                                <table class="four_column table style_table">
+                                    <tbody>
+                                        <tr>
+
+                                            <td>@objMessageKey.DealType</td>
+                                            @{
+                                                string strDealType = Model.Is_Master_Deal.Trim() == "Y" ? "Master Deal" : "Sub Deal";
+                                                <td>@strDealType</td>
+                                            }
+                                            <td>@objMessageKey.MasterDealToLink</td>
+                                            @{
+                                                int? masterDealMovieCode = Model.Master_Deal_Movie_Code_ToLink;
+                                                string strMasterDeal = @GlobalParams.msgNA;
+                                                if (masterDealMovieCode != null && masterDealMovieCode > 0)
+                                                    strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == masterDealMovieCode).
+                                                        Select(w => w.Title.Title_Name + " - " + w.Acq_Deal.Agreement_No).First();
+
+                                                <td>
+                                                    @strMasterDeal
+                                                    <input type="hidden" name="isAutoPush" id="isAutoPush" value="@AutoPush" />
+                                                </td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td>@objMessageKey.ModeofAcquisition</td>
+                                            <td>
+                                                @if (Model.Role == null && objSchema.Mode == "C")
+                                                {
+                                                    <span>@ViewBag.Role_Name</span>
+                                                }
+                                                else
+                                                {
+                                                    @Model.Role.Role_Name
+                                                }
+
+                                            </td>
+                                            <td>@objMessageKey.YearDefinition</td>
+                                            @{
+                                                string strYearType = "";
+
+                                                switch (Model.Year_Type.Trim())
+                                                {
+                                                    case "FY":
+                                                        strYearType = objMessageKey.FYAprMar;
+                                                        break;
+                                                    case "CY":
+                                                        strYearType = objMessageKey.JanDec;
+                                                        break;
+                                                    case "DY":
+                                                        strYearType = objMessageKey.DealYear;
+                                                        break;
+                                                }
+                                                <td>@strYearType</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td>@objMessageKey.DealFor</td>
+                                            <td>
+                                                @if (Model.Deal_Type1 != null)
+                                                {
+                                                    @Model.Deal_Type1.Deal_Type_Name
+                                                }
+                                            </td>
+                                            <td>@objMessageKey.Currency</td>
+
+                                            <td>
+                                                @if (Model.Currency == null && objSchema.Mode == "C")
+                                                {
+                                                    <span>@ViewBag.Currency_Name</span>
+                                                }
+                                                else
+                                                {
+                                                    @Model.Currency.Currency_Name
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@objMessageKey.Licensee/ @objMessageKey.Assignee</td>
+                                            <td>
+                                                @if (Model.Entity == null && objSchema.Mode == "C")
+                                                {
+                                                    <span>@ViewBag.entity_Name</span>
+                                                }
+                                                else
+                                                {
+                                                    @Model.Entity.Entity_Name
+                                                }
+                                            </td>
+                                            <td>@objMessageKey.BusinessUnit</td>
+                                            <td>
+                                                <span>
+                                                    <select name="Business_Unit_Code" id="ddlBusinessUnit" class="form_input chosen-select"></select>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span id="lblLicensor">@objMessageKey.Assignor</span></td>
+                                            <td>
+                                                <span style="font-weight: 800">
+                                                    @if (Model.Vendor != null)
+                                                    {
+                                                        @Model.Vendor.Vendor_Name
+                                                    }
+                                                </span>
+                                                <div class="expandable">
+                                                    @if (Model.Acq_Deal_Licensor != null && objSchema.Mode == "C")
+                                                    {
+                                                        <span>@ViewBag.Vendor_Name</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        string.Join(", ", Model.Acq_Deal_Licensor.Where(x => x.Vendor_Code != Model.Vendor_Code).Select(s => s.Vendor.Vendor_Name).ToArray());
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>@objMessageKey.Category</td>
+                                            <td>
+                                                @if (Model.Category == null && objSchema.Mode == "C")
+                                                {
+                                                    <span>@ViewBag.Category_Name</span>
+                                                }
+                                                else
+                                                {
+                                                    @Model.Category.Category_Name
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@objMessageKey.PrimaryContact</td>
+                                            @{
+                                                string vendorContactName = GlobalParams.msgNA,
+                                                    vendorPhone = GlobalParams.msgNA, vendorEmail = GlobalParams.msgNA;
+                                                if (Model.Vendor_Contacts != null)
+                                                {
+                                                    vendorContactName = Model.Vendor_Contacts.Contact_Name;
+                                                    vendorPhone = Model.Vendor_Contacts.Phone_No;
+                                                    vendorEmail = Model.Vendor_Contacts.Email;
+                                                }
+                                            }
+                                            <td>@vendorContactName</td>
+                                            <td>Reference No.</td>
+                                            <td>@Model.Ref_No</td>
+                                        </tr>
+                                        <tr>
+                                            <td>@objMessageKey.Phone</td>
+                                            <td>@vendorPhone</td>
+                                            <td>@objMessageKey.Email</td>
+                                            <td>@vendorEmail</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="scale_table_block" id="movieSearchBand" onclick="hideStarCast()">
+                                <table class="table style_table">
+                                    <tr>
+                                        <td class="bold" style="width: 15%;"><span id="lblTitleLabel"></span><span id="lblTitleCount"></span></td>
+                                        <td class="bold" style="width: 10%; text-align: right;">@objMessageKey.Titles:</td>
+                                        <td style="width: 50%;">
+                                            @if (ViewBag.Title_Search_List != null)
+                                            {
+                                                @Html.DropDownList("Title_Search_List", (List<SelectListItem>)ViewBag.Title_Search_List, new { @id = "ddlTitle_Search_List", @multiple = "multiple", @onchange = "ddlTitle_Search_List_OnChange()" });
+                                            }
+
+                                        </td>
+                                        <td style="width: 10%;">
+                                            <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearchTitle_Click()">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="paging_area clearfix" onclick="hideStarCast()">
+                                <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                                <span class="pull-left" id="lblTitleSearchCount"></span>
+                                <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                                <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                                <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                                <div id="Pagination" class="pagination">
+                                </div>
+                                <span class="pull-right">
+                                    @objMessageKey.PageSize:
+                                    <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" 
+                                           onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                                </span>
+                            </div>
+                            <div class="scale_table_block" id="subDealMovie">
+                            </div>
+
+                            <div class="scale_table_block" onclick="hideStarCast()">
+                                <div class="divBlock">
+                                    <div class="bold" style="padding-right: 100%;">@objMessageKey.Remarks</div>
+                                    <div class="remarks_General">
+                                        @{
+                                            if (!string.IsNullOrEmpty(Model.Remarks))
+                                            {
+                                                @Html.Raw(Model.Remarks.Replace("\n", "<br/>"))
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bottom_action" onclick="hideStarCast()">
+                            <ul class="form_link_nav clearfix">
+                                <li>
+                                    <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return ValidateSave()">
+                                    <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+                                    @if (objSchema.Deal_Workflow_Flag == GlobalParams.DEAL_MODE_REOPEN || objSchema.Mode == GlobalParams.DEAL_MODE_REOPEN)
+                                    {
+                                        <input type="submit" id="btnSaveApproveDeal" class="btn btn-primary" value="@objMessageKey.SaveApprove" onclick="return ValidateSave()">
+                                    }
+                                    <input type="hidden" id="hdnAgreementDate" name="hdnAgreementDate" />
+                                    <input type="hidden" id="hdnDealDesc" name="hdnDealDesc" />
+                                    <input type="hidden" id="hdnDealTagStatusCode" name="hdnDealTagStatusCode" />
+                                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                </li>
+                                <li>
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="CancelSaveDeal();">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+                                                }
+
+                                            }
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddDealMovie" role="dialog" tabindex="-1" aria-hidden="false" onclick="hideStarCast();">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="movie_popup">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.AddDealTitle</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper add_title_popup">
+                                <li>
+                                    <span id="subDealNote"></span>
+                                    <div id="divTitle" style="width:339px;">
+                                        <select id="ddlTitle" class="" multiple="multiple"></select>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a class="btn btn-primary" id="btnSaveTitle" href="#" onclick="btnSaveTitle_OnClick()">@objMessageKey.Save</a>
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

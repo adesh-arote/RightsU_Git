@@ -1,0 +1,60 @@
+﻿@using UTOFrameWork.FrameworkClasses
+
+@if (Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForMovieAvailabilityReport || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForProgramAvailabilityReport)
+{
+    <div class="tabbable">
+        <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
+            @if (ViewBag.ISCountryRight == true)
+            {
+                <li id="IsCountry" class="active">
+                    <a data-toggle="tab" href="#" role="tab" data-tabname="CO">Country</a>
+                </li>
+            }
+            @if (ViewBag.IsTerritoryLevelRights == true)
+            {
+                <li id="IsTerritory">
+                    <a data-toggle="tab" href="#" role="tab" data-tabname="IF">Territory</a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div id="divMappingData"></div>
+    </div>
+}
+else
+{
+    <div id="divMappingData"></div>
+}
+<script>
+    $(document).ready(function () {
+        debugger
+
+        //$('#ddlTerritoryList').val(TerritoryCodess)[0].sumo.reload();
+        IsFirstTime = "N";
+        BindRegion();
+        getTabName = $('#ResolveConflictTab > li > a').data('tabname')
+        //var selectedCodes = $("#hdnTVCodes_Country").val();
+        //AddEditRegion(selectedCodes);
+        $('#ResolveConflictTab > li > a').on('click', function () {
+            debugger
+            TabChange($(this).data('tabname'));
+        });
+
+
+    });
+    function TabChange(tabName) {
+        BindRegion(tabName);
+    }
+</script>
+<style>
+    .table-wrapper {
+        background-color: white !important;
+        padding: 0px !important;
+    }
+
+    #divMappingData {
+        background-color: white !important;
+    }
+</style>

@@ -1,0 +1,69 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+
+    var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Acq_Rights_Template")';
+    $(document).ready(function () {
+        BindPartialView("LIST", 0);
+    });
+
+    function BindPartialView(key,Acq_Rights_TemplateCode) {
+        debugger;
+        showLoading();
+        if (key == "ADDEDIT") {
+            Search = $('#searchCommon').val();
+            $('#hdnSearch').val($('#searchCommon').val());
+        }
+
+        if (key == "EDIT") {
+            Search = $('#searchCommon').val();
+            $('#hdnSearch').val($('#searchCommon').val());        
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                Acq_Rights_TemplateCode: Acq_Rights_TemplateCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divAcq_Rights_Template').empty();
+                    $('#divAcq_Rights_Template').html(result);
+                }
+                hideLoading();
+            },
+            error: function (result) {
+                hideLoading();
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+         <div class="container acq main_col">
+            <div id="divAcq_Rights_Template">
+
+            </div>
+          </div>
+    </section>
+    <input type="hidden" id="hdnSearch" name="hdnSearch" />
+    <input type="hidden" id="hdnRecodLockingCode_temp" name="hdnRecodLockingCode_temp" value="0" />
+    <input type="hidden" id="hdnRecordislocked" name="hdnRecordislocked" value="Y" />
+</div>
+

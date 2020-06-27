@@ -1,0 +1,89 @@
+﻿@model List<RightsU_Entities.Security_Group>
+@using RightsU_BLL
+@using RightsU_Entities
+@using RightsU_DAL
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+@*/////////////////////////////////////////////*@
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:18%;">@objMessageKey.SecurityGroupID</th>
+            <th style="width:62%;">@objMessageKey.SecurityGroupName</th>
+            <th style="width:10%;">@objMessageKey.Status</th>
+            <th style="width:10%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active, strBaseCurrency = "No";
+                string EntityType = "";
+                string EntityBroadcaster = "";
+
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                bool canDeactive = true;
+                string toolTipMsg = "";
+                if (item.Users.Count > 0)
+                {
+                    canDeactive = false;
+                    toolTipMsg = objMessageKey.Cannotdeactivatethissecuritygroupasitisusedinusers;
+                }
+                <tr>
+                    <td align="center">
+                        <span>SG @item.Security_Group_Code</span>
+                    </td>
+                    <td>
+                        <span>@item.Security_Group_Name</span>
+                    </td>
+                    <td align="center">
+                        <span>@strActive</span>
+                    </td>
+
+                    <td align="center">
+                        @if (item.Is_Active == "Y")
+                        {
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock('EDIT',@item.Security_Group_Code)"></a>
+                        }
+                        else
+                        {
+                            <a title="@objMessageKey.Cannoteditthissecuritygroupasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                        }
+                        @if (item.Is_Active == "Y")
+                        {
+                            if (canDeactive)
+                            {
+                                <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveSecurityGroup(@item.Security_Group_Code,'N')"></a>
+                            }
+                            else
+                            {
+                                <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                            }
+                        }
+                        else
+                        {
+                            <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveSecurityGroup(@item.Security_Group_Code,'Y')"></a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@*/////////////////////////////////////////////*@

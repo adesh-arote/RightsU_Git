@@ -1,0 +1,112 @@
+﻿@model List<RightsU_Entities.System_Language>
+<script>
+    $('.expand_System_Language_Name').expander({
+        slicePoint: 50,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblSystemLanguage">
+    <thead>
+        <tr>
+            <th style="width:20%;text-align:center;">System Language Name</th>
+            <th style="width:20%;text-align:center;">Layout Direction</th>
+            <th style="width:20%;text-align:center;">Status</th>
+            <th style="width:20%;text-align:center;">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (ViewBag.CommandName == "ADD")
+        {
+            double totalMessageCount = @ViewBag.TotalMessages;
+            <tr>
+                <td>
+                    <input type="text" id="txtSystemLanguage" maxlength="100" style="width:90%;" />
+                </td>
+                <td>
+
+                    <select class="form_input chosen-select" id="ddlDirection">
+                        <option value="LTR">Left To Right</option>
+                        <option value="RTL">Right To Left</option>
+                    </select>
+                </td>
+                <td style="text-align:center;">
+                    @*<div class="checkboxThree">
+                              <input type="checkbox" value="1"  id="checkboxThreeInput" name="" style="display:none;"/>
+                          <label for="checkboxThreeInput">
+                          </label>
+                        </div>*@
+                    <div class="progress">
+                        <span class="progressbar-back-text">0 / @totalMessageCount</span>
+                        <div class="progress-bar progress-bar-info" role="progressbar" data-transitiongoal-backup="0"
+                             data-transitiongoal="0" aria-valuenow="0" style="width: 0%;">
+                        </div>
+                    </div>
+                </td>
+                <td style="text-align:center;">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveSystemLanguage(0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelSave()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                double totalMessageCount = @ViewBag.TotalMessages;
+                double MessageCount = @item.System_Language_Message.Count;
+                double div = @MessageCount / @totalMessageCount;
+                double quotient = Convert.ToDouble(div);
+                double Completion = (@MessageCount / @totalMessageCount) * 100;
+                Convert.ToInt32(@Completion);
+
+                <tr>
+
+                    <td>
+                        @if (item.Is_Default == "Y")
+                        {
+                            <div class="expand_System_Language_Name">@item.Language_Name <a title="Default Language" href="#" class="glyphicon glyphicon-flag" style="cursor:default;"></a></div>
+
+                        }
+                        else
+                        {
+                            <div class="expand_System_Language_Name">@item.Language_Name</div>
+                        }
+
+                    </td>
+                    <td>
+                        @if (item.Layout_Direction == "LTR")
+                        {
+                            <div class="expand_Direction">Left To Right</div>
+                        }
+                        else
+                        {
+                            <div class="expand_Direction">Right To Left</div>
+                        }
+                    </td>
+                    <td align="center">
+                      
+                                <div class="progress">
+                                    <span class="progressbar-back-text" style="z-index:8;">@MessageCount / @totalMessageCount</span>
+                                    <div class="progress-bar progress-bar-info" role="progressbar" data-transitiongoal-backup="@MessageCount"
+                                         data-transitiongoal="@MessageCount" aria-valuenow="@MessageCount" style="width: @Completion%;">
+                                    </div>
+                                </div>
+                         
+                    </td>
+                    <td align="center">
+                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForConfigure + "~"))
+                        {
+                            <a title="Configure" href="#" class="glyphicon glyphicon-wrench" style="cursor:pointer" onclick="CheckRecordLock(@item.System_Language_Code)"></a>
+                        }
+                    </td>
+
+
+                </tr>
+            }
+        }
+    </tbody>
+</table>

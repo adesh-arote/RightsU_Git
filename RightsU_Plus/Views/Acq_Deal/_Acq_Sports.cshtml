@@ -1,0 +1,928 @@
+﻿@model RightsU_Entities.Acq_Deal_Sport
+@using UTOFrameWork.FrameworkClasses;
+@using RightsU_BLL;
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" version_no"]" />
+<script type="text/javascript" src="~/JS_Core/common.concat.js"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+@*
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script type="text/javascript">
+    var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+    var PaymentIntCode = 0;
+    var IsAddEditMode = "N";
+
+    function OnContentDeliveryClick(strContent) {
+        if (strContent == "RC")
+            $('#ddlContent_Broadcast_Mode_Code')[0].sumo.enable();
+        else {
+            $('#ddlContent_Broadcast_Mode_Code')[0].sumo.disable();
+            $('#ddlContent_Broadcast_Mode_Code')[0].sumo.unSelectAll();
+            //setChosenWidth('#ddlContent_Broadcast_Mode_Code', '40%');
+        }
+    }
+
+    function OnDeferredLiveClick(strContent) {
+        if (strContent != "DF")
+            $("input[name='txtDeferredDuration'][type=text]").attr('disabled', true);
+        else
+            $("input[name='txtDeferredDuration'][type=text]").attr('disabled', false);
+    }
+    function OnTapeDelayedClick(strContent) {
+        if (strContent != "DF") {
+            $("input[name='txtTapeDelayed'][type=text]").attr('disabled', true);
+        }
+        else
+            $("input[name='txtTapeDelayed'][type=text]").attr('disabled', false);
+    }
+    function OnStandaloneClick(strContent) {
+        if (strContent == "Y")
+            $('#ddlStandalonePlatform')[0].sumo.enable();
+        else {
+            $('#ddlStandalonePlatform')[0].sumo.disable();
+            $('#ddlStandalonePlatform')[0].sumo.unSelectAll();
+        }
+    }
+    function OnSimulcastClick(strContent) {
+        if (strContent == "Y")
+            $('#ddlSimulcastPlatform')[0].sumo.enable();
+        else {
+            $('#ddlSimulcastPlatform')[0].sumo.disable();
+            $('#ddlSimulcastPlatform')[0].sumo.unSelectAll();
+        }
+    }
+    function OnLanguageClick(strLanguage) {
+        if (strLanguage == "LG") {
+            $('#ddlLanguage').SumoSelect();
+            $("#ddlLanguage")[0].sumo.reload();
+            $('#ddlLanguage')[0].sumo.unSelectAll();
+            document.getElementById('divLanguage').style.display = "none";
+            document.getElementById('divLanguageGroup').style.display = "block";
+        }
+        else {
+            $('#ddlLanguageGroup').SumoSelect();       
+            $('#ddlLanguageGroup')[0].sumo.reload();
+            $('#ddlLanguageGroup')[0].sumo.unSelectAll();
+            document.getElementById('divLanguage').style.display = "block";
+            document.getElementById('divLanguageGroup').style.display = "none";
+        }
+    }
+
+
+    $(document).ready(function () {
+        debugger
+        $('#ddlContent_Broadcast_Mode_Code').SumoSelect();
+        $('#ddlStandalonePlatform').SumoSelect();
+        $('#ddlSimulcastPlatform').SumoSelect();
+        if ('@Model.Content_Delivery' == "RC")
+            $('#ddlContent_Broadcast_Mode_Code')[0].sumo.enable();
+        else {
+            $('#ddlContent_Broadcast_Mode_Code')[0].sumo.disable();
+            $('#ddlContent_Broadcast_Mode_Code')[0].sumo.unSelectAll();
+        }
+        if ('@Model.Standalone_Transmission' == "N")
+        {
+            $('#ddlStandalonePlatform')[0].sumo.disable();
+            $('#ddlStandalonePlatform')[0].sumo.unSelectAll();
+        }
+        else {
+            $('#ddlStandalonePlatform')[0].sumo.enable();
+        }
+        if ('@Model.Simulcast_Transmission' == "N")
+        {
+            $('#ddlSimulcastPlatform')[0].sumo.disable();
+            $('#ddlSimulcastPlatform')[0].sumo.unSelectAll();
+        }
+        else {
+            $('#ddlSimulcastPlatform')[0].sumo.enable();
+        }
+       // $("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');
+
+
+    });
+
+</script>
+<style>
+    .charNum {
+        float: right;
+    }
+
+    .simulcastDiv {
+        padding-bottom: 6px;
+    }
+
+        .simulcastDiv > div:first-child {
+            float: left;
+            width: 48%;
+        }
+
+        .simulcastDiv > div:nth-child(2) {
+            float: right;
+            width: 52%;
+            border-left: 1px solid #999;
+            padding-left: 20px;
+        }
+
+    .duration {
+        width: 65px;
+        margin: 3px 4px 0 10px;
+        text-align: right;
+    }
+
+    #MBOCriticalNotes {
+        overflow: auto;
+        width: 100%;
+    }
+
+    #MTOCriticalNotes {
+        overflow: auto;
+        width: 100%;
+    }
+
+    #File_Name {
+        width: 250px;
+    }
+
+    .SumoSelect {
+        width: 88% !important;
+    }
+
+    #divddllstTitle > div {
+        width: 100% !important;
+    }
+
+    .modal.scroll .modal_block {
+        max-height: 400px !important;
+    }
+   
+  
+</style>
+<form class="form" id="Form3">
+    <div class="acq">
+        <div class="form_fields">
+            <div class="modal_block modal_header">
+                <a class="close" data-dismiss="modal" href="#">
+                    <span>×</span>
+                    <span class="sr-only">Close</span>
+                </a>
+                <h2>
+                    @if (@ViewBag.HeaderLabel != null)
+                    { @ViewBag.HeaderLabel }
+                </h2>
+            </div>
+            <div class="modal_block">
+                <ul class="">
+                    <li class="clearfix" >
+                        <ul>
+                            <li>
+                                <label class="bold">@objMessageKey.Titles</label><br />
+                                @if (ViewBag.lstTitle != null)
+                                {
+                                <div id="divddllstTitle" style="width:93% !important;">
+                                    @Html.DropDownList("Acq_Deal_Movie_Code", ViewBag.lstTitle as MultiSelectList, new { @id = "ddllstTitle", @multiple = "multiple" })
+                                </div>
+                                }
+                                else if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                {
+                                string NewTitle = "";
+
+                                if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                {
+                                NewTitle = string.Join(", ", (Model.Acq_Deal_Sport_Title.Select(s => s.Title.Title_Name + " ( " + s.Episode_From + " - " + s.Episode_To + " )").ToArray()));
+                                }
+                                else if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Music)
+                                {
+                                NewTitle = string.Join(", ", (Model.Acq_Deal_Sport_Title.Select(s => s.Title.Title_Name + (Convert.ToString(s.Episode_From) == "0" ? " ( Unlimited ) " : " ( " + s.Episode_From + " )")).ToArray()));
+                                }
+                                else
+                                {
+                                NewTitle = string.Join(", ", (Model.Acq_Deal_Sport_Title.Select(s => s.Title.Title_Name).ToArray()));
+                                }
+
+                                <div class="expandable">
+                                    <span>@NewTitle</span>
+                                    <a href="#"><span></span></a>
+                                </div>
+                                }
+                                @Html.Hidden("hdnddllstTitle")
+                                @Html.Hidden("hdnAcq_Deal_Sport_Code", Model.Acq_Deal_Sport_Code)
+                            </li>
+                            <li>
+                                <div class="grid_area">
+                                    <div class="navigation_tabs" style="overflow : visible !important;">
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                <li class="active">
+                                                    <a data-toggle="tab" href="#" role="tab">@objMessageKey.ModeofBroadcast</a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                <div class="tab-pane active" id="tabstatusHistory">
+                                                    <div class="scale_table_block" id="divStatusHistory">
+                                                        <label class="bold">@objMessageKey.ContentDeliveryOption</label>
+                                                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                                        {
+                                                        string Content_Delivery = "";
+                                                        string strBroadcastModeView = string.Join(", ", Model.Acq_Deal_Sport_Broadcast.Where(x => x.Type == "MO").Select(x => x.Broadcast_Mode.Broadcast_Mode_Name));
+
+                                                        if (Model.Content_Delivery == "LV")
+                                                        {
+                                                        Content_Delivery = "Live";
+                                                        }
+                                                        else
+                                                        {
+                                                        Content_Delivery = "Recorded";
+                                                        }
+
+                                                        if (!strBroadcastModeView.Equals(""))
+                                                        {
+                                                        Content_Delivery += " (" + strBroadcastModeView + ")";
+                                                        }
+
+                                                        @Content_Delivery
+                                                        }
+                                                        else
+                                                        {
+                                                        if (Model.Content_Delivery == null)
+                                                        {
+                                                        foreach (var item in ViewBag.ContentDelivery)
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButton("rdb", (object)item.Value, (bool)item.Selected, new { id = "rdb" + item.Text, onchange = "OnContentDeliveryClick('" + item.Value + "')" })@item.Text
+                                                        </label>
+                                                        }
+                                                        }
+                                                        else
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Content_Delivery, "LV", new { @id = "rdbLive", @onchange = "OnContentDeliveryClick('LV')" })Live
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Content_Delivery, "RC", new { @id = "rdbRecorded", @onchange = "OnContentDeliveryClick('RC')" })Recorded
+                                                        </label>
+                                                        }
+                                                        if (ViewBag.lstBroadcastMode != null)
+                                                        {
+                                                        @Html.DropDownList("Broadcast_Mode_Code", ViewBag.lstBroadcastMode as MultiSelectList, new { @id = "ddlContent_Broadcast_Mode_Code", @multiple = "multiple" });
+                                                        }
+                                                        }
+                                                        @Html.Hidden("hdnContentDelivery")
+                                                        @Html.HiddenFor(modalitem => Model.Content_Delivery)
+                                                        @Html.Hidden("hdnddlContent_Broadcast_Mode_Code")
+                                                        <br />
+                                                        <label class="bold">@objMessageKey.ObligationtoBroadcast:</label>
+                                                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                                        {
+                                                        string Obligation = "";
+                                                        if (Model.Obligation_Broadcast == "Y")
+                                                        {
+                                                        Obligation = string.Join(", ", Model.Acq_Deal_Sport_Broadcast.Where(x => x.Type == "OB").Select(x => x.Broadcast_Mode.Broadcast_Mode_Name));
+                                                        }
+
+                                                        if (Model.Obligation_Broadcast == "Y")
+                                                        {
+                                                        Obligation = "Yes (" + Obligation + " )";
+                                                        }
+                                                        else
+                                                        {
+                                                        Obligation = "No";
+                                                        }
+                                                        @Obligation
+                                                        }
+                                                        else
+                                                        {
+                                                        if (Model.Obligation_Broadcast == null)
+                                                        {
+                                                        foreach (var item in ViewBag.lstObligation)
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButton("rdbObligation", (object)item.Value, (bool)item.Selected, new { id = "rdb" + item.Text, onchange = "OnObligationClick('" + item.Value + "')" })@item.Text
+                                                        </label>
+                                                        }
+                                                        }
+                                                        else
+                                                        {
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Obligation_Broadcast, "Y", new { @id = "rdbYes" })@objMessageKey.Yes
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(m => Model.Obligation_Broadcast, "N", new { @id = "rdbNo" })@objMessageKey.NO
+                                                        </label>
+                                                        }
+
+                                                        if (ViewBag.lstBroadcastMode != null)
+                                                        {
+                                                        @Html.DropDownList("Broadcast_Mode_Code", ViewBag.lstBroadcastModeObligation as MultiSelectList, new { @id = "ddlObligation_Broadcast_Mode_Code", @multiple = "multiple" });
+                                                        }
+                                                        }
+                                                        @Html.Hidden("hdnObligationBroadcast")
+                                                        @Html.Hidden("hdnddlObligation_Broadcast_Mode_Code")
+                                                        <br /> <label class="bold">@objMessageKey.MBOCriticalNotes:</label>
+                                                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                                        {
+                                                        <div class="expandable">
+                                                            @Model.MBO_Note
+                                                        </div>
+                                                        }
+                                                        else
+                                                        {
+                                                        <span id="CharNumMBO" class="charNum">4000</span>
+                                                        <textarea name="MBOCriticalNotes" id="MBOCriticalNotes" onkeypress="countCharNew(this,'MBO')" onkeyup="countCharNew(this,'MBO')">@ViewBag.MBOCriticalNotes</textarea>
+                                                        }
+                                                        @Html.Hidden("hdnMBOCriticalNotes")
+
+                                                        <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <div>
+                                                                        @*@style="float:left; width: 43%;"*@
+                                                                        <label class="bold">@objMessageKey.DeferredLiveDurationCap:</label><br />
+                                                                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                                                        {
+                                                                        string DeferredDuratnView = "";
+                                                                        if (Model.Deferred_Live == "UL")
+                                                                        {
+                                                                        DeferredDuratnView = "Unlimited";
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        if (Model.Deferred_Live == "NA")
+                                                                        {
+                                                                        DeferredDuratnView = "N.A.";
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        DeferredDuratnView = Model.Deferred_Live_Duration + " (hh:mm:ss)";
+                                                                        }
+                                                                        }
+                                                                        @DeferredDuratnView
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        string time = "(hh:mm:ss)";
+
+                                                                        if (Model.Deferred_Live == null)
+                                                                        {
+                                                                        foreach (var item in ViewBag.lstDeferred)
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButton("rdbDeferred", (object)item.Value, (bool)item.Selected, new { id = "rdb" + item.Text, onchange = "OnDeferredLiveClick('" + item.Value + "')" }) @item.Text
+                                                                        </label>
+                                                                        }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Deferred_Live, "NA", new { @id = "rdbNA", @onchange = "OnDeferredLiveClick('NA')" })NA
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Deferred_Live, "UL", new { @id = "rdbUnlimited", @onchange = "OnDeferredLiveClick('UL')" })Unlimited
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Deferred_Live, "DF", new { @id = "rdbDefined", @onchange = "OnDeferredLiveClick('DF')" })Defined
+                                                                        </label>
+                                                                        }
+
+                                                                        if (Model.Deferred_Live_Duration == null || Model.Deferred_Live_Duration == "")
+                                                                        {
+                                                                        @Html.TextBox("txtDeferredDuration", "00:00:00", new { @class = "textbox duration numeric", @maxlength = "8" })  @time
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.TextBox("txtDeferredDuration", Model.Deferred_Live_Duration, new { @class = "textbox duration numeric", @maxlength = "8" })  @time
+                                                                        }
+                                                                        }
+
+                                                                        @Html.Hidden("hdnDeferredLive")
+                                                                        @Html.Hidden("hdntxtDeferredDuration")
+
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div>
+                                                                        @*style="float: right; width: 50%;"*@
+                                                                        <label class="bold">@objMessageKey.TapeDelayedDurationCap:</label>
+                                                                        <br />
+                                                                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                                                        {
+                                                                        string TapeDelayed = "";
+
+                                                                        if (Model.Tape_Delayed == "UL")
+                                                                        {
+                                                                        TapeDelayed = "Unlimited";
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        if (Model.Tape_Delayed == "NA")
+                                                                        {
+                                                                        TapeDelayed = "N.A.";
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        TapeDelayed = Model.Tape_Delayed_Duration + " (hh:mm:ss)";
+                                                                        }
+                                                                        }
+                                                                        @TapeDelayed
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        string time = "(hh:mm:ss)";
+
+                                                                        if (Model.Tape_Delayed == null)
+                                                                        {
+                                                                        foreach (var item in ViewBag.lstTape)
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButton("rdbTape", (object)item.Value, (bool)item.Selected, new { id = "rdb" + item.Text + "Tape", onchange = "OnTapeDelayedClick('" + item.Value + "')" })@item.Text
+                                                                        </label>
+                                                                        }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Tape_Delayed, "NA", new { @id = "rdbNATape", @onchange = "OnTapeDelayedClick('NA')" })NA
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Tape_Delayed, "UL", new { @id = "rdbUnlimitedTape", @onchange = "OnTapeDelayedClick('UL')" })Unlimited
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Tape_Delayed, "DF", new { @id = "rdbDefinedTape", @onchange = "OnTapeDelayedClick('DF')" })Defined
+                                                                        </label>
+                                                                        }
+
+                                                                        if (Model.Tape_Delayed_Duration == null || Model.Tape_Delayed_Duration == "")
+                                                                        {
+                                                                        @Html.TextBox("txtTapeDelayed", "00:00:00", new { @class = "textbox duration numeric", @maxlength = "8" }) @time
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.TextBox("txtTapeDelayed", Model.Tape_Delayed_Duration, new { @class = "textbox duration numeric", @maxlength = "8" }) @time
+                                                                        }
+                                                                        }
+                                                                        @Html.Hidden("hdnTapeDelayed")
+                                                                        @Html.Hidden("hdntxtTapeDelayed")
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+
+
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="grid_area">
+                                        <div class="navigation_tabs" style="overflow: visible !important;">
+                                            <div class="tabbable">
+                                                <ul class="nav nav-tabs nav-tab pull-left">
+                                                    <li class="active">
+                                                        <a data-toggle="tab" href="#" role="tab">@objMessageKey.ModeOfDigitalTransmission</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                    <div class="tab-pane active" id="tabstatusHistory">
+                                                        <div class="scale_table_block" id="divStatusHistory">
+
+                                                            <div class="simulcastDiv clearfix">
+                                                                <div style="float: left; width: 48%;">
+
+                                                                    @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                                                    {
+                                                                    string StandaloneDigital = "";
+                                                                    string StandalonePlatformView = "";
+                                                                    string StandaloneSubstantialView = "";
+
+                                                                    if (Model.Standalone_Transmission == "Y")
+                                                                    {
+                                                                    StandaloneDigital = "Yes";
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    StandaloneDigital = "No";
+                                                                    }
+
+                                                                    if (Model.Standalone_Substantial == "Y")
+                                                                    {
+                                                                    StandaloneSubstantialView = "Yes";
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    StandaloneSubstantialView = "No";
+                                                                    }
+
+                                                                    StandalonePlatformView = string.Join(", ", Model.Acq_Deal_Sport_Platform.Where(x => x.Type == "ST").Select(x => x.Platform.Platform_Hiearachy));
+                                                                    StandalonePlatformView.Replace(">", "&#62;");
+                                                                    <div>
+                                                                        <div>
+                                                                            <label class="bold">@objMessageKey.StandaloneDigitalLiveTransmission: </label>
+                                                                            @StandaloneDigital
+                                                                        </div>
+                                                                        <div>
+                                                                            <label class="bold">@objMessageKey.StandaloneDigitalPlatform:  </label>
+                                                                            <br />
+                                                                            <div class="expandable">
+                                                                                @StandalonePlatformView
+                                                                            </div>
+                                                                        </div>
+                                                                        <div>
+                                                                            <label class="bold">@objMessageKey.SubstantialLiveStandaloneDigitalSimulcastPermitted: </label>
+                                                                            @StandaloneSubstantialView
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <div>
+                                                                        <label class="bold">@objMessageKey.StandaloneDigitalLiveTransmission: </label>
+                                                                        @if (Model.Standalone_Transmission == null)
+                                                                        {
+                                                                        foreach (var item in ViewBag.lstStandalone)
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButton("rdbStandalone", (object)item.Value, (bool)item.Selected, new { id = "rdb" + item.Text + "Standalone", onchange = "OnStandaloneClick('" + item.Value + "')" })@item.Text
+                                                                        </label>
+                                                                        }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Standalone_Transmission, "Y", new { @id = "rdbYesStandalone", @onchange = "OnStandaloneClick('Y')" })@objMessageKey.Yes
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Standalone_Transmission, "N", new { @id = "rdbNoStandalone", @onchange = "OnStandaloneClick('N')" })@objMessageKey.NO
+                                                                        </label>
+                                                                        }
+                                                                        @Html.Hidden("hdnStandalone")
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="bold">@objMessageKey.StandaloneDigitalPlatform: </label>
+                                                                        <br />
+                                                                        @if (ViewBag.lstStandalonePlatform != null)
+                                                                        {
+                                                                        @Html.DropDownList("Standalone_Platform_Code", ViewBag.lstStandalonePlatform as MultiSelectList, new { @id = "ddlStandalonePlatform", @multiple = "multiple" });
+                                                                        }
+                                                                        @Html.Hidden("hdnddlStandalonePlatform")
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="bold">@objMessageKey.SubstantialLiveStandaloneDigitalSimulcastPermitted:</label>
+                                                                        <br />
+                                                                        @if (Model.Standalone_Substantial == null)
+                                                                        {
+                                                                        foreach (var item in ViewBag.lstStandalone)
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButton("rdbSubstantial", (object)item.Value, (bool)item.Selected, new { id = "rdb" + item.Text + "SubStandalone" })@item.Text
+                                                                        </label>
+                                                                        }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Standalone_Substantial, "Y", new { @id = "rdbYesSubStandalone" })@objMessageKey.Yes
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Standalone_Substantial, "N", new { @id = "rdbNoSubStandalone" })@objMessageKey.NO
+
+                                                                        </label>
+                                                                        }
+                                                                        @Html.Hidden("hdnSubstantialStandalone")
+                                                                    </div>
+                                                                    }
+
+                                                                </div>
+                                                                <div>
+                                                                    @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                                                    {
+                                                                    string StandaloneDigital = "";
+                                                                    string StandalonePlatformView = "";
+                                                                    string StandaloneSubstantialView = "";
+
+                                                                    if (Model.Simulcast_Transmission == "Y")
+                                                                    {
+                                                                    StandaloneDigital = "Yes";
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    StandaloneDigital = "No";
+                                                                    }
+
+                                                                    if (Model.Simulcast_Substantial == "Y")
+                                                                    {
+                                                                    StandaloneSubstantialView = "Yes";
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    StandaloneSubstantialView = "No";
+                                                                    }
+
+                                                                    StandalonePlatformView = string.Join(", ", Model.Acq_Deal_Sport_Platform.Where(x => x.Type == "SM").Select(x => x.Platform.Platform_Hiearachy));
+                                                                    StandalonePlatformView.Replace(">", "&#62;");
+                                                                    <div>
+                                                                        <div>
+                                                                            <label class="bold">@objMessageKey.SimulcastDigitalTransmission: </label>
+                                                                            @StandaloneDigital
+                                                                        </div>
+                                                                        <div>
+                                                                            <label class="bold">@objMessageKey.SimulcastDigitalPlatform:  </label>
+                                                                            <br />
+                                                                            <div class="expandable">
+                                                                                @StandalonePlatformView
+                                                                            </div>
+                                                                        </div>
+                                                                        <div>
+                                                                            <label class="bold">@objMessageKey.SubstantialLiveDigitalSimulcastPermitted: </label>
+                                                                            @StandaloneSubstantialView
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <div>
+                                                                        <label class="bold">@objMessageKey.SimulcastDigitalTransmission: </label>
+
+                                                                        @if (Model.Simulcast_Transmission == null)
+                                                                        {
+                                                                        foreach (var item in ViewBag.lstStandalone)
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButton("rdbSimulcastTransmission", (object)item.Value, (bool)item.Selected, new { id = "rdb" + item.Text + "Simulcast", onchange = "OnSimulcastClick('" + item.Value + "')" })@item.Text
+                                                                        </label>
+                                                                        }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Simulcast_Transmission, "Y", new { @id = "rdbYesSimulcast", @onchange = "OnSimulcastClick('Y')" })Yes
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Simulcast_Transmission, "N", new { @id = "rdbNoSimulcast", @onchange = "OnSimulcastClick('N')" })No
+                                                                        </label>
+                                                                        }
+
+                                                                        @Html.Hidden("hdnSimulcast")
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="bold">@objMessageKey.SimulcastDigitalPlatform: </label>
+                                                                        <br />
+                                                                        @if (ViewBag.lstSimulcastPlatform != null)
+                                                                        {
+                                                                        @Html.DropDownList("Simulcast_Platform_Code", ViewBag.lstSimulcastPlatform as MultiSelectList, new { @id = "ddlSimulcastPlatform", @multiple = "multiple" });
+                                                                        }
+                                                                        @Html.Hidden("hdnddlSimulcastPlatform")
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="bold">@objMessageKey.SubstantialLiveDigitalSimulcastPermitted:</label>
+                                                                        <br />
+                                                                        @if (Model.Simulcast_Substantial == null)
+                                                                        {
+                                                                        foreach (var item in ViewBag.lstStandalone)
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButton("rdbSubstantialSimulcast", (object)item.Value, (bool)item.Selected, new { id = "rdb" + item.Text + "SubSimulcast" })@item.Text
+                                                                        </label>
+                                                                        }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Simulcast_Substantial, "Y", new { @id = "rdbYesSubSimulcast" })@objMessageKey.Yes
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            @Html.RadioButtonFor(m => Model.Simulcast_Substantial, "N", new { @id = "rdbNoSubSimulcast" })@objMessageKey.NO
+                                                                        </label>
+                                                                        }
+                                                                        @Html.Hidden("hdnSimulcastSubstantial")
+                                                                    </div>
+                                                                    }
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </li>
+
+                            <li>
+
+                            </li>
+
+
+                        </ul>
+                    </li>
+
+                    <li class="">
+                        <ul>
+                            <li>
+                                <label class="bold">MTO Critical Notes:</label>
+                                @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                {
+                                <div class="expandable">
+                                    @Model.Remarks
+                                </div>
+                                }
+                                else
+                                {
+                                <span id="CharNumMTo" class="charNum">2000</span>
+                                <textarea name="CriticalNotes" id="MTOCriticalNotes" onkeypress="countCharNew(this,'MTO')" onkeyup="countCharNew(this,'MTO')">@ViewBag.MTOCriticalNotes</textarea>
+                                }
+                                @Html.Hidden("hdnCriticalNotes")
+                            </li>
+                            <li>
+                                @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                {
+                                string CommentaryLangView = "";
+                                string[] arrLanguageNames = null;
+
+                                string[] arrSelectedLanguage = Model.Acq_Deal_Sport_Language.Where(x => x.Language_Type == "L").Select(s => s.Language_Code.ToString()).ToArray();
+
+                                if (arrSelectedLanguage.Length > 0)
+                                {
+                                CommentaryLangView = "Language: ";
+                                }
+                                else
+                                {
+                                arrSelectedLanguage = Model.Acq_Deal_Sport_Language.Where(x => x.Language_Type == "G").Select(s => s.Language_Group_Code.ToString()).ToArray();
+                                CommentaryLangView = "Language Group: ";
+                                }
+
+                                if (CommentaryLangView == "Language: ")
+                                {
+                                arrLanguageNames = (new Language_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => arrSelectedLanguage.Contains(x.Language_Code.ToString())).Select(s => s.Language_Name).ToArray();
+                                }
+                                else
+                                {
+                                arrLanguageNames = (new Language_Group_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => arrSelectedLanguage.Contains(x.Language_Group_Code.ToString())).Select(s => s.Language_Group_Name).ToArray();
+                                }
+
+                                string strLanguageNames = string.Join(", ", arrLanguageNames);
+
+                                if (!strLanguageNames.Equals(""))
+                                {
+                                CommentaryLangView += strLanguageNames;
+                                }
+                                else
+                                {
+                                CommentaryLangView = "";
+                                }
+
+                                <span>
+                                    <b>Commentary Languages</b>
+                                </span>
+                                <br />
+                                <div class="expandable">
+                                    @CommentaryLangView
+                                </div>
+
+                                }
+                                else
+                                {
+                                <label class="bold">Commentary Languages:</label>
+                                if (ViewBag.LanguageType == null || ViewBag.LanguageType == "L" || ViewBag.LanguageType == "")
+                                {
+                                <label class="radio-inline">
+                                    <input id="rdbLanguage" type="radio" checked="checked" name="rdbLanguage" onclick="OnLanguageClick('L');" value="L" />
+                                    Language
+                                </label>
+                                <label class="radio-inline">
+                                    <input id="rdbLanguageGroup" type="radio" name="rdbLanguage" onclick="OnLanguageClick('LG');" value="LG" />
+                                    Language Group
+                                </label>
+                                }
+                                else
+                                {
+                                <label class="radio-inline">
+                                    <input id="rdbLanguage" type="radio" name="rdbLanguage" onclick="OnLanguageClick('L');" value="L" />
+                                    Language
+                                </label>
+                                <label class="radio-inline">
+                                    <input id="rdbLanguageGroup" type="radio" checked="checked" name="rdbLanguage" onclick="OnLanguageClick('LG');" value="LG" />
+                                    Language Group
+                                </label>
+                                }
+                                if (ViewBag.CommandName == "Edit")
+                                {
+                                string strLanguageGroup = ViewBag.LanguageType;
+
+                                if (strLanguageGroup == "G")
+                                {
+                                <div id="divLanguage" style="display: none;">
+                                    @if (ViewBag.lstLanguage != null)
+                                    {
+                                    @Html.DropDownList("Language_Code", ViewBag.lstLanguage as MultiSelectList, new { @id = "ddlLanguage", @multiple = "multiple" });
+                                    }
+                                </div>
+                                <div id="divLanguageGroup">
+
+                                    @if (ViewBag.lstLanguageGroup != null)
+                                    {
+                                    @Html.DropDownList("Language_Group_Code", ViewBag.lstLanguageGroup as MultiSelectList, new { @id = "ddlLanguageGroup", @multiple = "multiple" });
+                                    }
+                                </div>
+                                }
+                                else
+                                {
+                                <div id="divLanguage">
+                                    @if (ViewBag.lstLanguage != null)
+                                    {
+                                    @Html.DropDownList("Language_Code", ViewBag.lstLanguage as MultiSelectList, new { @id = "ddlLanguage",  @multiple = "multiple" });
+                                    }
+                                </div>
+                                <div id="divLanguageGroup" style="display: none;">
+
+                                    @if (ViewBag.lstLanguageGroup != null)
+                                    {
+                                    @Html.DropDownList("Language_Group_Code", ViewBag.lstLanguageGroup as MultiSelectList, new { @id = "ddlLanguageGroup", @multiple = "multiple" });
+                                    }
+                                </div>
+                                }
+                                }
+                                else
+                                {
+
+                                <div id="divLanguage">
+                                    @if (ViewBag.lstLanguage != null)
+                                    {
+                                    @Html.DropDownList("Language_Code", ViewBag.lstLanguage as MultiSelectList, new { @id = "ddlLanguage", @multiple = "multiple" });
+                                    }
+                                </div>
+                                <div id="divLanguageGroup" style="display: none;">
+
+                                    @if (ViewBag.lstLanguageGroup != null)
+                                    {
+                                    @Html.DropDownList("Language_Group_Code", ViewBag.lstLanguageGroup as MultiSelectList, new { @id = "ddlLanguageGroup", @multiple = "multiple" });
+                                    }
+                                </div>
+                                }
+                                @Html.Hidden("hdnLang")
+                                @Html.Hidden("hdnrdbLanguage")
+                                }
+                            </li>
+                            <li>
+                                <label class="bold">When to join and leave the LIVE feed:</label>
+                                @if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                {
+                                <input type="file" id="File_Name" name="File_Name" />
+                                }
+
+                                @if (Model.File_Name != "")
+                                {
+                                <a style="cursor:pointer; text-decoration:underline;" onclick='window.location.href="@Url.Action("DownloadFile", "Acq_Sports", new { System_File_Name = Model.Sys_File_Name, Attachment_File_Name = Model.File_Name }) "'>
+                                    @Html.DisplayFor(modalitem => Model.File_Name)
+                                </a>
+                                }
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal_block_full">
+                <div class="form_links">
+                    <ul class="form_link_nav clearfix">
+                        @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                        {
+                        if (ViewBag.Acq_Deal_Sport_Code == null)
+                        {
+                        <li>
+                            <input type="button" id="btnSaveDeal" title="Save" class="btn btn-primary" value="Save" onclick="return FinalSaveSportsRight('Save')" />
+                        </li>
+                        }
+                        else
+                        {
+                        <li>
+                            <input type="button" id="btnUpdateDeal" title="Update" class="btn btn-primary" value="Update" onclick="return FinalSaveSportsRight('Update')" />
+                        </li>
+                        }
+                        }}
+                        <li>
+                            <a data-dismiss="modal" class="btn btn-primary" title="Cancel" href="#" onclick="CancelFinalSportsRight()">cancel</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,345 @@
+﻿@using RightsU_BLL;
+@model RightsU_Entities.Title
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    var URL_BindFieldNamedd = '@Url.Action("BindFieldNameddl", "Title")';
+    var URL_TitleList_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code", Record_Locking_Code ="RL_Code"})';
+
+    $(document).ready(function () {
+        $("#_hdnRecordLockingCode").val(recordLockingCode);
+        initializeChosen();
+       // $("#ancFileName").attr('href', '/Help/Masters/Layout.html?TitleList');
+        $('#ddlProducer').SumoSelect();
+        $('#ddlDirector').SumoSelect();
+        $('#ddlCountry').SumoSelect();
+        $('#ddlGenres').SumoSelect();
+        $('#ddlStarCast').SumoSelect();
+        BindExtended();
+        $("#imgTitle").on("click", function () {
+            $("#uploadFile").click();
+        });
+        $('#txtTitle_Name').keyup(function () {
+            $('#lblTitleHead').text(this.value);
+        });
+        $("#txtDuration").numeric({
+            allowMinus: false,
+            allowThouSep: true,
+            allowDecSep: true,
+            maxDecimalPlaces: 2,
+            maxPreDecimalPlaces: 3
+        });
+        var dir = '@ViewBag.Direction';
+        $('#popAddTalent').css("direction", dir);
+        $('#TalentHeader').css("direction", dir)
+
+        if ('RTL' == '@objMessageKey.LayoutDirection')
+        {
+            $('.poptalent').css("float", "Right");
+            $('.close').css("float", "left");
+            $('.PopGender').css("float", "Right");
+            $('.inline-radio').css("float", "Right");
+        }
+        else {
+            $('.poptalent').css("float", "Left");
+            $('.close').css("float", "Right");
+            $('.PopGender').css("float", "Left");
+            $('.inline-radio').css("float", "Left");
+        }
+
+        if ("RTL" == '@objMessageKey.LayoutDirection') {
+
+            $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px")
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
+        }
+        Dir_G = '@ViewBag.Direction';
+
+    });
+    function fileCheck(obj) {
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+
+        if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            return false;
+        }
+
+        if (obj.files && obj.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imgTitle').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(obj.files[0]);
+        }
+
+        return true;
+    }
+    function btnCancel() {
+        var URL = URL_TitleList_Cancel;
+        URL = URL.replace("Code", pageNo);
+        URL = URL.replace("RL_Code", $("#_hdnRecordLockingCode").val());
+        URL = URL.replace(/amp;/g, "");
+        window.location.href = URL;
+    }
+</script>
+<style>
+    .four_column td:nth-child(2n) {
+        width: 36% !important;
+    }
+
+    .four_column td:nth-child(2n+1) {
+        width: 14% !important;
+        font-weight: 700 !important;
+    }
+</style>
+@{
+    string textalignlast = "";
+    if (objMessageKey.LayoutDirection == "RTL")
+    {
+        textalignlast = "right";
+    }
+}
+@using (Ajax.BeginForm("Save", "Title", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmTitle" }))
+{
+    <div class="tab-pane active" id="tabGeneral">
+        <input type="hidden" name="_hdnRecordLockingCode" id="_hdnRecordLockingCode" />
+
+        <div class="scale_table_block">
+            <table class="table_brif table">
+                <tbody>
+                    <tr>
+                        <td class="intro_pic">
+                            <div>
+                                @if (ViewBag.CommandName == "E")
+                                {
+                                    if (Model.Title_Image != null)
+                                    {<img id="imgTitle" alt="Image" src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + Model.Title_Image)" />}
+                                    else
+                                    {
+                                        if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                        {<img id="imgTitle" alt="Image" src="~/Images/musicIcon.png" />}
+                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                        {<img id="imgTitle" alt="Image" src="~/Images/program.png" /> }
+                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
+                                        {<img id="imgTitle" alt="Image" src="~/Images/formatShow.png" /> }
+                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                        {<img id="imgTitle" alt="Image" src="~/Images/Event.png" /> }
+                                        else
+                                        {<img id="imgTitle" alt="Image" src="~/Images/movieIcon.png" />}
+                                    }
+                                    <input type="file" id="uploadFile" name="uploadFile" onchange="fileCheck(this);" />
+                                }
+                                else
+                                {
+                                    if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                    {<img id="imgTitle" alt="Image" src="~/Images/musicIcon.png" />}
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                    {<img id="imgTitle" alt="Image" src="~/Images/program.png" /> }
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
+                                    {<img id="imgTitle" alt="Image" src="~/Images/formatShow.png" /> }
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                    {<img id="imgTitle" alt="Image" src="~/Images/Event.png" /> }
+                                    else
+                                    {<img id="imgTitle" alt="Image" src="~/Images/movieIcon.png" />}
+                                    <input type="file" id="uploadFile" name="uploadFile" onchange="fileCheck(this);" />
+                                }
+                            </div>
+                        </td>
+                        <td class="intro">
+                            <table class="four_column table">
+                                <tr>
+                                    <td>@objMessageKey.TitleType</td>
+                                    <td>
+                                        @if (ViewBag.CommandName == "E")
+                                        {
+                                            if (ViewBag.AvailTitleCode == 0)
+                                            {
+                                                @Html.DropDownList("Deal_Type_Code", (List<SelectListItem>)ViewBag.DealTypeList, new { @id = "Deal_Type_Code", @class = "form_input chosen-select" })
+                                                @Html.HiddenFor(m => Model.Title_Code)
+                                                @Html.Hidden("hdnDealTypeCode")
+                                                @Html.Hidden("hdnAlternateTabName")
+                                                @Html.Hidden("hdnAlternateConfigCode")
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownList("Deal_Type_Code", (List<SelectListItem>)ViewBag.DealTypeList, new { @id = "Deal_Type_Code", @class = "form_input chosen-select" })
+                                                @Html.HiddenFor(m => Model.Title_Code)
+                                                @Html.Hidden("hdnDealTypeCode")
+                                                @Html.Hidden("hdnAlternateTabName")
+                                                @Html.Hidden("hdnAlternateConfigCode")
+                                            }
+
+                                        }
+                                        @if (ViewBag.CommandName == "C")
+                                        {
+                                            @Html.DropDownList("Deal_Type_Code", (List<SelectListItem>)ViewBag.DealTypeList, new { @id = "Deal_Type_Code", @class = "form_input chosen-select" })
+                                            @Html.HiddenFor(m => Model.Title_Code)
+                                            @Html.Hidden("hdnDealTypeCode")
+                                            @Html.Hidden("hdnAlternateTabName")
+                                            @Html.Hidden("hdnAlternateConfigCode")
+                                        }
+                                    </td>
+                                    <td>@objMessageKey.Program</td>
+                                    <td>
+                                        @Html.DropDownList("Program_Code", (List<SelectListItem>)ViewBag.ProgramList, new { @id = "Program_Code", @class = "form_input chosen-select" })
+                                        <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddProgram();" />
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.Title</td>
+                                    <td>
+                                        @if (ViewBag.CommandName == "E")
+                                        {
+                                            @Html.TextBoxFor(m => Model.Title_Name, new { @id = "txtTitle_Name" })
+                                            @Html.Hidden("hdnmode")
+                                            @Html.Hidden("hdnTitleCode")
+
+                                        }
+                                        @if (ViewBag.CommandName == "C")
+                                        {
+                                            @Html.TextBoxFor(m => m.Title_Name, new { @id = "txtTitle_Name", maxlength = "200" })
+                                            @Html.HiddenFor(m => Model.Title_Code)
+                                            @Html.Hidden("hdnmode")
+                                            @Html.Hidden("hdnTitleCode")
+                                        }
+                                    </td>
+                                    <td>@objMessageKey.OriginalTitle</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => Model.Original_Title)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.DurationInMin&#x200E;</td>
+                                    <td>
+                                        @Html.TextBoxFor(y => Model.Duration_In_Min, new { @MaxLength = "7", @id = "txtDuration" })
+                                    </td>
+                                    <td>@objMessageKey.YearOfRelease</td>
+                                    <td>
+                                        @Html.TextBoxFor(m => Model.Year_Of_Production, new { @onkeypress = "return isNumber(event);", @MaxLength = "4" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.TitleLanguage</td>
+                                    <td>
+                                        @*@Html.DropDownListFor(m => Model.Title_Language_Code, (List<SelectListItem>)ViewBag.LanguageList, new { @id = "ddlTitleLanguage", @class = "form_input chosen-select" })*@
+                                        @Html.DropDownList("Title_Language_Code", (List<SelectListItem>)ViewBag.LanguageList, new { @id = "Title_Language_Code", @class = "form_input chosen-select" })
+                                    </td>
+                                    <td>@objMessageKey.OriginalLanguage</td>
+                                    <td>
+                                        @*@Html.DropDownListFor(m => Model.Original_Language_Code, (List<SelectListItem>)ViewBag.LanguageList, new { @id = "ddlOriginalLanguage", @class = "form_input chosen-select" })*@
+                                        @Html.DropDownList("Original_Language_Code", (List<SelectListItem>)ViewBag.OriginalLanguageList, new { @id = "Original_Language_Code", @class = "form_input chosen-select" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.ProducerName</td>
+                                    <td>
+                                        @Html.ListBox("ddlProducer", ViewBag.ProduceList as MultiSelectList, new { @multiple = "multiple", @width = "89%" })
+                                        @Html.Hidden("hdnProducer")
+                                        <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddTalent" onclick="AddTalent(@GlobalParams.Role_code_Producer);" />
+                                    </td>
+                                    <td>@objMessageKey.DirectorName</td>
+                                    <td>
+                                        @Html.ListBox(
+                                                     "ddlDirector",
+                                                     ViewBag.DirectorList as MultiSelectList,
+                                                     new { @multiple = "multiple" }
+                                                     )
+                                        @Html.Hidden("hdnDirector")
+                                        <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddTalent" onclick="AddTalent(@GlobalParams.RoleCode_Director);" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.CountryOfOrigin</td>
+                                    <td>
+                                        @Html.ListBox(
+                                                     "ddlCountry",
+                                                     ViewBag.CountryList as MultiSelectList,
+                                                     new { @multiple = "multiple" }
+                                                     )
+                                        @Html.Hidden("hdnCountry")
+                                    </td>
+                                    <td>@objMessageKey.TitleGenres</td>
+                                    <td>
+                                        @Html.ListBox(
+                                                         "ddlGenres",
+                                                         ViewBag.GenresList as MultiSelectList,
+                                                         new { @multiple = "multiple" }
+                                                         )
+                                        @Html.Hidden("hdnGenres")
+                                    </td>
+                                </tr>
+                                <tr>
+
+                                    @if (Model.Deal_Type_Code == GlobalParams.CodeForEmbeddedMusic)
+                                    {
+                                        <td>@objMessageKey.MusicLabel</td>
+                                        <td>
+                                            @Html.DropDownList("Music_Label_Code", (List<SelectListItem>)ViewBag.MusicLabelList,
+                                                 new { @id = "Music_Label_Code", @class = "form_input chosen-select" })
+                                        </td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.KeyStarCast</td>
+                                    <td>
+                                        @Html.ListBox(
+                                         "ddlStarCast",
+                                         ViewBag.StarCastList as MultiSelectList,
+                                         new { @multiple = "multiple" }
+                                         )
+                                        <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddTalent" onclick="AddTalent(@GlobalParams.Role_code_StarCast);" />
+                                        @Html.Hidden("hdnStarCast")
+                                    </td>
+                                    @if (ViewBag.IsCalculatePublicDomain == "Y")
+                                    {
+                                    <td>Public Domain</td>
+                                    if (ViewBag.PublicDomain != null)
+                                    {<td>Yes</td>}
+                                    else
+                                    {<td>No</td> }
+                                    }
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.Synopsis</td>
+                                    <td colspan="3">
+                                        <div class="divBlock">
+                                            <div class="charNum">4000</div>
+                                        </div>
+                                        @Html.TextArea("Synopsis", new { @id = "Synopsis", @class = "textarea", @rows = "2", @cols = "20", @onkeyup = "countChar(this)" })
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="scale_table_block padding">
+            <a class="glyphicon glyphicon-plus pull-right" title="@objMessageKey.Add" id="btnAddAdditional" onclick="btnAddExtendedData();"></a>
+            <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>
+        </div>
+        <div class="bottom_action">
+            <ul class="form_link_nav clearfix">
+                <li class="poptalent">
+                    <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.Save" onclick="return Save();" />
+                </li>
+                <li class="poptalent">
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return btnCancel();" />
+                </li>
+            </ul>
+        </div>
+    </div>
+}

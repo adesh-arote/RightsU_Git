@@ -1,0 +1,71 @@
+	 <script type="text/javascript">
+      // Load Charts and the corechart package.
+       // google.charts.load('44', {'packages':['corechart','gauge']});
+
+      //chart-1: Draw the piechart_3d chart is loaded.
+      //google.charts.setOnLoadCallback(drawPie3dChart);
+
+      //chart-2: Draw the Stacked Column Chart is loaded.
+      //google.charts.setOnLoadCallback(drawStackedColumnChart);
+
+      //chart-3: Draw the piechart_3d chart is loaded.
+      google.charts.setOnLoadCallback(drawPie3dChart2);
+
+      //chart-4: Draw the Stacked Column Chart is loaded.
+      google.charts.setOnLoadCallback(drawStackedColumnChart2);
+
+	 //chart-3: Start piechart_3d
+		function drawPie3dChart2() {
+			var data4 = google.visualization.arrayToDataTable([
+			  ['Region', 'Count'],
+			  ['Open',     100],
+			  ['In Progress',     125],
+			  ['Closed',    75]
+			]);
+
+			var options4 = {title:'', is3D: true,
+			chartArea:{left:5,top: 25,'width': '100%', 'height': '100%'},
+			};
+
+			var chart4 = new google.visualization.PieChart(document.getElementById('3_piechart_3d_4'));
+			chart4.draw(data4, options4);
+		}
+	 //chart-4: Start Stacked column charts
+		function drawStackedColumnChart2() {
+
+		var data5 = google.visualization.arrayToDataTable(
+			[
+				['','Open', 'In Progress', 'Closed', { role: 'annotation' } ],
+				['T-Series', 40, 25, 20,''],
+				['Saregama', 15, 50, 35,  ''],
+				['Zee Music', 25, 30, 15, ''],
+				['Sony', 20, 20, 10, '']
+				
+			]);
+
+			  var options5 = {title:'',
+			  chartArea:{left:25,top: 25,'width': '100%', 'height': '80%'},
+				legend: { position: 'top','alignment':'center', maxLines: 4 },
+				bar: { groupWidth: '30%' },
+				isStacked: true,
+			  };
+
+			var chart5 = new google.visualization.ColumnChart(document.getElementById('2_StackedColumn_chart_5'));
+			chart5.draw(data5, options5);
+		}
+    </script>
+
+<div id="RowAired"  class="dashboardGroup" >
+	<div class="dashboard music">
+		 <span>Total Exceptions: 300</span>
+		<div id="3_piechart_3d_4" style="width:100%; height:190px;"></div>                         
+	</div>
+	<div class="dashboard music">
+		<span>Music Label wise Exception</span>	
+		<div id="2_StackedColumn_chart_5" style="width:100%; height:220px;"></div>						 
+	</div>
+</div>
+
+
+
+

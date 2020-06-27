@@ -1,0 +1,74 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Populate_Music_Result>
+
+<div class="tab-pane active scale_table_block">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                @if (ViewBag.MODE != "VIEW")
+                {
+                    <th style="width: 5%;">Select</th>
+                }
+                <th style="width: 15%;">Agreement No.</th>
+                <th style="width: 15%;">Deal Type</th>
+                <th style="width: 15%;">Title</th>
+                @if (ViewBag.MODE == "VIEW")
+                {
+                    <th style="width: 35%;">Episodes #</th>
+                    <th style="width: 20%;">No.of Play</th>
+                }
+                else
+                {
+                    <th style="width: 50%;">Episodes</th>
+                }
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var objRow in Model)
+                {
+                        
+                <tr>
+                    @if (ViewBag.MODE != "VIEW")
+                    {
+                        <td>
+                            <input type="checkbox" id="chkMusic_@objRow.Int_Code" name="chkSelection" value="@objRow.Int_Code" class="checkbox" /></td>
+                    }
+                    <td>
+                        @objRow.Agreement_No
+                        @if (ViewBag.MODE != "VIEW")
+                        {
+                            <input type ="text" id="txtEpisodeFrom_@objRow.Int_Code" value="@objRow.Episode_From" style="display:none" />
+                            <input type ="text" id="txtEpisodeTo_@objRow.Int_Code" value="@objRow.Episode_To" style="display:none" />
+                        }
+                    </td>
+                    <td>@objRow.Deal_Type</td>
+                    <td>
+                        <div class="expandable">
+                            @objRow.Title_Name
+                        </div>
+                    </td>
+
+                    @if (ViewBag.MODE == "VIEW")
+                    {
+                        <td style="width: 30%;">
+                            <div class="expandable">
+                                @objRow.Episodes
+                            </div>
+                        </td>
+                        <td style="width: 20%;">@objRow.No_Of_Play</td>
+                    }
+                    else
+                    {
+                        <td colspan="3">
+                            <div id="divEpisode_@objRow.Int_Code">
+                            </div>
+                        </td>
+                    }
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

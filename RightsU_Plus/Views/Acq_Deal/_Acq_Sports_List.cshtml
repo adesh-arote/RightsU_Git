@@ -1,0 +1,662 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Sport>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+
+<script type="text/javascript">
+    var PaymentIntCode = 0;
+    var IsAddEditMode = "N";
+
+    var recordLockingCode_G = parseInt(@ViewBag.Record_Locking_Code);
+    var message_G = "@ViewBag.Message";
+    var mode_G = "@ViewBag.Mode";
+    var dealMode_G = '@ViewBag.Mode';
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)';
+    var URL_BindGridAcqSport = '@Url.Action("BindGridAcqSport", "Acq_Sports")';
+    var URL_PartialAddEditDealSportRight = '@Url.Action("PartialAddEditDealSportRight", "Acq_Sports")';
+    var URL_Delete = '@Url.Action("Delete", "Acq_Sports")';
+    var URL_EditView = '@Url.Action("EditView", "Acq_Sports")';
+    var URL_SaveFile = '@Url.Action("SaveFile", "Acq_Sports")';
+    var URL_SaveSportRight = '@Url.Action("SaveSportRight", "Acq_Sports")'
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")'
+
+    $(document).ready(function () {
+        initializeExpander();
+        
+        if (recordLockingCode_G > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode_G, URL_Global_Refresh_Lock);
+
+        if(message_G !="")
+        {
+            if(mode_G == "Error")
+                showAlert("E", message_G);
+            else
+                showAlert("S", message_G);
+        }
+
+        LoadAcqDealSport(0,'Y');
+        initializeExpander();
+
+        $("input.numeric").alphanum({
+            allow              : ':,0,1,2,3,4,5,6,7,8,9',    // Allow extra characters
+            disallow           : '',    // Disallow extra characters
+            allowSpace         : false,  // Allow the space character
+            allowNumeric       : true,  // Allow digits 0-9
+            allowUpper         : false,  // Allow upper case characters
+            allowLower         : false,  // Allow lower case characters
+            allowCaseless      : false,  // Allow characters that do not have both upper & lower variants
+            allowLatin         : false,  // a-z A-Z
+            allowOtherCharSets : false,  // eg é, Á, Arabic, Chinese etc
+            forceUpper         : false, // Convert lower case characters to upper case
+            forceLower         : false, // Convert upper case characters to lower case
+            maxLength          : 9999    // eg Max Length
+        });
+    });
+
+    /*Bind Acq Sport Grid*/
+    function LoadAcqDealSport(pagenumber,isLoad) {
+        showLoading();
+
+        var txtPageSize=10;
+        $.ajax({
+            type: "POST",
+            url: URL_BindGridAcqSport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                txtPageSize: txtPageSize,
+                page_No: pagenumber
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#dvDealAcqSport').html(result);
+                    initializeExpander();
+                    hideLoading();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function AddEditSportsRight(AcqDealSportCode, CommandName) {
+        showLoading();     
+        $.ajax({
+            type: "POST",
+            url: URL_PartialAddEditDealSportRight,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                AcqDealSportCode: AcqDealSportCode,
+                CommandName: CommandName
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    $('#dvAddEditSportRight').html(result);
+                    $('#popAddEditSportRight').modal();
+                    $('#ddllstTitle,#ddlStandalonePlatform,#ddlObligation_Broadcast_Mode_Code,#ddlContent_Broadcast_Mode_Code,#ddlSimulcastPlatform,#ddlLanguage,#ddlLanguageGroup').SumoSelect();
+                    $('#ddlContent_Broadcast_Mode_Code')[0].sumo.disable();
+                    $('#ddlContent_Broadcast_Mode_Code')[0].sumo.unSelectAll();
+                  
+                    for(var i =0;i<=6;i++){
+                        $('#ddllstTitle,#ddlStandalonePlatform,#ddlObligation_Broadcast_Mode_Code,#ddlContent_Broadcast_Mode_Code,#ddlSimulcastPlatform,#ddlLanguage,#ddlLanguageGroup')[i].sumo.reload();
+                    }
+                   $("input[name='txtDeferredDuration'][type=text]").attr('disabled', true);
+                   $("input[name='txtTapeDelayed'][type=text]").attr('disabled', true);
+                   
+                    
+
+                    setDropdownWidth();
+                    initializeTooltip();
+                    $("input.numeric").alphanum({
+                        allow: ':,0,1,2,3,4,5,6,7,8,9',    // Allow extra characters
+                        disallow: '',    // Disallow extra characters
+                        allowSpace: false,  // Allow the space character
+                        allowNumeric: true,  // Allow digits 0-9
+                        allowUpper: false,  // Allow upper case characters
+                        allowLower: false,  // Allow lower case characters
+                        allowCaseless: false,  // Allow characters that do not have both upper & lower variants
+                        allowLatin: false,  // a-z A-Z
+                        allowOtherCharSets: false,  // eg é, Á, Arabic, Chinese etc
+                        forceUpper: false, // Convert lower case characters to upper case
+                        forceLower: false, // Convert upper case characters to lower case
+                        maxLength: 9999    // eg Max Length
+                    });
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function OnDeleteClick(Acq_Deal_Sport_Code) {
+        if (CheckEditMode()) {
+            PaymentIntCode = Acq_Deal_Sport_Code;
+            showAlert("I", "@objMessageKey.AreyousureyouwanttodeletethisSportsRight? ", "OKCANCEL");
+        }
+    }
+    function CheckEditMode() {
+        if (IsAddEditMode == 'Y') {
+            message = '@objMessageKey.PleasecompletetheAddEditfirst.';
+            showAlert('E', message);
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    function handleOk() {
+        showLoading();
+
+        $.ajax({
+            type: "POST",
+            url: URL_Delete,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Acq_Deal_Sport_Code: PaymentIntCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    LoadAcqDealSport(0, 'Y');
+                    $('#dvDealAcqSport').html(result);
+                    showAlert('S', "@objMessageKey.SportsRightdeletedsuccessfully");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function handleCancel() {
+        return false;
+    }
+    function CancelFinalSportsRight() {
+        showLoading();
+        $('#popAddEditSportRight').modal('hide');
+        hideLoading();
+    }
+    /* Textarea Character Limitation */
+    function countCharNew(val, strType) {
+        var abc = val;
+        var max = 2000;
+        if (strType == "MBO")
+            max = 4000;
+        var len = val.value.length;
+
+        if (len >= max)
+            val.value = val.value.substring(0, max);
+        if (strType == "MBO")
+            $('#CharNumMBO').text(val.value.length.toString() + '/' + max.toString());
+        else
+            $('#CharNumMTo').text(val.value.length.toString() + '/' + max.toString());
+    }
+    /*Edit SportsRight*/
+    function EditSportsRight(Acq_Deal_Sport_Code, Mode) {
+        showLoading();
+        if (CheckEditMode()) {
+            IsAddEditMode = "Y";
+            $.ajax({
+                type: "POST",
+                url: URL_EditView,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    Acq_Deal_Sport_Code: Acq_Deal_Sport_Code,
+                    Mode: Mode
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        hideLoading();
+                        $('#dvAddEditSportRight').html(result);
+                        $('#popAddEditSportRight').modal();
+                        initializeChosen();
+                        setDropdownWidth();
+                        var MBO = document.getElementById('MBOCriticalNotes');
+                        var MTO = document.getElementById('MTOCriticalNotes');
+                        countCharNew(MBO, 'MBO');
+                        countCharNew(MTO, 'MTO');
+
+                        //Enable-Disable controls
+                        if (Mode == "Edit") {
+                            var rdbLive = document.getElementById('rdbLive');
+                            if (rdbLive.checked == true) {
+                             //   $("select[ID='ddlContent_Broadcast_Mode_Code']").attr('disabled', true).trigger("chosen:updated");
+                            }
+                            else {
+                              //  $("select[ID='ddlContent_Broadcast_Mode_Code']").attr('disabled', false).trigger("chosen:updated");
+                            }
+
+                            var rdbYesStandalone = document.getElementById('rdbYesStandalone');
+                            if (rdbYesStandalone.checked == false) {
+                              //  $("select[ID='ddlStandalonePlatform']").attr('disabled', true).trigger("chosen:updated");
+                            }
+                            else {
+                              //  $("select[ID='ddlStandalonePlatform']").attr('disabled', false).trigger("chosen:updated");
+                            }
+
+                            var rdbYesSimulcast = document.getElementById('rdbYesSimulcast');
+                            if (rdbYesSimulcast.checked == false) {
+                           //     $("select[ID='ddlSimulcastPlatform']").attr('disabled', true).trigger("chosen:updated");
+                            }
+                            else {
+                             //   $("select[ID='ddlSimulcastPlatform']").attr('disabled', false).trigger("chosen:updated");
+                            }
+
+                            var rdbNA = document.getElementById('rdbNA');
+                            var rdbUnlimited = document.getElementById('rdbUnlimited');
+
+                            if (rdbNA.checked == true || rdbUnlimited.checked == true) {
+                                $("input[name='txtDeferredDuration'][type=text]").attr('disabled', true);
+                            }
+                            else {
+                                $("input[name='txtDeferredDuration'][type=text]").attr('disabled', false);
+                            }
+
+
+                            var rdbNATape = document.getElementById('rdbNATape');
+                            var rdbUnlimitedTape = document.getElementById('rdbUnlimitedTape');
+
+                            if (rdbNATape.checked == true || rdbUnlimitedTape.checked == true) {
+                                $("input[name='txtTapeDelayed'][type=text]").attr('disabled', true);
+                            }
+                            else {
+                                $("input[name='txtTapeDelayed'][type=text]").attr('disabled', false);
+                            }
+                            //Enable-Disable controls
+
+
+                            $('#ddllstTitle,#ddlStandalonePlatform,#ddlObligation_Broadcast_Mode_Code,#ddlContent_Broadcast_Mode_Code,#ddlSimulcastPlatform,#ddlLanguage,#ddlLanguageGroup').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+                            //$('#ddlStandalonePlatform').each(function () {
+                            //    $(this)[0].sumo.reload();
+                            //});
+                            $('#ddllstTitle')[0].sumo.reload();
+                            $('#ddlStandalonePlatform')[0].sumo.reload();
+                            $('#ddlObligation_Broadcast_Mode_Code')[0].sumo.reload();
+                            $('#ddlContent_Broadcast_Mode_Code')[0].sumo.reload();
+                            $('#ddlSimulcastPlatform')[0].sumo.reload();
+                            $('#ddlLanguage')[0].sumo.reload();
+                            $('#ddlLanguageGroup')[0].sumo.reload();
+
+                            $("input.numeric").alphanum({
+                                allow: ':,0,1,2,3,4,5,6,7,8,9',    // Allow extra characters
+                                disallow: '',    // Disallow extra characters
+                                allowSpace: false,  // Allow the space character
+                                allowNumeric: true,  // Allow digits 0-9
+                                allowUpper: false,  // Allow upper case characters
+                                allowLower: false,  // Allow lower case characters
+                                allowCaseless: false,  // Allow characters that do not have both upper & lower variants
+                                allowLatin: false,  // a-z A-Z
+                                allowOtherCharSets: false,  // eg é, Á, Arabic, Chinese etc
+                                forceUpper: false, // Convert lower case characters to upper case
+                                forceLower: false, // Convert upper case characters to lower case
+                                maxLength: 9999    // eg Max Length
+                            });
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function setDropdownWidth() {
+        setChosenWidth('#ddllstTitle', '100%');
+        setChosenWidth('#ddlContent_Broadcast_Mode_Code', '40%');
+        setChosenWidth('#ddlObligation_Broadcast_Mode_Code', '40%');
+        setChosenWidth('#ddlStandalonePlatform', '90%');
+        setChosenWidth('#ddlSimulcastPlatform', '90%');
+        setChosenWidth('#ddlLanguage', '100%');
+        setChosenWidth('#ddlLanguageGroup', '100%');
+    }
+    function SaveFile() {
+        var data = new FormData();
+        var files = $("#File_Name").get(0).files;
+        if (files.length > 0) {
+            data.append("InputFile", files[0]);
+        }
+        $.ajax({
+            url: URL_SaveFile,
+            type: "POST",
+            processData: false,
+            contentType: false,
+            data: data,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+            },
+            error: function (er) {
+                alert(er);
+            }
+        });
+    }
+    function FinalSaveSportsRight(strType) {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        var arrTitleCodes = $("#ddllstTitle").val();
+
+        if (arrTitleCodes != null) {
+            var SaveData = new Array();
+            var Attachment_File_Name = "";
+            var files = $("#File_Name").get(0).files;
+            var rdbLive = $("#rdbLive");
+            var rdbYes = $("#rdbYes");
+            var ddllstTitle = $("#ddllstTitle").val();
+            var ddlContent_Broadcast_Mode_Code = $("#ddlContent_Broadcast_Mode_Code").val();
+            var ddlObligation_Broadcast_Mode_Code = $("#ddlObligation_Broadcast_Mode_Code").val();
+
+            if (files.length > 0)
+                Attachment_File_Name = files[0].name;
+
+            if (files.length > 0)
+                SaveFile();
+
+            if (rdbLive[0].checked == true)
+                $('input[name=hdnContentDelivery]').val('LV');
+            else
+                $('input[name=hdnContentDelivery]').val('RC');
+
+            if (rdbYes[0].checked == true)
+                $('input[name=hdnObligationBroadcast]').val('Y');
+            else
+                $('input[name=hdnObligationBroadcast]').val('N');
+
+            if (ddllstTitle != null)
+                $('input[name=hdnddllstTitle]').val(ddllstTitle.join(','));
+
+            if (ddlContent_Broadcast_Mode_Code != null)
+                $('input[name=hdnddlContent_Broadcast_Mode_Code]').val(ddlContent_Broadcast_Mode_Code.join(','));
+
+            if (ddlObligation_Broadcast_Mode_Code != null)
+                $('input[name=hdnddlObligation_Broadcast_Mode_Code]').val(ddlObligation_Broadcast_Mode_Code.join(','));
+
+            //----------Deffered Live------------
+            var rdbNA = $("#rdbNA");
+            var rdbUnlimited = $("#rdbUnlimited");
+            var rdbDefined = $("#rdbDefined");
+            var txtDeferredDuration = $("#txtDeferredDuration").val();
+
+            if (rdbNA[0].checked == true)
+                $('input[name=hdnDeferredLive]').val('NA');
+            else if (rdbUnlimited[0].checked == true)
+                $('input[name=hdnDeferredLive]').val('UL');
+            else
+                $('input[name=hdnDeferredLive]').val('DF');
+
+            $('input[name=hdntxtDeferredDuration]').val(txtDeferredDuration);
+            //----------Deffered Live------------
+
+            //----------Tape Delayed------------
+            var rdbNA = $("#rdbNATape");
+            var rdbUnlimited = $("#rdbUnlimitedTape");
+            var rdbDefined = $("#rdbDefinedTape");
+
+            if (rdbNA[0].checked == true)
+                $('input[name=hdnTapeDelayed]').val('NA');
+            else if (rdbUnlimited[0].checked == true)
+                $('input[name=hdnTapeDelayed]').val('UL');
+            else
+                $('input[name=hdnTapeDelayed]').val('DF');
+
+            var txtTapeDelayed = $("#txtTapeDelayed").val();
+            $('input[name=hdntxtTapeDelayed]').val(txtTapeDelayed);
+            //----------Tape Delayed------------
+
+            //----------MBO Critical Note------------
+            var MBOCriticalNotes = $("#MBOCriticalNotes").val();
+            $('input[name=hdnMBOCriticalNotes]').val(MBOCriticalNotes);
+            //----------MBO Critical Note------------
+
+            //----------MTO Critical Note------------
+            var MTOCriticalNotes = $("#MTOCriticalNotes").val();
+            $('input[name=hdnCriticalNotes]').val(MTOCriticalNotes);
+            //----------MTO Critical Note------------
+
+            //----------Standalone------------
+            var rdbYesStandalone = $("#rdbYesStandalone");
+            var rdbYesSubStandalone = $("#rdbYesSubStandalone");
+
+            if (rdbYesStandalone[0].checked == true)
+                $('input[name=hdnStandalone]').val('Y');
+            else
+                $('input[name=hdnStandalone]').val('N');
+
+            if (rdbYesSubStandalone[0].checked == true)
+                $('input[name=hdnSubstantialStandalone]').val('Y');
+            else
+                $('input[name=hdnSubstantialStandalone]').val('N');
+
+            var ddlStandalonePlatform = $("#ddlStandalonePlatform").val();
+            if (ddlStandalonePlatform != null)
+                $('input[name=hdnddlStandalonePlatform]').val(ddlStandalonePlatform.join(','));
+            //----------Standalone------------
+
+            //----------Simulcast------------
+            var rdbYesSimulcast = $("#rdbYesSimulcast");
+            var rdbYesSubSimulcast = $("#rdbYesSubSimulcast");
+            var ddlSimulcastPlatform = $("#ddlSimulcastPlatform").val();
+
+            if (rdbYesSimulcast[0].checked == true)
+                $('input[name=hdnSimulcast]').val('Y');
+            else
+                $('input[name=hdnSimulcast]').val('N');
+
+            if (rdbYesSubSimulcast[0].checked == true)
+                $('input[name=hdnSimulcastSubstantial]').val('Y');
+            else
+                $('input[name=hdnSimulcastSubstantial]').val('N');
+
+            if (ddlSimulcastPlatform != null)
+                $('input[name=hdnddlSimulcastPlatform]').val(ddlSimulcastPlatform.join(','));
+            //----------Simulcast------------
+
+            //----------Language/Language Group
+            var rdbLanguage = $("#rdbLanguage");
+
+            if (rdbLanguage[0].checked == true) {
+                var ddlLanguage = $("#ddlLanguage").val();
+                $('input[name=hdnrdbLanguage]').val('L');
+
+                if (ddlLanguage != null)
+                    $('input[name=hdnLang]').val(ddlLanguage.join(','));
+            }
+            else {
+                $('input[name=hdnrdbLanguage]').val('G');
+                var ddlLanguageGroup = $("#ddlLanguageGroup").val();
+
+                if (ddlLanguageGroup != null)
+                    $('input[name=hdnLang]').val(ddlLanguageGroup.join(','));
+            }
+            //----------Language/Language Group
+
+            var hdnAcq_Deal_Sport_Code = 0;
+            if (strType == "Update") {
+                hdnAcq_Deal_Sport_Code = $('input[name=hdnAcq_Deal_Sport_Code]').val();
+            }
+
+            showLoading();
+            $.ajax({
+                type: "POST",
+                url: URL_SaveSportRight,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    hdnAcq_Deal_Sport_Code: hdnAcq_Deal_Sport_Code,
+                    hdnContentDelivery: $('input[name=hdnContentDelivery]').val(),
+                    hdnObligationBroadcast: $('input[name=hdnObligationBroadcast]').val(),
+                    hdnddllstTitle: ddllstTitle.join(','),
+                    hdnddlContent_Broadcast_Mode_Code: $('input[name=hdnddlContent_Broadcast_Mode_Code]').val(),
+                    hdnddlObligation_Broadcast_Mode_Code: $('input[name=hdnddlObligation_Broadcast_Mode_Code]').val(),
+                    hdnDeferredLive: $('input[name=hdnDeferredLive]').val(),
+                    hdntxtDeferredDuration: $('input[name=hdntxtDeferredDuration]').val(),
+                    hdnTapeDelayed: $('input[name=hdnTapeDelayed]').val(),
+                    hdntxtTapeDelayed: $('input[name=hdntxtTapeDelayed]').val(),
+                    hdnMBOCriticalNotes: $('input[name=hdnMBOCriticalNotes]').val(),
+                    hdnCriticalNotes: $('input[name=hdnCriticalNotes]').val(),
+                    hdnStandalone: $('input[name=hdnStandalone]').val(),
+                    hdnSubstantialStandalone: $('input[name=hdnSubstantialStandalone]').val(),
+                    hdnddlStandalonePlatform: $('input[name=hdnddlStandalonePlatform]').val(),
+                    hdnSimulcast: $('input[name=hdnSimulcast]').val(),
+                    hdnSimulcastSubstantial: $('input[name=hdnSimulcastSubstantial]').val(),
+                    hdnddlSimulcastPlatform: $('input[name=hdnddlSimulcastPlatform]').val(),
+                    hdnrdbLanguage: $('input[name=hdnrdbLanguage]').val(),
+                    hdnLang: $('input[name=hdnLang]').val(),
+                    Attachment_File_Name: Attachment_File_Name
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        hideLoading();
+
+                        if (result == "S") {
+                            if (hdnAcq_Deal_Sport_Code == 0)
+                                showAlert("S", "@objMessageKey.SportsRightsaddedsuccessfully");
+                            else
+                                showAlert("S", "@objMessageKey.SportsRightsupdatedsuccessfully");
+
+                            LoadAcqDealSport(0, 'Y');
+                        }
+
+                        $('#popAddEditSportRight').modal('hide');
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            $('#divddllstTitle').addClass("required");
+            $('#ddllstTitle').focus();
+            //showAlert("E", "Please select atleast one title", 'ddllstTitle');
+            return false;
+        }
+    }
+    function ValidateSave() {
+        if (CheckEditMode()) {
+            showLoading();
+            var Isvalid = true;
+            // Code for Maintaining approval remarks in session
+            if (dealMode_G == 'APRV') {
+                var approvalremarks = $('#approvalremarks').val();
+                $.ajax({
+                    type: "POST",
+                    url: URL_Global_SetApprovalRemarks,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: true,
+                    data: JSON.stringify({
+                        approvalremarks: $('#approvalremarks').val()
+                    }),
+                    success: function (result) {
+                        if (result == "true")
+                            redirectToLogin();
+                        else
+                            Isvalid = true;
+                    },
+                    error: function (result) {
+                        Isvalid = false;
+                    }
+                });
+            }
+            else
+                Isvalid = true;
+
+            if (Isvalid) {
+                hideLoading();
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+            hideLoading();
+            return Isvalid;
+        }
+    }
+</script>
+
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container acq">
+                <div class="tab-pane active" id="tabPayTerm">
+                    <div class="scale_table_block">
+                        <div class="sub_block clearfix">
+                            <div class="pull-right">
+                                @if (ViewBag.Mode != "V" && ViewBag.Mode != "APRV" && ViewBag.Mode != "EWOA")
+                                {
+                                    <a class="btn btn-primary" title="@objMessageKey.AddSportsRights" onclick="return AddEditSportsRight(0,'Add');">@objMessageKey.Add</a>
+                                }
+                            </div>
+                        </div>
+                        <div class="scale_table_block" id="dvDealAcqSport">
+                        </div>
+                    </div>
+                </div>
+                @if (ViewBag.Mode == "APRV")
+                {
+                    @Html.Partial("_Approved_List")
+                    <br />
+                }
+                @if (ViewBag.Mode == "EWOA")
+                {
+                    @Html.Partial("_Edit_Without_Approval")
+                }
+                else
+                { 
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            <input type="button" id="btnCancelDeal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                   onclick="if(CheckEditMode())  location.href='@Url.Action("Cancel", "Acq_Sports")    '" />
+                        </li>
+                    </ul>
+                </div>
+                }
+            <input type="hidden" id="hdnTabName" name="hdnTabName" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="popAddEditSportRight" class="form_wrapper modal fade big_popup scroll" aria-labelledby="myModalLabel"
+     role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix" id="dvAddEditSportRight">
+        </div>
+    </div>
+</div>

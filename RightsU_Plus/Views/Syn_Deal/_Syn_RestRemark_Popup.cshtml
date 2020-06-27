@@ -1,0 +1,110 @@
+﻿@using RightsU_Entities
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@model List<USP_Get_Data_Restriction_Remark_UDT>
+@{
+    var lstRemarks = Model.Select(i => new
+                        {
+                            Title_Name = i.Title_Name,
+                            Platform_Name = i.Platform_Name,
+                            Country_Name = i.Country_Name,
+                            Restriction_Remarks = i.Restriction_Remarks,
+                            Is_Title_Language_Right = i.Is_Title_Language_Right,
+                            SubTitle_Lang_Name = i.SubTitle_Lang_Name,
+                            Dubb_Lang_Name = i.Dubb_Lang_Name
+                        }
+                                                                        ).Distinct().ToList();
+
+    var lstSublicensing = Model.Select(i => new { SubLicensing = i.SubLicensing, Title_Name = i.Title_Name }).Distinct().ToList();
+}
+<style>
+    .modal-open {
+        overflow: scroll !important;
+        overflow-x: hidden !important;
+        padding-right: 1px !important;
+    }
+</style>
+
+<div class="form_fields syn">
+    <div class="modal_block modal_header">
+        <h2>@objMessageKey.Sublicensing</h2>
+    </div>
+    <div class="modal_block" style="max-height: 205px !important">
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>@objMessageKey.Title</th>
+                <th>@objMessageKey.Sublicensing</th>
+            </tr>
+            @foreach (var objSublicensing in lstSublicensing)
+            {
+                <tr>
+                    <td>@objSublicensing.Title_Name</td>
+                    <td>@objSublicensing.SubLicensing</td>
+                </tr>
+            }
+        </table>
+
+    </div>
+    <div class="modal_block modal_header">
+        <h2>@objMessageKey.RestrictionRemark</h2>
+    </div>
+    <div class="modal_block">
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th style="width:15%;">@objMessageKey.Title</th>
+                <th style="width:15%;">@objMessageKey.Platform</th>
+                <th style="width:15%;">@objMessageKey.Region</th>
+                <th style="width:15%;">@objMessageKey.RestrictionRemark</th>
+                <th style="width:15%;">@objMessageKey.TitleLanguage</th>
+                <th style="width:10%;">@objMessageKey.Subtitling</th>
+                <th style="width:15%;">@objMessageKey.Dubbing</th>
+            </tr>
+            @foreach (var objRemark in lstRemarks)
+            {
+                <tr>
+                    <td>@objRemark.Title_Name</td>
+                    <td>
+                        <div class="expandable">
+                            @objRemark.Platform_Name
+                        </div>
+                    </td>
+                    <td>
+                        <div class="expandable">
+                            @objRemark.Country_Name
+                        </div>
+                    </td>
+                    <td>
+                        <div class="expandable">
+                            @objRemark.Restriction_Remarks
+                        </div>
+                    </td>
+                    <td>@objRemark.Is_Title_Language_Right</td>
+                    <td>
+                        <div class="expandable">
+                            @objRemark.SubTitle_Lang_Name
+                        </div>
+                    </td>
+                    <td>
+                        <div class="expandable">
+                            @objRemark.Dubb_Lang_Name
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="modal_block_full">
+        <div class="form_links">
+            <ul class="modal_block clearfix">
+                <li>
+                    <a onclick="CloseRestRemarks();" class="btn btn-primary" href="#">@objMessageKey.Ok</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

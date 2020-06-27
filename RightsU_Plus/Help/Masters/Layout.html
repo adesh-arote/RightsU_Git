@@ -1,0 +1,917 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>RightsU User Manual</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="img/ico" href="img/u-to.ico">
+    <link type="text/css" rel="stylesheet" href="../css/UserManual.css">
+    <link href="../css/dtree.css" rel="stylesheet" />
+    <script src="../js/jquery-2.1.1.min.js"></script>
+    <script src="../js/dtree.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".dTree").dTree();
+        });
+    </script>
+    <script dir="auto">
+        $(document).ready(function () {
+            debugger;
+            ChangeFrameset();
+            function ChangeFrameset() {
+                debugger;
+                // alert("str");
+                var str = location.search.match(/\? *([^\&]+)/);
+                //alert(str);
+                var IntCode = 'Login';
+                if (str != null)
+                    if (str[1] != null)
+                        IntCode = str[1];
+                //var SiteName = 'http://localhost:49657/Help/'
+                var SiteName = ''
+                //alert(IntCode);
+
+
+                switch (IntCode) {
+                    //case 'currency':
+                    //    $("#helpDiv").load("Currency.html");
+                    //    break;
+                    //case 'territory':
+                    //    $("#helpDiv").load("Territory.html");
+                    //    break;
+
+                    case 'loginPage':
+                        $("#helpDiv").load("../login.html");
+                        break;
+                    case 'ForgotPassword':
+                        $("#helpDiv").load("../ForgotPassword.html");
+                        break;
+                    case 'NewUserCreation':
+                        $("#helpDiv").load("../NewUserCreation.html");
+                        break;
+                    case 'Masters':
+                        $("#helpDiv").load("Masters.html");
+                        break;
+                    case 'Currency':
+                        $("#helpDiv").load("Currency.html");
+                        break;
+                    case 'Territory':
+                        $("#helpDiv").load("Territory.html");
+                        break;
+                    case 'Country':
+                        $("#helpDiv").load("Country.html");
+                        break;
+                    case 'Genres':
+                        $("#helpDiv").load("Genres.html");
+                        break;
+                    case 'Commercial':
+                        $("#helpDiv").load("Commercial.html");
+                        break;
+                    case 'Category':
+                        $("#helpDiv").load("Category.html");
+                        break;
+                    case 'Channel':
+                        $("#helpDiv").load("Channel.html");
+                        break;
+                    case 'Language':
+                        $("#helpDiv").load("Language.html");
+                        break;
+                    case 'LanguageGroup':
+                        $("#helpDiv").load("LanguageGroup.html");
+                        break;
+                    case 'Talent':
+                        $("#helpDiv").load("Talent.html");
+                        break;
+                    case 'AdditionalExpenses':
+                        $("#helpDiv").load("AdditionalExpenses.html");
+                        break;
+                    case 'GradeMaster':
+                        $("#helpDiv").load("GradeMaster.html");
+                        break;
+                    case 'RightRule':
+                        $("#helpDiv").load("RightRule.html");
+                        break;
+                    case 'CostType':
+                        $("#helpDiv").load("CostType.html");
+                        break;
+                    case 'DocumentType':
+                        $("#helpDiv").load("DocumentType.html");
+                        break;
+                    case 'Party':
+                        $("#helpDiv").load("Party.html");
+                        break;
+                    case 'PaymentTerms':
+                        $("#helpDiv").load("PaymentTerms.html");
+                        break;
+                    case 'MaterialMedium':
+                        $("#helpDiv").load("MaterialMedium.html");
+                        break;
+                    case 'MaterialType':
+                        $("#helpDiv").load("MaterialType.html");
+                        break;
+                    case 'SecurityGroup':
+                        $("#helpDiv").load("SecurityGroup.html");
+                        break;
+                    case 'User':
+                        $("#helpDiv").load("User.html");
+                        break;
+                    case 'RoyaltyRecoupment':
+                        $("#helpDiv").load("RoyaltyRecoupment.html");
+                        break;
+                    case 'Exception':
+                        $("#helpDiv").load("Exception.html");
+                        break;
+                    case 'TitleList':
+                        $("#helpDiv").load("../Modules/TitleList.html");
+                        break;
+                    case 'AcquisitionDeal':
+                        $("#helpDiv").load("../Modules/AcquisitionDeal.html");
+                        break;
+                    case 'acq_General':
+                        $("#helpDiv").load("../Modules/../Modules/acq_General.html");
+                        break;
+                    case 'acq_Rights':
+                        $("#helpDiv").load("../Modules/acq_Rights.html");
+                        break;
+                    case 'acq_LicensorHoldback':
+                        $("#helpDiv").load("../Modules/acq_LicensorHoldback.html");
+                        break;
+                    case 'acq_RunDefinition':
+                        $("#helpDiv").load("../Modules/acq_RunDefinition.html");
+                        break;
+                    case 'acq_Budget':
+                        $("#helpDiv").load("../Modules/acq_Budget.html");
+                        break;
+                    case 'acq_Cost':
+                        $("#helpDiv").load("../Modules/acq_Cost.html");
+                        break;
+                    case 'acq_Material':
+                        $("#helpDiv").load("../Modules/acq_Material.html");
+                        break;
+                    case 'acq_Ancillary':
+                        $("#helpDiv").load("../Modules/acq_Ancillary.html");
+                        break;
+                    case 'acq_Attachments':
+                        $("#helpDiv").load("../Modules/acq_Attachments.html");
+                        break;
+                    case 'acq_SportsRights':
+                        $("#helpDiv").load("../Modules/acq_SportsRights.html");
+                        break;
+                    case 'acq_SportsAncillary':
+                        $("#helpDiv").load("../Modules/acq_SportsAncillary.html");
+                        break;
+                    case 'acq_StatusHistory':
+                        $("#helpDiv").load("../Modules/acq_StatusHistory.html");
+                        break;
+                    case 'acq_WorkflowStatus':
+                        $("#helpDiv").load("../Modules/acq_WorkflowStatus.html");
+                        break;
+                    case 'acq_SendApproval':
+                        $("#helpDiv").load("../Modules/acq_SendApproval.html");
+                        break;
+                    case 'acq_Amendment':
+                        $("#helpDiv").load("../Modules/acq_Amendment.html");
+                        break;
+                    case 'acq_AmendAfterSyn':
+                        $("#helpDiv").load("../Modules/acq_AmendAfterSyn.html");
+                        break;
+                    case 'acq_Set%20Milestone':
+                        $("#helpDiv").load("../Modules/acq_Set%20Milestone.html");
+                        break;
+                    case 'acq_BacktoVersion':
+                        $("#helpDiv").load("../Modules/acq_BacktoVersion.html");
+                        break;
+                    case 'acq_Clone':
+                        $("#helpDiv").load("../Modules/acq_Clone.html");
+                        break;
+                    case 'acq_Close%20Title':
+                        $("#helpDiv").load("../Modules/acq_Close%20Title.html");
+                        break;
+                    case 'SyndicationDeals':
+                        $("#helpDiv").load("../Modules/SyndicationDeals.html");
+                        break;
+                    case 'syn_General':
+                        $("#helpDiv").load("../Modules/syn_General.html");
+                        break;
+                    case 'syn_Rights':
+                        $("#helpDiv").load("../Modules/syn_Rights.html");
+                        break;
+                    case 'syn_LicensorHoldback':
+                        $("#helpDiv").load("../Modules/syn_LicensorHoldback.html");
+                        break;
+                    case 'syn_RunDefinition':
+                        $("#helpDiv").load("../Modules/syn_RunDefinition.html");
+                        break;
+                    case 'syn_Revenue':
+                        $("#helpDiv").load("../Modules/syn_Revenue.html");
+                        break;
+                    case 'syn_PaymentTerms':
+                        $("#helpDiv").load("../Modules/syn_paymentTerms.html");
+                        break;
+                    case 'syn_Materials':
+                        $("#helpDiv").load("../Modules/syn_Materials.html");
+                        break;
+                        
+                    case 'syn_Attachments':
+                        $("#helpDiv").load("../Modules/syn_Attachments.html");
+                        break;
+                    case 'syn_StatusHistory':
+                        $("#helpDiv").load("../Modules/syn_StatusHistory.html");
+                        break;
+                    case 'syn_WorkflowStatus':
+                        $("#helpDiv").load("../Modules/syn_WorkflowStatus.html");
+                        break;
+                    case 'syn_SendApproval':
+                        $("#helpDiv").load("../Modules/syn_SendApproval.html");
+                        break;
+                    case 'syn_Amendment':
+                        $("#helpDiv").load("../Modules/syn_Amendment.html");
+                        break;
+                    case 'syn_BacktoVersion':
+                        $("#helpDiv").load("../Modules/syn_BacktoVersion.html");
+                        break;
+                    case 'ApprovalAcquisition':
+                        $("#helpDiv").load("../Modules/ApprovalAcquisition.html");
+                        break;
+                    case 'ApprovalSyndication':
+                        $("#helpDiv").load("../Modules/ApprovalSyndication.html");
+                        break;
+                    case 'ApprovalBoth':
+                        $("#helpDiv").load("../Modules/ApprovalBoth.html");
+                        break;
+                    case 'Glossary':
+                        $("#helpDiv").load("../Glossary/Glossary.html");
+                        break;
+                    case 'Glossary_AllPlatforms':
+                        $("#helpDiv").load("../Glossary/Glossary_AllPlatforms.html");
+                        break;
+                    case 'Glossary_ReportsUsage':
+                        $("#helpDiv").load("../Glossary/Glossary_ReportsUsage.html");
+                        break;
+                    case 'Glossary_FAQ':
+                        $("#helpDiv").load("../Glossary/Glossary_FAQ.html");
+                        break;
+                    case 'Glossary_ContactInfo':
+                        $("#helpDiv").load("../Glossary/Glossary_ContactInfo.html");
+                        break;
+                    case 'Glossary_AskExpert':
+                        $("#helpDiv").load("../Glossary/Glossary_AskExpert.html");
+                        break;
+                    case 'Reports':
+                        $("#helpDiv").load("../Reports/Reports.html");
+                        break;
+                    case 'AcqQueryReport':
+                        $("#helpDiv").load("../Reports/AcqQueryReport.html");
+                        break;
+                    case 'SynQueryReport':
+                        $("#helpDiv").load("../Reports/SynQueryReport.html");
+                        break;
+                    case 'Dashboard':
+                        $("#helpDiv").load("../Reports/Dashboard.html");
+                        break;
+                    case 'AcqDealListReport':
+                        $("#helpDiv").load("../Reports/AcqDealListReport.html");
+                        break;
+                    case 'SynDealListReport':
+                        $("#helpDiv").load("../Reports/SynDealListReport.html");
+                        break;
+                    case 'LoginDetailsReports':
+                        $("#helpDiv").load("../Reports/LoginDetailsReports.html");
+                        break;
+                    case 'TitleAvailabilityReport':
+                        $("#helpDiv").load("../Reports/TitleAvailabilityReport.html");
+                        break;
+                    case 'TitleAvailability2':
+                        $("#helpDiv").load("../Reports/TitleAvailability2.html");
+                        break;
+                    case 'TitleAvailability3':
+                        $("#helpDiv").load("../Reports/TitleAvailability3.html");
+                        break;
+                    case 'PlatformwiseAcq':
+                        $("#helpDiv").load("../Reports/PlatformwiseAcq.html");
+                        break;
+                    case 'PA_RightsReport':
+                        $("#helpDiv").load("../Reports/PA_RightsReport.html");
+                        break;
+                    case 'RightsUsageReport':
+                        $("#helpDiv").load("../Reports/RightsUsageReport.html");
+                        break;
+                    case 'RunUtilizationReport':
+                        $("#helpDiv").load("../Reports/RunUtilizationReport.html");
+                        break;
+                    case 'RunExceptionReport':
+                        $("#helpDiv").load("../Reports/RunExceptionReport.html");
+                        break;
+                    case 'LoggedUsers':
+                        $("#helpDiv").load("../Reports/LoggedUsers.html");
+                        break;
+                    case 'DealExpiryReport':
+                        $("#helpDiv").load("../Reports/DealExpiryReport.html");
+                        break;
+                    case 'DashboardGraphical':
+                        $("#helpDiv").load("../Reports/DashboardGraphical.html");
+                        break;
+                    case 'IPR_Application':
+                        $("#helpDiv").load("../IPR/IPR_Application.html");
+                        break;
+                    case 'IPR_Country':
+                        $("#helpDiv").load("../IPR/IPR_Country.html");
+                        break;
+                    case 'UploadFile1':
+                        $("#helpDiv").load("../Upload/UploadFile1.html");
+                        break;
+                    case 'ChangePassword':
+                        $("#helpDiv").load("../Masters/ChangePassword.html");
+                        break;
+                    case 'AmortRule':
+                        $("#helpDiv").load("../Settings/AmortRule.html");
+                        break;
+                    case 'AmortMonthClosing':
+                        $("#helpDiv").load("../Settings/AmortMonthClosing.html");
+                        break;
+                    case 'ApprovalWorkflow':
+                        $("#helpDiv").load("ApprovalWorkflow.html");
+                        break;
+                    case 'AssignWorkflow':
+                        $("#helpDiv").load("AssignWorkflow.html");
+                        break;
+                        //------------------------------
+
+                    case 'MovieAvailability':
+                        $("#helpDiv").load("../Availability/MovieAvailability.html");
+                        break;
+                    case 'ShowAvailability':
+                        $("#helpDiv").load("../Availability/ShowAvailability.html");
+                        break; 
+                    case 'MusicTrackPage':
+                        $("#helpDiv").load("../Music/MusicTrackPage.html");
+                        break;
+
+                    case 'MusicLanguage':
+                        $("#helpDiv").load("../Music/MusicLanguage.html");
+                        break;
+                    case 'MusicTheme':
+                        $("#helpDiv").load("../Music/MusicTheme.html");
+                        break;
+                    case 'MusicAlbum':
+                        $("#helpDiv").load("../Music/MusicAlbum.html");
+                        break;
+                    case 'MusicLabel':
+                        $("#helpDiv").load("../Music/MusicLabel.html");
+                        break;
+                    case 'ApprovalListPage':
+                        $("#helpDiv").load("../ApprovalList/ApprovalListPage.html");
+                        break;
+
+                    default:
+                        $("#helpDiv").load("../Glossary/Glossary.html");
+                        break;
+
+                    
+                }
+            }
+
+            $("#loginPage").click(function () {
+                $("#helpDiv").load("../login.html");
+            });
+            $("#forgotPassword").click(function () {
+                $("#helpDiv").load("../ForgotPassword.html");
+            });
+            $("#newUserCreation").click(function () {
+                $("#helpDiv").load("../NewUserCreation.html");
+            });
+            $("#masters").click(function () {
+                $("#helpDiv").load("Masters.html");
+            });
+            $("#currency").click(function () {
+                $("#helpDiv").load("Currency.html");
+            });
+            $("#territory").click(function () {
+                $("#helpDiv").load("Territory.html");
+            });
+            $("#country").click(function () {
+                $("#helpDiv").load("Country.html");
+            });
+            $("#genres").click(function () {
+                $("#helpDiv").load("Genres.html");
+            });
+            $("#commercial").click(function () {
+                $("#helpDiv").load("Commercial.html");
+            });
+            $("#category").click(function () {
+                $("#helpDiv").load("Category.html");
+            });
+            $("#channel").click(function () {
+                $("#helpDiv").load("Channel.html");
+            }); 
+            $("#language").click(function () {
+                $("#helpDiv").load("Language.html");
+            });
+            $("#languageGroup").click(function () {
+                $("#helpDiv").load("LanguageGroup.html");
+            });
+            $("#talent").click(function () {
+                $("#helpDiv").load("Talent.html");
+            });
+            $("#additionalExpenses").click(function () {
+                $("#helpDiv").load("AdditionalExpenses.html");
+            });
+            $("#gradeMaster").click(function () {
+                $("#helpDiv").load("GradeMaster.html");
+            });
+            $("#rightRule").click(function () {
+                $("#helpDiv").load("RightRule.html");
+            });
+            $("#costType").click(function () {
+                $("#helpDiv").load("CostType.html");
+            });
+            $("#documentType").click(function () {
+                $("#helpDiv").load("DocumentType.html");
+            });
+            $("#party").click(function () {
+                $("#helpDiv").load("Party.html");
+            });
+            $("#paymentTerms").click(function () {
+                $("#helpDiv").load("PaymentTerms.html");
+            });
+            $("#materialMedium").click(function () {
+                $("#helpDiv").load("MaterialMedium.html");
+            });
+            $("#materialType").click(function () {
+                $("#helpDiv").load("MaterialType.html");
+            });
+            $("#securityGroup").click(function () {
+                $("#helpDiv").load("SecurityGroup.html");
+            });
+            $("#user").click(function () {
+                $("#helpDiv").load("User.html");
+            });
+            $("#royaltyRecoupment").click(function () {
+                $("#helpDiv").load("RoyaltyRecoupment.html");
+            });
+            $("#exception").click(function () {
+                $("#helpDiv").load("Exception.html");
+            });
+            $("#titleList").click(function () {
+                $("#helpDiv").load("../Modules/TitleList.html");
+            });
+            //$("#acquisitionDeal").click(function () {
+            //    $("#helpDiv").load("../Modules/AcquisitionDeal.html");
+            //});
+            $("#acquisitionDealList").click(function () {
+                $("#helpDiv").load("../Modules/AcquisitionDeal.html");
+            });
+            $("#acq_General").click(function () {
+                $("#helpDiv").load("../Modules/../Modules/acq_General.html");
+            });
+            $("#acq_Rights").click(function () {
+                $("#helpDiv").load("../Modules/acq_Rights.html");
+            });
+            $("#acq_LicensorHoldback").click(function () {
+                $("#helpDiv").load("../Modules/acq_LicensorHoldback.html");
+            });
+            $("#acq_RunDefinition").click(function () {
+                $("#helpDiv").load("../Modules/acq_RunDefinition.html");
+            });
+            $("#acq_Budget").click(function () {
+                $("#helpDiv").load("../Modules/acq_Budget.html");
+            });
+            $("#acq_Ancillary").click(function () {
+                $("#helpDiv").load("../Modules/acq_Ancillary.html");
+            });
+            $("#acq_Attachments").click(function () {
+                $("#helpDiv").load("../Modules/acq_Attachments.html");
+            });
+            $("#acq_SportsRights").click(function () {
+                $("#helpDiv").load("../Modules/acq_SportsRights.html");
+            });
+            $("#acq_SportsAncillary").click(function () {
+                $("#helpDiv").load("../Modules/acq_SportsAncillary.html");
+            });
+            $("#acq_StatusHistory").click(function () {
+                $("#helpDiv").load("../Modules/acq_StatusHistory.html");
+            });
+            $("#acq_WorkflowStatus").click(function () {
+                $("#helpDiv").load("../Modules/acq_WorkflowStatus.html");
+            });
+            $("#acq_SendApproval").click(function () {
+                $("#helpDiv").load("../Modules/acq_SendApproval.html");
+            });
+            $("#acq_Amendment").click(function () {
+                $("#helpDiv").load("../Modules/acq_Amendment.html");
+            });
+            $("#acq_AmendAfterSyn").click(function () {
+                $("#helpDiv").load("../Modules/acq_AmendAfterSyn.html");
+            });
+            $("#acq_SetMilestone").click(function () {
+                $("#helpDiv").load("../Modules/acq_Set%20Milestone.html");
+            });
+            $("#acq_BacktoVersion").click(function () {
+                $("#helpDiv").load("../Modules/acq_BacktoVersion.html");
+            });
+            $("#acq_Clone").click(function () {
+                $("#helpDiv").load("../Modules/acq_Clone.html");
+            });
+            $("#acq_CloseTitle").click(function () {
+                $("#helpDiv").load("../Modules/acq_Close%20Title.html");
+            });
+            $("#syndicationDealsList").click(function () {
+                $("#helpDiv").load("../Modules/SyndicationDeals.html");
+            });
+            $("#syn_General").click(function () {
+                $("#helpDiv").load("../Modules/syn_General.html");
+            });
+            $("#syn_Rights").click(function () {
+                $("#helpDiv").load("../Modules/syn_Rights.html");
+            });
+            $("#syn_LicensorHoldback").click(function () {
+                $("#helpDiv").load("../Modules/syn_LicensorHoldback.html");
+            });
+            $("#syn_RunDefinition").click(function () {
+                $("#helpDiv").load("../Modules/syn_RunDefinition.html");
+            });
+            $("#syn_Attachments").click(function () {
+                $("#helpDiv").load("../Modules/syn_Attachments.html");
+            });
+            $("#syn_StatusHistory").click(function () {
+                $("#helpDiv").load("../Modules/syn_StatusHistory.html");
+            });
+            $("#syn_WorkflowStatus").click(function () {
+                $("#helpDiv").load("../Modules/syn_WorkflowStatus.html");
+            });
+            $("#syn_SendApproval").click(function () {
+                $("#helpDiv").load("../Modules/syn_SendApproval.html");
+            });
+            $("#syn_Amendment").click(function () {
+                $("#helpDiv").load("../Modules/syn_Amendment.html");
+            });
+            $("#syn_BacktoVersion").click(function () {
+                $("#helpDiv").load("../Modules/syn_BacktoVersion.html");
+            });
+            $("#approvalAcquisition").click(function () {
+                $("#helpDiv").load("../Modules/ApprovalAcquisition.html");
+            });
+            $("#approvalSyndication").click(function () {
+                $("#helpDiv").load("../Modules/ApprovalSyndication.html");
+            });
+            $("#approvalBoth").click(function () {
+                $("#helpDiv").load("../Modules/ApprovalBoth.html");
+            });
+
+            $("#musicTrack").click(function () {
+                $("#helpDiv").load("../Music/MusicTrackPage.html");
+            });
+
+            $("#musicExceptionHandling").click(function () {
+                $("#helpDiv").load("../Music/MusicExceptionHandling.html");
+            });
+
+            $("#musicLabel").click(function () {
+                $("#helpDiv").load("../Music/MusicLabel.html");
+            });
+
+            $("#musicAlbum").click(function () {
+                $("#helpDiv").load("../Music/MusicAlbum.html");
+            });
+            $("#musicTheme").click(function () {
+                $("#helpDiv").load("../Music/MusicTheme.html");
+            });
+            $("#musicLanguage").click(function () {
+                $("#helpDiv").load("../Music/MusicLanguage.html");
+            });
+            
+            $("#glossary").click(function () {
+                $("#helpDiv").load("../Glossary/Glossary.html");
+            });
+            $("#glossary_AllPlatforms").click(function () {
+                $("#helpDiv").load("../Glossary/Glossary_AllPlatforms.html");
+            });
+            $("#glossary_ReportsUsage").click(function () {
+                $("#helpDiv").load("../Glossary/Glossary_ReportsUsage.html");
+            });
+            $("#glossary_FAQ").click(function () {
+                $("#helpDiv").load("../Glossary/Glossary_FAQ.html");
+            });
+            $("#glossary_ContactInfo").click(function () {
+                $("#helpDiv").load("../Glossary/Glossary_ContactInfo.html");
+            });
+            $("#glossary_AskExpert").click(function () {
+                $("#helpDiv").load("../Glossary/Glossary_AskExpert.html");
+            });
+            
+            $("#reports").click(function () {
+                $("#helpDiv").load("../Reports/Reports.html");
+            });
+            $("#acqQueryReport").click(function () {
+                $("#helpDiv").load("../Reports/AcqQueryReport.html");
+            });
+            $("#synQueryReport").click(function () {
+                $("#helpDiv").load("../Reports/SynQueryReport.html");
+            });
+            $("#dashboard").click(function () {
+                $("#helpDiv").load("../Reports/Dashboard.html");
+            });
+            $("#acqDealListReport").click(function () {
+                $("#helpDiv").load("../Reports/AcqDealListReport.html");
+            });
+            $("#synDealListReport").click(function () {
+                $("#helpDiv").load("../Reports/SynDealListReport.html");
+            });
+            $("#loginDetailsReports").click(function () {
+                $("#helpDiv").load("../Reports/LoginDetailsReports.html");
+            });
+            $("#titleAvailabilityReport").click(function () {
+                $("#helpDiv").load("../Reports/TitleAvailabilityReport.html");
+            });
+            $("#titleAvailability2").click(function () {
+                $("#helpDiv").load("../Reports/TitleAvailability2.html");
+            });
+            $("#titleAvailability3").click(function () {
+                $("#helpDiv").load("../Reports/TitleAvailability3.html");
+            });
+            $("#platformwiseAcq").click(function () {
+                $("#helpDiv").load("../Reports/PlatformwiseAcq.html");
+            });
+            $("#pA_RightsReport").click(function () {
+                $("#helpDiv").load("../Reports/PA_RightsReport.html");
+            });
+            $("#rightsUsageReport").click(function () {
+                $("#helpDiv").load("../Reports/RightsUsageReport.html");
+            });
+            $("#runUtilizationReport").click(function () {
+                $("#helpDiv").load("../Reports/RunUtilizationReport.html");
+            });
+            $("#runExceptionReport").click(function () {
+                $("#helpDiv").load("../Reports/RunExceptionReport.html");
+            });
+            $("#loggedUsers").click(function () {
+                $("#helpDiv").load("../Reports/LoggedUsers.html");
+            });
+            $("#dealExpiryReport").click(function () {
+                $("#helpDiv").load("../Reports/DealExpiryReport.html");
+            });
+            $("#dashboardGraphical").click(function () {
+                $("#helpDiv").load("../Reports/DashboardGraphical.html");
+            });
+            $("#IPR_Application").click(function () {
+                $("#helpDiv").load("../IPR/IPR_Application.html");
+            });
+            $("#IPR_Country").click(function () {
+                $("#helpDiv").load("../IPR/IPR_Country.html");
+            });
+            $("#uploadFile1").click(function () {
+                $("#helpDiv").load("../Upload/UploadFile1.html");
+            });
+            $("#changePassword").click(function () {
+                debugger;
+                $("#helpDiv").load("../Masters/ChangePassword.html");
+            });
+            $("#amortRule").click(function () {
+                debugger;
+                $("#helpDiv").load("../Settings/AmortRule.html");
+            });
+            $("#amortMonthClosing").click(function () {
+                debugger;
+                $("#helpDiv").load("../Settings/AmortMonthClosing.html");
+            });
+            $("#approvalWorkflow").click(function () {
+                $("#helpDiv").load("ApprovalWorkflow.html");
+            });
+            $("#assignWorkflow").click(function () {
+                $("#helpDiv").load("AssignWorkflow.html");
+            });
+           
+
+        });
+
+       
+
+
+    </script>
+    <style>
+        li {
+            color: white;
+            cursor:pointer;
+        }
+
+        .scrollable {
+            min-height: auto;
+            max-height: 100%;
+            overflow-y: scroll;
+        }
+
+        section {
+            float:left;
+            padding-left:50px;
+        }
+       
+    </style>
+
+    <!--<title>Jquery Directory Tree</title>-->
+</head>
+<body>
+    <aside style="width:18% !important;">
+        <div class="topImg">
+            <img src="img/rights_u.png" style="width:200px">
+        </div>
+        <div class="dTree" style="overflow: scroll;
+    height: 760px; position:inherit !important">
+            <ul>
+                <li><a href="../index.html">USER MANUAL</a></li>
+                <li id="loginPage">Login page</li>
+                <li id="forgotPassword">Forgot password</li>
+                <li id="newUserCreation">New User Creation</li>
+                <li id="masters1">
+                    Masters
+                    <ul>
+                        <li id="currency">Currency</li>
+                        <li>
+                            Territory
+                            <ul>
+                                <li id="territory" >Territory</li>
+                                <li id="country">Country</li>
+                            </ul>
+                        </li>
+                        <li id="genres">Genres</li>
+                        <li id="commercial">
+                            Commercial
+                            <ul>
+                                <li id="category">Category</li>
+                                <li id="channel">Channel</li>
+                                <li id="language">Language</li>
+                                <li id="languageGroup">Language Group</li>
+                                <li id="talent">Talent</li>
+                                <li id="additionalExpenses">Additional Expenses</li>
+                                <li id="gradeMaster">Grade Master</li>
+                                <li id="rightRule">Right Rule</li>
+                            </ul>
+                        </li>
+                        <li id="costType">Cost Type</li>
+                        <li id="documentType">Document Type</li>
+                        <li id="party">Party</li>
+                        <li id="paymentTerms">Payment Terms</li>
+                        <li>
+                           Material
+                            <ul>
+                                <li id="materialMedium">Material Medium</li>
+                                <li id="materialType">Material Type</li>
+                            </ul>
+                        </li>
+                        <li>
+                            User Mgmt
+                            <ul>
+                                <li id="securityGroup">Security Group</li>
+                                <li id="user">User</li>
+                            </ul>
+                        </li>
+                        <li id="royaltyRecoupment">Royalty Recoupment</li>
+                        <li id="exception">Exception</li>
+                    </ul>
+                </li>
+                <li>
+                    Modules
+                    <ul>
+                        <li id="titleList">Title</li>
+                        <li id="acquisitionDeal">
+                            Acquisition Deal
+                            <ul>
+                                <li id="acquisitionDealList">Acquisation Deal List</li>
+                                <li id="acq_General">General</li>
+                                <li id="acq_Rights">Rights</li>
+                                <li id="acq_LicensorHoldback">Licensor Holdback</li>
+                                <li id="acq_RunDefinition">Run Definition</li>
+                                <li id="acq_Budget">Budget</li>
+                                <li id="acq_Ancillary">Ancillary</li>
+                                <li id="acq_Attachments">Attachments</li>
+                                <li id="acq_SportsRights">Sports Rights</li>
+                                <li id="acq_SportsAncillary">Sports Ancillary</li>
+                                <li id="acq_StatusHistory">Status History</li>
+                                <li id="acq_WorkflowStatus">Workflow Status</li>
+                                <li id="acq_SendApproval">Send For Approval</li>
+                                <li id="acq_Amendment">Amendment</li>
+                                <li id="acq_AmendAfterSyn">Amend After Syndication</li>
+                                <li id="acq_SetMilestone">Set Milestone</li>
+                                <li id="acq_BacktoVersion">Back to Version</li>
+                                <li id="acq_Clone">Renew / Clone</li>
+                                <li id="acq_CloseTitle">Close Title</li>
+                            </ul>
+                        </li>
+                        <li id="syndicationDeals">
+                            Syndication Deals
+                            <ul>
+                                <li id="syndicationDealsList">Syndication Deal List</li>
+                                <li id="syn_General">General</li>
+                                <li id="syn_Rights">Rights</li>
+                                <li id="syn_LicensorHoldback">Licensor Holdback</li>
+                                <li id="syn_RunDefinition">Run Definition</li>
+                                <li id="syn_Attachments">Attachments</li>
+                                <li id="syn_StatusHistory">Status History</li>
+                                <li id="syn_WorkflowStatus">Workflow Status</li>
+                                <li id="syn_SendApproval">Send for Approval</li>
+                                <li id="syn_Amendment">Amendment</li>
+                                <li id="syn_BacktoVersion">Back to Version</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">Approval List</a>
+                            <ul>
+                                <li id="approvalAcquisition">FAQ</li>
+                                <li id="approvalSyndication">Contact Info</li>
+                                <li id="approvalBoth">Ask an Expert</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">Music Track</a>
+                            <ul>
+                                <li id="musicTrack">Music Track</li>
+                                <li id="musicExceptionHandling">Music Exception Handling</li>
+                                <li id="musicLabel">Music Label</li>
+                                <li id="musicAlbum">Music Album</li>
+                                <li id="musicTheme">Music Theme</li>
+                                <li id="musicLanguage">Music Language</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li id="glossary">
+                    Glossary
+                    <ul>
+                        <li>
+                            <a href="#">Descriptions</a>
+                            <ul>
+                                <li id="glossary_AllPlatforms">Show All Platforms</li>
+                                <li id="glossary_ReportsUsage">Reports and Usage</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">Support</a>
+                            <ul>
+                                <li id="glossary_FAQ">FAQ</li>
+                                <li id="glossary_ContactInfo">Contact Info</li>
+                                <li id="glossary_AskExpert">Ask an Expert</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li id="reports">
+                    <a href="#">Reports</a>
+                    <ul>
+                        <li>
+                            <a href="#">Query Report</a>
+                            <ul>
+                                <li id="acqQueryReport">Acquisition Query</li>
+                                <li id="synQueryReport">Syndication Query</li>
+                            </ul>
+                        </li>
+                        <li id="dashboard">Dashboard</li>
+                        <li id="acqDealListReport">Acquisition Deal List</a></li>
+                        <li id="synDealListReport">Syndication Deal List</a></li>
+                        <li id="loginDetailsReports">Login Details</a></li>
+                        <li id="titleAvailabilityReport">Title Availability</a></li>
+                        <li id="titleAvailability2">Title Availability 2</a></li>
+                        <li id="titleAvailability3">Title Availability 3</a></li>
+                        <li id="platformwiseAcq">Platformwise Acquisition</a></li>
+                        <li id="pA_RightsReport">P&A Rights</a></li>
+                        <li id="rightsUsageReport">Rights Usage</a></li>
+                        <li id="runUtilizationReport">Run Utilization</a></li>
+                        <li id="runExceptionReport">Run Exception</a></li>
+                        <li id="loggedUsers">Logged in Users</a></li>
+                        <li id="dealExpiryReport">Deal Expiry</a></li>
+                        <li id="dashboardGraphical">Dashboard (Graphical)</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">IPR</a>
+                    <ul>
+                        <li id="IPR_Application">IPR Application</li>
+                        <li id="IPR_Country">IPR Country</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Upload</a>
+                    <ul>
+                        <li id="uploadFile1">Upload File 1</li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Settings</a>
+                    <ul>
+                        <li id="changePassword">Change Password</li>
+                        <li id="amortRule">Amort Rule</li>
+                        <li id="amortMonthClosing">Amort Month Closing</li>
+                        <li id="approvalWorkflow">Approval Workflow</li>
+                        <li id="assignWorkflow">Assign Workflow</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="bottomImg">
+            <img src="img/u-to-product-by.gif">
+        </div>
+    </aside>
+    <div id="helpDiv"class="scrollable" >
+
+
+    </div>
+</body>
+</html>

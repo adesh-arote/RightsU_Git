@@ -1,0 +1,133 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        countChar(document.getElementById('approvalremarks'));
+    });
+    var DoConfirmation = ''
+    var ApprovalValue = ''
+    function setUserAction(value) {
+        debugger;
+        var approvalremarks = $.trim($('#approvalremarks').val());
+        ApprovalValue = value;
+        if (approvalremarks == '') {
+            showAlert('I', 'Please enter remarks');
+        }
+        else {
+            if (value == 'A') {
+                showAlert('I', 'Are you sure you want to approve this deal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+            else if (value == 'RO') {
+                showAlert('I', 'Are you sure you want to Re-Open this deal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+            else {
+                showAlert('I', 'Are you sure you want to reject this deal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+        }
+        return false;
+    }
+
+    function handleCancel() { }
+
+    function handleOk() {
+        debugger;
+        if (DoConfirmation == 'Y') {
+            var wrkFlwSts = $('#lblWorkflowStatus').text();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Approve_Reject_Deal", "Global")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    user_Action: ApprovalValue,
+                    approvalremarks: $('#approvalremarks').val(),
+                    WorkFlowStatus: wrkFlwSts
+                }),
+                success: function (result) {
+                    debugger;
+                    var message
+                    if (ApprovalValue == 'A') {
+                        if (wrkFlwSts == "Waiting (Archive)") {
+                            if (result == 'E') {
+                                showAlert('E', 'Some Error While Archiving Deal Please Contact Support Team.', 'OK');
+                            }
+                            message = 'Deal Archived successfully';
+                        }
+                        else
+                            message = 'Deal Approved successfully';
+                    }
+                    else if (ApprovalValue == 'RO') {
+                        location.href = '@Html.Raw(Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Reopen", Acq_Deal_Code = objSchema.Deal_Code }))';
+                        return false;
+                    }
+                    else
+                        message = 'Deal Rejected successfully';
+
+                    if (result == 'Y')
+                        message = message + ', but unable to send mail. Please check the error log..';
+
+                    if (result != 'E')
+                        showAlert('S', message, 'OK');
+                    $(".btn_Apr_Rej_Ropn_BOL").attr('disabled', true);
+                    DoConfirmation = 'N';
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            location.href = '@Url.Action("Index","Acq_List")'
+        }
+    }
+</script>
+@*@using (Html.BeginForm("Approve_Reject_Deal", "Global", FormMethod.Get))
+    {
+*@<div class="scale_table_block">
+    <div class="divBlock">
+        <div class="bold" style="padding-right: 750px;">Approval / Rejection Remarks</div>
+        <div class="charNum">0/4000</div>
+    </div>
+    @Html.TextArea("approvalremarks", objSchema.Approver_Remark, new { @id = "approvalremarks", @class = "textarea", @row = "2", @cols = "20", @onkeyup = "countChar(this)" })
+    @Html.Hidden("user_Action")
+</div>
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        @{
+            if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForApprove))
+            {
+                <li>
+                    <input class="btn-primary btn_Apr_Rej_Ropn_BOL" type="submit" onclick='return setUserAction("A")' value="Approve" />
+                </li>
+            }
+            if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForDealReject))
+            {
+                <li>
+                    <input class="btn-primary btn_Apr_Rej_Ropn_BOL" type="submit" onclick='return setUserAction("R")' value="Reject" />
+                </li>
+            }
+            if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForDealReopen))
+            {
+                <li>
+                    <input class="btn-primary btn_Apr_Rej_Ropn_BOL " type="submit" onclick='return setUserAction("RO")' value="ReOpen" />
+                </li>
+            }
+            <li>
+                <input class="btn-primary btn_Apr_Rej_Ropn_BOL" type="button" onclick="location.href='@Url.Action("Index", "Acq_List")'" value="Back To List" />
+            </li>
+        }
+    </ul>
+</div>@*
+    }*@

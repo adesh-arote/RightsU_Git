@@ -1,0 +1,173 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_Rights_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema Obj_Deal_Schema_View = null;
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    { Obj_Deal_Schema_View = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA]; }
+    var msg = ViewBag.Msg;
+    ViewBag.Msg = "";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/CSS/Rights_Tab.css" />
+
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+
+<script>
+    var PushbackText = '@Obj_Deal_Schema_View.Pushback_Text';
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+    var dealMode_G = '@Obj_Deal_Schema_View.Mode';
+    var pushbackPageNo_G = '@Obj_Deal_Schema_View.Pushback_PageNo';
+    var pushbackPageSize_G = '@Obj_Deal_Schema_View.Pushback_PageSize';
+    var pushbackRecordCount_G = '@Obj_Deal_Schema_View.List_Pushback.Count()';
+    var View_Type_Search = '@Obj_Deal_Schema_View.Pushback_View';
+    var rightsRegion_G = '@Obj_Deal_Schema_View.Pushback_Region'.split(',');
+    var rightsPlatform_G = '@Obj_Deal_Schema_View.Pushback_Platform';
+   // var rightsTitle_G = '@Obj_Deal_Schema_View.Pushback_Title'.split(',');
+    var rightsExclusive_G = "";
+    var selectedTitleCode_G = '';
+    if ('@ViewBag.Title_Code_Search' != null && '@ViewBag.Title_Code_Search' != '')
+        selectedTitleCode_G = '@ViewBag.Title_Code_Search';
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)';
+    var URL_ShowAll = '@Url.Action("ShowAll", "Acq_Pushback")';
+    var URL_Edit_Pushback = '@Url.Action("Edit_Pushback", "Acq_Pushback")';
+    var URL_Clone_Pushback = '@Url.Action("Clone_Pushback", "Acq_Pushback")';
+    var URL_DeletePushback = '@Url.Action("DeletePushback", "Acq_Pushback")';
+    var URL_Add = '@Url.Action("Add", "Acq_Pushback")';
+    var URL_BindDropDown_Popup = '@Url.Action("BindDropDown_Popup", "Acq_Pushback")';
+    var URL_Bind_Grid_List = '@Url.Action("Bind_Grid_List", "Acq_Pushback")';
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")';
+    var URL_BindRightsFilterData = '@Url.Action("BindRightsFilterData","Acq_Pushback")';
+    var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+    $(document).ready(function () {
+        BindRightsFilterData();
+        $('#hdnModuleCode').val(@GlobalParams.ModuleCodeForAcqDeal)
+        //$('#Title_Code').SumoSelect();
+        //$('#Title_Code')[0].sumo.reload();
+    });
+    function BindRightsFilterData() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindRightsFilterData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divRightsFilter').empty();
+                    $('#divRightsFilter').html(result);
+                    initializeExpander();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+<style>
+    /*.SumoSelect{
+        width : 94% !important;
+    }*/
+    /*#divTitle_Code{
+        width:94%!important;
+    }
+    #divTitle_Code > div{
+        width : 100% !important;
+    }*/
+    .navigation_tabs{
+        overflow:visible !important;
+    }
+      .SumoSelect > .optWrapper.multiple > .options li.opt{
+        font-weight : 100 !important;
+    }
+       .select-all{
+        font-weight : 100 !important;
+    }
+         .SumoSelect > .CaptionCont > span{
+         font-weight : 100 !important;
+    }
+         #popupFade .modal_header{
+        background:#c3c3c3;
+    }
+        
+</style>
+<script src="~/Custom_Scripts/Acq_Deal_Pushback.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<div class="grid_area" onclick="FadeOutPopup1();">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabReverseHB">
+                    <div class="scale_table_block">
+                        <div id="divRightsFilter">
+                        </div>
+                    </div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left" id="lblTotal"></span>
+                       
+                        <div id="Pagination" class="pagination"></div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();"  onblur="setDefaultPaging('txtPageSize')"/>
+                        </span>
+                        @*@if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                        {
+                                <a class="btn btn-primary pull-right" href="#" data-toggle="modal" id="btnAdd" onclick="Add('popEditRevHB');">Add</a>
+                        }*@
+                    </div>
+                    <div class="scale_table_block">
+                        <div id="dvAcq_Pushback_List" class="deal clearfix">
+                        </div>
+                    </div>
+                    @if (Obj_Deal_Schema_View.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+                        @Html.Partial("_Edit_Without_Approval")
+                    }
+                    @if (Obj_Deal_Schema_View.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        @Html.Partial("_Approved_List")
+                        <br />
+                    }
+                    else if (Obj_Deal_Schema_View.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+                        <div class="bottom_action">
+                            <ul class="form_link_nav clearfix">
+                                <li>
+                                    <input type="button" id="btnCancel_Pushback" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("Cancel", "Acq_Pushback")    '">
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" id="popEditRevHB" class="form_wrapper modal fade big_popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+</div>
+
+
+

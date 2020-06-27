@@ -1,0 +1,474 @@
+﻿@model List<RightsU_Entities.Syn_Deal_Material>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+    var PaymentIntCode = 0;
+    var IsAddEditMode="N";
+    $(document).ready(function () {
+       // $("#ancFileName").attr('href', 'Help/index.html?IntCode=Login');
+        if ('@ViewBag.Record_Locking_Code' != '')
+        {
+            var fullUrl = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+            Call_RefreshRecordReleaseTime(@ViewBag.Record_Locking_Code,fullUrl);
+        }
+
+        if("@ViewBag.Message" !="")
+        {
+            if("@ViewBag.Mode"=="Error")
+            {
+                showAlert("E","@ViewBag.Message");
+            }
+            else
+                showAlert("S","@ViewBag.Message");
+        }
+
+        $("#Quantity").numeric({
+            allowMinus   : false,
+            allowThouSep : false,
+            allowDecSep  : false
+        });
+        addNumeric();
+        LoadSynDealMaterial(0,'Y');
+        initializeTooltip();
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function PageSize_OnChange() {
+        if (CheckEditMode()) {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            var IsValid = ValidatePageSize();
+            if (IsValid) {
+                LoadSynDealMaterial(0, 'Y');
+            }
+            else
+                return false;
+        }
+    }
+    function pageBinding() {
+        LoadSynDealMaterial(0, 'Y');
+    }
+    /*Bind Syn Material Grid*/
+    function LoadSynDealMaterial(pagenumber,isLoad) {
+        showLoading();
+        var txtPageSize = $("#txtPageSize").val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindGridSynMaterial", "Syn_Material")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                txtPageSize: txtPageSize,
+                page_No: pagenumber
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else {
+                    $('#dvDealSynMaterialList').empty();
+                    $('#dvDealSynMaterialList').html(result);
+                    SetPaging(txtPageSize);
+                    initializeTooltip();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function CheckEditMode(){
+        if(IsAddEditMode == 'Y'){
+            message = '@objMessageKey.PleasecompletetheAddEditfirst';
+            showAlert('E',message);
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    function OnBlur() {
+        debugger
+        if ($('#txtPageSize').val() == '' || $('#txtPageSize').val() == 0) {
+            $('#txtPageSize').val() == 10;
+        }
+    }
+
+    function RequiredFieldValidation()
+    {
+        var returnVal = true;
+        var Title_Code = $("#Title_Code").val();
+        var Material_Type_Code = $("#Material_Type_Code").val();
+        var Material_Medium_Code = $("#Material_Medium_Code").val();
+        var Quantity = $("#Quantity").val();
+
+        if (Title_Code == "0") {
+            $('#Title_Code').addClass('required');
+            returnVal = false;
+        }
+
+        else if (Material_Type_Code == "0") {
+            $('#Material_Type_Code').addClass('required');
+            returnVal = false;
+        }
+
+        else if (Material_Medium_Code == "0") {
+            $('#Material_Medium_Code').addClass('required');
+            returnVal = false;
+        }
+
+        else if (Quantity == "") {
+            $('#Quantity').addClass('required');
+            returnVal = false;
+        }
+
+        if ( parseInt(Quantity) == 0) {
+            showAlert('E','@objMessageKey.Quantitycannotbezero');
+            //return false;
+            $('#Quantity').addClass('required');
+            returnVal = false;
+        }
+        return returnVal;
+    }
+
+
+    /*Save/Update Payment Terms */
+    function SaveMaterial(Syn_Deal_Material_Code,Title_Code,Material_Type_Code,Material_Medium_Code,Quantity,Title_Codes)
+    {
+        var pageNo = $('#hdnpage_index').val();
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SaveMaterial", "Syn_Material")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Syn_Deal_Material_Code: Syn_Deal_Material_Code,
+                Title_Code: Title_Code,
+                Material_Type_Code: Material_Type_Code,
+                Material_Medium_Code: Material_Medium_Code,
+                Quantity:Quantity,
+                Title_Codes:Title_Codes
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    if(result == "N")
+                    {
+                        showAlert('E','@objMessageKey.CombinationconflictswithotherMaterialrecords');
+                        return false;
+                    }
+                    else{
+                        //$('#dvDealSynMaterialList').html(result);
+                        var strMessage='@objMessageKey.Materialaddedsuccessfully';
+                        if(Syn_Deal_Material_Code > 0)
+                            strMessage='@objMessageKey.Materialupdatedsuccessfully';
+                        showAlert('S', strMessage);
+                        IsAddEditMode="N";
+                        LoadSynDealMaterial(pageNo,'Y');
+                        initializeTooltip();
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function checkForsave(NewRow) {
+        //alert(NewRow);
+        debugger;
+        $('.required').removeClass('required');
+        var  returnVal =  RequiredFieldValidation();
+        if(returnVal)
+        {
+            var Syn_Deal_Material_Code = 0
+            if (NewRow == 1)
+            {
+                Syn_Deal_Material_Code = $("#Syn_Deal_Material_Code").val();
+            }
+
+            var Title_Codes= $("#Title_Code option:selected").text();
+            //var Syn_Deal_Material_Code = $("#Syn_Deal_Material_Code").val();
+            var Title_Code = $("#Title_Code").val();
+            var Material_Type_Code = $("#Material_Type_Code").val();
+            var Material_Medium_Code = $("#Material_Medium_Code").val();
+            var Quantity = $("#Quantity").val();
+            SaveMaterial(Syn_Deal_Material_Code,Title_Code,Material_Type_Code,Material_Medium_Code,Quantity,Title_Codes);
+        }
+    }
+
+
+    function OnDeleteClick(Syn_Deal_Material_Code)
+    {
+        if(CheckEditMode())
+        {
+            PaymentIntCode = Syn_Deal_Material_Code;
+            showAlert("I",'@objMessageKey.Areyousureyouwanttodeletethismaterial',"OKCANCEL");
+        }
+    }
+
+    function handleOk() {
+        showLoading();
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Delete", "Syn_Material")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Syn_Deal_Material_Code: PaymentIntCode,
+                txtPageSize: txtPageSize,
+                pageNo: pageNo
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    $('#dvDealSynMaterialList').html(result);
+                    showAlert('S', '@objMessageKey.Materialdeletedsuccessfully');
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function handleCancel() {
+        return false;
+    }
+
+    function ValidateSave() {
+        if(CheckEditMode())
+        {
+            showLoading();
+            var Isvalid = true;
+            // Code for Maintaining approval remarks in session
+            var Mode = '@ViewBag.PageMode';
+            if (Mode == 'APRV') {
+                var approvalremarks = $('#approvalremarks').val();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetSynApprovalRemarks", "Global")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: true,
+                    data: JSON.stringify({
+                        approvalremarks: $('#approvalremarks').val()
+                    }),
+                    success: function (result) {
+                        if (result == "true")
+                        {
+                            redirectToLogin();
+                        }
+                        else{
+                            Isvalid = true;
+                        }
+                    },
+                    error: function (result) {
+                        Isvalid = false;
+                    }
+                });
+            }
+            else
+                Isvalid = true;
+            if(Isvalid)
+            {
+                hideLoading();
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+            hideLoading();
+            return Isvalid;
+        }
+    }
+
+    /*On Add or Cancel Click*/
+    function AddCancelMaterial(isAdd) {
+        debugger;
+        if ($("#txtPageSize").val() == "") {
+            return false;
+        }
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        if (isAdd == "0" || (CheckEditMode() && isAdd == "1")) {
+            showLoading();
+            if(isAdd == "0")
+                IsAddEditMode="N";
+            else
+                IsAddEditMode="Y";
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Create", "Syn_Material")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    isAdd: isAdd,
+                    txtPageSize: txtPageSize,
+                    pageNo: pageNo
+                }),
+                success: function (result) {
+                    if (result == "true")
+                    {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#dvDealSynMaterialList').empty();
+                        $('#dvDealSynMaterialList').html(result);
+                        initializeChosen();
+                        initializeTooltip();
+                        hideLoading();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    /*Edit Material*/
+    function EditMaterial(Syn_Deal_Material_Code) {
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        if (CheckEditMode()) {
+            IsAddEditMode="Y";
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Edit", "Syn_Material")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    Syn_Deal_Material_Code: Syn_Deal_Material_Code,
+                    txtPageSize: txtPageSize,
+                    pageNo: pageNo
+                }),
+                success: function (result) {
+                    if (result == "true")
+                    {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#dvDealSynMaterialList').html(result);
+                        initializeChosen();
+                        initializeTooltip();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+</script>
+<style>
+    span::after {
+        content: "\200E‎";
+    }
+
+    label::after {
+        content: "\200E‎";
+    }
+
+    .active-result::after {
+        content: "\200E‎";
+    }
+</style>
+<input type="hidden" id="hdnTabName" name="hdnTabName" />
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container syn">
+                <div class="tab-pane active" id="tabPayTerm">
+                    <div class="scale_table_block">
+                        <div class="sub_block clearfix">
+                            <div class="pull-right">
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
+                                {
+                                    <a class="btn btn-primary" title="@objMessageKey.AddMaterial" onclick="return AddCancelMaterial(1);">@objMessageKey.Add</a>
+                                }
+                            </div>
+                        </div>
+                        <div class="paging_area clearfix">
+                            <span id="spanRecordCount" class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+                            <input type="hidden" id="hdnpage_index" name="hdnpage_index" value="1" />
+                            <div class="pagination" id="Pagination"></div>
+                            <span class="pull-right">
+                                @objMessageKey.PageSize:
+                                <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();" onfocus="CheckEditMode()" 
+                                       onblur="setDefaultPaging('txtPageSize')"/>
+                            </span>
+                        </div>
+                        <div class="scale_table_block" id="dvDealSynMaterialList">
+                        </div>
+                    </div>
+                </div>
+                @if (ViewBag.PageMode == "APRV")
+                {
+                    @Html.Partial("_Syn_Approved_List")
+                    <br />
+                }
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            @if (ViewBag.PageMode != "APRV")
+                            {
+                                <input type="button" id="btnCancelDeal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                       onclick="if(CheckEditMode())  location.href='@Url.Action("Cancel", "Syn_Material")    '">
+                            }
+                        </li>
+                    </ul>
+                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

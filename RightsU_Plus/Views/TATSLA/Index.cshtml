@@ -1,0 +1,374 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+
+<script>
+    var URL_BindSLAList = '@Url.Action("BindSLAList", "TATSLA")';
+    var URL_BindSLAMatrix = '@Url.Action("BindSLAMatrix", "TATSLA")';
+    var URL_SaveSLAMatrix = '@Url.Action("SaveSLAMatrix", "TATSLA")';
+    var URL_AddEditSLA = '@Url.Action("AddEditSLA", "TATSLA")';
+    var URL_SaveSLA = '@Url.Action("SaveSLA", "TATSLA")';
+    var URL_DeleteSLAMatrix = '@Url.Action("DeleteSLAMatrix", "TATSLA")';
+    var URL_ActiveDeactiveSLA = '@Url.Action("ActiveDeactiveSLA","TATSLA")';
+
+    $(document).ready(function () {
+        BindSLAList('List', 0);
+        initializeTooltip();
+    });
+    function BindSLAList(Key, tatSLAcode)
+    {
+        $.ajax({
+            type: "POST",
+            url: URL_BindSLAList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Key: Key,
+                tatSLAcode: tatSLAcode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divSLAList').empty();
+                    $('#divSLAList').html(result);
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function AddEditSLA(Key, tatSLAcode) {
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditSLA,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Key: Key,
+                tatSLAcode: tatSLAcode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divSLAList').empty();
+                    $('#divSLAList').html(result);
+                    initializeTooltip();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BindSLAMatrix(StatusName, TATSLACode, CommandName) {
+        debugger;
+        var TATSLACode = $('#hdnTATSLACode').val();
+        if (CommandName == 'Delete')
+            $('#IsAddEdit').val('N');
+
+        if (CheckIsAddEdit()) {
+            if ((CommandName == 'Add' || CommandName == 'Edit') && $("#IsAddEdit").val() != 'Y') {
+                $("#IsAddEdit").val('Y');
+            }
+            $.ajax({
+                type: "POST",
+                url: URL_BindSLAMatrix,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    StatusName: StatusName,
+                    TATSLACode: TATSLACode,
+                    CommandName: CommandName
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divSLAMatrix').empty();
+                        $('#divSLAMatrix').html(result);
+                        $('#ddlUsersSLA1,#ddlUsersSLA2,#ddlUsersSLA3').SumoSelect();
+                        if ($('#ddlUsersSLA1')[0] != undefined)
+                            $('#ddlUsersSLA1')[0].sumo.reload();
+                        if ($('#ddlUsersSLA2')[0] != undefined)
+                            $('#ddlUsersSLA2')[0].sumo.reload();
+                        if ($('#ddlUsersSLA3')[0] != undefined)
+                            $('#ddlUsersSLA3')[0].sumo.reload();
+                        //$('#ddlUsersSLA1').SumoSelect();
+                        //$('#ddlUsersSLA1')[0].sumo.reload();
+                        //$('#ddlUsersSLA2').SumoSelect();
+                        //$('#ddlUsersSLA2')[0].sumo.reload();
+                        //$('#ddlUsersSLA3').SumoSelect();
+                        //$('#ddlUsersSLA3')[0].sumo.reload();
+                        initializeChosen();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function SaveSLAMatrix(Action, MatrixCodes) {
+        debugger;
+        if (Action == 'Delete') {
+            var SLA3ToDays = $('#tdSLA3ToDays').text();
+        }
+        else {
+            if (!ValidateSaveSLAMatrix()) {
+                return false;
+            }
+            //var MatrixCodes = $('#hdnMatrixCodes_' + SLA1FromDays).val();
+        }
+        var TATSLACode = $('#hdnTATSLACode').val();
+        var Status = $('#ddlWorkflowStatus').val();
+        var SLA1FromDays = $('#txtSLA1FromDays').val();
+        var SLA1ToDays = $('#txtSLA1ToDays').val();
+        var SLA2FromDays = $('#txtSLA2FromDays').val();
+        var SLA2ToDays = $('#txtSLA2ToDays').val();
+        var SLA3FromDays = $('#txtSLA3FromDays').val();
+        var SLA3ToDays = $('#txtSLA3ToDays').val();
+        var SLA2Users = $('#ddlUsersSLA2').val();
+        var SLA1Users = $('#ddlUsersSLA1').val();
+        var SLA3Users = $('#ddlUsersSLA3').val();
+
+        $("#IsAddEdit").val('N');
+            $.ajax({
+                type: "POST",
+                url: URL_SaveSLAMatrix,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Action: Action,
+                    MatrixCodes: MatrixCodes,
+                    TATSLACode: TATSLACode,
+                    SLA1FromDays: SLA1FromDays,
+                    SLA1ToDays: SLA1ToDays,
+                    SLA1Users: SLA1Users,
+                    SLA2FromDays: SLA2FromDays,
+                    SLA2ToDays: SLA2ToDays,
+                    SLA2Users: SLA2Users,
+                    SLA3FromDays: SLA3FromDays,
+                    SLA3ToDays: SLA3ToDays,
+                    SLA3Users: SLA3Users,
+                    Status: Status
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert('S', result.Message);
+                            BindSLAMatrix('', 0, 'List')
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+            BindSLAMatrix('', 0, 'List')
+     }
+    function SaveSLA() {
+        var returnVal = true;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var TATSLACode = $('#hdnTATSLACode').val();
+        var SLAName = $('#txtSLAName').val();
+        var BUCode = $("#ddlBusinessUnit").val();
+        var DealTypeCode = $('#ddlDealType').val();
+
+       if (SLAName == '') {
+           $('#txtSLAName').val('');
+           $('#txtSLAName').attr('required', true)
+           returnVal = false;
+       }
+       if ($('#ddlBusinessUnit').val() == "") {
+            $('#ddlBusinessUnit').addClass('required');
+            returnVal = false;
+       }
+       if ($('#ddlDealType').val() == "") {
+            $('#ddlDealType').addClass('required');
+            returnVal = false;
+       }
+
+       if (CheckIsAddEdit()) {
+           if (returnVal == true) {
+               $.ajax({
+                   type: "POST",
+                   url: URL_SaveSLA,
+                   traditional: true,
+                   enctype: 'multipart/form-data',
+                   contentType: "application/json; charset=utf-8",
+                   data: JSON.stringify({
+                       TATSLACode: TATSLACode,
+                       SLAName: SLAName,
+                       BUCode: BUCode,
+                       DealTypeCode: DealTypeCode
+                   }),
+                   async: false,
+                   success: function (result) {
+                       if (result == "true") {
+                           redirectToLogin();
+                       }
+                       else {
+                           if (result.Status == "S") {
+                               showAlert('S', result.Message);
+                               BindSLAList('List', 0);
+                           }
+                           else {
+                               showAlert("E", result.Message);
+                           }
+                       }
+                   },
+                   error: function (result) {
+                       alert('Error: ' + result.responseText);
+                   }
+               });
+               BindSLAList('List', 0);
+           }
+       }
+    }
+    function ValidateSaveSLAMatrix() {
+        debugger;
+        var returnVal = true;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var TATSLACode = $('#hdnTATSLACode').val();
+        var Status = $('#ddlWorkflowStatus').val();
+        var SLA1FromDays = $('#txtSLA1FromDays').val();
+        var SLA1ToDays = $('#txtSLA1ToDays').val();
+        var SLA2FromDays = $('#txtSLA2FromDays').val();
+        var SLA2ToDays = $('#txtSLA2ToDays').val();
+        var SLA3FromDays = $('#txtSLA3FromDays').val();
+        var SLA3ToDays = $('#txtSLA3ToDays').val();
+        var SLA2Users = $('#ddlUsersSLA2').val();
+        var SLA1Users = $('#ddlUsersSLA1').val();
+        var SLA3Users = $('#ddlUsersSLA3').val();
+        //var MatrixCodes = $('#hdnMatrixCodes_' + SLA1FromDays).val();
+
+        if (SLA1FromDays == '') {
+            $('#txtSLA1FromDays').val('');
+            $('#txtSLA1FromDays').attr('required', true)
+            returnVal = false;
+        }
+        if (SLA1ToDays == '') {
+            $('#txtSLA1ToDays').val('');
+            $('#txtSLA1ToDays').attr('required', true)
+            returnVal = false;
+        }
+        if ($('#ddlWorkflowStatus').val() == "") {
+            $('#ddlWorkflowStatus').addClass('required');
+            returnVal = false;
+        }
+        if ($('#ddlUsersSLA1').val() == null) {
+            $('#ddlUsersSLA1').addClass('required');
+            returnVal = false;
+        }
+        return returnVal;
+    }
+    function ActiveDeactiveSLA(TATSLACode, doActive) {
+        $.ajax({
+            type: "POST",
+            url: URL_ActiveDeactiveSLA,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TATSLACode: TATSLACode,
+                doActive: doActive
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+                        BindSLAList();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function DeleteConfirmation(MatrixCodes) {
+        $('#finalSave').val('D');
+        $('#hdnDeletedId').val(MatrixCodes);
+        showAlert("I", "Are you sure, you want to delete this record?", 'OKCANCEL');
+        return false;
+    }
+    function handleOk() {
+        if ($('#finalSave').val() == 'Y') {
+            BindSLAList('List',0)
+        }
+        if ($('#finalSave').val() == 'D') {
+            var MatrixCodes = $('#hdnDeletedId').val();
+            SaveSLAMatrix('Delete', MatrixCodes);
+        }
+    }
+    function validateOnCancel() {
+        if (CheckIsAddEdit()) {
+            $('#finalSave').val('Y');
+            showAlert('I', 'All unsaved data will be lost, still want to go ahead?', 'OKCANCEL');
+        }
+    }
+    function CheckIsAddEdit() {
+        if ($("#IsAddEdit").val() == 'Y') {
+            showAlert("E", "Please Complete Add/Edit Operation First");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<input type="hidden" id="IsAddEdit" />
+<input type="hidden" id="finalSave" />
+<input type="hidden" id="hdnDeletedId" />
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="divSLAList">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+

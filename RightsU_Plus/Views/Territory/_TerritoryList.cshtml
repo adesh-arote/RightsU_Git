@@ -1,0 +1,113 @@
+﻿@model List<RightsU_Entities.USP_List_Territory_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<script>
+    $('.expand_strCountryNames').expander({
+        slicePoint: 50,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+    $('.expand_Territory_Name').expander({
+        slicePoint: 48,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblTerritory">
+    <thead>
+        <tr>
+            <th style="width:35%;">@objMessageKey.Territory</th>
+            <th style="width:10%;">@objMessageKey.Theatrical</th>
+            <th style="width:25%;">@objMessageKey.Countries</th>
+            @*<th style="width:10%;">@objMessageKey.Language</th>*@
+            <th style="width:10%;">@objMessageKey.Status</th>
+            <th style="width:10%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="expand_Territory_Name">@item.Territory_Name</div>
+                    </td>
+                    <td align="center">
+                        <span>@item.Theatrical</span>
+                    </td>
+                    <td>
+                        <div class="expand_strCountryNames">@item.Country_Names</div>
+                    </td>
+                   @* <td><span id="Langauge_@item.Territory_Code"></span></td>*@
+                    <td align="center">
+                        @if(item.Status == "Y")
+                        { 
+                        <span><text>@objMessageKey.Active</text></span>
+                        }
+                        else
+                        {
+                            <span><text>@objMessageKey.Deactive</text></span>
+                        }
+                    </td>
+                    <td align="center">
+                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                        {
+                            if (item.Status == "Y")
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Territory_Code)"></a>
+                            }
+                            else
+                            {
+                                <a title="@objMessageKey.CannoteditthisTerritoryasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                        }
+                        @if (item.Status == "Y")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                if (item.Disable_Message == "")
+                                {
+                                    <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveTerritory(@item.Territory_Code, 'N')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@item.Disable_Message" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveTerritory(@item.Territory_Code, 'Y')"></a>
+                            }
+                        }
+                   
+                         @* <a title="@objMessageKey.Language" class="glyphicon glyphicon-plus" style="cursor:pointer;" onclick="AddLanguage(@item.Territory_Code)"></a>*@
+                      
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

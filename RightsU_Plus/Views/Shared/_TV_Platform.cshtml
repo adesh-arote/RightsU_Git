@@ -1,0 +1,334 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        initializeTooltip();
+        var treeData =  @Html.Raw(ViewBag.TV_Platform)
+            treeData[0].title = treeData[0].title.replace('{AD}', '@ViewBag.TreeId' + 'platformCnt');
+
+        //treeData = [
+        //    {
+        //        title: 'Platform / Rights 2', key: '3', folder: true, expanded: false, selected: true, preselected: true,
+        //        children: [
+        //            {
+        //                title: 'Sound Recording(Audio)', folder: true, key: '0', selected: true, preselected: true,
+        //                children: [
+        //                    { title: 'Synchronisation / public performance', key: '2', selected: true, expanded: false, preselected: true, unselectable: true },
+        //                    {
+        //                        title: 'Edit Rights(restricted only to duration)', folder: true, key: '0', preselected: true,
+        //                        children: [
+        //                            {
+        //                                title: 'Non-Commercial(Synchronisation)', folder: true, key: '0', preselected: true,
+        //                                children: [
+        //                                    { title: 'Right to use Lyrics', key: '6', expanded: false, preselected: true, unselectable: true },
+        //                                    { title: 'Right to use Musical Composition', key: '7', expanded: false, preselected: true, unselectable: true},
+        //                                    { title: 'Right to use of Song Audio/ Sound Recording', key: '8', expanded: false, preselected: true, unselectable: true }
+        //                                ], expanded: false
+        //                            }
+        //                            , {
+        //                                title: 'Promotional', folder: true, key: '0', preselected: true,
+        //                                children: [
+        //                                    { title: 'Right to use Lyrics', key: '9', expanded: false, preselected: true, unselectableStatus: true },
+        //                                    { title: 'Right to use Musical Composition', key: '10', expanded: false, preselected: true, unselectable: true },
+        //                                    { title: 'Right to use of Song Audio/ Sound Recording', key: '11', expanded: false, preselected: true, unselectable: true }
+        //                                ], expanded: false
+        //                            }
+        //                        ], expanded: false
+        //                    }
+        //                ]
+        //            },
+        //            {
+        //                title: 'Gaming Rights', folder: true, key: '0', selected: true, preselected: true, unselectableStatus: true,
+        //                children: [
+        //                    { title: 'Promotional', key: '9', unselectableStatus: true, preselected: true, tooltip: 'Holdback is already added for the platform', selected: true, expanded: false },
+        //                    { title: 'Commercial', key: '10', unselectableStatus: true, preselected: true, tooltip: 'Holdback is already added for the platform', selected: true, expanded: false }
+        //                ]
+        //            }
+        //        ]
+        //    }
+        //];
+
+
+        $("#" + '@ViewBag.TreeId').fancytree({
+            extensions: ["filter"],
+            filter: {  // override default settings
+                counter: false, // No counter badges
+                mode: "hide"  // "dimm": Grayout unmatched nodes, "hide": remove unmatched nodes
+            },
+            // Case insensitive search for titles containing 'foo':
+            checkbox: true,
+            selectMode: 3,
+            source: treeData,
+            init: function (event, data) {
+                debugger;
+                data.tree.getRootNode().visit(function (node) {
+                    if (node.data.preselected) {
+                        node.setSelected(true);
+                    }
+                    //if (node.data.unselectable) {
+                    //    node.setSelected(true);
+                    //    //node.folder.
+                    //}
+                    //else { node.unselectable(false); }
+                    //if (node.data.unselectable) { node.un; }
+
+
+                });
+            },
+            //renderNode: function (event, data) {
+            //    if (node.data.unselectable) {
+            //        node.render();
+            //    }
+            //},
+            loadChildren: function (event, ctx) {
+                ctx.node.fixSelection3AfterClick();
+            },
+            //click: function (event, data) {
+            //    logEvent(event, data, ", targetType=" + data.targetType);
+            //},
+
+
+            select: function (event, data) {
+                $('#hdnAccordianRegion').val('N');
+                $('#hdnAccordianSub').val('N');
+                $('#hdnAccordianDub').val('N');
+
+                //textSelected = [];
+                //if (data.tree.getSelectedNodes().children == null) {
+                //    textSelected.push(data.tree.getSelectedNodes().title);
+                //}
+                //else {
+                //    var j = data.tree.getSelectedNodes().children;
+                //    $.each(j, function (index, value) {
+                //        textSelected.push(value.title);
+                //    });
+                //}
+
+                var selKeys = $.map(data.tree.getSelectedNodes(), function (node) {
+                    return node.key;
+                });
+
+                var selText = $.map(data.tree.getSelectedNodes(), function (node) {
+                    return { key: node.key, title: node.title };
+                });
+                $("#" + '@ViewBag.TreeValueId').val(selKeys.join(","));
+
+                if ('@ViewBag.Treetext' != "")
+                    $("#" + '@ViewBag.Treetext').val(JSON.stringify(selText));
+
+                @*if('@ViewBag.TreeCountId' !='')
+                {*@
+                var sPlatform = selKeys;
+                var pcount = 0;
+                for (var i = 0; i < sPlatform.length; i++) {
+                    if (sPlatform[i].trim() != '0' && sPlatform[i] != 0 && sPlatform[i].trim() != '')
+                        pcount++;
+                }
+                @*if ($("#" + '@ViewBag.TreeCountId') != undefined)
+                    $("#" + '@ViewBag.TreeCountId').html(pcount);*@
+                //}
+                //treeData.replace("{AD}", pcount);
+
+                $("#" + '@ViewBag.TreeId' + "platformCnt").html(pcount);
+                if ('@ViewBag.TreeId' == "Rights_Platform_Country") {
+                    LoadMoreOptionRegionPopup();
+                    if (pcount > 9) {
+                        if ($('#regionCountTab').attr('data-original-title') !== undefined) {
+                            $('#regionCountTab').removeAttr('data-original-title');
+                            $('#regionCountTab').text("9+");
+                            $('#regionCountTab').attr('data-original-title', pcount + " Regions");
+
+                        }
+                        initializeTooltip();
+                    }
+                    else {
+
+                        if ($('#regionCountTab').attr('data-original-title') !== undefined) {
+                            $('#regionCountTab').removeAttr('data-original-title');
+                            $('#regionCountTab').text(pcount);
+                            $('#regionCountTab').attr('data-original-title', pcount + " Regions");
+                        }
+                        initializeTooltip();
+                    }
+                    //$('#regionCountTab').text(pcount);
+                }
+                if ('@ViewBag.TreeId' == "Rights_Platform_G") {
+                    LoadMoreOptionPlatformPopup();
+                    if (pcount > 9) {
+                        if ($('#PlatformCountTab').attr('data-original-title') !== undefined) {
+                            $('#PlatformCountTab').removeAttr('data-original-title');
+                            $('#PlatformCountTab').text("9+");
+                            $('#PlatformCountTab').attr('data-original-title', pcount + " Platforms");
+
+                        }
+                        initializeTooltip();
+                    }
+                    else {
+
+                        if ($('#PlatformCountTab').attr('data-original-title') !== undefined) {
+                            $('#PlatformCountTab').removeAttr('data-original-title');
+                            $('#PlatformCountTab').text(pcount);
+                            $('#PlatformCountTab').attr('data-original-title', pcount + " Platforms");
+                        }
+                        initializeTooltip();
+                    }
+                    // $('#PlatformCountTab').text(pcount);
+                }
+                if ('@ViewBag.TreeId' == "Rights_Platform_SubLang_G") {
+                    LoadMoreOptionSubtitlePopup();
+                    if (pcount > 9) {
+                        if ($('#subTitleCountTab').attr('data-original-title') !== undefined) {
+                            $('#subTitleCountTab').removeAttr('data-original-title');
+                            $('#subTitleCountTab').text("9+");
+                            $('#subTitleCountTab').attr('data-original-title', pcount + " Subtitles");
+
+                        }
+                        initializeTooltip();
+                    }
+                    else {
+
+                        if ($('#subTitleCountTab').attr('data-original-title') !== undefined) {
+                            $('#subTitleCountTab').removeAttr('data-original-title');
+                            $('#subTitleCountTab').text(pcount);
+                            $('#subTitleCountTab').attr('data-original-title', pcount + " Subtitles");
+                        }
+                        initializeTooltip();
+                    }
+                    // $('#subTitleCountTab').text(pcount);
+                }
+                if ('@ViewBag.TreeId' == "Rights_Platform_DubLang_G") {
+                    LoadMoreOptionDubbingPopup();
+                    if (pcount > 9) {
+                        if ($('#DubbingCountTab').attr('data-original-title') !== undefined) {
+                            $('#DubbingCountTab').removeAttr('data-original-title');
+                            $('#DubbingCountTab').text("9+");
+                            $('#DubbingCountTab').attr('data-original-title', pcount + " Dubbing");
+
+                        }
+                        initializeTooltip();
+                    }
+                    else {
+
+                        if ($('#DubbingCountTab').attr('data-original-title') !== undefined) {
+                            $('#DubbingCountTab').removeAttr('data-original-title');
+                            $('#DubbingCountTab').text(pcount);
+                            $('#DubbingCountTab').attr('data-original-title', pcount + " Dubbing");
+                        }
+                        initializeTooltip();
+                    }
+                    // $('#DubbingCountTab').text(pcount);
+                }
+                if ('@ViewBag.TreeId' == "Rights_Promoter_G") {
+                    LoadMoreOptionPromoterPopup();
+                    if (pcount > 9) {
+                        if ($('#SelfUtilizationCountTab').attr('data-original-title') !== undefined) {
+                            $('#SelfUtilizationCountTab').removeAttr('data-original-title');
+                            $('#SelfUtilizationCountTab').text("9+");
+                            $('#SelfUtilizationCountTab').attr('data-original-title', pcount + " Self Utilizations");
+
+                        }
+                        initializeTooltip();
+                    }
+                    else {
+
+                        if ($('#SelfUtilizationCountTab').attr('data-original-title') !== undefined) {
+                            $('#SelfUtilizationCountTab').removeAttr('data-original-title');
+                            $('#SelfUtilizationCountTab').text(pcount);
+                            $('#SelfUtilizationCountTab').attr('data-original-title', pcount + " Self Utilizations");
+                        }
+                        initializeTooltip();
+                    }
+                    // $('#PlatformCountTab').text(pcount);
+                }
+                @*if (callFrom != "Edit") {
+                     if ('@ViewBag.TreeId' != "Rights_Platform_Filter") {
+                    debugger;
+                    if (typeof TreeViewSelectedChange == 'function') {
+                        TreeViewSelectedChange(@ViewBag.TreeId);
+                    }
+                }
+                }*@
+            },
+            cookieId: '@ViewBag.TreeId' + "-Cb3",
+            idPrefix: '@ViewBag.TreeId' + "-Cb3-"
+
+        });
+
+        var selKeys = $.map($("#" + '@ViewBag.TreeId').fancytree("getTree").getSelectedNodes(), function (node) {
+            return node.key;
+        });
+        $("#" + '@ViewBag.TreeValueId').val(selKeys.join(","));
+        var sPlatform = selKeys;
+        var pcount = 0;
+        for (var i = 0; i < sPlatform.length; i++) {
+            if (sPlatform[i] != '0' && sPlatform[i] != 0 && sPlatform[i] != "")
+                pcount++;
+        }
+        $("#" + '@ViewBag.TreeId' + "platformCnt").html(pcount);
+
+        $("input[name=search_@ViewBag.TreeId]").keyup(function (e) {
+            var n,
+            opts = {
+                autoExpand: $("#autoExpand"),
+                leavesOnly: $("#leavesOnly").is(":checked")
+            },
+            match = $(this).val();
+            if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
+                $("input[name=search_@ViewBag.TreeId]").val("");
+                $("span#matches_@ViewBag.TreeId").text("");
+                $("#" + '@ViewBag.TreeId').fancytree("getTree").clearFilter();
+                return;
+            }
+            n = $("#" + '@ViewBag.TreeId').fancytree("getTree").filterBranches(match, opts);
+            $("span#matches_@ViewBag.TreeId").text("(" + n + " @objMessageKey.matches)");
+            $("span#matches_@ViewBag.TreeId").css("font-size", 10);
+            $("span#matches_@ViewBag.TreeId").css("font-style", "italic");
+        }).focus();
+
+    });
+</script>
+<div id="Tree_Filter_@ViewBag.TreeId" style="text-align:left;position:absolute;z-index:1;background: #eee;padding:5px;direction:@objMessageKey.LayoutDirection">
+    <label id="lblFilter">@objMessageKey.Filter</label>
+    @if (ViewBag.TreeId == "Rights_Platform_G" || ViewBag.TreeId == "Rights_Platform_E" || ViewBag.TreeId == "Rights_Platform_M" ||
+        ViewBag.TreeId == "Rights_Platform_Filter" || ViewBag.TreeId == "Rights_Platform" || ViewBag.TreeId == "Rights_HB_Platform" ||
+        ViewBag.TreeId == "Rights_HB_Platform_View" || ViewBag.TreeId == "Rights_List_Platform" || ViewBag.TreeId == "Rights_Platform_M")
+    {
+        <input name="search_@ViewBag.TreeId" placeholder="@objMessageKey.Platform" autocomplete="off">
+    }
+    else if (ViewBag.TreeId == "Rights_Platform_Country")
+    {
+        <input name="search_@ViewBag.TreeId" placeholder="Country" autocomplete="off">
+    }
+    else if (ViewBag.TreeId == "Rights_Platform_SubLang_G")
+    {
+        <input name="search_@ViewBag.TreeId" placeholder="Subtitling" autocomplete="off">
+    }
+    else if (ViewBag.TreeId == "Rights_Platform_DubLang_G")
+    {
+        <input name="search_@ViewBag.TreeId" placeholder="Dubbing" autocomplete="off">
+    }
+    else if (ViewBag.TreeId == "IPR_Class")
+    {
+        <input name="search_@ViewBag.TreeId" placeholder="Class" autocomplete="off">
+    }
+    else if (ViewBag.TreeId == "Rights_Security")
+    {
+        <input name="search_@ViewBag.TreeId" placeholder="Security Group" autocomplete="off">
+    }
+    else if (ViewBag.TreeId == "Rights_Promoter_G" || ViewBag.TreeId == "Rights_Promoter_E" || ViewBag.TreeId == "Rights_Promoter_M" || ViewBag.TreeId == "Rights_List_Promoter"
+            || ViewBag.TreeId == "Promoter_Matrix")
+    {
+        <input name="search_@ViewBag.TreeId" placeholder="Self Utilization" autocomplete="off">
+    }
+    <span id="matches_@ViewBag.TreeId"></span>
+</div>
+
+<div id="@ViewBag.TreeId" style="margin:37px 0px 0px 0px">
+
+</div>

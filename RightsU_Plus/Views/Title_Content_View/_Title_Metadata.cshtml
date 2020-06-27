@@ -1,0 +1,220 @@
+﻿@using RightsU_BLL;
+@model RightsU_Entities.Title
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    
+    RightsU_BLL.Language_Service objLS = new RightsU_BLL.Language_Service(objLoginEntity.ConnectionStringName);
+    RightsU_BLL.Talent_Service objT = new RightsU_BLL.Talent_Service(objLoginEntity.ConnectionStringName);
+    RightsU_BLL.Program_Service objP = new RightsU_BLL.Program_Service(objLoginEntity.ConnectionStringName);
+    var lstTalent = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().ToList();
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }   
+}
+<script>
+    var URL_BindProgramList = '@Url.Action("BindProgramList", "Title_Content_View")';
+    var URL_SaveTitleContent = '@Url.Action("SaveTitleContent", "Title_Content_View")';
+    $(document).ready(function () {
+        $('#hdnTitleContentCode').val('@ViewBag.TitleContentCode');
+        BindProgramList('');
+    });
+    function btnCancel() {
+        var URL = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "Code" })';
+        URL = URL.replace("Title_Name", '@ViewBag.SearchedTitle');
+        URL = URL.replace("Code", '@ViewBag.PageNo');
+        URL = URL.replace("amp;", "");
+        window.location.href = URL;
+
+    }
+    function EditContent_OnClick(titleContentCode, CommandName) {
+        if (checkCurrentAction()) {
+            $('#hdnTitleContentCode').val(titleContentCode);
+            BindProgramList(CommandName);
+            $('#hdnAction').val(CommandName);
+        }
+
+        if (!ValidatePageSize('txtPageSize'))
+            return false;
+
+    }
+    function CancelContent_OnClick(titleContentCode) {
+        $('#hdnAction').val("");
+        $('#hdnTitleContentCode').val(titleContentCode);
+        BindProgramList('');
+    }
+    function SaveTitleContent(titleContentCode) {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var EpisodeName = $.trim($('#txtEpisodeName_' + titleContentCode).val());
+        var duration = $('#txtDuration_' + titleContentCode).val();
+        var synopsis = $('#txtSynopsis_' + titleContentCode).val();
+       
+        if (EpisodeName == '') {
+            $('#txtEpisodeName_' + titleContentCode).val('')
+            $('#txtEpisodeName_' + titleContentCode).attr('required', true)
+            return false;
+        }
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SaveTitleContent,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                titleContentCode: titleContentCode,
+                EpisodeName: EpisodeName,
+                duration: duration,
+                synopsis: synopsis
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        showAlert("S", result.Message);
+                        BindProgramList("");
+                        }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function BindProgramList(CommandName) {
+        var titleContentCode = 0;
+        //if (changeMu != 'Y')
+            titleContentCode = $('#hdnTitleContentCode').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindProgramList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                contentCodeForEdit: titleContentCode,
+                CommandName: CommandName
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divTitleContentList').html(result);
+                initializeExpander();
+                addNumeric();
+                initializeTooltip();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="scale_table_block">
+            <table class="table_brif table">
+                <tbody>
+                    <tr>
+                        <td class="intro_pic" style="width:10%!important">
+                            <div>
+                                @if (Model.Title_Image != null)
+                                {   <img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Title_Image)" alt="Image" />}
+                                else
+                                {
+                                    if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                    { <a href="javascript:void(0)"><img src="~/Images/musicIcon.png" alt="Image" /></a> }
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                    {<a href="javascript:void(0)"><img src="~/Images/program.png" alt="Image" /></a> }
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
+                                    {<a href="javascript:void(0)"><img src="~/Images/formatShow.png" alt="Image" /></a> }
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                    {<a href="javascript:void(0)"><img src="~/Images/Event.png" alt="Image" /></a> }
+                                    else
+                                    {<a href="javascript:void(0)"><img src="~/Images/movieIcon.png" alt="Image" /></a> }
+                                }
+                            </div>
+                        </td>
+                        <td class="intro">
+                            <table class="four_column table">
+                                <tr>
+                                    <td>@objMessageKey.TitleType </td>
+                                    <td>
+                                        @Model.Deal_Type.Deal_Type_Name
+                                    </td>
+                                    <td>@objMessageKey.Language </td>
+                                    <td>
+                                        @{
+                                            string Language_Name = "";
+                                            if (@Model.Title_Language_Code > 0)
+                                            {
+                                                Language_Name = objLS.GetById(Model.Title_Language_Code ?? 0).Language_Name;
+                                            }
+                                        }
+                                        @Html.Label("TitleLanguage", Language_Name)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.Title </td>
+                                    <td>
+                                        @Model.Title_Name
+                                    </td>
+                                    <td>@objMessageKey.YearOfRelease</td>
+                                    <td>
+                                        @Model.Year_Of_Production
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.Producer </td>
+                                    <td class="expandable">
+                                        @ViewBag.ProduceList
+                                    </td>
+
+                                    <td>@objMessageKey.Director </td>
+                                    <td class="expandable">
+                                        @ViewBag.DirectorList
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.KeyStarCast </td>
+                                    <td colspan="3" class="expandable">
+                                        @ViewBag.StarCastList
+                                    </td>
+                                </tr>
+                                <tr>
+
+                                    <td>@objMessageKey.Synopsis </td>
+                                    <td class="expandable" id="tdsynopsis">
+                                        @Model.Synopsis
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <input type="hidden" id="hdnTitleContentCode" value="0" />
+        <div id="divTitleContentList" class="deal clearfix">
+        </div>
+    </section>
+</div>

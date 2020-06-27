@@ -1,0 +1,239 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/JS_Core/jquery.mark.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<style>
+    label {
+        margin: 0 5px 0 5px;
+    }
+    td {
+        padding: 10px 0 10px 0;
+    }
+        #DDJobName_chosen {
+        width: 50% !important;
+    }
+    #DDBusinessName_chosen {
+        width: 50% !important;
+    }
+    #txtentityname {
+        width:46%;
+    }
+    #uploadFile {
+        width:46%;
+    }
+    .table-wrapper {
+       margin-bottom:-50px;
+    }
+</style>
+<script>
+    var URL_Save = '@Url.Action("Save", "DemoSetup")';
+    var URL_Execute = '@Url.Action("Execute", "DemoSetup")';
+    $(document).ready(function () {
+        $("#DDBusinessName_chosen").css('display', 'none');
+        $('[name="searchBy"]').change(function (event) {
+            if ($('[name="searchBy"]:checked').val() == 'New') {
+                $("#txtbusinessname").css('display', '');
+                $("#DDBusinessName_chosen").css('display', 'none');
+            }
+            if ($('[name="searchBy"]:checked').val() == 'Existing') {
+                $("#DDBusinessName_chosen").css('display', '');
+                $("#txtbusinessname").css('display', 'none');
+            }
+        });
+    });
+    function fileCheck(obj) {
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+        if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) != -1) {
+            return true;
+        }
+        else {
+            showAlert("E", "Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            var input = $("#uploadFile");
+            input.replaceWith(input.val('').clone(true));
+            return false;
+        }
+    }
+    function saveEntity() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var isValid = true;
+        var data = new FormData();
+        var searchby = $("input[name = 'searchBy']:checked").val();
+        var entityname = $.trim($("#txtentityname").val());
+        var businessentity = $.trim($("#txtbusinessname").val());
+        var file = $("#uploadFile").get(0).files;
+
+        if (entityname === null || entityname==="") {
+            isValid = false;
+            $("#txtentityname").attr("required", true);
+            $("#txtentityname").addClass('required');
+        }
+        if (!($("input[name = 'searchBy']").is(":checked"))) {
+            showAlert("E", "Please select New or Existing Business Unit Name");
+            isValid = false;
+        } else {
+            if (businessentity === null || businessentity==="") {
+                if (searchby === "Existing")
+                {
+                    businessentity = $("#DDBusinessName").val();                   
+                }
+                else
+                { isValid = false; }
+                $("#txtbusinessname").addClass('required');
+            }
+        }
+        if (file.length > 0) {
+            data.append("postedFile", file[0]);
+            data.append("searchBy", $("input[name = 'searchBy']:checked").val());
+            if (searchby=="New") {
+                data.append("businessName", businessentity);
+            }
+            else {
+                data.append("businessName", $("#DDBusinessName").val());
+            }
+            data.append("entityName",entityname);
+            if (isValid) {
+                $.ajax({
+                    type: "POST",
+                    url: URL_Save,
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (result) {
+                        if (result == "true")
+                        { redirectToLogin(); }
+                        else {
+                            if (result.Status == "S") {
+                                showAlert("S", "Record saved successfully. You will now be redirected to login page", "OK");
+                            } else {
+                                showAlert("E", "Business Unit Name already exists");
+                            }                           
+                        }
+                    },
+                    error: function (er) { }
+                });
+            } else {
+                $("#txtbusinessname").attr("required", true);
+            }
+        }
+        else {
+            $("#uploadFile").attr("required", true);
+        }
+    }
+    function handleOk() {
+        window.location.href = '@Url.Action("Index", "Login", new { isReset = "Y" })';
+    }
+    function executeJob() {
+        var ddoption = $("#DDJobName").val();
+        $.ajax({
+            type: "POST",
+            url: URL_Execute,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                ddOption: ddoption
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    showAlert("S", "Job Executed Successfully");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">           
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Client Demo Setup
+                        <span> </span>
+                    </h2>
+                </div>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="scale_table_block">
+                        <table style="width:80%;height:0 auto;">
+                            <tbody>
+                                <tr>
+                                    <td width="20%">
+                                        <b> Entity</b>
+                                    </td>
+                                    <td width="80%">
+                                        <input type="text" name="txtentityname" id="txtentityname" placeholder="Entity Name" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>Business Unit</b>
+                                    </td>
+                                    <td>
+                                        <label>
+                                            <text>New</text> @Html.RadioButton("searchBy", "New", new { @checked = "checked" })
+                                        </label>
+                                        <label>
+                                            <text>Existing</text> @Html.RadioButton("searchBy", "Existing", new { @required = true })
+                                        </label>
+                                        <input type="text" id="txtbusinessname" placeholder="Business Unit Name">
+                                        @Html.DropDownList("Business_Unit_Name", (SelectList)ViewBag.BusinessNameSelect, new { @id = "DDBusinessName", @class = "form_input chosen-select" })
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>New Logo</b>
+                                    </td>
+                                    <td>
+                                        <input type="file" id="uploadFile" name="uploadFile" onchange="fileCheck(this)">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <input type="button" id="btnSave" class="btn btn-primary" value="Save" onclick="saveEntity()">
+                </div>                
+            </div>              
+                <div class="container acq main_col">
+                     <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="scale_table_block">
+
+                                <table style="width:80%;height:0 auto;">
+                                    <tbody>
+                                        <tr>
+                                            <td width="20%">
+                                                <b>SQL Server Job</b>
+                                            </td>
+                                            <td width="80%">
+                                                @Html.DropDownList("JobName", (SelectList)ViewBag.JobNameSelect, new { @id = "DDJobName", @class = "form_input chosen-select" })
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <input type="button" id="btnexecute" class="btn btn-primary" value="Execute Job" onclick="executeJob()">
+
+                        </div>
+                        <br />
+                        </div>
+                    </section>
+</div>

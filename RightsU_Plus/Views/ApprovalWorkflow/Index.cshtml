@@ -1,0 +1,137 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+  
+    var URL_BindPartialPages = '@Url.Action("BindPartialPages", "ApprovalWorkflow")';
+
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "ApprovalWorkflow")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+ 
+    $(document).ready(function () {
+        debugger;
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?ApprovalWorkflow');
+        BindPartialView("LIST",0);
+    });
+  
+    //------------------------Record Locking-----------------
+
+    function CheckRecordLock(ApprovalWorkflowCode, commandName) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ApprovalWorkflowCode: ApprovalWorkflowCode,
+                commandName: commandName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        debugger;
+                        $("#hdnRecordislocked").val("Y")
+                        BindPartialView("ADDEDIT", ApprovalWorkflowCode)
+                        $('#hdnRecodLockingCode_temp').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else {
+                        $("#hdnRecordislocked").val("N")
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindPartialView(key, WorkflowCode) {
+        debugger
+        if (key == "ADDEDIT") {
+            Search = $('#searchCommon').val();
+            $('#hdnSearch').val($('#searchCommon').val());
+        }
+
+        if (key == "EDIT") {
+            Search = $('#searchCommon').val();
+            $('#hdnSearch').val($('#searchCommon').val());
+            CheckRecordLock(WorkflowCode, "EDIT")
+
+            var isRCLock = $("#hdnRecordislocked").val()
+            if (isRCLock == "N") {
+                return false;
+            }
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                WorkflowCode: WorkflowCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divApprovalWorkflow').empty();
+                    $('#divApprovalWorkflow').html(result);
+                  //  initializeChosen();
+                    
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+</script>
+<style>
+    .glyphicon_orange {
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	font-family: 'Glyphicons Halflings';
+	font-style: normal;
+	font-weight: normal;
+	font-size: 15px;
+	margin-right: 4px;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: #ff732f;
+}
+.glyphicon_orange:hover{
+color: #ff732f !important;
+}
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="divApprovalWorkflow">
+            </div>
+        </div>
+    </section>
+    <input type="hidden" id="hdnSearch" name="hdnSearch" />.
+    <input type="hidden" id="hdnRecodLockingCode_temp" name="hdnRecodLockingCode_temp" value="0" />
+    <input type="hidden" id="hdnRecordislocked" name="hdnRecordislocked" value="Y" />
+    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+</div>

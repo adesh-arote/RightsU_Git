@@ -1,0 +1,522 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Cost>
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        //debugger;
+        // $("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');
+       // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Cost');
+    });
+    var PaymentIntCode = 0;
+    var tmp_pageNo;
+    var IsAddEditMode="N";
+
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+    var messageType_G  = '@ViewBag.MessageType';
+    var message_G  = '@ViewBag.Message';
+    var error_G  = '@ViewBag.Error';
+    var pageMode_G = '@ViewBag.PageMode';
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)';
+    var URL_SaveCostNew = '@Url.Action("SaveCostNew", "Acq_Cost_New")';
+    var URL_BindGridAcqCostNew = '@Url.Action("BindGridAcqCostNew", "Acq_Cost_New")';
+    var URL_Delete = '@Url.Action("Delete", "Acq_Cost_New")';
+    var URL_Create = '@Url.Action("Create", "Acq_Cost_New")';
+    var URL_Edit = '@Url.Action("Edit", "Acq_Cost_New")';
+    var URL_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")'
+
+    $(document).ready(function () {
+        if (@ViewBag.Record_Locking_Code > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode_G, URL_Global_Refresh_Lock);
+
+        if(messageType_G !='')
+        {
+            if(message_G !="")
+                showAlert('E',message_G);
+        }
+        else{
+            if(message_G !="")
+                showAlert('S',message_G);
+        }
+
+        if(error_G!="")
+            showAlert('E',error_G);
+
+        $("#Deal_Cost").numeric({
+            allowMinus   : false,
+            allowThouSep : true,
+            allowDecSep  : false
+        });
+
+        initializeExpander();
+        var txtRemark = document.getElementById('Remarks');
+        if(txtRemark!=null)
+            countChar(txtRemark);
+
+        LoadAcqDealCostNew(0,'Y');
+    });
+    function CheckEditMode() {
+        if(IsAddEditMode == 'Y'){
+            message = '@objMessageKey.PleasecompletetheAddEditfirst.';
+            showAlert('E',message);
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    function checkForsave(NewRow)
+    {
+        if($('#txtPageSize').val() !="")
+        {
+            var txtPageSize =  $('#txtPageSize').val();
+            var  returnVal =  RequiredFieldValidation();
+            if(returnVal)
+            {
+                var Acq_Deal_Cost_Code = 0
+                if (NewRow == 1)
+                {
+                    Acq_Deal_Cost_Code = $("#Acq_Deal_Cost_Code").val();
+                }
+
+                var Cost_Type_Code = $("#Cost_Type_Code").val();
+                var Deal_Cost = $("#Deal_Cost").val();
+                var Remarks = $("#Remarks").val();
+
+                var rdbYes = $("#rdbYes")
+                var rdbNo = $("#rdbNo")
+                var Incentive = "N";
+                var Title_Codes =  $('#ddllstTitle').val().join(',');
+                if(rdbYes[0].checked==true)
+                {
+                    Incentive="Y";
+                }
+                $('input[name=hdnIncentive]').val(Incentive);
+                $('input[name=hdnCostTypeCode]').val(Cost_Type_Code);
+                $('input[name=hdnDeal_Cost]').val(Deal_Cost);
+
+                SaveCostNew(Acq_Deal_Cost_Code, Title_Codes, Cost_Type_Code, Deal_Cost, Incentive, Remarks);
+            }
+        }
+    }
+    /*Save/Update Cost New */
+    function SaveCostNew(Acq_Deal_Cost_Code, Title_Codes, Cost_Type_Code, Deal_Cost, Incentive, Remarks)
+    {
+        var txtPageSize =  $('#txtPageSize').val();
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SaveCostNew,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Acq_Deal_Cost_Code: Acq_Deal_Cost_Code,
+                Title_Codes: Title_Codes,
+                Cost_Type_Code: Cost_Type_Code,
+                Deal_Cost: Deal_Cost,
+                Incentive:Incentive,
+                Remarks:Remarks
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    if(result == "N")
+                    {
+                        showAlert('E', "@objMessageKey.CombinationconflictswithotherCostrecords.");
+                        return false;
+                    }
+                    if(result == "E")
+                    {
+                        showAlert('E', "@objMessageKey.ThisCostheadisalreadyassignedtoPaymentTerm.");
+                        return false;
+                    }
+                    else{
+                        var strMessage="@objMessageKey.Costaddedsuccessfully";
+                        if(Acq_Deal_Cost_Code > 0)
+                            strMessage="@objMessageKey.Costupdatedsuccessfully";
+                        showAlert('S', strMessage);
+                        IsAddEditMode="N";
+                        LoadAcqDealCostNew(tmp_pageNo,'N');
+                    }
+                }
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function RequiredFieldValidation()
+    {
+        var returnVal = true;
+        var Title_Codes = $("#ddllstTitle").val();
+        var Cost_Type_Code = $("#Cost_Type_Code").val();
+        var Deal_Cost= $("#Deal_Cost").val();
+
+        if(Title_Codes==null)
+        {
+            $('#divddllstTitle').addClass('required');
+            returnVal = false;
+        }
+
+        if(Cost_Type_Code == "0")
+        {
+            $('#Cost_Type_Code').addClass('required');
+            returnVal = false;
+        }
+
+        if(Deal_Cost == "" || Deal_Cost == "0")
+        {
+            $('#Deal_Cost').addClass('required');
+            returnVal = false;
+        }
+        return returnVal;
+    }
+    /*Bind Cost New Grid*/
+    function LoadAcqDealCostNew(pagenumber,isLoad) {
+        //debugger;
+        var txtPageSize=10;
+        if(isLoad=="N")
+        {
+            if($('#txtPageSize').val()!= "")
+                txtPageSize=parseInt($('#txtPageSize').val());
+        }
+        tmp_pageNo = pagenumber;
+        if(pagenumber >= 0)
+        {
+            $.ajax({
+                type: "POST",
+                url: URL_BindGridAcqCostNew,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                async:false,
+                data: JSON.stringify({
+                    txtPageSize: txtPageSize,
+                    page_No: pagenumber
+                }),
+                success: function (result) {
+                    if (result == "true")
+                    {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#dvDealAcqCostNewList').empty();
+                        $('#dvDealAcqCostNewList').html(result);
+                        initializeExpander();
+                        hideLoading();
+                        initializeTooltip();
+                    }
+                },
+                error: function (result) {
+                    hideLoading();
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function OnDeleteClick(Acq_Deal_Cost_Code)
+    {
+        if($('#txtPageSize').val() !="")
+        {
+            if(CheckEditMode())
+            {
+                PaymentIntCode = Acq_Deal_Cost_Code;
+                showAlert("I","@objMessageKey.AreyousureyouwanttodeletethisCost?","OKCANCEL");
+            }
+        }
+    }
+    function handleOk() {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_Delete,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Acq_Deal_Cost_Code: PaymentIntCode
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    if(result == "Y")
+                    {
+                        showAlert('E', "@objMessageKey.ThisCostheadisalreadyassignedtoPaymentTerm.");
+                        return false;
+                    }
+                    else{
+                        showAlert('S', "@objMessageKey.Costdeletedsuccessfully");
+                        LoadAcqDealCostNew(tmp_pageNo, 'N');
+                        initializeChosen();
+                        initializeExpander();
+                        initializeTooltip();
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function handleCancel() {
+        return false;
+    }
+    /*On Add or Cancel Click*/
+    function AddCancelCostNew(isAdd) {
+        //debugger;
+        if($('#txtPageSize').val() != "" )
+        {
+            var txtPageSize =  $('#txtPageSize').val();
+            if (isAdd == "0" || (CheckEditMode() && isAdd == "1")) {
+                if(isAdd == "0")
+                    IsAddEditMode="N";
+                else
+                {
+                    IsAddEditMode="Y";
+                }
+                $.ajax({
+                    type: "POST",
+                    url: URL_Create,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    data: JSON.stringify({
+                        isAdd: isAdd,
+                        page_No: tmp_pageNo,
+                        txtPageSize: txtPageSize
+                    }),
+                    success: function (result) {
+                        if (result == "true")
+                        {
+                            redirectToLogin();
+                        }
+                        else{
+                            $('#dvDealAcqCostNewList').empty();
+                            $('#dvDealAcqCostNewList').html(result);
+                            $('#ddllstTitle').SumoSelect();
+                            $('#ddllstTitle')[0].sumo.reload();
+
+                            initializeChosen();
+                            initializeExpander();
+                            initializeTooltip();
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        }
+    }
+    /*Edit Cost New*/
+    function EditCostNew(Acq_Deal_Cost_Code) {
+        if($('#txtPageSize').val() !="")
+        {
+            if (CheckEditMode()) {
+                IsAddEditMode="Y";
+                var txtPageSize =  $('#txtPageSize').val();
+                $.ajax({
+                    type: "POST",
+                    url: URL_Edit,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    data: JSON.stringify({
+                        Acq_Deal_Cost_Code: Acq_Deal_Cost_Code,
+                        page_No: tmp_pageNo,
+                        txtPageSize: txtPageSize
+                    }),
+                    success: function (result) {
+                        if (result == "true")
+                        {
+                            redirectToLogin();
+                        }
+                        else{
+                            $('#dvDealAcqCostNewList').html(result);
+                            $('#ddllstTitle').SumoSelect();
+                            $('#ddllstTitle')[0].sumo.reload();
+                            var txtRemark = document.getElementById('Remarks');
+                            if(txtRemark!=null)
+                                countChar(txtRemark);
+                            initializeChosen();
+                            initializeExpander();
+                            initializeTooltip();
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        }
+    }
+    function CheckPageNumber()
+    {
+        $('#txtPageSize').removeClass("required");
+        var txtPageSize = $("#txtPageSize");
+        if( parseInt( txtPageSize.val()) > 0)
+        {
+            return true;
+        }
+        else{
+            txtPageSize.val("");
+            $('#txtPageSize').addClass("required");
+            return false;
+        }
+    }
+
+    function pageBinding() {
+        LoadAcqDealCostNew(0, 'N')
+    }
+    function ValidateSave() {
+        if(CheckEditMode())
+        {
+            showLoading();
+            var Isvalid = true;
+
+            // Code for Maintaining approval remarks in session
+            if (pageMode_G == 'APRV') {
+                var approvalremarks = $('#approvalremarks').val();
+                $.ajax({
+                    type: "POST",
+                    url: URL_SetApprovalRemarks,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: true,
+                    data: JSON.stringify({
+                        approvalremarks: $('#approvalremarks').val()
+                    }),
+                    success: function (result) {
+                        if (result == "true")
+                        {
+                            redirectToLogin();
+                        }
+                        else{
+                            Isvalid = true;
+                        }
+                    },
+                    error: function (result) {
+                        Isvalid = false;
+                    }
+                });
+            }
+            else
+                Isvalid = true;
+
+            if(Isvalid)
+            {
+                hideLoading();
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+            hideLoading();
+            return Isvalid;
+        }
+    }
+</script>
+
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container acq">
+                <div class="tab-pane active" id="tabPayTerm">
+                    <div class="scale_table_block">
+                        <div class="sub_block clearfix">
+                            <div class="pull-right">
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                                {
+                                    <a class="btn btn-primary" title="@objMessageKey.AddCost" onclick="return AddCancelCostNew(1);">@objMessageKey.Add</a>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">
+                            @objMessageKey.TotalRecords:
+                            <label id="lblTotalRecords"></label>
+                        </span>
+                        <div class="pagination" id="Pagination"></div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" class="smallTextBox" value="" id="txtPageSize" onchange="if(CheckPageNumber()) LoadAcqDealCostNew(0,'N')" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="scale_table_block" id="dvDealAcqCostNewList">
+                    </div>
+                    <div class="scale_table_block">
+                        <table align="center" border="0" style="border-color: Black" cellpadding="3" cellspacing="3"
+                               valign="top" width="100%" class="main">
+                            <tr>
+                                <td align="right" class="search" style="height: 24px; width: 5%;">
+                                    &nbsp;
+                                </td>
+                                <td align="right" class="search" style="height: 24px; width: 39.3%;">
+                                    <label style="text-align: right; font-weight: bold;">@objMessageKey.TotalAgreementValue</label>
+                                </td>
+                                <td width="10px">&nbsp;</td>
+                                <td class="search" style="height: 24px; margin-left: 10px; width: 12%;" align="left" colspan="3">
+                                    <label id="lblTotalAgreementValue"></label>
+                                </td>
+                                <td class="search">
+                                    &nbsp;
+                                </td>
+                                <td width="17%" class="search">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                @if (objSchema.Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    @Html.Partial("_Edit_Without_Approval")
+                }
+                @if (ViewBag.PageMode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Approved_List")
+                    <br />
+                }
+                else if (objSchema.Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="button" id="btnCancelDeal" title="Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                       onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Acq_Cost_New")    '">
+                            </li>
+                        </ul>
+                    </div>
+                }
+                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+            </div>
+        </div>
+    </div>
+</div>

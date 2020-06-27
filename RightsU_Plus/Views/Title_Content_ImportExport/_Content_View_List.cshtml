@@ -1,0 +1,165 @@
+﻿
+@model List<RightsU_Entities.USP_List_ContentBulkImport_Result>
+@{
+    string Message = Convert.ToString(Session["Message"]);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    $(document).ready(function () {  
+        $('#lblTotal').text('Total Records : ' + @ViewBag.RecordCount);
+    });
+  
+    $('.expandable').expander({
+        slicePoint: 22,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+   
+</script>
+
+    <div id="AllsubmenuHide" dir=@objMessageKey.LayoutDirection>
+        <table class="table table-bordered table-hover" id="tblDMImport">
+            <thead>
+                <tr>
+                    <th style="width:7%;">Excel Sr. No.</th>
+                    <th style="width:8%;">Content</th>
+                    <th style="width:7%;">Episode No</th>
+                    <th style="width:7%;">Version</th>
+                    <th style="width:10%;">Music Track</th>
+                    <th style="width:6%;">TC IN</th>
+                    <th style="width:6%;">TC OUT</th>
+                    <th style="width:7%;">From Frame</th>
+                    <th style="width:7%;">To Frame</th>
+                    <th style="width:8%;">Duration</th>
+                    <th style="width:7%;">Duration Frame</th>
+                    <th style="width:7%;">Status</th>
+                    <th style="width:19%;">Error Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count() > 0)
+                {
+
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td align="center">@item.ExcelLineNo</td>   
+                            <td align="center" class="Highlight" style="color:blue;" onmouseover="this.style.cursor='pointer';" onclick="BindMappingPopUp(@item.DMContentMusicCode)">@item.Content</td>                                                   
+                            <td align="center" class="Highlight">@item.EpisodeNo</td>
+                            <td align="center">@item.VersionName</td>
+                            <td align="center" class="Highlight">@item.MusicTrackName</td>
+                            <td align="center">@item.TC_IN</td>
+                            <td align="center">@item.TC_OUT </td>
+                            <td align="center">@item.FromFrame</td>
+                            <td align="center">@item.ToFrame</td>
+                            <td align="center">@item.Duration</td>
+                            <td align="center">@item.DurationFrame</td>
+                            <td align="center" class="Highlight">@item.Status</td>
+                            <td align="center" class="expandable">@Html.Raw(Convert.ToString(item.ErrorMessage == null ? "" : item.ErrorMessage).Trim().Trim('~').Trim().Replace("~", "<br/>").Replace("\r\n", "<br/>").Replace("\n", "<br/>"))</td>
+                    </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="13">No record found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function () {
+            addNumeric();
+        });
+        function addNumeric() {
+            $(".pagingSize").numeric({
+                allowMinus: false,
+                allowThouSep: false,
+                allowDecSep: false,
+                max: 999,
+                min: 1
+            });
+        }
+        function PageSize_OnChange() {
+            if (!ValidatePageSize())
+                return false;
+            var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
+            var File_Type = '@ViewBag.FileType'
+            var SearchCriteria = $.trim($('#srchCommon').val());
+         
+            BindContentViewList(0, DM_Master_Import_Code, SearchCriteria ,File_Type,'N')
+        }
+        function ValidatePageSize() {
+            var recordPerPage = $('#txtErrorPageSize').val();
+            if ($.trim(recordPerPage) != '') {
+                var txtPageSize = parseInt(recordPerPage);
+                if (txtPageSize > 0)
+                    return true;
+            }
+            $('#txtErrorPageSize').addClass("required");
+            return false;
+        }
+        function pageBinding() {
+            var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
+            var File_Type = '@ViewBag.FileType'
+            var SearchCriteria = $.trim($('#srchCommon').val());
+            var File_Type = '@ViewBag.FileType'
+        
+            BindContentViewList(0, DM_Master_Import_Code, SearchCriteria ,File_Type,'N')
+        }
+
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+        function SetViewPaging() {
+
+            IsCall = 'N';
+            var PageNo, recordCnt;
+
+            var txtPageSize = $('#txtErrorPageSize').val();
+            if ('@ViewBag.PageNo' != null)
+                PageNo = '@ViewBag.PageNo';
+
+            if ('@ViewBag.RecordCount' != null && '@ViewBag.RecordCount' != '0')
+                recordCnt = '@ViewBag.RecordCount';
+
+            PageNo = PageNo - 1;
+
+            var opt = { callback: pageselectCallback };
+            opt["items_per_page"] = @(Convert.ToInt32(ViewBag.txtpageSize) == 0 || ViewBag.txtpageSize == null ? 10 : ViewBag.txtpageSize);
+            opt["num_display_entries"] = 5;
+            opt["num"] = 10;
+            opt["prev_text"] = "<<";
+            opt["next_text"] = ">>";
+            opt["current_page"] = PageNo;
+            $("#ErrorPagination").pagination(recordCnt, opt);
+        }
+        function pageselectCallback(page_index, jq) {
+            var SearchCriteria = $.trim($('#srchCommon').val());
+            var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
+            var File_Type = '@ViewBag.FileType'
+          
+            $("#hdnPageNo").val(page_index);
+
+            if (IsCall == 'Y') {
+                BindContentViewList(page_index, DM_Master_Import_Code, SearchCriteria , File_Type,'N');
+            }
+            else
+                IsCall = 'Y';
+
+        }
+    </script>
+

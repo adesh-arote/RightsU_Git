@@ -1,0 +1,97 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Populate_Music_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+}
+
+<div class="tab-pane active scale_table_block">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width: 3%;">
+                    <input type="checkbox" id="chkAllMusic" /></th>
+                @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+                {
+                    <th style="width: 10%;">Agreement No.</th>
+                    <th style="width: 15%;">Music Library</th>
+                }
+
+                <th style="width: 25%;">Music Title</th>
+                <th style="width: 15%;">Album / Movie</th>
+
+                @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+                {
+                    <th style="width: 10%;">Label</th>
+                }
+
+                <th style="width: 20%;">Singer</th>
+                <th style="width: 20%;">Music Composer</th>
+
+                @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                {
+                    <th style="width: 15%;">Lyricist</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var objRow in Model)
+                {
+                <tr>
+                    <td>
+                        <input type="checkbox" id="chkMusic_@objRow.Int_Code" name="chkSelection" value="@objRow.Int_Code" class="checkbox" /></td>
+
+                    @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+                    {
+                        <td>@objRow.Agreement_No</td>
+                        <td>
+                            <div class="expandable">
+                                @objRow.Music_Library
+                            </div>
+                        </td>
+                    }
+
+                    <td>
+                        <div class="expandable">@objRow.Music_Title<a href="#"><span></span></a></div>
+                    </td>
+                    <td>@objRow.Movie_Album</td>
+
+                    @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+                    {
+                        <td>
+                            <div class="expandable">
+                                @objRow.Label
+                            </div>
+                        </td>
+                    }
+
+                    <td>
+                        <div class="expandable">
+                            @objRow.Singer
+                        </div>
+                    </td>
+                    <td>
+                        <div class="expandable">
+                            @objRow.Music_Composer
+                        </div>
+                    </td>
+
+                    @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                    {
+                        <td>
+                            <div class="expandable">
+                                @objRow.Lyricist
+                            </div>
+                        </td>
+                    }
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

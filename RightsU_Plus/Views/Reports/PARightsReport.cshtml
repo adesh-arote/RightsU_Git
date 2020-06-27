@@ -1,0 +1,550 @@
+﻿@{
+    ViewBag.Title = "PARightsReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+
+    var URL_BindPARightsReport = '@Url.Action("BindPARightsReport", "Reports")';
+    var URL_BindPATitleList = '@Url.Action("BindPATitleList", "Reports")';
+    var URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNo", "Reports")';
+
+    var platformCodes_G = " ";
+    var platformCodes_GP = " ";
+    var moduleCode_G = "";
+
+    var URL_BindPlatformTreeView = '@Url.Action("BindPlatformTreeView", "Reports")';
+    var URL_BindPlatformPopup = '@Url.Action("BindPlatformPopup", "Reports")';
+    var URL_BindPlatformGroup = '@Url.Action("BindPlatformGroup", "Reports")';
+
+    $(document).ready(function () {
+
+        //var dateInString = $("#txtfrom").val();
+        //var txtto = $("#txtto").val();
+        $('#ddlTitle').SumoSelect();
+
+        //$('#ddlBusinessUnit_chosen').click(function () {
+        //    BindTitleList($('#ddlBusinessUnit').val());
+        //});
+
+    });
+   
+    function btnShow_OnClick() {
+        debugger;
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var titleList = $('#txtTitle').val();
+        var agreementNo = $('#txtAgreementNo').val();
+
+        if (titleList == 0) {
+            titleList = " ";
+        }
+        debugger;
+        var IsAncillary = $('#hdnIsAncillary').val();
+        var platformCodes = "", AncillaryTypeCode = ""
+        if (IsAncillary == "Y") {
+            
+            if ($('#hdnTitleCode').val() == '0' && $('#ddlAncillaryType').val() == "") {
+                showAlert('E', '@objMessageKey.PleaseSelectatleastTitleOrAncillaryType');
+                return false;
+            }
+            
+            platformCodes = platformCodes_G;
+            AncillaryTypeCode = $('#ddlAncillaryType').val();
+        }
+        else {
+            if ($('#hdnTitleCode').val() == '0' && ($('#txtAgreementNo').val() == null || agreementNo == "")) {
+                showAlert('E', '@objMessageKey.PleaseSelectatleastonesearchcriteria');
+                return false;
+            }
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPARightsReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                businessUnitcode: businessUnitcode,
+                titleCodes: titleList,
+                agreementNo: agreementNo,
+                AncillaryTypeCode: AncillaryTypeCode,
+                platformCodes: platformCodes
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divResult').empty();
+                    $('#divResult').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function populateAgreementNo(evt) {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var selectedtxt = $('#txtAgreementNo').val()
+        var returnVal = true;
+        if (businessUnitcode == 0) {
+            $('#ddlBusinessUnit').attr('required', true);
+            returnVal = false;
+        }
+
+        if (returnVal) {
+            $("#txtAgreementNo").autocomplete({
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    $('#hdnAcqDealCode').val('0')
+                    $('#hdnAgreementNo').val('')
+                    var param = {
+                        searchPrefix: $('#txtAgreementNo').val()
+                    };
+                    $.ajax({
+                        url: URL_PopulateAgreementNo,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: v.Text,
+                                        val: v.Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var code = i.item.val;
+                    $('#hdnAcqDealCode').val(code);
+                    $('#hdnAgreementNo').val(i.item.value);
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+    }
+
+    function ClearAll() {
+        var code = 1;
+        $("#txtTitle,#txtAgreementNo").val('').trigger("chosen:updated");
+        $('#ddlBusinessUnit').val(code).trigger('chosen:updated');
+        // BindTitleList(code);
+
+        $('#ddlAncillaryType').val("");
+        $('#ddlAncillaryType').trigger('chosen:updated');
+
+        $('#hdnTitleCode').val("0");
+        $("#hdnTVCodes").val("");
+        $("#hdnPGCode").val("");
+        selectedPlatform = '0';
+        $('#selectedPlatofrms').text('');
+        $('#selectedPlatofrms').text("@objMessageKey.SelectedPlatforms: " + selectedPlatform);
+
+    }
+    function PopulateTitleNameForPA(keyword) {
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        BU_Code: $('#ddlBusinessUnit').val(),
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_BindPATitleList,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = '@objMessageKey.ResultNotFound';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "285px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                     $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+    function ClosePopup() {
+        platformCodes_G = $("#hdnTVCodes").val();
+        platformCodes_GP = $("#hdnPGCode").val();
+        var selectedPlatform = $('#Rights_PlatformplatformCnt').text();
+        if (selectedPlatform.trim() == "")
+            selectedPlatform = '0';
+        $('#selectedPlatofrms').text('');
+        $('#selectedPlatofrms').text("@objMessageKey.SelectedPlatforms: " + selectedPlatform);
+
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+
+    }
+
+
+    function BindPlatformPopup() {
+        debugger
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformPopup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+                $('#popup').modal();
+            },
+            error: function (result) { }
+        });
+    }
+    function BindPlatform() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SelectedPlatform: $('#hdnTVCodes').val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divTree').empty();
+                $('#divTree').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+    function TabChange(tabName) {
+        $('#hdnTabName').val(tabName);
+        $('#hdnTVCodes').val('');
+        if (tabName == 'P') {
+            //$('#ddlPFGroup').val(null);
+            $('#divDdlPG').hide();
+            BindPlatform();
+        }
+        else {
+            $('#divDdlPG').show();
+            ddlPFGroup_Change();
+        }
+    }
+    function BindPlatformGroup() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                PlatformGroupCode: $('#ddlPFGroup').val(),
+                //SelectedCodes: $('#hdnTVCodes').val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#divTree').empty();
+                    $('#divTree').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ddlPFGroup_Change() {
+        debugger;
+        var pgCode = $('#ddlPFGroup').val();
+        if (pgCode != null && pgCode != "") {
+            $('#hdnPGCode').val(pgCode);
+            BindPlatformGroup();
+        }
+        else {
+            $('#hdnPGCode').val("");
+            $('#divTree').empty();
+        }
+    }
+</script>
+
+<style>
+     #Tree_Filter_Rights_Platform {
+        position:relative!important;
+    }
+    #Rights_Platform{
+        margin:0px 0px 0px 0px!important;
+    }
+
+
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 91%;
+    }
+
+    #ddlTitleList_chosen {
+        max-width: 50%;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+
+    td {
+        padding: 1px;
+    }
+
+
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <h2 dir='@objMessageKey.LayoutDirection'>@objMessageKey.PAAncillaryRightsReport</h2>
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td style="width:10%;">
+                            <label class="bold">
+                                <input type="hidden" id="hdnIsAncillary" value="@ViewBag.isAdvAncillary" />
+                                @objMessageKey.AgreementNo
+                            </label>
+                        </td>
+                        <td style="width:20%;">
+                            <input type="text" id="txtAgreementNo" maxlength="20" style="width:221px" placeholder="@objMessageKey.AgreementNo" onkeyup="populateAgreementNo(this)" />
+                            <input type="hidden" id="hdnAcqDealCode" value="0" />
+                            <input type="hidden" id="hdnAgreementNo" value="0" />
+                        </td>
+                        <td style="width:10%;">
+                            <label class="bold">
+                               @objMessageKey.BusinessUnit
+                            </label>
+                        </td>
+                        <td style="width:25%;">
+                            @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", @onchange = "BindPATitleList()" })
+                        </td>
+                        <td style="width:4%;">
+                            <label class="bold">@objMessageKey.Title</label>
+                        </td>
+                        <td>
+                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:285px" placeholder="@objMessageKey.Title" onkeyup="PopulateTitleNameForPA(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnTitleCode" value="0" />
+                        </td>
+                    </tr>
+                    @if (ViewBag.isAdvAncillary == "Y")
+                    {
+                        <tr>
+                            <td style="width:10%;">
+                                <label class="bold">
+                                    @objMessageKey.AncillaryType
+                                </label>
+                            </td>
+                            <td style="width:20%;">
+                                @Html.DropDownList("AncillaryTypeList", ViewBag.AncillaryTypeList as SelectList,"Please Select", new { @id = "ddlAncillaryType", @class = "form_input chosen-select" })
+                            </td>
+                            <td colspan="2">
+                                <a title="@objMessageKey.SelectPlatforms" class="glyphicon glyphicon-flash" style="cursor: pointer;" onclick="BindPlatformPopup()"></a> <span id="selectedPlatofrms">@objMessageKey.SelectedPlatforms: 0</span>
+
+                                <input type="hidden" id="hdnTabName" value="P" />
+                                <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                                <input type="hidden" id="hdnPGCode" name="hdnPGCode" value="" />
+                            </td>
+                            <td colspan="2" style="width:20%;text-align:right">
+                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                                <input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" style="width:20%;text-align:right">
+                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                                <input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            <br />
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+
+        </div>
+    </div>
+</div>

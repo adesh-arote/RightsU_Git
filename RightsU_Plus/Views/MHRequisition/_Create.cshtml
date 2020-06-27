@@ -1,0 +1,336 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        if (LayoutDirection_G == 'RTL') {
+            $('#movie_popup .close').css('padding-left', '0px');
+        }
+        $('#ddlLanguage1').SumoSelect();
+        $('#ddlStarcast').SumoSelect();
+        $('#ddlSinger').SumoSelect();
+        $('#ddlTalent').SumoSelect();
+
+        $('#txtmusicAlbum').click(function () {
+            $('#txtmusicAlbum').removeClass('required');
+        })
+        setChosenWidth("#MovieAlbum", "12%");
+        initializeTooltip();
+    });
+    function LanguageOnChange(obj) {
+        if (obj.selectedIndex > 0) {
+            $(".ddlLanguage1").removeClass('required');
+            $("#ddlLanguage1")[0].sumo.reload();
+        }
+    }
+    function StarcastOnChange(obj) {
+        if (obj.selectedIndex > 0) {
+            $(".ddlStarcast").removeClass('required');
+            $("#ddlStarcast")[0].sumo.reload();
+        }
+    }
+    function SingerOnChange(obj) {
+        if (obj.selectedIndex > 0) {
+            $(".ddlSinger").removeClass('required');
+            $("#ddlSinger")[0].sumo.reload();
+        }
+    }
+    function ValidateSave(ViewType) {
+        debugger;
+      
+        var MusicAlbumCode = "";
+        var NewTitleName = "";
+        var ISDuplicate = "";
+        var hdnddlLanguage = "";
+        var hdnddlStarcast = "";
+        var hdnddlSinger = "";
+        var hdnddlTalent = "";
+        var hdnTxtTitleName = "";
+        var hdnMusicLabel = "0";
+        var Error = "";
+        var selectedValue = "";
+        if (ViewType == 'Movie')
+        {
+            if ($("#ddlTalent").val() != "") {
+                hdnddlTalent = $("#ddlTalent").val();
+                //if (hdnddlTalent == "0" || hdnddlTalent == null) {
+                //    showAlert("E", "Please Select Atleast One Talent", "");
+                //    $('#ddlTalent').addClass("required");
+                //    Error = "E";
+                //}
+            }
+            else {
+                showAlert("E", "Please Select Atleast One Language", "");
+                Error = "E";
+            }
+            if ($.trim($('#txtTitleName').val()) != "")
+                hdnTxtTitleName = $("#txtTitleName").val();
+            else {
+                $("#txtTitleName").addClass("required");
+                Error = "E";
+            }
+            NewTitleName = $.trim($('#txtTitleName').val());
+        }
+        else
+        {
+            $(".ddlLanguage1").removeClass('required');
+            hdnMusicLabel = $('#hdnMusicLabelCode').val();
+            var selectedLanguageObj = $("#ddlLanguage1 option").filter(":selected");
+            if (selectedLanguageObj.length > 0) {
+                $.each(selectedLanguageObj, function () {
+                    selectedValue += $(this).val() + ",";
+                });
+            }
+            hdnddlLanguage = selectedValue;
+            if (selectedValue == '') {
+                $(".ddlLanguage1").addClass("required");
+                Error = "E";
+            }
+
+          
+
+            if ($("#ddlSinger").val() != null)
+                hdnddlSinger = $("#ddlSinger").val().join(',');
+
+          
+            if ($("#ddlStarcast").val() != null)
+                hdnddlStarcast = $("#ddlStarcast").val().join(',');
+
+         
+
+            if ($.trim($('#txtMusicTitleName').val()) != "")
+                hdnTxtTitleName = $("#txtMusicTitleName").val();
+            else {
+                Error = "E";
+                $("#txtMusicTitleName").addClass("required");
+            }
+            NewTitleName = $.trim($('#txtMusicTitleName').val());
+            //MusicAlbumCode = $("#hdnMovieAlbumCode").val();
+            MusicAlbumCode = $("#ddlMusicAlbum option").filter(":selected").val();
+        }
+
+        if ($("#ddlMusicAlbum option").filter(":selected").val() != "") {
+            hdnMovieAlbumCode = $("#ddlMusicAlbum option").filter(":selected").val();
+            if (hdnMovieAlbumCode == "0") {
+                $('#ddlMusicAlbum').val('')
+                $('#ddlMusicAlbum_chosen').addClass("required");
+                Error = "E";
+            }
+        }
+        else {
+            $('#ddlMusicAlbum').val('').attr('required', true)
+            Error = "E";
+        }
+
+        if ($("#ddlMusicLabel option").filter(":selected").val() != "") {
+            hdnMusicLabel = $("#ddlMusicLabel option").filter(":selected").val();
+            if (hdnMusicLabel == "0") {
+                $('#ddlMusicLabel').val('')
+                $('#ddlMusicLabel_chosen').addClass("required");
+                Error = "E";
+            }
+        }
+        else {
+            $('#ddlMusicLabel').val('').attr('required', true)
+            Error = "E";
+        }
+        if (MusicAlbumCode == "")
+            MusicAlbumCode = 0;
+        if (NewTitleName != "") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ValidateIsDuplicate", "MHRequisition")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    TitleName: NewTitleName,
+                    MusicAlbumCode: MusicAlbumCode,
+                    Music_Album_Type: $('#txtAlbumType').val(),
+                    ViewType: ViewType
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.Message != "") {
+                        ISDuplicate = result.Message;
+                        showAlert("E", ISDuplicate);
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+        if (Error == "E" && ISDuplicate != "") {
+            $('#popAddMusicTitle').modal('');
+
+        }
+
+        var MHRequestDetailsCode = $('#hdnMHReqDetailsCode').val();
+        var MHRequestTypeCode = $('#hdnMHRequestTypeCode').val();
+        if (Error == "" && ISDuplicate == "") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveTitle", "MHRequisition")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    TitleName: NewTitleName,
+                    MovieAlbumCode: MusicAlbumCode,
+                    hdnddlLanguage: hdnddlLanguage,
+                    hdnMusicLabel: hdnMusicLabel,
+                    MHRequestDetailsCode: MHRequestDetailsCode,
+                    Type: ViewType,
+                    Talent_Code: hdnddlTalent,
+                    Starcast: hdnddlStarcast,
+                    Singer : hdnddlSinger,
+                    Music_Album_Type: $('#txtAlbumType').val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    debugger;
+                    showLoading();
+                    var MusicTitleName = parseInt(result.TitleName);
+                    $('#popAddMusicTitle').modal('hide');
+                    $('#hdnMusicTitleCode_' + MHRequestDetailsCode).val(result.TitleCode);
+                    $('#hdnCreateMap_' + MHRequestDetailsCode).val('C');
+                    $('#spnMusicTitle_' + MHRequestDetailsCode).show();
+                    $('#spnMusicTitle_' + MHRequestDetailsCode).html("");
+
+                    debugger;
+                    var str = "<a href='#' class= 'glyphicon glyphicon-music' title='New Music' data-toggle='modal' onclick = 'AddMusicTitleForMovie(" + MHRequestDetailsCode+")'></a>"
+                    $("#_MovieAlbumCode_" + MHRequestDetailsCode).val(result.TitleCode)
+                    $("#_Music_Album_Name_" + MHRequestDetailsCode).val(result.TitleName)
+                    $('#spnMusicTitle_' + MHRequestDetailsCode).append(str);
+
+                    $('#MapToExsisting_' + MHRequestDetailsCode).prop('disabled', 'true');
+                    $('#CreateNewTitle_' + MHRequestDetailsCode).hide();
+                    if (MHRequestTypeCode == 2) {
+                        SearchMHRequestDetails("")
+                    }        
+                    //SearchMHRequestDetails("")
+                    //BindMHRequestDetails_List(MHRequestDetailsCode, "");
+                    showAlert("S", result.Message);
+                    hideLoading();
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+</script>
+<style>
+    .sumo_ddlLanguage1 {
+        width: 333px !important;
+    }
+
+    .sum_ddlStarcast {
+        width: 343px !important;
+    }
+
+    .sum_ddlSinger {
+        width: 343px !important;
+    }
+</style>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        <form class="form" id="movie_popup">
+            <div class="form_wrapper">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>Add @ViewBag.Type</h2>
+                    </div>
+                    @if (ViewBag.Type == "Music")
+                    {
+                    <div class="modal_block">
+                        <ul class="add_title_popup">
+                            <li>
+                                <label>Music Track</label>
+                                <input id="txtMusicTitleName" class="form_input" value="@ViewBag.Music" autocomplete="off" maxlength="200" />
+                                <input type="text" id="lblDealTitleCode" style="display: none;" />
+                            </li>
+                            <li>
+                                <label> Movie / Album </label>
+                                <br />
+                                @Html.DropDownList("ddlMusicAlbum", (List<SelectListItem>)ViewBag.MusicMovieAlbumList,
+                                    new { @id = "ddlMusicAlbum", @class = "form_input chosen-select" })<selectlistitem>
+                                        @*@ViewBag.MusicAlbumName*@
+                                        <input type="hidden" value="@ViewBag.MusicAlbumCode" id="hdnMovieAlbumCode" />
+                            </li>
+                            <li>
+                                <label>Music Label</label><br />
+                                @Html.DropDownList("ddlMusicLabel", (List<SelectListItem>)ViewBag.MusicLabelList,
+                                    new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })<selectlistitem>
+                                        @*@ViewBag.MusicLabelName*@
+                                        <input type="hidden" value="@ViewBag.MusicLabelCode" id="hdnMusicLabelCode" />
+                            </li>
+                            <li>
+                                <label>Music Language</label>
+                                <div class="ddlLanguage1" style="width: 327px;">
+                                    @Html.ListBox("ddlLanguage1", ViewBag.Language as MultiSelectList, new { @multiple = "multiple" })
+                                </div>
+                                @Html.Hidden("hdnLanguage")
+                            </li>
+                            <li>
+                                <label>Starcast</label>
+                                <div class="ddlStarcast" style="width: 327px;">
+                                    @Html.DropDownList("ddlStarcast", ViewBag.StarcastList as MultiSelectList, new { @id = "ddlStarcast", @class = "ddlStarcast", @multiple = "multiple" })
+                                  @Html.Hidden("hdnStarcast")
+                                </div>
+                            </li>
+                            <li>
+                                <label>Singer</label>
+                                <div class="ddlSinger" style="width: 327px;">
+                                    @*  @Html.DropDownList("ddlSinger", ViewBag.SingersList as MultiSelectList, new { @id = "ddlSinger", @class = "ddlSinger", @multiple = "multiple" })*@
+                                    @Html.ListBox("ddlSinger", ViewBag.SingersList as MultiSelectList, new { @multiple = "multiple" })
+                                </div>
+                                @Html.Hidden("hdnSingers")
+                            </li>
+                        </ul>
+                    </div>
+                    }
+                    else
+                    {
+                    <div class="modal_block">
+                        <ul class="add_title_popup">
+                            <li>
+                                <label>Music Album </label><br />
+                                <input id="txtTitleName" class="form_input" value="@ViewBag.Movie" autocomplete="off" maxlength="500" />
+                            </li>
+                            <li>
+                                <label>Album Type</label><br />
+                                <input id="txtAlbumType" class="form_input" value="@ViewBag.AlbumType" autocomplete="off" maxlength="500" />
+                            </li>
+                            <li>
+                                <label>Talent</label>
+                                @Html.DropDownList("ddlTalent", ViewBag.TalentList as MultiSelectList, new { @id = "ddlTalent", @class = "ddlTalent", @multiple = "multiple" })
+                            </li>
+                        </ul>
+                    </div>
+                    }
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <input type="hidden" id="hdnMHReqDetailsCode" value="@ViewBag.MHRequestDetailsCode" />
+                                    <a class="btn btn-primary" onclick="ValidateSave('@ViewBag.Type');">Save</a>
+                                </li>
+                                <li>
+                                    <a data-dismiss="modal" class="btn btn-primary">Cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+        <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="AddMovie_Album_popup" tabindex="-1" aria-hidden="false" hidden style="width:500px;">
+            @Html.Action("PartialAddMovie_Album", "Music_Title")
+        </div>
+    </div>
+</div>
+
+

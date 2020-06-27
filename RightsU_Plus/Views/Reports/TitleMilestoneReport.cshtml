@@ -1,0 +1,431 @@
+﻿@{
+    ViewBag.Title = "TitleMilestoneReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    var URL_PopulateTitleNameForTitleMilesone = '@Url.Action("PopulateTitleForTitleMilestone", "Reports")';
+    var URL_PopulateTalentForTitleMilesone = '@Url.Action("PopulateTalentTitleMilestone", "Reports")';
+    var URL_BindtitleMilestoneReport = '@Url.Action("BindTitleMilestoneReport", "Reports")';
+
+    $(document).ready(function () {
+        //$('#ddlTalentType').SumoSelect();
+        $('#txtfrom').change(function () {
+            SetMinDt();
+        });
+        $('#txtto').change(function () {
+            SetMaxDt();
+        });
+        $('#ddlMilestoneNatureName').SumoSelect();
+    });
+
+    function btnShow_OnClick() {
+        debugger;
+        var MilestoneNatureCode = "";
+        var TalentCode = "";
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal = true;
+        if ($('#txtTalent').val() == "" && $('#ddlMilestoneNatureName').val() == null && $('#txtTitle').val() == "" && $('#txtfrom').val() == "" && $('#txtto').val() == "") {
+            showAlert('E', 'Please select atleast one field');
+            return false;
+        }
+
+
+        if ($('#txtTalent').val() == null || $('#txtTalent').val() == "") {
+             TalentCode = " ";
+        } else {
+            TalentCode = $('#txtTalent').val();
+        }
+
+        if ($('#ddlMilestoneNatureName').val() == null || $('#ddlMilestoneNatureName').val() == "") {
+            MilestoneNatureCode = " ";
+        } else {
+            MilestoneNatureCode = $('#ddlMilestoneNatureName').val().join(',');
+        }
+
+        if ($('#txtTitle').val() == null || $('#txtTitle').val() == "") {
+            Title = " ";
+        } else {
+            Title = $('#txtTitle').val();
+        }
+
+        //if ($('#txtTitle').val() != '0') {
+        //    var Title = $('#txtTitle').val();
+        //}
+        //else {
+        //     Title = " ";
+        //}
+
+        if ($('#txtfrom').val() == '') {
+            var FromDate = " ";
+        }
+        else {
+             FromDate = $('#txtfrom').val();
+        }
+
+        if ($('#txtto').val() == '') {
+            var ToDate = " ";
+        }
+        else {
+             ToDate  = $('#txtto').val();
+        }
+
+          if ($('#txtfrom').val() == '' && $('#txtto').val() != '') {
+                showAlert('E', 'From Period cannot be blank');
+                return false;
+            }
+            if ($('#txtfrom').val() != '' && $('#txtto').val() == '') {
+                showAlert('E', 'To Period cannot be blank');
+                return false;
+            }
+            //if ($('#txtfrom').val() == '' && $('#txtto').val() == '') {
+            //    showAlert('E', 'Please Select From Period And To Period');
+            //    returnVal = false;
+            //}
+        
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindtitleMilestoneReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Title: Title,
+                    TalentName: TalentCode,
+                    MilestonenatureName: MilestoneNatureCode,
+                    FromDate: FromDate,
+                    ToDate: ToDate,
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function btnClear_OnClick() {
+        debugger;
+      
+        var code = 1;
+        $('#txtTitle').val('');
+        $('#txtTalent').val('');
+        //$('#ddlTalentType').val('')[0].sumo.reload();
+        $('#ddlMilestoneNatureName').val('')[0].sumo.reload();
+        $('#txtfrom').val('');
+        $('#txtto').val('');
+    
+    }
+    
+    function SetMaxDt() {
+        setMinMaxDates('txtfrom', '', $('#txtto').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtto', $('#txtfrom').val(), '');
+    }
+    Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
+    function EndRequestHandler(sender, args) {
+        AssignDateJQuery();
+    }
+    function PopulateTitleNameForTitleMilestone(keyword) {
+        debugger;
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+    
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtTitle').val()
+                    };
+                    $.ajax({
+                        url: URL_PopulateTitleNameForTitleMilesone,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0',
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "285px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+      function PopulateTalentForTitleMilestone(keyword) {
+        debugger;
+        if ($('#txtTalent').val().length == "0") {
+            $('#hdnTalentCode').val(0);
+        }
+    
+        var selectedtxt = $('#txtTalent').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTalent").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtTalent').val()
+                    };
+                    $.ajax({
+                        url: URL_PopulateTalentForTitleMilesone,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTalent').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0',
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTalent').removeClass('loader');
+                                    return {
+                                        label: v.Talent_Name,
+                                        val: v.Talent_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTalentCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTalentCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtTalent').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "285px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    input.isDatepicker {
+        width: 100px;
+        z-index: auto;
+    }
+
+    #ddlDeal_chosen {
+        width: 290px;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                          <h2>Title Milestone Report</h2>            
+            </div>
+            <div id="divFilter">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width:10%">
+                                <b>Title </b>
+                            </td>
+                            <td style="width:30%">
+                                <input type="text" id="txtTitle" class="search" maxlength="100" style="width:278px" placeholder="Title" onkeyup="PopulateTitleNameForTitleMilestone(event)" autocomplete="on" />
+                                <input type="hidden" id="hdnTitleCode" value="0" />
+                            </td>
+                            <td style="width:20%">
+                                <b>Name of the Counterparty</b>
+                            </td>
+                            <td style="width:30%">
+                                @*@Html.DropDownList("ddlTalentType", (List<SelectListItem>)ViewBag.TalentName, new { @id = "ddlTalentType", @multiple = "Multiple" })*@
+                                <input type="text" id="txtTalent" class="search" maxlength="100" style="width:278px" placeholder="Talent" onkeyup="PopulateTalentForTitleMilestone(event)" autocomplete="on" />
+                                <input type="hidden" id="hdnTalentCode" value="0" />
+                            </td>
+                            <td style="width:10%">
+                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>Expiry Date Range</b>
+                            </td>
+                            <td>
+                                @*<input type="text" title="From Date" class="isDatepicker shortDate common" value="" id="txtfrom" style="width: 30%;" placeholder="DD/MM/YYYY" />
+        <input type="text" title="To Date" class="isDatepicker shortDate common" value="" id="txtto" style="width: 34%;" placeholder="DD/MM/YYYY" />*@
+                                <input type="text" class="isDatepicker" id="txtfrom" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
+                                       title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                                <input type="text" class="isDatepicker" id="txtto" name="End_Date" placeholder="DD/MM/YYYY"
+                                       title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            </td>
+                            <td>
+                                <b>Nature of Deal Name</b>
+                            </td>
+                            <td>
+                                @Html.DropDownList("ddlMilestoneNatureName", (List<SelectListItem>)ViewBag.MilestoneNatureName, new { @id = "ddlMilestoneNatureName", @multiple = "Multiple" })
+                            </td>
+                            <td>
+                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Reset" onclick="btnClear_OnClick()">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+

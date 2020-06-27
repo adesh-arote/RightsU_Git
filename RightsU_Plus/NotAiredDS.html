@@ -1,0 +1,70 @@
+	 <script type="text/javascript">
+		debugger;
+      // Load Charts and the corechart package.
+       // google.charts.load('44', {'packages':['corechart','gauge']});
+
+      //chart-1: Draw the piechart_3d chart is loaded.
+      google.charts.setOnLoadCallback(drawPie3dChart);
+
+      //chart-2: Draw the Stacked Column Chart is loaded.
+      google.charts.setOnLoadCallback(drawStackedColumnChart);
+
+      //chart-3: Draw the piechart_3d chart is loaded.
+      //google.charts.setOnLoadCallback(drawPie3dChart2);
+
+      //chart-4: Draw the Stacked Column Chart is loaded.
+      //google.charts.setOnLoadCallback(drawStackedColumnChart2);
+
+
+	 //chart-1: Start piechart_3d
+		function drawPie3dChart() {
+			var data3 = google.visualization.arrayToDataTable([
+			  ['Region', 'Count'],
+			  ['Open',     150],
+			  ['In Progress',     50],
+			  ['Closed',    300]
+			]);
+
+			var options3 = {title:'', is3D: true,
+			chartArea:{left:5,top: 25,'width': '100%', 'height': '100%'},
+			
+			};
+
+			var chart3 = new google.visualization.PieChart(document.getElementById('3_piechart_3d'));
+			chart3.draw(data3, options3);
+		}
+	 	 //chart-2: Start Stacked column charts
+		function drawStackedColumnChart() {
+
+		var data2 = google.visualization.arrayToDataTable(
+			[
+				['','Open', 'In Progress', 'Closed', { role: 'annotation' } ],
+				['YRF', 50, 20, 100,''],
+				['Saregama', 75, 20, 100,  ''],
+				['Universal', 25, 10, 100, '']
+			]);
+
+			  var options2 = {title:'',
+			  chartArea:{left:25,top: 25,'width': '100%', 'height': '80%'},
+				legend: { position: 'top','alignment':'center', maxLines: 3 },
+				bar: { groupWidth: '30%' },
+				isStacked: true,
+
+			  };
+
+			var chart2 = new google.visualization.ColumnChart(document.getElementById('2_StackedColumn_chart'));
+			chart2.draw(data2, options2);
+		}
+    </script>
+
+<div id="RowNotAired" class="dashboardGroup">
+	<div class="dashboard music">
+		 <span>Total Exceptions: 500</span>
+		<div id="3_piechart_3d" style="width:100%; height:190px;"></div>                         
+	</div>
+	<div class="dashboard music">
+		<span>Music Label wise Exceptions</span>	
+		<div id="2_StackedColumn_chart" style="width:100%; height:220px;"></div>						 
+	</div>					
+</div>
+	

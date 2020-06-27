@@ -1,0 +1,773 @@
+﻿@model RightsU_Entities.BMS_Log
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+
+
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/Custom_Scripts/Custom_CSS/Acq_Deal_List.min.css" rel="stylesheet" />
+
+<script>
+    var IsCall = 'Y', Command_Name = "";
+    var URL_BindBVLogList = '@Url.Action("BindBVLogList", "BV_Log")';
+    var URL_SearchBVLogList = '@Url.Action("SearchBVLogList", "BV_Log")';
+    var URL_ViewXML = '@Url.Action("ViewXML", "BV_Log")';
+
+
+
+
+    $(document).ready(function () {
+        debugger;
+        addNumeric();
+        //SearchBVLogList("BMS_Deal");
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        //BindBVLogList();
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Language');
+        //$("#ancFileName").attr('href', '../Help/Masters/Layout.html?language');
+
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindBVLogList(0, "");
+            else
+                IsCall = 'Y';
+        }
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindBVLogList(0, "");
+        SetPaging();
+    }
+    function pageBinding() {
+        BindBVLogList(0, "");
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function btnSearch_OnClick() {
+        debugger;
+        //  showLoading();
+        if (!checkCurrentAction())
+            return false;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+
+        $("#IsAdvanceSearch").val("N");
+        showLoading();
+        SearchBVLogList(searchText);
+
+    }
+    function btnShowAll_OnClick() {
+        debugger
+        if (!checkCurrentAction())
+            return false;
+        if (!ValidatePageSize())
+            return false;
+        $('#hdnPageNo').val(1);
+        $("#IsAdvanceSearch").val("N");
+        $('#searchCommon').attr('required', false)
+        $('#searchCommon').val('');
+
+        SearchBVLogList("");
+
+    }
+    function BindBVLogList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        var ADSearch = $("#IsAdvanceSearch").val();
+        var pageSize = $("#txtPageSize").val();
+
+        var searchtext = $("#searchCommon").val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindBVLogList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                ADSearch: ADSearch,
+                pageSize: pageSize,
+                searchtext: searchtext
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+
+
+                    $('#divBVLogList').empty();
+                    $('#divBVLogList').html(result);
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function SearchBVLogList(searchText) {
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchBVLogList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindBVLogList(0, "");
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+
+    function handleOk() {
+    }
+    function handleCancel() {
+    }
+
+    function checkCurrentAction() {
+        debugger;
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("I", "Complete Add Operation First")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("I", "Complete Edit Operation First")
+            return false;
+        }
+        return true;
+    }
+    function Cancel() {
+        $('#hdnAction').val("")
+        BindBVLogList(0, "");
+    }
+</script>
+
+<script>
+
+    var panelVisible = false;
+    var RightpanelHideCss = '-350px';
+    var RightpanelShowCss = '0px';
+
+    function BindSearch() {
+        debugger;
+        BindAdvanced_Search_Controls('BTC', '@ViewBag.StarCast_Code', '@ViewBag.Language_Code', '@ViewBag.Genres_Code', '@ViewBag.MusicLabel_Code', '@ViewBag.Singer_Code', '@ViewBag.Composer_Code', '@ViewBag.LyricistCode', '@ViewBag.MusicTitleName_Search', '@ViewBag.ThemeCode');
+
+    }
+
+    var URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "BV_Log")';
+    function BindAdvanced_Search_Controls(callfrom, ModuleName, MethodType, RecordStatus, RequestXML) {
+        debugger;
+        //Here call from PGL - Pageload (document ready), BTC - Button(Search) Click
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $("#TitleName").val("");
+        //$("#lbTitle_Code").find("option").attr("selected", false);
+        $("#lbTitle_Code").val('');
+
+        if (callfrom == 'BTC')
+            $('#divSearch').slideToggle(400);
+        var Is_async = true;
+        //if (tmp_IsAdvanced == 'Y')
+        //    Is_async = false;
+        if (parseInt($("#ddlModuleName option").length) == 0) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindAdvanced_Search_Controls,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Module_Name: ModuleName,
+                    Method_Type: MethodType,
+                    Record_Status: RecordStatus
+
+                }),
+                async: Is_async,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        debugger;
+                        //alert('a')
+                        //$("#ddlMusicTitle").empty();
+                        $("#ddlModuleName").empty();
+                        $("#ddlMethodType").empty();
+                        $("#ddlRecordStatus").empty();
+
+                        var obj_Search = $(result.objPage_Properties);
+
+
+                        $("#ddlModuleName").append($("<option>").val(0).text("--Please Select--"));
+                        $(result.lstModuleName).each(function (index, item) {
+                            $("#ddlModuleName").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        // $("#ddlModuleName").val(obj_Search[0].Module_Name.split(',')).attr("selected", "true").trigger("chosen:updated")
+                        $('#ddlModuleName').trigger("chosen:updated")
+
+                        var cur = 1;
+                        $("#ddlMethodType").append($("<option>").val(0).text("--Please Select--"));
+                        $(result.lstMethodType).each(function (index, item) {
+                            $("#ddlMethodType").append($("<option>").val(cur++).text(this.Text));
+                        });
+                        // $("#ddlMethodType").val(obj_Search[0].Module_Name.split(',')).attr("selected", "true").trigger("chosen:updated")
+                        $('#ddlMethodType').trigger("chosen:updated")
+
+                        var cur1 = 1
+                        $("#ddlRecordStatus").append($("<option>").val(0).text("--Please Select--"));
+                        $(result.lstRecordStatus).each(function (index, item) {
+                            $("#ddlRecordStatus").append($("<option>").val(cur1++).text(this.Text));
+
+                        });
+                        // $("#ddlMethodType").val(obj_Search[0].Module_Name.split(',')).attr("selected", "true").trigger("chosen:updated")
+                        $('#ddlRecordStatus').trigger("chosen:updated")
+
+
+
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        //Clear();
+        //BindGrid($("#hdnPageIndex").val(), 'Y', 'N', 'N');
+    }
+
+
+    function validateSearch() {
+        debugger;
+        tmp_IsAdvanced = 'Y';
+        tmp_IsSearch = 'N';
+        //$("#srchCommon").val('');
+        $('#hdnClearAll').val('N');
+        var tmpModuleName = '', tmpMethodType = '', tmpRecordStatus = '', tmpRequestXML = '', tmpResponseXML = '';
+
+        if ($('#ddlModuleName').val())
+            tmpModuleName = $('#ddlModuleName').val().join(',');
+
+        if ($('#ddlMethodType').val())
+            tmpMethodType = $('#ddlMethodType').val().join(',');
+
+        if ($('#ddlRecordStatus').val())
+            tmpRecordStatus = $('#ddlRecordStatus').val().join(',');
+
+        if ($('#ddlRequestXML').val())
+            tmpRequestXML = $('#ddlRequestXML').val().join(',');
+
+        if ($('#ddlResponseXML').val())
+            tmpResponseXML = $('ddlResponseXML').val().join(',');
+
+        if (tmpModuleName == '' && tmpMethodType == '' && tmpRecordStatus == '' && tmpRequestXML == '' && tmpResponseXML == '') {
+            showAlert('e', 'Please select/enter search criteria');
+            return false;
+        }
+        else {
+            return true
+        }
+    }
+
+    function ClearAll() {
+        debugger;
+        Clear();
+        AdvanceSearch();
+
+
+    }
+    function Clear() {
+        debugger;
+        //$("#ddlModuleName").find("option").attr("selected", false);
+        $("#ddlModuleName,#ddlMethodType,#ddlRecordStatus,#txtfrom,#txtto").val('').trigger("chosen:updated");
+
+        //$("#ddlMethodType").find("option").attr("selected", false);
+        //$('#ddlMethodType').val('').trigger("chosen:updated");
+
+        //$("#ddlRecordStatus").find("option").attr("selected", false);
+        //   $("#ddlRecordStatus").text('').trigger("chosen:updated");
+
+        $("#ddlRequestXML").find("option").attr("selected", false);
+        $("#ddlRequestXML").val('').trigger("chosen:updated");
+
+        $("#ddlResponseXML").find("option").attr("selected", false);
+        $("#ddlResponseXML").val('').trigger("chosen:updated");
+
+        //$("#").val('').trigger("chosen:updated");
+        //  txtfrom
+        $('#txtTitleSearch').val('')
+        $("#txtYearOfRelease").val('');
+        $("#txtTag").val('');
+    }
+
+
+    function AdvanceSearch(isAdvance) {
+        debugger;
+        if (!checkCurrentAction())
+            return false;
+        if (!ValidatePageSize())
+            return false;
+
+        $("#IsAdvanceSearch").val("N");
+        $('#searchCommon').attr('required', false)
+        $('#searchCommon').val('');
+
+        var tmpModuleName = '', tmpMethodType = '', tmpRecordStatus = '', tmpRequestXML = '', tmpResponseXML = '', tmptxtfrom = '', tmptxtto = '';
+        if ($('#ddlModuleName').val())
+            tmpModuleName = $('#ddlModuleName').val();
+
+        if ($('select#ddlMethodType option:selected').text())
+            tmpMethodType = $('select#ddlMethodType option:selected').text();
+
+        if ($('select#ddlRecordStatus option:selected').text())
+            tmpRecordStatus = $('select#ddlRecordStatus option:selected').text();
+
+        if ($('#ddlRequestXML').val())
+            tmpRequestXML = $('#ddlRequestXML').val();
+
+        if ($('#ddlResponseXML').val())
+            tmpResponseXML = $('#ddlResponseXML').val();
+
+        if ($('#txtfrom').val())
+            tmptxtfrom = $('#txtfrom').val();
+
+        if ($('#txtto').val())
+            tmptxtto = $('#txtto').val();
+
+        //var txtYearOfRelease = $('#txtYearOfRelease').val();
+        //var txtTag = $('#txtTag').val();
+
+        if (validateSearch) {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AdvanceSearch", "BV_Log")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    SrchModuleName: tmpModuleName,
+                    SrchModuleType: tmpMethodType,
+                    SrchRecordStatus: tmpRecordStatus,
+                    SrchRequestXML: tmpRequestXML,
+                    SrchResponseXML: tmpResponseXML,
+                    SrchRequestTime: tmptxtfrom,
+                    SrchResponseTime: tmptxtto
+
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        debugger;
+                        if (isAdvance) {
+                            $('#hdnPageNo').text(1);
+                            $('#lblRecordCount').text(result.Record_Count);
+                            $("#hdnRecordCount").val(result.Record_Count);
+                            SetPaging()
+
+                            $("#IsAdvanceSearch").val("Y");
+                            BindBVLogList();
+                        }
+                        else {
+                            $("#IsAdvanceSearch").val("N");
+                        }
+
+                        //BindGrid(0, 'Y', 'N', 'Y');
+                    }
+                },
+                error: function (result) {
+                    alert(result);
+                }
+            });
+        }
+
+
+
+    }
+
+    $(document).ready(function () {
+        initializeChosen();
+        initializeSubMenu2();
+        AllsubmenuHide();
+
+        var lastScrollTop = 0;
+        debugger;
+        $(window).scroll(function (event) {
+            debugger;
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop) {
+                // downscroll code
+                $("#pnlSearch").addClass("tinyADSearch")
+
+            } else {
+                // upscroll code
+                $("#pnlSearch").removeClass("tinyADSearch")
+
+            }
+        });
+
+        $("#AllsubmenuHide").click(function () {
+            $('.RightPanel').css('right', RightpanelHideCss);
+            $('.leftPanel').css('left', panelHideCss);
+            $('#sideNavi').show();
+        })
+
+    });
+
+    function togglePanelVisibility2(panelID) {
+        debugger;
+        $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelHideCss);
+        var panel = document.getElementById(panelID);
+
+        if (panel.style.right == RightpanelShowCss) {
+            panel.style.right = RightpanelHideCss;
+            panelVisible = false;
+            $('#sideNavi').show();
+            //$('#AdvanceSearchPanel').hide();
+        }
+        else {
+            panel.style.right = RightpanelShowCss;
+            panelVisible = true;
+            $('#sideNavi').hide();
+            //$('#AdvanceSearchPanel').show();
+        }
+    }
+    function initializeSubMenu2() {
+        debugger;
+        //$('.RightPanel').hide();
+        //$('#sideNavi').show();
+        $('.RightPanel li.has-sub>a').on('click', function () {
+            $(this).removeAttr('href');
+            var element = $(this).parent('li');
+            if (element.hasClass('open')) {
+                element.removeClass('open');
+                element.find('li').removeClass('open');
+                element.find('ul').slideUp(200);
+            }
+            else {
+                element.addClass('open');
+                element.children('ul').slideDown(200);
+                element.siblings('li').children('ul').slideUp(200);
+                element.siblings('li').removeClass('open');
+                element.siblings('li').find('li').removeClass('open');
+                element.siblings('li').find('ul').slideUp(200);
+            }
+        });
+    }
+
+    function AllsubmenuHide() {
+        debugger;
+        $('.RightPanel').css('right', RightpanelHideCss);
+        $('.leftPanel').css('left', panelHideCss);
+        $('#sideNavi').show();
+        //$('.RightPanel').hide();
+    }
+
+    //-----------Pop up-----------------------------------------------------------
+
+    function ViewXML(BMSLogCode, commandName) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $('#hdnAction').val("");
+        $.ajax({
+            type: "POST",
+            url: URL_ViewXML,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                BMSLogCode: BMSLogCode,
+                commandName: commandName
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    if (commandName != "VIEW")
+                        commandName = "";
+
+                    //BindExchangeRateList(commandName, "");
+                    BindBVLogList(commandName, "");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ClosePopup() {
+        //if (!checkCurrentAction())
+        //    return false;
+
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+
+    //---------------------------
+
+
+</script>
+
+<style>
+    .tinyADSearch {
+        top: 40px;
+    }
+
+    .AdSearch {
+        margin-left: 8px;
+        margin-top: 3px;
+    }
+</style>
+
+
+
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div id="sideNavi" style="z-index:3;">
+            @*BindAdvanced_Search_Controls('BTC');*@
+            @*<div class="side-navi-item item1" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindSearch();"><div>Advance Search</div></div>*@
+            <div class="side-navi-item item1" style="top:0px ;width: 46px !important;" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindSearch();"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+        </div>
+        <div class="RightPanel" id="pnlSearch">
+            <div id="AdvanceSearchPanel">
+                <h4>Advance Search</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible=true;togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
+                <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+                    <li class="AdSearch">
+                        <label>Module:</label><br>
+                        @*<input type="text" value="@ViewBag.m" placeholder="Module Name" maxlength="15" id="txtSrchDealNo" style="width: 172px;" />*@
+                        <select id="ddlModuleName" class="form_input chosen-select"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>Method Type:</label><br>
+                        @*<input type="text" value="@ViewBag.m" placeholder="Module Name" maxlength="15" id="txtSrchDealNo" style="width: 172px;" />*@
+                        <select id="ddlMethodType" class="form_input chosen-select" selected="selected"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>Date:</label><br>
+                        <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealFrmDt_Search" runat="server" id="txtfrom" placeholder="From" title="From" />
+                        <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealToDt_Search" runat="server" id="txtto" placeholder="To" title="To" />
+                    </li>
+                    <li class="AdSearch">
+                        <label>Record Status:</label><br>
+                        <select id="ddlRecordStatus" class="form_input chosen-select"></select>
+                        @*<select id="ddlRecordStatus" style="width: 174px;"></select>*@
+                        @*onchange="OnChangeBindTitle()"*@
+                    </li>
+
+                    <li class="AdSearch">
+                        <label>Request XML:</label><br>
+                        <input type="text" value="@ViewBag.DealNo_Search" placeholder="Request XML" maxlength="15" id="ddlRequestXML" style="width: 315px;" />
+                    </li>
+                    <li class="AdSearch">
+                        <label>Response XML:</label><br>
+                        <input type="text" value="@ViewBag.DealNo_Search" placeholder="Response XML" maxlength="15" id="ddlResponseXML" style="width: 315px;" />
+                    </li>
+
+
+                </ul>
+                <br />
+                <div style="text-align:center;">
+
+                    <a class="btn-primary" href="#" onclick="AdvanceSearch(true);">Search</a>
+                    <input type="hidden" id="IsAdvanceSearch" value="N" />
+                    <a class="btn-primary" href="#" onclick="ClearAll(true);">Clear All</a>
+                    <input type="hidden" id="hdnClearAll" />
+                </div>
+            </div>
+        </div>
+        <div class="container acq main_col" id="AllsubmenuHide">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        BV Log List
+                        <span></span>
+                    </h2>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:50%;">
+                                <input type="text" placeholder="Module Name, Method Type, Request XML, Response XMl, Record Status & Error Description" name="srchCommon" id="searchCommon" class="search" style="width:100%" maxlength="50" onclick="checkCurrentAction()" />
+                            </td>
+                            @*<td style="width:10%;text-align:center;padding-top:8px;">
+                                Language Name:
+                            </td>*@
+                            <td style="width: 70px;">
+                                <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">
+                            </td>
+                            <td>
+                                <input type="button" id="btnShowAll" class="button" value="Show All" onclick="btnShowAll_OnClick()">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount" style="font-weight:bold"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            <b>Page Size:</b>
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="50" onfocus="checkCurrentAction()" 
+                                   onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+
+                            <input type="hidden" id="hdnLanguageCode" value="0" />
+                            <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                            <div id="divBVLogList" class="deal clearfix">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>

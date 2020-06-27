@@ -1,0 +1,179 @@
+﻿@model List < RightsU_Entities.DM_Master_Log > 
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#hdnPageNo").val(@((ViewBag.PageNo ?? 1)));
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        SetPaging();
+    });
+</script>
+
+<div class="scale_table_block">
+    <table class="table table-bordered table-hover" id="tblSystemMappedMasterLogData">
+        <thead>
+            <tr>
+                <th style="width:20%;">Name </th>
+                <th style="width:25%;">Map Data</th>
+                <th style="width:15%;">Movie Album</th>
+                <th style="width:15%;">Music Language</th>
+                <th style="width:15%;">Music Label</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    int? MusicTitleCode = item.Master_Code;
+                    string Mapped_Name = new RightsU_BLL.Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Title_Code == MusicTitleCode).Select(s => s.Music_Title_Name).FirstOrDefault();
+                    int? MovieAlbumCode = new RightsU_BLL.Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Title_Code == MusicTitleCode).Select(s => s.Music_Album_Code).FirstOrDefault();
+                    string MovieAlbum = new RightsU_BLL.Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Album_Code == MovieAlbumCode).Select(s => s.Music_Album_Name).FirstOrDefault();
+                    string MusicLabelName = new RightsU_BLL.Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Title_Code == MusicTitleCode).Select(s => s.Music_Label.Music_Label_Name).FirstOrDefault();
+                    string MusicLanguageName = new RightsU_BLL.Music_Title_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Title_Code == MusicTitleCode).Select(s => s.Music_Language.Language_Name).FirstOrDefault();
+                    
+                    <tr>
+                        <td><label id="lblName_@item.DM_Master_Log_Code">@item.Name</label>
+                        <input type="hidden" id="hdnSystemMappingMasterLogCode_@item.DM_Master_Log_Code" value="@item.DM_Master_Log_Code" /> </td>
+                        <td><div id="divMapped_@item.DM_Master_Log_Code"><label id="lblMappedName_@item.DM_Master_Log_Code">@Mapped_Name </label>
+                             <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="BindGridSystemMapping(@item.DM_Master_Log_Code)"></a></div>
+                            <input type="hidden" id="hdnMappedCode_@item.DM_Master_Log_Code" name="MappedCode" value="@item.Mapped_Code" /></td>
+                        <td><label id="lblMovieAlbum_@item.DM_Master_Log_Code">@MovieAlbum</label> </td>
+                        <td><label id="lblMusicLanguageName_@item.DM_Master_Log_Code">@MusicLanguageName</label> </td>
+                        <td><label id="lblMusicLabelName_@item.DM_Master_Log_Code">@MusicLabelName</label> </td>
+                        
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    var URL_PopulateAutoCompleteData = '@Url.Action("PopulateAutoCompleteData", "Title_Content_ImportExport")';
+    var URL_BindMusicData = '@Url.Action("BindMusicData", "Title_Content_ImportExport")';
+    function BindGridSystemMapping(masterLogcode)
+    {
+        debugger
+        $('#divMapped_' + masterLogcode).empty();
+        $('#divMapped_' + masterLogcode).append('<input type="text" id="txtSystemMappedName_' + masterLogcode + '"  name="MappedName" class="txtMapped" onkeyup="PopulateAutoComplete(' + masterLogcode + ')" > ');
+    }
+    function PopulateAutoComplete(masterLogCode) {
+        var keyword = $("#txtSystemMappedName_" + masterLogCode).val();
+        $("#txtSystemMappedName_" + masterLogCode).autocomplete({
+            focus: function () {
+                return false;
+            },
+            search: function (e, u) {
+                $(this).addClass('loader');
+            },
+            source: function (request, response) {
+                $("#hdnMappedCode_" + masterLogCode).val('');
+                var param = {
+                    keyword: keyword
+                };
+                $.ajax({
+                    url: URL_PopulateAutoCompleteData,
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        if (data.length == 0) {
+                            data[0] = 'Result Not Found';
+                            response($.map(data, function (v, i) {
+                                $("#txtSystemMappedName_" + masterLogCode).removeClass('loader');
+                                return {
+                                    label: 'Result Not Found',
+                                    val: '0'
+                                }
+                            }))
+                        }
+                        else {
+                            response($.map(data, function (v, i) {
+                                $("#txtSystemMappedName_" + masterLogCode).removeClass('loader');
+                                return {
+                                    label: v.Mapping_Name,
+                                    val: v.Mapping_Code
+                                }
+                            }))
+                        }
+
+                        //if (data.length == 0) {
+                        //    data[0] = 'Result Not Found~0';
+                        //}
+                        //response($.map(data, function (v, i) {
+                        //    return {
+                        //        label: v.Mapping_Name,
+                        //        val: v.Mapping_Code
+                        //    }
+                        //}))
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Error" + textStatus);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                debugger
+                $("#hdnMappedCode_" + masterLogCode).val(ui.item.val);
+                if (ui.item.val == '0') {
+                    return false;
+                }
+                BindMusicData(ui.item.val,masterLogCode);
+            },
+            minLength: 2,
+            open: function (event, ui) {
+                $(".ui-autocomplete").css("position", "absolute");
+                $(".ui-autocomplete").css("max-height", "200px");
+                $(".ui-autocomplete").css("max-width", "250px");
+                $(".ui-autocomplete").css("overflow-y", "auto");
+                $(".ui-autocomplete").css("overflow-x", "hidden");
+                $(".ui-autocomplete").css("z-index", "2147483647");
+            },
+        });
+    }
+    function BindMusicData(musicTitleCode, masterLogCode)
+    {
+        $.ajax({
+            type: "POST",
+            url: URL_BindMusicData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                MusicTitleCode: musicTitleCode,
+                MasterLogCode: masterLogCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#lblMovieAlbum_' + masterLogCode).text(result.MovieAlbum);
+                    $('#lblMusicLanguageName_' + masterLogCode).text(result.MusicLanguage);
+                    $('#lblMusicLabelName_' + masterLogCode).text(result.MusicLabel);
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+
+    }
+</script>

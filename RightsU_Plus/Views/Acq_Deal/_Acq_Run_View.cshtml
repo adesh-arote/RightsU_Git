@@ -1,0 +1,564 @@
+﻿@model RightsU_Entities.Acq_Deal_Run
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+
+<script>
+    var dealMode_G = '@objSchema.Mode';
+    var recordLockingCode_G = parseInt(@ViewBag.Record_Locking_Code);
+    var acqDealRunCode_G = '@(Model.Acq_Deal_Run_Code)';
+
+    var runType_G = '@(Model.Run_Type)';
+    var isYearWise_G = '@(Model.Is_Yearwise_Definition)';
+    var isRuleRight_G = '@(Model.Is_Rule_Right)';
+    var repeatWithinDaysHrs_G = '@(Model.Repeat_Within_Days_Hrs)';
+    var isChannelDefinitionRights_G = '@(Model.Is_Channel_Definition_Rights)';
+    var runDefnType_G = $.trim('@(Model.Run_Definition_Type)');
+
+    var primeRun_G = '@(Model.Prime_Run)';
+
+    if (primeRun_G == '')
+        primeRun_G = 0;
+    else
+        primeRun_G = parseInt(primeRun_G);
+
+    var offPrimeRun_G = '@(Model.Off_Prime_Run)';
+
+    if (offPrimeRun_G == '')
+        offPrimeRun_G = 0;
+    else
+        offPrimeRun_G = parseInt(offPrimeRun_G);
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)';
+    var URL_PartialChannelList1 = '@Url.Action("PartialChannelList1", "Acq_Run")';
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")'
+
+    function GetYearWiseRunHTML() {
+        var strHTML = ''
+        strHTML = strHTML + '<td></td><td colspan="3"><table id="tblYearWiseRun" class="table table-bordered table-hover"><thead><tr><th width="40%">Period</th><th width="30%">Run</th></tr></thead><tbody>'
+        @for (int i = 0; i < Model.Acq_Deal_Run_Yearwise_Run.Count; i++)
+        {
+                    <text>
+        var noOfRuns = '@(Model.Acq_Deal_Run_Yearwise_Run.ElementAt(i).No_Of_Runs.ToString())';
+        strHTML = strHTML + '<tr><td>' + '@Model.Acq_Deal_Run_Yearwise_Run.ElementAt(i).Run_Period' + '</td>'
+        strHTML = strHTML + '<td>'
+        strHTML = strHTML + $.trim(noOfRuns)
+        @*strHTML = strHTML + '</td><td>' + '@((Model.Acq_Deal_Run_Yearwise_Run.ElementAt(i).No_Of_Runs_Sched != null) ? Model.Acq_Deal_Run_Yearwise_Run.ElementAt(i).No_Of_Runs_Sched : 0)'*@
+        strHTML = strHTML + '</td></tr>'
+        </text>
+                }
+        strHTML = strHTML + '</tbody></table></td>'
+        return strHTML;
+    }
+
+    $(document).ready(function () {
+
+        //$("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');
+
+        if (recordLockingCode_G > 0)
+            Call_RefreshRecordReleaseTime(URL_Global_Refresh_Lock, URL_Global_Refresh_Lock);
+
+        if (acqDealRunCode_G > 0) {
+            $('input[name=Run_Type][value=' + runType_G + ']').prop('checked', true);
+            if (runType_G == "U") {
+                document.getElementById("addrunsDef2").style.display = 'none';
+                document.getElementById("rowPrime1").style.display = 'none';
+                document.getElementById("rowPrime2").style.display = 'none';
+            }
+
+            $('input[name=Is_Yearwise_Definition][value=' + isYearWise_G + ']').prop('checked', true)
+            if (isYearWise_G == "Y") {
+                document.getElementById("addrunsDef2").style.display = '';
+                var strHTML = GetYearWiseRunHTML();
+                $('#addrunsDef2').html(strHTML);
+            }
+            else
+                document.getElementById("addrunsDef2").style.display = 'none';
+
+            if (isRuleRight_G == "Y") {
+                for (var i = 1; i < 8; i++) {
+                    document.getElementById("RuleEdit_" + i).style.display = '';
+                }
+                if (repeatWithinDaysHrs_G == 'D')
+                    document.getElementById("RuleEdit_7").style.display = '';
+                else
+                    document.getElementById("RuleEdit_7").style.display = 'none';
+            }
+
+            if (isChannelDefinitionRights_G == 'Y') {
+                document.getElementById("addChannel_edit").style.display = '';
+                document.getElementById("addChannel2_edit").style.display = '';
+                if (runDefnType_G == "C") {
+                    document.getElementById("showRundefinition2_1").style.display = '';
+                    document.getElementById("showRundefinition2_2").style.display = 'none';
+                    document.getElementById("showRundefinition2_3").style.display = 'none';
+                    document.getElementById("showRundefinition2_4").style.display = 'none';
+                    document.getElementById("showRundefinition2_5").style.display = 'none';
+                }
+                else if (runDefnType_G == "CS") {
+                    document.getElementById("showRundefinition2_1").style.display = 'none';
+                    document.getElementById("showRundefinition2_2").style.display = '';
+                    document.getElementById("showRundefinition2_3").style.display = 'none';
+                    document.getElementById("showRundefinition2_4").style.display = 'none';
+                    document.getElementById("showRundefinition2_5").style.display = 'none';
+
+                }
+                else if (runDefnType_G == "A") {
+                    document.getElementById("showRundefinition2_1").style.display = 'none';
+                    document.getElementById("showRundefinition2_2").style.display = 'none';
+                    document.getElementById("showRundefinition2_3").style.display = '';
+                    document.getElementById("showRundefinition2_4").style.display = 'none';
+                    document.getElementById("showRundefinition2_5").style.display = 'none';
+
+                }
+                else if (runDefnType_G == "S") {
+                    document.getElementById("showRundefinition2_1").style.display = 'none';
+                    document.getElementById("showRundefinition2_2").style.display = 'none';
+                    document.getElementById("showRundefinition2_3").style.display = 'none';
+                    document.getElementById("showRundefinition2_4").style.display = '';
+                    document.getElementById("showRundefinition2_5").style.display = 'none';
+                }
+                else if (runDefnType_G == "N") {
+                    document.getElementById("showRundefinition2_1").style.display = 'none';
+                    document.getElementById("showRundefinition2_2").style.display = 'none';
+                    document.getElementById("showRundefinition2_3").style.display = 'none';
+                    document.getElementById("showRundefinition2_4").style.display = 'none';
+                    document.getElementById("showRundefinition2_5").style.display = 'none';
+                }
+                $.ajax({
+                    type: "POST",
+                    url: URL_PartialChannelList1,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        Acq_Deal_Run_Code: acqDealRunCode_G
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        if (runDefnType_G == "C")
+                            $('#showRundefinition2_1').html(result);
+                        else if (runDefnType_G == "CS")
+                            $('#showRundefinition2_2').html(result);
+                        else if (runDefnType_G == "A")
+                            $('#showRundefinition2_3').html(result);
+                        else if (runDefnType_G == "S")
+                            $('#showRundefinition2_4').html(result);
+
+                        $('.numbertext').numeric({ maxDigits: 5 });
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+
+                if ((primeRun_G + offPrimeRun_G) > 0) {
+                    document.getElementById("rowPrime1").style.display = '';
+                    document.getElementById("rowPrime2").style.display = '';
+                }
+                else {
+                    document.getElementById("rowPrime1").style.display = 'none';
+                    document.getElementById("rowPrime2").style.display = 'none';
+                }
+
+            }
+            else {
+                document.getElementById("addChannel_edit").style.display = 'none';
+                document.getElementById("addChannel2_edit").style.display = 'none';
+            }
+        }
+        CheckSubLicen();
+    });
+    function getFormattedDate(input) {
+        var pattern = /(.*?)\/(.*?)\/(.*?)$/;
+        var result = input.replace(pattern, function (match, p1, p2, p3) {
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return (p2 < 10 ? "0" + p2 : p2) + " " + months[(p1 - 1)] + " " + p3;
+        });
+
+        return result;
+    }
+    function ValidateSave() {
+        showLoading();
+        var Isvalid = true;
+        // Code for Maintaining approval remarks in session
+        if (dealMode_G == 'APRV') {
+            var approvalremarks = $('#approvalremarks').val();
+            $.ajax({
+                type: "POST",
+                url: URL_Global_SetApprovalRemarks,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: true,
+                data: JSON.stringify({
+                    approvalremarks: $('#approvalremarks').val()
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    Isvalid = true;
+                },
+                error: function (result) {
+                    Isvalid = false;
+                }
+            });
+        }
+        else
+            Isvalid = true;
+
+        if (Isvalid) {
+            hideLoading();
+            var tabName = $('#hdnTabName').val();
+            BindPartialTabs(tabName);
+        }
+        hideLoading();
+        //Code end for approval
+        return Isvalid;
+    }
+    function CheckSubLicen() {
+        debugger;
+        if ('@Model.Run_Type' == 'C') {
+            var titleCodes = '@ViewBag.SelectedTitleCode';
+            if (titleCodes != '')
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CheckSubLicen", "Acq_Run")',
+                    traditional: true,
+                    async: false,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        TitleCodes: titleCodes
+                    }),
+                    success: function (result) {
+                        debugger;
+                        if (result == 'False') {
+                            document.getElementById("lbladdNoRun").style.display = 'none';
+                            document.getElementById("lbladdSynRun").style.display = 'none';
+                        }
+                        else {
+                            document.getElementById("lbladdNoRun").style.display = '';
+                            document.getElementById("lbladdSynRun").style.display = '';
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+        }
+    }
+</script>
+
+<div class="grid_area">
+
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabRunDef">
+                    <div class="scale_table_block">
+                        <table class="table">
+                            <tr>
+                                <td class='bold' width="20%">@objMessageKey.Title </td>
+                                @if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Movie || objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Drama_Play || objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Tele_Film)
+                                {
+                                    <td id="tdTitleCodes" colspan="3">
+                                        @(
+string.Join(",", Model.Acq_Deal_Run_Title.Select(t => t.Title.Title_Name))
+                                        )
+                                    </td>
+                                }
+                                else
+                                {
+                                    if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                    {
+                                        <td colspan="3">
+                                            @(
+string.Join(",", Model.Acq_Deal_Run_Title.Select(t => t.Title.Title_Name + " ( " + ((t.Episode_From == 0) ? "Unlimited" : t.Episode_From.ToString()) + " ) "))
+                                            )
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="3">
+                                            @(
+string.Join(",", Model.Acq_Deal_Run_Title.Select(t => t.Title.Title_Name + " ( " + t.Episode_From + " - " + t.Episode_To + " ) "))
+                                            )
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                <td class='bold'>@objMessageKey.NoofExhibition</td>
+                                @if (Model.Run_Type == "C")
+                                {
+                                    @*<td>
+                                            Limited @Model.No_Of_Runs Runs
+                                            <label>(Entire License Period)</label>
+
+                                        </td>*@
+                                    <td colspan="3">
+                                        <table id="tblLimited" style="width:70%">
+                                            <tr>
+                                                <td id="tdaddNoRun">
+                                                    <label id="lbladdNoRun" style="display: none;">
+                                                        <font class='bold'> @objMessageKey.Runs</font>&nbsp; :&nbsp;@((ViewBag.No_Of_Run == null) ? "NA" : Convert.ToString(ViewBag.No_Of_Run))
+                                                    </label>
+                                                </td>
+                                                <td id="tdaddSynRun">
+                                                    <label id="lbladdSynRun" style="display: none;">
+                                                        <font class='bold'>@objMessageKey.SyndicationRuns</font> :&nbsp; @((Model.Syndication_Runs == null) ? "NA" : Convert.ToString(Model.Syndication_Runs))
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label id="lblAddLimited">
+                                                        <font class='bold'>@objMessageKey.Runs&nbsp;(@objMessageKey.Self)</font> :&nbsp; @((Model.No_Of_Runs == null) ? "NA" : Convert.ToString(Model.No_Of_Runs)) &nbsp;(Entire License Period)
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @objMessageKey.UnlimitedRuns
+                                        <label>(@objMessageKey.EntireLicensePeriod)</label>
+                                    </td>
+                                }
+
+                            </tr>
+                            <tr>
+                                <td class='bold'>@objMessageKey.YearWiseRunDefinition</td>
+                                <td colspan="3">
+                                    @((Model.Is_Yearwise_Definition == "Y") ? "Yes" : "NA")
+                                </td>
+                            </tr>
+                            <tr id="addrunsDef2" style="display: none;"></tr>
+                            <tr>
+                                <td class='bold'>@objMessageKey.PerExhibitionDayRuleRight</td>
+                                <td colspan="3">
+                                    @((Model.Is_Rule_Right == "Y") ? "Yes" : "NA")
+                                </td>
+                            </tr>
+                            <tr id="RuleEdit_1" style="display: none;">
+                                <td class='search'>@objMessageKey.Rule</td>
+                                <td>
+                                    @((Model.Right_Rule != null) ? Model.Right_Rule.Right_Rule_Name : "NA")
+                                </td>
+                                <td colspan="2">
+                            </tr>
+                            <tr id="RuleEdit_2" style="display: none;">
+                                <td class='search'>@objMessageKey.DayStartTime  </td>
+                                <td colspan="3">
+                                    @((Model.Right_Rule != null) ? Model.Right_Rule.Start_Time : "")
+                                </td>
+                            </tr>
+                            <tr id="RuleEdit_3" style="display: none;">
+                                <td class='search'>@objMessageKey.Playsperday  </td>
+                                <td colspan="3">
+                                    @((Model.Right_Rule != null) ? Model.Right_Rule.Play_Per_Day : 0)
+                                </td>
+                            </tr>
+                            <tr id="RuleEdit_4" style="display: none;">
+                                <td class='search'>@objMessageKey.DurationofDay (@objMessageKey.inhrs)</td>
+                                <td colspan="3">
+                                    @((Model.Right_Rule != null) ? Model.Right_Rule.Duration_Of_Day : 0)
+                                </td>
+                            </tr>
+                            <tr id="RuleEdit_5" style="display: none;">
+                                <td class='search'>@objMessageKey.NoofRepeat  </td>
+                                <td colspan="3">
+                                    @((Model.Right_Rule != null) ? Model.Right_Rule.No_Of_Repeat : 0)
+                                </td>
+                            </tr>
+                            <tr id="RuleEdit_6" style="display: none;">
+                                <td class='search'>@objMessageKey.RepeatWithinDuration  </td>
+                                <td colspan="3">
+                                    @(Model.No_Of_Days_Hrs) @((Model.Repeat_Within_Days_Hrs == "D") ? "Days" : "Hrs")
+                                </td>
+                            </tr>
+                            <tr id="RuleEdit_7" style="display: none;">
+                                <td class='search'>@objMessageKey.OnlyOn  </td>
+                                <td>
+                                    @ViewBag.RepearOnDays
+                                </td>
+                                <td colspan="2">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td class='bold'>@objMessageKey.ChannelDefinition </td>
+                                <td colspan="3">
+                                    @((Model.Is_Channel_Definition_Rights == "Y") ? "Yes" : "NA")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class='bold'>@objMessageKey.ChannelType </td>
+                                <td colspan="3">
+                                    @((Model.Channel_Type == "C") ? "Channel" : "Channel Cluster")
+                                </td>
+                            </tr>
+                            <tr>
+                                @if (Model.Channel_Type == "G")
+                                {
+                                <tr>
+                                    <td class='bold'>@objMessageKey.ChannelCluster </td>
+                                    <td style="width: 450px">
+                                        <div class="expandable">
+                                            @ViewBag.Channel_Cluster
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+                                <tr id="addChannel_edit" style="display: none;">
+                                    <td class='bold'>@objMessageKey.Channel</td>
+                                    <td style="width: 450px">
+                                        <div class="expandable">
+                                            @ViewBag.Channel
+                                        </div>
+                                    </td>
+                                    <td class='bold' style="width: 140px">@objMessageKey.PrimaryChannel</td>
+                                    <td>
+                                        @ViewBag.PrimaryChannel
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class='bold'>
+                                        @objMessageKey.RunDefinition:
+                                    </td>
+                                    <td>
+                                        @ViewBag.RunDefinitionType
+                                    </td>
+                                </tr>
+                                <tr id="addChannel2_edit" style="display: none;">
+                                    <td></td>
+                                    <td colspan="3" class='head2'>
+                                        <table width='100%' border='0' cellpadding='0' cellspacing='0' align='center' valign='top'>
+
+                                            <tr id="showRundefinition2_1" style="display: none;"></tr>
+                                            <tr id="showRundefinition2_2" style="display: none;"></tr>
+                                            <tr id="showRundefinition2_3" style="display: none;"></tr>
+                                            <tr id="showRundefinition2_4" style="display: none;"></tr>
+                                            <tr id="showRundefinition2_5">
+                                                <td class='normal'>&nbsp;</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class='bold'>@objMessageKey.Prime/@objMessageKey.OffPrime @objMessageKey.Definition</td>
+                                    <td colspan="3">
+                                        @(((Model.Prime_Run + Model.Off_Prime_Run) > 0) ? "Yes" : "NA")
+                                    </td>
+                                </tr>
+                                <tr id="rowPrime1" style="display: none;">
+                                    <td class="bold">@objMessageKey.PrimeTime</td>
+                                    <td colspan="3">
+                                        <div class="divBlock">
+                                            <div>
+                                                <span>@objMessageKey.StartTime:</span>
+                                                @((Model.Prime_Start_Time != null) ? new DateTime(1, 1, 1, Model.Prime_Start_Time.Value.Hours, Model.Prime_Start_Time.Value.Minutes, 0).ToString("hh:mm tt") : "NA")
+                                            </div>
+                                            &nbsp;
+                                            <div>
+                                                <span>@objMessageKey.EndTime:</span>
+                                                @((Model.Prime_End_Time != null) ? new DateTime(1, 1, 1, Model.Prime_End_Time.Value.Hours, Model.Prime_End_Time.Value.Minutes, 0).ToString("hh:mm tt") : "NA")
+                                            </div>
+                                            &nbsp;
+                                            <div>
+                                                <span>@objMessageKey.Run:</span>
+                                                @Model.Prime_Run
+                                            </div>
+                                            <div style="margin-left: 15px"><b>@ViewBag.PrimeScheduledRuns</b></div>
+                                            <div style="margin-left: 15px"><b>@ViewBag.PrimeBalanceRuns</b></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr id="rowPrime2" style="display: none;">
+                                    <td class="bold">@objMessageKey.OffPrimeTime</td>
+                                    <td colspan="3">
+                                        <div class="divBlock">
+                                            <div>
+                                                <span>@objMessageKey.StartTime:</span>
+                                                @((Model.Off_Prime_Start_Time != null) ? new DateTime(1, 1, 1, Model.Off_Prime_Start_Time.Value.Hours, Model.Off_Prime_Start_Time.Value.Minutes, 0).ToString("hh:mm tt") : "NA")
+                                            </div>
+                                            &nbsp;
+                                            <div>
+                                                <span>@objMessageKey.EndTime:</span>
+                                                @((Model.Off_Prime_End_Time != null) ? new DateTime(1, 1, 1, Model.Off_Prime_End_Time.Value.Hours, Model.Off_Prime_End_Time.Value.Minutes, 0).ToString("hh:mm tt") : "NA")
+                                            </div>
+                                            &nbsp;
+                                            <div>
+                                                <span>@objMessageKey.Run:</span>
+                                                @Model.Off_Prime_Run
+                                            </div>
+                                            <div style="margin-left: 15px;"><b>@ViewBag.OffPrimeScheduledRuns</b></div>
+                                            <div style="margin-left: 15px;"><b>@ViewBag.OffPrimeBalanceRuns</b></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr id="rowPrime3">
+                                    <td class="bold">@objMessageKey.TimeLag</td>
+                                    <td colspan="3">
+                                        @((Model.Time_Lag_Simulcast != null) ? new DateTime(1, 1, 1, Model.Time_Lag_Simulcast.Value.Hours, Model.Time_Lag_Simulcast.Value.Minutes, Model.Time_Lag_Simulcast.Value.Seconds).ToString("HH:mm:ss") : "NA")
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        @Html.Partial("_Approved_List")
+                        <br />
+                    }
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="button" class="btn-primary" value="@objMessageKey.Cancel" onclick="BindPartialTabs('@GlobalParams.Page_From_Run')" />
+                            </li>
+                        </ul>
+                    </div>
+                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popRunDefn" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="Form1">
+                    <div>
+                        <div class="form_fields acq">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>
+                                        ×
+                                    </span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>@objMessageKey.Combinationconflictswithotherrundefinition</h2>
+                            </div>
+                            <div id="conflictRun" class="modal_block">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+

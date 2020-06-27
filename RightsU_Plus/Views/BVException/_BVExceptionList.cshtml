@@ -1,0 +1,87 @@
+﻿@model List<RightsU_Entities.BVException>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<script>
+    $('.expand_strChannelName').expander({
+        slicePoint: 60,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $('.expand_strUserNames').expander({
+        slicePoint: 60,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class="table table-bordered table-hover" cellspacing="0" rules="all" border="1" id="tblBVException">
+    <thead>
+        <tr>
+            <th width="15%;">@objMessageKey.ExceptionType</th>
+            <th width="40%;">@objMessageKey.Channel</th>
+            <th width="40%;">@objMessageKey.User</th>
+            <th width="5%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strExceptionType = "Schedule", strChannelName = "", strUserNames = "";
+                if (item.BVException_Channel.Count > 0)
+                {
+                    strChannelName = string.Join(",", item.BVException_Channel.Select(c => c.Channel.Channel_Name).ToList());
+                }
+                if (item.BVException_Users.Count > 0)
+                {
+                    strUserNames = string.Join(",", item.BVException_Users.Select(u => u.User.Full_Name).ToList());
+                }
+
+                if (item.Bv_Exception_Type.Trim() == "R")
+                {
+                    strExceptionType = "As Run";
+                }
+                <tr>
+                    <td>
+                        <span>@strExceptionType</span>
+                    </td>
+                    <td>
+                        <div class="expand_strChannelName">@strChannelName</div>
+                    </td>
+                    <td>
+                        <div class="expand_strUserNames">@strUserNames</div>
+                    </td>
+                    <td style="text-align:center;">
+                        @if (item.Is_Active == "Y")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Bv_Exception_Code)"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDelete + "~"))
+                            {
+                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteBVException(@item.Bv_Exception_Code,false)"></a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

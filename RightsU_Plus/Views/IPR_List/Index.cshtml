@@ -1,0 +1,1070 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/Rights_Tab.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+    var
+    URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "IPR_List")',
+    URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "IPR_List")',
+    URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")',
+    URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var panelVisible = false;
+    var RightpanelHideCss = '-350px';
+    var RightpanelShowCss = '0px';
+    $(document).ready(function () {
+        $('#ddlBusinessUnit').SumoSelect({ up: true });
+        $('#ddlChannel').SumoSelect({ up: true });
+        $('#ddlBusinessUnit')[0].sumo.reload();
+        $('#ddlChannel')[0].sumo.reload();
+        $('#hdnPageSizeForDosmestic_temp').val('0');
+        $('#searchCommon').keypress(function (e) {
+            debugger;
+            if (e.keyCode == 13) {
+                SearchCommon()
+                return false;
+            }
+        });
+        loadList('@ViewBag.tab', '0', 'N', 'N');
+        if ('@ViewBag.isAdvanced' == 'Y')
+            $('#divSearch').show();
+        else
+            $('#divSearch').hide();
+        initializeChosen();
+        initializeSubMenu2();
+        AllsubmenuHide();
+        var lastScrollTop = 0;
+
+        $(window).scroll(function (event) {
+            debugger;
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop) {
+                // downscroll code
+                $("#pnlSearch").addClass("tinyADSearch")
+
+            } else {
+                // upscroll code
+                $("#pnlSearch").removeClass("tinyADSearch")
+
+            }
+        });
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?IPR_Application');
+    })
+    function Ask_Confirmation(IprCode, RowNum, tab) {
+        $('#hdnCurrentTab').val(tab)
+        var num = RowNum + '';
+        $("#hdnRowNum").val(num);
+        showAlert("I", 'Are you sure, you want to delete this record ?', "OKCANCEL");
+    }
+    function handleCancel() {
+        $("#hdnRowNum").val('');
+    }
+
+    function handleOk() {
+        debugger;
+        showLoading();
+        var RowNum = $("#hdnRowNum").val();
+        if ($('#hdnCurrentTab').val() == 'A' || $('#hdnCurrentTab').val() == 'B')
+            var objCode = $("#" + RowNum + "_hdnIPR_Opp_Code").val();
+        else
+            var objCode = $("#" + RowNum + "_hdnIPR_Rep_Code").val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordCurrentStatus,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                IPR_Int_Opp_Code: parseInt(objCode)
+            }),
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        debugger;
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
+                        DeleteIPR(objCode, $('#hdnCurrentTab').val());
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        return true;
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                        return false;
+                    }
+                }
+            },
+            error: function (result) {
+                hideLoading();
+                Command_Name_G = "";
+                objSynListCode = 0;
+                alert('Error in CheckRecordCurrentStatus() : ' + result.responseText);
+            }
+        });
+        hideLoading();
+    }
+
+    function loadList(tab, pageNo, Istabchange, IsSetPage, recordPerPage) {
+        debugger;
+        if (tab == 'D') {
+            recordPerPage = $('#txtPageSize').val()
+            if (recordPerPage == undefined) {
+                $('#hdnPageSizeForDosmestic_temp').val('10');
+            }
+        }
+        if (tab == 'I') {
+            recordPerPage = $('#txtPageSize_Int').val()
+            if (recordPerPage == undefined) {
+                $('#hdnPageSizeForInt_temp').val('10');
+            }
+        }
+        if (tab == 'B') {
+            recordPerPage = $('#txtPageSize_OppB').val()
+            if (recordPerPage == undefined) {
+                $('#hdnPageSizeForOppBy_temp').val('10');
+            }
+        }
+        if (tab == 'A') {
+            recordPerPage = $('#txtPageSize_OppA').val()
+            if (recordPerPage == undefined) {
+                $('#hdnPageSizeForOppAgainst_temp').val('10');
+            }
+        }
+        var istabchange = Istabchange;
+        var isSetPage = IsSetPage;
+        if (Istabchange == 'Y')
+            $('#searchCommon').val('');
+        if (tab == 'D' || tab == 'I')
+            $("#searchCommon").attr('placeholder', 'Application No., Type, Business Unit, Channel, Trademark, Trademark Attorney, Application Status, Applicant, Class, Country')
+        else
+            $("#searchCommon").attr('placeholder', 'Opposition No., Type, Business Unit, Channel, Trademark, Trademark Attorney, Class, Opposition Status')
+
+        showLoading();
+        tabChange(tab, istabchange);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Bind_Grid_Domestic_List", "IPR_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Tab: tab,
+                SearchCriteria: '',
+                PageNo: pageNo,
+                Istabchange: istabchange,
+                IsSetPage: isSetPage,
+                recordPerPage: recordPerPage
+            }),
+            success: function (result) {
+                $('#gvArea').html(result);
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function AppChange() {
+        $('#applicationNo').val($('#txtApplicationNo').val());
+        $('#type').val($('#ddlType').val())
+        $('#trademark').val($('#txtTradeMark').val())
+        $('#type').val($('#txtTradeMarkAttorney').val())
+        $('#appFromDate').val($('#txtAppFromDate').val())
+        $('#appToDate').val($('#txtAppToDate').val())
+        $('#applicationStatus').val($('#ddlApplicationStatus').val())
+        $('#applicant').val($('#ddlApplicant').val())
+        $('#renFromDate').val($('#txtRenFromDate').val())
+        $('#renToDate').val($('#txtRenToDate').val())
+        $('#type').val($('#txtClass').val())
+        $('#useFromDate').val($('#txtUseFromDate').val())
+        $('#useToDate').val($('#txtUseToDate').val())
+        $('#oppositionNo').val($('#txtOppositionNo').val())
+        $('#oppStatus').val($('#ddlOppStatus').val())
+        $('#country').val($('#ddlCountry').val())
+        $('#tab').val($('#hdnCurrentTab').val())
+        $('#registrationNo').val($('#txtRegistrationNo').val())
+    }
+    function SearchCommon() {
+        if ($('#searchCommon').val() != "") {
+            clearField();
+            $('#divSearch').hide();
+        }
+        SearchList('C', '0');
+    }
+    function SearchList(mode, pageNo) {
+        debugger;
+        var isAdvance = '';
+        if (mode == 'C') {
+            clearField();
+        }
+        showLoading();
+        var ApplicationNo = $('#txtApplicationNo').val().trim()
+        var Type = $('#ddlType').val().trim()
+        var Trademark = $('#txtTradeMark').val().trim()
+        var TradeMarkAttorney = $('#txtTradeMarkAttorney').val().trim()
+        var AppFromDate = $('#txtAppFromDate').val().trim()
+        var AppToDate = $('#txtAppToDate').val().trim()
+        var ApplicationStatus = $('#ddlApplicationStatus').val().trim()
+        var Applicant = $('#ddlApplicant').val().trim()
+        var RenFromDate = $('#txtRenFromDate').val().trim()
+        var RenToDate = $('#txtRenToDate').val().trim()
+        var Classt = $('#txtClass').val().trim()
+        var UseFromDate = $('#txtUseFromDate').val().trim()
+        var UseToDate = $('#txtUseToDate').val().trim()
+        var OppositionNo = $('#txtOppositionNo').val().trim()
+        var OppStatus = $('#ddlOppStatus').val().trim()
+        var Country = $('#ddlCountry').val().trim()
+
+        var BusinessUnit = "";
+        if ($('#ddlBusinessUnit').val() != null)
+            BusinessUnit = $('#ddlBusinessUnit').val().toString();
+
+        var Channel = "";
+        if ($('#ddlChannel').val() != null)
+            Channel = $('#ddlChannel').val().toString();
+
+        var tabname = $('#hdnCurrentTab').val().trim()
+        var srchCommon = $('#searchCommon').val().trim()
+        var RegistrationNo = $('#txtRegistrationNo').val().trim()
+        if (mode == 'S') {
+            isAdvance = 'Y';
+            $('#searchCommon').val('');
+            if (ApplicationNo == "" && Type == "" && Trademark == "" && TradeMarkAttorney == "" && AppFromDate == "" && AppToDate == "" && ApplicationStatus == ""
+            && Applicant == "" && RenFromDate == "" && RenToDate == "" && Classt == "" && UseFromDate == "" && UseToDate == "" && OppositionNo == ""
+            && OppStatus == "" && Country == "" && RegistrationNo == "" && BusinessUnit == "" && Channel == "") {
+                srchCommon = "";
+                showAlert('e', 'Please select/enter search criteria');
+                hideLoading();
+                return false;
+            }
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SearchList", "IPR_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                SearchCommon: srchCommon,
+                Tab: tabname,
+                applicationNo: ApplicationNo,
+                type: Type,
+                trademark: Trademark,
+                tradeMarkAtto: TradeMarkAttorney,
+                appFromDate: AppFromDate,
+                appToDate: AppToDate,
+                applicationStatus: ApplicationStatus,
+                applicant: Applicant,
+                renFromDate: RenFromDate,
+                renToDate: RenToDate,
+                classt: Classt,
+                useFromDate: UseFromDate,
+                useToDate: UseToDate,
+                oppositionNo: OppositionNo,
+                oppStatus: OppStatus,
+                country: Country,
+                businessUnit: BusinessUnit,
+                channel: Channel,
+                PageNo: pageNo,
+                isAdvanced: isAdvance,
+                registrationNo: RegistrationNo
+            }),
+            success: function (result) {
+                $('#gvArea').html(result);
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function clearField() {
+        $('#txtApplicationNo').val('');
+        $('#ddlType').val('')
+        $('#txtTradeMark').val('')
+        $('#txtTradeMarkAttorney').val('')
+        $('#txtAppFromDate').val('')
+        $('#txtAppToDate').val('')
+        $('#ddlApplicationStatus').val('')
+        $('#ddlApplicant').val('')
+        $('#txtRenFromDate').val('')
+        $('#txtRenToDate').val('')
+        $('#txtClass').val('')
+        $('#txtUseFromDate').val('')
+        $('#txtUseToDate').val('')
+        $('#txtOppositionNo').val('')
+        $('#ddlOppStatus').val('')
+        $('#ddlCountry').val('')
+        $('#ddlBusinessUnit').val('');
+        $('#ddlChannel').val('');
+        $('#txtRegistrationNo').val('')
+    }
+    function ShowAll() {
+        $('#searchCommon').val('');
+        clearField();
+        loadList($('#hdnCurrentTab').val(), '0', 'Y', 'N');
+    }
+
+    function tabChange(tab, Istabchange) {
+        if (Istabchange == 'Y')
+            clearField();
+        $('#hdnCurrentTab').val(tab);
+        $('#Tab').val(tab);
+        var h = $('#hdnCurrentTab').val();
+        if (tab == "D" || tab == "I") {
+            if (tab == "D") {
+                $('#DomesticLi').addClass('active');
+                $('#InternationalLi').removeClass();
+                $('#OppositionByLi').removeClass();
+                $('#OppositionAgainstLi').removeClass();
+                $('#CountryLi').hide();
+                $('#RegistrationLi').hide();
+            }
+            else {
+                $('#InternationalLi').addClass('active');
+                $('#DomesticLi').removeClass();
+                $('#OppositionByLi').removeClass();
+                $('#OppositionAgainstLi').removeClass();
+                $('#CountryLi').show();
+                $('#RegistrationLi').show();
+            }
+            $('#AppLi').show();
+            $('#appdateLi').show();
+            $('#rendateLi').show();
+            $('#statusLi').show();
+            $('#DateOfUseLi').show();
+            $('#OppNoLi').hide();
+            $('#OppStaLi').hide();
+        }
+        else {
+            if (tab == "B") {
+                $('#OppositionByLi').addClass('active');
+                $('#InternationalLi').removeClass();
+                $('#DomesticLi').removeClass();
+                $('#OppositionAgainstLi').removeClass();
+            }
+            if (tab == "A") {
+                $('#OppositionAgainstLi').addClass('active');
+                $('#InternationalLi').removeClass();
+                $('#DomesticLi').removeClass();
+                $('#OppositionByLi').removeClass();
+            }
+            $('#OppNoLi').show();
+            $('#OppStaLi').show();
+            $('#AppLi').hide();
+            $('#appdateLi').hide();
+            $('#rendateLi').hide();
+            $('#statusLi').hide();
+            $('#DateOfUseLi').hide();
+            $('#CountryLi').hide();
+            $('#RegistrationLi').hide();
+        }
+    }
+    function PageSize_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            Bind_Grid(0, 'Y');
+        }
+        else
+            return false;
+    }
+    function DeleteIPR(objCode, tab) {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeleteIPR", "IPR_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                IPR_Code: objCode
+            }),
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Error != "")
+                        showAlert(tab, result.Error);
+                    else {
+                        showAlert("S", result.Message);
+                        loadList(tab, $("#hdnPageIndex").val(), 'N', 'N')
+                    }
+                    hideLoading();
+                }
+            },
+            error: function (result) { }
+
+        });
+    }
+    function initializeSubMenu2() {
+
+        //$('.RightPanel').hide();
+        //$('#sideNavi').show();
+        $('.RightPanel li.has-sub>a').on('click', function () {
+            $(this).removeAttr('href');
+            var element = $(this).parent('li');
+            if (element.hasClass('open')) {
+                element.removeClass('open');
+                element.find('li').removeClass('open');
+                element.find('ul').slideUp(200);
+            }
+            else {
+                element.addClass('open');
+                element.children('ul').slideDown(200);
+                element.siblings('li').children('ul').slideUp(200);
+                element.siblings('li').removeClass('open');
+                element.siblings('li').find('li').removeClass('open');
+                element.siblings('li').find('ul').slideUp(200);
+            }
+        });
+    }
+
+    function AllsubmenuHide() {
+
+        $('.RightPanel').css('right', RightpanelHideCss);
+        $('.leftPanel').css('left', panelHideCss);
+        $('#sideNavi').show();
+        //$('.RightPanel').hide();
+    }
+    function togglePanelVisibility2(panelID) {
+        document.getElementById('pnlSearch').removeAttribute('hidden')
+        $('.leftPanel').css('left', panelHideCss);
+        $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelHideCss);
+        var panel = document.getElementById(panelID);
+
+        if (panel.style.right == RightpanelShowCss) {
+            panel.style.right = RightpanelHideCss;
+            panelVisible = false;
+            $('#sideNavi').show();
+            //$('#AdvanceSearchPanel').hide();
+        }
+        else {
+            panel.style.right = RightpanelShowCss;
+            panelVisible = true;
+            $('#sideNavi').hide();
+            //$('#AdvanceSearchPanel').show();
+        }
+    }
+
+</script>
+<script>
+
+    function CheckRecordLock(Mode, IPR_Rep_Code, IPR_Opp_Code) {
+        debugger;
+        showLoading();
+        var returnVal = false;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                IPR_Rep_Code: IPR_Rep_Code,
+                IPR_Opp_Code: IPR_Opp_Code
+            }),
+            async: true,
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        debugger;
+                        if (Mode == "E") {
+                            IPR_Opp_Code
+                            if (IPR_Opp_Code == 0) {
+                                var URL = '@Url.Action("ButtonEvent", "IPR_List", new
+                                {
+                                    MODE = "_MODE_",
+                                    IPR_Rep_Code = "_IPR_Rep_Code_"
+                                })';
+                                URL = URL.replace("_MODE_", Mode);
+                                URL = URL.replace("_IPR_Rep_Code_", IPR_Rep_Code);
+                                URL = URL.replace(/amp;/g, "");
+                                window.location.href = URL;
+                            }
+                            else if (IPR_Rep_Code == 0)
+                            {
+                                var URL = '@Url.Action("ButtonEvent", "IPR_List", new
+                                {
+                                    MODE = "_MODE_",
+                                    IPR_Opp_Code = "_IPR_Opp_Code_"
+                                })';
+                                URL = URL.replace("_MODE_", Mode);
+                                URL = URL.replace("_IPR_Opp_Code_", IPR_Opp_Code);
+                                URL = URL.replace(/amp;/g, "");
+                                window.location.href = URL;
+                            }
+                        }
+                        else {
+                            $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
+                            Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        }
+                        returnVal = true;
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                        returnVal = false;
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error in CheckRecordLock(): ' + result.responseText);
+                hideLoading();
+                returnVal = false;
+            }
+        });
+        return returnVal;
+    }
+</script>
+<style>
+    .tinyADSearch {
+        top: 40px;
+    }
+
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+    }
+
+    #divSearch {
+        padding: 6px 10px;
+        margin-bottom: 5px;
+        border: 1px solid #ddd;
+        background-color: #eee;
+    }
+
+        #divSearch > ul > li {
+            float: left;
+            min-height: 32px;
+            list-style-type: none;
+            padding: 0 3px;
+        }
+
+        #divSearch .chosen-container {
+            margin: 0;
+        }
+
+        #divSearch .checkbox-inline {
+            margin-bottom: 7px;
+        }
+
+    .scale_table_block {
+        padding: 0px !important;
+    }
+
+    .tabbable .isDatepicker {
+        width: 80px !important;
+        font-size: 11px;
+        height: 26px;
+    }
+
+    .nav-tab {
+        border-bottom: 4px solid #EEE !important;
+        width: 100%;
+    }
+
+    ul.first label, ul.first span, ul.second label, ul.second span, ul.third label, ul.third span, ul.four label, ul.four span {
+        display: inline-block;
+    }
+
+    ul.first > li:first-child, ul.second > li:first-child, ul.third > li:first-child, ul.four > li:first-child {
+        width: 30%;
+    }
+
+    ul.first > li:nth-child(2), ul.second > li:nth-child(2), ul.four > li:nth-child(2) {
+        width: 18%;
+    }
+
+    ul.third > li:nth-child(2) {
+        width: 39%;
+    }
+
+    ul.first > li:nth-child(3), ul.third > li:nth-child(3), ul.four > li:nth-child(3) {
+        width: 22%;
+    }
+
+    ul.second > li:nth-child(2) {
+        width: 30%;
+    }
+
+    ul.second > li:nth-child(3) {
+        width: 18%;
+    }
+
+    ul.second > li:nth-child(4) {
+        width: 22%;
+    }
+
+    ul.third > li:nth-child(3) {
+        width: 69%;
+    }
+
+    ul.first > li:last-child, ul.second > li:last-child, ul.third > li:last-child, ul.four > li:last-child {
+        width: 30%;
+    }
+
+    ul.first > li:first-child label {
+        width: 35%;
+    }
+
+    ul.first > li:first-child span {
+        width: 60%;
+    }
+
+    ul.first > li:nth-child(2) label {
+        width: 18%;
+    }
+
+    ul.first > li:nth-child(2) span {
+        width: 80%;
+    }
+
+    ul.first > li:nth-child(3) label {
+        width: 32%;
+    }
+
+    ul.first > li:nth-child(3) span {
+        width: 66%;
+    }
+
+    ul.first > li:last-child label {
+        width: 44%;
+    }
+
+    ul.first > li:last-child span {
+        width: 54%;
+    }
+
+    ul.second > li:first-child label {
+        width: 35%;
+    }
+
+    ul.second > li:first-child span {
+        width: 60%;
+    }
+
+    ul.second > li:nth-child(2) label {
+        width: 35%;
+    }
+
+    ul.second > li:nth-child(2) span {
+        width: 60%;
+    }
+
+    ul.second > li:nth-child(3) label {
+        width: 18%;
+    }
+
+    ul.second > li:nth-child(3) span {
+        width: 18%;
+    }
+
+    ul.second > li:nth-child(4) label {
+        width: 32%;
+    }
+
+    ul.second > li:nth-child(4) span {
+        width: 66%;
+    }
+
+    ul.second > li:last-child label {
+        width: 36%;
+    }
+
+    ul.second > li:last-child span {
+        width: 62%;
+    }
+
+    ul.third > li:first-child label {
+        width: 35%;
+    }
+
+    ul.third > li:first-child span {
+        width: 62%;
+    }
+
+    ul.third > li:nth-child(2) label {
+        width: 23%;
+    }
+
+    ul.third > li:nth-child(2) span {
+        width: 46%;
+    }
+
+    ul.third > li:nth-child(3) label {
+        width: 16%;
+    }
+
+    ul.third > li:nth-child(3) span {
+        width: 62%;
+    }
+
+    ul.third > li:last-child label {
+        width: 17%;
+    }
+
+    ul.third > li:last-child span {
+        width: 17%;
+    }
+
+    ul.four > li:first-child label {
+        width: 35%;
+    }
+
+    ul.four > li:first-child span {
+        width: 62%;
+    }
+
+    ul.four > li:nth-child(2) label {
+        width: 33%;
+    }
+
+    ul.four > li:nth-child(2) span {
+        width: 60%;
+    }
+
+    .navigation_tabs {
+        /*border-bottom: 6px solid #EEEEEE;
+        height: 33px;
+        margin-top: 10px;
+        margin-bottom:5px;*/
+        margin-top: 10px;
+        border: 0 none;
+    }
+
+    .AdSearch {
+        margin-left: 8px;
+        margin-top: 3px;
+    }
+
+    #AdvanceSearchPanel {
+        overflow-y: scroll !important;
+        height: 100%;
+    }
+
+    .SumoSelect {
+        width: 94% !important;
+    }
+    /*.CaptionCont SelectBox search{
+        width:94% !important;
+    }*/
+    /*.SumoSelect > .optWrapper.selall > .options {
+            margin-bottom : 43px !important;
+        }*/
+</style>
+
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div id="sideNavi">
+            <div class="side-navi-item item1" style="top:0px;width: 46px !important;background-color: #acb755;" onclick="javascript: togglePanelVisibility2('pnlSearch');"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+        </div>
+        <div class="RightPanel" id="pnlSearch" hidden="hidden">
+            <div id="AdvanceSearchPanel">
+                <h4>Advance Search</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
+                <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+
+                    <li>
+                        <label>Application No. :</label>
+                        <br>
+                        <span><input type="text" maxlength="15" id="txtApplicationNo" value="@ViewBag.applicationNo" style="width: 182px;" onchange="AppChange();" /></span>
+                    </li>
+                    <li>
+                        <label>Type :</label>
+                        <br>
+                        <span>
+                            @if (ViewBag.Type_List != null)
+                            {
+                                @Html.DropDownList("ddlType", (SelectList)ViewBag.Type_List, "--Please Select--", new { style = "width: 182px;" })
+                            }
+                        </span>
+                    </li>
+                    <li>
+                        <label>Trade Mark :</label>
+                        <br>
+                        <span>
+                            <input type="text" maxlength="15" id="txtTradeMark" value="@ViewBag.trademark" style="width: 182px;" />
+                        </span>
+                    </li>
+                    <li>
+                        <label>Trade Mark Attorney :</label>
+                        <br>
+                        <span>
+                            <input type="text" maxlength="15" id="txtTradeMarkAttorney" value="@ViewBag.tradeMarkAtto" style="width: 182px;" />
+                        </span>
+                    </li>
+
+                    <li id="AppLi" style="display: none">
+                        <label>Applicant :</label>
+                        <br>
+                        <span>
+                            @if (ViewBag.Applicant_List != null)
+                            {
+                                @Html.DropDownList("ddlApplicant", (SelectList)ViewBag.Applicant_List, "--Please Select--", new { style = "width: 182px;", @onchange = "AppChange();" })
+                            }
+                        </span>
+                    </li>
+                    <li id="OppNoLi" style="display: none">
+                        <div id="OppNo">
+                            <label>Opposition No. :</label>
+                            <br>
+                            <span><input type="text" maxlength="15" id="txtOppositionNo" value="@ViewBag.oppositionNo" style="width: 182px;" /></span>
+                        </div>
+                    </li>
+                    <li id="ClassLi">
+                        <label>Class :</label>
+                        <br>
+                        <span>
+                            <input type="text" maxlength="15" id="txtClass" value="@ViewBag.classt" style="width: 182px;" />
+                        </span>
+                    </li>
+                    <li id="statusLi" style="display: none">
+                        <label>Status :</label>
+                        <br>
+                        <span>
+                            @if (ViewBag.ApplicationStatus_List != null)
+                            {
+                                @Html.DropDownList("ddlApplicationStatus", (SelectList)ViewBag.ApplicationStatus_List, "--Please Select--", new { style = "width: 182px;", @onchange = "AppChange();" })
+                            }
+                        </span>
+                    </li>
+
+                    <li id="DateOfUseLi" style="display: none">
+                        <div id="DateOfUse">
+                            <label>Date Of Use :</label>
+                            <br>
+                            <span>
+                                <input type="text" maxlength="15" placeholder="DD/MM/YYYY" id="txtUseFromDate" value="@ViewBag.useFromDate" class="isDatepicker shortDate" /> To
+                                <input type="text" maxlength="15" placeholder="DD/MM/YYYY" id="txtUseToDate" value="@ViewBag.useToDate" class="isDatepicker shortDate" />
+                            </span>
+                        </div>
+                    </li>
+
+                    <li id="appdateLi" style="display: none">
+                        <label>Application Date :</label>
+                        <br>
+                        <span>
+                            <input type="text" class="isDatepicker shortDate" placeholder="DD/MM/YYYY" maxlength="15" value="@ViewBag.appFromDate" id="txtAppFromDate" /> To
+                            <input type="text" class="isDatepicker shortDate" placeholder="DD/MM/YYYY" maxlength="15" value="@ViewBag.appToDate" id="txtAppToDate" />
+                        </span>
+                    </li>
+                    <li id="rendateLi" style="display: none">
+                        <label>Renewed Date :</label>
+                        <br>
+                        <span>
+                            <input type="text" maxlength="15" id="txtRenFromDate" placeholder="DD/MM/YYYY" value="@ViewBag.renFromDate" class="isDatepicker shortDate" /> To
+                            <input type="text" maxlength="15" id="txtRenToDate" placeholder="DD/MM/YYYY" value="@ViewBag.renToDate" class="isDatepicker shortDate" />
+                        </span>
+                    </li>
+                    <li id="OppStaLi" style="display: none">
+                        <div id="OppSta">
+                            <label>Opposition Status :</label>
+                            <br>
+                            <span>
+                                @if (ViewBag.OppStatus_List != null)
+                                {
+                                    @Html.DropDownList("ddlOppStatus", (SelectList)ViewBag.OppStatus_List, "--Please Select--", new { style = "width: 176px;" })
+                                }
+                            </span>
+                        </div>
+                    </li>
+
+                    <li id="CountryLi" style="display: none">
+                        <div id="Country">
+                            <label>Country :</label>
+                            <br>
+                            <span>
+                                @if (ViewBag.Country_List != null)
+                                {
+                                    @Html.DropDownList("ddlCountry", (SelectList)ViewBag.Country_List, "--Please Select--", new { style = "width: 183px;" })
+                                }
+                            </span>
+                        </div>
+                    </li>
+                    <li id="RegistrationLi" style="display: none">
+                        <div id="Registration">
+                            <label>Registration No. :</label>
+                            <br>
+                            <span><input type="text" maxlength="15" id="txtRegistrationNo" style="width: 174px;" /></span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <label>Business Unit :</label>
+                        <br>
+                        <span>
+                            @if (ViewBag.BusinessUnitList != null)
+                            {
+                                @Html.DropDownList("ddlBusinessUnit", ViewBag.BusinessUnitList as MultiSelectList,
+                            new { @id = "ddlBusinessUnit", @multiple = "multiple" })
+                            }
+                        </span>
+                    </li>
+                    <li>
+                        <label>Channel :</label>
+                        <br>
+                        <span>
+                            @if (ViewBag.ChannelList != null)
+                            {
+                                @Html.DropDownList("ddlChannel", ViewBag.ChannelList as MultiSelectList,
+                            new { @id = "ddlChannel", @multiple = "multiple" })
+                            }
+                        </span>
+                    </li>
+                </ul>
+                <br />
+                <div style="text-align:center;">
+                    <input type="button" id="btnSearch" class="btn-primary" onclick="return SearchList('S', '0')" value="Search" />
+                    <input type="button" id="btnShowAll" class="btn-primary" onclick="return ShowAll()" value="Show All" />
+                    <input type="hidden" id="hdnClearAll" />
+                </div>
+            </div>
+        </div>
+        <div class="container ipr main_col" onclick="AllsubmenuHide(); $('.leftPanel').css('left', panelHideCss);">
+
+            <div class="top_area">
+                <h2 class="pull-left">IPR List</h2>
+                @if (ViewBag.NoRight)
+                {
+
+                    <div class="right_nav pull-right" style="margin-top: 5px;margin-right: 17px;">
+                        <ul>
+
+                            <li>
+                                <input type="text" name="srchCommon" value="@ViewBag.common_Search" id="searchCommon" class="search" style="width:800px" />
+                                @*onfocusout="SearchCommon();"*@
+                            </li>
+                            <li>
+                                <input class="btn btn-primary" type="button" id="btnSearch" value="Search" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch'); SearchCommon();" />
+                            </li>
+                            <li>
+                                <a href="#" onclick="return ShowAll()">
+                                    <span class="glyphicon glyphicon-refresh" title="Show All" id="ShowAll"></span>
+                                </a>
+                            </li>
+                            @*<li>
+                                    <a href="#">
+                                        <span class="glyphicon glyphicon-search" title="Advanced Search" onclick="$('#divSearch').slideToggle(400);"></span>
+                                    </a>
+                                </li>*@
+                            @if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForExportToExcel + "~"))
+                            {
+                                <li>
+                                    <label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save" title="Save to Excel">
+                                        @using (Html.BeginForm("ExportToExcel", "IPR_List"))
+                                        {
+                                            <input id="btnExportToExcel" type="submit" style="display: none" />
+                                            @Html.Hidden("Tab")
+                                            @Html.Hidden("applicationNo")
+                                            @Html.Hidden("type")
+                                            @Html.Hidden("trademark")
+                                            @Html.Hidden("tradeMarkAtto")
+                                            @Html.Hidden("appFromDate")
+                                            @Html.Hidden("appToDate")
+                                            @Html.Hidden("applicationStatus")
+                                            @Html.Hidden("applicant")
+                                            @Html.Hidden("renFromDate")
+                                            @Html.Hidden("classt")
+                                            @Html.Hidden("renToDate")
+                                            @Html.Hidden("useFromDate")
+                                            @Html.Hidden("useToDate")
+                                            @Html.Hidden("oppositionNo")
+                                            @Html.Hidden("oppStatus")
+                                            @Html.Hidden("country")
+                                            @Html.Hidden("registrationNo")
+                                            @Html.Hidden("businessUnit")
+                                            @Html.Hidden("channel")
+                                        }
+
+                                    </label>
+                                </li>
+                            }
+                            <li>
+                                @{if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <a class="btn btn-primary" data-toggle="modal" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = GlobalParams.DEAL_MODE_ADD })">Add</a>
+                                }}
+                            </li>
+
+                        </ul>
+                    </div>
+                }
+            </div>
+            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+            @if (ViewBag.NoRight)
+            {
+                <div class="navigation_tabs">
+                    <div class="tabbable ">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            @if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForDomesticTab + "~"))
+                            {
+                                <li id="DomesticLi" class="active">
+                                    <input type="submit" role="tab" onclick="return loadList('D', '0', 'Y', 'N')" value="Domestic" />
+                                    <input type="hidden" id="hdnPageSizeForDosmestic_temp" name="hdnPageSizeForDosmestic_temp" value="0" />
+                                    <span></span>
+                                </li>
+                            }
+                            @if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForInternationalTab + "~"))
+                            {
+                                <li id="InternationalLi">
+                                    <input type="submit" role="tab" onclick="return loadList('I', '0', 'Y', 'N')" value="International" />
+                                    <input type="hidden" id="hdnPageSizeForInt_temp" name="hdnPageSizeForInt_temp" value="0" />
+                                    <span></span>
+                                </li>
+                            }
+                            @if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForOppositionByTab + "~"))
+                            {
+                                <li id="OppositionByLi">
+                                    <input type="submit" role="tab" onclick="return loadList('B', '0', 'Y', 'N')" value="Opposition By" />
+                                    <input type="hidden" id="hdnPageSizeForOppBy_temp" name="hdnPageSizeForOppBy_temp" value="0" />
+                                    <span></span>
+                                </li>
+                            }
+                            @if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForOppositionAgainstTab + "~"))
+                            {
+                                <li id="OppositionAgainstLi">
+                                    <input type="submit" role="tab" onclick="return loadList('A', '0', 'Y', 'N')" value="Opposition Against" />
+                                    <input type="hidden" id="hdnPageSizeForOppAgainst_temp" name="hdnPageSizeForOppAgainst_temp" value="0" />
+                                    <span></span>
+                                </li>
+                            }
+                            @Html.Hidden("hdnCurrentTab")
+                        </ul>
+                        <div class="">
+
+                        </div>
+                    </div>
+                </div>
+                <div id="gvArea" class="scale_table_block">
+                    @*@Html.Action("Bind_Grid_Domestic_List", "IPR_List", new { Tab = ViewBag.Tab, SearchCriteria = "", PageNo = "0" })*@
+                </div>
+            }
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitle" role="dialog" tabindex="-1" aria-hidden="false">
+</div>
+

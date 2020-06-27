@@ -1,0 +1,45 @@
+﻿@model List<RightsU_Entities.USP_Acq_Deal_Rights_Holdback_Release_Result>
+@{
+     MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+   
+</script>
+<table class="table table-bordered table-hover" id="tabHolbackRelease">
+    <thead>
+        <tr>
+            <th style="width:20%;">@objMessageKey.Title</th>
+            <th style="width:17%;" align="center">@objMessageKey.Platform</th>
+            <th style="width:20%;" align="center">@objMessageKey.Region</th>
+            <th style="width:20%;" align="center">@objMessageKey.ReleaseDate</th>
+            <th style="width:23%;" align="center">@objMessageKey.HoldbackReleaseOn</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                <tr>
+                    <td align="center">@item.Title</td>
+                    <td align="center">@item.Platform</td>
+                    <td align="center">@item.Region</td>
+                    <td align="center">@item.Release_Date</td>
+                    <td align="center">@item.Holdback_Release_Date</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<style>
+    #tabHolbackRelease th {
+    text-align: center !important;
+}
+</style>

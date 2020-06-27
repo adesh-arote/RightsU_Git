@@ -1,0 +1,327 @@
+﻿@model RightsU_Entities.Acq_Deal_Cost
+@using System.Linq;
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+<script type="text/javascript">
+
+    function CheckAddEditMode() {
+        if ("@ViewBag.IsAddEditMode" == 'Y') {
+            message = '@objMessageKey.PleasecompletetheAddEditfirst';
+            showAlert('E', message);
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function SaveAE(acqDealAEeCode, rowIdex) {
+
+
+        debugger;
+        var additionalexpCode = $('#ddlAECode_' + rowIdex).val();
+        var Amt = RemoveComa($('#txtAmountAE_' + rowIdex).val());
+        var rblIsMinMax;
+
+        if (rowIdex == "0") {
+            rblIsMinMax = $("input[name='Min_Max_0']:radio:checked").val();
+
+        }
+        else { rblIsMinMax = $("input[name='objADC.Min_Max']:radio:checked").val(); }
+
+
+        if (parseInt(additionalexpCode) == 0) {
+            $('#ddlAECode_' + rowIdex).addClass('required');
+            return false;
+        }
+        else if (Amt == "") {
+            $('#ddlAECode_' + rowIdex).removeClass('required');
+            $('#txtAmountAE_' + rowIdex).attr('required', true);
+            return false;
+        }
+        //else if (Amt != "" && parseFloat(Amt) == 0) {
+        //    $('#ddlAECode_' + rowIdex).removeClass('required');
+        //    $('#txtAmountAE_' + rowIdex).addClass('required');
+        //    return false;
+        //}
+        else {
+            EnableDisableTabs(false, 2);
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveAdditionalExp", "Acq_Cost")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    AcqDealAdditionalExpCode: acqDealAEeCode,
+                    AdditionalExpCode: additionalexpCode,
+                    Amount: Amt,
+                    MinMax: rblIsMinMax,
+                    rowIndex: rowIdex
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if ('@ViewBag.Message' != "") {
+                            showAlert('E', '@ViewBag.Message');
+                            return false;
+                        } else {
+                            $('#tabAdditionalExp').html(result);
+                            initializeChosen();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+}
+var tmp_rowIndex;
+function DeleteAE(rowIndex) {
+    if (CheckAddEditMode()) {
+        tmp_rowIndex = rowIndex;
+        CommandName = "AddExp";
+        showAlert("I", '@objMessageKey.AreyousureyouwanttodeletethisAdditionalExpense', "OKCANCEL");
+    }
+
+}
+function handleCancel() { }
+
+function EditAE(acqAEcode, rowIndex, additionalExpCode) {
+    EnableDisableTabs(true, 2);
+
+    debugger;
+    if (CheckAddEditMode()) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("EditAdditionalExpense", "Acq_Cost")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                AcqDealAdditionalExpCode: acqAEcode,
+                AdditionalExpCode: additionalExpCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#tabAdditionalExp').html(result);
+                    initializeChosen();
+
+                    //$("#txtAmountAE_" + rowIndex).numeric({
+                    //    allowMinus: false,
+                    //    allowThouSep: false,
+                    //    allowDecSep: true,
+                    //    maxPreDecimalPlaces: 10,
+                    //    maxDecimalPlaces: 3
+                    //});
+                    $("#txtAmountAE_" + rowIndex).autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+}
+
+function AddCancelUpdateAE(isAdd) {
+    if (isAdd == 1) {
+        EnableDisableTabs(true, 2);
+    }
+    else {
+        EnableDisableTabs(false, 2);
+    }
+
+    if (isAdd == "0" || (CheckAddEditMode() && isAdd == "1")) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddCancelAdditionalExpense", "Acq_Cost")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                isAdd: isAdd
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#tabAdditionalExp').html(result);
+                    initializeChosen();
+
+                    if (isAdd == "1") {
+                        $('#trAddEditAE').show();
+                        $('#txtAmountAE_0').val('');
+                        $('#ddlAECode_0').val('0');
+
+                        //$("#txtAmountAE_0").numeric({
+                        //    allowMinus: false,
+                        //    allowThouSep: false,
+                        //    allowDecSep: true,
+                        //    maxDecimalPlaces: 3,
+                        //    maxPreDecimalPlaces: 10
+                        //});
+                        $("#txtAmountAE_0").autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+                    }
+                    else { $('#trAddEditAE').hide(); }
+                }
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+}
+
+
+</script>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<div class="pull-right">
+    @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+        {<span class="red_icon glyphicon glyphicon-plus" onclick="AddCancelUpdateAE(1);"></span>
+        }}
+</div>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width: 30%">@objMessageKey.AdditionalExpense</th>
+            <th style="width: 30%">@objMessageKey.Minimum / @objMessageKey.Maximum</th>
+            <th style="width: 30%">@objMessageKey.Amount</th>
+            @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                {
+            <th style="width: 10%">@objMessageKey.Action</th>}}
+        </tr>
+    </thead>
+    <tbody>
+        @{if (Model != null)
+            {
+                int i = 1;
+                foreach (var objADC in Model.Acq_Deal_Cost_Additional_Exp)
+                {
+                    if (objADC.EntityState != RightsU_Entities.State.Deleted)
+                    {
+                        /*Edit*/
+                        if (ViewBag.AcqDealAdditonalExpCode > 0 && ViewBag.AcqDealAdditonalExpCode == objADC.Additional_Expense_Code)
+                        {
+                            <tr>
+                                <td>
+                                    @if (ViewBag.DdlAdditionalExpense != null)
+                                    {
+                                        @Html.DropDownList("Additional_Expense_Code", (List<SelectListItem>)ViewBag.DdlAdditionalExpense, new { @id = "ddlAECode_" + i, @class = "form_input chosen-select" });
+                                    }
+                                </td>
+                                <td>
+                                    @foreach (var item in ViewBag.Min_Max_Radio)
+                                {
+                                    <label class="radio-inline">
+                                        @Html.RadioButtonFor(m => objADC.Min_Max, (object)item.Value, new { id = "rdoMinMax_" + i + "_" + item.Value })@item.Text
+                                    </label>
+                                }
+                            </td>
+                            <td>@Html.TextBox("Amount", Convert.ToString(objADC.Amount), new { @id = "txtAmountAE_" + i, @class = "text-right", @onkeyup = "RemoveReqClass(this)" })</td>
+                            <td>
+                                <a title="@objMessageKey.Update" href="#" class="glyphicon glyphicon-ok-circle" onclick="SaveAE(@objADC.Acq_Deal_Cost_Additional_Exp_Code,@i)"></a>
+                                <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelUpdateAE(0);"></a>
+                            </td>
+                        </tr>
+                        }
+                        else/*List*/
+                        {
+                            <tr>
+                                <td>
+                                    @{RightsU_BLL.Additional_Expense_Service objAES = new RightsU_BLL.Additional_Expense_Service(objLoginEntity.ConnectionStringName);
+
+                                        string Additional_Expense_Name = objAES.GetById(Convert.ToInt32(objADC.Additional_Expense_Code)).Additional_Expense_Name;
+                                        @Html.Label("Additional_Expense_Name", Additional_Expense_Name, new { @id = "lblAdditionalExpenseName" + i })
+                                    }
+                                </td>
+                                <td>
+                                    @{    string strMinMax = "";
+                                        if (objADC.Min_Max == "MIN") { strMinMax = "Minimum"; }
+                                        else if (objADC.Min_Max == "MAX") { strMinMax = "Maximum"; }
+                                        else if (objADC.Min_Max == "Fix") { strMinMax = "Fixed"; }
+                                        @Html.Label("Min_Max", Convert.ToString(strMinMax), new { @id = "lblMinMax" + i })
+                                    }
+                                </td>
+                                <td class="text-right">@Html.Label("Amount", GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Amount)), new { @id = "lblAmountAE" + i })</td>
+                                @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                    {
+                <td>
+
+                    <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick="EditAE(@objADC.Acq_Deal_Cost_Additional_Exp_Code,@i,@objADC.Additional_Expense_Code)"></a>
+                    <a title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash" onclick="DeleteAE(@i)"></a>
+
+                </td>
+                                    }}
+                            </tr>
+                                                }
+                                                i++;
+                                            }
+                                        }
+                                    }
+        }
+        <tr id="trAddEditAE" style="display: none">
+            <td>
+                @if (ViewBag.DdlAdditionalExpense != null)
+                {
+                    @Html.DropDownList("Additional_Expense_Code", (List<SelectListItem>)ViewBag.DdlAdditionalExpense, new { @id = "ddlAECode_0", @class = "form_input chosen-select" });
+                }
+            </td>
+            <td>
+                @{if (ViewBag.Min_Max_Radio != null)
+                    {
+                        foreach (var item in ViewBag.Min_Max_Radio)
+                        {
+                            string Min_Max_0 = "MIN";
+                            <label class="radio-inline">
+
+                                @Html.RadioButtonFor(m => Min_Max_0, (object)item.Value, new { id = "rdoMinMax_0_" + item.Value })@item.Text
+                            </label>
+                        }
+                    }}
+            </td>
+            <td>
+                <input class="text text-right" id="txtAmountAE_0" type="text" value="" onkeyup="RemoveReqClass(this)" />
+            </td>
+            <td>
+                <a title="@objMessageKey.Save" href="#" class="glyphicon glyphicon-ok-circle" onclick="SaveAE(0,0)"></a>
+                <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelUpdateAE(0);"></a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="pull-right">
+    <br />
+    <b>@objMessageKey.TotalAmount : </b>@if (ViewBag.TotalAdditionalExpense != null)
+    {@ViewBag.TotalAdditionalExpense}<br />
+</div>
+

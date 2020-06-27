@@ -1,0 +1,121 @@
+﻿@model List<RightsU_Entities.User>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+
+<table class="table table-bordered table-hover" id="tblUsers">
+    <thead>
+        <tr>
+            <th style="width:17%;">@objMessageKey.LoginName</th>
+            <th style="width:17%;">@objMessageKey.FirstName</th>
+            <th style="width:17%;">@objMessageKey.MiddleName</th>
+            <th style="width:17%;">@objMessageKey.LastName</th>
+            <th style="width:16%;">@objMessageKey.SecurityGroup</th>
+            <th style="width:7%;">@objMessageKey.Status</th>
+            <th style="width:7%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+
+                <tr>
+                    <td>
+                        <span>@item.Login_Name</span>
+                    </td>
+                    <td>
+                        <span>@item.First_Name</span>
+                    </td>
+                    <td>
+                        <span>@item.Middle_Name</span>
+                    </td>
+                    <td>
+                        <span>@item.Last_Name</span>
+                    </td>
+                    <td>
+                        @Html.Label("SecurityGroup",item.Security_Group == null ?"" : item.Security_Group.Security_Group_Name)
+                    </td>
+                    <td style="text-align:center;">
+                        <span>@strActive</span>
+                    </td>
+                    <td style="text-align:center">
+                        @if (item.Is_Active == "Y")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Users_Code)"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                if (item.BVException_Users.Count > 0)
+                                {
+                                    <a title="@objMessageKey.CannotdeactivatethisUserasitisusedinBVException" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                                else
+                                {
+                            <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveUser(@item.Users_Code, 'N')"></a>
+                                }
+                            }
+                            if (item.IsLDAPUser == "N" && ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForResetPassword + ""))
+                            {                           
+                                    <a title="@objMessageKey.ResetPassword" class="glyphicon-minus" onclick="ResetPassword(@item.Users_Code)"></a>
+                                
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForUnlockUser + "~"))
+                            {
+                                if (item.Password_Fail_Count >= 5)
+                                {
+
+                                    <a title="@objMessageKey.Unlock" class="glyphicon glyphicon-lock" style="cursor: pointer;" onclick="UnlockUser(@item.Users_Code)"></a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {
+                            <a title="@objMessageKey.CannoteditthisUserasitisdeactivated" class="glyphicon glyphicon-pencil disabled"  onclick="return false;"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
+                            { 
+                            <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveUser(@item.Users_Code, 'Y')"></a>
+                            }
+                            if (item.IsLDAPUser == "N" && ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForResetPassword + ""))
+                            {
+                                <a title="@objMessageKey.ResetPassword" class="glyphicon-minus" onclick="ResetPassword(@item.Users_Code)"></a>
+
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForUnlockUser + "~"))
+                            {
+                                if (item.Password_Fail_Count >= 5)
+                                {
+
+                                    <a title="@objMessageKey.Unlock" class="glyphicon glyphicon-lock" style="cursor: pointer;" onclick="UnlockUser(@item.Users_Code)"></a>
+                                }
+                            }
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

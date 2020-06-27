@@ -1,0 +1,72 @@
+﻿@using RightsU_Entities
+@model List<USP_GetContentsAiringData_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        debugger
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        $('#txtPageSize').val('@ViewBag.PageSize');
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+
+        if('@ViewBag.TabChanged' == 'Y')
+        {
+            $('#txtStartDate_A').val('@ViewBag.StartDate');
+            $('#txtEndDate_A').val('@ViewBag.EndDate');
+            var versionId = ('@ViewBag.Version').split(',');
+            $('#ddlVersion_A').val(versionId).trigger('chosen:updated');
+            var channelCodes = ('@ViewBag.ChannelCodes').split(',');
+             $('#ddlChannel_A').val(channelCodes)[0].sumo.reload();
+        }
+
+        SetPaging();
+        initializeTooltip();
+        initializeExpander();
+    });
+</script>
+<div class="scale_table_block">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:15%;">@objMessageKey.Version</th>
+                <th style="width:15%;">@objMessageKey.AiringDate</th>
+                <th style="width:15%;">@objMessageKey.AiringTime</th>
+                <th style="width:10%;">@objMessageKey.Channel</th>
+                <th style="width:10%;">@objMessageKey.PlayDay</th>
+                <th style="width:10%;">@objMessageKey.PlayRun</th>
+                <th style="width:10%;">@objMessageKey.IsIgnore</th>
+                <th style="width:15%;">@objMessageKey.Error</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Version_Name</td>
+                        <td>@item.Airing_Date</td>
+                        <td>@item.Airing_Time</td>
+                        <td>@item.Channel_Name</td>
+                        <td>@item.Play_Day</td>
+                        <td>@item.Play_Run</td>
+                        <td>@item.IsIgnore</td>
+                        <td>@item.Error</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

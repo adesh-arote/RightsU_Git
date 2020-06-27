@@ -1,0 +1,570 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@{
+    ViewBag.Title = "Acq Contents";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+        if (objSchema.Content_PageSize == 0)
+        {
+            objSchema.Content_PageSize = 50;
+        }
+        //objSchema.Mode = GlobalParams.DEAL_MODE_APPROVE;
+    }
+    string Message = Convert.ToString(Session["Message"]);
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css">
+
+    <script>
+        $(document).ready(function () {
+            showLoading();
+
+
+            //     setChosenWidth('#Channel_Cluster', '55%');
+
+            var meesage = '@Message'
+            if (meesage != '') {
+                showAlert('S', meesage);
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ResetMessageSession", "Acq_Content")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: false,
+                    data: JSON.stringify({}),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+
+            var exists = ImageExists('#imgTitleIcon');
+
+            var contentTitles = '@objSchema.Content_Search_Titles'.split(',');
+            $("select#Title_Code.form_input.chosen-select").val(contentTitles).trigger('chosen:updated');
+        });
+
+        function AddAttachment() {
+            if($('#hdnEditRecord').val()=='0')
+            {
+                $('#popupUpload').modal();
+            }
+            else
+            {
+                showAlert('E','Please complete Add/Edit operation First');
+                return false;
+            }
+        }
+
+        function ImageExists(selector) {
+            var imageFound = $(selector);
+
+            if (!imageFound.get(0).complete) {
+                return false;
+            }
+            else if (imageFound.height() === 0) {
+                return false;
+            }
+
+            return true;
+        }
+
+        $(function () {
+            $('#txtPageSize').numeric({
+                max: 100
+            });
+
+            $('#txtPageSize').val(@objSchema.Content_PageSize);
+            LoadGrid(@objSchema.Content_PageNo);
+
+            if ($('#Pagination'))
+                SetPaging();
+
+        });
+
+        function editFirst()
+        {
+            if($('#hdnEditRecord').val()!='0')
+            {
+                showAlert('E','Please complete Add/Edit operation First');
+                return false;
+            }
+            return true;
+        }
+
+        function searchClick() {
+            if($('#hdnEditRecord').val()=='0')
+            {
+                if($('#txtPageSize').val() !="")
+                {
+                    if ($("select#Title_Code.form_input.chosen-select").val() === null)
+                        showAlert('E', 'Select title to search');
+                    else
+                        LoadGrid(0);
+                }
+            }
+            else
+            {
+                showAlert('E','Please complete Add/Edit operation First');
+                return false;
+            }
+        }
+
+        function showAllClick() {
+            if($('#hdnEditRecord').val()=='0')
+            {
+                if($('#txtPageSize').val() !="")
+                {
+                    $("select#Title_Code.form_input.chosen-select").val('').trigger('chosen:updated');
+                    LoadGrid(0);
+                }
+            }
+            else
+            {
+                showAlert('E','Please complete Add/Edit operation First');
+                return false;
+            }
+        }
+
+        
+
+        function LoadGrid(page_index, mode) {
+            debugger;
+            showLoading();
+            var searchText = '';
+            var txtPageSize = $('#txtPageSize').val();
+            var editRecordCode=0;
+            if(mode='Edit')
+                editRecordCode=parseInt($('#hdnEditRecord').val());
+            else
+                $('#hdnEditRecord').val('0');
+            if ($("select#Title_Code.form_input.chosen-select").val() != null)
+                searchText = $("select#Title_Code.form_input.chosen-select").val().join(',');
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindContent", "Acq_Content")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    hdnTitleCode: searchText,
+                    PageNumber: page_index,
+                    PageSize: txtPageSize,
+                    RecordCode:editRecordCode
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#grdContent').html(result);
+                    SetPaging();
+                    initializeExpander();
+                    hideLoading();
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+
+        function applyPaging() {
+            if ($('#txtPageSize').val() == '' || parseInt($('#txtPageSize').val()) == 0)
+            {
+                $('#txtPageSize').addClass('required');
+                return false;
+            }
+            else
+                LoadGrid(0);
+        }
+        function SaveRecord()
+        {
+            showLoading();
+            //alert($('#hdnEditRecord').val())
+            debugger;
+            if(($('#Title_Name').val()).trim()=='')
+            {
+                showAlert('E','Please Enter Episode Title Name');
+                hideLoading();
+                return false;
+            }
+            else if (($('#txtDuration').val()).trim() == '') {
+                showAlert('E', 'Please Enter Duration');
+                hideLoading();
+                return false;
+            }
+            else{
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Save", "Acq_Content")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: false,
+                    data: JSON.stringify({
+                        Record_Code: $('#hdnEditRecord').val(),
+                        Title_Name: $('#Title_Name').val(),
+                        Duration:$('#txtDuration').val()
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.Error != "")
+                                showAlert("S", result.Error, "OK");
+                            else {
+                                showAlert("S", result.Message, "OK");
+                                $('#hdnEditRecord').val('0');
+                                LoadGrid(result.PageNo);
+                            }
+                            hideLoading();
+                        }
+                        
+                        hideLoading();
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+                });
+            }
+        }
+
+        function UploadTitle() {
+            var formdata = new FormData();
+            var files = $("#fileUpload").get(0).files;
+            if (files.length > 0) {
+                formdata.append("InputFile", files[0]);
+            }
+            else {
+                showAlert("a", "Please select File");
+                return false;
+            }
+            showLoading();
+            $.ajax({
+
+                type: "POST",
+                url: '@Url.Action("UploadTitle", "Acq_Content")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                contentType: false,
+                processData: false,
+                data: formdata,
+                success: function (result) {
+                    var ss = result.split('~');
+                    showAlert(ss[0], ss[1], "OK");
+                    if (ss[0] == 'S') {
+                        $("#popupUpload").modal('hide');
+                        }
+                    LoadGrid('@objSchema.Content_PageNo')
+                    $('#fileUpload').val('');
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+            hideLoading();
+        }
+        function ExportToExcel()
+        {
+            var searchText='';
+            if($('#hdnEditRecord').val()=='0')
+            {
+                if ($("select#Title_Code.form_input.chosen-select").val() != null)
+                    searchText = $("select#Title_Code.form_input.chosen-select").val().join(',');
+                $("#TitleName").val(searchText)
+            }
+            else
+            {
+                showAlert('E','Please complete Add/Edit operation First');
+                return false;
+            }
+        }
+        function CancelClick()
+        {
+            if (editFirst()) {
+                location.href = '@Url.Action("Cancel", "Acq_Content")'
+            }
+        }
+    </script>
+    <style>
+        .clusterDDL
+        {
+            float: left;
+            width: 300px;
+            margin-left: 200px;
+        }
+
+        #tblMain li
+        {
+            float: none;
+            line-height: initial;
+            list-style: none;
+            margin: 0;
+        }
+
+            #tblMain li:before
+            {
+                content: "\0BB \020";
+            }
+    </style>
+</head>
+<body>
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+
+
+                <div class="top_area">
+                    <div class="title_block dotted_border clearfix">
+                        <h2 class="pull-left">
+                            @Html.Label("Add", "Acquisition Deal Information")
+                        </h2>
+                    </div>
+                    <table class="table_brif table">
+                        <tbody>
+                            <tr>
+                                <td class="intro_pic">
+                                    <div class="movie_deal" id="divTitleIcon" title="@objSchema.Title_Icon_Tooltip">
+                                        <img alt="" id="imgTitleIcon" src="@Url.Content(@System.Configuration.ConfigurationManager.AppSettings["TitleImagePath"].ToString() + objSchema.Title_Icon_Path)" />
+                                        <span class="strip">strip</span>
+                                    </div>
+                                </td>
+                                <td class="intro">
+                                    <table class="four_column table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="td_label">Agreement No.</td>
+                                                <td>
+                                                    @Html.Label("Agreement_No", ((objSchema.Agreement_No == "" ? "New" : objSchema.Agreement_No) + " Version #: VN " + (objSchema.Version == "" ? "0001" : objSchema.Version)))
+                                                </td>
+                                                <td class="td_label">Agreement Date</td>
+                                                <td>
+                                                    <span class="required">
+
+                                                        @Html.Label("Agreement_Date", (objSchema.Agreement_No == "" ? "New" : string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objSchema.Agreement_Date)))
+
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="td_label">Description</td>
+                                                <td><span class="required">
+
+                                                    <div class="expandable">
+                                                        @Html.Label("Deal_Description", objSchema.Deal_Desc)
+                                                    </div>
+
+                                                </span>
+                                                </td>
+                                                <td class="td_label">Status</td>
+                                                <td>
+                                                    <span class="required">
+
+                                                        @Html.Label("Deal_Tag", objSchema.Status)
+
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                @{
+                                    if (objSchema.Deal_Code > 0)
+                                    {
+                                        objSchema.Deal_Workflow_Status = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Deal_DealWorkFlowStatus(objSchema.Deal_Code, objSchema.Deal_Workflow_Flag, 143, "A").First();
+                                    }
+                                    else
+                                    {
+                                        objSchema.Deal_Workflow_Status = "New Deal";
+                                    }
+                                }
+
+                                @if (objSchema.Deal_Workflow_Flag == "O" || objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_New ||
+                     objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Ammended)
+                                {
+                                    <td class="intro_approved">
+                                        <div class="stampBg approved">
+                                            <h4 title="Workflow Status">
+                                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status)
+                                            </h4>
+                                        </div>
+                                    </td>
+                                }
+                                else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Approved)
+                                {
+                                    <td class="intro_approved">
+                                        <div class="stampBg approved">
+                                            <h4 title="Workflow Status">
+                                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status)
+                                            </h4>
+                                        </div>
+                                    </td>
+                                }
+                                else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Waiting)
+                                {
+                                    <td class="intro_approved">
+                                        <div class="stampBg pending">
+                                            <h4 title="Workflow Status">
+                                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status)
+                                            </h4>
+                                        </div>
+                                    </td>
+                                }
+                                else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Declined)
+                                {
+                                    <td class="intro_approved">
+                                        <div class="stampBg rejected">
+                                            <h4 title="Workflow Status">
+                                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status)
+                                            </h4>
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabRunDef">
+                                    <div class="scale_table_block">
+                                        @* @using (Html.BeginForm("Index", "Acq_Run_List", FormMethod.Post))
+                                        {
+                                            *@<table class="table">
+                                                <tr>
+                                                    <td class="bold" style="width: 10%;">Titles</td>
+                                                    <td style="width: 60%;">
+
+                                                        @Html.Hidden("hdnTitleCode", "")
+                                                        @Html.ListBox(
+                                                                     "Title_Code",
+                                                                     ViewBag.TitleList as MultiSelectList,
+                                                                     new { @class = "form_input chosen-select", onclick = "return editFirst()" }
+                                                                  )
+                                                    </td>
+                                                    <td style="width: 10%;">
+                                                        <input type="button" class="button" value="Search" onclick="searchClick()"></td>
+                                                    <td style="width: 10%;">
+                                                        <input type="button" class="button" value="Show All" onclick="showAllClick()"></td>
+                                                    <td style="width: 10%;">
+                                                        @if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Sports || objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                                        {
+                                                            <label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save" title="Download Content">
+                                                                @using (Html.BeginForm("ExportToExcel", "Acq_Content"))
+                                                                {
+                                                                    <input type="submit" style="display: none" id="btnExportToExcel" onclick="return ExportToExcel()" />
+                                                                    @Html.Hidden("TitleName")
+                                                                }
+                                                            </label>
+                                                    
+@*<input type="button" class="button" value="Upload" onclick="return AddAttachment()" >*@
+                                                            <label onclick="return AddAttachment()" class="glyphicon glyphicon-open" title="Update Content"></label>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                    </div>
+                                    <div class="paging_area clearfix">
+                                        <span id="spanRecordCount" class="pull-left">Total Records:  @ViewBag.RecordCount</span>
+
+
+                                        <div id="Pagination" class="pagination" onclick="return editFirst()"></div>
+                                        <span class="pull-right">Page Size : 
+                                            <input type="text" class="smallTextBox" value="" id="txtPageSize" onchange="if(CheckPageNumber()) LoadGrid(0)" 
+                                                   onclick="return editFirst()" onblur="setDefaultPaging('txtPageSize')"></span>
+                                    </div>
+                                    <div class="scale_table_block" id="grdContent">
+                                    </div>
+                                    <div class="bottom_action">
+                                        <ul class="form_link_nav clearfix">
+                                            <li>
+                                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="Cancel" 
+                                                onclick="return CancelClick()">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div aria-labelledby="myModalLabel" id="popupLinkShow" class="form_wrapper modal fade scroll" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in scroll" id="popupUpload" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix" style="border-radius: 0px !important;">
+                @* @using (Ajax.BeginForm("UploadTitle", "Acq_Content", new AjaxOptions { OnSuccess = "OnAttachmentSaveSuccess", HttpMethod = "POST" }))
+            {
+                *@<div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Upload File</h2>
+                        </div>
+
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper" style="Padding:25px">
+                                <li class="clearfix">
+                                    <label class="bold">File for upload</label>
+                                    <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                                    @Html.TextBox("FileUpload", "", new { @type = "file", @style = "display:none;", onchange = "fileCheck(this);" })
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix" style="Padding: 12px 0px 0px 25px;">
+                                    <li>
+                                        <input type="submit" name="btnAddToAttachmentList" class="btn-primary" value="Save" onclick="UploadTitle()" id="btnAddToAttachmentList" />
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" onclick="return editFirst()" href="#">Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                @* }*@
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,255 @@
+﻿@model List<RightsU_Entities.ProjectMilestoneDetail>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    var dummyGuid_G = "";
+    var URL_SavePMDetailsList = '@Url.Action("SavePMDetails", "Project_Milestone")';
+    var URL_DeletePMDetailsList = '@Url.Action("DeletePMDetailsList", "Project_Milestone")';
+    function SavePMDetailsList(dummyGuid, rowNumber) {
+        debugger;
+        var effectiveDate = $.trim($('#txtEffectiveDate_' + rowNumber).val());
+        var exchangeRate = $.trim($('#txtExchangeRate_' + rowNumber).val());
+        var exchangeRateRmk = $.trim($('#txtExchangeRemarks_' + rowNumber).val());
+        $.ajax({
+            type: "POST",
+            url: URL_SavePMDetailsList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                dummyGuid: dummyGuid,
+                effectiveDate: effectiveDate,
+                exchangeRate: exchangeRate,
+                exchangeRateRmk: exchangeRateRmk
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindPMDetailsList("", "");
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    //function handleOk() {
+
+    //    if (Command_Name == "DELETE_EXCHANGE_RATE") {
+    //        $('#popup').css('z-index', '1050');
+    //        DeletePMDetailsList(dummyGuid_G, true);
+    //    }
+    //}
+    //function handleCancel() {
+    //    $('#popup').css('z-index', '1050');
+    //    Command_Name = "";
+    //    dummyGuid_G = "";
+    //}
+    function DeletePMDetailsList(dummyGuid, confirmed) {
+        debugger
+        if (confirmed) {
+            Command_Name = "";
+            dummyGuid_G = "";
+
+            $.ajax({
+                type: "POST",
+                url: URL_DeletePMDetailsList,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dummyGuid: dummyGuid
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        BindPMDetailsList("", "");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            })
+        }
+        else {
+            Command_Name = "DELETE_EXCHANGE_RATE";
+            dummyGuid_G = dummyGuid;
+
+            $('#popup').css('z-index', '1040');
+            DeletePMDetailsList(dummyGuid_G, true);
+            showAlert("S", "Record Deleted Successfully");
+           
+        }
+    }
+</script>
+ 
+<input type="hidden" id="hdnMaxDate" value="@ViewBag.MaxDate" />
+<input type="hidden" id="Model_Count" value="@Model.Count" />
+<input type="hidden" id="hdnLastMaxDate" value="" />
+<table class="table table-bordered table-hover" id="tblMusicLink" style="width:100% !important">
+    @*<thead>
+            <tr >
+                <th style="width:15%;">Sr no</th>
+                <th style="width:10%;">Milestone Name</th>
+                <th style="width:30%;">Effective  Date</th>
+                <th style="width:35%">Remarks</th>
+                <th style="width:15%;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{int rowNumber = 1; }
+            @if (ViewBag.CommandName == "ADD")
+            {
+            <tr>
+                <td style="text-align:center;">
+                    <span>New</span>
+                </td>
+                <td style="">
+                    <input type="text" id="txtExchangeRate_0" value="" class="exchangeRate form-control input-sm" maxlength="100" style="width:240px;" />
+                </td>
+                <td style="text-align:center;">
+                    <input type="text" id="txtEffectiveDate_0" value="" class="isDatepicker shortDate form-control input-sm" placeholder="DD/MM/YYYY" style="width:100px;text-align:center;margin-left:75px" />
+                </td>
+                <td style="">
+                    <input type="text" id="txtExchangeRemarks_0" value="" class="exchangeRate form-control input-sm" maxlength="500" style="width:100%" />
+                </td>
+                <td align="center">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SavePMDetailsList('', 0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="PMDetails_Cancel()"></a>
+                </td>
+            </tr>
+            }
+            @if (Model.Count > 0)
+            {
+
+                foreach (var item in Model)
+                {
+
+            <tr id="trExchangeRate_@rowNumber">
+                <td style="text-align:center;">
+                    <span>@rowNumber</span>
+                    @{
+                        if (Model.Count - 1 == rowNumber)
+                        {
+                            <input type="hidden" id="hdnLastMax" value="@item.MileStoneDate" />
+
+                        }
+                    }
+                </td>
+
+                @if (ViewBag.CommandName == "EDIT" && ViewBag.DummmyGuid == item.Dummy_Guid)
+                {
+                    <td style="">
+                        <input type="text" id="txtExchangeRate_@rowNumber" value="@item.MilestoneName" maxlength="100" class="exchangeRate form-control input-sm" style="width:240px;text-align:right;" />
+                    </td>
+                    <td style="text-align:center;">
+                        <input type="text" id="txtEffectiveDate_@rowNumber" class="isDatepicker shortDate form-control input-sm"
+                               value='@string.Format("{0:" + GlobalParams.DateFormat + "}", item.MileStoneDate)' placeholder="DD/MM/YYYY" style="width:100px;text-align:center;margin-left:75px;" />
+                    </td>
+                    <td style="">
+                        <input type="text" id="txtExchangeRemarks_@rowNumber" value="@item.Remarks" maxlength="100" class="exchangeRate form-control input-sm" style="text-align:right;width:100%" />
+                    </td>
+                    <td align="center">
+                        <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SavePMDetailsList('@item.Dummy_Guid', @rowNumber)"></a>
+                        <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="PMDetails_Cancel()"></a>
+                    </td>
+                }
+                else
+                {
+                    <td style="">
+                        <span>@item.MilestoneName</span>
+                    </td>
+
+                    <td style="text-align:center;">
+                        <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.MileStoneDate)</span>
+                    </td>
+                    <td style="">
+                        <span>@item.Remarks</span>
+                    </td>
+
+
+                    <td align="center">
+                        @{
+                            string effectiveSD = item.MileStoneDate.ToString();
+                            <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditPMDetailsList('EDIT', '@item.Dummy_Guid')"></a>
+                            <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeletePMDetailsList('@item.Dummy_Guid', false)"></a>
+                        }
+                    </td>
+
+                }
+            </tr>
+                    rowNumber++;
+                }
+            }
+            else if (ViewBag.CommandName != "ADD")
+            {
+
+                <tr>
+                    @if (ViewBag.CommandName != "VIEW")
+                    {
+                        <td colspan="5">No record found</td>
+                    }
+                    else
+                    {
+                        <td colspan="4">No record found</td>
+                    }
+                </tr>
+            }
+        </tbody>*@
+    <thead>
+        <tr>
+            <th style="width:5%;">Stage</th>
+            <th style="width:36%;">Key Events</th>
+            <th style="width:10%;">Deadline</th>
+            <th style="width:12%;">Release</th>
+            <th style="width:27%">Milestone Status</th>
+            <th style="width:15%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+      
+            <tr>
+                <td style="text-align:center">
+                    <span>1</span>
+                </td>
+                <td>
+                    <span>All development deliverables to be submitted by the counter party to RIL</span>
+                </td>
+                <td style="text-align:center;">
+                    01-Dec-2018
+                </td>
+                <td style="text-align:center;">
+                   <lable>2</lable>&nbsp;&nbsp;<label>Days</label>
+                </td>
+                <td style="">
+                    Expired
+                </td>
+                <td align="center">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick=""></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick=""></a>
+                </td>
+            </tr>
+       
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $("#hdnLastMaxDate").val($("#hdnLastMax").val());
+    });
+</script>

@@ -1,0 +1,391 @@
+﻿@model RightsU_Entities.Music_Title
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<style>
+
+    .btn-disable
+        {
+        opacity: 0.65; 
+        cursor: not-allowed;
+        /*pointer-events:none;*/            
+        }
+</style>
+
+<script type="text/javascript">
+    var counter = 2;
+    $(document).ready(function () {
+
+        if (LayoutDirection_G == 'RTL') {
+            $('#movie_popup .close').css('padding-left', '0px');
+        }
+        $('#ddlLanguage1').SumoSelect();
+        $("#AddMovie_Album_popup").hide();
+
+        $('#txtmusicAlbum').click(function () {
+            $('#txtmusicAlbum').removeClass('required');
+        })
+        setChosenWidth("#MovieAlbum", "12%");
+        initializeTooltip();
+
+        var wrapper = $(".input_fields_wrap"); //Fields wrapper
+        var add_button = $(".add_field_button"); //Add button ID
+
+        var x = 1; //initlal text box count
+        $(add_button).click(function (e) { //on add input button click
+            e.preventDefault();
+            if (counter < 4) { //max input box allowed
+                $('#btnAddAdditionalmetadata').addClass('btn-disable');
+                document.getElementById('btnAddAdditionalmetadata').onclick = function () {
+                    return false;
+                }
+                $(wrapper).append('<div><input type="text" style="width: 80%;margin-top: 5px;" id="txtMusicTitleName' + counter + '" value="" />&nbsp;<a href="#" id="addButton' + counter + '" class="glyphicon glyphicon-plus add_field"></a><a href="#" class="glyphicon glyphicon-remove remove_field"></a></div>'); //add input box
+                counter++;
+            }
+        });
+        $(wrapper).on("click", ".add_field", function (e) { //user click on add button
+            debugger;
+            e.preventDefault();
+            if (counter == 5) {
+                $(wrapper).append('<div><input type="text" style="width: 80%;margin-top: 5px;" id="txtMusicTitleName' + counter + '" value=""/>&nbsp;<a href="#" class="glyphicon glyphicon-remove remove_field"></a></div>'); //add input box
+                $("#addButton" + counter).css("display", "none");
+                counter++;
+            }
+            else if (counter < 5) {
+                $(wrapper).append('<div><input type="text" style="width: 80%;margin-top: 5px;" id="txtMusicTitleName' + counter + '" value=""/>&nbsp;<a href="#" id="addButton' + counter + '" class="glyphicon glyphicon-plus add_field"></a><a href="#" class="glyphicon glyphicon-remove remove_field"></a></div>'); //add input box
+                counter++;
+            }
+        })
+        $(wrapper).on("click", ".remove_field", function (e) { //user click on remove button
+            debugger;
+            e.preventDefault();
+            $(this).parent('div').remove();
+            if (counter == 3)
+            {
+                $('#btnAddAdditionalmetadata').removeClass('btn-disable');
+                document.getElementById('btnAddAdditionalmetadata').onclick = function () {
+                    ValidateSave('SS');
+                }
+            }
+            counter--;
+        })
+    });
+    function LanguageOnChange(obj) {
+        debugger;
+        if (obj.selectedIndex > 0) {
+            $(".ddlLanguage1").removeClass('required');
+            $("#ddlLanguage1")[0].sumo.reload();
+        }
+    }
+    function ValidateSave(Type) {
+        debugger;
+        $(".ddlLanguage1").removeClass('required');
+        var hdnddlLanguage = "";
+        var hdnMusicLabel = "";
+        var hdnTxtTitleName = "";
+        var Error = "";
+        var selectedValue = "";
+        var Music_Version = '@ViewBag.Music_Version';
+
+        var selectedLanguageObj = $("#ddlLanguage1 option").filter(":selected");
+        if (selectedLanguageObj.length > 0) {
+            $.each(selectedLanguageObj, function () {
+                selectedValue += $(this).val() + ",";
+            });
+
+        }
+        hdnddlLanguage = selectedValue;
+
+        if (selectedValue == '') {
+            $(".ddlLanguage1").addClass("required");
+            Error = "E";
+        }
+
+        if ($("#ddlMusicLabel option").filter(":selected").val() != "") {
+            hdnMusicLabel = $("#ddlMusicLabel option").filter(":selected").val();
+            if (hdnMusicLabel == "0") {
+                $('#ddlMusicLabel').val('').attr('required', true)
+                Error = "E";
+            }
+        }
+        else {
+            $('#ddlMusicLabel').val('').attr('required', true)
+            Error = "E";
+        }
+        var NewTitleName = "";
+        for (i = 1; i < counter; i++) {
+            if ($.trim($('#txtMusicTitleName' + i).val()) != "")
+                NewTitleName += '~' + $('#txtMusicTitleName' + i).val();
+            else {
+                Error = "E";
+                $('#txtMusicTitleName' + i).addClass("required");
+            }
+        }
+        if ($('#txtmusicAlbum').val() != "")
+            hdnTxtmusicalbumName = $('#txtmusicAlbum').val();
+        else {
+            Error = "E";
+            $('#txtmusicAlbum').attr('required', true)
+            return false;
+        }
+        var ISDuplicate = ""
+        var MusicAlbumCode = $("#hdnMovieAlbumCode").val();
+        var MusicAlbumName = $('#txtmusicAlbum').val();
+        if (MusicAlbumCode == "")
+            MusicAlbumCode = 0;
+        if (NewTitleName != "") {
+            NewTitleName = NewTitleName.slice(1);
+            debugger
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ValidateIsDuplicate", "Music_Title")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    MusicTitleName: NewTitleName,
+                    MusicAlbumCode: MusicAlbumCode,
+                    MusicAlbumName: MusicAlbumName,
+                    mode: "Add"
+
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.ErrorMsg != "") {
+                        ISDuplicate = result.ErrorMsg;
+                        showAlert("E", ISDuplicate);
+                    }
+                    if (result.Message != "") {
+                        ISDuplicate = result.Message;
+                        showAlert("E", ISDuplicate);
+                    }
+                    if (result.ErrorMessage != "") {
+                        $('#txtmusicAlbum').addClass('required');
+                        $('#txtmusicAlbum').val('');
+                        ISDuplicate = result.ErrorMessage;
+                        Error = "E";
+                    }
+                    else if (result.MusicAlbumCode != "") {
+                        MusicAlbumCode = result.MusicAlbumCode;
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+        if (Error == "E" && ISDuplicate != "") {
+            debugger;
+            $('#popAddTitle').modal('');
+
+        }
+
+        if (Error == "" && ISDuplicate == "") {
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveTitle", "Music_Title")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    MusicTitleName: NewTitleName,
+                    MovieAlbumName: MusicAlbumCode,
+                    hdnddlLanguage: hdnddlLanguage,
+                    hdnMusicLabel: hdnMusicLabel,
+
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    debugger;
+                    var MusicTitleCode = parseInt(result.MusicTitleCode);
+                    if (Type == "SS") {
+                        var URL = '@Url.Action("Index", "Music_Title", new { id = "MusicTitleCode", Page_No = @ViewBag.PageNo, SearchedTitle = @ViewBag.SearchedTitle, PageSize = @ViewBag.PageSize, commandName = "" })';
+                        URL = URL.replace("MusicTitleCode", parseInt(result.MusicTitleCode));
+                        window.location.href = URL;
+                    }
+                    BindGrid("", "SHOW_ALL", "");
+                    //BindTitle();
+                    $('#popAddTitle').modal('hide');
+                    showAlert("S", result.Message, "");
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+    function AddTalent() {
+        debugger;
+        $("#ddlStarCastAdd").attr('selectedIndex', '-1');
+        $("#AddMovie_Album_popup").modal();
+        $("#AddMovie_Album_popup").show();
+    }
+    function AutoCompleteMovieAlbum(keyword) {
+        debugger;
+        var keyword = $("#txtmusicAlbum").val();
+        $("#txtmusicAlbum").autocomplete({
+            focus: function () {
+                return false;
+            },
+            search: function (e, u) {
+                $(this).addClass('loader');
+            },
+            source: function (request, response) {
+                var param = {
+                    keyword: keyword
+                };
+                $.ajax({
+                    url: URL_AutoCompleteMovieAlbum,
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        if (data.length == 0) {
+                            data[0] = 'Result Not Found';
+                            response($.map(data, function (v, i) {
+                                $('#txtmusicAlbum').removeClass('loader');
+                                return {
+                                    label: 'Result Not Found',
+                                    val: '0'
+                                }
+                            }))
+                        }
+                        else {
+                            response($.map(data, function (v, i) {
+                                $('#txtmusicAlbum').removeClass('loader');
+                                return {
+                                    label: v.Music_Album_Name,
+                                    val: v.Music_Album_Code
+                                }
+                            }))
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Error" + textStatus);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                debugger;
+                $('#hdnMovieAlbumCode').val(ui.item.val);
+            },
+            minLength: 2,
+            open: function (event, ui) {
+                $(".ui-autocomplete").css("position", "absolute");
+                $(".ui-autocomplete").css("max-height", "200px");
+                $(".ui-autocomplete").css("max-width", "250px");
+                $(".ui-autocomplete").css("overflow-y", "auto");
+                $(".ui-autocomplete").css("overflow-x", "hidden");
+                $(".ui-autocomplete").css("z-index", "2147483647");
+            },
+        });
+    }
+
+
+</script>
+<style>
+    .sumo_ddlLanguage1 {
+        width: 325px !important;
+    }
+</style>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        <form class="form" id="movie_popup">
+            <div class="form_wrapper">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>@objMessageKey.AddMusicTrack</h2>
+                    </div>
+                    <div class="modal_block">
+                        <ul class="add_title_popup">
+                            <li>
+                                <label>@objMessageKey.MusicTrack</label>
+                                <div class="input_fields_wrap">
+                                    <div>                                      
+                                        @Html.TextBoxFor(m => Model.Music_Title_Name, new{ @id ="txtMusicTitleName1", @class = "form_input", autocomplete = "off", maxlength = "200", style = "width:80%;" })
+                                        <span id="addRemoveButton">
+                                            <a class="glyphicon glyphicon-plus add_field_button" id="addButton" />
+                                            @*<a title="Remove" class="glyphicon glyphicon-remove" id="removeButton"></a>*@
+                                        </span>
+                                    </div>
+                                </div>                                                                                                                                                                           
+                                    <input type="text" id="lblDealTitleCode" style="display: none;" />                                                                                                       
+                            </li>
+                            <li>
+                                @Html.Hidden("hdnddlLanguage")
+                                <label>@objMessageKey.Movie / @objMessageKey.Album </label>
+                                <br />
+                                @*@Html.DropDownList("Music_Album_Name", (List<SelectListItem>)ViewBag.MovieAlbum, new { @id = "Music_Album_Name", @class = "form_input chosen-select", onchange = "jsFunction(this.value);" })*@
+                                <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbum" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:250px" onkeyup="AutoCompleteMovieAlbum(this)" />
+                                <input type="hidden" id="hdnMovieAlbumCode" />
+                                <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddMovieAlbum" onclick="AddTalent();" />
+                            </li>
+                            <li>
+                                <label>@objMessageKey.MusicLanguage</label>
+                                @*@Html.DropDownList("ddlLanguage", (List<SelectListItem>)ViewBag.Language, new { @id = "ddlLanguage" })*@
+
+                                @*@Html.DropDownList("ddlLanguage", (List<SelectListItem>)ViewBag.Language,
+                                    new { @id = "ddlLanguage", @class = "form_input chosen-select", @onchange = "LanguageOnChange(this);" })*@
+
+                                @*@Html.ListBox("ddlLanguage", ViewBag.Language as MultiSelectList, new
+                                    {
+                                        @class = "form_input chosen-select",
+                                        @style = "width:95% !important"
+                                    })*@
+
+                                <div class="ddlLanguage1" style="width: 327px;">
+                                    @Html.ListBox("ddlLanguage1", ViewBag.Language as MultiSelectList, new { @multiple = "multiple" })
+                                </div>
+
+                                @Html.Hidden("hdnLanguage")
+
+                                @*@Html.ListBox("ddlLanguage", ViewBag.Language as MultiSelectList, new { @class = "form_input chosen-select", style = "display:none;" })
+                                    <input type="text" name="txtLanguage" id="txtLanguage" style="display:none;" class="search" onkeypress="return isAlphaNumeric(event);" />*@
+                            </li>
+
+                            <li>
+                                <label>@objMessageKey.MusicLabel</label>
+                                @Html.DropDownList("ddlMusicLabel", (List<SelectListItem>)ViewBag.MusicLabelList,
+                                       new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })<selectlistitem>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <a class="btn btn-primary"  onclick="ValidateSave('S');">@objMessageKey.Save</a>
+                                </li>
+                                <li>
+                                    @*<input type="button" class="btn btn-primary" id="btnAddAdditionalmetadata" value="Add Additional metadata" onclick="ValidateSave('SS');">*@
+                                    <span class="Wrapper1">
+                                        <a class="btn btn-primary" id="btnAddAdditionalmetadata" onclick="ValidateSave('SS');">@objMessageKey.AddAdditionalmetadata</a>
+                                    </span>                              
+                                </li>
+                                <li>
+                                    <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+        <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="AddMovie_Album_popup" tabindex="-1" aria-hidden="false" hidden style="width:500px;">
+            @Html.Action("PartialAddMovie_Album", "Music_Title")
+        </div>
+    </div>
+</div>
+
+

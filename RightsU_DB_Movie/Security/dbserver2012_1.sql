@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [dbserver2012]
+    WITH PASSWORD = N'$rhllzdde@@Xwk5EJ9gswngumsFT7_&#$!~<vrtolxpbbkwt', SID = 0xDA26C708C9A30D4AA16AAA59D1CFCA93, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

@@ -1,0 +1,102 @@
+﻿@model List<RightsU_Entities.Content_Music_Link>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    var Title = new RightsU_BLL.Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:20%;text-align:center">@objMessageKey.Program</th>
+            <th style="width:20%;text-align:center">@objMessageKey.episode</th>
+            <th style="width:15%;text-align:center">@objMessageKey.Version</th>
+            <th style="width:15%;text-align:center">@objMessageKey.TCIn</th>
+            <th style="width:15%;text-align:center">@objMessageKey.TCOut</th>
+            <th style="width:15%;text-align:center">@objMessageKey.Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int i = 1; }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                var a = new RightsU_BLL.Title_Content_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Title_Content_Code == item.Title_Content_Code).FirstOrDefault();
+
+                string strFrom = "00:00:00", strTo = "00:00:00", strDuration = "00:00:00", strFromFrame = "00", strToFrame = "00", strDurationFrame = "00";
+                if (item.From != null && item.To != null && item.Duration != null)
+                {
+                    strFrom = item.From.Value.ToString();
+                    strTo = item.To.Value.ToString();
+                    strDuration = item.Duration.ToString();
+                }
+
+                if (item.From_Frame != null && item.To_Frame != null && item.Duration_Frame != null)
+                {
+                    strFromFrame = item.From_Frame.Value.ToString("00");
+                    strToFrame = item.To_Frame.Value.ToString("00");
+                    strDurationFrame = item.Duration_Frame.Value.ToString("00");
+                }
+                <tr>
+                    <td>
+                        @if (a.Episode_Title == null)
+                        {
+                            var temp = Title.Where(z => z.Title_Code == a.Title_Code).FirstOrDefault();
+                            @temp.Title_Name
+                        }
+                        else
+                        {
+                            @a.Episode_Title
+                        }
+                    </td>
+                    <td align="center">
+                        @a.Episode_No
+                    </td>
+                    <td>
+                        @{
+                            string versionName = "";
+                            {
+                                if (item.Title_Content_Version != null)
+                                {
+                                    versionName = item.Title_Content_Version.Version.Version_Name;
+                                }
+                            }
+
+                        }
+                        <span>@versionName</span>
+                    </td>
+              
+                    <td style="text-align:center">
+                        <span>@strFrom</span>
+                        <span>@strFromFrame</span>
+                    </td>
+                    <td style="text-align:center">
+                        <span>@strTo</span>
+                        <span>@strToFrame</span>
+                    </td>
+                    <td style="text-align:center">
+                        <span>@strDuration</span>
+                        <span>@strDurationFrame</span>
+                    </td>  
+                </tr>
+                        i++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">No record found</td>
+            </tr>
+        }
+
+    </tbody>
+</table>

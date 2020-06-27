@@ -1,0 +1,613 @@
+﻿@model RightsU_Entities.Acq_Deal_Cost
+@using System.Linq;
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+<script type="text/javascript">
+
+    function CheckAddEditMode() {
+        if ("@ViewBag.IsAddEditMode" == 'Y') {
+            message = '@objMessageKey.PleasecompletetheAddEditfirst';
+            showAlert('E', message);
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    var tmp_ValidateCostType = 0;
+    function SaveSR(acqDealSRCode, rowIdex) {
+
+        debugger;
+        var EntityCode = $('#ddlSRECode_' + rowIdex).val();
+        var CostTypeCode = $('#ddlSRCTCode_' + rowIdex).val();
+        var Amt = RemoveComa($('#txtAmountSR_' + rowIdex).val());
+        var Percentage = $('#txtPercentageSR_' + rowIdex).val();
+        if (Amt == "") { Amt = "0"; }
+        if (Percentage == "") { Percentage = "0"; }
+        var rblCommType;
+        if (rowIdex == "0") {
+            rblCommType = $("input[name='Commission_Type_0']:radio:checked").val();
+
+        }
+        else { rblCommType = $("input[name='objADC.Commission_Type']:radio:checked").val(); }
+
+        /*---Collect Variable Cost Details---*/
+        var VarTypeList = new Array();
+        var StandardReturns = $("#tblStdReturns tr:not(:has(th),.hide)");
+        var i = 1;
+        var isDuplicate = 0;
+        StandardReturns.each(function (rowId_outer) {
+            var _entityType = 0, _entityCode = 0;
+
+            _entityType = $("#hdnEntityType_" + i).val();
+            _entityCode = $("#hdnEntityCode_" + i).val();
+
+            var currEntity = EntityCode.split('~');
+            if (currEntity[1] == _entityType && currEntity[0] == _entityCode && isDuplicate == 0) {
+                isDuplicate = 1;
+            }
+
+            i = i + 1;
+        });
+        /*------------------------------------*/
+        //ValidCostTypeOnAdd(rowIdex)
+
+        if (isDuplicate == 1) {
+            showAlert('E', '@objMessageKey.CosttypeforthePartyisalreadyavailable');
+            return false;
+        }
+        else
+            if (parseInt(EntityCode) == 0) {
+            $('#ddlSRECode_' + rowIdex).addClass('required');
+            return false;
+        }
+        else if (parseInt(CostTypeCode) == 0 && rblCommType == "C") {
+            $('#ddlSRECode_' + rowIdex).removeClass('required');
+            $('#ddlSRCTCode_' + rowIdex).addClass('required');
+            return false;
+        }
+        //else if ((parseFloat(Amt) == 0) && (parseFloat(Percentage) == 0)) {
+        //    $('#ddlSRCTCode_' + rowIdex).removeClass('required');
+        //    $('#ddlSRECode_' + rowIdex).removeClass('required');
+
+        //    if (rblCommType == "C") { $('#txtAmountSR_' + rowIdex).addClass('required'); }
+        //    $('#txtPercentageSR_' + rowIdex).addClass('required');
+        //    return false;
+        //}
+        else if (Percentage != "" && parseFloat(Percentage) > 100) {
+            $('#txtPercentageSR_' + rowIdex).addClass('required');
+            return false;
+        }
+        else if (tmp_ValidateCostType == 1) {
+            showAlert('E', '@objMessageKey.Sumofcommissioncostshouldnotexceedcosttypeamountdefined');
+            return false;
+        }
+        else {
+            EnableDisableTabs(false, 3);
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            Percentage = $('#txtPercentageSR_' + rowIdex).val();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveStandardReturns", "Acq_Cost")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    AcqDealStandardReturnsCode: acqDealSRCode,
+                    EntityCode: EntityCode,
+                    CostTypeCode: CostTypeCode,
+                    Amount: Amt,
+                    Percentage: Percentage,
+                    CommType: rblCommType,
+                    rowIndex: rowIdex
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        //if (result.Message != "") {
+                        //    showAlert('E', result.Message);
+                        //    return false;
+                        //} else {
+                        $('#tabStdReturns').html(result);
+                        initializeChosen();
+                        //}
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+}
+var tmp_rowIndex;
+function DeleteSR(rowIndex) {
+    if (CheckAddEditMode()) {
+        CommandName = "StdRet";
+        tmp_rowIndex = rowIndex;
+        showAlert("I", '@objMessageKey.AreyousureyouwanttodeletethisStandardReturns', "OKCANCEL");
+    }
+
+}
+
+function handleCancel() { }
+
+function EditSR(acqSRcode, entityCode, CostTypeCode, Commission_Type, rowIdex, Vendor_Code) {
+    debugger;
+    if (entityCode == "")
+        entityCode = 0;
+    if (Vendor_Code == "")
+        Vendor_Code = 0;
+    EnableDisableTabs(true, 3);
+
+    if (CheckAddEditMode()) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("EditStandardReturns", "Acq_Cost")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                AcqDealStandardReturnsCode: acqSRcode,
+                EntityCodeCode: entityCode,
+                CostTypeCode: CostTypeCode,
+                VendorCode: Vendor_Code
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#tabStdReturns').html(result);
+                    if (Commission_Type == "R" || Commission_Type == "O") {
+
+                        $('#ddlSRCTCode_' + rowIdex).attr('disabled', true);
+                        $('#txtAmountSR_' + rowIdex).attr('disabled', true);
+                    }
+                    else {
+
+                        $('#ddlSRCTCode_' + rowIdex).attr('disabled', false);
+                        $('#txtAmountSR_' + rowIdex).attr('disabled', false);
+                    }
+                    if (parseInt(Vendor_Code) > 0) {
+                        $('#ddlSRECode_' + rowIdex).val(Vendor_Code + "~L");
+                    }
+                    else if (parseInt(entityCode) > 0) {
+                        $('#ddlSRECode_' + rowIdex).val(entityCode + "~O");
+                    }
+
+                    $("#txtPercentageSR_" + rowIdex).numeric({
+                        allowMinus: false,
+                        allowThouSep: false,
+                        allowDecSep: true,
+                        maxPreDecimalPlaces: 3,
+                        maxDecimalPlaces: 2
+                    });
+                    //$("#txtAmountSR_" + rowIdex).numeric({
+                    //    allowMinus: false,
+                    //    allowThouSep: false,
+                    //    allowDecSep: true,
+                    //    maxPreDecimalPlaces: 10,
+                    //    maxDecimalPlaces: 3
+                    //});
+                    $("#txtAmountSR_" + rowIndex).autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+
+                    initializeChosen();
+                }
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+}
+
+    function AddCancelUpdateSR(isAdd) {
+
+        if (isAdd == 1) {
+            EnableDisableTabs(true, 3);
+        }
+        else {
+            EnableDisableTabs(false, 3);
+        }
+
+    if (isAdd == "0" || (CheckAddEditMode() && isAdd == "1")) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddCancelStandardReturns", "Acq_Cost")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                isAdd: isAdd
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#tabStdReturns').html(result);
+                    initializeChosen();
+
+                    if (isAdd == "1") {
+                        $('#trAddEditSR').show();
+                        $('#txtAmountSR_0').val('');
+                        $('#txtPercentageSR_0').val('');
+                        $('#ddlSRCTCode_0').val('0');
+                        $('#ddlSRECode_0').val('0');
+
+                        $("#txtPercentageSR_0").numeric({
+                            allowMinus: false,
+                            allowThouSep: false,
+                            allowDecSep: true,
+                            maxPreDecimalPlaces: 3,
+                            maxDecimalPlaces: 2
+                        });
+
+                        $("#txtAmountSR_0").autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+                    }
+                    else { $('#trAddEditSR').hide(); }
+                }
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+}
+
+    function ValidCostTypeOnAmount(strRowIndex) {
+        debugger;
+    RemoveReqClass();
+    tmp_ValidateCostType = 0;
+
+    var SelectedddlFCostTypeCode = $('#ddlSRCTCode_' + strRowIndex).val();
+    var ValtxtFAmount = $('#txtAmountSR_' + strRowIndex).val();
+
+    ValtxtFAmount = RemoveComa(ValtxtFAmount);
+    var cnt = 0;
+    var tCount = 0;
+
+    /*---Collect Variable Cost Details---*/
+    var StandardReturns = $("#tblStdReturns tr:not(:has(th),.hide)");
+    var i = 1;
+    StandardReturns.each(function (rowId_outer) {
+        var Amount = 0, CostType = 0;
+
+        lblAmount = $("#lblAmountSR" + i);
+        hdnCostType = $("#hdnCostTypeCode_" + i);
+
+        if (lblAmount != null && hdnCostType != null) {
+            if (RemoveComa(lblAmount.text()) != "") {
+                if (parseFloat(SelectedddlFCostTypeCode) > 0 && parseFloat(SelectedddlFCostTypeCode) == parseFloat(hdnCostType.val()))
+                    tCount = parseFloat(tCount) + parseFloat(RemoveComa(lblAmount.text()));
+            }
+        }
+
+        i = i + 1;
+    });
+    /*------------------------------------*/
+
+    /*-------Collect Cost Type------------*/
+    var CostType = $("#tblCostType tr:not(:has(th),.hide)");
+    var ctCnt = 1;
+    CostType.each(function (ctrowId_Outer) {
+        var CostTypeCode = 0, CostTypeAmt = 0;
+        CostTypeCode = $('#hdn_CostTypeCode_' + ctCnt).val();
+        CostTypeAmt = $('#hdn_BudgetedAmt_' + ctCnt).val();
+
+        if (CostTypeCode > 0) {
+            if (CostTypeCode == SelectedddlFCostTypeCode && CostTypeCode > 0) {
+                if ((parseFloat(ValtxtFAmount) + parseFloat(tCount)) > parseFloat(CostTypeAmt)) {
+                    tmp_ValidateCostType = 1;
+                    return false;
+                }
+                else {
+                    var calPerc = parseFloat(parseFloat(ValtxtFAmount) / (parseFloat(CostTypeAmt)));
+
+                    if (isNaN(calPerc))
+                        calPerc = 0;
+                    calPerc = parseFloat(calPerc * 100);
+
+                    if (parseInt(calPerc) <= 100) {
+                        if (isNaN(ValtxtFAmount))
+                            ValtxtFAmount = 0;
+                        //addCommas(ValtxtFAmount);
+                        $('#txtAmountSR_' + strRowIndex).val(ValtxtFAmount);
+                        $('#txtPercentageSR_' + strRowIndex).val(calPerc.toFixed(2));
+
+                    }
+
+                }
+            }
+        }
+        ctCnt = ctCnt + 1;
+    });
+    /*-------------------------------------*/
+}
+
+function ValidCostTypeOnPercentage(strRowIndex) {
+    tmp_ValidateCostType = 0;
+    RemoveReqClass();
+    //var rblECommissionType = document.getElementById(strRowIndex + 'rblCommissionType');
+    var SelectedddlFCostTypeCode = $('#ddlSRCTCode_' + strRowIndex).val();
+    var ValtxtFAmount = $('#txtPercentageSR_' + strRowIndex).val();
+
+    if (parseFloat(ValtxtFAmount) > 100) {
+        //showAlert('E','Percentage should not be more than 100');
+        return false;
+    }
+        ValtxtFAmount = RemoveComa(ValtxtFAmount);
+
+    /*---Collect Variable Cost Details---*/
+        var StandardReturns = $("#tblStdReturns tr:not(:has(th),.hide)");
+        var i = 1;
+        var tCount = 0;
+        StandardReturns.each(function (rowId_outer) {
+            var Amount = 0, CostType = 0;
+
+            lblAmount = $("#lblAmountSR" + i);
+            hdnCostType = $("#hdnCostTypeCode_" + i);
+
+            if (lblAmount != null && hdnCostType != null) {
+                if (lblAmount.text() != "") {
+                    if (parseFloat(SelectedddlFCostTypeCode) > 0 && parseFloat(SelectedddlFCostTypeCode) == parseFloat(hdnCostType.val()))
+                        tCount = parseFloat(tCount) + parseFloat(RemoveComa(lblAmount.text()));
+                }
+            }
+
+            i = i + 1;
+        });
+    /*------------------------------------*/
+
+    /*-------Collect Cost Type------------*/
+        var CostType = $("#tblCostType tr:not(:has(th),.hide)");
+        var ctCnt = 1;
+        CostType.each(function (ctrowId_Outer) {
+            var CostTypeCode = 0, CostTypeAmt = 0;
+            CostTypeCode = $('#hdn_CostTypeCode_' + ctCnt).val();
+            CostTypeAmt = $('#hdn_BudgetedAmt_' + ctCnt).val();
+
+            if (CostTypeCode > 0) {
+                if (CostTypeCode == SelectedddlFCostTypeCode && CostTypeCode > 0) {
+                    if ((parseFloat(ValtxtFAmount) + parseFloat(tCount)) > 100) {
+                        //showAlert('E','Percentage should not be more than 100')
+                        return false;
+                    }
+                    else {
+                        //var calPerc = parseFloat(parseFloat(ValtxtFAmount) / (parseFloat(CostTypeAmt)));
+                        //calPerc = parseFloat(calPerc / 100);
+                        //if (isNaN(calPerc))
+                          //  calPerc = 0;
+
+                        if (parseInt(ValtxtFAmount) <= 100) {
+                            //addCommas(ValtxtFAmount);
+                            calPerc = ValtxtFAmount;
+
+                            var CalAmt = parseFloat((parseFloat(calPerc) * parseFloat(CostTypeAmt)) / 100);
+                            if (isNaN(CalAmt))
+                                CalAmt = 0;
+                            $('#txtAmountSR_' + strRowIndex).val(CalAmt.toFixed(2));
+                            $('#txtPercentageSR_' + strRowIndex).val(ValtxtFAmount);
+                        }
+
+                    }
+                }
+            }
+            ctCnt = ctCnt + 1;
+        });
+  }
+
+function OnChangeOfCommType(rowIndex) {
+    RemoveReqClass();
+    debugger;
+    var radioVal = "";
+    if (rowIndex == "0") {
+        radioVal = $("input[name='Commission_Type_0']:radio:checked").val();
+    }
+    else { radioVal = $("input[name='objADC.Commission_Type']:radio:checked").val(); }
+
+    if (radioVal == "R" || radioVal == "O") {
+
+        $('#ddlSRCTCode_' + rowIndex).attr('disabled', true);
+        $('#txtAmountSR_' + rowIndex).attr('disabled', true);
+    }
+    else {
+        $('#ddlSRCTCode_' + rowIndex).attr('disabled', false);
+        $('#txtAmountSR_' + rowIndex).attr('disabled', false);
+
+    }
+    $('#ddlSRCTCode_' + rowIndex).val('0');
+    $('#txtAmountSR_' + rowIndex).val('');
+    $('#txtPercentageSR_' + rowIndex).val('');
+
+    $('#ddlSRCTCode_' + rowIndex).trigger("chosen:updated");
+}
+</script>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<div class="pull-right">
+    @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+        {<span class="red_icon glyphicon glyphicon-plus" onclick="AddCancelUpdateSR(1);"></span>
+        }}
+</div>
+<table class="table table-bordered table-hover" id="tblStdReturns">
+    <thead>
+        <tr>
+            <th style="width: 20%">@objMessageKey.Party</th>
+            <th style="width: 30%">@objMessageKey.CommissionType</th>
+            <th style="width: 20%">@objMessageKey.CostType</th>
+            <th style="width: 5%">@objMessageKey.Amount</th>
+            <th style="width: 5%">@objMessageKey.Percentage</th>
+            @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                {
+            <th style="width: 10%">@objMessageKey.Action</th>}}
+        </tr>
+    </thead>
+    <tbody>
+        @{if (Model != null)
+            {
+                int i = 1;
+                foreach (var objADC in Model.Acq_Deal_Cost_Commission)
+                {
+                    if (objADC.EntityState != RightsU_Entities.State.Deleted)
+                    {
+                        /*Edit*/
+                        if (ViewBag.AcqDealEntityCode > 0 && ((ViewBag.AcqDealEntityCode == objADC.Entity_Code && objADC.Type == ViewBag.EntityType) || (ViewBag.AcqDealEntityCode == objADC.Vendor_Code && objADC.Type == ViewBag.EntityType)))
+                        {
+                            <tr>
+                                <td>
+                                    @if (ViewBag.DdlEntity != null)
+                                    {
+                                        @Html.DropDownList("Entity_Code", (List<SelectListItem>)ViewBag.DdlEntity, new { @id = "ddlSRECode_" + i, @class = "form_input chosen-select" });
+                                    }
+                                </td>
+                                <td>
+                                    @foreach (var item in ViewBag.Commision_Type)
+                                {
+                                    <label class="radio-inline">
+                                        @Html.RadioButtonFor(m => objADC.Commission_Type, (object)item.Value, new { id = "rdoCT_" + i + "_" + item.Value, onchange = "OnChangeOfCommType(" + i + ")" })@item.Text
+                                    </label>
+                                }
+                            </td>
+                            <td>
+                                @if (ViewBag.CostTypeSR != null)
+                                {
+                                    @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.CostTypeSR, new { @id = "ddlSRCTCode_" + i, @class = "form_input chosen-select" });
+                                }
+                            </td>
+                            <td>@Html.TextBox("Amount", GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Amount)), new { @id = "txtAmountSR_" + i, @class = "text-right", @onkeyup = "ValidCostTypeOnAmount(" + i + ")" })</td>
+                            <td>@Html.TextBox("Percentage", Convert.ToString(objADC.Percentage), new { @id = "txtPercentageSR_" + i, @onkeyup = "ValidCostTypeOnPercentage(" + i + ")" })</td>
+                            <td>
+                                <a title="@objMessageKey.Update" href="#" class="glyphicon glyphicon-ok-circle" onclick="SaveSR(@objADC.Acq_Deal_Cost_Commission_Code,@i)"></a>
+                                <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelUpdateSR(0);"></a>
+                            </td>
+                        </tr>
+                        }
+                        else/*List*/
+                        {
+                            <tr>
+                                <td>
+                                    @{
+                                        if (objADC.Type == "L")
+                                        {
+                                            RightsU_BLL.Vendor_Service objSRE = new RightsU_BLL.Vendor_Service(objLoginEntity.ConnectionStringName);
+
+                                            string Entity_Name = objSRE.GetById(Convert.ToInt32(objADC.Vendor_Code)).Vendor_Name;
+                                            @Html.Label("Entity_Name", Entity_Name, new { @id = "lblEntity_NameSR" + i })
+                                            @Html.Hidden("hdnEntityCode_" + i, objADC.Vendor_Code)
+                                        }
+                                        else
+                                        {
+                                            RightsU_BLL.Entity_Service objSRE = new RightsU_BLL.Entity_Service(objLoginEntity.ConnectionStringName);
+
+                                            string Entity_Name = objSRE.GetById(Convert.ToInt32(objADC.Entity_Code)).Entity_Name;
+                                            @Html.Label("Entity_Name", Entity_Name, new { @id = "lblEntity_NameSR" + i })
+                                            @Html.Hidden("hdnEntityCode_" + i, objADC.Entity_Code)
+                                        }
+                                        @Html.Hidden("hdnEntityType_" + i, objADC.Type)
+
+                                    }
+                                </td>
+                                <td>
+                                    @{    string strCommType = "";
+                                        if (objADC.Commission_Type == "C") { strCommType = "Cost"; }
+                                        else if (objADC.Commission_Type == "R") { strCommType = "Theatrical Revenue"; }
+                                        else if (objADC.Commission_Type == "O") { strCommType = "ROI"; }
+                                        @Html.Label("Commission_Type", Convert.ToString(strCommType), new { @id = "lblCommTypeSR" + i })
+                                    }
+                                </td>
+                                <td>
+                                    @{RightsU_BLL.Cost_Type_Service objCostType = new RightsU_BLL.Cost_Type_Service(objLoginEntity.ConnectionStringName);
+                                        string Cost_Type_Name = "";
+                                        int str_Cost_Type_Code = 0;
+                                        if (objADC.Cost_Type_Code != 0 && objADC.Cost_Type_Code != null)
+                                        {
+                                            Cost_Type_Name = objCostType.GetById(Convert.ToInt32(objADC.Cost_Type_Code)).Cost_Type_Name;
+                                            str_Cost_Type_Code = Convert.ToInt32(objADC.Cost_Type_Code);
+                                        }
+
+                                        @Html.Label("Cost_Type_Name", Cost_Type_Name, new { @id = "lblCost_Type_NameSR" + i })
+                                        @Html.Hidden("hdnCostTypeCode_" + i, str_Cost_Type_Code)
+                                    }
+                                </td>
+                                <td class="text-right">@Html.Label("Amount", GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Amount)), new { @id = "lblAmountSR" + i })</td>
+                                <td>@Html.Label("Percentage", Convert.ToString(objADC.Percentage), new { @id = "lblPerSR" + i })</td>
+                                @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                    {
+                <td>
+                    <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick="EditSR(@objADC.Acq_Deal_Cost_Commission_Code,'@objADC.Entity_Code',@str_Cost_Type_Code,'@objADC.Commission_Type',@i,'@objADC.Vendor_Code')"></a>
+                    <a title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash" onclick="DeleteSR(@i)"></a>
+                </td>}}
+                            </tr>
+                                                }
+                                                i++;
+                                            }
+                                        }
+                                    }
+        }
+        <tr id="trAddEditSR" style="display: none">
+            <td>
+                @if (ViewBag.DdlEntity != null)
+                {
+                    @Html.DropDownList("Entity_Code", (List<SelectListItem>)ViewBag.DdlEntity, new { @id = "ddlSRECode_0", @class = "form_input chosen-select" });
+                }
+            </td>
+            <td>
+                @if (ViewBag.Commision_Type != null)
+                {
+                    foreach (var item in ViewBag.Commision_Type)
+                    {
+                        string Commission_Type_0 = "C";
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(m => Commission_Type_0, (object)item.Value, new { id = "rdoCT_" + item.Value, onchange = "OnChangeOfCommType(0)" })@item.Text
+                        </label>
+                    }
+                }
+            </td>
+            <td>
+                @if (ViewBag.CostTypeSR != null)
+                {
+                    @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.CostTypeSR, new { @id = "ddlSRCTCode_0", @class = "form_input chosen-select" });
+                }
+            </td>
+            <td>
+                <input class="text text-right" id="txtAmountSR_0" type="text" value="" onkeyup="ValidCostTypeOnAmount(0)" />
+            </td>
+            <td>
+                <input class="text" id="txtPercentageSR_0" type="text" value="" onkeyup="ValidCostTypeOnPercentage(0)" />
+            </td>
+            <td>
+                <a title="@objMessageKey.Save" href="#" class="glyphicon glyphicon-ok-circle" onclick="SaveSR(0,0)"></a>
+                <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelUpdateSR(0);"></a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="pull-right">
+    <br /> <b>@objMessageKey.TotalAmount : </b>@if (ViewBag.TotalStandardReturns != null)
+    {@ViewBag.TotalStandardReturns}<br />
+</div>
+

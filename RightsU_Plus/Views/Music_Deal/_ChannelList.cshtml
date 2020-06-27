@@ -1,0 +1,77 @@
+﻿@model List<RightsU_Entities.Music_Deal_Channel>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    } 
+}
+<script>
+    $(document).ready(function () {
+        if ('@objMessageKey.LayoutDirection'=="RTL") {
+            $("#tblChannel thead th").css('text-align','right')
+        }
+
+        $(".txtSong").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 0
+        });
+    });
+</script>
+<div class="sub_block clearfix" id="divChannel">
+    <table class="table table-bordered table-hover" id="tblChannel">
+        
+        <thead>
+            <tr>
+                <th style="width:40%;">@objMessageKey.Channel</th>
+                <th style="width:60%;">@objMessageKey.Noofsongs</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    
+                    if (item.Channel == null)
+                    {
+                        item.Channel = new RightsU_BLL.Channel_Service(objLoginEntity.ConnectionStringName).GetById((int)item.Channel_Code);
+                    }
+                    <tr>
+                        <td>
+                            @item.Channel.Channel_Name
+                            <input type="hidden" id="hdnChannelCode" name="hdnChannelCode" value=@item.Channel_Code>
+                        </td>
+                        <td>
+                            @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                @item.Defined_Runs
+                              
+                            }
+                            else
+                            {
+                                <input type="text" id="txtSong" name="txtSong" class="txtSong" value="@item.Defined_Runs" />
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<style>
+    #divChannel {
+        overflow: auto;
+        max-height: 200px;
+    }
+</style>

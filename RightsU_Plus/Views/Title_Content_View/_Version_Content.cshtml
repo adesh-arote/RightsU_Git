@@ -1,0 +1,305 @@
+﻿@model List<RightsU_Entities.USP_GetContentsVersionData_Result>
+
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.System_Parameter_New objSPN = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "DefaultVersionCode").FirstOrDefault();
+    int DefaultVersionCode = 0;
+    if (objSPN != null)
+    {
+        DefaultVersionCode = Convert.ToInt32(objSPN.Parameter_Value);
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript">
+    var URL_SaveVersion = '@Url.Action("SaveVersion", "Title_Content_View")';
+    var URL_DeleteVersion = '@Url.Action("DeleteVersion", "Title_Content_View")';
+    $(document).ready(function () {
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        $('#txtPageSize').val('@ViewBag.PageSize');
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+        initializeChosen();
+        if ('@ViewBag.TabChanged' == 'Y') {
+            $('#txtSearchText_MV').val('@ViewBag.SearchText');
+        }
+        $(".numeric_Duration").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: true,
+            maxDecimalPlaces: 2,
+            max: 999,
+            min: 1
+        });
+        SetPaging();
+        initializeTooltip();
+        initializeExpander();
+    });
+</script>
+<style>
+    .numeric_Duration{
+        width:65%;
+    }
+</style>
+<div class="scale_table_block">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:30%;">@objMessageKey.Version</th>
+                <th style="width:30%;">@objMessageKey.HouseIds</th>
+                <th style="width:15%;">@objMessageKey.VersionDuration</th>
+                <th style="width:15%;">Status</th>
+                <th style="width:10%;">@objMessageKey.Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.Command == "ADD")
+            {
+                <tr>
+                    <td>
+                        @Html.DropDownList("ddlVersion", ViewBag.VersionList as SelectList, "Please select", new { @id = "ddlVersion_"+0, @class = "form_input chosen-select",@width = "100%" })
+                    </td>
+                    <td align="center">
+                        <input id="txtHouseId_0" type="text" value="" maxlength="100" />
+                    </td>
+                    <td>
+                        <input id="txtDuration_0" type="text" value=@ViewBag.Duration maxlength="100" class="numeric_Duration" />
+                    </td>
+                    <td>
+                        <select name="" id="Select32" class="form_input chosen-select">
+                            <option value="1">Please Select</option>
+                            <option value="2">Ready To Air</option>
+                            <option value="3">Rejected</option>
+                        </select>
+                    </td>
+                    <td align="center">
+                        <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveVersion(0)"></a>
+                        <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                    </td>
+                </tr>
+            }
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        @if (ViewBag.Command == "EDIT" && ViewBag.titleVersionCode == item.Title_Content_Version_Code)
+                        {
+                            string name = new RightsU_BLL.Title_Content_Version_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Content_Version_Code == item.Title_Content_Version_Code).Select(x=>x.Version.Version_Name).FirstOrDefault();
+                            <td>
+                                @if (name == "Standard")
+                                {
+                                    <label for="ddlVersion" value="@item.Version_Code"  id="ddlVersion">@item.Version_Name</label>
+                                    <input type="hidden" id="ddlVersion_@item.Title_Content_Version_Code" value="@item.Version_Code" />
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("ddlVersion", ViewBag.VersionList as SelectList, "Please select", new { @id = "ddlVersion_" + item.Title_Content_Version_Code, @class = "form_input chosen-select" })
+
+                                }
+                            </td>
+                            <td align="center">
+                                @*GM- 000123, GM- 000124*@
+                                <input id="txtHouseId_@item.Title_Content_Version_Code" type="text" value="@item.House_Id" maxlength="100" />
+                            </td>
+                            <td>
+                                <input id="txtDuration_@item.Title_Content_Version_Code" type="text" value=@item.Duration class="numeric_Duration" />
+                            </td>
+                            <td>
+                                <select name="" id="Select32" class="form_input chosen-select">
+                                    <option value="1">Please Select</option>
+                                    <option value="2">Ready To Air</option>
+                                    <option value="3">Rejected</option>
+                                </select>
+                            </td>
+                            <td align="center">
+                                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveVersion(@item.Title_Content_Version_Code)"></a>
+                                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                @item.Version_Name
+                            </td>
+                            <td align="center">
+                               @item.House_Id
+                            </td>
+                            <td>@item.Duration</td>
+                            <td>
+                                @if (item.Version_Code == 3)
+                                {
+                                    <span>Rejected</span>
+                                }
+                                else
+                                {
+                                    <span>Ready to Air</span>
+                                }
+                            </td>
+                            <td align="center">
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="AddEditVersion(@item.Title_Content_Version_Code, 'EDIT')"></a>
+
+                                @if (item.Version_Code != DefaultVersionCode)
+                                {
+                                    int count = new RightsU_BLL.Content_Music_Link_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Content_Version_Code == item.Title_Content_Version_Code).Count();
+
+                                    if (count == 0)
+                                    {
+                                        <a title="@objMessageKey.Delete" id="Delete" href="#" class="glyphicon glyphicon-trash" onclick="Ask_Confirmation('DELETE',@item.Title_Content_Version_Code)"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@objMessageKey.Cannotdeletethisversionasitislinkedwithmusictrack" id="Delete" href="#" class="glyphicon glyphicon-trash disabled" onclick="return false"></a>
+
+                                    }
+                                }
+
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+
+            else
+            {
+                <tr>
+                    <td colspan="4">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var TitleContentCode_G = 0, CommandName_G = "";
+
+    function SaveVersion(titleContentCode) {
+        debugger
+        var returnVal = true;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+
+        var duration = $.trim($('#txtDuration_' + titleContentCode).val());
+        var houseId = $.trim($('#txtHouseId_' + titleContentCode).val());
+        var versioncode = $('#ddlVersion_' + titleContentCode).val();
+       
+        if (duration == '') {
+            $('#txtDuration_' + titleContentCode).val('')
+            $('#txtDuration_' + titleContentCode).attr('required', true)
+            returnVal= false;
+        }
+        if (versioncode == '') {
+            $('#ddlVersion_' +titleContentCode).addClass("required");
+            returnVal= false;
+        }
+
+        showLoading();
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveVersion,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    titleContentCode: titleContentCode,
+                    versioncode: versioncode,
+                    houseId: houseId,
+                    duration: duration
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        hideLoading();
+                        if (result.Status == "S") {
+                            $('#hdnAction').val("")
+                            showAlert("S", result.Message);
+                            BindVersionListData('', 0, '', false);
+                            BindDDL();
+                            SetPaging();
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+        hideLoading();
+    }
+    function Cancel() {
+        debugger
+        $('#hdnAction').val("")
+        BindVersionListData('', 0, '', false);
+    }
+    function Ask_Confirmation(commandName, titleContentCode) {
+        debugger
+        if (checkCurrentAction()) {
+            TitleContentCode_G = titleContentCode;
+            CommandName_G = commandName;
+            showAlert('I', 'Are you sure, you want to delete this record?', 'OKCANCEL');
+        }
+    }
+    function handleCancel() {
+        TitleContentCode_G = 0;
+        CommandName_G = "";
+    }
+    function handleOk() {
+        if (CommandName_G == "DELETE")
+            DeleteVersion();
+    }
+    function DeleteVersion() {
+        debugger
+        var title_Content_Version_Code = TitleContentCode_G;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_DeleteVersion,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                title_Content_Version_Code: title_Content_Version_Code,
+            }),
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        TitleContentCode_G = 0;
+                        CommandName_G = "";
+                        showAlert("S", result.Message);
+                        BindVersionListData('', 0, '', false);
+                        BindDDL();
+                    }
+                    else if (result.Status == "E")
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+</script>

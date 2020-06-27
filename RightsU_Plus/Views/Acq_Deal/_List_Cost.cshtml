@@ -1,0 +1,176 @@
+﻿@model ICollection<RightsU_Entities.Acq_Deal_Cost>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+@using UTOFrameWork.FrameworkClasses;
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        if ($('#Pagination'))
+            SetPaging();
+
+        $("#txtPageSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxDigits: 3
+        });
+        initializeExpander();
+    });
+
+
+    var IsCall = 'Y';
+    function SetPaging() {
+        IsCall = 'N';
+        var PageNo, recordCnt, pageSize = 10;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        if ('@ViewBag.pageSize' != null) {
+            pageSize = '@ViewBag.pageSize';
+            $('#txtPageSize').val(pageSize);
+        }
+        else
+            pageSize = $('#txtPageSize').val();
+     
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = pageSize;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        var pageSize = $('#txtPageSize').val();
+        if (IsCall == 'Y') {
+            LoadAcqDealCost(page_index, 'N');
+        }
+        else
+            IsCall = 'Y';
+    }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+
+        return false
+    }
+
+    function txtPageSize_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        LoadAcqDealCost(0, 'N');
+        //SetPaging();
+    }
+</script>
+<div class="paging_area clearfix">
+
+    <table>
+        <tr>
+            <td><span class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span></td>
+            <td style="padding-left: 27%;">
+                <div class="pagination" id="Pagination"></div>
+                <span class="pull-right">
+                    @objMessageKey.PageSize:
+                    <input type="text" class="smallTextBox" value="" id="txtPageSize" onchange="txtPageSize_OnChange()">
+                </span>
+            </td>
+            <td>
+                <span class="pull-right">
+                    @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {<a title="@objMessageKey.AddCost" href="#" class="btn btn-primary" data-toggle="modal" onclick="AddEditCost(0,'Add');">@objMessageKey.Add</a>}
+                    }
+                </span>
+            </td>
+        </tr>
+    </table>
+
+
+</div>
+<table class="table table-bordered table-hover">
+    <tr>
+        <th style="width: 45%">@objMessageKey.TitleName</th>
+        <th style="width: 25%">@objMessageKey.AgreementValue</th>
+        <th style="width: 25%">@objMessageKey.Overflow</th>
+        <th style="width: 10%">@objMessageKey.Action</th>
+    </tr>
+    @foreach (var objAcqCostList in Model)
+    {
+        <tr>
+
+            <td>
+                @{
+        string movieName = "";
+        if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+        {
+            movieName = string.Join(", ", (objAcqCostList.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name + " ( " + s.Episode_From + " - " + s.Episode_To + " )").ToArray()));
+        }
+        else if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Music)
+        {
+            movieName = string.Join(", ", (objAcqCostList.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name + " ( " + (Convert.ToString(s.Episode_From) == "0" ? "Unlimited" : Convert.ToString(s.Episode_From)) + " )").ToArray()));
+        }
+        else
+        {
+            movieName = string.Join(", ", (objAcqCostList.Acq_Deal_Cost_Title.Select(s => s.Title.Title_Name).ToArray()));
+        }
+                }
+
+                <div class="expandable">
+                    <span>@movieName</span>
+                    <a href="#"><span></span></a>
+                </div>
+
+            </td>
+            <td class="text-right">
+                @GlobalParams.CurrencyFormat(Convert.ToDouble(objAcqCostList.Deal_Cost))
+            </td>
+            <td>
+                @{if (objAcqCostList.Variable_Cost_Type == "N")
+                {<span title="Deal Type">@objMessageKey.NO</span>}
+                else
+                {<span title="Deal Type">@objMessageKey.Yes</span>}}
+            </td>
+            <td>
+                @{
+
+        if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+        {
+            <a title="@objMessageKey.View" href="#" class="glyphicon glyphicon-eye-open" data-toggle="modal" onclick="AddEditCost(@objAcqCostList.Acq_Deal_Cost_Code,'View');"></a>
+        }
+        else
+        {
+            <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" data-toggle="modal" onclick="AddEditCost(@objAcqCostList.Acq_Deal_Cost_Code,'Edit');"></a>
+                    <a title="@objMessageKey.Delete" id="Delete" href="#" class="glyphicon glyphicon-trash" onclick="DeleteCost(@objAcqCostList.Acq_Deal_Cost_Code)"></a>
+        }
+
+                }
+            </td>
+        </tr>
+    }
+</table>

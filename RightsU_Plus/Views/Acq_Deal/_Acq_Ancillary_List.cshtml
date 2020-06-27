@@ -1,0 +1,84 @@
+﻿@{
+    RightsU_Entities.Deal_Schema Obj_Deal_Schema_View = null;
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    { Obj_Deal_Schema_View = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA]; }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+   
+}
+
+<script>
+
+    var dealMode_G = '@Obj_Deal_Schema_View.Mode';
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+    var isCatchUpright = '@ViewBag.IsCatchUpRights';
+    var URL_Edit_Ancillary = '@Url.Action("Edit_Ancillary", "Acq_Ancillary")';
+    var URL_Delete_Ancillary = '@Url.Action("Delete_Ancillary", "Acq_Ancillary")';
+    var URL_Add_Ancillary = '@Url.Action("Add_Ancillary", "Acq_Ancillary")';
+    var URL_Bind_Grid_List = '@Url.Action("Bind_Grid_List", "Acq_Ancillary")';
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)';
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")';
+</script>
+<script src="~/Custom_Scripts/Acq_Deal_Ancillary_List.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabAncillary">
+                    @if (Obj_Deal_Schema_View.Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE &&
+                        Obj_Deal_Schema_View.Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW &&
+                        Obj_Deal_Schema_View.Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {<div class="scale_table_block">
+                        <table class="table">
+                            <tr>
+                                <td style="width: 10%;">
+                                    <div class="pull-right">
+                                        <a class="btn btn-primary" href="#" id="btnAdd" onclick="Add_Ancillary('popEditRevHB');">@objMessageKey.Add</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    }
+                    <div class="paging_area clearfix">
+                        <span class="pull-left" id="lblTotal">@objMessageKey.TotalRecords: 0</span>
+                        <div class="pagination" id="Pagination"></div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')" />
+                        </span>
+                    </div>
+
+                    <div id="dvAcq_Ancillary_List" class="scale_table_block"></div>
+                </div>
+                @if (Obj_Deal_Schema_View.Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    @Html.Partial("_Edit_Without_Approval")
+                }
+                @if (ViewBag.Deal_Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Approved_List")
+                }
+                else if (Obj_Deal_Schema_View.Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="button" id="btnCancel_Ancillary" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                       onclick="location.href='@Url.Action("Cancel", "Acq_Ancillary")    '" />
+                            </li>
+                        </ul>
+                    </div>
+                }
+                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" id="popEditRevHB" class="form_wrapper modal fade in big_popup scroll" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-width:80%;padding-right:17px;">
+</div>
+

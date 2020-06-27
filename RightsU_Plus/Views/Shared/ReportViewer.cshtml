@@ -1,0 +1,35 @@
+﻿@using ReportViewerForMvc;
+@Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer)
+@{ 
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    var interval = null;
+    $(document).ready(function () {
+        debugger
+        //$('#ReportViewer1_ctl14').scrollLeft(500);
+        $("#ReportViewer1_ctl14").scrollLeft(500);
+        $('iframe').css('height', '527px');
+        $('iframe').css('width', '100%');
+
+        interval = setInterval(tempInterval, 100);
+    });
+
+    function tempInterval() {
+        debugger
+        var j = $('iframe').contents().find('#ReportViewer1');
+        $(j).removeAttr('style');
+            //$(j).find('#ReportViewer1_ctl14').scrollLeft(500);
+        if ($(j).find('#ReportViewer1_ctl14').is(':visible')) {
+            $(j).find('#ReportViewer1_ctl14').css('height', '').css('height', '475px');
+            //$("#ReportViewer1_ctl14").scrollLeft(500);
+            clearInterval(interval);
+        }
+        $(j).css('height', '100% !important').css('width', '100% !important');
+        //$(j).find('#ReportViewer1_ctl14').scrollLeft(500);
+    }
+</script>

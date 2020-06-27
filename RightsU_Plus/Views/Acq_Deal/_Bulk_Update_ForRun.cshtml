@@ -1,0 +1,576 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
+<style>
+    .SumoSelect {
+    width: 35% !important;
+}
+    .sumo_Channel_Code {
+    width: 20% !important;
+}
+</style>
+
+<script>
+    var URL_BindBulkUpdateRun = '@Url.Action("BulkUpdateForRunList", "Acq_Run_List")';
+    var callFor = '@ViewBag.callFor'
+    $(document).ready(function () {
+        debugger;
+        BindChanges();
+        LoadGrid(0);
+        $('#Title_Code').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#Title_Code').each(function () {
+            $(this)[0].sumo.reload();
+        });
+        $('#Channel_Code').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#Channel_Code').each(function () {
+            $(this)[0].sumo.reload();
+        });
+    });
+    function PageSize_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid)
+            LoadGrid(0);
+        else
+            return false;
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val();
+
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+
+            if (pageSize > 0)
+                return true;
+        }
+
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function changediv() {
+        debugger;
+        var Lcount = parseInt($('#hdnCount').val());
+        var RunCodes = '';
+        var IsValidSave = true;
+
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                RunCodes += ',' + $('#' + i + "_hdnRunCode").val();
+            }
+
+        }
+        if (RunCodes == '') {
+            IsValidSave = false;
+            showAlert('E', 'Please Select Any Run');
+        }
+        if (IsValidSave) {
+            $('divChannel').attr("style", "display:none");
+            var ddlchange = $('#ddlChange').val();
+            BindDropdown(ddlchange);
+            if (ddlchange == 'C') {
+                $('#divChannel').attr("style", "display:block");
+                $('#ActionDiv').attr("style", "display:block");
+            }
+        }
+        else
+            BindChanges();
+
+        //$('.checkbox').prop('checked', false);
+    }
+
+     function BindChanges() {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindChangeDropdown", "Acq_Run_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                debugger;
+                $("#ddlChange").empty();
+                $.each(result, function () {
+                    if (this.Selected == true)
+                        $("#ddlChange").append($("<option />").val(this.Value).text(this.Text).attr("selected", "selected"));
+                    else
+                        $("#ddlChange").append($("<option />").val(this.Value).text(this.Text));
+                });
+                $("#ddlChange").trigger("chosen:updated");
+                initializeChosen();
+            },
+            error: function (result) { }
+        });
+    }
+    function BindDropdown(SelectedType) {
+        debugger;
+        var Lcount = parseInt($('#hdnCount').val());
+        var RunCodes = '';
+        var IsValidSave = true;
+        var selectedTitles = '';
+        if ($("#hdnTitle_Code").val() != null)
+            selectedTitles = $('#hdnTitle_Code').val();
+
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                RunCodes += ',' + $('#' + i + "_hdnRunCode").val();
+            }
+        }
+        if (RunCodes == '') {
+            IsValidSave = false;
+            showAlert('E', 'Please Select Any Run');
+        }
+        var CL_Type = 'C';
+
+        var selectedId = '';
+        if (SelectedType == "C") {
+            selectedId = 'lbChannel';
+        }
+        var selectedCodes = '';
+        var selected_Channel = '';
+
+            $.ajax({
+            type: "POST",
+            url: '@Url.Action("Bind_JSON_ListBox", "Acq_Run_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                str_Type: SelectedType,
+                selectedCodes: RunCodes
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    $("#lbChannel").empty();
+                    debugger;
+                        $(result).each(function (index, item) {
+                           if (SelectedType == "C")
+                                $("#lbChannel").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                    //if (SelectedType == 'A') {
+
+                    $("#lbChannel").val(selected_Channel);
+
+
+                    $('#lbChannel').SumoSelect();
+                    $('#lbChannel').each(function () {
+                        $(this)[0].sumo.reload();
+                    });
+                    //setTimeout(function () {
+                    //    $('#lbTerritory,#lbSub_Language,#lbDub_Language').each(function () {
+                    //        $(this)[0].sumo.reload();
+                    //    });
+                    //},2000);
+                    debugger;
+                    $("#" + selectedId).val(selectedCodes).trigger("chosen:updated");
+                }
+            }
+            , error: function (result) {
+                showAlert('E', 'Error: ' + result.responseText);
+            }
+        });
+
+
+    }
+    function LoadGrid(page_index) {
+        debugger
+    showLoading();
+        var searchText = '';
+        var SearchTextForBulk = '';
+        var searchText1 = '';
+        var Lcount = parseInt($('#hdnCount').val());
+        var RunCodes = '';
+
+        if ($.trim($('#SearchRights').val() != null)) {
+            SearchTextForBulk = $.trim($('#SearchRights').val());
+        }
+        ///////
+      
+        //var IsValidSave = true;
+        //var selectedTitles = '';
+        //if ($("#hdnTitle_Code").val() != null)
+        //    selectedTitles = $('#hdnTitle_Code').val();
+
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                RunCodes += ',' + $('#' + i + "_hdnRunCode").val();               
+                $("#hdnSelectedAcqDealCode").val($("#hdnSelectedAcqDealCode").val() + ',' + $('#' + i + "_hdnRunCode").val())
+            }
+           
+        }
+        
+        ///////
+    if ($("#Title_Code").val() != null)
+        searchText = $("#Title_Code").val().join(',');
+    if ($("#Channel_Code").val() != null)
+        searchText1 = $("#Channel_Code").val().join(',');
+
+    var txtPageSize = $('#txtPageSize').val();
+    $.ajax({
+        type: "POST",
+        url: URL_BindBulkUpdateRun,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        async: false,
+        data: JSON.stringify({
+            SearchText: SearchTextForBulk,
+            hdnTitleCode: searchText,
+            ChannelCode: searchText1,
+            SelectedAcqDealRunCodes:RunCodes,
+            PageNumber: page_index,
+            PageSize: txtPageSize,
+            CallFor: callFor
+        }),
+            success: function (result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            $('#grdRun').html(result);
+            SetPaging();
+            initializeExpander();
+            hideLoading();
+        },
+        error: function (result) {
+            alert('Error: ' + result.responseText);
+            hideLoading();
+        }
+    });
+    }
+    function ValidateBulkApply() {
+        debugger;
+        var Lcount = parseInt($('#hdnCount').val());
+        var RunCodes = '';
+        var IsValidSave = true;
+        var Action_For = '';
+        var changeType = $('#ddlChange').val();
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                RunCodes += ',' + $('#' + i + "_hdnRunCode").val();
+            }
+        }
+        var hdnChannel_Code = $("#hdnChannel_Code");
+         hdnChannel_Code.val('');
+
+
+        var ErrorMsg = '';
+
+        //------------------ Channel
+        if (changeType == 'C') {
+            var subType = changeType;
+            $("#hdnSub_Type").val(subType);
+
+            var selectedSub = '';
+
+            if ($("#lbChannel option:selected").length > 0) {
+                $("#lbChannel option:selected").each(function () {
+                    if (selectedSub == '')
+                        selectedSub = $(this).val();
+                    else
+                        selectedSub = selectedSub + ',' + $(this).val();
+                });
+            }
+            else {
+                if (changeType == 'C')
+                    showAlert('E', 'Please select at least one Channel');
+                else
+                    showAlert('E', 'Please Select At Least One Language Group');
+                return false;
+            }
+
+            hdnChannel_Code.val(selectedSub);
+        }
+        //------------------ END
+
+
+        if (!IsValidSave && $.trim(ErrorMsg) != '') {
+            showAlert('E', ErrorMsg);
+        }
+
+        if (RunCodes == '') {
+            IsValidSave = false;
+            showAlert('E', 'Please Select Any Run');
+        }
+        if (changeType == '0' || changeType == '') {
+            IsValidSave = false;
+            showAlert('E', 'Please Select Any Change');
+        }
+        debugger;
+        if (IsValidSave) {
+            var codes = '';
+            var Change_For = $('#ddlChange').val();
+            if (Change_For == 'C')
+            { codes = $("#hdnChannel_Code").val(); }
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BulkSave", "Acq_Run_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    SelectedRightCodes: RunCodes,
+                    ChangeFor: changeType,
+                    SelectedCodes: codes
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        initializeChosen();
+                        BindChanges();
+                        LoadGrid(0);
+                        if (result.message != "") {
+                            debugger
+                            showAlert('S', result.Message, 'OK');
+                        }
+                        else {
+                            showAlert('E', result.Message);
+                        }
+                        $("#hdnSelectedAcqDealCode").val('');
+                        $('#divChannel').attr("style", "display:none");
+                        $('#ActionDiv').attr("style", "display:none");
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+    function Search_BulkUpdateForRun(key) {
+        debugger;
+       
+        if (key == "SA") {
+            $("#Title_Code").val('');
+            $("#Channel_Code").val('');
+            $('#Title_Code')[0].sumo.unSelectAll();
+            $("#Channel_Code")[0].sumo.unSelectAll();
+
+            $("input[name=chkRecord]").attr('checked', false);
+        }
+          LoadGrid(0);
+        
+    }
+    function chkBxEnableOrDisable(idthis) {
+
+        debugger;
+        var chkid = idthis.id;
+        if (chkid != "chkAll") {
+            $('#chkAll').prop("checked", false);
+        }
+        BindChanges();
+        $('#divChannel').attr("style", "display:none");
+        $('#ActionDiv').attr("style", "display:none");
+    }
+
+    function ValidateBulkDelete() {
+        debugger;
+        var Lcount = parseInt($('#hdnCount').val());
+        var RunCodes = '';
+        var IsValidSave = true;
+        var Action_For = '';
+       // var changeType = $('#ddlChange').val();
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var i = 1;
+        for (i = 1; i <= Lcount; i++) {
+            if ($('#' + i + "_chkRecord").prop('checked')) {
+                RunCodes += ',' + $('#' + i + "_hdnRunCode").val();
+            }
+        }
+        var hdnChannel_Code = $("#hdnChannel_Code");
+         hdnChannel_Code.val('');
+
+
+        var ErrorMsg = '';
+
+      
+
+        if (!IsValidSave && $.trim(ErrorMsg) != '') {
+            showAlert('E', ErrorMsg);
+        }
+
+        if (RunCodes == '') {
+            IsValidSave = false;
+            showAlert('E', 'Please Select Any Run');
+        }
+        debugger;
+        if (IsValidSave) {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BulkDelete", "Acq_Run_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    SelectedRightCodes: RunCodes
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        initializeChosen();
+                        BindChanges();
+                        LoadGrid(0);
+                        if (result.message != "") {
+                            debugger
+                            showAlert('S', result.Message);
+                        }
+                        else {
+                            showAlert('E', result.Message);
+                        }
+                        $('#divChannel').attr("style", "display:none");
+                        $('#ActionDiv').attr("style", "display:none");
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+</script>
+<style>
+    #ddlChange_chosen {
+        width: 60% !important;
+    }
+
+    .chosen-container-multi {
+        width: 60% !important;
+    }
+</style>
+@using (Ajax.BeginForm("ChangeTab", "Acq_Run_List", new AjaxOptions { OnSuccess = "Save_Success" }))
+{
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabRights" style="height:800px">
+                        <div class="scale_table_block">
+                            @Html.Hidden("hdnPageIndex")
+                            @Html.Hidden("hdnTitle_Code")
+                            @Html.Hidden("hdnChangeType")
+                            @Html.Hidden("hdnRights_Type")
+                            @Html.Hidden("hdnAcqDealCode")
+                            <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                            <input type="hidden" id="hdnTabCurrent" name="hdnTabCurrent" value="BLK" />
+                            <table class="table">
+                                <tr>
+                                    <td style="width: 25%;">
+                                        @if (ViewBag.callFor == "BLK_RUN")
+                                        {
+                                            <span class="bold" id="BulkValue">Bulk Update:</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="bold" id="BulkValue" >Bulk Delete:</span>
+                                        }
+                                        &nbsp; &nbsp;@*<input id="SearchRights" class="search" placeholder="Search By Title, Channel" style="width:300px" />*@
+                                        @Html.ListBox("Title_Code",ViewBag.TitleList as MultiSelectList,new { @id="Title_Code" })
+                                        @Html.ListBox("Channel_Code", ViewBag.ChannelList as MultiSelectList, new { @id = "Channel_Code" })
+                                        
+                                        <input type="button" id="btnSearchBulkUpdate" value="Search" class="btn-block" onclick="Search_BulkUpdateForRun('S')" />
+                                        <input type="button" id="btnShowAllBulkUpdate" value="Show All" class="btn-block" onclick="Search_BulkUpdateForRun('SA')" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="paging_area clearfix">
+                            <span class="pull-left" id="lblTotal">
+                            </span>
+                            <div id="Pagination" class="pagination">
+                            </div>
+                            <span class="pull-right">
+                                Page Size:
+                                <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();" />
+                            </span>
+                        </div>
+                        <div class="scale_table_block" style="overflow-y:auto;max-height:300px">
+                            <div id="grdRun">
+                            </div>
+                        </div>
+                        <br>
+                        @if (ViewBag.callFor == "BLK_RUN")
+                        {
+                            <div class="scale_table_block" style="height:50px; background-color:#f7f7f7">
+                                <div>
+                                    <table class="table">
+                                        <tr>
+                                            <td style="width: 40%;">
+                                                <span class="bold">
+                                                    Bulk Update For:
+                                                </span>
+                                                <select name="ddlChange" id="ddlChange" class="form_input chosen-select" onchange="changediv();"></select>
+                                            </td>
+                                            <td style="width: 15%;">
+                                                <div id="ActionDiv" style="display:none">
+                                                    <label class="radio-inline" style="position:relative">
+                                                        <input type="radio" name="optaddDelete" id="rbtnadd" value="A" checked onchange="" />
+                                                        Add
+                                                    </label>
+                                                    @Html.Hidden("hdnActionName")
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div id="divChannel" style="display:none">
+                                                    <select id="lbChannel" multiple="multiple"></select>
+                                                    @Html.Hidden("hdnChannel_Code")
+                                                    @Html.Hidden("hdnChannel_Type")
+                                                    @Html.Hidden("hdnSelectedAcqDealCode")
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        <div class="bottom_action">
+                            <ul class="form_link_nav clearfix">
+                                @if (ViewBag.callFor == "BLK_RUN")
+                                {
+                                    <li>
+                                        <input type="button" id="btnApply" class="btn btn-primary" value="Apply" onclick="return ValidateBulkApply();" />
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <input type="button" id="btnApply" class="btn btn-primary" value="Delete" onclick="return ValidateBulkDelete();" />
+                                    </li>
+                                }
+                                <li>
+                                    <input type="button" id="btnBack1" class="btn btn-primary" value="Back" onclick="BindPartialTabs('@GlobalParams.Page_From_Run');" />
+                                    <input type="submit" id="btnBack" class="btn btn-primary" value="Back" style="display:none" onclick="return ValidateSave();" />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

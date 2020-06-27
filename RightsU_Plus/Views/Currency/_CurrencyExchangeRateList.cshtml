@@ -1,0 +1,152 @@
+﻿@model List<RightsU_Entities.Currency_Exchange_Rate>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }    
+}
+<input type="hidden" id="hdnMaxDate" value="@ViewBag.MaxDate" />
+<input type="hidden" id="Model_Count" value="@Model.Count" />
+<input type="hidden" id="hdnLastMaxDate" value=""/>
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:15%;">@objMessageKey.Srno</th>
+            <th style="width:35%;">@objMessageKey.EffectiveStartDate</th>
+            <th style="width:35%;">@objMessageKey.ExchangeRate</th>
+            @if (ViewBag.CommandName != "VIEW")
+            {
+                <th style="width:15%;">@objMessageKey.Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{int rowNumber = 1; }
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td style="text-align:center;">
+                    <span>@objMessageKey.New</span>
+                </td>
+                <td style="text-align:center;">
+                    <input type="text" id="txtEffectiveDate_0" value="" class="isDatepicker shortDate form-control input-sm" placeholder="DD/MM/YYYY" style="width:100px;text-align:center;" />
+                </td>
+                <td style="text-align:right;">
+                    <input type="text" id="txtExchangeRate_0" value="" class="exchangeRate form-control input-sm" maxlength="7" style="width:80px;text-align:right;"/>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveExchangeRate('', 0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="ExchangeRate_Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+
+            foreach (var item in Model)
+            {
+
+                <tr id="trExchangeRate_@rowNumber">
+                    <td style="text-align:center;">
+                        <span>@rowNumber</span>
+                        @{
+                if (Model.Count - 1 == rowNumber)
+                {
+                    <input type="hidden" id="hdnLastMax" value="@item.Effective_Start_Date" />
+
+                }
+                        }
+                    </td>
+                    @{
+                System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("ar-AE");
+                    }
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.DummmyGuid == item.Dummy_Guid)
+                    {
+                      
+                        if (objMessageKey.LayoutDirection == "RTL")
+                        {
+                            <td style="text-align:center;">
+                                <input type="text" id="txtEffectiveDate_@rowNumber" class="isDatepicker shortDate form-control input-sm"
+                                       value='@(Convert.ToDateTime(item.Effective_Start_Date).ToString("dd/MM/yyyy", cultureinfo))' placeholder="DD/MM/YYYY" style="width:100px;text-align:center;" />
+                            </td>
+                        }
+                        else
+                        {
+                        <td style="text-align:center;">
+                            <input type="text" id="txtEffectiveDate_@rowNumber" class="isDatepicker shortDate form-control input-sm"
+                                   value='@string.Format("{0:" + GlobalParams.DateFormat + "}", item.Effective_Start_Date)' placeholder="DD/MM/YYYY" style="width:100px;text-align:center;" />
+                        </td>
+                    }
+                        <td style="text-align:right;">
+                            <input type="text" id="txtExchangeRate_@rowNumber" value="@item.Exchange_Rate" maxlength="7" class="exchangeRate form-control input-sm" style="width:80px;text-align:right;" />
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveExchangeRate('@item.Dummy_Guid', @rowNumber)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="ExchangeRate_Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        if (objMessageKey.LayoutDirection == "RTL")
+                        {
+                        <td style="text-align:center;">
+                           
+                            @*<span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Effective_Start_Date)</span>*@
+                            <span>@(Convert.ToDateTime(item.Effective_Start_Date).ToString("dd-MMM-yyyy", cultureinfo))</span>
+                        </td>
+                        }
+                        else
+                        {
+                            <td style="text-align:center;">
+                                <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Effective_Start_Date)</span>
+                                @*<span>@(Convert.ToDateTime(item.Effective_Start_Date).ToString("dd MMM yyyy", cultureinfo))</span>*@
+                            </td>
+                        }
+                        <td style="text-align:right;">
+                            <span>@item.Exchange_Rate</span>
+                        </td>
+                        if (ViewBag.CommandName != "VIEW")
+                        {
+                            <td align="center">
+                                @{
+                            string effectiveSD = item.Effective_Start_Date.ToString(GlobalParams.DateFormat);
+
+                            if (ViewBag.CanEdit == "Y" && effectiveSD == ViewBag.MaxDate)
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditExchangeRate('EDIT', '@item.Dummy_Guid')"></a>
+                            }
+                            if (ViewBag.CanDelete == "Y" && effectiveSD == ViewBag.MaxDate)
+                            {
+                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteExchangeRate('@item.Dummy_Guid', false)"></a>
+                            }
+                                }
+                            </td>
+                        }
+                    }
+                </tr>
+                    rowNumber++;
+            }
+        }
+        else if (ViewBag.CommandName != "ADD")
+        {
+
+            <tr>
+                @if (ViewBag.CommandName != "VIEW")
+                {
+                    <td colspan="4">@objMessageKey.Norecordfound</td>
+                }
+                else
+                {
+                    <td colspan="3">@objMessageKey.Norecordfound</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $("#hdnLastMaxDate").val($("#hdnLastMax").val());
+    });
+</script>

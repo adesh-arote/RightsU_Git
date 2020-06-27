@@ -1,0 +1,295 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript" >
+
+    $(document).ready(function () {
+       // $("#ancFileName").attr('href', '../Help/index.html?IntCode=AmortRule');
+        BindGrid('@ViewBag.Query_String_Page_No','N');
+        if('@ViewBag.Message'!="")
+            showAlert('S', '@ViewBag.Message', 'OK');
+        if ('@ViewBag.Rule_No' != '')
+            $('#hdnRuleNo').val('@ViewBag.Rule_No')
+        if ('@ViewBag.Rule_Type' != '')
+            $('#hdnRuleType').val('@ViewBag.Rule_Type')
+    });
+    function BindGrid(page_index, ShowAll) {
+        //debugger;
+        showLoading();
+        var page_size = '';
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        @* if ('@ViewBag.Query_String_Page_No' != '')
+            page_index = '@ViewBag.Query_String_Page_No';
+        if ('@ViewBag.PageSize' != '')
+            page_size = '@ViewBag.PageSize';
+        else*@
+        if ($('#PageSize').val() == null)
+            page_size = parseInt('@ViewBag.PageSize');
+        else
+        page_size=($('#PageSize').val() == 0 ? 10 : $('#PageSize').val());
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindGrid", "Amort_Rule")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Rule_No: $("#RuleNo").val(),
+                Rule_Type: $("#RuleType").val(),
+                PageIndex: page_index,
+                IsShowAll: ShowAll,
+                pageSize: page_size
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#AmortListGrid").empty();
+                    $("#AmortListGrid").append(result);
+
+                    if ($('.pagination'))
+                        SetPaging();
+
+                    initializeTooltip();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+        initializeExpander();
+    }
+    function search()
+    {
+        //debugger;
+        var v = $('#RuleType').val();
+        if ($('#RuleNo').val() == '' && $('#RuleType').val() == '') {
+            //$('#RuleNo').focus();
+            $('#RuleType').addClass("required");
+            showAlert('p', "Please select/Enter Search Criteria");
+            return false;
+        }
+            BindGrid('0', 'N');
+            $('#hdnRuleNo').val($('#RuleNo').val());
+            $('#hdnRuleType').val($('#RuleType').val());
+        
+    }
+    function setPegSize()
+    {
+        if ($('#PageSize').val() == "0" || $('#PageSize').val() == "")
+        {
+            $('#PageSize').focus();
+            $('#PageSize').addClass("required");
+            showAlert('p', "Please Enter Page Size");
+            return false;
+        }
+        BindGrid('0', 'N');
+        $('#hdnRuleNo').val($('#RuleNo').val());
+        $('#hdnRuleType').val($('#RuleType').val());
+    }
+    function ShowAll()
+    {
+        $("#RuleNo").val('');
+        $('#RuleType option').attr('selected', false);
+        $('#hdnRuleNo').val('')
+        $('#hdnRuleType').val('')
+        BindGrid('0', 'Y');
+    }
+    function Ask_Confirmation(amortcode,ronum,IsActive) {
+        var num = ronum + '';
+        $("#hdnRowNum").val(num);
+        if (IsActive=='Y')
+            showAlert("I", 'Are you sure, you want to deactivate this record ?', "OKCANCEL");
+        else
+            showAlert("I", 'Are you sure, you want to Activate this record ?', "OKCANCEL");
+    }
+    function handleCancel() {
+        $("#hdnRowNum").val('');
+    }
+
+    function handleOk() {
+        var RowNum = $("#hdnRowNum").val();
+        var objCode = $("#" + RowNum + "_hdnAmortCode").val();
+        DeactivateAmort(objCode);
+    }
+    function DeactivateAmort(amortcode)
+    {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DelactivateData", "Amort_Rule")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    id: amortcode
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Error != "")
+                            showAlert("S", result.Error, "OK");
+                        else {
+                            showAlert("S", result.Message, "OK");
+                            BindGrid($("#hdnPageIndex").val())
+                        }
+                        hideLoading();
+                    }
+                },
+                error: function (result) { }
+            });
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var v = evt;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    
+    function EditAmort(num) {
+        var code = $("#" + num + "_hdnAmortCode").val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("EditRecord", "Amort_Rule")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                id:code
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+    }
+</script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+   <style>
+    .top_filter
+    {
+        margin-top: 22px;
+    }
+    ul.first > li
+    {
+        width: 16%;
+    }
+
+        ul.first > li:nth-child(2)
+        {
+            width: 20%;
+        }
+
+        ul.first > li:last-child
+        {
+            width: 16%;
+        }
+
+    ul.second > li
+    {
+        width: 27%;
+    }
+
+        ul.second > li:last-child
+        {
+            width: 19%;
+        }
+
+    .grid_item ul {
+    float: left;
+    width: 100%;
+    padding: 0 0 0 0px !important;
+    margin: 1px 0;
+}
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col" onclick="$('.leftPanel').css('left', panelHideCss);">
+            <div class="top_area">
+                <h2 class="pull-left">Amort Rule List</h2>
+                <div class="right_nav pull-right">
+                    <ul>
+                        <li>
+                            <input class="button" type="submit" id="btnSearch" value="Search" onclick="return search();" />
+                        </li>
+                        <li>
+                           @* @if (ViewBag.AddVisibility.Contains("~" +GlobalParams.RightCodeForExportToExcel+ "~"))
+                              {
+                            *@<label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save" title="Save to Excel">
+                              
+                                @using (Html.BeginForm("ExportToExcel", "Amort_Rule"))
+                                {
+                                    <input type="submit" style="display: none" id="btnExportToExcel" />
+                                    @Html.Hidden("hdnRuleNo")
+                                    @Html.Hidden("hdnRuleType")
+                                    @Html.Hidden("pageSize")
+                                    @Html.Hidden("pageIndex")
+                                }
+                                
+                            </label>
+                            @*}*@
+                        </li>
+                        <li>
+                            <a class="glyphicon glyphicon-refresh" title="Show All" id="btnShowAll" onclick="ShowAll()"></a>
+                        </li>
+                        <li>
+                             @if (ViewBag.AddVisibility.Contains("~" +GlobalParams.RightCodeForAdd+ "~"))
+                              {
+                            <a class="btn btn-primary" href="@Url.Action("AddAmortRule", "Amort_Rule", new{commandName="Add" })" data-toggle="modal" >Add</a>
+                             }
+                        </li>
+                       @* <li>
+                            <a class="btn btn-primary" href="~/Music_Title/Music_Title_Import" data-toggle="modal">Music Title Bulk Import</a>
+                        </li>*@
+                    </ul>
+                </div>
+                <div class="top_filter pull-right">
+                 <table class="table">
+                            <tr>      
+                            <td> @*@Html.TextBox("RuleNo") *@
+                                <input type="text" id="RuleNo" class="search" onkeypress = "return isAlphaNumeric(event);" autocomplete="off" placeholder="Rule No." value='@ViewBag.Rule_No' />
+                            </td>
+                            <td  style="width:150px;">
+                            @*<select id="RuleType" name="RuleType" selectedvalue="@ViewBag.Rule_Type" class = "form_input chosen-select" >
+                             <option value="">  </option>
+                             <option value="R">Run</option>
+                             <option value="P">Period</option>
+                             <option value="O">Other</option>
+                             <option value="C">Premium/Show Premium</option>
+                             </select>*@
+                                @if (ViewBag.Rule_TypeList != null)
+                            {
+                                @Html.DropDownList("ddlRuleType", (SelectList)ViewBag.Rule_TypeList,new { @id = "RuleType"});
+                            }
+                            </td>
+                            </tr>
+                        </table>
+                </div>
+            </div>
+            <div id="AmortListGrid" runat="server">
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitle" role="dialog" tabindex="-1" aria-hidden="false">
+</div>

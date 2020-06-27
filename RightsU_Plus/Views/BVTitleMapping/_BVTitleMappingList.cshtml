@@ -1,0 +1,200 @@
+﻿@model List<RightsU_Entities.BV_HouseId_Data>
+@using UTOFrameWork.FrameworkClasses
+<script>
+    $(document).ready(function () {
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+    });
+    $('#checkAll').on("click", function () {
+        var IsCheck = $(this).prop("checked");
+        $('.checkboxAll').prop('checked', IsCheck);
+        $('.txtMaptoDeal').prop('disabled', !IsCheck);
+    });
+
+    $('.checkboxAll').on("click", function () {
+        debugger;
+        if ($('.checkboxAll:checked').length == $('.checkboxAll').length) {
+            $('#checkAll').prop('checked', true);
+        } else {
+            $('#checkAll').prop('checked', false);
+        }
+        var IsCheck = $(this).prop('checked');
+        $('.txtMaptoDeal').attr('required', false)
+        $(this).parents('tr').find('.txtMaptoDeal').prop('disabled', !IsCheck);
+    });
+    function selectCurrent(chkBox) {
+        debugger;
+        var chkBoxId = chkBox.id;
+        var txtDealTitles = document.getElementById(chkBoxId.replace('chk_', 'Mapped_Deal_Title_Code_'));
+        var chkIgnore = document.getElementById(chkBoxId.replace('chk_', 'chkIgnore_'))
+        if ($(chkBox).prop("checked")) {
+            $(txtDealTitles).removeAttr("disabled");
+        }
+        else {
+            $(chkIgnore).prop('checked', false);
+            $(txtDealTitles).val('');
+            $(txtDealTitles).attr("disabled", "disabled");
+        }
+    }
+    function SelectIgnore(chkBox) {
+        debugger;
+        var chkBoxId = chkBox.id;
+        var txtDealTitles = document.getElementById(chkBoxId.replace('chkIgnore_', 'Mapped_Deal_Title_Code_'));
+        var chk = document.getElementById(chkBoxId.replace('chkIgnore_', 'chk_'));
+
+        if ($(chkBox).prop("checked")) {
+            $(txtDealTitles).val('');
+            $(chk).prop('checked', true);
+            $(txtDealTitles).attr("disabled", true);
+        }
+        else {
+            $(chk).removeAttr("disabled");
+            $(chk).prop('checked', false);
+            if ($('.checkboxAll').prop('checked') == true) {
+                $(txtDealTitles).attr("disabled", false);
+            }
+        }
+    }
+    var URL_MapData = '@Url.Action("MapData", "BVTitleMapping")';
+    function MapData() {
+        var ISValid = 'true';
+        if ($('.checkboxAll:checked:not("#checkAll")').length == 0) {
+            showAlert('E', "Please Check at least one checkbox");
+            return false;
+        }
+        if (($('.checkboxAll').prop('checked')) && ($('.txtMaptoDeal').val() == "") && ($('.checkboxIgnore').prop('checked') == false)) {
+            showAlert('E', "Please select either Ignore or Deal title to Map");
+            return false;
+        }
+        else {
+            debugger;
+            var BVContent = new Array();
+            var tblData = $("#tblBVTitle tbody tr");
+            $.each($(tblData), function (index, value) {
+                debugger;
+                var c = index;
+                var counter = 0;
+                var CurrentRow = $(value);
+                var _checkType = $(value).find('input[name="BV_HouseId_Data_Code"]').val();
+                var _ChkAll = $(value).find('input[class="checkboxAll"]').prop('checked');
+                var ChkAll = $(value).find('input[class="checkboxAll"]').val();
+                var _Episode_No = $(value).find('input[name="hdnEpisode_No"]').val();
+                var _MapDealTitleCode = 0;
+                if (_ChkAll == true) {
+                    var _IsIgnore = $(value).find('input[class="checkboxIgnore"]').prop('checked');
+                    if (_IsIgnore == false) {
+                        _IsIgnore = "N";
+                        _MapDealTitleCode = $(value).find('input[name="Mapped_Deal_Title_Code"]').val();
+                    }
+                    else {
+                        _IsIgnore = "Y";
+                    }
+                    if (ChkAll) {
+                        if (_ChkAll == true) {
+                            counter++;
+                            if ((_MapDealTitleCode == "0" || _MapDealTitleCode == "") && _IsIgnore == "N") {
+                                ISValid = false;
+                                $('.txtMaptoDeal').attr('required', true)
+                                return false;
+                            }
+                        }
+                    }
+                    if (ISValid) {
+                        BVContent.push({
+                            IsIgnore: _IsIgnore, Mapped_Deal_Title_Code: _MapDealTitleCode, BV_HouseId_Data_Code: _checkType, Episode_No: _Episode_No, Is_Mapped: _ChkAll
+                        });
+                    }
+                }
+            });
+            if (ISValid) {
+                $.ajax({
+                    type: "POST",
+                    url: URL_MapData,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        lst: BVContent
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.status == "S") {
+                                showAlert('S', result.Message);
+                            }
+                            else {
+                                showAlert('E', result.Message);
+                            }
+                            if (result.valid == false) {
+                                $('#chk_' + result.BV_Code).prop('checked', true);
+                                $('#Mapped_Deal_Title_Code_' + result.BV_Code).val('');
+                            }
+                            else {
+                                SetPaging();
+                                BindBVTitleMappingList();
+                                BindDDL();
+                                hideLoading();
+                            }
+                    }
+                },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+            });
+            return true;
+        }
+    else {
+                return false;
+    }
+    }
+
+    }
+</script>
+<table class="table table-bordered table-hover" id="tblBVTitle">
+    <thead>
+        <tr>
+            <th style="width:10%;">Check All <input type="checkbox" id="checkAll" /></th>
+            <th style="width:15%;">Program Episode ID</th>
+            <th style="width:35%;">BV Title Name</th>
+            <th style="width:10%;">Episode No.</th>
+            <th style="width:10%;">Ignore</th>
+            <th style="width:20%;">Map To Deal Title:</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                <tr>
+                    <td style="text-align:center;">
+                        <input type="hidden" value="@item.BV_HouseId_Data_Code" name="BV_HouseId_Data_Code" />
+                        <input type="hidden" value="@item.Schedule_Item_Log_Date" id="SheduleDate_@item.BV_HouseId_Data_Code" />
+                        <input type="hidden" value="@item.Schedule_Item_Log_Time" id="SheduleTime_@item.BV_HouseId_Data_Code" />
+                        @*<input type="hidden" id="chk_@item.BV_HouseId_Data_Code" name="checkType" />*@
+                        <input id="chk_@item.BV_HouseId_Data_Code" type="checkbox" name="chkType" class="checkboxAll" onchange="selectCurrent(this);" 
+                               value="@item.BV_HouseId_Data_Code" />
+                    </td>
+                    <td align="center">@item.Program_Episode_ID<input type="hidden" name="hdnProgram_Episode_ID" value="@item.Program_Episode_ID"></td>
+                    <td>
+                        <div class="expandable">@item.BV_Title <input type="hidden" name="hdnBV_Title" value="@item.BV_Title" /></div>
+                    </td>
+
+                    <td align="center">@item.Episode_No<input type="hidden" name="hdnEpisode_No" value="@item.Episode_No"></td>
+                    <td style="text-align:center;">
+                        <input id="chkIgnore_@item.BV_HouseId_Data_Code" type="checkbox" name="IsIgnore" class="checkboxIgnore" onchange="SelectIgnore(this)" 
+                               value="@item.BV_HouseId_Data_Code" />
+                    </td>
+                    <td align="center">
+                        <input type="text" class="txtMaptoDeal" name="Title_Name" disabled="disabled" id="Mapped_Deal_Title_Code_@item.BV_HouseId_Data_Code" 
+                               autocomplete="on" onkeyup="PopulateTitleForMapping(this)" onblur="PopulateTitleForMapping(this)" />
+                        <input type="hidden" id="hdnDealTitleCode_@item.BV_HouseId_Data_Code" name="Mapped_Deal_Title_Code" class="DealTtileCode" />
+                        <input type="text" class="txttitleCode" Style="display: none;" name="Mapped_itle_Code" id="Mapped_Title_Code_@item.BV_HouseId_Data_Code" />
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,42 @@
+﻿@model  List<RightsU_Plus.Controllers.Syn_Deal_Rights_Holdback_Validation>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@if (Model.Count() > 0)
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:25%;">@objMessageKey.Title</th>
+                <th style="width:30%;">@objMessageKey.Region</th>
+                <th style="width:45%;">@objMessageKey.Platform</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @if (Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td align="center">@item.Title_Name&#x200E;</td>
+                        <td align="center">
+                            <div class="expandable">@item.Region</div>
+                        </td>
+                        <td align="center">
+                            <div class="expandable">@item.Platform</div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+
+

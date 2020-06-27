@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="DS_Reports">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=192.168.0.115;Initial Catalog=RightsU_Plus_Testing</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>6d511629-819e-49df-8d1e-3045852238ed</DataSourceID>
+</RptDataSource>

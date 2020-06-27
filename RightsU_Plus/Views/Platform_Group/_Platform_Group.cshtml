@@ -1,0 +1,144 @@
+﻿@using RightsU_BLL;
+@model List<RightsU_Entities.Platform_Group>
+
+
+@using UTOFrameWork.FrameworkClasses
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    var j = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<style>
+     
+</style>
+<script>
+    $(document).ready(function () {
+        $('.clsPlatformPopup').on('click', function (e) {
+            var btdId = e.target.id;
+            var hdnIntCodeID = btdId.replace("_aViewPlatform", "_hdnPlatform_Group_Code");
+            var platformGroupCode = $('#' + hdnIntCodeID).val();
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    platformGroupCode: platformGroupCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPlatformTree').html(result);
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+
+        $("#popupFade").click(function (event) {
+            event.stopPropagation();
+        });
+    });
+</script>
+
+<table class="table table-bordered table-hover" id="divPlatform_GroupList">
+    <thead>
+        <tr>
+            <th style="width:20%;">@objMessageKey.PlatformGroup</th>
+            <th style="width:60%; text-align:center">@objMessageKey.Platform</th>
+            <th style="width:10%; text-align:center">@objMessageKey.Status</th>
+            <th style="width:10%; text-align:center">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                <tr>
+                    <td>
+                        @item.Platform_Group_Name
+                        @Html.Hidden("hdnPlatform_Group_Code", item.Platform_Group_Code, new { id = item.Platform_Group_Code + "_hdnPlatform_Group_Code" })
+                    </td>
+                    <td>
+                        @Html.Raw(item.Platform_Group_Details.First().Platform.Platform_Name)
+                        <a id="@(item.Platform_Group_Code)_aViewPlatform" title="@objMessageKey.ViewPlatforms" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>
+                    </td>
+                    <td style="text-align:center">
+                        <span>@strActive</span>
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                bool canDeactive = true;
+                string toolTipMsg = "";
+
+                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                {
+                    if (item.Is_Active == "Y")
+                    {
+                        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Platform_Group_Code, 'EDIT')"></a>
+                    }
+                    else
+                    {
+                        <a title="@objMessageKey.Cannoteditthisplatformgroupasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                    }
+                }
+
+                if (item.Is_Active == "Y")
+                {
+                    if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                    {
+                        if (canDeactive)
+                        {
+                            <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactivePlatform_Group(@item.Platform_Group_Code, 'N')"></a>
+                        }
+                        else
+                        {
+                            <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                        }
+                    }
+                }
+                else
+                {
+                    if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                    {
+                        <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactivePlatform_Group(@item.Platform_Group_Code, 'Y')"></a>
+                    }
+                }
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            {
+                <tr>
+                    <td colspan="5">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+        }
+    </tbody>
+
+
+</table>

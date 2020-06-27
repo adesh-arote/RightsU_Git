@@ -1,0 +1,2721 @@
+﻿@using System.Web.Optimization
+@using RightsU_Entities
+@using UTOFrameWork.FrameworkClasses
+@using RightsU_BLL;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    Layout = null;
+    RightsU_Entities.User objLoginUser = ((RightsU_Entities.RightsU_Session)Session[RightsU_Entities.RightsU_Session.SESS_KEY]).Objuser;
+    System_Versions objSysVersion = (System_Versions)Session["VersionDetails"];
+    string CurrentController = ViewContext.RouteData.Values["Controller"].ToString();
+    List<int> Menulist = null;
+    string Is_Approve = "";
+
+    if (Session["Menu"] != null)
+    { Menulist = (List<int>)Session["Menu"]; }
+
+    if (Session["Is_Approve"] != null)
+    { Is_Approve = (string)Session["Is_Approve"]; }
+    string alertDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Email_Alert_Days").Select(x => x.Parameter_Value).FirstOrDefault();
+    var dt = DateTime.Today.AddDays(Convert.ToDouble(alertDays));
+    var count = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N" && string.IsNullOrEmpty(x.Email_Body) == false
+    && x.User_Code == objLoginUser.Users_Code && x.Created_Time >= dt
+    && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").Select(s => s.Email_Notification_Log_Code).Count();
+
+
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<!DOCTYPE html>
+<link type="image/ico" rel="icon" href="~/Images/u-to.ico" />
+<div id="allLinks">
+    @if (objMessageKey.LayoutDirection == "RTL")
+    {
+        <link href="~/CSS/CommonRTL.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/CSS/CommonLTR.css" rel="stylesheet" />
+    }
+</div>
+<html>
+<head>
+    <title>RightsU</title>
+    <link rel="stylesheet" href="~/CSS/dashboard.css" />
+
+    <link href="~/CSS/TopBand.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    @*<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">*@
+    @*<link type="image/ico" rel="icon" href="~/Images/u-to.ico" />*@
+    @Styles.Render("~/bundles/CSS?v=" + System.Configuration.ConfigurationManager.AppSettings["Version_No"])
+    @Scripts.Render("~/bundles/JS_Core?v=" + System.Configuration.ConfigurationManager.AppSettings["Version_No"])
+    <script>
+        var ShowMessage = {
+            "MsgPlaceSearch": '@objMessageKey.Search'
+        }
+        var MsgOk = '@objMessageKey.Ok';
+        var MsgCancel = '@objMessageKey.Cancel';
+
+        var UsersCode_G = '@objLoginUser.Users_Code';
+        var LayoutDirection_G = '@objMessageKey.LayoutDirection';
+        var PleaseSelect_G = '@objMessageKey.PleaseSelect';
+        var URL_Reload_Current_Page = '';
+        var URL_Validate_Deal_Approve_List = '@Url.Action("Validate_Deal_Approve_List", "Global")'
+    , URL_GetMenu = '@Url.Action("GetMenu", "Base")'
+    , URL_GetApprovalList = '@Url.Action("GetApprovalList", "Base")'
+    , URL_Deal_For_Approval_Acq = '@Url.Action("Deal_For_Approval", "Global", new {
+                                  DealCode = "Deal_Code", ModuleCode = GlobalParams.ModuleCodeForAcqDeal, Record_Locking_Code = "RecordLockingCode" })'
+    , URL_Deal_For_Approval_Syn = '@Url.Action("Deal_For_Approval", "Global", new {
+                                  DealCode = "Deal_Code", ModuleCode = GlobalParams.ModuleCodeForSynDeal, Record_Locking_Code = "RecordLockingCode" })'
+    , URL_Deal_For_Approval_Music = '@Url.Action("Deal_For_Approval", "Global", new {
+                                    DealCode = "Deal_Code", ModuleCode = GlobalParams.ModuleCodeForMusicDeal, Record_Locking_Code = "RecordLockingCode" })'
+    , URL_Syn_Approve_Reject = '@Url.Action("Syn_Approve_Reject_Deal", "Global")'
+    , URL_Approve_Reject_Reopen = '@Url.Action("Approve_Reject_Deal", "Global")';
+
+        $(document).ready(function () {
+            //  $("#triangle").css({ "top": "-13px" });
+            if (LayoutDirection_G == 'RTL') {
+                //$('.navbar-custom-menu').addClass('navbar-custom-menu-Head')
+                //$('.user-menu').addClass('user-menu-Head')
+                $('#Email-Head-Icon').css("float", "Right");
+                $('#User-Head-Icon').css("float", "Right");
+                $('#dropdown').css("left", "402px");
+                $('.leftPanel ul > li.has-sub > a:before').css("left", "22px");
+
+            }
+            else {
+                $('.leftPanel ul > li.has-sub > a:before').css("right", "22px");
+                $('#Email-Head-Icon').css("float", "left");
+                $('#User-Head-Icon').css("float", "left");
+                $('#dropdown').css("left", "706px");
+            }
+
+
+            $('.nav-toggle').click(function () {
+                var collapse_content_selector = $(this).attr('onclick');
+                var toggle_switch = $("#triangle");
+                if ($("#triangle").hasClass('glyphicon-triangle-top')) {
+                    toggle_switch.removeClass("glyphicon-triangle-top");
+                    toggle_switch.addClass("glyphicon-triangle-bottom");
+                    $("#sub_class").css({ "padding-bottom": "" });
+                }
+                else {
+                    toggle_switch.removeClass("glyphicon-triangle-bottom");
+                    toggle_switch.addClass("glyphicon-triangle-top");
+                    $("#sub_class").css({ "padding-bottom": "0px" });
+                }
+                $(collapse_content_selector).toggle(function () {
+                });
+            });
+            $("#collapse").click(function () {
+                debugger;
+                $(".rightPannel").slideDown("slow", function () {
+                });
+                $(".NotifyEmailPanel").slideDown("slow", function () {
+                });
+            });
+            $('#liLanguage').click(function () {
+                $("#dropdown").slideDown("slow", function () {
+                });
+                $(".rightPannel").slideDown("slow", function () {
+                });
+            });
+            $("#collapse1").click(function () {
+                $(".rightPannel:before").css("display", "block");
+                $("#collapse2").css("display", "none");
+                $("#sub_class").css({ "padding-bottom": "" });
+                $("#triangle").removeClass("glyphicon-triangle-top");
+                $("#triangle").addClass("glyphicon-triangle-bottom");
+                $(".rightPannel").fadeToggle(300);
+                $(".NotifyEmailPanel").slideUp("slow", function () {
+                });
+                $(".rightPanneltoggle").slideDown("slow", function () {
+                });
+            });
+
+            $("#NotifyEmail").click(function () {
+                $(".NotifyEmailPanel:before").css("display", "block");
+                $("#sub_class").css({ "padding-bottom": "" });
+                $("#triangle").removeClass("glyphicon-triangle-top");
+                $("#triangle").addClass("glyphicon-triangle-bottom");
+                $(".NotifyEmailPanel").fadeToggle(300);
+
+                $(".rightPannel").slideUp("slow", function () {
+                });
+                $(".rightPanneltoggle").fadeToggle(300);
+            });
+            $(".container,.navigation,.pull-left").click(function () {
+                $("#collapse2").css("display", "none");
+                $(".rightPannel").fadeOut("slow");
+                //$(".NotifyEmailPanel").fadeOut("slow");
+                $(".rightPanneltoggle").slideUp("slow", function () {
+                });
+                //$(".NotifyEmailPanel before").css("display", "none");
+            });
+
+            $(".container,.navigation,.pull-left").click(function () {
+
+
+                $(".NotifyEmailPanel").fadeOut("slow");
+                $(".rightPanneltoggle").fadeOut("slow");
+                $(".NotifyEmailPanel:before").css("display", "none");
+            });
+
+            $(".navigation").click(function () {
+                $("#dropdown").slideUp("slow", function () {
+                });
+            });
+            $(".container,.navigation,.pull-left").click(function () {
+                $("#dropdown").slideUp("slow", function () {
+                });
+            });
+            var lastScrollTop = 0;
+        });
+        function ViewProfile() {
+            $('#viewProfile').submit();
+        }
+        function setDefaultPaging(txtId) {
+            debugger
+            var pageSize = $('#' + txtId).val();
+            if (pageSize < 1 || pageSize == "") {
+                $('#' + txtId).val('10');
+                pageBinding()
+            }
+        }
+        function pageBinding() {
+           debugger
+        }
+
+        $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+        var term = this.term.split('﹐').join('|');
+        var re = new RegExp("(" + term + ")", "gi");
+            var t = item.label.replace(re, "<strong>$1</strong>");
+        return $("<li></li>")
+            .data("item.autocomplete", item)
+            .append("<div>" + t + "</div>")
+            .appendTo(ul);
+        };
+
+    </script>
+    <link href="~/CSS/slider-menu.jquery.css" rel="stylesheet" />
+    <link href="~/CSS/slider-menu.theme.jquery.css" rel="stylesheet" />
+
+    <script src="~/JS_Core/slider-menu.jquery.js"></script>
+    <link type="text/css" rel="stylesheet" href="~/CSS/responsive.css" media="screen and (max-width:979px) and (max-height:719px)" />
+    <script src="~/Custom_Scripts/Site_Layout.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+    <link href="~/Custom_Scripts/Custom_CSS/Site_Layout.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+    <script>
+        var URL_UpdateSystemLanguage = '@Url.Action("UpdateSystemLanguage", "Base")';
+        function ChangeLayoutDirection(element) {
+            debugger;
+            showLoading();
+            var langCode = $(element).find("span.item-code").text();
+            var LayoutDirection_G = $(element).find("span.layout-direction").text();
+
+
+            $.ajax({
+                type: "POST",
+                url: URL_UpdateSystemLanguage,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    systemLanguageCode: langCode
+                }),
+                async: false,
+                success: function (result) {
+                    hideLoading();
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            debugger;
+                            if (URL_Reload_Current_Page == "/Acq_Deal") {
+                                var currentTab = $.trim($('#hdn_curent_TabFor_MultiLang_Acq').val());
+                                if (currentTab != "") {
+                                    URL_Reload_Current_Page = URL_Reload_Current_Page + "?currentTab=" + currentTab
+                                }
+                            }
+                            showLoading();
+                            window.location.href = URL_Reload_Current_Page;
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    hideLoading();
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    </script>
+    <style>
+        .emailPNL {
+            background-color: #e2dfdf;
+            width: 236px;
+        }
+
+        /*#DivEmailConfig {
+            max-height: 180px!important;
+
+            /*overflow-y: auto;
+            overflow-x: hidden;
+        }*/
+
+        #divEmail {
+            overflow: auto;
+            max-height: 500px;
+        }
+
+        #collapse1 {
+            cursor: pointer;
+        }
+
+        .glyphicon-bell:before {
+            content: "\e123";
+            color: #ffffff;
+        }
+
+        #dropdown {
+            position: absolute;
+            right: 220px;
+            top: 164px;
+            width: 174px;
+            max-height: 170px;
+            z-index: 99;
+            background-color: #f3f3f3;
+            border: 1px solid #000000;
+            float: left;
+            overflow: auto;
+            word-break: break-all;
+        }
+
+        .shadow {
+            -webkit-box-shadow: 3px 3px 5px 6px #ccc; /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+            -moz-box-shadow: 3px 3px 5px 6px #ccc; /* Firefox 3.5 - 3.6 */
+            box-shadow: -12px 5px 11px 1px #ccc; /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+        }
+
+        /*.rightPannel ul {
+                list-style-type: none;
+            }*/
+
+        .rightPannel li {
+            padding: 10px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 14px;
+            cursor: pointer;
+            vertical-align: middle;
+            padding: 0px 0px 0px 0px;
+            list-style-type: none;
+        }
+
+            .rightPannel li span {
+                vertical-align: middle;
+                display: inline-block;
+            }
+
+        .rightPannel > ul {
+            /*border-top: 1px solid #aaa;*/
+        }
+
+        .rightPannel > li:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .rightPannel {
+            display: none;
+        }
+
+            .rightPannel > li > a {
+                vertical-align: middle;
+                padding-left: 8px;
+                cursor: pointer;
+                z-index: 2;
+                font-size: 13px;
+                color: #000;
+                -webkit-transition: color .2s ease;
+                -o-transition: color .2s ease;
+                transition: color .2s ease;
+                display: block;
+                height: 36px;
+                line-height: 35px;
+            }
+
+            .rightPannel ul li a {
+                padding: 5px 22px;
+                z-index: 2;
+                font-size: 13px;
+                text-decoration: none;
+                color: #3a3636;
+                /*border-top: 1px solid #aaa;
+                background: rgba(0,0,0,0.2);*/
+                -webkit-transition: color .2s ease;
+                -o-transition: color .2s ease;
+                transition: color .2s ease;
+                display: block;
+                height: 36px;
+                line-height: 35px;
+            }
+
+            .rightPannel ul li:hover {
+                background-color: #ffffff;
+            }
+
+
+        .triangleToggle {
+            top: 0px;
+        }
+
+
+        .rightPanneltoggle ul {
+            list-style-type: none;
+        }
+
+            .rightPanneltoggle ul li {
+                padding: 10px;
+                border-bottom: 1px solid #dddddd;
+                font-size: 14px;
+                cursor: pointer;
+                vertical-align: middle;
+                padding: 0px 0px 0px 0px;
+            }
+
+                .rightPanneltoggle ul li span {
+                    vertical-align: middle;
+                    display: inline-block;
+                }
+
+        .rightPanneltoggle > ul {
+            /*border-top: 1px solid #aaa;*/
+        }
+
+            .rightPanneltoggle > ul > li:hover {
+                background-color: rgba(0,0,0,0.1);
+            }
+
+        .rightPanneltoggle ul ul {
+            display: none;
+        }
+
+        .rightPanneltoggle > ul > li > a {
+            vertical-align: middle;
+            padding-left: 8px;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 13px;
+            color: #000;
+            -webkit-transition: color .2s ease;
+            -o-transition: color .2s ease;
+            transition: color .2s ease;
+            display: block;
+            height: 36px;
+            line-height: 35px;
+        }
+
+        .rightPanneltoggle ul ul li:hover {
+            background-color: #ffffff;
+        }
+
+        .rightPanneltoggle {
+            position: fixed;
+            right: 3px;
+            top: 40px;
+            width: 217px;
+            /*height:440px;
+                    max-height:440px;*/
+            height: inherit;
+            z-index: 99;
+            background-color: #f3f3f3;
+            border: 1px solid #000000;
+        }
+
+        .leftPanel ul ul li a:hover {
+            color: #ffffff;
+        }
+
+        .leftPanel ul ul > li.has-sub > a:after {
+            top: 16px;
+            right: 26px;
+            background: #dddddd;
+        }
+
+        .leftPanel ul ul > li.has-sub > a:before {
+            top: 20px;
+            background: #dddddd;
+        }
+
+        /*.leftPanel ul ul > li.has-sub > a-Head:before {
+            left:22px !important;
+        }*/
+
+        #ProfileName {
+            background-color: #949494;
+        }
+
+            #ProfileName a {
+                color: black;
+            }
+
+
+        .search_area {
+            border-bottom: 1px dotted #777;
+            margin-bottom: 5px;
+        }
+
+        ul.first > li {
+            width: 16%;
+        }
+
+            ul.first > li:nth-child(2) {
+                width: 20%;
+            }
+
+            ul.first > li:last-child {
+                width: 16%;
+            }
+
+        ul.second > li {
+            width: 27%;
+        }
+
+            ul.second > li:last-child {
+                width: 19%;
+            }
+
+        #tabbable {
+            padding-left: 3px;
+            padding-top: 5px;
+            padding-bottom: 0px;
+            display: inline-block;
+        }
+
+        .leftPanel ul > li:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .leftPanel ul > li > a {
+            cursor: pointer;
+            z-index: 2;
+            color: #ffffff;
+            border-bottom: 1px solid #aaa;
+        }
+
+        ul, ol {
+            margin-top: 0;
+            margin-bottom: 0px !important;
+            padding: 0;
+        }
+
+        .NotifyEmailPanel li {
+            padding: 9px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 13px;
+            cursor: pointer;
+            vertical-align: middle;
+            max-width: 236px;
+            height: 36px;
+        }
+
+            .NotifyEmailPanel li span {
+                vertical-align: middle;
+                display: inline-block;
+            }
+
+        .NotifyEmailPanel > ul {
+            /*border-top: 1px solid #aaa;*/
+        }
+
+        .NotifyEmailPanel > li:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        #DivEmailConfig > li:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .NotifyEmailPanel ul ul {
+            display: none;
+        }
+
+        .NotifyEmailPanel > li > a {
+            vertical-align: middle;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 13px;
+            color: #000;
+            -webkit-transition: color .2s ease;
+            -o-transition: color .2s ease;
+            transition: color .2s ease;
+        }
+
+        .NotifyEmailPanel ul li a {
+            padding: 5px 22px;
+            z-index: 2;
+            font-size: 13px;
+            text-decoration: none;
+            color: #3a3636;
+            -webkit-transition: color .2s ease;
+            -o-transition: color .2s ease;
+            transition: color .2s ease;
+        }
+
+        .liEmail:hover {
+            background-color: #ffffff;
+        }
+
+        .glyphicon disabled {
+            cursor: not-allowed;
+            color: #bbb;
+        }
+
+        .TotalEmailCount {
+            position: absolute;
+            top: -2px;
+            right: 0;
+            left: auto;
+            width: 15px;
+            height: 15px;
+            font-size: 10px;
+            background: red;
+            border-radius: 50%;
+            text-align: center;
+            color: white;
+        }
+
+        .EmailCount {
+            position: relative;
+            width: 15px;
+            height: 15px;
+            font-size: 10px;
+            color: white;
+            background: #82817e;
+            border-radius: 50%;
+            text-align: center;
+            float: right;
+        }
+
+        .highlight {
+            background-color: #87CEFA !important;
+            color: #000828 !important;
+        }
+
+        li {
+            cursor: pointer;
+        }
+        /* Remove margins and padding from the list */
+        #dropdown ul {
+            margin: 0;
+            padding: 0;
+        }
+
+            /* Style the list items */
+            #dropdown ul li {
+                cursor: pointer;
+                position: relative;
+                padding: 5px 5px 5px 5px;
+                background: #f3f3f3;
+                font-size: 12px;
+                transition: 0.2s;
+            }
+
+            /* Set all odd list items to a different color (zebra-stripes) */
+            #dropdown ul li {
+                background: #f9f9f9;
+            }
+
+                /* Darker background-color on hover */
+                #dropdown ul li:hover {
+                    background: #ddd;
+                }
+
+                /* When clicked on, add a background color and strike out text */
+                #dropdown ul li.checked {
+                    background: #bbb;
+                    color: #fff;
+                }
+
+                    /* Add a "checked" mark when clicked on */
+                    #dropdown ul li.checked::before {
+                        content: '';
+                        position: absolute;
+                        border-color: black;
+                        border-style: solid;
+                        border-width: 0 2px 2px 0;
+                        top: 6px;
+                        left: 16px;
+                        transform: rotate(45deg);
+                        height: 15px;
+                        width: 7px;
+                    }
+
+        .header-nav.tiny {
+            height: 59px !important;
+        }
+
+        .navbar-custom-menu > .navbar-nav > li {
+            position: relative;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-right: 4px;
+        }
+
+        /*.navbar-custom-menu-Head {
+            float: left;
+        }*/
+
+        /*.user-menu-Head {
+            float: right !important;
+        }*/
+
+        .navbar-nav > .user-menu > .dropdown-menu {
+            border-top-right-radius: 0;
+            border-top-left-radius: 0;
+            padding: 1px 0 0 0;
+            border-top-width: 0;
+            width: 280px;
+        }
+
+        /*.pull-left-Head {
+            float: right !important;
+            padding-right: 12px !important;
+        }
+
+        .pull-right-Head {
+            float: left !important;
+        }*/
+
+        /*.leftPanel-Head {
+            background-color: #777;
+            width: 280px;
+            max-height: 100%;
+            bottom: 35px;
+            top: 70px;
+            position: fixed;
+            z-index: 98;
+            box-shadow: 6px 0px 10px rgba(0,0,0,0.3);
+            -moz-box-shadow: 6px 0px 10px rgba(0,0,0,0.3);
+            -webkit-box-shadow: 6px 0px 10px rgba(0,0,0,0.3);
+            transition: all 0.25s linear;
+            -o-transition: all 0.25s linear;
+            -moz-transition: all 0.25s linear;
+            -webkit-transition: all 0.25s linear;
+            left: auto !important;
+            direction: rtl;
+            overflow: auto;
+        }*/
+
+        /*.close-Head {
+            float: left;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            filter: alpha(opacity=20);
+            opacity: .3;
+            padding-left: 28px;
+        }*/
+
+        /*.Reviewclose-Head {
+            position: relative;
+            top: -21px;
+            right: 250px;
+            color: inherit;
+        }*/
+
+        /*.navigation-Head {
+            position: fixed;
+            top: 0;
+            left: auto;
+            right: 0px;
+            width: 74px;
+            height: 100%;
+            font-size: 30px;
+            border-right: 1px solid rgba(0,0,0,0.3);*/
+        /*background: transparent url(../Images/bg-sidemenu.jpg) left top repeat;*/
+        /*z-index: 99;
+            text-align: center;
+        }*/
+
+        /*.header-nav-Head {
+            padding: 8px 90px 0px 8px;
+            width: 100%;
+            height: 70px;
+            position: fixed;
+            top: 0;
+            z-index: 95;
+            background-color: #2b64a5;
+            transition: 500ms;
+        }*/
+
+        /*.container-Head {
+            width: 95%;
+            margin: 0 auto;
+            padding: 10px 80px 55px 0px;
+        }*/
+
+
+        #liLanguage {
+            padding: 9px 9px 9px 9px;
+        }
+    </style>
+    <style>
+        .containerss {
+            max-width: 320px;
+            margin: 0px auto;
+            width: 247px;
+        }
+
+        .slider {
+            border-radius: 3px;
+            overflow: hidden;
+            background-color: #fff;
+            padding: 5px;
+        }
+
+        /*.details,
+        .copyright {
+            color: #fff;
+            font-size: 12px;
+        }
+
+            .details a,
+            .copyright a {
+                text-decoration: none;
+                color: #00a52b;
+            }*/
+
+        .copyright {
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 30px;
+        }
+
+            .copyright a:hover {
+                text-decoration: underline;
+            }
+
+        /*.details {
+            padding-left: 15px;
+            margin-top: 30px;
+        }*/
+        .menu_margin {
+            margin: 0px;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $('.modal').modal({
+                backdrop: 'static',
+                keyboard: false,
+                show: false
+            })
+            $('.showhidetooltip').click(function () {
+                $(".tooltip").stop().fadeIn();
+            }, function () {
+                $(".tooltip").stop().fadeOut();
+            }
+            );
+        });
+
+
+        function RightmenuHide() {
+            //$('.RightPanel').css('right', RightpanelHideCss);
+            $('#sideNavi').show();
+
+        }
+
+        function RightmenuHide1() {
+            $('#collapse_img').hide();
+        }
+
+        function Schedule() {
+            var strWindowFeatures = "location=yes,toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=4000,height=4000";
+            window.open('http://bv/sportsplanner/', '_blank', strWindowFeatures);
+        }
+
+        function DigitalInterim() {
+            var strWindowFeatures = "location=yes,toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=4000,height=4000";
+            window.open('http://localhost:52844/Login/Login', '_blank', strWindowFeatures);
+        }
+        
+    </script>
+</head>
+
+<body>
+    <div class="main_section">
+        <header class="rightsU_header clearfix">
+            <div class="navigation" onclick="RightmenuHide()">
+                <ul>
+                    @*<li class="home_button" title="Home" data-placement="right">
+            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
+        </li>
+        <li class="seperator"></li>*@
+                    @{ if (Menulist != null)
+                        {
+                            string dataPlacement = "right";
+                            if (objMessageKey.LayoutDirection.Equals("RTL"))
+                            {
+                                dataPlacement = "left";
+                            }
+
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForTitle))
+                            {
+                                <li title="@objMessageKey.Titles" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-film add_movie" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Title_List", IsMenu = "Y" })"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForProjectMilestone))
+                            {
+                                <li title="Project Milestone" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-modal-window" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Project_MilestoneList", IsMenu = "Y" })"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAcqDeal))
+                            {
+                                <li title="@objMessageKey.AcquisitionDeals" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-log-in" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Acq_List", IsMenu = "Y" })"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSynDeal))
+                            {
+                                <li title="@objMessageKey.SyndicationDeals" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-log-out" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Syn_List", IsMenu = "Y" })"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusicDeal))
+                            {
+                                <li title="@objMessageKey.MusicDeals" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-headphones" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Music_Deal_List", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForMusicDeal })"></a>
+                                </li>
+                            }
+                            if (Is_Approve == "Yes")
+                            {
+                                <li class="check_button  showhidetooltip menu_margin" onclick="javascript: togglePanelVisibility('pnlApprovalList');" title="@objMessageKey.ApprovalList" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-check" href='#'></a>
+                                    <span id="approvalCount" class="count">0</span>
+                                </li>
+
+                            }
+
+                            @*<li class="seperator"></li>
+                            <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-calendar" href="#"></a>
+                            </li>
+                            <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-phone" href="#"></a>
+                            </li>
+                            <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-tent" href="#"></a>
+                            </li>*@
+
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title) ||
+                              Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
+                            {
+                                <li class="seperator "></li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title))
+                            {
+                                <li title="@objMessageKey.MusicTrack" class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('M','pnlMusic');" data-placement="@dataPlacement">
+                                    @*<a class="glyphicon glyphicon-music btn btn-primary btn-lg" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "List", ControllerName = "Music_Title", IsMenu = "Y" })"></a>*@
+                                    <a class="glyphicon glyphicon-music" href="#"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Hub))
+                            {
+                                <li title="Music Hub" class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('O','pnlMusicHub');" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-play-circle" href="#"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
+                            {
+                                <li title="@objMessageKey.Content" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-copy" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Title_Content", IsMenu = "Y" })"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMasters) ||
+                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports) ||
+                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
+                            {
+                                <li class="seperator "></li>
+                            }
+
+                            @*{
+                    <li title="Digital" data-placement="right">
+                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
+                    </li>
+                }*@
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
+                            {
+                                <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('G','pnlAvail');" title="@objMessageKey.Availability" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-font" href="#"></a>
+                                </li>
+                            }
+
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMasters))
+                            {
+                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('A','pnlMasters');" title="@objMessageKey.Master" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-book" href="#"></a>
+                                </li>
+                            }
+                            @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGlossary))
+                {
+                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
+                       <a class="glyphicon glyphicon-tasks" href="#"></a>
+                   </li>
+                }*@
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports))
+                            {
+                                <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('E','pnlReports');" title="@objMessageKey.Reports" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-list-alt" href="#"></a>
+                                </li>
+                            }
+
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application) ||
+                                Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
+                            {
+                                <li class="seperator"></li>
+                            }
+                            @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForUploads))
+                {
+                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
+                        <a class="glyphicon glyphicon-open" href="#"></a>
+                    </li>
+                }*@
+
+
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application))
+                            {
+                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('C','pnlIPR');" title="@objMessageKey.IPR" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-registration-mark" href="#"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
+                            {
+                                <li onclick="javascript: loadNavMenu('D','pnlSettings');" title="@objMessageKey.Settings" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-cog" href="#"></a>
+                                </li>
+                            }
+                        }
+                    }
+                    @*<li title="Log Out" data-placement="right">
+            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
+        </li>*@
+                </ul>
+            </div>
+            <div class="header-nav ">
+                <div class="site_logo pull-left">
+                    <nav class="navbar navbar-static-top" role="navigation">
+                        <a href="@Url.Action("Main", "Base")">
+                            <img alt="Site-Logo" src="@Url.Content("~/Images/logo-rights.png")" />
+                        </a>
+                        <span class="tag_line">@objMessageKey.RightsManagementSystem</span>
+                    </nav>
+                </div>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <!-- Client company Name -->
+                        <li class="dropdown user user-menu">
+                            <span class="headerDetails" id="lblEntityName">
+                                <label>@objLoginUser.DefaultEntityName</label>
+                            </span>
+                        </li>
+                        @*<li data-placement="left" id="Email-Head-Icon">
+                                                     <label class="glyphicon glyphicon-bell" id="NotifyEmail"></label>
+                                                     @if (count > 99)
+                                                     {
+                                                         <span class="TotalEmailCount" id="TotalEmailCount">99+</span>
+                                                     }
+                                                     else
+                                                     {
+                                                         <span class="TotalEmailCount" id="TotalEmailCount">@count</span>
+                                                     }
+                                                     <input type="hidden" id="hdnTotalEmailCount" value="@count" />
+                                                     <ul id="EmailPanel" class="NotifyEmailPanel" style="display: none;">
+                                                         <li class="emailPNL">
+                                                             <span class="bold">Notifications</span>
+                                                         </li>
+                                                         @{ List<Email_Config> lstEmailConfig = new Email_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>
+                            x.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y")
+                            .OrderBy(x => x.Email_Type).ToList();
+                                                             List<Email_Notification_Log> lstEmail_Notification_Log = (List<Email_Notification_Log>)Session["lstEmail_Notification_Log"];
+
+                                                             var EmailConfig = new List<Email_Config>();
+
+                                                             foreach (Email_Config objEmail in lstEmailConfig)
+                                                             {
+                                                                 objEmail.TotalCount = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName)
+                                                                     .SearchFor(x => x.User_Code == objLoginUser.Users_Code
+                                                                     && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
+                                                                     //&& x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
+                                                                     )
+                                                                     .Count();
+                                                                 objEmail.Count = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N"
+                                                                 && x.User_Code == objLoginUser.Users_Code && string.IsNullOrEmpty(x.Email_Body) == false
+                                                                 && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
+                                                                 //&& x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
+                                                                 )
+                                                                 .Count();
+                                                             }
+                                                             EmailConfig = lstEmailConfig;
+                                                         }
+
+                                                         @{int NoNotiCount = 0;}
+                                                         <div id="DivEmailConfig">
+
+                                                             @foreach (Email_Config item in EmailConfig)
+                                                             {
+                                                                 if (item.TotalCount > 0)
+                                                                 {
+                                                                     NoNotiCount = 1;
+                                                                     <li class="liEmail" onclick="EmailPopup('@item.Email_Config_Code','@item.Email_Type','@item.Count');">
+                                                                         <a href="#">@item.Email_Type</a>
+                                                                         <span class="EmailCount" title="Unseen Message" id="TotalECount_@item.Email_Config_Code">@item.Count</span>
+                                                                     </li>
+                                                                 }
+                                                             }
+
+                                                             @if (NoNotiCount == 0)
+                                                             {
+                                                                 <li>
+                                                                     <span>No new notifications</span>
+                                                                 </li>
+                                                             }
+                                                         </div>
+                                                         @if (NoNotiCount > 0)
+                                                         {
+                                                             <li class="emailPNL" style="text-align:center">
+                                                                 <a id="MarkAsRead" onclick="MarkAllRead()">Mark all as Read</a>
+                                                             </li>
+                                                         }
+                                                     </ul>
+                                                 </li>*@
+
+                        <li data-placement="left" id="User-Head-Icon">
+                            <label class="glyphicon glyphicon-user2" id="collapse1"></label>
+                            <div class="slider containerss rightPannel" id="pannel" style="display: none; ">
+                                <ul class="my-menu">
+                                    @using (Html.BeginForm("ViewProfile", "User", FormMethod.Post, new { id = "viewProfile" }))
+                                    {
+                                        <li style="height: 85px;">
+                                            <input type="hidden" name="userCode" id="userCode" value="@objLoginUser.Users_Code" />
+                                            @if (!string.IsNullOrEmpty(objLoginUser.User_Image))
+                                            {
+                                                <a href="#" onclick="ViewProfile();" style="height: 85px;">
+                                                    <img src="@Url.Content(System.Configuration.ConfigurationManager.AppSettings["TitleImagePath"] + objLoginUser.User_Image)" style="width:80px;" id="collapse_img" onerror="RightmenuHide1()" class="img-circle username" />
+                                                    @objLoginUser.First_Name  @objLoginUser.Last_Name.Substring(0, 1) <label class="username" id="lblProfileName"></label>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="#" onclick="ViewProfile();" style="height: 85px;">
+                                                    <img src="@Url.Content(System.Configuration.ConfigurationManager.AppSettings["TitleImagePath"] + "User-Image.jpg")" style="width:80px;" id="collapse_img" onerror="RightmenuHide1()" class="img-circle username" />
+                                                    @objLoginUser.First_Name  @objLoginUser.Last_Name.Substring(0, 1) <label class="username" id="lblProfileName"></label>
+                                                </a>
+                                            }
+                                        </li>
+                                    }
+
+                                    @if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGlossary))
+                                    {
+                                        <li data-vertical="true">
+                                            <a href="#"><span style="height: 36px;line-height: 35px;" class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Glossary</a>
+                                            <ul style="margin: auto;">
+                                                <li><a href="@Url.Action("ShowPlatforms", "Glossary", new { @modulecode = 143 })" style="display: block;"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;Show All Platforms</a></li>
+                                                <li><a href="@Url.Action("ReportsUsage", "Glossary", new { @modulecode = 145 })" style="display: block;"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;&nbsp;Reports & Usage</a></li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    @{
+                                        var paramValue = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Is_Allow_Multilanguage").Select(x => x.Parameter_Value).SingleOrDefault();
+                                        ViewBag.parmValue = paramValue;
+
+                                        List<System_Language> lstSystemLanguage = new System_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList();
+                                        int systemLanguageCode = (lstSystemLanguage.Where(w => w.Is_Default == "Y").First() ?? new System_Language()).System_Language_Code;
+                                        systemLanguageCode = (objLoginUser.System_Language_Code ?? systemLanguageCode);
+                                        ViewBag.Language = new SelectList(lstSystemLanguage, "System_Language_Code", "Language_Name", systemLanguageCode);
+                                    }
+                                    @if (paramValue == "Y")
+                                    {
+                                        <li>
+                                            <a href="#"> <span class="glyphicon glyphicon-exclamation-sign"></span> Language</a>
+                                            <ul style="margin: auto;height: 300px;">
+                                                <div id="slimscroll">
+                                                    @foreach (System_Language item in lstSystemLanguage)
+                                                    {
+                                                        if (objLoginUser.System_Language_Code != item.System_Language_Code)
+                                                        {
+                                                            <li onclick="ChangeLayoutDirection($(this));">
+                                                                <a href="#">
+                                                                    <span>@item.Language_Name</span>
+                                                                    <span class="item-code" style="display:none">@item.System_Language_Code</span>
+                                                                    <span class="layout-direction" style="display:none">@item.Layout_Direction</span>
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li><a href="#"><span>@item.Language_Name</span></a></li>
+                                                        }
+                                                    }
+                                                </div>
+                                            </ul>
+                                        </li>
+                                    }
+                                    @if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForFAQ))
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("FAQ", "Glossary", new { @modulecode = 146 })" style="display: block;"><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;&nbsp;FAQ</a>
+                                        </li>
+                                    }
+                                    @if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContactInfo))
+                                    {
+                                        <li>
+
+                                            <a href="@Url.Action("ContactInfo", "Glossary", new { @modulecode = 147 })" style="display: block;"><span class="glyphicon glyphicon-phone"></span>&nbsp;&nbsp;Contact Info</a>
+                                        </li>
+                                    }
+                                    @if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAskanExpert))
+                                    {
+                                        <li><a href="@Url.Action("AskExpert", "Glossary", new { @modulecode = 148 })" style="display: block;"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;&nbsp;Ask an Expert</a></li>
+                                    }
+                                    <li><a href="@Url.Action("Index", "Login", new { isReset = "Y" })" style="display: block;"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;Logout</a></li>
+                                </ul><!-- .my-menu -->
+                            </div><!-- .slider -->
+                        <li style="padding-top:0px!important">
+                            <img class="clientLogo" alt="Client Logo" src="~/Logo/@objLoginUser.DefaultEntityLogoName" style="padding-left:10px;" />
+                        </li>
+                    </ul>
+                </div>
+                @*<div class="ChangedDirection">
+                        @{
+                            string btnVal = (MessageKey.LayoutDirection == "RTL") ? "LTR" : "RTL";
+                        }
+                        <input type="button" class="btn-direction" value="@btnVal" onclick="ChangeLayoutDirection(this)" />
+                    </div>*@
+            </div>
+
+
+        </header>
+
+
+
+        <div id="dropdown" class="shadow" style="display:none;">
+            <ul style="text-align:center;" id="ulLanguage">
+                @*<li value="H">Hindi</li>
+                    <li value="LTR" onclick="ChangeLayoutDirection(this)">English</li>
+                    <li value="RTL" onclick="ChangeLayoutDirection(this)">Arabic</li>
+                    <li value="H">Hindi</li>
+                    <li value="LTR" onclick="ChangeLayoutDirection(this)">English</li>
+                    <li value="RTL" onclick="ChangeLayoutDirection(this)">Arabic</li>*@
+                @foreach (System_Language item in lstSystemLanguage)
+                {
+                    if (objLoginUser.System_Language_Code != item.System_Language_Code)
+                    {
+                        <li onclick="ChangeLayoutDirection($(this));">
+                            <span>@item.Language_Name</span>
+                            <span class="item-code" style="display:none">@item.System_Language_Code</span>
+                            <span class="layout-direction" style="display:none">@item.Layout_Direction</span>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <span>@item.Language_Name</span>
+                        </li>
+                    }
+                }
+            </ul>
+
+        </div>
+        <section class="rightsU_container clearfix">
+            <div class="leftPanel" id="pnlApprovalList">
+                <h4>For Review</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible=true;togglePanelVisibility('pnlApprovalList');">
+                    <span class="Reviewclose">x</span>
+                </a>
+                <div style="padding-left: 11px; padding-top: 14px;">
+                    <input type="text" name="srchCommonAppr" id="srchCommonAppr" style="width: 95%; font-size: 12px;" class="search" placeholder="Search by Title, Deal No., Licensee, Licensor" onkeyup="searchApproveList();" />
+                </div>
+
+                <div class="navigation_tabs">
+                    <div id="tabbable">
+                        <ul class="navLeft nav-tabsLeft nav-tabLeft pull-left">
+                            @if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAcqDeal))
+                            {
+                                <li class="active" id="liAcq">
+                                    <a data-toggle="tab" href="#tabAcquisition" onclick="bindApprovalList('A')" role="tab">Acquisition</a>
+                                </li>
+                            }
+                            @if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusicDeal))
+                            {
+                                <li class="" id="liMusic">
+                                    <a data-toggle="tab" href="#tabAcquisition" onclick="bindApprovalList('M')" role="tab">Music</a>
+                                </li>
+                            }
+                            @if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSynDeal))
+                            {
+                                <li id="liSyn">
+                                    <a data-toggle="tab" href="#tabSyndication" onclick="bindApprovalList('S')" role="tab">Syndication</a>
+                                </li>
+                            }
+                            <li id="liBoth">
+                                <a data-toggle="tab" href="#tabBoth" onclick="bindApprovalList('B')" role="tab">All</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content clearfix  scale_table_container" style="padding: 2px !important">
+                            <div class="tab-pane active" id="tabAcquisition">
+                                <ul id="review" class="forReview"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="leftPanel" id="pnlAvail"></div>
+            <div class="leftPanel" id="pnlMasters"></div>
+            <div class="leftPanel" id="pnlAmort"></div>
+            <div class="leftPanel" id="pnlMusic"></div>
+            <div class="leftPanel" id="pnlMusicHub"></div>
+            <div class="leftPanel" id="pnlGlossary"></div>
+            <div class="leftPanel" id="pnlReports"></div>
+            <div class="leftPanel" id="pnlUploads"></div>
+            <div class="leftPanel" id="pnlSettings">
+            </div>
+            <div class="leftPanel" id="pnlIPR"></div>
+
+            @if (CurrentController != "Login_" && CurrentController != "Base")
+            {
+                <div>
+                    @RenderBody()
+                </div>
+            }
+            else if (CurrentController == "Base")
+            {
+                if (ViewBag.DashBoardVissible != null && ViewBag.DashBoardVissible == "T")
+                {
+                    @RenderBody()
+                }
+                else
+                {
+                    <h2 class="welcomeText">Welcome</h2>
+                    <div class="container main_col">
+                    </div>
+                }
+            }
+            else
+            {
+                <h2 class="welcomeText">Welcome</h2>
+                <div class="container main_col">
+                </div>
+            }
+        </section>
+    </div>
+    <footer class="rightsU_footer clearfix">
+        <div class="footer_content pull-right">
+            <ul class="nav nav-pills pull-left">
+                <li class="footer_link">
+                    <a href="http://uto.in/RightsUNew.aspx" target="_blank">Product of U-TO Solutions</a>
+                </li>
+                @*<li class="footer_link">
+                        <a href="http://uto.in/reachUs.aspx" target="_blank">Contact Us</a>
+                    </li>*@
+                <li>&nbsp;Version No: <span>@objSysVersion.Version_No</span> | Last Modified On:   <span>@Convert.ToDateTime(objSysVersion.Version_Published_Date).ToString("dddd, MMMM dd,yyyy hh:mm tt")</span></li>
+
+            </ul>
+            <div class="footer_logo pull-right">
+            </div>
+            @*<div class="footer_logo pull-right">
+                    <img alt="Site-Logo" src="@Url.Content("~/Images/logo-rights.png")" />
+                </div>*@
+        </div>
+    </footer>
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup in" id="popNotification" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div><span class="glyphicon glyphicon-chevron-left"></span></div>
+            <div class="modal-content clearfix" id="PopEmailNotify">
+                <form class="form" id="movie_popup">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="updateCount()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <span id="Email_Type" style="font-size: 1.7em;font-family: Oswald,Segoe;font-weight: 500;margin: inherit;"> </span>
+                            @*&nbsp;[<span title="UnSeen" id="unseenCount"></span>]*@
+                            &nbsp;<span style="font-size:18px" class="openbracket">[</span><span title="UnSeen" style="font-size:18px" id="unseenCount"></span><span class="openbracket" style="font-size:18px">]</span>
+                        </div>
+                        <div class="modal_block" id="divEmail"></div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li class="pull-left">
+                                        @*<input type="button" title="Previous" id="btnPrev" value="<<" onclick="showPrevious()" />*@
+                                        <a class="btn btn-primary" href="#" id="btnPrev" onclick="showPrevious()">Previous</a>
+                                    </li>
+                                    <b>
+                                        <li style="position:relative; left:38%!important; vertical-align:middle">
+                                            <span id="SeenEmailCount"></span> of <span id="TotalEmailLogCount"></span>
+                                        </li>
+                                    </b>
+                                    <li class="pull-right">
+                                        @*<input type="button" title="Next" id="btnNext" value=">>" onclick="showNext()" />*@
+                                        <a class="btn btn-primary" href="#" id="btnNext" onclick="showNext()">Next</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </div>
+    </div>
+    <input type="hidden" id="hdnSelectedEmail" />
+    <input type="hidden" id="hdnSeenCount" />
+    <input type="hidden" id="hdnCurrNoti" />
+    <input type="hidden" id="hdnSeenEmailCount" />
+</body>
+</html>
+<script>
+    function showPrevious() {
+        var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
+        var oldDiv = $('#hdnDiv').val();
+        var num = parseInt($('#hdnDiv').val().split('_')[1]);
+        var hdnSeenId = $('#hdnSeenId_' + num).val();
+        num -= 1;
+        var currid = 'div_' + num;
+
+        if ($('#hdnSelectedEmail').val() != "")
+            $('#hdnSelectedEmail').val($('#hdnSelectedEmail').val() + ',' + hdnSeenId);
+        else
+            $('#hdnSelectedEmail').val(hdnSeenId);
+
+        if ($('#' + currid).val() != undefined) {
+            $('#' + currid).attr('style', 'display:block')
+            $('#hdnDiv').val(currid)
+            document.getElementById('SeenEmailCount').innerHTML = parseInt($('#hdnSeenEmailCount').val()) - 1;
+            $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+        }
+        else {
+            var hdnNoOfGrid = parseInt($("#hdnNoOfGrid").val());
+            $('#div_' + hdnNoOfGrid).attr('style', 'display:block')
+            $('#hdnDiv').val('div_' + hdnNoOfGrid)
+            num = $('#hdnNoOfGrid').val();
+            document.getElementById('SeenEmailCount').innerHTML = parseInt($('#FirstTotalCount').val());
+            $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+        }
+        if ($('#hdnSeen_' + num).val() == 'N') {
+            $('#hdnSeen_' + num).val('Y');
+            if (unseenCount != 0) {
+                unseenCount -= 1;
+                document.getElementById('unseenCount').innerHTML = unseenCount;
+                var hdnCount = parseInt($('#hdnCount').val());
+                var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
+                $('#hdnSeenCount').val(hdnCount - unseenCount);
+            }
+        }
+        $('#' + oldDiv).attr('style', 'display:none')
+    }
+    function showNext() {
+        var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
+        var oldDiv = $('#hdnDiv').val();
+        var num = parseInt($('#hdnDiv').val().split('_')[1]);
+        var hdnSeenId = $('#hdnSeenId_' + num).val();
+        num += 1;
+        var currid = 'div_' + num;
+        if ($('#hdnSelectedEmail').val() != "")
+            $('#hdnSelectedEmail').val($('#hdnSelectedEmail').val() + ',' + hdnSeenId);
+        else
+            $('#hdnSelectedEmail').val(hdnSeenId);
+        if ($('#hdnSeen_' + num).val() == 'N') {
+            $('#hdnSeen_' + num).val('Y');
+
+            if (unseenCount != 0) {
+                unseenCount -= 1;
+                document.getElementById('unseenCount').innerHTML = unseenCount;
+                var hdnCount = parseInt($('#hdnCount').val());
+                var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
+                $('#hdnSeenCount').val(hdnCount - unseenCount);
+                //if($('#TotalEmailLogCount').val() == $('#hdnCount').val())
+                //{
+                //    document.getElementById('SeenEmailCount').innerHTML=1;
+                //}
+                //else{
+                //    document.getElementById('SeenEmailCount').innerHTML =  parseInt($('#hdnSeenEmailCount').val()) + 1;
+                //    $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+                //}
+            }
+        }
+        if ($('#' + currid).val() != undefined) {
+            $('#' + currid).attr('style', 'display:block')
+            $('#hdnDiv').val(currid)
+            document.getElementById('SeenEmailCount').innerHTML = parseInt($('#hdnSeenEmailCount').val()) + 1;
+            $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+        }
+        else {
+            $('#div_1').attr('style', 'display:block')
+            $('#hdnDiv').val('div_1')
+            document.getElementById('SeenEmailCount').innerHTML = 1;
+            $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+        }
+        $('#' + oldDiv).attr('style', 'display:none')
+    }
+    function EmailPopup(Email_Type_Code, Email_Type, Count) {
+        $('#hdnSelectedEmail').val('');
+        $('#hdnCurrNoti').val(Email_Type_Code);
+        $('#hdnSeenCount').val('0')
+        var unseenCount = parseInt(Count) - 1;
+        //document.getElementById('unseenCount').innerHTML=unseenCount;
+        document.getElementById('Email_Type').innerHTML = Email_Type + ' Notifications';
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Show_Email_Popup", "Base")',
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Email_Type_Code: Email_Type_Code
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $("#divEmail").html(result);
+                if ($('#hdnSeen_1').val() == 'N') {
+                    document.getElementById('unseenCount').innerHTML = parseInt($("#hdnCount").val()) - 1;
+                    document.getElementById('TotalEmailLogCount').innerHTML = parseInt($("#FirstTotalCount").val());
+                    document.getElementById('SeenEmailCount').innerHTML = 1;
+                    $('#hdnSeenEmailCount').val(1);
+
+                }
+                else {
+                    document.getElementById('unseenCount').innerHTML = $("#hdnCount").val();
+                    document.getElementById('TotalEmailLogCount').innerHTML = parseInt($("#FirstTotalCount").val());
+                    document.getElementById('SeenEmailCount').innerHTML = 1;
+                    $('#hdnSeenEmailCount').val(1);
+                }
+            },
+            error: function (x, e) {
+            }
+        });
+        $('#popNotification').modal();
+        initializeChosen();
+        //setChosenWidth('#lbSearchTitles', '500px');
+        initializeExpander();
+    }
+    function updateCount() {
+        debugger
+        var TotalCounttt = 0;
+        var greaterEmailCount = 0;
+        var num = parseInt($('#hdnDiv').val().split('_')[1]);
+        var hdnSeenId = $('#hdnSeenId_' + num).val();
+        $('#hdnSelectedEmail').val($('#hdnSelectedEmail').val() + ',' + hdnSeenId);
+        var TotalECountId = 'TotalECount_' + $('#hdnCurrNoti').val()
+        var TotalECount = parseInt(document.getElementById(TotalECountId).innerHTML);
+        if ($('#hdnSeen_' + num).val() == 'N' && num == 1)
+            $('#hdnSeenCount').val('1')
+        if (!($('#hdnSeen_' + num).val() == 'Y' && num == 1)) {
+            if (TotalECount != 0)
+                document.getElementById(TotalECountId).innerHTML = TotalECount - parseInt($('#hdnSeenCount').val());
+
+            var TotalEmailCount = parseInt(document.getElementById('TotalEmailCount').innerHTML);
+            if (TotalEmailCount != 0) {
+                if ($('#hdnTotalEmailCount').val() <= 99) {
+                    TotalCounttt = TotalEmailCount - parseInt($('#hdnSeenCount').val());
+                }
+                else {
+                    greaterEmailCount = parseInt($('#hdnTotalEmailCount').val()) - parseInt($('#hdnSeenCount').val());
+                }
+                if (greaterEmailCount > 99) {
+                    document.getElementById('TotalEmailCount').innerHTML = '99+';
+                    $('#hdnTotalEmailCount').val(parseInt($('#hdnTotalEmailCount').val()) - parseInt($('#hdnSeenCount').val()))
+                }
+                else if (greaterEmailCount < 99 && greaterEmailCount != 0) {
+                    document.getElementById('TotalEmailCount').innerHTML = TotalEmailCount - parseInt($('#hdnSeenCount').val());
+                }
+                else if (TotalCounttt > 0) {
+                    document.getElementById('TotalEmailCount').innerHTML = TotalEmailCount - parseInt($('#hdnSeenCount').val());
+                }
+                else {
+                    //document.getElementById("TotalEmailCount").style.display='none';
+                    document.getElementById("TotalEmailCount").innerHTML = parseInt(0);
+                }
+
+            }
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("updateSeenNotification", "Base")',
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Email_Log_Codes: $('#hdnSelectedEmail').val()
+            }),
+            success: function (result) {
+
+            },
+            error: function (x, e) {
+            }
+        });
+    }
+    function MarkAllRead() {
+        var markCount = parseInt(document.getElementById("TotalEmailCount").innerHTML);
+        if (markCount != 0) {
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("MarkAllRead", "Base")',
+                async: true,
+                data: JSON.stringify({
+                }),
+                success: function (result) {
+                    var outputs = document.querySelectorAll("span.EmailCount");
+                    for (var i = 0; i < outputs.length; ++i) {
+                        outputs[i].textContent = 0;
+                    }
+                    document.getElementById("TotalEmailCount").innerHTML = parseInt(0);
+                    $('#hdnTotalEmailCount').val(0);
+                    // document.getElementById("TotalEmailCount").style.display='none';
+                    //showAlert("S","All Notifications are mark as read","");
+                },
+                error: function (x, e) {
+                }
+            });
+        }
+        //else{
+        //    showAlert("E","No new notifications to read","");
+        //}
+
+    }
+</script>
+<script>
+    (function ($) {
+        $(function () {
+            debugger;
+            $('.my-menu').sliderMenu();
+            //$('.liEmail').sliderMenu();
+        });
+    })(jQuery);
+</script>
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36251023-1']);
+    _gaq.push(['_setDomainName', 'jqueryscript.net']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+</script>
+<style>
+    .slimScrollDiv {
+        border: 1px solid #eee;
+        /*max-height:250px;*/
+    }
+
+    .slimScrollDiv1 {
+        border: 1px solid #eee;
+        /*max-height:250px;*/
+    }
+
+    #nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #fff;
+        padding: 15px;
+        border-radius: 20px;
+        width: 200px;
+    }
+
+        #nav ul {
+            list-style-type: square;
+            list-style-position: inside;
+            margin: 20px 0 0 0;
+            padding: 0;
+        }
+
+        #nav a {
+            text-decoration: none;
+            color: #000;
+        }
+
+            #nav a:hover {
+                text-decoration: underline;
+            }
+
+    #git-fork img {
+        position: fixed;
+        top: 0;
+        right: 0;
+        border: 0;
+        z-index: 999;
+    }
+</style>
+<script>
+
+    (function ($) {
+
+        $.fn.extend({
+            slimScroll: function (options) {
+                if (LayoutDirection_G == "RTL") {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'left',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+                else {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        height: '250px',
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'right',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+
+                var o = $.extend(defaults, options);
+
+                // do it for every element that matches selector
+                this.each(function () {
+
+                    var isOverPanel, isOverBar, isDragg, queueHide, touchDif,
+                        barHeight, percentScroll, lastScroll,
+                        divS = '<div></div>',
+                        minBarHeight = 30,
+                        releaseScroll = false;
+
+                    // used in event handlers and for better minification
+                    var me = $(this);
+
+                    // ensure we are not binding it again
+                    if (me.parent().hasClass(o.wrapperClass)) {
+                        // start from last bar position
+                        var offset = me.scrollTop();
+
+                        // find bar and rail
+                        bar = me.siblings('.' + o.barClass);
+                        rail = me.siblings('.' + o.railClass);
+
+                        getBarHeight();
+
+                        // check if we should scroll existing instance
+                        if ($.isPlainObject(options)) {
+                            // Pass height: auto to an existing slimscroll object to force a resize after contents have changed
+                            if ('height' in options && options.height == 'auto') {
+                                me.parent().css('height', 'auto');
+                                me.css('height', 'auto');
+                                var height = me.parent().parent().height();
+                                me.parent().css('height', height);
+                                me.css('height', height);
+                            } else if ('height' in options) {
+                                var h = options.height;
+                                me.parent().css('height', h);
+                                me.css('height', h);
+                            }
+
+                            if ('scrollTo' in options) {
+                                // jump to a static point
+                                offset = parseInt(o.scrollTo);
+                            }
+                            else if ('scrollBy' in options) {
+                                // jump by value pixels
+                                offset += parseInt(o.scrollBy);
+                            }
+                            else if ('destroy' in options) {
+                                // remove slimscroll elements
+                                bar.remove();
+                                rail.remove();
+                                me.unwrap();
+                                return;
+                            }
+
+                            // scroll content by the given offset
+                            scrollContent(offset, false, true);
+                        }
+
+                        return;
+                    }
+                    else if ($.isPlainObject(options)) {
+                        if ('destroy' in options) {
+                            return;
+                        }
+                    }
+
+                    // optionally set height to the parent's height
+                    o.height = (o.height == 'auto') ? me.parent().height() : o.height;
+
+                    // wrap content
+                    var wrapper = $(divS)
+                        .addClass(o.wrapperClass)
+                        .css({
+                            position: 'relative',
+                            overflow: 'hidden',
+                            width: o.width,
+                            height: o.height
+                        });
+
+                    // update style for the div
+                    me.css({
+                        overflow: 'hidden',
+                        width: o.width,
+                        height: o.height
+                    });
+
+                    // create scrollbar rail
+                    var rail = $(divS)
+                        .addClass(o.railClass)
+                        .css({
+                            width: o.size,
+                            height: '100%',
+                            position: 'absolute',
+                            top: 0,
+                            display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
+                            'border-radius': o.railBorderRadius,
+                            background: o.railColor,
+                            opacity: o.railOpacity,
+                            zIndex: 90
+                        });
+
+                    // create scrollbar
+                    var bar = $(divS)
+                        .addClass(o.barClass)
+                        .css({
+                            background: o.color,
+                            width: o.size,
+                            position: 'absolute',
+                            top: 0,
+                            opacity: o.opacity,
+                            display: o.alwaysVisible ? 'block' : 'none',
+                            'border-radius': o.borderRadius,
+                            BorderRadius: o.borderRadius,
+                            MozBorderRadius: o.borderRadius,
+                            WebkitBorderRadius: o.borderRadius,
+                            zIndex: 99
+                        });
+
+                    // set position
+                    var posCss = (o.position == 'right') ? { right: o.distance } : { left: o.distance };
+                    rail.css(posCss);
+                    bar.css(posCss);
+
+                    // wrap it
+                    me.wrap(wrapper);
+
+                    // append to parent div
+                    me.parent().append(bar);
+                    me.parent().append(rail);
+
+                    // make it draggable and no longer dependent on the jqueryUI
+                    if (o.railDraggable) {
+                        bar.bind("mousedown", function (e) {
+                            var $doc = $(document);
+                            isDragg = true;
+                            t = parseFloat(bar.css('top'));
+                            pageY = e.pageY;
+
+                            $doc.bind("mousemove.slimscroll", function (e) {
+                                currTop = t + e.pageY - pageY;
+                                bar.css('top', currTop);
+                                scrollContent(0, bar.position().top, false);// scroll content
+                            });
+
+                            $doc.bind("mouseup.slimscroll", function (e) {
+                                isDragg = false; hideBar();
+                                $doc.unbind('.slimscroll');
+                            });
+                            return false;
+                        }).bind("selectstart.slimscroll", function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            return false;
+                        });
+                    }
+
+                    // on rail over
+                    rail.hover(function () {
+                        showBar();
+                    }, function () {
+                        hideBar();
+                    });
+
+                    // on bar over
+                    bar.hover(function () {
+                        isOverBar = true;
+                    }, function () {
+                        isOverBar = false;
+                    });
+
+                    // show on parent mouseover
+                    me.hover(function () {
+                        isOverPanel = true;
+                        showBar();
+                        hideBar();
+                    }, function () {
+                        isOverPanel = false;
+                        hideBar();
+                    });
+
+                    // support for mobile
+                    me.bind('touchstart', function (e, b) {
+                        if (e.originalEvent.touches.length) {
+                            // record where touch started
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    me.bind('touchmove', function (e) {
+                        // prevent scrolling the page if necessary
+                        if (!releaseScroll) {
+                            e.originalEvent.preventDefault();
+                        }
+                        if (e.originalEvent.touches.length) {
+                            // see how far user swiped
+                            var diff = (touchDif - e.originalEvent.touches[0].pageY) / o.touchScrollStep;
+                            // scroll content
+                            scrollContent(diff, true);
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    // set up initial height
+                    getBarHeight();
+
+                    // check start position
+                    if (o.start === 'bottom') {
+                        // scroll content to bottom
+                        bar.css({ top: me.outerHeight() - bar.outerHeight() });
+                        scrollContent(0, true);
+                    }
+                    else if (o.start !== 'top') {
+                        // assume jQuery selector
+                        scrollContent($(o.start).position().top, null, true);
+
+                        // make sure bar stays hidden
+                        if (!o.alwaysVisible) { bar.hide(); }
+                    }
+
+                    // attach scroll events
+                    attachWheel(this);
+
+                    function _onWheel(e) {
+                        // use mouse wheel only when mouse is over
+                        if (!isOverPanel) { return; }
+
+                        var e = e || window.event;
+
+                        var delta = 0;
+                        if (e.wheelDelta) { delta = -e.wheelDelta / 120; }
+                        if (e.detail) { delta = e.detail / 3; }
+
+                        var target = e.target || e.srcTarget || e.srcElement;
+                        if ($(target).closest('.' + o.wrapperClass).is(me.parent())) {
+                            // scroll content
+                            scrollContent(delta, true);
+                        }
+
+                        // stop window scroll
+                        if (e.preventDefault && !releaseScroll) { e.preventDefault(); }
+                        if (!releaseScroll) { e.returnValue = false; }
+                    }
+
+                    function scrollContent(y, isWheel, isJump) {
+                        releaseScroll = false;
+                        var delta = y;
+                        var maxTop = me.outerHeight() - bar.outerHeight();
+
+                        if (isWheel) {
+                            // move bar with mouse wheel
+                            delta = parseInt(bar.css('top')) + y * parseInt(o.wheelStep) / 100 * bar.outerHeight();
+
+                            // move bar, make sure it doesn't go out
+                            delta = Math.min(Math.max(delta, 0), maxTop);
+
+                            // if scrolling down, make sure a fractional change to the
+                            // scroll position isn't rounded away when the scrollbar's CSS is set
+                            // this flooring of delta would happened automatically when
+                            // bar.css is set below, but we floor here for clarity
+                            delta = (y > 0) ? Math.ceil(delta) : Math.floor(delta);
+
+                            // scroll the scrollbar
+                            bar.css({ top: delta + 'px' });
+                        }
+
+                        // calculate actual scroll amount
+                        percentScroll = parseInt(bar.css('top')) / (me.outerHeight() - bar.outerHeight());
+                        delta = percentScroll * (me[0].scrollHeight - me.outerHeight());
+
+                        if (isJump) {
+                            delta = y;
+                            var offsetTop = delta / me[0].scrollHeight * me.outerHeight();
+                            offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);
+                            bar.css({ top: offsetTop + 'px' });
+                        }
+
+                        // scroll content
+                        me.scrollTop(delta);
+
+                        // fire scrolling event
+                        me.trigger('slimscrolling', ~~delta);
+
+                        // ensure bar is visible
+                        showBar();
+
+                        // trigger hide when scroll is stopped
+                        hideBar();
+                    }
+
+                    function attachWheel(target) {
+                        if (window.addEventListener) {
+                            target.addEventListener('DOMMouseScroll', _onWheel, false);
+                            target.addEventListener('mousewheel', _onWheel, false);
+                        }
+                        else {
+                            document.attachEvent("onmousewheel", _onWheel)
+                        }
+                    }
+
+                    function getBarHeight() {
+                        // calculate scrollbar height and make sure it is not too small
+                        barHeight = Math.max((me.outerHeight() / me[0].scrollHeight) * me.outerHeight(), minBarHeight);
+                        bar.css({ height: barHeight + 'px' });
+
+                        // hide scrollbar if content is not long enough
+                        var display = barHeight == me.outerHeight() ? 'none' : 'block';
+                        bar.css({ display: display });
+                    }
+
+                    function showBar() {
+                        // recalculate bar height
+                        getBarHeight();
+                        clearTimeout(queueHide);
+
+                        // when bar reached top or bottom
+                        if (percentScroll == ~~percentScroll) {
+                            //release wheel
+                            releaseScroll = o.allowPageScroll;
+
+                            // publish approporiate event
+                            if (lastScroll != percentScroll) {
+                                var msg = (~~percentScroll == 0) ? 'top' : 'bottom';
+                                me.trigger('slimscroll', msg);
+                            }
+                        }
+                        else {
+                            releaseScroll = false;
+                        }
+                        lastScroll = percentScroll;
+
+                        // show only when required
+                        if (barHeight >= me.outerHeight()) {
+                            //allow window scroll
+                            releaseScroll = true;
+                            return;
+                        }
+                        bar.stop(true, true).fadeIn('fast');
+                        if (o.railVisible) { rail.stop(true, true).fadeIn('fast'); }
+                    }
+
+                    function hideBar() {
+                        // only hide when options allow it
+                        if (!o.alwaysVisible) {
+                            queueHide = setTimeout(function () {
+                                if (!(o.disableFadeOut && isOverPanel) && !isOverBar && !isDragg) {
+                                    bar.fadeOut('slow');
+                                    rail.fadeOut('slow');
+                                }
+                            }, 1000);
+                        }
+                    }
+
+                });
+
+                // maintain chainability
+                return this;
+            }
+        });
+
+        $.fn.extend({
+            slimscroll: $.fn.slimScroll
+        });
+
+    })(jQuery);
+
+</script>
+<script>
+
+    (function ($) {
+
+        $.fn.extend({
+            slimScroll1: function (options) {
+                if (LayoutDirection_G == "RTL") {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        //height: '110px',
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'left',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv1',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+                else {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        //height: '110px',
+
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'right',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv1',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+
+                var o = $.extend(defaults, options);
+
+                // do it for every element that matches selector
+                this.each(function () {
+
+                    var isOverPanel, isOverBar, isDragg, queueHide, touchDif,
+                        barHeight, percentScroll, lastScroll,
+                        divS = '<div></div>',
+                        minBarHeight = 30,
+                        releaseScroll = false;
+
+                    // used in event handlers and for better minification
+                    var me = $(this);
+
+                    // ensure we are not binding it again
+                    if (me.parent().hasClass(o.wrapperClass)) {
+                        // start from last bar position
+                        var offset = me.scrollTop();
+
+                        // find bar and rail
+                        bar = me.siblings('.' + o.barClass);
+                        rail = me.siblings('.' + o.railClass);
+
+                        getBarHeight();
+
+                        // check if we should scroll existing instance
+                        if ($.isPlainObject(options)) {
+                            // Pass height: auto to an existing slimscroll object to force a resize after contents have changed
+                            if ('height' in options && options.height == 'auto') {
+                                me.parent().css('height', 'auto');
+                                me.css('height', 'auto');
+                                var height = me.parent().parent().height();
+                                me.parent().css('height', height);
+                                me.css('height', height);
+                            } else if ('height' in options) {
+                                var h = options.height;
+                                me.parent().css('height', h);
+                                me.css('height', h);
+                            }
+
+                            if ('scrollTo' in options) {
+                                // jump to a static point
+                                offset = parseInt(o.scrollTo);
+                            }
+                            else if ('scrollBy' in options) {
+                                // jump by value pixels
+                                offset += parseInt(o.scrollBy);
+                            }
+                            else if ('destroy' in options) {
+                                // remove slimscroll elements
+                                bar.remove();
+                                rail.remove();
+                                me.unwrap();
+                                return;
+                            }
+
+                            // scroll content by the given offset
+                            scrollContent(offset, false, true);
+                        }
+
+                        return;
+                    }
+                    else if ($.isPlainObject(options)) {
+                        if ('destroy' in options) {
+                            return;
+                        }
+                    }
+
+                    // optionally set height to the parent's height
+                    o.height = (o.height == 'auto') ? me.parent().height() : o.height;
+
+                    // wrap content
+                    var wrapper = $(divS)
+                        .addClass(o.wrapperClass)
+                        .css({
+                            position: 'relative',
+                            overflow: 'hidden',
+                            width: o.width,
+                            height: o.height
+                        });
+
+                    // update style for the div
+                    me.css({
+                        overflow: 'hidden',
+                        width: o.width,
+                        height: o.height
+                    });
+
+                    // create scrollbar rail
+                    var rail = $(divS)
+                        .addClass(o.railClass)
+                        .css({
+                            width: o.size,
+                            height: '100%',
+                            position: 'absolute',
+                            top: 0,
+                            display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
+                            'border-radius': o.railBorderRadius,
+                            background: o.railColor,
+                            opacity: o.railOpacity,
+                            zIndex: 90
+                        });
+
+                    // create scrollbar
+                    var bar = $(divS)
+                        .addClass(o.barClass)
+                        .css({
+                            background: o.color,
+                            width: o.size,
+                            position: 'absolute',
+                            top: 0,
+                            opacity: o.opacity,
+                            display: o.alwaysVisible ? 'block' : 'none',
+                            'border-radius': o.borderRadius,
+                            BorderRadius: o.borderRadius,
+                            MozBorderRadius: o.borderRadius,
+                            WebkitBorderRadius: o.borderRadius,
+                            zIndex: 99
+                        });
+
+                    // set position
+                    var posCss = (o.position == 'right') ? { right: o.distance } : { left: o.distance };
+                    rail.css(posCss);
+                    bar.css(posCss);
+
+                    // wrap it
+                    me.wrap(wrapper);
+
+                    // append to parent div
+                    me.parent().append(bar);
+                    me.parent().append(rail);
+
+                    // make it draggable and no longer dependent on the jqueryUI
+                    if (o.railDraggable) {
+                        bar.bind("mousedown", function (e) {
+                            var $doc = $(document);
+                            isDragg = true;
+                            t = parseFloat(bar.css('top'));
+                            pageY = e.pageY;
+
+                            $doc.bind("mousemove.slimscroll", function (e) {
+                                currTop = t + e.pageY - pageY;
+                                bar.css('top', currTop);
+                                scrollContent(0, bar.position().top, false);// scroll content
+                            });
+
+                            $doc.bind("mouseup.slimscroll", function (e) {
+                                isDragg = false; hideBar();
+                                $doc.unbind('.slimscroll');
+                            });
+                            return false;
+                        }).bind("selectstart.slimscroll", function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            return false;
+                        });
+                    }
+
+                    // on rail over
+                    rail.hover(function () {
+                        showBar();
+                    }, function () {
+                        hideBar();
+                    });
+
+                    // on bar over
+                    bar.hover(function () {
+                        isOverBar = true;
+                    }, function () {
+                        isOverBar = false;
+                    });
+
+                    // show on parent mouseover
+                    me.hover(function () {
+                        isOverPanel = true;
+                        showBar();
+                        hideBar();
+                    }, function () {
+                        isOverPanel = false;
+                        hideBar();
+                    });
+
+                    // support for mobile
+                    me.bind('touchstart', function (e, b) {
+                        if (e.originalEvent.touches.length) {
+                            // record where touch started
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    me.bind('touchmove', function (e) {
+                        // prevent scrolling the page if necessary
+                        if (!releaseScroll) {
+                            e.originalEvent.preventDefault();
+                        }
+                        if (e.originalEvent.touches.length) {
+                            // see how far user swiped
+                            var diff = (touchDif - e.originalEvent.touches[0].pageY) / o.touchScrollStep;
+                            // scroll content
+                            scrollContent(diff, true);
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    // set up initial height
+                    getBarHeight();
+
+                    // check start position
+                    if (o.start === 'bottom') {
+                        // scroll content to bottom
+                        bar.css({ top: me.outerHeight() - bar.outerHeight() });
+                        scrollContent(0, true);
+                    }
+                    else if (o.start !== 'top') {
+                        // assume jQuery selector
+                        scrollContent($(o.start).position().top, null, true);
+
+                        // make sure bar stays hidden
+                        if (!o.alwaysVisible) { bar.hide(); }
+                    }
+
+                    // attach scroll events
+                    attachWheel(this);
+
+                    function _onWheel(e) {
+                        // use mouse wheel only when mouse is over
+                        if (!isOverPanel) { return; }
+
+                        var e = e || window.event;
+
+                        var delta = 0;
+                        if (e.wheelDelta) { delta = -e.wheelDelta / 120; }
+                        if (e.detail) { delta = e.detail / 3; }
+
+                        var target = e.target || e.srcTarget || e.srcElement;
+                        if ($(target).closest('.' + o.wrapperClass).is(me.parent())) {
+                            // scroll content
+                            scrollContent(delta, true);
+                        }
+
+                        // stop window scroll
+                        if (e.preventDefault && !releaseScroll) { e.preventDefault(); }
+                        if (!releaseScroll) { e.returnValue = false; }
+                    }
+
+                    function scrollContent(y, isWheel, isJump) {
+                        releaseScroll = false;
+                        var delta = y;
+                        var maxTop = me.outerHeight() - bar.outerHeight();
+
+                        if (isWheel) {
+                            // move bar with mouse wheel
+                            delta = parseInt(bar.css('top')) + y * parseInt(o.wheelStep) / 100 * bar.outerHeight();
+
+                            // move bar, make sure it doesn't go out
+                            delta = Math.min(Math.max(delta, 0), maxTop);
+
+                            // if scrolling down, make sure a fractional change to the
+                            // scroll position isn't rounded away when the scrollbar's CSS is set
+                            // this flooring of delta would happened automatically when
+                            // bar.css is set below, but we floor here for clarity
+                            delta = (y > 0) ? Math.ceil(delta) : Math.floor(delta);
+
+                            // scroll the scrollbar
+                            bar.css({ top: delta + 'px' });
+                        }
+
+                        // calculate actual scroll amount
+                        percentScroll = parseInt(bar.css('top')) / (me.outerHeight() - bar.outerHeight());
+                        delta = percentScroll * (me[0].scrollHeight - me.outerHeight());
+
+                        if (isJump) {
+                            delta = y;
+                            var offsetTop = delta / me[0].scrollHeight * me.outerHeight();
+                            offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);
+                            bar.css({ top: offsetTop + 'px' });
+                        }
+
+                        // scroll content
+                        me.scrollTop(delta);
+
+                        // fire scrolling event
+                        me.trigger('slimscrolling', ~~delta);
+
+                        // ensure bar is visible
+                        showBar();
+
+                        // trigger hide when scroll is stopped
+                        hideBar();
+                    }
+
+                    function attachWheel(target) {
+                        if (window.addEventListener) {
+                            target.addEventListener('DOMMouseScroll', _onWheel, false);
+                            target.addEventListener('mousewheel', _onWheel, false);
+                        }
+                        else {
+                            document.attachEvent("onmousewheel", _onWheel)
+                        }
+                    }
+
+                    function getBarHeight() {
+                        // calculate scrollbar height and make sure it is not too small
+                        barHeight = Math.max((me.outerHeight() / me[0].scrollHeight) * me.outerHeight(), minBarHeight);
+                        bar.css({ height: barHeight + 'px' });
+
+                        // hide scrollbar if content is not long enough
+                        var display = barHeight == me.outerHeight() ? 'none' : 'block';
+                        bar.css({ display: display });
+                    }
+
+                    function showBar() {
+                        // recalculate bar height
+                        getBarHeight();
+                        clearTimeout(queueHide);
+
+                        // when bar reached top or bottom
+                        if (percentScroll == ~~percentScroll) {
+                            //release wheel
+                            releaseScroll = o.allowPageScroll;
+
+                            // publish approporiate event
+                            if (lastScroll != percentScroll) {
+                                var msg = (~~percentScroll == 0) ? 'top' : 'bottom';
+                                me.trigger('slimscroll', msg);
+                            }
+                        }
+                        else {
+                            releaseScroll = false;
+                        }
+                        lastScroll = percentScroll;
+
+                        // show only when required
+                        if (barHeight >= me.outerHeight()) {
+                            //allow window scroll
+                            releaseScroll = true;
+                            return;
+                        }
+                        bar.stop(true, true).fadeIn('fast');
+                        if (o.railVisible) { rail.stop(true, true).fadeIn('fast'); }
+                    }
+
+                    function hideBar() {
+                        // only hide when options allow it
+                        if (!o.alwaysVisible) {
+                            queueHide = setTimeout(function () {
+                                if (!(o.disableFadeOut && isOverPanel) && !isOverBar && !isDragg) {
+                                    bar.fadeOut('slow');
+                                    rail.fadeOut('slow');
+                                }
+                            }, 1000);
+                        }
+                    }
+
+                });
+
+                // maintain chainability
+                return this;
+            }
+        });
+
+        $.fn.extend({
+            slimscroll1: $.fn.slimScroll1
+        });
+
+    })(jQuery);
+
+</script>
+<script type="text/javascript">
+
+    $(function () {
+        $('#slimscroll').slimscroll();
+        $('#DivEmailConfig').slimScroll1();
+        $('.slimScrollDiv1').css("max-height", 180)
+        $('#DivEmailConfig').css("max-height", 180)
+    });
+</script>

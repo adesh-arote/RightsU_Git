@@ -1,0 +1,60 @@
+﻿@model List<RightsU_Entities.MQ_Log>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr style="width:100%">
+            <th style="width:10%">MQ Config Code</th>
+            <th style="width:10%">Message Key</th>
+            <th style="width:50%">Request Text</th>
+            <th style="width:10%">Request Time</th>
+            <th style="width:10%">Record Code</th>
+            <th style="width:10%">Record Status</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr style="width:100%">
+                    <td style="width:10%">
+                        <span>@item.MQ_Config_Code</span>
+                    </td>
+                    <td style="width:10%">
+                        <span>@item.Message_Key</span>
+                    </td>
+                    <td style="width:50%" class="Request_Text">
+                        <span>@item.Request_Text</span>
+                    </td>
+                    <td style="width:10%">
+                        <span>@item.Request_Time</span>
+                    </td>
+                    <td style="width:10%">
+                        <span>@item.Record_Code</span>
+                    </td>
+                    <td style="width:10%">
+                        <span>@item.Record_Status</span>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            if (TempData["Action"] != "AddMaterialType")
+            {
+                <tr>
+                    <td colspan="6">No Record Found</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    $('.Request_Text').expander({
+        slicePoint: 90,
+        expandPrefix: '',
+        expandText: '...Read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>

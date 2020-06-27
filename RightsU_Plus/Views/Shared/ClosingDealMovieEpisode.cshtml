@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Closing Deal Movie Episode List
+                        <span></span>
+                    </h2>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount">3</span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <div class="deal clearfix">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 10%;">Sr. #</th>
+                                            <th style="width: 30%;">Month Closed</th>
+                                            <th style="width: 30%;">Closed On</th>
+                                            <th style="width: 30%;">Closed By</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>January - 2017</td>
+                                            <td>05/02/2017</td>
+                                            <td>Prathesh Shah</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>February - 2017</td>
+                                            <td>05/03/2017</td>
+                                            <td>Adesh Arote</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>March - 2017</td>
+                                            <td>05/04/2017</td>
+                                            <td>Vinay Natraj</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4">Current Open Month : <b>April 2017</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="margin-top:10px">
+                                <input type="button" value="Close" id="btnClose" class="btn btn-primary" />
+                                <input type="button" value="Review" id="btnReview" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

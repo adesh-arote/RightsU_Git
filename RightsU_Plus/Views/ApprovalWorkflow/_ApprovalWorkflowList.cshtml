@@ -1,0 +1,77 @@
+﻿@model List<RightsU_Entities.Workflow>
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:30%;">Workflow Name</th>
+            <th style="width:45%;">Description</th>
+            <th style="width:15%;">Business Unit</th>
+            @if (ViewData["Status"] != "V")
+            {
+                <th style="width:10%;">Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="expandable">
+                        <span>@item.Workflow_Name</span>
+                    </td>
+                    <td class="expandable">
+                        <span>@item.Remarks</span>
+                    </td>
+                    <td>
+                        <span>@item.Business_Unit.Business_Unit_Name</span>
+                    </td>
+                    <td align="center">
+
+                        @{  bool canDeactive = true;
+                          string toolTipMsg = "";
+                          if (item.Workflow_Module.Count > 0)
+                          {
+                              canDeactive = false;
+                              toolTipMsg = "Can not delete this Workflow as it is used in Assign Workflow";
+                              //Can not edit this Workflow as it is used in Assign Workflow
+                          }
+                        }
+                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                        {
+                            if (canDeactive)
+                            {
+                                <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="BindPartialView('EDIT',@item.Workflow_Code)"></a>
+                            }
+                            else
+                            {
+                                <a title="Can not edit this Workflow as it is used in Assign Workflow" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                        }
+                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDelete + "~"))
+                        {
+                            if (canDeactive)
+                            {
+                                <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="Delete(@item.Workflow_Code)"></a>
+                            }
+                            else
+                            {
+                                <a title="@toolTipMsg" class="glyphicon glyphicon-trash disabled" onclick="return false;"></a>
+                            }
+                        }
+                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + "~"))
+                        {
+                            <a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPartialView('VIEW',@item.Workflow_Code)"></a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">No record found</td>
+            </tr>
+        }
+    </tbody>
+</table>

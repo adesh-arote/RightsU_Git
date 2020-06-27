@@ -1,0 +1,272 @@
+﻿@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css" />
+<script type="text/javascript" src="~/JS_Core/jquery-ui_(without_tooltip).min.js"></script>
+<script type='text/javascript' src="~/JS_Core/jquery.plugin.js"></script>
+<script type='text/javascript' src="~/JS_Core/jquery.timeentry.js"></script>
+
+<script>
+    var dealMode_G = '@objSchema.Mode';
+    var recordLockingCode_G = parseInt('@ViewBag.Record_Locking_Code');
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+    var URL_BindProgramming = '@Url.Action("BindProgramming", "Acq_Sport_Ancillary")';
+    var URL_BindMarketing = '@Url.Action("BindMarketing", "Acq_Sport_Ancillary")';
+    var URL_BindSales = '@Url.Action("BindSales", "Acq_Sport_Ancillary")';
+    var URL_BindFCT = '@Url.Action("BindFCT", "Acq_Sport_Ancillary")';
+    var URL_BindMonetisation = '@Url.Action("BindMonetisation", "Acq_Sport_Ancillary")';
+    var URL_BindProgramming = '@Url.Action("BindProgramming", "Acq_Sport_Ancillary")'
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")'
+    var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+    $(document).ready(function () {
+        var activeIndex = ''
+
+        if (recordLockingCode_G > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode_G, URL_Global_Refresh_Lock);
+
+        if (isNaN($('#hdnAccordionIndex').val()))
+            activeIndex = parseInt($('#hdnAccordionIndex').val());
+        else
+            activeIndex = 0;
+
+        $(".accordion").accordion({
+            collapsible: true,
+            active: activeIndex,
+            heightStyle: "content",
+            change: function (event, ui) {
+                showLoading();
+                var index = $(this).children('h3').index(ui.newHeader);
+                $('#hdnAccordionIndex').val(index);
+                var Url = '';
+
+                if (index == 0)
+                    Url = URL_BindProgramming;
+                else if (index == 1)
+                    Url = URL_BindMarketing;
+                else if (index == 2)
+                    Url = URL_BindSales;
+                else if (index == 3)
+                    Url = URL_BindFCT;
+                else if (index == 4)
+                    Url = URL_BindMonetisation;
+
+                $.ajax({
+                    type: "POST",
+                    url: Url,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({}),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        if (index == 0) {
+                            $('#divProgramming').html(result);
+                            $('#divMarketing').html('');
+                            $('#divSales').html('');
+                            $('#divFCT').html('');
+                            $('#divMonetisation').html('');
+                        }
+                        else
+                            if (index == 1) {
+                                $('#divProgramming').html('')
+                                $('#divMarketing').html(result);
+                                $('#divSales').html('');
+                                $('#divFCT').html('');
+                                $('#divMonetisation').html('');
+                            }
+                            else
+                                if (index == 2) {
+                                    $('#divSales').html(result);
+                                    $('#divProgramming').html('')
+                                    $('#divMarketing').html('');
+                                    $('#divFCT').html('');
+                                    $('#divMonetisation').html('');
+                                }
+                                else
+                                    if (index == 3) {
+                                        $('#divFCT').html(result);
+                                        $('#divSales').html('');
+                                        $('#divMonetisation').html('');
+                                        $('#divProgramming').html('')
+                                        $('#divMarketing').html('');
+                                    }
+                                    else
+                                        if (index == 4) {
+                                            $('#divMonetisation').html(result);
+                                            $('#divSales').html('');
+                                            $('#divFCT').html('');
+                                            $('#divProgramming').html('')
+                                            $('#divMarketing').html('');
+                                        }
+                        hideLoading();
+                        initializeChosen();
+                        initializeExpander();
+                        initializeTooltip();
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            },
+            create: function (event, ui) {
+                showLoading();
+
+                $.ajax({
+                    type: "POST",
+                    url: URL_BindProgramming,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({}),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        $('#divProgramming').html(result);
+                        hideLoading();
+                        initializeChosen();
+                        initializeExpander();
+                        initializeTooltip();
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        });
+    })
+    function ValidateSave() {
+        showLoading();
+        if (SaveApprovalRemarks()) {
+            hideLoading();
+            var tabName = $('#hdnTabName').val();
+            BindPartialTabs(tabName);
+        }
+        else {
+            hideLoading();
+            return false;
+        }
+    }
+    function SaveApprovalRemarks() {
+        var Isvalid = true;
+        if (dealMode_G == 'APRV') {
+            var approvalremarks = $('#approvalremarks').val();
+            $.ajax({
+                type: "POST",
+                url: URL_Global_SetApprovalRemarks,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: true,
+                data: JSON.stringify({
+                    approvalremarks: $('#approvalremarks').val()
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    Isvalid = true;
+                    hideLoading();
+                },
+                error: function (result) {
+                    Isvalid = false;
+                }
+            });
+        }
+        else
+            Isvalid = true;
+
+        return Isvalid;
+    }
+    @*$(document).ready(function () {
+        debugger;
+        $("#ancFileName").attr('href', '/Help/index.html?IntCode=@Session["FileName"]');
+    });*@
+</script>
+<style>
+    .ui-widget {
+        font-size: 1em;
+    }
+
+    div.accordion {
+        margin-bottom: 10px;
+    }
+
+    .ui-accordion-content.ui-corner-bottom {
+        border-radius: 0;
+    }
+
+    .ui-accordion .ui-accordion-header {
+        margin-top: 0;
+        border-radius: 0;
+        background-color: #fefefe;
+        font-weight: 700;
+    }
+</style>
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabRunDef">
+                    <div class="accordion">
+                        <h3>@objMessageKey.Programming</h3>
+                        <div id="divProgramming" class="scale_table_block">
+                        </div>
+
+                        <h3>@objMessageKey.Marketing</h3>
+                        <div id="divMarketing" class="scale_table_block">
+                        </div>
+
+                        <h3>@objMessageKey.Sales</h3>
+                        <div id="divSales" class="scale_table_block">
+                        </div>
+
+                        <h3>@objMessageKey.FCTCommitments</h3>
+                        <div id="divFCT" class="scale_table_block">
+                        </div>
+
+                        <h3>@objMessageKey.MonetisationTypes</h3>
+                        <div id="divMonetisation" class="scale_table_block">
+                        </div>
+                    </div>
+                </div>
+                @if (objSchema.Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Approved_List")
+                }
+                else if (objSchema.Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    @Html.Partial("_Edit_Without_Approval")
+                }
+                else
+                {
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                       onclick="location.href='@Url.Action("Cancel", "Acq_Sport_Ancillary")    '">
+                            </li>
+                        </ul>
+                    </div>
+                }
+                @Html.Hidden("hdnAccordionIndex")
+                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+            </div>
+        </div>
+    </div>
+</div>

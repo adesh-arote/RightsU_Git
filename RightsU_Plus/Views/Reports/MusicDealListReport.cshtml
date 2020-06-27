@@ -1,0 +1,299 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+
+    var URL_PopulateAgreementNumber = '@Url.Action("PopulateAgreementNumber", "Reports")';
+    var URL_BindMusicDealListReport = '@Url.Action("BindMusicDealListReport", "Reports")';
+
+    $(document).ready(function () {
+        debugger;
+        $('#txtStart').change(function () {
+            debugger;
+            SetMinDt();
+        });
+        $('#ddlLabel').SumoSelect();
+
+        $('#txtEnd').change(function () {
+            debugger;
+            SetMaxDt();
+        });
+    });
+    function SetMaxDt() {
+        setMinMaxDates('txtStart', '', $('#txtEnd').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtEnd', $('#txtStart').val(), '');
+    }
+    function PopulateAgreementNumber(evt) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var selectedtxt = $('#txtAgreementNo').val()
+        var returnVal = true;
+       
+        if (returnVal) {
+            $("#txtAgreementNo").autocomplete({
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    $('#hdnAcqDealCode').val('0')
+                    $('#hdnAgreementNo').val('')
+                    var param = {
+                        searchPrefix: $('#txtAgreementNo').val(),
+                    };
+                    $.ajax({
+                        url: URL_PopulateAgreementNumber,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: v.Text,
+                                        val: v.Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var code = i.item.val;
+                    $('#hdnAcqDealCode').val(code);
+                    $('#hdnAgreementNo').val(i.item.value);
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "350px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+    }
+    function btnShow_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var agreementNo = $('#txtAgreementNo').val();
+        var musicLabelcode = $('#ddlLabel').val();
+        var startDate = $('#txtStart').val();
+        var endDate = $('#txtEnd').val();
+        var expiredDeal = $('#chk_expiredDeals').is(":checked");
+     
+        var returnVal = true;
+       
+        if ($('#txtAgreementNo').val() == "" && musicLabelcode == null) {
+            $('#divLabel').addClass('required');
+            $('#txtAgreementNo').addClass('required');
+            returnVal = false;
+        }
+        else {
+            returnVal = true;
+        }
+        if (musicLabelcode != null)
+            musicLabelcode = $('#ddlLabel').val().join(',');
+        else
+            musicLabelcode = "";
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindMusicDealListReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    agreementNo: agreementNo,
+                    musicLabelcode: musicLabelcode,
+                    startDate: startDate,
+                    endDate: endDate,
+                    expiredDeal: expiredDeal,
+                    dateformat: $('#ddlDateFormat').val(),
+                    numberformat: $('#ddlNumberFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function btnClear_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $('#txtAgreementNo').val('');      
+        $('#txtStart').val('');
+        $('#txtEnd').val('');
+        $("#ddlLabel").val('')[0].sumo.reload();
+    }
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+</script>
+<style>
+    .SumoSelect {
+        width: 157px;
+    }
+
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    input.isDatepicker {
+        width: 120px;
+        z-index: auto;
+    }
+     #divLabel > div{
+        width : 100% !important;
+    }
+     #ddlDateFormat_chosen{
+         width:163px!important;
+     }
+     .SumoSelect sumo_ddlLabel{
+         width:95% !important;
+     }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.MusicDealListReport</h2>
+            </div>
+            <div id="divFilter">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width:11%"><b>@objMessageKey.AgreementNo:</b></td>
+                            <td style="width:16%">
+                                    <input type="text" id="txtAgreementNo" class="search" maxlength="100" style="width:175px" placeholder="@objMessageKey.AgreementNo" onkeyup="PopulateAgreementNumber(event)" autocomplete="on" />
+                                <input type="hidden" id="hdnMusicDealCode" value="0" />
+                                <input type="hidden" id="hdnAgreementNo" value="0" />
+                            </td>
+                            <td style="width:7%"><b>@objMessageKey.MusicLabel</b></td>
+                            <td style="width:17%">
+                                <div id="divLabel" style="width:183px;">
+                                    @Html.DropDownList("ddlLabel", (List<SelectListItem>)ViewBag.MusicLabel, new { @id = "ddlLabel", @multiple = "multiple" })
+                                </div>
+                            </td>
+                            <td style="width:9%"><b>@objMessageKey.DateFormat:</b></td>
+                            <td style="width:17%">
+                                @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                        </td>
+                            <td style="width:11%"><b>@objMessageKey.NumberFormat:</b></td>
+                            <td style="width:17%">
+                                @Html.DropDownList("NumberFormat", (List<SelectListItem>)ViewBag.NumberFormat, new { @id = "ddlNumberFormat", @class = "form_input chosen-select" })
+                            </td>
+                            </tr>
+                        <tr>
+                            <td style="width:8%"><b>@objMessageKey.StartDate:</b></td>
+                            <td style="width:10%">
+                                <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
+                                       title="@objMessageKey.StartDate" />
+                            </td>
+                            <td style="width:8%"><b>@objMessageKey.EndDate:</b></td>
+                            <td style="width:12%">
+                                <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="DD/MM/YYYY" width="100"
+                                       title="@objMessageKey.EndDate" />
+                            </td>
+                            <td>
+                            <td style="width:18%;">
+                                <input type="checkbox" id="chk_expiredDeals" style="cursor: pointer;" /> <b>@objMessageKey.IncludeExpiredDeals</b>
+                            </td>
+                            <td style="width:7%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
+                            <td style="width:15%;"><input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="btnClear_OnClick()"> </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+            <div>
+                <table>
+                    <tr align="left" id="trImg">
+                        <td id='tdShowImg' align='left' style="display: none">
+                            <input type="image" title="@objMessageKey.Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
+                        </td>
+                        <td id='tdHideImg' align="left">
+                            <input type="image" title="@objMessageKey.Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

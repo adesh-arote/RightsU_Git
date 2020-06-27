@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "AddEdit";
+}
+
+
+<style>
+    .SumoSelect > .optWrapper.multiple > .options li.opt label {
+        font-weight: 100 !important;
+    }
+
+    .select-all label {
+        font-weight: 100 !important;
+    }
+
+    .SumoSelect > .CaptionCont > span {
+        font-weight: 100 !important;
+    }
+
+    #ddlModule_chosen {
+        margin-left: -13%;
+    }
+
+    .sumo_Form_ID {
+        margin-left: -24%;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        initializeChosen();
+        BindSystem_LanguageList(0, "");
+        $('#ddlForm').SumoSelect();
+       // $('#ddlForm').val("Common")[0].sumo.reload();
+    });
+</script>
+
+@using (Ajax.BeginForm("Save", "System_Language", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmAddEditMsg" }))
+{
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            <span>Configure Language For - @ViewBag.LanguageName</span>
+
+        </h2>
+    </div>
+    <div class="search_area">
+        <table class="four_column table">
+            <tr>
+                <td style="padding-left: 4%;padding-top: 9px;">Module</td>
+                <td>
+                    <span class="required">
+                        @Html.DropDownList("ModuleCode", ViewBag.GetModules as SelectList, "Common", new { @id = "ddlModule", @class = "form_input chosen-select", @onchange = "GetFormsByModuleID(this.value)" })
+                    </span>
+                </td>
+                <td style="padding-left: 0%;padding-top: 9px;">Form ID</td>
+                <td>
+                    @Html.DropDownList("Form_ID", ViewBag.GetFormId as MultiSelectList, new { @id = "ddlForm", @multiple = "multiple" })
+                </td>
+                <td style="vertical-align:middle;">
+                    <input type="button" value="Search" class="red_btn btn-primary" onclick="Show()" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="grid_area">
+        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+        <div class="paging_area clearfix">
+            <span class="pull-left">Total Records: </span>
+            <span class="pull-left" id="lblRecordCount_"></span>
+        </div>
+        <div class="tab-content clearfix table-wrapper scale_table_container">
+            <div>
+                <div id="divMessageList" class="deal clearfix">
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+            <li>
+                <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="return ValidateSave()">
+            </li>
+            <li>
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="Cancel()">
+            </li>
+        </ul>
+    </div>
+}
+

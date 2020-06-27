@@ -1,0 +1,258 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_IPR_Opp_Result>
+@using UTOFrameWork.FrameworkClasses;
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var a = $('#hdnPageSizeForOppAgainst_temp').val();
+        if (a != "0") {
+            $('#txtPageSize_OppA').val(a)
+        }
+
+
+        if ($('.pagination'))
+            SetPaging();
+        initializeTooltip();
+
+    });
+    $('.expand_Party_Name').expander({
+        slicePoint: 40,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $('.expandable').expander({
+        slicePoint: 25,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    var IsCall = 'Y';
+
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var PageNo, RecordCount;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            RecordCount = '@ViewBag.RecordCount';
+
+
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize_OppA').val());
+
+
+        var cnt = PageNo * recordPerPage;
+        if (cnt >= RecordCount) {
+            var v1 = parseInt(RecordCount / recordPerPage);
+            if ((v1 * recordPerPage) == RecordCount)
+                PageNo = v1;
+            else
+                PageNo = v1 + 1;
+        }
+        if (PageNo == 0)
+            PageNo = 1;
+
+
+
+
+        var index = PageNo - 1;
+
+        $('#hdnPageNo').val(PageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $(".pagination").pagination(RecordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        if (IsCall == 'Y') {
+            loadList('A', page_index, 'N', 'Y');
+            $("#hdnPageIndex").val(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+
+
+    //----------------------------------------------------------------------
+
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $('#hdnPageSizeForOppAgainst_temp').val($('#txtPageSize_OppA').val());
+
+
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+
+
+        if (!ValidatePageSize())
+            return false;
+
+
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize_OppA').val();
+        if (recordPerPage == "") {
+            recordPerPage = 10;
+            $('#txtPageSize_OppA').val("10");
+        }
+
+
+        loadList('A', pageNo, 'Y', 'N', recordPerPage)
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize_OppA').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize_OppA').attr('required', true)
+        return false
+    }
+
+
+</script>
+<style>
+    span.not-available {
+        font-style: italic;
+        opacity: 0.5;
+    }
+</style>
+<div class="paging_area clearfix">
+    <input type="hidden" id="hdnPageIndex" />
+    <span class="pull-left">Total Records:  @ViewBag.RecordCount</span>
+    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+
+    <div class="pagination"></div>
+    <span class="pull-right">
+        Page Size:
+        <input type="text" id="txtPageSize_OppA" name="txtPageSize_OppA" class="smallTextBox pagingSize" value="10"
+               onchange="txtPageSize_OnChange()">
+    </span>
+</div>
+<div class="grid_area deal clearfix">
+    @{
+        int counter = 0;
+
+        @Html.Hidden("hdnRowNum", new { @id = "hdnRowNum" })
+        foreach (var objIPROppList in Model)
+        {
+            counter += 1;
+            <div>
+                <table class="grid_item active">
+                    <tr>
+                        <td class="applicant_description" style="width: 10% !important;">
+                            <b><span title="Opposition No.">@objIPROppList.Opp_No</span></b>
+                            @Html.Hidden("hdnIPR_Rep_Code", objIPROppList.IPR_Opp_Code, new { id = counter + "_hdnIPR_Opp_Code" })
+                            <ul>
+                                <li>
+                                    <span class="" data-toggle="tooltip" title="IPR Rep Application No.">
+                                        <a href="#" onclick="window.location.href = '@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Opp_Code = objIPROppList.IPR_Opp_Code })'">
+                                            <label for="id" style="cursor:pointer;">@objIPROppList.IPR_Rep_Application_No</label>
+                                        </a>
+                                    </span>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="applicant_Trademark" style="width: 26% !important;">
+                            <ul>
+                                <li>
+                                    <span class="" data-toggle="tooltip" title="Trademark">
+                                        <a href="#" onclick="window.location.href = '@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Opp_Code = objIPROppList.IPR_Opp_Code })'">
+                                            <label for="id" style="cursor:pointer;">@objIPROppList.Trademark</label>
+                                        </a>
+                                    </span>
+                                </li>
+                                <li><span class="seperator">| </span></li>
+                                <li><span title="Opposition Party Trademark">@objIPROppList.Opposition_Party_Trademark</span></li>
+                            </ul>
+                            <ul>
+                                <li>
+                                    <h5><span class="expand_Party_Name" title="Party Name">@objIPROppList.Party_Name</span></h5>
+                                </li>
+                            </ul>
+
+                        </td>
+                        <td class="applicant_BusinessUnit">
+                            <ul>
+                                <li>
+                                    <div class="expandable">
+                                        @if (string.IsNullOrEmpty(objIPROppList.Business_Unit))
+                                        {
+                                            <span class="not-available" title="Business Unit">@GlobalParams.msgNO Business Unit</span>
+                                        }
+                                        else
+                                        {
+                                            <span title="Business Unit">
+                                                @objIPROppList.Business_Unit
+                                            </span>
+                                        }
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul>
+                                <li>
+                                    <div class="expandable">
+                                        @if (string.IsNullOrEmpty(objIPROppList.Channel_Name))
+                                        {
+                                            <span class="not-available" title="Channel">@GlobalParams.msgNO Channels</span>
+                                        }
+                                        else
+                                        {
+                                            <span title="Channel">
+                                                @objIPROppList.Channel_Name
+                                            </span>
+                                        }
+                                    </div>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="applicant_status">
+                            <ul>
+                                <li><span title="Application Status">@objIPROppList.App_Status</span></li>
+                                <li><span class="seperator">| </span></li>
+                                <li><span title="Workflow Status">@objIPROppList.Workflow_Status</span></li>
+                            </ul>
+                            <ul>
+                                <li>
+                                    <h5><span title="Class Name">@objIPROppList.Class_Name</span></h5>
+                                </li>
+                            </ul>
+
+                        </td>
+                        <td class="applicant_action">
+                            @if (@objIPROppList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
+                            {
+                                <a title="View" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Opp_Code = objIPROppList.IPR_Opp_Code })"></a>
+                            }
+                            @if (@objIPROppList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForEdit + ","))
+                            {
+                                <a class="glyphicon glyphicon-pencil" href="#" title='Edit' onclick="CheckRecordLock('@UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT',0, @objIPROppList.IPR_Opp_Code);"></a>
+                                @*<a title="Edit" class="glyphicon glyphicon-pencil" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT, IPR_Opp_Code = objIPROppList.IPR_Opp_Code })"></a>*@
+                            }
+                            @if (@objIPROppList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForDelete + ",") && (@objIPROppList.Workflow_Status != "Approved" && Convert.ToInt32(@objIPROppList.Version) == 1))
+                            {
+                                <a title="Delete" id="Delete" href="#" class="glyphicon glyphicon-trash"
+                                   onclick="Ask_Confirmation(@objIPROppList.IPR_Opp_Code,@counter,'A')"></a>
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+    }
+</div>

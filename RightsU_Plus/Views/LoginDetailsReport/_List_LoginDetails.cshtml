@@ -1,0 +1,79 @@
+﻿@model List<RightsU_Entities.USP_Login_Details_Report_Result>
+@{ 
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@using UTOFrameWork.FrameworkClasses
+<table class="table table-bordered table-hover" id="div_List_LoginDetails">
+    <thead>
+        <tr>
+            <th style="width:10%;">@objMessageKey.FirstName</th>
+            <th style="width:10%;">@objMessageKey.MiddleName</th>
+            <th style="width:10%;">@objMessageKey.LastName</th>
+            <th style="width:10%;">@objMessageKey.LoginName</th>
+            <th style="width:15%;">@objMessageKey.LoginTime</th>
+            <th style="width:15%;">@objMessageKey.LogoutTime</th>
+            <th style="width:15%;">@objMessageKey.SecurityGroupName</th>
+            <th style="width:15%;">@objMessageKey.Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        @*@foreach (var item in Model.Select((x, i) => new { Data = x, Index = i }))
+            {
+                <tr>
+                    <td>
+                        @item.Index
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.File_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.Upload_Date)
+                    </td>
+                    <td>
+                        <input type="button" id="btnDetails" class="button" value="Details" onclick="btnSearch_OnClick()">
+                    </td>
+                </tr>
+            }*@
+        @{
+            int counter = 0;
+        }
+        @foreach (var item in Model)
+        {
+            counter = counter + 1;
+
+            <tr>
+                @*<td align="center">
+                        @counter
+                    </td>*@
+                <td>
+                    @item.first_name
+                </td>
+                <td align="center">
+                    @item.middle_Name
+                </td>
+                <td align="center">
+                    @item.last_name
+                </td>
+                <td align="center">
+                    @item.login_name
+                </td>
+                <td align="center">
+                    @item.LoginTime
+                </td>
+                <td align="center">
+                    @item.LogoutTime
+                </td>
+                <td align="center">
+                    @item.security_group_name
+                </td>
+                <td align="center">
+                    @item.duration
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

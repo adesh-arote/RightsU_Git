@@ -1,0 +1,738 @@
+﻿@model RightsU_Entities.Acq_Deal_Rights
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Plus.Controllers.Rights_Page_Properties objPage_Properties = new RightsU_Plus.Controllers.Rights_Page_Properties();
+    if (Session["Rights_Page_Properties"] != null)
+    {
+        objPage_Properties = (RightsU_Plus.Controllers.Rights_Page_Properties)Session["Rights_Page_Properties"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_BLL.System_Parameter_New_Service objSPNService = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Rights.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<style type="text/css">
+    #Tree_Filter_Rights_Platform {   
+        width:565px;
+        padding-left:3px;
+        position:relative!important;
+    }
+    #Rights_Platform{
+        margin:0px 0px 0px 0px!important;
+    }
+    #tabValidity {
+        width: 97%;
+    }
+
+    #tabBlackout td {
+        text-align: center;
+    }
+
+        #tabBlackout td > input {
+            width: 95px;
+        }
+
+    #tabRights .ui-fancytree {
+        height: 657px;
+        overflow-y: auto;
+    }
+
+    #popEditHB .fancytree-container {
+        height: 400px;
+        width: 410px;
+    }
+
+    #popPlatformRights .fancytree-container {
+        height: 400px;
+        width: 100%;
+    }
+
+    .four_column td.td_label {
+        width: 10% !important;
+    }
+
+    #ddlMilestone_Type_Code_chosen {
+        width: 100% !important;
+    }
+
+    #ddlMilestone_Unit_Type_chosen {
+        width: 100% !important;
+    }
+
+    .form_li_sub {
+        float: left;
+        margin-right: 6px !important;
+        list-style-type: none;
+    }
+
+    #Milestone_End_Date {
+        width: 94px;
+    }
+
+    .Count {
+        position: absolute;
+        top: -22%;
+        background: #f9df73;
+        border-radius: 87%;
+        font-size: 11px;
+        height: 18px;
+        width: 18px;
+        text-align: center;
+        vertical-align: middle;
+        right: -21%;
+        z-index: 2;
+    }
+
+    .SumoSelect, #divlbTitles, #divCountry, #lbTitles, #lbTerritory {
+        width: 512px !important;
+    }
+
+    .sumo_ddlPromoter, .sumo_ddlRemarks {
+        width: 400px !important;
+    }
+    .boldSubLcns{
+        font-weight: 700;
+    }
+</style>
+<script type="text/javascript">
+    var treeID_G = '@ViewBag.TreeId';
+    var theatricalPlatformCode_G = '@Model.Theatrical_Platform_Code';
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+    var mode_G = '@ViewBag.MODE';
+    //var rightType_G='@Model.Original_Right_Type';
+    if ('@ViewBag.Enabled_Perpetuity' == 'Y' && '@Model.Original_Right_Type' !=null && '@Model.Original_Right_Type' != '')
+    {
+        var rightType_G = '@Model.Original_Right_Type';
+    }
+    else
+    {
+        var rightType_G = '@Model.Right_Type';
+    }
+    var subLicenseCode_G = '@Model.Sub_License_Code';
+    var isTheatricalRight_G = '@Model.Is_Theatrical_Right';
+    var disableTentative_G = '@Model.Disable_Tentative';
+    var isTentative_G = '@Model.Is_Tentative';
+    var disableThetrical_G = '@Model.Disable_Thetrical';
+    var disableIsExclusive_G = '@Model.Disable_IsExclusive';
+    var disableTitleRights_G = '@Model.Disable_TitleRights';
+    var milestoneStartDate_G = '@Convert.ToString(Model.Milestone_Start_Date)';
+    var milestoneEndDate_G = '@Convert.ToString(Model.Milestone_End_Date)';
+    var rofrDate_G = '@Model.ROFR_DT';
+    var rofrDays_G = '@Model.ROFR_Days'
+    var disableRightType_G = '@Model.Disable_RightType';
+    var existingRightType_G = '@Model.Existing_RightType';
+    var isNullEmpty_milestoneStartDate_G = '@string.IsNullOrEmpty(Model.Milestone_Start_Date)';
+
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+    var URL_BindHoldback = '@Url.Action("BindHoldback", "Acq_Rights_Holdback")';
+    var URL_BindBlackOut = '@Url.Action("BindBlackOut", "Acq_Rights_Blackout")';
+    var URL_Add_Holdback = '@Url.Action("Add_Holdback", "Acq_Rights_Holdback")';
+    var URL_Add_Blackout = '@Url.Action("Add_Blackout", "Acq_Rights_Blackout")';
+    var URL_Add_Promoter = '@Url.Action("Add_Promoter", "Acq_Rights_Promoter")';
+    var URL_Bind_JSON_ListBox = '@Url.Action("Bind_JSON_ListBox", "Acq_Rights")';
+    var URL_Acq_Rights_List_Index = '@Url.Action("Index", "Acq_Rights_List")';
+    var URL_Global_ChangeTab = '@Url.Action("ChangeTab", "Global")';
+    var URL_Cancel_Rights = '@Url.Action("Cancel_Rights", "Acq_Rights")';
+    var URL_Global_RedirectToControl = '@Url.Action("RedirectToControl", "Global", new { tabName = GlobalParams.Page_From_Rights, listPage_PageNo = "PageNo" })';
+    var URL_Delete_Holdback = '@Url.Action("Delete_Holdback", "Acq_Rights_Holdback")';
+    var URL_Delete_Blackout = '@Url.Action("Delete_Blackout", "Acq_Rights_Blackout")';
+    var URL_CheckHBRegionWithRightsRegion = '@Url.Action("CheckHBRegionWithRightsRegion", "Acq_Rights")';
+    var URL_CheckHBSubtitleWithRightsSubtitle = '@Url.Action("CheckHBSubtitleWithRightsSubtitle", "Acq_Rights")';
+    var URL_CheckHBDubbingWithRightsDubbing = '@Url.Action("CheckHBDubbingWithRightsDubbing", "Acq_Rights")';
+    var URL_Show_Validation_Popup = '@Url.Action("Show_Validation_Popup", "Acq_Rights")';
+    var URL_showHoldbackValidationPopup = '@Url.Action("showHoldbackValidationPopup", "Acq_Rights")';
+    var URL_ClearHoldbackGrid = '@Url.Action("ClearHoldbackGrid", "Acq_Rights_Holdback")';
+    var URL_GetTitleLanguageName = '@Url.Action("GetTitleLanguageName", "Acq_Rights")';
+    var URL_Validate_Groups = '@Url.Action("Validate_Groups", "Acq_Rights")';
+    var URL_Validate_Acq_Rights_After_Syndication = '@Url.Action("Validate_Acq_Rights_After_Syndication", "Acq_Rights")';
+    var URL_Validate_Acq_Right_Title_Platform = '@Url.Action("Validate_Acq_Right_Title_Platform", "Acq_Rights")';
+    var URL_BindPlatformTreeView = '@Url.Action("BindPlatformTreeView", "Acq_Rights")';
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_Rights")';
+    var URL_Save_Rights = '@Url.Action("Save_Rights", "Acq_Rights")';
+    var URL_BindPromoter = '@Url.Action("BindPromoter", "Acq_Rights_Promoter")';
+    var URL_Delete_Promoter = '@Url.Action("Delete_Promoter", "Acq_Rights_Promoter")';
+    var URL_ApplyTemplate = '@Url.Action("ApplyTemplate", "Acq_Rights")';
+
+
+    var ShowMessage = {
+        "MsgForSearch": '@objMessageKey.Pleaseselectatleastonecriteriatoview',
+        "MsgForDeleteSyndRcd": '@objMessageKey.Cannotdeleterightasitisalreadysyndicated',
+        "MsgForDeleteRgt": '@objMessageKey.Areyousureyouwanttodeletethisright',
+        "MsgForunsavedData": '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead',
+        "MsgTabCal": '@objMessageKey.Cannotselectrighttypeyearbasedasrightsalreadysyndicated',
+        "MsgTabPerp": '@objMessageKey.Cannotselectrighttypeperpetuityasrightsalreadysyndicated',
+        "MsgTabMile": '@objMessageKey.Cannotselectrighttypemilestoneasrightsalreadysyndicated',
+        "MsgRunDef": '@objMessageKey.Cannotselectrighttypeperpetuityasrundefinitionalreadyadded',
+        "MsgMileRunDef": '@objMessageKey.CannotselectrighttypeMilestonebasedasrundefinitionalreadyadded',
+        "MsgForDate": '@objMessageKey.Startdateshouldbelessthanenddate',
+        "MsgValidTerm": '@objMessageKey.PleaseentervalidTerm',
+        "MsgForLang": '@objMessageKey.PleaseselectatleastoneLanguage',
+        "MsgForAddEdit": '@objMessageKey.PleasecompletetheAddEditfirst',
+        "MsgForHBAdd" : '@objMessageKey.Holdbackisalreadyadded',
+        "MsgForROFR" : '@objMessageKey.PleaseentervalidRefusalDayssothatRefusalDategreaterthanorequaltoStartDate',
+        "MsgForROFRMile": '@objMessageKey.PleaseentervalidRefusalDayssothatRefusalDategreaterthanorequaltomilestoneStartDate',
+        "MsgForROFRFormat": '@objMessageKey.ROFRdateisnotinproperformat',
+        "MsgForStartDateFmt": '@objMessageKey.Startdateisnotinproperformat',
+        "MsgForStartDate": '@objMessageKey.Pleaseselectstartdate',
+        "MsgForEndDate": '@objMessageKey.Pleaseselectenddate',
+        "VDMsgForStartDate": '@objMessageKey.StartDateisnotvalid',
+        "VDMsgForEndDate": '@objMessageKey.EndDateisnotvalid',
+        "MsgForPromoter": '@objMessageKey.PromoterGroupdetailsisnotenteredDoyouwishtocontinueandSavetheRights',
+        "VDMsgForHB": '@objMessageKey.HoldbackalreadyaddedforTitleLanguage',
+        "MsgForHBDelete": '@objMessageKey.Holdbackdeletedsuccessfully',
+        "MsgForRegion":'@objMessageKey.PleaseselectRegion',
+        "MsgForSubTitle": '@objMessageKey.PleaseselectSubtitlinglanguage',
+        "MsgForDubb": '@objMessageKey.PleaseselectDubbinglanguage',
+        "MsgForHB": '@objMessageKey.asitisalreadyselectedinHoldback',
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+   
+
+    var lblTreeCount = 'lblTreeCount';
+    $(document).ready(function () {
+        debugger;
+        if(LayoutDirection_G == "RTL")
+        {
+            $('#RightPad').css("padding-right","10px");
+            $('.SumoSelect > .CaptionCont > label').css("right","480px");
+            $('.col-md-6').css("float","right");
+            $('.fancytree-container ul').css("padding", "0 16px 0 0");
+            $('.boldSubLcns').css("float", "right");
+        }
+    });
+    function hideRegion() {
+        debugger
+        $('.MoreRegionDiv').hide('slow');
+    }
+    function hideSubTitle() {
+        $('.MoreSubtitleDiv').hide('slow');
+    }
+    function hideDubbing() {
+        $('.MoreDubbingDiv').hide('slow');
+    }
+    function Cancel_Rights1() {
+        debugger;
+        $('#hdnCommandName').val('CANCEL');
+        showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
+        //MsgForunsavedData = All unsaved data will be lost, still want to go ahead
+    }
+  
+</script>
+
+@using (Ajax.BeginForm("Save_Rights", "Acq_Rights", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @id = "frmRights" }))
+{
+    string ORightType = "", Promoter_Tab = "";
+    if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
+    {
+        ORightType = Model.Original_Right_Type;
+    }
+    else
+    {
+        ORightType = Model.Right_Type;
+    }
+    Promoter_Tab = objSPNService.SearchFor(s => s.Parameter_Name == "Promoter_Tab").First().Parameter_Value;
+    @Html.Hidden("IsPromoter", Promoter_Tab);
+    @Html.Hidden("hdnPromoter",Model.Promoter_Flag);
+    <div class="grid_area" onclick="hideRegion(); hideSubTitle(); hideDubbing();">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabRights">
+                        <div class="scale_table_block">
+                            <table>
+                                <tr>
+                                    <td width="50%" valign="top" id="RightPad">
+                                        @if (objPage_Properties.RMODE == "A")
+                                        {
+                                            <label class="bold">Template</label>
+                                            @Html.DropDownList("Template_List", ViewBag.arr_Template_List as SelectList, "Please select",
+                                           new { @id = "ddlTemplate_List", @onchange = "ApplyTemplate()", @class = "form_input chosen-select" })
+                                            <br>
+                                            <br>
+                                        }
+                                        <label class="bold">@objMessageKey.Titles</label>
+                                        <div id="divlbTitles">
+                                            <select id="lbTitles" name="lbTitles" multiple="multiple"></select>
+                                        </div>
+                                        @Html.Hidden("hdnTitle_Code")
+                                        @Html.Hidden("hdnCommandName")
+                                        <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                        <br>
+                                        <br>
+                                        <label class="bold">@objMessageKey.RightsDefinition</label>
+                                        <div class="platform_checkbox">
+                                            <input type="hidden" value="" id="hdnIs_Exclusive" name="hdnIs_Exclusive">
+                                            <table>
+                                                <tr>
+                                                    <td style="width: 102px;"><label>@objMessageKey.ExclusiveRights</label></td>
+                                                    <td style="padding-right: 338px;">
+                                                        <div style="width: 83%; float: right;">
+                                                            <div id="divExclusiveRights" style="width:90px; height:23px">
+                                                                @{ string displayStyle = "none";
+                                                                 string attrDisabled1 = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
+                                                                }
+                                                                @if (Model.Is_Exclusive == "Y")
+                                                                {
+                                                                    displayStyle = "";
+                                                                    <label class="radio-inline">
+                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" @attrDisabled1 />@objMessageKey.Yes
+
+                                                                    </label>
+                                                                    <label class="radio-inline">
+                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                    </label>
+                                                                }
+                                                                else if (Model.Is_Exclusive == "N")
+                                                                {
+                                                                    <label class="radio-inline">
+                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" @attrDisabled1 />@objMessageKey.Yes
+                                                                    </label>
+                                                                    <label class="radio-inline">
+                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                    </label>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label class="radio-inline">
+                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" @attrDisabled1 />@objMessageKey.Yes
+                                                                    </label>
+                                                                    <label class="radio-inline">
+                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                    </label>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <label class="checkbox-inline">
+                                                            @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" })
+                                                            @objMessageKey.TitleLanguage:
+                                                            @Html.Hidden("hdnIs_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false))
+                                                            <label id="Title_Language">(-)</label>
+                                                        </label>
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <label class="checkbox-inline">
+                                                            @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                            @objMessageKey.DomesticTheatrical
+                                                            @Html.Hidden("hdnIs_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                        </label>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+
+
+                                        </div>
+                                        @*<br>*@
+                                        <label class="bold">
+                                            @objMessageKey.Region
+                                        </label>
+                                        <div style="width: 90%; float: right;">
+                                            <label class="radio-inline">
+                                                @if (Model.Region_Type == "I")
+                                                {
+                                                    <input type="radio" name="rdoTerritoryType" id="rdoCountryHB" value="I" onchange="BindDropdown('I');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoTerritoryType" id="rdoCountryHB" value="I" onchange="BindDropdown('I');" />
+                                                }
+                                                <span id="lblCountry"></span>
+
+                                            </label>
+                                            <label class="radio-inline">
+                                                @if (Model.Region_Type == "G")
+                                                {
+                                                    <input type="radio" name="rdoTerritoryType" id="rdoTerritoryHB" value="G" onchange="BindDropdown('T');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoTerritoryType" id="rdoTerritoryHB" value="G" onchange="BindDropdown('T');" />
+                                                }
+                                                Territory @*: <label id="lblTerritoryCount"></label>*@
+                                            </label>
+                                        </div>
+                                        <div id="divCountry">
+                                            <select id="lbTerritory" name="lbTerritory" multiple="multiple"></select>
+                                            @Html.Hidden("hdnRegion_Type")
+                                            @Html.Hidden("hdnRegion_Code")
+                                        </div>
+                                        <br>
+                                        <label class="boldSubLcns">@objMessageKey.Sublicensing</label>
+                                        <div style="width: 83%; float: right;">
+                                            <div id="divSublicensingOptions" style="width:90px; height:23px">
+                                                @{
+                                                string displayStyle1 = "none";
+                                                string attrDisabled = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
+                                                }
+                                                @if (Model.Is_Sub_License == "Y")
+                                                {
+                                                    displayStyle1 = "";
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="rdoSublicensing" id="rdoSublicensingY" value="Y" checked onchange="ShowHideSublicensingList(true)" @attrDisabled />@objMessageKey.Yes
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="rdoSublicensing" id="rdoSublicensingN" value="N" onchange="ShowHideSublicensingList(false)" @attrDisabled />@objMessageKey.NO
+                                                    </label>
+                                                }
+                                                else if (Model.Is_Sub_License == "N")
+                                                {
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="rdoSublicensing" id="rdoSublicensingY" value="Y" onchange="ShowHideSublicensingList(true)" @attrDisabled />@objMessageKey.Yes
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="rdoSublicensing" id="rdoSublicensingN" value="N" checked onchange="ShowHideSublicensingList(false)" @attrDisabled />@objMessageKey.NO
+                                                    </label>
+                                                }
+                                                else
+                                                {
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="rdoSublicensing" id="rdoSublicensingY" value="Y" onchange="ShowHideSublicensingList(true)" @attrDisabled />@objMessageKey.Yes
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="rdoSublicensing" id="rdoSublicensingN" value="N" onchange="ShowHideSublicensingList(false)" @attrDisabled />@objMessageKey.NO
+                                                    </label>
+                                                }
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div id="divSublicensingList" style="display:@displayStyle1">
+                                            <select id="ddlSub_License_Code" name="ddlSub_License_Code" class="form_input chosen-select"></select>
+                                            @Html.Hidden("hdnSub_License_Code", "0")
+                                        </div>
+                                        <br>
+                                        <label class="bold">@objMessageKey.Validity</label>
+                                        <div id="tabValidity" class="tabbable">
+                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                <li class="@(ORightType == "Y" ? "active" : "")" id="liCal" onclick="SetRightPeriod('Y');">
+                                                    <a data-toggle="tab" href="#tabCal" role="tab">@objMessageKey.Yearbased</a>
+                                                </li>
+                                                <li class="@(ORightType == "M" ? "active" : "")" id="liMile" onclick="SetRightPeriod('M');">
+                                                    <a data-toggle="tab" href="#tabMile" role="tab">
+                                                        @objMessageKey.Milestonebased
+                                                    </a>
+                                                </li>
+                                                <li class="@(ORightType == "U" ? "active" : "")" id="liPerp" onclick="SetRightPeriod('U');">
+                                                    <a data-toggle="tab" href="#tabPerp" role="tab">@objMessageKey.Perpetuity</a>
+                                                </li>
+                                            </ul>
+                                            @Html.Hidden("Original_Right_Type", ORightType)
+                                            @Html.Hidden("Right_Type", Model.Right_Type)
+
+                                            @Html.Hidden("TermYear", Model.Term_YY)
+                                            @Html.Hidden("TermMonth", Model.Term_MM)
+                                            @Html.Hidden("TermDay", Model.Term_DD)
+
+                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                <div class="@(ORightType == "Y" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabCal">
+                                                    @Html.CheckBox("Is_Tentative", (Model.Is_Tentative == "Y" ? true : false))
+                                                    <label>Tentative</label>
+                                                    <br>
+                                                    <label>@objMessageKey.StartDate</label>
+                                                    @Html.TextBox("Start_Date", Model.Start_Date, new { @id = "Start_Date", @placeholder = "DD/MM/YYYY", @class = "isDatepicker" })
+                                                    @Html.TextBox("Term_YY", Model.Term_YY, new { @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
+                                                    @Html.TextBox("Term_MM", Model.Term_MM, new { @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
+                                                    @Html.TextBox("Term_DD", Model.Term_DD, new { @class = "smallTextBox", @placeholder = "DD", @maxlength = 2 })
+                                                    <label style="margin-left: 15px">@objMessageKey.EndDate</label>
+                                                    @Html.TextBox("End_Date", Model.End_Date, new { @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                </div>
+                                                <div class="@(ORightType == "M" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabMile">
+                                                    <ul class="from_to clearfix">
+                                                        <li class="form_li_sub">
+                                                            <label>@objMessageKey.StartDate</label>
+                                                            @Html.TextBox("Milestone_Start_Date", Model.Start_Date, new { @id = "Milestone_Start_Date", @placeholder = "DD/MM/YYYY", @class = "isDatepicker" })
+                                                        </li>
+                                                        <li class="form_li_sub">
+                                                            <label>@objMessageKey.startfrom</label>
+                                                            <select id="ddlMilestone_Type_Code" name="ddlMilestone_Type_Code" class="form_input chosen-select"></select>
+                                                            @Html.HiddenFor(i => Model.Milestone_Type_Code)
+                                                        </li>
+                                                        <li class="form_li_sub">
+                                                            <label>@objMessageKey.validfor</label>
+                                                            @Html.TextBox("txtMilestone_No_Of_Unit", Model.Milestone_No_Of_Unit, new { @class = "smallTextBox", @onblur = "CalculateMilestoneEndDate()" })
+                                                            @Html.HiddenFor(i => Model.Milestone_No_Of_Unit)
+                                                        </li>
+                                                        <li class="form_li_sub">
+                                                            <label></label>
+                                                            <br />
+                                                            <select id="ddlMilestone_Unit_Type" name="ddlMilestone_Unit_Type" class="form_input chosen-select" onchange="CalculateMilestoneEndDate()"></select>
+                                                            @Html.HiddenFor(i => Model.Milestone_Unit_Type)
+                                                        </li>
+                                                        <li class="form_li_sub">
+                                                            <label>@objMessageKey.EndDate</label>
+                                                            @Html.TextBox("Milestone_End_Date", Model.End_Date, new { @id = "Milestone_End_Date", @placeholder = "DD/MM/YYYY", @readonly = "readonly" })
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="@(ORightType == "U" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabPerp">
+                                                    <ul style="height: 30px;">
+                                                        <li style="text-decoration: none;display: inline;width: 35%;float: left">
+                                                            <label>@objMessageKey.StartDate</label>
+                                                            @Html.TextBox("Perpetuity_Date", Model.Start_Date, new { @id = "txtPerpetuity_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                        </li>
+                                                        @if (ViewBag.Enabled_Perpetuity == "Y")
+                {
+                                        <li style="text-decoration: none;display: inline;padding-left: 4%">
+                                            <b>@objMessageKey.Term : </b>
+                                            <label>@ViewBag.Term_Perputity</label>
+                                            <label>@objMessageKey.Years</label>
+                                            @Html.Hidden("Term_Perputity", ViewBag.Term_Perputity as string, new { @id = "hdnTerm_Perputity" })
+                                        </li>
+                                        <li style="text-decoration: none;display: inline;width: 35%;float: right">
+                                            <label>@objMessageKey.EndDate</label>
+                                            @Html.TextBox("Perpetuity_EndDate", Model.End_Date, new { @id = "txtPerpetuity_EndDate", @placeholder = "DD/MM/YYYY", @readonly = "readonly", @style = "width:95px;" })
+                                        </li>
+}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <label class="bold">@objMessageKey.ROFR</label>
+                                        &nbsp;@Html.TextBox("ROFR_DT", Model.ROFR_DT, new { @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY" })
+                                        <span>@objMessageKey.Days</span>
+                                        @Html.TextBox("ROFR_Days", Model.ROFR_Days, new { @class = "smallTextBox", @maxlength = 3 })
+                                        @if (objPage_Properties.Is_ROFR_Type_Visible == "Y")
+                                        {
+                                            <br />
+                                            <br />
+                                            <label class="bold">@objMessageKey.ROFRType</label>
+                                            <select id="ROFR_Code" name="ROFR_Code" class="form_input chosen-select"></select>
+                                        }
+                                        <br>
+                                        <br>
+                                        <label class="bold">@objMessageKey.Language</label>
+                                        <div style="margin-bottom:4px;">
+                                            <label class="radio-inline">
+                                                @if (Model.Sub_Type == "L")
+                                                {
+                                                    <input type="radio" name="rdoSubtitlingLanguage" id="rdoSubL" value="L" onchange="BindDropdown('SL');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoSubtitlingLanguage" id="rdoSubL" value="L" onchange="BindDropdown('SL');" />
+                                                }
+                                                @objMessageKey.Subtitle
+                                            </label>
+                                            <label class="radio-inline">
+                                                @if (Model.Sub_Type == "G")
+                                                {
+                                                    <input type="radio" name="rdoSubtitlingLanguage" id="rdoSubLG" value="G" onchange="BindDropdown('SG');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoSubtitlingLanguage" id="rdoSubLG" value="G" onchange="BindDropdown('SG');" />
+                                                }
+                                                @objMessageKey.SubtitleGroup @*: <label id="lblLanguageCount"></label>*@
+                                            </label>
+                                        </div>
+
+                                        <div id="divSubSingle">
+                                            <select id="lbSub_Language" name="lbSub_Language" multiple="multiple"></select>
+                                            @Html.Hidden("hdnSub_Code")
+                                            @Html.Hidden("hdnSub_Type")
+                                        </div>
+                                        <div style="margin-bottom:4px;">
+                                            <label class="radio-inline">
+                                                @if (Model.Dub_Type == "L")
+                                                {
+                                                    <input type="radio" name="rdoDubbingLanguage" id="rdoDubbingL" value="L" onchange="BindDropdown('DL');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoDubbingLanguage" id="rdoDubbingL" value="L" onchange="BindDropdown('DL');" />
+                                                }
+                                                @objMessageKey.Dubbing
+                                            </label>
+                                            <label class="radio-inline">
+                                                @if (Model.Dub_Type == "G")
+                                                {
+                                                    <input type="radio" name="rdoDubbingLanguage" id="rdoDubbingLG" value="G" onchange="BindDropdown('DG');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoDubbingLanguage" id="rdoDubbingLG" value="G" onchange="BindDropdown('DG');" />
+                                                }
+                                                @objMessageKey.DubbingGroup@*: <label id="lblDubbingCount">@ViewBag.selected_DL_Count</label>*@
+                                            </label>
+                                        </div>
+                                        <div id="divDubSingle">
+                                            <select id="lbDub_Language" name="lbDub_Language" multiple="multiple"></select>
+                                            @Html.Hidden("hdnDub_Type")
+                                            @Html.Hidden("hdnDub_Code")
+                                        </div>
+                                        <br>
+                                    </td>
+                                    <td valign="top">
+                                        <div class="platform_wrapper">
+                                            <label class="bold" for="platform">@objMessageKey.Platform / @objMessageKey.Rights</label>
+                                            <div id="tree" class="treeClass">
+                                            </div>
+                                            <span id="lblTheatrical" style="display: none;">@objMessageKey.Theatrical</span>
+                                            <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" value="@Model.Platform_Codes" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <label class="bold">@objMessageKey.SpecialDetails</label>
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                <li class="active" style="z-index:0;">
+                                                    <a data-toggle="tab" href="#tabRestriction" onclick="OnTabChange('RR')" role="tab">@objMessageKey.RestrictionRemark</a>
+                                                </li>
+                                                <li data-toggle="tab" href="#tabHoldback" onclick="OnTabChange('HB')" role="tab" style="z-index:0;">
+                                                    <a class="" href='#'>@objMessageKey.Holdback</a>
+                                                    <span id="spnHoldBackCount" class="Count">@Model.Acq_Deal_Rights_Holdback.Count()</span>
+                                                </li>
+                                                <li data-toggle="tab" href="#tabBlackout" onclick="OnTabChange('BO')" role="tab" style="z-index:0;">
+                                                    <a class="" href="#">@objMessageKey.Blackout</a>
+                                                    <span id="spnBlackOutCount" class="Count">@Model.Acq_Deal_Rights_Blackout.Count()</span>
+                                                </li>
+                                                @if (Promoter_Tab == "Y")
+                                                {
+                                                    <li data-toggle="tab" href="#tabPromoter" onclick="OnTabChange('PR')" role="tab" style="z-index:0;">
+                                                        <a class="" href="#">@objMessageKey.Promoter</a>
+                                                        <span id="spnPromotercount" class="Count">@Model.Acq_Deal_Rights_Promoter.Count()</span>
+                                                    </li>
+                                                }
+
+                                            </ul>
+                                            <div class="pull-right">
+                                                <a title="@objMessageKey.Add" class="glyphicon glyphicon-plus" id="btnAddSD" onclick="return Add_Holdback_Blackout('HB');" style="display:none"></a>
+                                                @Html.Hidden("hdnEditRecord")
+                                            </div>
+                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                <div class="tab-pane active scale_table_block" id="tabRestriction">
+                                                    @Html.TextAreaFor(m => Model.Restriction_Remarks, new { @id = "Restriction_Remarks", @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+                                                    <div class="divBlock">
+                                                        <div class="charNum">0/4000</div>
+                                                        <div style=""></div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane scale_table_block" id="tabHoldback">
+                                                </div>
+
+                                                <div class="tab-pane scale_table_block" id="tabBlackout">
+                                                </div>
+                                                <div class="tab-pane scale_table_block" id="tabPromoter">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return ValidateSave();">
+                            </li>
+                            <li>
+                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Rights1();" />
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupValidationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DuplicateCombination</h2>
+                        </div>
+                        <div class="modal_block" style="overflow-y:hidden!important">
+                            <div id="BindValidationPopup"></div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupHoldbackValidationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DuplicateHoldbackCombination</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="BindHoldbackValidationPopup"></div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+
+    });
+
+</script>
+
+

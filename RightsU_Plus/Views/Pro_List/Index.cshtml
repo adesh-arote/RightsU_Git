@@ -1,0 +1,182 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Master/JS/Master.js"></script>
+@*<script src="~/JS_Core/common.concat.js"></script>*@
+
+<script>
+    var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Pro_List")',
+    URL_BindMusicDealList = '@Url.Action("BindMusicDealList", "Pro_List")',
+    URL_BindAdvanceSearch = '@Url.Action("BindAdvanceSearch", "Pro_List")',
+    URL_ButtonEvents = '@Url.Action("ButtonEvents", "Pro_List")',
+    URL_BindRunDef = '@Url.Action("BindRunDef", "Pro_List")',
+    URL_AddEditRunChannel = '@Url.Action("AddEditRunChannel", "Pro_List")';
+    URL_SaveUpdate_RUN_CHANNEL = '@Url.Action("SaveUpdate_RUN_CHANNEL", "Pro_List")',
+    URL_Pro_Deal_Title = "@Url.Action("GetProDealTitles", "Pro_List")",
+    URL_SaveTitle = "@Url.Action("SaveTitle", "Pro_List")",
+    URL_BindTitleList = "@Url.Action("BindListTitle", "Pro_List")",
+    URL_UpdateTitle = '@Url.Action("UpdateTitle", "Pro_List")',
+    URL_DeleteTitle = '@Url.Action("DeleteTitle", "Pro_List")',
+    URL_BindAddChannel = '@Url.Action("BindAddChannel", "Pro_List")',
+    URL_BindRunDefTitle = '@Url.Action("BindRunDefTitle", "Pro_List")',
+    URL_BindSingleTitle = '@Url.Action("BindSingleTitle", "Pro_List")',
+    URL_Save_Update_Run_Defination = '@Url.Action("Save_Update_Run_Defination", "Pro_List")',
+    URL_Cancel_Run_Defination = '@Url.Action("Cancel_Run_Defination", "Pro_List")',
+    URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Pro_List")',
+    URL_Reload_Current_Page = '@Url.Action("Index", "Pro_List")',
+    URL_DeleteProDeal = '@Url.Action("DeleteProDeal", "Pro_List")',
+    URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Pro_List")',
+    URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Pro_List")',
+    URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")',
+    URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+
+    function BindPartialView(key, PDCode, Mode, RecLockCode) {
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                PDCode: PDCode,
+                Mode: Mode,
+                RecLockCode: RecLockCode
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divProvisionalDeal').empty();
+                    $('#divProvisionalDeal').html(result);
+                    if (key == "ADD_DEAL") {
+                        BindListTitle(0, "");
+                    }
+                    if ('@objMessageKey.LayoutDirection' == "RTL") {
+                        $("#spnRemarkLength").css("float", "left");
+                        $(".AddDealTile").css({ "marginRight": "915px !important" });
+                        $(".RunDef").css({ "float": "left" });
+                    }
+                    if (Mode == "D") {
+                        showAlert("S", "Record Deleted Successfully");
+                    }
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                hideLoading();
+                alert('Error: ' + result.responseText);
+
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        BindPartialView("LIST", 0, '');
+    });
+
+    function DeleteProvisionalDeal(key, PDCode, Mode, confirmed) {
+        debugger;
+        var Record_Locking_Code = $('#hdnRecordLockingCode').val();
+        if (confirmed) {
+            Command_Name = null;
+            PDCode_G = "";
+            key_G = "";
+            Mode_G = "";
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteProDeal,
+                traditional: true,
+                enctype: "multipart/form-data",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    PDCode: PDCode,
+                    Mode: Mode,
+                    Record_Locking_Code: Record_Locking_Code
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            if (Mode == "D") {
+                                showAlert("S", result.Message);
+                                SearchOrShowAll("", false);
+                            }
+                        }
+                        else if (result.Status == "E")
+                            showAlert("E", result.Message);
+
+                        hideLoading();
+                    }
+                },
+                error: function (result) {
+                    hideLoading();
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            Command_Name = "DELETE_PRO_DEAL";
+            PDCode_G = PDCode;
+            key_G = key;
+            Mode_G = Mode;
+            showAlert("I", "Are you sure, you want to delete this record ?", "OKCANCEL")
+        }
+    }
+
+</script>
+<script>
+    var panelVisible = false;
+    var RightpanelHideCss = '-350px';
+    var RightpanelShowCss = '0px';
+    var LeftpanelHideCss = '-350px';
+    var LeftpanelShowCss = '0px';
+
+    $(document).ready(function () {
+        debugger;
+        initializeChosen();
+        initializeSubMenu2();
+        AllsubmenuHide();
+        var lastScrollTop = 0;
+        $(window).scroll(function (event) {
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop)
+                $("#pnlSearch").addClass("tinyADSearch")
+            else
+                $("#pnlSearch").removeClass("tinyADSearch")
+        });
+    });
+
+</script>
+<script>
+
+
+</script>
+
+<script src="~/Custom_Scripts/Pro_Deal_List.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<div class="main_section" onclick="$('#pannel,#EmailPanel').fadeOut();">
+    <section class="rightsU_container clearfix">
+        <div id="divProvisionalDeal">
+        </div>
+    </section>
+</div>
+

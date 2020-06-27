@@ -1,0 +1,118 @@
+﻿@model List<RightsU_Entities.USP_List_Content_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        $('#chkAll').on("click", function () {
+            var IsCheck = $(this).prop("checked");
+            $('input[type="checkbox"]').prop('checked', IsCheck);
+        });
+
+        $('.checkbox').on("click", function () {
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $('#chkAll').prop('checked', true);
+            } else {
+                $('#chkAll').prop('checked', false);
+            }
+        });
+        $("#btnConsiderExport").on("click", function () {
+            debugger;
+            if ($('.checkbox:checked').length > 0) {
+                $("#tblConsiderExport").css("display", "");
+                var k = $('#tblSelectExport > tbody tr input:checkbox:checked').parents('tr');
+                var j = $(k).not('.consider').clone();
+                $(k).removeClass('consider').addClass('consider');
+                $("#tblConsiderExport tbody").append($($(j).get().reverse()));
+                $.each($("#tblConsiderExport tbody tr"), function (index, value) {
+                    debugger;
+                    var i = $(value).children().last();
+                    if ($(i).find('.btnDeleteIcon').length == 0) {
+                    debugger;
+                        var btnDeleteId = $(value).children().find("input:checkbox").attr('id').replace('chk', 'btn')
+                        $(value).append('<td align="center"><a title="Delete" id="' + btnDeleteId + '" name="btnDelete" class="glyphicon glyphicon-trash btnDeleteIcon" style="cursor: pointer;"></a></td>');
+
+                    }
+                });
+                $("#tblConsiderExport tr td:nth-child(1)").hide();
+            }
+            else {
+                $("#tblConsiderExport").css("display", "");
+                showAlert("E", "Select atleast one content");
+                return false;
+            }
+        });
+
+        $("#tblConsiderExport tbody").on("click", ".btnDeleteIcon", function () {
+            var hdn_Title_Content_Code = $(this).parents('tr').find('input[name=hdn_Title_Content_Code]');
+            var title_Content_Code = $(hdn_Title_Content_Code).val();
+            $('#tblSelectExport > tbody tr').find("[id=hdn_Title_Content_Code_" + title_Content_Code + "]").parents('tr').removeClass('consider');
+            $(hdn_Title_Content_Code).val('0');
+            $(this).parents('tr').hide();
+        });    
+    });
+</script>
+<style>
+    .scrollable {
+        min-height: auto;
+        max-height: 180px;
+        overflow-y: scroll;
+    }
+</style>
+
+<div class="scrollable">
+    <table class="table table-bordered table-hover" id="tblSelectExport">
+        <thead>
+            <tr>
+                <th style="width:2%;"><input type="checkbox" id="chkAll" /></th>
+                <th style="width:40%;">@objMessageKey.Content</th>
+                <th style="width:30%;">@objMessageKey.episode</th>
+                <th style="width:13%;">@objMessageKey.DurationInMin</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model.Count > 0)
+            {
+                int i = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td><input type="checkbox" id="chk_@item.Title_Content_Code" class="checkbox" /></td>
+                        <td>
+                            @item.Title_Name
+                            <input type="hidden" id="hdn_Title_Content_Code_@item.Title_Content_Code" name="hdn_Title_Content_Code" value="@item.Title_Content_Code" />
+                            <input type="hidden" id="hdn_Title_Name_@item.Title_Content_Code" name="hdn_Title_Name" value="@item.Title_Name" />
+
+                        </td>
+                        <td>
+                            @item.Episode
+                            <input type="hidden" id="hdn_Episode_@item.Title_Content_Code" name="hdn_Episode" value="@item.Episode" />
+                        </td>
+                        <td>
+                            @item.Duration_In_Min
+                            <input type="hidden" id="hdn_Duration_In_Min_@item.Title_Content_Code" name="hdn_Duration_In_Min" value="@item.Duration_In_Min" />
+                        </td>
+                    </tr>
+                    i = i + 1;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<div>
+    <br /><input type="button" id="btnConsiderExport" value="@objMessageKey.IncludeForExport" class="btn btn-primary" style="margin-top: -11px;margin-bottom: 3px;" />
+</div>
+

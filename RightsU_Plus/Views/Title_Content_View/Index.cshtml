@@ -1,0 +1,1023 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+@model RightsU_Entities.USP_GetContentMetadata_Result
+@using RightsU_BLL;
+@using UTOFrameWork.FrameworkClasses;
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript">
+
+    var IsCall = 'Y';
+    var URL_BindRightsListData = '@Url.Action("BindRightsListData", "Title_Content_View")';
+    var URL_BindCostListData = '@Url.Action("BindCostListData", "Title_Content_View")';
+    var URL_BindMusicListData = '@Url.Action("BindMusicListData", "Title_Content_View")';
+    var URL_BindVersionListData = '@Url.Action("BindVersionListData", "Title_Content_View")';
+    var URL_BindAiringListData = '@Url.Action("BindAiringListData", "Title_Content_View")';
+    var URL_BindStatusHistoryListData = '@Url.Action("BindStatusHistoryListData", "Title_Content_View")';
+    var URL_BindDDL = '@Url.Action("BindDDL", "Title_Content_View")';
+    var URL_BindTitleMetadata = '@Url.Action("BindTitleMetadata", "Title_Content_View")';
+    var URL_BindTitleAlternatedata = '@Url.Action("BindTitleAlternatedata", "Title_Content_View")';
+    var URL_BindRunDefinitionListData = '@Url.Action("BindRunDefinitionListData", "Title_Content_View")';
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Title_Content_View", new { Title_Content_Code = ViewBag.TitleContentCode })';
+    var command_Search = '@ViewBag.Command_Search';
+    var command_ShowAll = '@ViewBag.Command_ShowAll';
+    var Tab = 'False', CurrentRunTab = 'Y';
+    $(document).ready(function () {
+        $('#ddlChannel_A').SumoSelect();
+        $('#ddlChannel_A')[0].sumo.reload();
+        $('#ddlCostType').SumoSelect();
+        $('#ddlCostType')[0].sumo.reload();
+        $('#txtfrom').change(function () {
+            SetMinDt();
+        });
+
+        $('#txtto').change(function () {
+            SetMaxDt();
+        });
+        addNumeric();
+        initializeChosen();
+        initializeTooltip();
+        initializeExpander();
+        $("#ddlRunDefinition").change(function () {
+            BindCurrentTab(true);
+        });
+        Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDealInfoContent + "~"))'
+        if (Tab == 'True') {
+            TabChange('R');
+        }
+        if (Tab == 'False') {
+            Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForTitleMetaDataContent + "~"))'
+            if (Tab == 'True') {
+                TabChange('T');
+            }
+        }
+        if (Tab == 'False') {
+            Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForCost + "~"))'
+            if (Tab == 'True') {
+                TabChange('C');
+            }
+        }
+        if (Tab == 'False') {
+            Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForMusicContent + "~"))'
+            if (Tab == 'True') {
+                TabChange('M');
+            }
+        }
+        if (Tab == 'False') {
+            Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForVersionContent + "~"))'
+            if (Tab == 'True') {
+                TabChange('V');
+            }
+        }
+        if (Tab == 'False') {
+            Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAiringContent + "~"))'
+            if (Tab == 'True') {
+                TabChange('A');
+            }
+        }
+        if (Tab == 'False') {
+            Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForStatusHistoryContent + "~"))'
+            if (Tab == 'True') {
+                TabChange('S');
+            }
+        }
+        if (Tab == 'False') {
+            Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForRunDefinitionContent + "~"))'
+            if (Tab == 'True') {
+                TabChange('D');
+            }
+            if (Tab = 'False') {
+                $('.grid_area').hide();
+            }
+        }
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetMaxDt() {
+        setMinMaxDates('txtfrom', '', $('#txtto').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtto', $('#txtfrom').val(), '');
+    }
+    function SetPaging() {
+        IsCall = 'N';
+
+        var pageNo = 1, recordCount = 0, pagePerBatch = 0, recordPerPage = 0;
+        pageNo = parseInt($('#hdnPageNo').val());
+        recordCount = parseInt($('#hdnRecordCount').val());
+        pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+        var opt = { callback: PageIndexChanged };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function PageIndexChanged(page_index, jq) {
+        if (checkCurrentAction()) {
+            if (!ValidatePageSize('txtPageSize'))
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+
+            if (IsCall == 'Y') {
+                BindCurrentTab(false);
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!checkCurrentAction())
+            return false;
+
+        if (!ValidatePageSize('txtPageSize'))
+            return false;
+
+        BindCurrentTab(false);
+    }
+    function ValidatePageSize(txtID) {
+        var recordPerPage = $('#' + txtID).val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#' + txtID).attr('required', true)
+        return false
+    }
+    function pageBinding() {
+        BindCurrentTab(false);
+    }
+    function TabChange(currentTab, configCode) {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (checkCurrentAction()) {
+            if (!ValidatePageSize('txtPageSize')) {
+                event.preventDefault();
+                return false;
+            }
+
+            $('#hdnCurrentTab').val(currentTab);
+            $('#hdnConfigCode').val(configCode);
+            BindCurrentTab(true);
+
+        }
+    }
+
+    function BindCurrentTab(tabChanged) {
+        var currentTab = $('#hdnCurrentTab').val();
+        var configCode = $('#hdnConfigCode').val();
+        switch (currentTab) {
+
+            case 'R':
+                BindRightsListData('', tabChanged)
+                break;
+            case 'T':
+                BindTitleMetadata('', tabChanged)
+                break;
+            case 'AL':
+                BindTitleAlternatedata('', configCode, tabChanged)
+                break;
+            case 'C':
+                BindCostListData('', '', tabChanged)
+                break;
+            case 'M':
+                BindMusicListData('', '', '', tabChanged)
+                break;
+            case 'V':
+                BindVersionListData('', 0, '', tabChanged);
+                break;
+            case 'A':
+                BindAiringListData('', '', '', '', '', tabChanged);
+                break;
+            case 'S':
+                BindStatusHistoryListData('', tabChanged);
+                break;
+            case 'D':
+                BindRunDefinitionListData('', tabChanged,CurrentRunTab);
+                break;
+        }
+    }
+    function BindRightsListData(command, tabChanged) {
+        $('#Paging').show();
+        $('#divMusicVersionSearch').hide();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').hide();
+        $('#divRunDefinition').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindRightsListData,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function BindTitleMetadata(command, tabChanged) {
+        $('#divMusicVersionSearch').hide();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').hide();
+        $('#Paging').hide();
+        $('#divRunDefinition').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindTitleMetadata,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function BindTitleAlternatedata(command, configCode, tabChanged) {
+        $('#divMusicVersionSearch').hide();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').hide();
+        $('#Paging').hide();
+        $('#divRunDefinition').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindTitleAlternatedata,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                configCode: configCode,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function BindCostListData(searchText, command, tabChanged) {
+        $('#Paging').show();
+        $('#divMusicVersionSearch').hide();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').show();
+        $('#divRunDefinition').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindCostListData,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                searchText: searchText,
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function BindMusicListData(searchText, searchVersion, command, tabChanged) {
+        $('#Paging').show();
+        $('#divMusicVersionSearch').show();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').hide();
+        $('#tdversion').show();
+        $('#btnAdd').hide();
+        $('#divRunDefinition').hide();
+        $('#btnExport').hide();
+        $('#btnImport').hide();
+        $("#txtSearchText_MV").attr("placeholder", "@objMessageKey.MusicTrack, @objMessageKey.MovieName, @objMessageKey.MusicLabel");
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindMusicListData,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                searchText: searchText,
+                searchVersion: searchVersion,
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function BindVersionListData(searchText, titleversioncode, command, tabChanged) {
+        $('#Paging').show();
+        $('#divMusicVersionSearch').show();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').hide();
+        $('#tdversion').hide();
+        $('#btnAdd').show();
+        $('#btnExport').show();
+        $('#btnImport').show();
+        $('#divRunDefinition').hide();
+        $("#txtSearchText_MV").attr("placeholder", "Version");
+
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindVersionListData,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                searchText: searchText,
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                titleversioncode: titleversioncode,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function BindAiringListData(startDate, endDate, versionId, channelCodes, command, tabChanged) {
+        $('#Paging').show();
+        $('#divMusicVersionSearch').hide();
+        $('#divAiringSerach').show();
+        $('#divCostSerach').hide();
+        $('#divRunDefinition').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindAiringListData,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                StartDate: startDate,
+                EndDate: endDate,
+                VersionId: versionId,
+                ChannelCodes: channelCodes,
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                    initializeChosen();
+                    initializeExpander();
+                }
+            }
+        });
+    }
+    function BindStatusHistoryListData(command, tabChanged) {
+        $('#Paging').show();
+        $('#divMusicVersionSearch').hide();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').hide();
+        $('#divRunDefinition').hide();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindStatusHistoryListData,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function BindRunDefinitionListData(command, tabChanged, CurrentTab) {
+        CurrentRunTab = CurrentTab;
+        $('#Paging').hide();
+        $('#divMusicVersionSearch').hide();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').hide();
+        $('#divRunDefinition').show();
+
+        $.ajax({
+            url: URL_BindRunDefinitionListData,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                command: command,
+                tabChanged: tabChanged,
+                Type: $('#ddlRunDefinition').val(),
+                Channel_Code: $('#ddlChannel').val(),
+                Start_Date: $('#txtfrom').val(),
+                End_Date: $('#txtto').val(),
+                Deal_Type: $('#ddlDeal').val(),
+                CurrentTab: CurrentTab
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function BindDDL() {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindDDL,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#ddlVersion_MV').empty();
+                    $.each(result.VersionList, function () {
+                        $("#ddlVersion_MV").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlVersion_MV').trigger("chosen:updated");
+
+                    $('#ddlVersion_A').empty();
+                    $.each(result.VersionList, function () {
+                        $("#ddlVersion_A").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlVersion_A').trigger("chosen:updated");
+
+                    $('#ddlRunDefinition').empty();
+                    $.each(result.RunDefintionType, function () {
+                        $("#ddlRunDefinition").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlRunDefinition').trigger("chosen:updated");
+
+                    $('#ddlChannel').empty();
+                    $.each(result.Channel, function () {
+                        $("#ddlChannel").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlChannel').trigger("chosen:updated");
+
+                    $('#ddlDeal').empty();
+                    $.each(result.Deal, function () {
+                        $("#ddlDeal").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlDeal').trigger("chosen:updated");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SearchData(showAll) {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!checkCurrentAction())
+            return false;
+
+        var currentTab = $('#hdnCurrentTab').val();
+
+        var command = '';
+        if (showAll) {
+            command = command_ShowAll;
+            $('.table :input').not('input:button').each(function () {
+                if ($(this)[0].id != "") {
+                    if ($(this).is('select'))
+                        $(this).val('').trigger('chosen:updated');
+                    else
+                        $(this).val('');
+                }
+            });
+            $('#hdnPageNo').val(1);
+            $('#ddlChannel_A')[0].sumo.reload();
+            $('#ddlCostType')[0].sumo.reload();
+        }
+        if (currentTab == "C") {
+            var searchText = '';
+            if (!showAll) {
+                var searchText = $.trim($('#ddlCostType').val());
+                if (searchText == "") {
+                    $('#divCost').addClass('required');
+                    return false;
+                }
+                $('#hdnPageNo').val(1);
+                command = command_Search;
+            }
+
+            BindCostListData(searchText, command, false);
+        }
+        if (currentTab == 'M' || currentTab == 'V') {
+            /*** Search functionality for MUSIC and VERSION Tab ***/
+            var searchText = '', searchVersion = '';
+            if (!showAll) {
+                searchText = $.trim($('#txtSearchText_MV').val());
+                searchVersion = $.trim($('#ddlVersion_MV').val());
+                if (searchText == "" && searchVersion == "") {
+                    $('#txtSearchText_MV').val('').attr('required', true)
+                    return false;
+                }
+                $('#hdnPageNo').val(1);
+                command = command_Search;
+            }
+
+            if (currentTab == 'M')
+                BindMusicListData(searchText, searchVersion, command, false);
+            else
+                BindVersionListData(searchText, 0, command, false);
+        }
+        else if (currentTab == 'A') {
+            /*** Search functionality for AIRING Tab ***/
+            var startDate = '', endDate = '', versionId = '', channelCodes = '';
+            if (!showAll) {
+                startDate = $.trim($("#txtStartDate_A").val());
+                endDate = $.trim($("#txtEndDate_A").val());
+                channelCodes = $('#ddlChannel_A').val();
+                versionId = $('#ddlVersion_A').val();
+
+                if (versionId == "" && channelCodes == null && startDate == "" && endDate == "") {
+                    showAlert("E", "Please select search criteria", 'txtStartDate_A')
+                    return false
+                }
+                else if (startDate == "" && endDate != "") {
+                    showAlert("E", "Please select Start Date", 'txtStartDate_A')
+                    return false
+                }
+                else if (startDate != "" && endDate == "") {
+                    showAlert("E", "Please select End Date", 'txtEndDate_A')
+                    return false
+                }
+
+                if ((new Date(endDate).getTime()) < (new Date(startDate).getTime())) {
+                    showAlert("E", "End Date cannot be less then Start Date", 'txtEndDate_A')
+                    return false;
+                }
+
+                if (channelCodes == null)
+                    channelCodes = '';
+                else
+                    channelCodes = channelCodes.toString();
+
+                if (versionId == null)
+                    versionId = '';
+                else
+                    versionId = versionId.toString();
+
+                command = command_Search;
+            }
+
+            BindAiringListData(startDate, endDate, versionId, channelCodes, command, false);
+        }
+    }
+    function AddEditVersion(titleversioncode, commandName) {
+        if (checkCurrentAction()) {
+            BindVersionListData('', titleversioncode, commandName, false);
+            $('#hdnAction').val(commandName)
+        }
+    }
+    function checkCurrentAction() {
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("E", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+</script>
+<style>
+    input[type=date] {
+        line-height: normal !important;
+        width: 130px;
+    }
+
+    #ddlVersion_MV {
+        width: 60%;
+    }
+
+    #ddlRunDefinition_chosen {
+        width: 50% !important;
+    }
+
+    #ddlChannel_chosen {
+        width: 68% !important;
+    }
+
+    #ddlDeal_chosen {
+        width: 65% !important;
+    }
+
+    .SumoSelect {
+        width: 95% !important;
+    }
+
+    .sumo_ddlCostType {
+        width: 238px !important;
+    }
+</style>
+<div class="container acq main_col" onclick="$('.leftPanel').css('left', panelHideCss);">
+    <div class="top_area">
+
+        <h2 class="pull-left">
+            @objMessageKey.ViewContent - @Model.Title_Name
+            <span></span>
+        </h2>
+
+        @*<table class="table_brif table">
+                <tbody>
+                    <tr>
+                        <td class="intro_pic">
+                            <div class="movie_deal" title="Deal Type - Music">
+                                <img alt="" src="~/Images/movieIcon.png" />
+                            </div>
+                        </td>
+                        <td class="intro">
+                            <table class="four_column table">
+                                <tbody>
+                                    <tr>
+                                        <td class="td_label">Content</td>
+                                        <td><span>@Model.Title_Name</span></td>
+                                        <td class="td_label">Episode</td>
+                                        <td>@Model.Episode_No</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="td_label">Title Type</td>
+                                        @if (string.IsNullOrEmpty(Model.Content_Category))
+                                        {
+                                            <td>@Model.Title_Type</td>
+                                        }
+                                        else
+                                        {
+                                            <td>@(Model.Content_Category + " - " + Model.Content_Category)</td>
+                                        }
+                                        <td class="td_label">Duration</td>
+                                        <td>@Model.Duration Min</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>*@
+    </div>
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <input type="hidden" id="hdnConfigCode" />
+                <ul class="nav nav-tabs nav-tab pull-left">
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDealInfoContent + "~"))
+                    {
+                        <li id="liTabR" class="active">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('R',0)">@objMessageKey.DealInfo</a>
+                        </li>
+                    }
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForTitleMetaDataContent + "~"))
+                    {
+                        <li id="liTabTitle" class="">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('T',0)">@objMessageKey.TitleMetadata</a>
+                        </li>
+                    }
+                    @if (ViewBag.PartialTabList != null)
+                    {
+
+                        int?[] alternateCode = ViewBag.PartialTabList;
+
+                        foreach (var item in alternateCode)
+                        {
+                            string config_Name = new Alternate_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Alternate_Config_Code == item).Select(x => x.Alternate_Name).FirstOrDefault();
+                            <li id="liTabAlternateTab" class="">
+                                <a data-toggle="tab" href="" role="tab" onclick="TabChange('AL',@item)">@config_Name</a>
+                            </li>
+                        }
+                    }
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForCost + "~"))
+                    {
+                        <li id="liTabC" class="">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('C',0)">@objMessageKey.Cost</a>
+                        </li>
+                    }
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForMusicContent + "~"))
+                    {
+                        <li id="liTabM" class="">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('M',0)">@objMessageKey.Music</a>
+                        </li>
+                    }
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForVersionContent + "~"))
+                    {
+                        <li id="liTabV" class="">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('V',0)">@objMessageKey.Version</a>
+                        </li>
+                    }
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAiringContent + "~"))
+                    {
+                        <li id="liTabA" class="">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('A',0)">@objMessageKey.Airing</a>
+                        </li>
+                    }
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForStatusHistoryContent + "~"))
+                    {
+                        <li id="liTabS" class="">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('S',0)">@objMessageKey.StatusHistory</a>
+                        </li>
+                    }
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForRunDefinitionContent + "~"))
+                    {
+                        <li id="liTabS" class="">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('D',0)">@objMessageKey.RunDefintion</a>
+                        </li>
+                    }
+                </ul>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div id="divCostSerach" class="scale_table_block" style="display:none">
+                        <table class="table">
+                            <tr>
+                                <td style="width:10%;padding-top: 7px;text-align:center"><b>@objMessageKey.CostType:</b></td>
+                                <td style="width:20%;" id="tdcosttype">
+                                    <div id="divCost" style="width:99%!important">
+                                        @Html.DropDownList("ddlCostType", new SelectList(ViewBag.CostTypeList, "Value", "Text"), new { @id = "ddlCostType", multiple = "multiple", })
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch_MV" onclick="SearchData(false)">
+                                    <input type="button" class="button" value="@objMessageKey.ShowAll" id="btnShowAll_MV" onclick="SearchData(true)">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="divMusicVersionSearch" class="scale_table_block" style="display:none">
+                        <table class="table">
+                            <tr>
+                                <td style="width:40%;">
+                                    <input type="text" style="width:100%" id="txtSearchText_MV" placeholder="@objMessageKey.MusicTrack, @objMessageKey.MovieName, @objMessageKey.MusicLabel">
+                                </td>
+
+                                <td style="width:20%;" id="tdversion">
+                                    @Html.DropDownList("ddlVersion", new SelectList(ViewBag.Version, "Value", "Text"), new { @id = "ddlVersion_MV", @class = "form_input chosen-select" })
+                                </td>
+
+                                <td>
+                                    <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch_MV" onclick="SearchData(false)">
+                                    <input type="button" class="button" value="@objMessageKey.ShowAll" id="btnShowAll_MV" onclick="SearchData(true)">
+                                </td>
+                                <td id="btnAdd">
+                                    <div class="right_nav pull-right">
+                                        <a class="btn btn-primary" onclick="AddEditVersion(0, 'ADD')">@objMessageKey.Add</a>
+                                    </div>
+                                </td>
+                                
+                                @*<td id="btnExport" style="width:10px;">
+                                    <label for="btnExportToXml" class="glyphicon glyphicon-floppy-save" title="Save To Xml">
+                                        @using (Html.BeginForm("ExportToXml", "Title_Content_View"))
+                                        {
+                                            <input type="submit" style="display: none" id="btnExportToXml" />
+                                             <input type="hidden" name="DealTypeC" value="@Model.Title_Content_Code" id="DealTypeC" />
+                                        }
+                                    </label>
+                                </td>
+                                 
+                                <td id="btnImport">
+                                    <label for="btnTitleContentImport" class="glyphicon glyphicon-floppy-open" onclick="@("window.location.href='" + @Url.Action("UploadContentVersionTitle", "Title_Content_View") + "'");" title="Content Version Import">
+                                    </label>
+                                </td>*@
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="divAiringSerach" class="scale_table_block" style="display:none">
+                        <table class="table">
+                            <tr>
+                                <td style="width:4%;padding-top: 7px;">
+                                    <spn class="bold">@objMessageKey.From</spn>
+                                </td>
+                                <td style="width:12%;">
+                                    <input type="date" id="txtStartDate_A" value="">
+                                </td>
+                                <td style="width:2%;padding-top: 7px;">
+                                    <span class="bold">@objMessageKey.To</span>
+                                </td>
+                                <td style="width:15%">
+                                    <input type="date" id="txtEndDate_A" value="">
+                                </td>
+                                <td style="width:5%;padding-top: 7px;">
+                                    <span class="bold">@objMessageKey.Version</span>
+                                </td>
+                                <td style="width:18%">
+                                    @Html.DropDownList("ddlVersion_A", new SelectList(ViewBag.Version, "Value", "Text"), new { @id = "ddlVersion_A", @class = "form_input chosen-select" })
+
+                                </td>
+
+                                <td style="width:5%;padding-top: 7px;">
+                                    <span class="bold">@objMessageKey.Channel</span>
+                                </td>
+                                <td style="width:27%">
+                                    @Html.DropDownList("ddlChannel_A", new SelectList(ViewBag.ChannelList, "Value", "Text"), new { multiple = "multiple", @style = "display:none" })
+                                </td>
+                                <td style="width:12%;">
+                                    <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch_A" onclick="SearchData(false)">
+                                    <input type="button" class="button" value="@objMessageKey.ShowAll" id="btnShowAll_A" onclick="SearchData(true)">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="divRunDefinition" class="scale_table_block" style="display:none;">
+                        <table class="table">
+                            <tr>
+                                <td style="width:19%">
+                                    <label>@objMessageKey.GroupBy:</label>
+                                    @Html.DropDownList("ddlRunDefinition", new SelectList(ViewBag.RunDefintionType, "Value", "Text"), new { @id = "ddlRunDefinition", @class = "form_input chosen-select" })
+                                </td>
+                                <td style="width:20%">
+                                    @objMessageKey.Channel: &nbsp;
+                                    @Html.DropDownList("ddlChannel", new SelectList(ViewBag.Channel, "Value", "Text"), new { @id = "ddlChannel", @class = "form_input chosen-select" })
+                                </td>
+                                <td style="width:20%;">
+                                    @objMessageKey.DealType: &nbsp;
+                                    @Html.DropDownList("ddlDeal", new SelectList(ViewBag.DealType, "Value", "Text"), new { @id = "ddlDeal", @class = "form_input chosen-select" })
+                                </td>
+                                <td>
+                                    @objMessageKey.RightsPeriodFrom: &nbsp;
+                                    <input type="text" class="isDatepicker shortDate" value="" id="txtfrom" placeholder="dd/MM/yyyy" title="From" />
+                                    &nbsp; @objMessageKey.To &nbsp;
+                                    <input type="text" class="isDatepicker shortDate" value="" id="txtto" placeholder="dd/MM/yyyy" title="To" />
+                                </td>
+                                <td>
+                                    <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch" onclick="BindRunDefinitionListData('',true,CurrentRunTab)">
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="background-color:white;">
+                            <div class="navigation_tabs">
+                                <div class="tabbable">
+                                    <ul class="nav nav-tabs nav-tab pull-left" style="padding-top:15px;">
+                                        <li class="active">
+                                            <a data-toggle="tab" href="" role="tab" onclick="BindRunDefinitionListData('',true,'Y')">@objMessageKey.Active</a>
+                                        </li>
+                                        <li>
+                                            <a data-toggle="tab" href="" role="tab" onclick="BindRunDefinitionListData('',true,'N')">@objMessageKey.Archive</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="paging_area clearfix" style="height:31px !important;" id="Paging">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <input type="hidden" id="hdnCurrentTab" name="hdnCurrentTab" value="R" />
+                        <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" 
+                                   onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div id="tabs">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom_action">
+        <ul class="modal_block clearfix" style="padding-top: 10px;">
+            <li>
+                <a class="btn-primary" href='@Url.Action("Cancel", "Title_Content_View")'>@objMessageKey.Back</a>
+            </li>
+        </ul>
+    </div>
+</div>

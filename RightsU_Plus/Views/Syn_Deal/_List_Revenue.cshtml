@@ -1,0 +1,154 @@
+﻿@model ICollection<RightsU_Entities.Syn_Deal_Revenue>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@using UTOFrameWork.FrameworkClasses;
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?syn_Revenue');
+        if ($('#Pagination'))
+            SetPaging();
+
+        $("#txtPageSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxDigits: 3
+        });
+        initializeExpander();
+        initializeTooltip();
+    });
+
+    var IsCall = 'Y';
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var PageNo, recordCnt, pageSize = 10;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        if ('@ViewBag.pageSize' != null) {
+            pageSize = '@ViewBag.pageSize';
+            $('#txtPageSize').val(pageSize);
+        }
+        else
+            pageSize = $('#txtPageSize').val();
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = pageSize;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if ($('#txtPageSize').val() != "") {
+            if (IsCall == 'Y') {
+                LoadSynDealRevenue(page_index, 'N');
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function CheckPageNumber() {
+        $('#txtPageSize').removeClass("required");
+        var txtPageSize = $("#txtPageSize");
+        if (parseInt(txtPageSize.val()) > 0) {
+            return true;
+        }
+        else {
+            txtPageSize.val("");
+            $('#txtPageSize').addClass("required");
+            return false;
+        }
+    }
+    function pageBinding() {
+        LoadSynDealRevenue(0, 'N');
+    }
+</script>
+<div class="paging_area clearfix">
+    <span class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+    <div class="pagination" id="Pagination"></div>
+    <span class="pull-right">
+        @objMessageKey.PageSize:
+        <input type="text" class="smallTextBox" value="" id="txtPageSize" onchange="if(CheckPageNumber()) LoadSynDealRevenue(0,'N')" onblur="setDefaultPaging('txtPageSize')">
+    </span>
+</div>
+<table class="table table-bordered table-hover">
+    <tr>
+        <th style="width: 45%">@objMessageKey.TitleName</th>
+        <th style="width: 25%">@objMessageKey.FixedFees</th>
+        <th style="width: 25%">@objMessageKey.VariableFees</th>
+        <th style="width: 10%">@objMessageKey.Action</th>
+    </tr>
+    @foreach (var objSynRevenueList in Model)
+    {
+        <tr>
+
+            <td>
+                @{
+        string movieName = "";
+        if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+        {
+            movieName = string.Join(", ", (objSynRevenueList.Syn_Deal_Revenue_Title.Select(s => s.Title.Title_Name + " ( " + s.Episode_From + " - " + s.Episode_To + " )").ToArray()));
+        }
+        else if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Music)
+        {
+            movieName = string.Join(", ", (objSynRevenueList.Syn_Deal_Revenue_Title.Select(s => s.Title.Title_Name + " ( " + (Convert.ToString(s.Episode_From) == "0" ? "Unlimited" : Convert.ToString(s.Episode_From)) + " )").ToArray()));
+        }
+        else
+        {
+            movieName = string.Join(", ", (objSynRevenueList.Syn_Deal_Revenue_Title.Select(s => s.Title.Title_Name).ToArray()));
+        }
+                }
+
+                <div class="expandable">
+                    <span>@movieName&#x200E;</span>
+                    <a href="#"><span></span></a>
+                </div>
+
+            </td>
+            <td class="text-right">
+                @GlobalParams.CurrencyFormat(Convert.ToDouble(objSynRevenueList.Deal_Cost))
+            </td>
+            <td>
+                @{if (objSynRevenueList.Variable_Cost_Type == "N")
+                {<span title="@objMessageKey.DealType">@objMessageKey.NO</span>}
+                else
+                {<span title="@objMessageKey.DealType">@objMessageKey.Yes</span>}}
+            </td>
+            <td>
+                @{
+
+        if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+        {
+            <a title="@objMessageKey.View" href="#" class="glyphicon glyphicon-eye-open" data-toggle="modal" onclick="AddEditRevenue(@objSynRevenueList.Syn_Deal_Revenue_Code,'View');"></a>
+        }
+        else
+        {
+            <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" data-toggle="modal" onclick="AddEditRevenue(@objSynRevenueList.Syn_Deal_Revenue_Code,'Edit');"></a>
+                    <a title="@objMessageKey.Delete" id="Delete" href="#" class="glyphicon glyphicon-trash" onclick="DeleteCost(@objSynRevenueList.Syn_Deal_Revenue_Code)"></a>
+        }
+
+                }
+            </td>
+        </tr>
+    }
+</table>

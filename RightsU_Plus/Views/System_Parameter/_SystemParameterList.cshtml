@@ -1,0 +1,69 @@
+﻿@model List<RightsU_Entities.System_Parameter_New>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }  
+}           
+<script>
+       $('.expand_Parameter_Value').expander({
+        slicePoint: 80,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblSystemParameter">
+    <thead>
+        <tr>
+            <th style="width:40%;">@objMessageKey.ParameterName</th>
+            <th style="width:50%;">@objMessageKey.ParameterValue</th>
+            <th style="width:10%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.Id == item.Id)
+                    {
+                        <td>
+                            <span>@item.Parameter_Name</span>
+                        </td>
+                        <td>
+                            <input id="txtParamValue_@item.Id" type="text" value="@item.Parameter_Value" maxlength="100" style="width:90%;"/>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveSystem_Parameter(@item.Id)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <span>@item.Parameter_Name</span>
+                        </td>
+                        <td>
+                            <span class="expand_Parameter_Value">@item.Parameter_Value</span>
+                        </td>
+                        <td align="center">
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Id, 'EDIT')"></a>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

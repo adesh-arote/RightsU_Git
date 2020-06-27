@@ -1,0 +1,852 @@
+﻿@model RightsU_Entities.USPMHCueSheetList_Result
+@using UTOFrameWork.FrameworkClasses;
+
+<script>
+    var IsValidForTab = true;
+    var URL_BindAlbumName  = '@Url.Action("BindAlbumName", "MHCueSheet")';
+    var URL_Bind_Track = '@Url.Action("Bind_Music_track", "MHCueSheet")';
+    var URL_Bind_Title = '@Url.Action("Bind_Title", "MHCueSheet")';
+    var URL_BindGrid = '@Url.Action("BindGrid", "MHCueSheet")';
+    var URL_BindEpsNo = '@Url.Action("BindEpsNo", "MHCueSheet")';
+    var URL_SaveMHCueSheetSongs_List = '@Url.Action("SaveMHCueSheetSongs_List", "MHCueSheet")';
+    var URL_RemoveMHCueSheetSongs_List = '@Url.Action("RemoveMHCueSheetSongs_List", "MHCueSheet")';
+    var URL_finalSave = '@Url.Action("FinalSave", "MHCueSheet")';
+
+    var isTabChangedSuccess = false;
+
+    $(document).ready(function () {
+        if ('@Model.UploadStatus.ToUpper()' == "COMPLETED" || '@Model.UploadStatus.ToUpper()' == "SUBMITTED") {
+            $.trim($('#hdnTabName').val("CM"));
+        }
+        addNumeric();
+        var restrictCharLength = $(".restrictChar").val().length;
+        $(".charNum").html(restrictCharLength + "/4000");
+        BindGrid(true, false, '');
+        $('#ResolveConflictTab > li > a').on('click', function () {
+            debugger
+            TabChange($(this).data('tabname'));
+            debugger
+            if (isTabChangedSuccess) {
+                var prevElm = $(this).parents('#ResolveConflictTab').find('li.active');
+                if (!IsValidForTab) {
+                    $(this).removeClass('active');
+                    $(prevElm).addClass('active');
+                    IsValidForTab = true;
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        });
+        SetPaging();
+    });
+
+    $(document).on('keyup', 'textarea', function () {
+        //
+        //var count = $(this).val().length;
+        //$(".charNum").html(count + "/4000");
+        var Val = $(this);
+        var max = 4000;
+        var len = $(this).val().length;
+
+        if (len >= max)
+            Val.val(Val.val().substring(0, max));
+
+        $('.charNum').text(Val.val().length.toString() + '/' + max.toString());
+
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+        if (pageNo == 0)
+            pageNo = 1;
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (validateGRID()) {
+            $('.required').removeClass('required');
+            if (!ValidatePageSize('txtPageSize'))
+                return false;
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                SaveMHCueSheetSongs_List(false);
+            else
+                IsCall = 'Y';
+        }
+        else
+            return false;
+    }
+    function txtPageSize_OnChange(txtID) {
+        debugger;;
+        if (validateGRID()) {
+
+            $("[required='required']").removeAttr("required");
+            $('.required').removeClass('required');
+            if (!ValidatePageSize(txtID))
+                return false;
+
+            SaveMHCueSheetSongs_List(false);
+            // BindGrid(false, false, '');
+            SetPaging();
+        }
+        else {
+            return false;
+        }
+    }
+    function ValidatePageSize(txtID) {
+        var recordPerPage = $('#' + txtID).val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#' + txtID).attr('required', true)
+        return false
+    }
+    function TabChange(tabName, DM_Master_Import_Code) {
+        debugger
+        if (validateGRID()) {
+            isTabChangedSuccess = true;
+            //SaveMappedData();
+            var previousTabName = $('#hdnTabName').val();
+            $('#hdnTabName').val(tabName);
+            SaveMHCueSheetSongs_List(true, previousTabName)
+
+            //BindGrid(false, true, previousTabName);
+            SetPaging();
+        }
+        else {
+            isTabChangedSuccess = false;
+        }
+    }
+    function BindGrid(fetchData, isTabChanged, previousTabName) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var MHCueSheetCode = $.trim($('#hdnMHCueSheetCode').val());
+        var currentTabName = $.trim($('#hdnTabName').val());
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        var key = $('#hdnKey').val();
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_BindGrid,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                MHCueSheetCode: MHCueSheetCode,
+                fetchData: fetchData,
+                isTabChanged: isTabChanged,
+                currentTabName: currentTabName,
+                previousTabName: previousTabName,
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                key: key
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#divMHCueSheetSongData").empty();
+                    $("#divMHCueSheetSongData").append(result);
+
+                    initializeTooltip();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+    }
+    function populateTitle(evt, Count_List, Episode_No) {
+
+        var Selected_Title_Codes = "";
+        var selectedtxt = $('#txtTitleSearch_' + Count_List).val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+
+
+        var txtSearch = $('#txtTitleSearch_' + Count_List + '').val();
+        if (txtSearch == '' || txtSearch == null || txtSearch == undefined || evt.key == "Backspace") {
+            $('#ddl_txtTitleSearch_' + Count_List + '_chosen').hide();
+            //$('#txtTitleSearch_' + Count_List + '').val('');
+            //$(value).find('select[id*="ddl_txtTitleSearch_' + Count_List + '"]').val('');
+            $('#ddl_txtTitleSearch_' + Count_List).val('');
+            $('#hdnTitleCode_' + Count_List).val(0);
+
+
+        }
+
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitleSearch_" + Count_List).autocomplete({
+                focus: function () {
+                    return false;
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_deal_type_Code: '0',
+                        Selected_Title_Codes: Selected_Title_Codes,
+                        Searched_Title: $('#txtTitleSearch_' + Count_List).val()
+                    };
+                    $.ajax({
+                        url: URL_Bind_Title,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            // $("#lbTitle_Code").val('');
+                            response($.map(data, function (v, i) {
+                                return {
+                                    //label: v.Music_Title_Name,
+                                    //val: v.Music_Title_Code
+                                    label: v.Title_Name,
+                                    val: v.Title_Code
+                                }
+                            }))
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+
+                    $('#ddl_txtTitleSearch_' + Count_List + '_chosen').show();
+                    $("#txtTitleSearch_" + Count_List).removeClass('required');
+                    $('#ddl_txtTitleSearch_' + Count_List).removeClass('required');
+
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    // text.push("");
+                    this.value = text;
+                    //this.value = text.join("﹐");
+
+                    var value = $("#hdnTitleSearch" + Count_List).val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    // value.push("");
+                    $('#hdnTitleCode_' + Count_List).val(i.item.val);
+
+                    $("#ddl_" + $(this).attr('id')).css("display", "");
+                    $("#hdnTitleSearch" + Count_List)[0].value = value.join(", ");
+                    if (Episode_No != 0)
+                        BindEpsNo(this.value, $(this).attr('id'),0, Episode_No);
+                    else
+                        BindEpsNo(this.value, $(this).attr('id'),0, 0);
+
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "300px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function BindEpsNo(titleName, id, TitleContentCode, Episode_No) {
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindEpsNo,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                titleName: titleName,
+                TitleContentCode: TitleContentCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+
+                    if (result.lstEpisode != "E") {
+                        $("#ddl_" + id).empty();
+                        $("#ddl_" + id).append('<option value="0" selected>No Episode found</option>');
+                        $(result.lstEpisode).each(function (index, item) {
+                            //if (this.Text == "Episode - " + Episode_No && RUTitleContentCode == undefined)
+                            if (TitleContentCode == this.Value )
+                                $("#ddl_" + id).append('<option value="' + this.Value + '" selected>' + this.Text + '</option>');
+                            else
+                                $("#ddl_" + id).append('<option value="' + this.Value + '">' + this.Text + '</option>');
+
+                            //if (this.Value == RUTitleContentCode) {
+                            //    $("#ddl_" + id).append('<option value="' + this.Value + '" selected>' + this.Text + '</option>');
+                            //}
+                        });
+
+                        $("#ddl_" + id).trigger("chosen:updated");
+                        $("#ddl_" + id).css("display", "none");
+
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: 1' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function populateTrack(evt, Count_List) {
+
+        var Selected_Track_Codes = "";
+        var selectedtxt = $('#txtTrackSearch_' + Count_List).val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+
+
+        var txtSearch = $('#txtTrackSearch_' + Count_List + '').val();
+        if (txtSearch == '' || txtSearch == null || txtSearch == undefined || evt.key == "Backspace") {
+            $('#ddl_txtTrackSearch_' + Count_List + '_chosen').hide();
+            $('#ddl_txtTrackSearch_' + Count_List).val('');
+            $('#hdnTrackCode_' + Count_List).val(0);
+        }
+
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTrackSearch_" + Count_List).autocomplete({
+                focus: function () {
+                    return false;
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_Track_Codes: Selected_Track_Codes,
+                        Searched_Track: $('#txtTrackSearch_' + Count_List).val()
+                    };
+                    $.ajax({
+                        url: URL_Bind_Track,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+
+                            // $("#lbTrack_Code").val('');
+                            response($.map(data, function (v, i) {
+                                return {
+                                    //label: v.Music_Track_Name,
+                                    //val: v.Music_Track_Code
+                                    label: v.Music_Title_Name,
+                                    val: v.Music_Title_Code
+                                }
+                            }))
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+
+                    //$('#ddl_txtTrackSearch_' + Count_List + '_chosen').show();
+                    $("#txtTrackSearch_" + Count_List).removeClass('required');
+                    //$('#ddl_txtTrackSearch_' + Count_List).removeClass('required');
+
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    // text.push("");
+                    this.value = text;
+                    //this.value = text.join("﹐");
+
+                    var value = $("#hdnTrackSearch" + Count_List).val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    // value.push("");
+                    $('#hdnTrackCode_' + Count_List).val(i.item.val);
+
+                    //$("#ddl_" + $(this).attr('id')).css("display", "");
+                    $("#hdnTrackSearch" + Count_List)[0].value = value.join(", ");
+
+                    //if (Episode_No != 0)
+                    //    BindEpsNo(this.value, $(this).attr('id'), Episode_No);
+                    //else
+                    //    BindEpsNo(this.value, $(this).attr('id'), 0);
+
+                    if (parseInt(value) > 0) {
+                        BindAlbumName(parseInt(value), Count_List);
+                    }
+
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "300px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function BindAlbumName(Track_Code, Count_List) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindAlbumName,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Track_Code: Track_Code
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+
+                    $("#ddl_txtTrackSearch_" + Count_List).text(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: 2' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function SaveMHCueSheetSongs_List(isTabChanged, previousTabName) {
+        debugger
+
+        var returnVal = true;
+        $('.required').removeClass('required');
+        var i = $("#tblConsume tr:nth-child(1) td:first").text().trim();
+        var lstCML = new Array();
+        var tblConsume = $("#tblConsume tr:not(:has(th))");
+
+        tblConsume.each(function () {
+            debugger
+            var _hdnMHCSCode = 0, _txtTitleAutoCom = "", _hdnTitleCode = 0, _ddl_txtTitleSearch = 0, _txtTrackAutoCom = "", _hdnTrackCode = 0, _spanTrackName = "", _isApprove= false;
+
+            _hdnMHCSCode = $('#hdnMHCSCode_' + i).val();
+            _txtTitleAutoCom = $('#txtTitleSearch_' + i).val() == undefined ? "" : $('#txtTitleSearch_' + i).val();
+            _hdnTitleCode = $('#hdnTitleCode_' + i).val() == undefined ? "0" : $('#hdnTitleCode_' + i).val();
+            _ddl_txtTitleSearch = $('#ddl_txtTitleSearch_' + i).val() == undefined ? "0" : $('#ddl_txtTitleSearch_' + i).val();
+            _txtTrackAutoCom = $('#txtTrackSearch_' + i).val() == undefined ? "" : $('#txtTrackSearch_' + i).val();
+            _hdnTrackCode = $('#hdnTrackCode_' + i).val() == undefined ? "0" : $('#hdnTrackCode_' + i).val();
+            _isApprove = $('#chkCreateNewOther_' + i).prop("checked");
+
+            if (_isApprove) {
+                lstCML.push({
+                    MHCueSheetSongCode: _hdnMHCSCode, TitleName: _txtTitleAutoCom, TitleCode: _hdnTitleCode, TitleContentCode: _ddl_txtTitleSearch,
+                    MusicTrackName: _txtTrackAutoCom, MusicTitleCode: _hdnTrackCode, isApprove: _isApprove
+                });
+            }
+            i++;
+        });
+
+        if (lstCML.length > 0) //recordEffectedCount > 0 ||  length > 0 ||
+        {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveMHCueSheetSongs_List,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    lstCML: lstCML
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result == "S") {
+                            BindGrid(false, isTabChanged, previousTabName);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: 3' + result.responseText);
+                }
+            });
+        }
+        else {
+            BindGrid(false, isTabChanged, previousTabName);
+        }
+
+        return returnVal;
+    }
+    function validateGRID() {
+        var returnVal = true;
+        if ($('#hdnTabName').val() != "CM") {
+            $('.required').removeClass('required');
+            var i = $("#tblConsume tr:nth-child(1) td:first").text().trim();
+            var lstCML = new Array();
+            var tblConsume = $("#tblConsume tr:not(:has(th))");
+            var isError = "N";
+
+            tblConsume.each(function () {
+                debugger
+                var _hdnMHCSCode = 0, _ddl_txtTitleSearch = 0, _isApprove = false;
+                _hdnMHCSCode = $('#hdnMHCSCode_' + i).val();
+                _isApprove = $('#chkCreateNewOther_' + i).prop("checked");
+
+                if (_isApprove) {
+                    if ($('#chkCreateNewOther_' + i)[0].className.indexOf('MHSNNF') >= 0 || $('#chkCreateNewOther_' + i)[0].className.indexOf('MHENIV') >= 0) {
+                        _ddl_txtTitleSearch = $('#ddl_txtTitleSearch_' + i).val();
+                        if (_ddl_txtTitleSearch == "0") {
+                            $('#ddl_txtTitleSearch_' + i).addClass('required');
+                            returnVal = false;
+                        }
+                        else if (_ddl_txtTitleSearch == null) {
+
+                            if ($('#hdnTitleCode_' + i).val() == "0" && $('#hdnTitleCode_' + i).val() != undefined ) {
+                                $('#txtTitleSearch_' + i).addClass('required');
+                            }
+
+                            $('#ddl_txtTitleSearch_' + i).addClass('required');
+                            returnVal = false;
+                        }
+                    }
+                    if ($('#chkCreateNewOther_' + i)[0].className.indexOf('MHMTNF') >= 0) {
+                        var _hdnTrackCode = $('#hdnTrackCode_' + i).val();
+                        if (_hdnTrackCode == "") {
+                            $('#txtTrackSearch_' + i).addClass('required');
+                            returnVal = false;
+                        }
+                        else if (_hdnTrackCode == null) {
+                            $('#txtTrackSearch_' + i).addClass('required');
+                            returnVal = false;
+                        }
+                    }
+                }
+                i++;
+            });
+        }
+         return returnVal;
+    }
+    function RemoveMHCueSheetSongs_List(MHCueSheetSongCode) {
+
+            $.ajax({
+                type: "POST",
+                url: URL_RemoveMHCueSheetSongs_List,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    MHCueSheetSongCode: MHCueSheetSongCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    function finalSave(callFor) {
+        debugger;
+        if (callFor == "M") {
+            var oRadio = $('[name="chkbox"]');
+            var status = true
+            for (var i = 0; i < oRadio.length; i++) {
+                if (oRadio[i].id != "") {
+                    if (oRadio[i].checked == true) {
+                        status = false
+                    }
+                }
+            }
+            if (status) {
+                showAlert("E", "Please Select atleast one record");
+                return;
+            }
+        }
+        if (validateGRID() == false && callFor == "M") {
+            return
+        }
+        if (SaveMHCueSheetSongs_List(false)) {
+            var spclInst = "";
+            if (callFor == "S") {
+                spclInst = $('#txtSpecialInst').val();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: URL_finalSave,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    callFor: callFor,
+                    spclInst: spclInst
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert("S", result.Message);
+                            if (callFor == "M")
+                                BindGrid(false, false, '');
+                            else if (callFor == "S")
+                                BindPartialView('LIST', 0, callFor);
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            showAlert("E", "Error in SaveMHCueSheetSongs_List() method");
+        }
+    }
+
+</script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<style>
+    .divRemarks {
+        display: inline-block;
+        font-weight: bold;
+        border-bottom: 1px dotted #777;
+        padding: 5px;
+        background-color: #eee;
+        width: 20%;
+    }
+</style>
+<div class="top_area">
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            Music Assignment
+            <span> </span>
+        </h2>
+        <div class="right_nav pull-right">
+            <ul></ul>
+        </div>
+    </div>
+    <table class="table_brif table">
+        <tbody>
+            <tr>
+                <td class="intro_pic">
+                    <div class="movie_deal" title="">
+                        <img alt="" src="../Images/movieIcon.png" />
+                        <span class="strip_song">strip</span>
+                    </div>
+                </td>
+                <td class="intro">
+                    <table class="six_column table">
+                        <tbody>
+                            <tr>
+                                <td class="td_label">Cuesheet ID:</td>
+                                <td>@Model.RequestID</td>
+                                <td class="td_label">Uploaded By:</td>
+                                <td>@((Model.CreatedBy ?? "NA"))</td>
+                            </tr>
+                            <tr>
+                                <td class="td_label">Uploaded Date:</td>
+                                <td>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.CreatedOn)</td>
+                                <td class="td_label">Assigned By:</td>
+                                <td>@((ViewBag.ApprovedBy))</td>
+                                <td class="td_label">Assigned Date:</td>
+                                <td>@((ViewBag.ApprovedOn == "NA" ? "" : string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Convert.ToDateTime(ViewBag.ApprovedOn))))</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td class="intro_approved">
+                    @if (Model.UploadStatus.ToUpper() == "WARNING")
+                    {
+                        <div class="stampBg rejected" style="height:74px !important">
+                            <h4 title="Workflow Status"> @Model.UploadStatus</h4>
+                        </div>
+                    }
+                    else if (Model.UploadStatus.ToUpper() == "SUBMITTED")
+                    {
+                        <div class="stampBg pending" style="height:74px !important">
+                            <h4 title="Workflow Status"> @Model.UploadStatus </h4>
+                        </div>
+                    }
+                    else if (Model.UploadStatus.ToUpper() == "COMPLETED")
+                    {
+                        <div class="stampBg approved" style="height:74px !important">
+                            <h4 title="Workflow Status"> @Model.UploadStatus </h4>
+                        </div>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="search_area" style="background-color:#eee; display:none">
+    <table class="table">
+        <tr>
+            <td style="width:25%; vertical-align:middle;">
+                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" maxlength="100" />
+            </td>
+            <td>
+                &nbsp;&nbsp;
+                <input type="button" id="btnSearch" class="button" value="Search" ">&nbsp;
+                <input type="button" id="btnShowAll" class="button" value="Show All">
+            </td>
+
+        </tr>
+    </table>
+</div>
+
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <span class="pull-left" id="lblTotal"></span>
+        <input type="hidden" id="hdnMappedCount" value="0" />
+        <input type="hidden" id="hdnTabName" value="OT" />
+        <input type="hidden" id="hdnMHCueSheetCode" value="@Model.MHCueSheetCode" />
+        <div class="tabbable">
+            <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
+                @if (Model.UploadStatus.ToUpper() == "COMPLETED" || Model.UploadStatus.ToUpper() == "SUBMITTED")
+                {
+                    <li style="display:none">
+                        <a data-toggle="tab" role="tab" data-tabname="OT">Data Error</a>
+                    </li>
+                    <li class="active">
+                        <a data-toggle="tab" role="tab" data-tabname="CM">Valid Data</a>
+                    </li>
+                    <li class="" style="display:none">
+                        <a data-toggle="tab" role="tab" data-tabname="SM">system Mapping</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="active">
+                        <a data-toggle="tab" role="tab" data-tabname="OT">Data Error</a>
+                    </li>
+                    <li class="">
+                        <a data-toggle="tab" role="tab" data-tabname="CM">Valid Data</a>
+                    </li>
+                    <li class="" style="display:none">
+                        <a data-toggle="tab" role="tab" data-tabname="SM">system Mapping</a>
+                    </li>
+                }
+
+            </ul>
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="paging_area clearfix">
+                    <span class="pull-left">Total Records: </span>
+                    <span class="pull-left" id="lblRecordCount">@((ViewBag.RecordCount ?? 0))</span>
+                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="@((ViewBag.PageNo ?? 1))" />
+                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="@((ViewBag.RecordCount ?? 0))" />
+                    <input type="hidden" id="hdnKey" value="@ViewBag.Key" />
+
+                    <div id="Pagination" class="pagination">
+                    </div>
+                    <span class="pull-right">
+                        Page Size:
+                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="@((ViewBag.PageSize ?? 10))"
+                               onchange="txtPageSize_OnChange('txtPageSize')" onblur="setDefaultPaging('txtPageSize')">
+                    </span>
+                </div>
+                <div id="divMHCueSheetSongData"></div>
+            </div>
+            <br />
+        </div>
+
+    </div>
+
+</div>
+
+<br />
+<div class="remarks_area" style="display:none">
+    <div class="divRemarks">Special Instructions: </div>
+    <div class="divBlockRemarks">
+        <span class="charNum"></span>
+        <span style="">characters left</span>
+    </div>
+    <br />
+    <div class="remarksDetails">
+        @if (ViewBag.Key != "VIEW")
+        {
+            <textarea name="txtPaymentTerms" id="txtSpecialInst" class="textarea restrictChar">@Model.SpecialInstruction</textarea>
+        }
+        else
+        {
+            <span name="txtPaymentTerms" id="txtSpecialInst" class="textarea restrictChar">@Model.SpecialInstruction</span>
+        }
+    </div>
+</div>
+<br />
+
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        <li><a class="btn btn-primary" style="display:none" id="btnMap" onclick="finalSave('M')">Map</a></li>
+        <li><a class="btn btn-primary" style="display:none" id="btnSubmit" onclick="finalSave('S')">Submit</a></li>
+        <li><a class="btn btn-primary" onclick="BindPartialView('LIST', 0,'B')">Back</a></li>
+        <!-- href="Mhub_allRequest.htm"
+        <a class="btn btn-primary" href="Mhub_allRequest.htm">Ok</a>-->
+    </ul>
+</div>

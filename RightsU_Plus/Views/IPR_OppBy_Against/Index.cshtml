@@ -1,0 +1,1236 @@
+﻿@model RightsU_Entities.IPR_Opp
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> lstFrq = (List<string>)ViewBag.Frq_List;
+    string FileName = string.Empty;
+    RightsU_Entities.IPR_Opp_Attachment objAtt = Model.IPR_Opp_Attachment.Where(a => a.Flag == "M").FirstOrDefault();
+    if (objAtt != null)
+    {
+        FileName = objAtt.File_Name;
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script type="text/javascript">
+
+    function BrowsApplicationNo() {
+        debugger;
+        BindApplicationNo(true);
+        return false;
+    }
+    var attachmentMode = "";
+    debugger;
+    var CommandName_G = "";
+    var recordLockingCode = @ViewBag.RecordLockingCode;
+    var
+    URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")',
+    URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    $(document).ready(function () {
+        debugger;
+        $('#hdnRecordLockingCode').val(recordLockingCode)
+        if(recordLockingCode > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+      
+        $("#imgAttachment").on("click", function () {         
+            $("#FileUpload").click();
+        });
+        initializeDatepicker();
+        initializeExpander();
+        $('.numbertext').numeric({ allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 3,
+            maxDecimalPlaces: 0 });
+
+        if(@Model.IPR_Opp_Code > 0)
+        {
+            LinkApplication();
+            if('@FileName' != '')
+            {
+                if('@Model.IPR_For' == 'B')
+                {
+                    document.getElementById('lnkBtnBy_AttachedFile').style.display = 'inline-block';
+                }
+                else
+                    document.getElementById('lnkBtnAgainst_AttachedFile').style.display = 'inline-block';
+            }
+            var txtComment = document.getElementById('txtComments');
+            countLocalChar(txtComment,1000,'divCommentsCharCount');
+
+            var txtOutcomes = document.getElementById('txtOutcomes');
+            countLocalChar(txtOutcomes,1000,'divOutcomesCharCount');
+        }
+        $('#ddlBusinessUnit,#ddlChannel').SumoSelect();
+        $('#ddlBusinessUnit')[0].sumo.reload();
+        $('#ddlChannel')[0].sumo.reload();
+    });
+    function OnBegin() {
+        debugger;
+        var files = $('#FileUpload')[0].files;
+        if (files.length > 0) {
+            if (window.FormData !== undefined) {
+                var data = new FormData();
+                for (var x = 0; x < files.length; x++) {
+                    data.append("file" + x, files[x]);
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UploadAttachment", "IPR_OppBy_Against")',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    async: true,
+                    success: function (result) {
+                        console.log(result);
+                    },
+                    error: function (xhr, status, p3, p4) {
+                        var err = "Error " + " " + status + " " + p3 + " " + p4;
+                        if (xhr.responseText && xhr.responseText[0] == "{")
+                            err = JSON.parse(xhr.responseText).Message;
+                        console.log(err);
+                    }
+                });
+            } else {
+                showAlert("E", "This browser doesn't support HTML5 file uploads!");
+                return false;
+            }
+        }
+        else {
+            showAlert('E', 'Please select file');
+            return false;
+        }
+        $('#FileUpload').val('');
+        attachmentMode="A";
+    }
+    function clickOnImage(For,SystemFileName)
+    {
+        debugger;
+        var f=For;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("checkDownloadFile", "IPR_OppBy_Against")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                For:f,
+                systemFileName:SystemFileName
+            }),
+            success: function (result) {
+                //alert(result.systemFileName);
+                var s=SystemFileName;
+                if(result.path=="")
+                    showAlert('S',"Image Not Found",'OK');
+                else
+                {
+                    var parameter="?&For="+f+"&systemFileName="+result.systemFileName;
+                    var URL = '@Url.Action("DownloadFile", "IPR_OppBy_Against", new { SearchedTitle = "Searched_Text" })';
+                    URL = URL.replace("Searched_Text",parameter);
+                    window.location.href = URL;
+                    //window.location = "~/IPR_OppBy_Against/DownloadFile?For="+For+"&systemFileName="+SystemFileName;
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function BindApplicationNo(isFirstTime) {
+        debugger;
+        if (!isFirstTime && $("#txtApp_No_Search").val() == '') {
+            showAlert('E', 'Please enter search criteria');
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindAppGridview", "IPR_OppBy_Against")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                txtApp_No_Search: $('#txtApp_No_Search').val(),
+                firstTime: isFirstTime
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divApplicationList').html(result);
+                    $('#popupApplication').modal();
+                }
+            },
+            error: function (result) {
+                var StrErrMessage = "Please wait....Page is loading";
+                alert('Error: ' + StrErrMessage);
+            }
+        });
+    }
+
+    function LinkApplication() {
+        debugger;
+        if ($('#hdnRepCode').val() != '') {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetApplicationProperty", "IPR_OppBy_Against")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                data: JSON.stringify({
+                    rep_Code: $('#hdnRepCode').val()
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        debugger
+                        $('#lblApp_No').text(result.Application_No);
+                        $('#lblName_Of_Entity').text(result.Entity);
+                        $('#lblTradeMark').text(result.Trademark);
+                        $('#lblClass').html(result.ClassName);
+                        $('#lblStatus').text(result.App_Status);
+                        $('#lblTrademarkAttorney').text(result.Trademark_Attorney);
+                        $('#lblType').text(result.Type);
+                        if (result.ImageUrl == "" ) {
+                            $('#imgLogo').attr('src', '@Url.Content("~/Images/NoImageFound.jpg")');
+                        }
+                        else {
+                            //result.ImageUrl.slice(1)
+                            $('#imgLogo').attr({src:   result.ImageUrl});
+                            // alert(result.ImageUrl)
+                        }
+                       
+                       // $('#imgLogo').attr('src',result.ImageUrl);
+                        initializeExpander();
+                    }
+                },
+                error: function (result) {
+                    var StrErrMessage = "Please wait....Page is loading";
+                    alert('Error: ' + StrErrMessage);
+                }
+            });
+        }
+        else {
+            showAlert('E', 'Please select application no.')
+        }
+        return false;
+    }
+
+    function AddAttachment(obj, hdnid, rowindex,filepath) {
+        attachmentMode = "A";
+        if(rowindex >= 0)
+            attachmentMode = "E"
+        var description = $(hdnid).val();
+        var Attchpath = $(filepath).val();
+
+        $("#FileUpload").replaceWith($("#FileUpload").clone(true));
+        $('#imgAttachment').attr('src', '@Url.Content("~/Images/add.png")');
+
+
+        if (attachmentMode == "A") {
+
+            $('#imgAttachment').attr('src', '@Url.Content("~/Images/add.png")');
+
+        }
+        else if (attachmentMode == "E") {
+            $('#imgAttachment').attr({src: "@Url.Content("UploadFolder/")" + Attchpath});
+        }
+        if (obj == 'M') {
+            document.getElementById('divAttachmentDescription').style.display = 'none';
+            $('#hdnAttachment_RowIndex').val('');
+            $('#txt_Description').val('')
+            $('#hdnAttachment_Flag').val('M');
+        }
+        else {
+            document.getElementById('divAttachmentDescription').style.display = 'block';
+            $('#hdnAttachment_Flag').val('G');
+            $('#txt_Description').val(description);
+            $('#hdnAttachment_RowIndex').val(rowindex);
+            var txtRemark = document.getElementById('txt_Description');
+            countLocalChar(txtRemark,200,'divAttachDescCharCount');
+        }
+
+        $('#popupAttachment').modal();
+    }
+
+    function DeleteAttachment(rowindex) {
+        $('#hdnCommandName').val('DELETEATTACHMENT');
+        $('#hdnAttchRowIndex').val(rowindex);
+        showAlert('I','Are you sure, you want to delete this attachment?','OKCANCEL');
+    }
+
+    function OnAttachmentSaveSuccess(obj) {
+        if ($('#hdnAttachment_Flag').val() == 'M') {
+            if ('@Model.IPR_For' == 'B') {
+                $('#lnkBtnBy_AttachedFile').text(obj);
+                $('#lnkBtnBy_AttachedFile').show();
+                document.getElementById('lnkBtnBy_AttachedFile').style.display = 'inline-block';
+            }
+            else {
+                $('#lnkBtnAgainst_AttachedFile').text(obj);
+                $('#lnkBtnAgainst_AttachedFile').show();
+                document.getElementById('lnkBtnAgainst_AttachedFile').style.display = 'inline-block';
+            }
+        }
+        else {
+            $('#divAttachments').html(obj);
+        }
+        $('#popupAttachment').modal('hide');
+    }
+
+    function SetIprRepCode(obj) {
+        $('#hdnRepCode').val(obj);
+    }
+
+    function ValidateSave(isSubmit)
+    {
+        var IsValidSave = true;
+        $('#hdnIsSubmit').val(isSubmit);
+        if($('#Opp_No').val() == '')
+        {
+            IsValidSave = false;
+            $("#Opp_No").attr('required', true);
+        }
+        else
+            $("#Opp_No").removeAttr('required');
+
+        if($('#IPR_Opp_Status_Code').val() == null || $('#IPR_Opp_Status_Code').val() == 0)
+        {
+            IsValidSave = false;
+            $("#IPR_Opp_Status_Code").addClass('required');
+        }
+        else
+            $("#IPR_Opp_Status_Code").removeClass('required');
+
+
+
+        if($('#Party_Name').val() == '')
+        {
+            IsValidSave = false;
+            $("#Party_Name").attr('required', true);
+        }
+        else
+            $("#Party_Name").removeAttr('required');
+
+        if($('#Trademark').val() == '')
+        {
+            IsValidSave = false;
+            $("#Trademark").attr('required', true);
+        }
+        else
+            $("#Trademark").removeAttr('required');
+
+        if($('#lblApp_No').text() == '' && IsValidSave)
+        {
+            showAlert('E','Please select application no.');
+            return false;
+        }
+        return IsValidSave;
+    }
+
+    function fileCheck(obj) {
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+
+        if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            return false;
+        }
+
+        if (obj.files && obj.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imgAttachment').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(obj.files[0]);
+        }
+
+        return true;
+    }
+
+    function OnSaveSuccess(obj)
+    {
+        if(obj != 'Opposition number cannot be duplicate')
+        {
+            $('#hdnCommandName').val('SAVE');
+            showAlert('S',obj);
+            location.href = '@Url.Action("Index", "IPR_List", new { TABNAME = Model.IPR_For })'
+        }
+        else
+            showAlert('E',obj);
+    }
+
+    function handleOk()
+    {
+        debugger;
+        if($('#hdnCommandName').val() == 'DELETEATTACHMENT' )
+        {
+            var rowindex = $('#hdnAttchRowIndex').val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeleteAttachment", "IPR_OppBy_Against")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                async: false,
+                data: JSON.stringify({
+                    row_index: rowindex
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divAttachments').html(result);
+                    }
+                },
+                error: function (result) {
+                    var StrErrMessage = "Please wait....Page is loading";
+                    alert('Error: ' + StrErrMessage);
+                }
+            });
+        }
+        else
+            if($('#hdnCommandName').val() == 'SAVE' )
+            {
+                location.href = '@Url.Action("Index", "IPR_List", new { TABNAME = Model.IPR_For })'
+            }
+            else if($('#hdnCommandName').val() == 'CANCEL')
+            {
+                location.href= '@Url.Action("Cancel", "IPR_OppBy_Against", new { TABNAME = Model.IPR_For })'
+            }
+    }
+    function countLocalChar(val,max,id) {
+        var len = val.value.length;
+        if (len >= max)
+            val.value = val.value.substring(0, max);
+        $('#'+id).text(val.value.length.toString() + '/' + max.toString());
+    }
+
+    function OnCancelClick()
+    {
+        $('#hdnCommandName').val('CANCEL');
+        showAlert('I', 'All unsaved data will be lost, still want to go ahead?', 'OKCANCEL');
+    }
+</script>
+
+<style type="text/css">
+    /*.chosen-container {
+        margin: 0;
+    }*/
+
+    .scale_table_block {
+        margin-bottom: 10px;
+        background-color: #fff;
+        padding: 0px !important;
+    }
+
+    .tdbackgourd {
+        background-color: #EEE;
+    }
+</style>
+<style>
+    .card {
+        background: #fff;
+        border-radius: 2px;
+        display: inline-block;
+        margin-left: 3px;
+        margin-right: 3px;
+        position: relative;
+    }
+
+    .cardheader {
+        background-color: #80878e;
+        padding: 5px 5px 5px 10px;
+        color: white;
+        margin: 0px;
+        width: 100%;
+    }
+
+    .firstBox {
+        margin-top: 5px;
+        width: 99.3%;
+        height: 50px;
+    }
+
+    td {
+        padding: 5px 0px;
+    }
+
+    .chosen-container {
+        margin: 2px 0px;
+        width: 87% !important;
+    }
+
+    #oppByDetail, #oppParty {
+        width: 49.3%;
+        height: 426px;
+    }
+
+    #publicationDetail {
+        width: 99.3%;
+        height: 195px;
+    }
+
+    #procesuctionDetail_OppBy, #procesuctionDetail_OppAgainst {
+        width: 99.3%;
+        height: 370px;
+    }
+
+    #attachment, #hearing, #statusHistory {
+        width: 99.3%;
+    }
+
+
+    textarea {
+        overflow: auto;
+        width: 95% !important;
+        height: 60px !important;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .container .top_area {
+        border-bottom: none !important;
+    }
+    .SumoSelect{
+        width : 87% !important;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container ipr main_col" onclick="$('.leftPanel').css('left', panelHideCss);">
+            <div class="top_area">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @if (Model.IPR_Opp_Code > 0)
+                        {
+                            if (Model.IPR_For == "B")
+                            {
+                                @:Edit Opposition By
+                                            }
+                            else
+                            {
+                                @:Edit Opposition Against
+                                            }
+                        }
+                        else
+                        {
+                            if (Model.IPR_For == "B")
+                            {
+                                @:Add Opposition By
+                                            }
+                            else
+                            {
+                                @:Add Opposition Against
+                                            }
+                        }
+                        <span></span>
+                    </h2>
+                </div>
+                @*</div>
+                    <div class="grid_area">*@
+                @*<div class="navigation_tabs">*@
+                @*<div class="tabbable">*@
+                @using (Ajax.BeginForm("Save", "IPR_OppBy_Against", new AjaxOptions { OnSuccess = "OnSaveSuccess", HttpMethod = "POST" }))
+                {
+
+                    @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+                    <table class="table_brif table" style="background:#e2e1e0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="card firstBox">
+                                        <table style="margin:10px; margin-top: 5px;">
+                                            <tr>
+                                                <td style="width:15%"><b>Opposition Number</b></td>
+                                                <td style="width:35%">
+                                                    @*<input type="text" value="" placeholder="Opposition Number" class="form-control input-sm" style="width:50%;" />
+                                                        <span>00017</span>*@
+                                                    @Html.TextBoxFor(m => m.Opp_No, new { @maxlength = "100", @style = "width:50%;", @class = "form-control input-sm", @placeholder = "Opposition Number" })&nbsp;@Model.Version
+                                                    @Html.HiddenFor(m => m.IPR_Opp_Code)
+                                                    @Html.HiddenFor(m => m.IPR_For)
+                                                    <input type="hidden" id="hdnIsSubmit" name="hdnIsSubmit" />
+                                                </td>
+                                                <td style="width:15%"><b>Opposition Status</b></td>
+                                                <td style="width:35%">
+                                                    @Html.DropDownListFor(m => m.IPR_Opp_Status_Code, ViewBag.IRP_Opp_Status as MultiSelectList, new { @class = "form_input chosen-select" })
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="oppByDetail">
+                                        <div class="card cardheader">
+                                            <b>Opposition By Details</b>
+                                        </div>
+                                        <table style="margin:10px;">
+                                            <tr>
+                                                <td style="width:30%"><b>Application No.</b></td>
+                                                <td style="width:40%">
+                                                    <span id="lblApp_No"></span>
+                                                    <a class="glyphicon glyphicon-search" title="Search Application No." onclick="return BrowsApplicationNo();"></a>
+                                                </td>
+                                                <td style="width:30%" rowspan="3">
+                                                    <img alt="Logo" id="imgLogo" style="height: 100px; width: 145px;">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Name of the Entity</b></td>
+                                                <td><span id="lblName_Of_Entity"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Trade Mark</b></td>
+                                                <td><span id="lblTradeMark"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Class</b></td>
+                                                <td colspan="2"><div id="lblClass" class="expandable"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Status</b></td>
+                                                <td colspan="2"><span id="lblStatus"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Trademark Attorney</b></td>
+                                                <td colspan="2"><span id="lblTrademarkAttorney"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Type</b></td>
+                                                <td colspan="2"><span id="lblType"></span></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="card" id="oppParty">
+                                        <div class="card cardheader">
+                                            <b>Opposite Party</b>
+                                        </div>
+                                        <table style="margin:10px;">
+                                            <tr>
+                                                <td style="width:30%"><b>Opposite Party Name</b></td>
+                                                <td style="width:70%">@Html.TextBoxFor(m => m.Party_Name, new { @maxlength = "500" })</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Trade Mark</b></td>
+                                                <td>@Html.TextBoxFor(m => m.Trademark, new { @maxlength = "50" })</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Application No.</b></td>
+                                                <td>@Html.TextBoxFor(m => m.Application_No, new { @maxlength = "50" })</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Class</b></td>
+                                                <td>
+                                                    @Html.DropDownListFor(m => m.IPR_Class_Code, ViewBag.IRP_Class as MultiSelectList, new { @class = "form_input chosen-select" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Status</b></td>
+                                                <td>
+                                                    @Html.DropDownListFor(m => m.IPR_App_Status_Code, ViewBag.IRP_App_Status as MultiSelectList, new { @class = "form_input chosen-select" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Business Unit</b></td>
+                                                <td>
+                                                    @Html.DropDownList("ddlBusinessUnit", ViewBag.BusinessUnitList as MultiSelectList, new { @id = "ddlBusinessUnit", @multiple = "multiple" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Channel</b></td>
+                                                <td>
+                                                    @Html.DropDownList("ddlChannel", ViewBag.ChannelList as MultiSelectList, new { @id = "ddlChannel", @multiple = "multiple" })
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="publicationDetail">
+                                        <div class="card cardheader">
+                                            <b>Publication Details</b>
+                                        </div>
+
+                                        @if (Model.IPR_For == "B")
+                                        {
+                                            <table style="margin:10px; width:47.5%; float:right">
+                                                <tr>
+                                                    <td style="width:30%"><b>Journal No.</b></td>
+                                                    <td style="width:70%">
+                                                        @Html.TextBox("txtBy_JournalNo", Model.Journal_No, new { @maxlength = "100" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Date of Publication</b></td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_PublicationDate", (Model.Publication_Date != null) ? Model.Publication_Date.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Page No.</b></td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_PageNo", Model.Page_No, new { @maxlength = "5" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Attachment</b>
+                                                    </td>
+                                                    <td>
+                                                        @*<input type="button" value="Add Attachment" name="Add Attachment" id="btnBy_AddAttachment" onclick="return AddAttachment('M');" />*@
+                                                        <span class="glyphicon glyphicon-plus" style="margin-right:20px" id="btnBy_AddAttachment" onclick="return AddAttachment('M');"></span>
+                                                        <a id="lnkBtnBy_AttachedFile" style="cursor:pointer; text-decoration:underline; display:none; " onclick="clickOnImage('M','')">@FileName</a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        }
+                                        else
+                                        {
+                                            <table style="margin:10px; width:47.5%; float:left">
+                                                <tr>
+                                                    <td style="width:30%"><b>Journal No.</b></td>
+                                                    <td style="width:70%">
+                                                        @Html.TextBox("txtAgainst_JournalNo", Model.Journal_No, new { @maxlength = "100" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Date of Publication</b></td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_PublicationDate", (Model.Publication_Date != null) ? Model.Publication_Date.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Page No.</b></td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_PageNo", Model.Page_No, new { @maxlength = "5" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Attachment</b>
+                                                    </td>
+                                                    <td>
+                                                        <input type="button" value="Add Attachment" name="Add Attachment" id="btnAgainst_AddAttachment" onclick="return AddAttachment('M');" />
+                                                        @*<a id="lnkBtnAgainst_AttachedFile" style="cursor:pointer; text-decoration:underline; display:none; " onclick ='window.location.href="@Url.Action("DownloadFile", "IPR_OppBy_Against", new { For = "M" }) "'>@FileName</a>*@
+
+                                                        <a id="lnkBtnAgainst_AttachedFile" style="cursor:pointer; text-decoration:underline; display:none; " onclick="clickOnImage('M','')">@FileName</a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        }
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="procesuctionDetail_OppBy">
+                                        <div class="card cardheader">
+                                            <b>Prosecution Details</b>
+                                        </div>
+                                        <table style="margin:10px;">
+                                            @if (Model.IPR_For == "B")
+                                            {
+                                                <tr>
+                                                    <td style="width:25%"><b>Date of filing of Notice of Opposition</b></td>
+                                                    <td style="width:25%">
+                                                        @Html.TextBox("txtBy_DateOppositionNotice", (Model.Date_Opposition_Notice != null) ? Model.Date_Opposition_Notice.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td style="width:25%"><b>Deadline for filing Counter Statement</b></td>
+                                                    <td style="width:25%">
+                                                        @Html.TextBox("txtBy_DeadlineCounterStatement", (Model.Deadline_Counter_Statement != null) ? Model.Deadline_Counter_Statement.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b> Reminder Frequency(date of Notice Opp)</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_Freq1", lstFrq[0], new { @class = "form-control input-sm", @style = "width:13%;" })
+                                                        @Html.TextBox("txtBy_Freq2", lstFrq[1], new { @class = "form-control input-sm", @style = "width:13%;" })
+                                                        @Html.TextBox("txtBy_Freq3", lstFrq[2], new { @class = "form-control input-sm", @style = "width:13%;" })
+                                                        @Html.TextBox("txtBy_Freq4", lstFrq[3], new { @class = "form-control input-sm", @style = "width:13%;" })
+                                                        @Html.TextBox("txtBy_Freq5", lstFrq[4], new { @class = "form-control input-sm", @style = "width:13%;" })
+                                                        @Html.TextBox("txtBy_Freq6", lstFrq[5], new { @class = "form-control input-sm", @style = "width:13%;" })
+                                                    </td>
+
+
+                                                    <td>
+                                                        <b> Deadline to file Evidence u/r 51</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_DeadlineEvidenceUR51", (Model.Deadline_Evidence_UR51 != null) ? Model.Deadline_Evidence_UR51.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b>Date of Receipt of Counter Statement</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_DateCounterStatement", (Model.Date_Counter_Statement != null) ? Model.Date_Counter_Statement.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <tb></tb>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b> Deadline for filing Evidence u/r 50</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_DeadlineEvidenceUR50", (Model.Deadline_Evidence_UR50 != null) ? Model.Deadline_Evidence_UR50.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Date of filing Evidence u/r 50</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_DateEvidenceUR50", (Model.Date_Evidence_UR50 != null) ? Model.Date_Evidence_UR50.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b>Date of receipt of Evidence u/r 51</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_DateEvidenceUR51", (Model.Date_Evidence_UR51 != null) ? Model.Date_Evidence_UR51.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b> Deadline to file Rebuttal u/r 52</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_DeadlineRebuttalUR52", (Model.Deadline_Rebuttal_UR52 != null) ? Model.Deadline_Rebuttal_UR52.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b> Date of filling Rebuttal u/r 52</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtBy_DateRebuttalUR52", (Model.Date_Rebuttal_UR52 != null) ? Model.Date_Rebuttal_UR52.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+
+                                                @*Opposition by Code end*@
+                                            }
+                                            else
+                                            {
+                                                @*Opposition Against Code Start*@
+
+                                                <tr>
+
+                                                    <td style="width:25%">
+                                                        <b>Date of Receipt of Notice of Opposition</b>
+                                                    </td>
+                                                    <td style="width:25%">
+                                                        @Html.TextBox("txtAgainst_DateOppositionNotice", (Model.Date_Opposition_Notice != null) ? Model.Date_Opposition_Notice.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+
+                                                    <td style="width:25%">
+                                                        <b> Deadline for filing of Notice of Opposition</b>
+                                                    </td>
+                                                    <td style="width:25%">
+                                                        @Html.TextBox("txtAgainst_DeadlineOppositionNotice", (Model.Deadline_Opposition_Notice != null) ? Model.Deadline_Opposition_Notice.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b>Deadline for filing Counter Statement</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_DeadlineCounterStatement", (Model.Deadline_Counter_Statement != null) ? Model.Deadline_Counter_Statement.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+
+
+                                                    <td>
+                                                        <b>Deadline to file Evidence u/r 50</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_DeadlineEvidenceUR50", (Model.Deadline_Evidence_UR50 != null) ? Model.Deadline_Evidence_UR50.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b>Reminder Frequency</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_Freq1", lstFrq[0], new { @class = "numbertext smallTextBox" })
+                                                        @Html.TextBox("txtAgainst_Freq2", lstFrq[1], new { @class = "numbertext smallTextBox" })
+                                                        @Html.TextBox("txtAgainst_Freq3", lstFrq[2], new { @class = "numbertext smallTextBox" })
+                                                        @Html.TextBox("txtAgainst_Freq4", lstFrq[3], new { @class = "numbertext smallTextBox" })
+                                                        @Html.TextBox("txtAgainst_Freq5", lstFrq[4], new { @class = "numbertext smallTextBox" })
+                                                        @Html.TextBox("txtAgainst_Freq6", lstFrq[5], new { @class = "numbertext smallTextBox" })
+                                                    </td>
+                                                    <td>
+                                                        <b>Deadline to file Rebuttal u/r 52</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_DeadlineRebuttalUR52", (Model.Deadline_Rebuttal_UR52 != null) ? Model.Deadline_Rebuttal_UR52.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Date of filling of Counter Statement</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_DateCounterStatement", (Model.Date_Counter_Statement != null) ? Model.Date_Counter_Statement.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b>Date of receipt of Evidence u/r 50</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_DateEvidenceUR50", (Model.Date_Evidence_UR50 != null) ? Model.Date_Evidence_UR50.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b>Deadline for filing Evidence u/r 51</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_DeadlineEvidenceUR51", (Model.Deadline_Evidence_UR51 != null) ? Model.Deadline_Evidence_UR51.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>
+                                                        <b>Date of filling Evidence u/r 51</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_DateEvidenceUR51", (Model.Date_Evidence_UR51 != null) ? Model.Date_Evidence_UR51.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b> Date of receipt of Rebuttal u/r 52</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("txtAgainst_DateRebuttalUR52", (Model.Date_Rebuttal_UR52 != null) ? Model.Date_Rebuttal_UR52.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+
+                                                @*Opposition Against Code end*@
+                                            }
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="hearing">
+                                        <div class="card cardheader">
+                                            <b>Hearing</b>
+                                        </div>
+                                        @*<table style="margin:10px;">
+                                                <tr>
+                                                    <td style="width:5%"><b>Order Date</b></td>
+                                                    <td style="width:45%" >
+                                                        @Html.TextBox("txtOrder_Date", (Model.Order_Date != null) ? Model.Order_Date.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                    </td>
+                                                    <td style="width:5%"></td>
+                                                    <td style="width:45%"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td ><b>Outcome</b></td>
+                                                    <td style=" text-align:right; padding-right: 30px;">
+                                                        <div class="divBlock">
+                                                            <div id="divOutcomesCharCount">0/1000</div>
+                                                            <div style=""></div>
+                                                        </div>
+                                                        @Html.TextArea("txtOutcomes", Model.Outcomes, new { @maxlength = "1000", @onkeypress = "countLocalChar(this,1000,'divOutcomesCharCount')", @onkeyup = "countLocalChar(this,1000,'divOutcomesCharCount')" })
+
+                                                    </td>
+                                                    <td ><b>Comments</b></td>
+                                                    <td style=" text-align:right; padding-right: 30px;">
+                                                        <div class="divBlock">
+                                                            <div id="divCommentsCharCount">0/1000</div>
+                                                            <div style=""></div>
+                                                        </div>
+                                                        @Html.TextArea("txtComments", Model.Comments, new { @maxlength = "1000", @onkeypress = "countLocalChar(this,1000,'divCommentsCharCount')", @onkeyup = "countLocalChar(this,1000,'divCommentsCharCount')" })
+
+                                                    </td>
+                                                </tr>
+
+                                            </table>*@
+                                        <table style="margin:10px; width:98% !important">
+                                            <tr>
+                                                <td style="width:10%"><b>Order Date</b></td>
+                                                <td style="width:90%" colspan="3">
+                                                    @Html.TextBox("txtOrder_Date", (Model.Order_Date != null) ? Model.Order_Date.Value.ToString("dd/MM/yyyy") : "", new { @class = "isDatepicker" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%"><b>Outcome</b></td>
+                                                <td style="width:40%; text-align:right; padding-right: 30px;">
+                                                    <div class="divBlock">
+                                                        <div id="divOutcomesCharCount">0/1000</div>
+                                                        <div style=""></div>
+                                                    </div>
+                                                </td>
+                                                <td style="width:25%"><b>Comments</b></td>
+                                                <td style="width:25%; text-align:right; padding-right: 30px;">
+                                                    <div class="divBlock">
+                                                        <div id="divCommentsCharCount">0/1000</div>
+                                                        <div style=""></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    @Html.TextArea("txtOutcomes", Model.Outcomes, new { @maxlength = "1000", @onkeypress = "countLocalChar(this,1000,'divOutcomesCharCount')", @onkeyup = "countLocalChar(this,1000,'divOutcomesCharCount')" })
+
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.TextArea("txtComments", Model.Comments, new { @maxlength = "1000", @onkeypress = "countLocalChar(this,1000,'divCommentsCharCount')", @onkeyup = "countLocalChar(this,1000,'divCommentsCharCount')" })
+
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="attachment">
+                                        <div class="card cardheader">
+                                            <b>Attachment</b>
+
+                                            <div class="pull-right">
+                                                <a class="glyphicon glyphicon-plus" title="Add" onclick="AddAttachment('G','','-1')"></a>
+                                            </div>
+                                        </div>
+                                        <div id="divAttachments">
+                                            @Html.Partial("_List_IPR_Opp_Attachment", Model.IPR_Opp_Attachment.Where(a => a.Flag == "G").ToList())
+
+                                        </div>
+                                        @*<table style="margin:10px; width:98%" class="table table-bordered table-hover">
+                                                <tr>
+                                                    <td style="width:15%"><b>File</b></td>
+                                                    <td style="width:75%"><b>Description</b></td>
+                                                    <td style="width:10%"><b>Action</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <a style="cursor: pointer; text-decoration: underline;">
+                                                            Penguins.jpg
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        Warmly little before cousin sussex entire men set. Blessing it ladyship on sensible judgment settling outweigh.
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <a class="glyphicon glyphicon-pencil" title="Edit" data-original-title="Edit">
+                                                        </a><a class="glyphicon glyphicon-trash" title="Delete" data-original-title="Delete">
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </table>*@
+                                    </div>
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="statusHistory">
+                                        <div class="card cardheader">
+                                            <b>Status History</b>
+                                        </div>
+                                        <table style="margin:10px; width:98%" class="table table-bordered table-hover">
+                                            <tr>
+                                                <td style="width:20%"><b>Status</b></td>
+                                                <td style="width:20%"><b>Changed On</b></td>
+                                                <td style="width:60%"><b>Changed By</b></td>
+                                            </tr>
+
+                                            @foreach (RightsU_Entities.USP_List_IPR_Opp_Status_History_Result objStatusHist in ViewBag.IPR_Status_History)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @objStatusHist.IPR_Status
+                                                    </td>
+                                                    <td>
+                                                        @objStatusHist.Changed_On
+                                                    </td>
+                                                    <td>
+                                                        @objStatusHist.UserName
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </div>
+                                    <div class="bottom_action" style="margin-top: 5px;">
+                                        <ul class="form_link_nav clearfix">
+                                            <li>
+                                                <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="Save" onclick="return ValidateSave(false);">
+                                            </li>
+                                            <li>
+                                                <input type="submit" id="btnSaveSubmitDeal" class="btn btn-primary" value="Save & Submit" onclick="return ValidateSave(true);">
+                                            </li>
+                                            <li>
+                                                <a id="btnCancelDeal" class="btn btn-primary" onclick="OnCancelClick();">Cancel</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <input type="hidden" id="hdnCommandName" />
+                                    <input type="hidden" id="hdnAttchRowIndex" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in scroll" id="popupApplication" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div>
+                    <div class="form_fields ipr">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Application No. List</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper">
+                                <li class="clearfix">
+                                    <input type="text" name="txtApp_No_Search" id="txtApp_No_Search" />
+                                    <input type="button" name="Search" id="btnBrows" value="Search" onclick="BindApplicationNo(false);" />
+                                </li>
+                            </ul>
+                            <br />
+                            <div id="divApplicationList">
+                            </div>
+                            <input type="hidden" id="hdnRepCode" value="@Model.IPR_Rep_Code" />
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#" onclick="LinkApplication();">Link</a>
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in scroll" id="popupAttachment" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            @using (Ajax.BeginForm("SaveFile", "IPR_OppBy_Against", new AjaxOptions { OnSuccess = "OnAttachmentSaveSuccess", HttpMethod = "POST" }))
+            {
+                <div>
+                    <div class="form_fields ipr">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Attachment</h2>
+                        </div>
+
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper">
+                                <li class="clearfix">
+                                    <label class="bold">File for upload</label>
+                                    <img id="imgAttachment" style="cursor: pointer; max-height: 100px;" alt="Image" src="~/Images/add.png" />
+                                    @Html.TextBox("FileUpload", "", new { @type = "file", @style = "display:none;", onchange = "fileCheck(this);" })
+                                    @*<input type="file" id="fileUpload_Attachment" name="fileUpload_Attachment" />*@
+                                    <input type="hidden" id="hdnAttachment_Flag" name="hdnAttachment_Flag" />
+                                    <input type="hidden" id="hdnAttachment_RowIndex" name="hdnAttachment_RowIndex" />
+                                    <label>(Choose only jpeg, jpg, bmp, png, gif)</label>
+                                </li>
+                                <li id="divAttachmentDescription" class="clearfix">
+                                    <label class="bold">Description</label>
+                                    @Html.TextArea("txt_Description", "", new { @class = "textarea", @maxlength = "200", @onkeypress = "countLocalChar(this,200,'divAttachDescCharCount')", @onkeyup = "countLocalChar(this,200,'divAttachDescCharCount')" })
+                                    <div class="divBlock">
+                                        <div id="divAttachDescCharCount">0/200</div>
+                                        <div style=""></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="submit" name="btnAddToAttachmentList" class="btn btn-primary" value="Save" onclick="return OnBegin();" id="btnAddToAttachmentList" />
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

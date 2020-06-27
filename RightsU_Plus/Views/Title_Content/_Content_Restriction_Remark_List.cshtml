@@ -1,0 +1,27 @@
+﻿@model List<RightsU_Entities.USP_GetContentRestrictionRemarks_Result>
+
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:30%;">Music Track</th>
+            <th style="width:70%;">Restriction Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <div class="expandable">
+                        @item.Music_Title_Name
+                    </div>
+                </td>
+                <td>
+                    <div class="expandable">
+                        @item.Restriction_Remarks
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

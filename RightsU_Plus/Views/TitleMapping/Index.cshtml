@@ -1,0 +1,191 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    var IsCall = 'Y';
+
+
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = @(Convert.ToInt32(ViewBag.PageSize) == 0 || ViewBag.PageSize == null ? 10 : ViewBag.PageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $(".pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (!ValidatePageSize())
+            return false;
+
+        if (IsCall == 'Y') {
+            //LoadDeals(page_index, '@ViewBag.isAdvanced', 'N');
+            BindGrid(page_index,"", '@ViewBag.isSearch', '@ViewBag.isAdvanced');
+            $("#hdnPageIndex").val(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+    function setPageSize()
+    {
+        debugger;
+        var s = $("#PageSize").val();
+        $("#hdnPageSize").val(s);
+        $("#hdnPageIndex").val('0');
+        BindGrid($("#hdnPageIndex").val(),"", '@ViewBag.isSearch', '@ViewBag.isAdvanced');
+    }
+    function txtPageSize_OnChange() {
+        debugger;
+        @*var  Page_index = '@ViewBag.PageNo';
+        Page_index = Page_index -1;*@
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        BindGrid(0,"", '@ViewBag.isSearch', '@ViewBag.isAdvanced');
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#PageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#PageSize').attr('required', true)
+        return false;
+
+    }
+
+    function BindBVTitleMappingList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindBVTitleMappingList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleMappingList').empty();
+                    $('#divTitleMappingList').html(result);
+                    initializeExpander();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+        background-color: #eee;
+    }
+</style>
+<style>
+    td {
+        padding: 5px 0px;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .paging_area {
+        border-bottom: 1px dotted #777;
+        height: 36px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Title Mapping
+                        <span></span>
+                    </h2>
+                </div>
+                <input type="hidden" id="hdnIntCode" />
+                <div class="search_area" id="Title">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%; vertical-align:middle">
+                                Agreement No :
+                            </td>
+                            <td style="width:25%; vertical-align:middle">
+                                @Html.DropDownList("Agreement_No", (List<SelectListItem>)ViewBag.AgreementNo, new { @id = "Agreement_No", @class = "form_input chosen-select", onchange = "" })
+                            </td>
+                            <td>
+                                &nbsp;&nbsp;
+                                <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <div id="divTitleMappingList" class="deal clearfix">
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

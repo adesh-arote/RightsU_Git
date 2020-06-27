@@ -1,0 +1,163 @@
+﻿@{
+    ViewBag.Title = "Consumption_Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/CSS/common.css" rel="stylesheet" />
+<link href="~/CSS/responsive.css" rel="stylesheet" media="screen and (max-width:960px) and (max-height:640px)" />
+<link href="~/CSS/chosen.min.css" rel="stylesheet" />
+
+<script src="~/Scripts/jquery-3.0.0.min.js"></script>
+<script src="~/JS_Core/jquery-ui.min.js"></script>
+<script src="~/JS_Core/chosen.jquery.min.js"></script>
+<script src="~/JS_Core/common.concat.js"></script>
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        padding: 5px;
+        background-color: #eee;
+    }
+
+    .form_wrapper {
+        max-width: 910px !important;
+        width: 100%;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="container acq main_col" onclick="$('.leftPanel').css('left', panelHideCss);">
+    <div class="">
+        <div class="title_block dotted_border clearfix">
+            <h2 class="pull-left">
+                Consumption Report
+                <span></span>
+            </h2>
+            <!--div class="pull-left">
+                    <ul class="breadcrumb">
+                        <li><a href="EmbeddedMusic.htm">MUSIC</a></li>
+                        <li ><a href="MusicProgram.htm">PROGRAM</a></li>
+                        <li><a href="MusicAssign.htm">ASSIGN</a></li>
+                        <li><a href="#">&nbsp;</a></li>
+                    </ul >
+            </div-->
+            <div class="right_nav pull-right">
+            </div>
+        </div>
+        <div class="search_area">
+            <table class="table">
+                <tr>
+                    <td style="width:10%;">Search Text</td>
+                    <td style="width:40%;">
+                        <input type="text" style="width:100%" class="musicSearch" placeholder="Title, Description, GUID, Platform, Version, Kaltura Flavour, Format" />
+                    </td>
+                    <td>
+                        <input type="button" class="button" value="Search">
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+        <div class="grid_area">
+            <div style="border-bottom: 1px dotted #777; display:none;"><h3 id="musicShow">Music Program</h3></div>
+            <div class="paging_area clearfix">
+                <span class="pull-left">Total Records: 4</span>
+                <div id="Pagination" class="pagination"><span class="current prev">&lt;&lt;</span><span class="current">1</span><span class="current next">&gt;&gt;</span></div>
+                @*<ul class="pagination pull-right">
+                    <li class="disabled">
+                        <a href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li>
+                        <a href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>*@
+                <span class="pull-right">Page Size: <input type="text" class="smallTextBox" value="100"></span>
+            </div>
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="scale_table_block" id="divIntegrationLog">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:15%;"> Title Name</th>
+                                <th style="width:5%;"> Episode</th>
+                                <th style="width:5%;"> Element</th>
+                                <th style="width:5%;"> Description</th>
+                                <th style="width:20%;"> GUID</th>
+                                <th style="width:5%;"> Status</th>
+                                <th style="width:5%;"> Platform</th>
+                                <th style="width:5%;"> VOOT Channel</th>
+                                <th style="width:5%;"> Scheduled Date</th>
+                                <th style="width:5%;"> Scheduled Time</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bigg Boss Season 10</td>
+                                <td style="text-align:center">32</td>
+                                <td style="text-align:center">Live</td>
+                                <td style="text-align:center">Episode</td>
+                                <td style="text-align:center">COH-BB32-29112016-PFT-5678</td>
+                                <td style="text-align:center">Assigned</td>
+                                <td style="text-align:center">Web</td>
+                                <td style="text-align:center">VOOT Pick</td>
+                                <td style="text-align:center">08/11/2016</td>
+                                <td style="text-align:center">20:00:00</td>
+                            </tr>
+                            <tr>
+                                <td>Bigg Boss Season 10</td>
+                                <td style="text-align:center">32</td>
+                                <td style="text-align:center">Unseen</td>
+                                <td style="text-align:center">Miniclip</td>
+                                <td style="text-align:center">COMC-BB32-29112016-PFT-5678</td>
+                                <td style="text-align:center">UnAssigned</td>
+                                <td style="text-align:center">Mobile</td>
+                                <td style="text-align:center">VOOT Kids</td>
+                                <td style="text-align:center">08/11/2016</td>
+                                <td style="text-align:center">20:00:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
+            <!--<div class="bottom_action">
+                <ul class="form_link_nav clearfix">
+                    <li>
+                        <a class="btn btn-primary" href="#">Apply</a>
+                    </li>
+                </ul>
+            </div>-->
+
+            <div class="bottom_action">
+                <!--ul class="form_link_nav clearfix">
+                    <li>
+                        <span class="btn-primary" onclick="window.location.href='EmbeddedMusic.htm';" style="cursor: pointer;">BACK</span>
+                    </li>
+                    <li>
+                        <span class="btn-primary" onclick="window.location.href='MusicAssign.htm';" style="cursor: pointer;">NEXT</span>
+                    </li>
+
+                </ul -->
+            </div>
+        </div>
+    </div>
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+            <li>
+                <a class="btn btn-primary" onclick="location.href = '@Url.Action("Digital", "Digital_Rights")'">Back</a>
+            </li>
+        </ul>
+    </div>
+</div>
+

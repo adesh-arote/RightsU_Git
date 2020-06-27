@@ -1,0 +1,184 @@
+﻿@model List<RightsU_Entities.USP_List_Content_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        $('.expand_Channels').expander({
+            slicePoint: 90,
+            expandPrefix: '',
+            expandText: '...readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        $("#extent").click(function (event) {
+            event.stopPropagation();
+        });
+        $('.clsChannelPopup').on('click', function (e) {
+            debugger;
+            var btdId = e.target.id;
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindChannelList,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    Title_Content_Code: btdId
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#Channels').html(result);
+                        if (pos.left > 1000) {
+                            pos.left = 980;
+                        }
+                        $('#extent').offset({ top: pos.top, left: pos.left }).fadeIn();
+                        $('#extent').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        });
+    });
+    var URL_BindChannelList = '@Url.Action("BindChannelList", "Title_Content")';
+    function FadeOutPopup() {
+        $('#Channels').empty();
+        $('#extent').offset({ top: pos.top, left: pos.left }).fadeOut();
+        return false;
+    }
+</script>
+<style>
+    #extent {
+        position: absolute;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+</style>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:5%;">@objMessageKey.Srno</th>
+            <th style="width:30%;">@objMessageKey.Content</th>
+            <th style="width:15%;">@objMessageKey.episode</th>
+            <th style="width:15%;">@objMessageKey.DurationInMin</th>
+            <th style="width:26%;">@objMessageKey.Channels</th>
+            <th style="width:9%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int srNo = 0; }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                srNo++;
+                if (item.Title_Content_Code == ViewBag.ContentCodeForEdit)
+                {
+
+                    <tr>
+                        <td align="center">@(ViewBag.SrNo_StartFrom + srNo)</td>
+                        <td>
+                            <input type="text" id="txtContentName_@srNo" value="@item.Title_Name" style="width:100%" />
+                            <input type="hidden" id="hdnContentName_@srNo" value="@item.Title_Name" />
+                        </td>
+                        <td>
+                            @item.Episode
+                            &nbsp;&nbsp;
+                            @if (item.NumberOfSongs != 0)
+                            {
+                                <a title="@objMessageKey.AssignMusic" data-toggle="modal" data-original-title="Assign Music" style="cursor: pointer;"
+                                   onclick="BindPartialPage('ASSIGN_MUSIC', 'N', @item.Title_Content_Code, '@srNo', '@item.Episode', '@item.Duration_In_Min','V')">
+                                    <text>[Songs : </text>  @item.NumberOfSongs <text>]</text>
+                                </a>
+                            }
+                        </td>
+                        <td align="center"><input type="text" id="txtDuration_@srNo" class="numeric_Duration" value="@item.Duration_In_Min" style="width:80px" maxlength="6" /></td>
+                        <td>
+                            <div class="expand_Channels">
+                                @item.Channel_Name
+                            </div>
+                            <font style="font-size : larger">
+                                <a id="@item.Title_Content_Code" href="#" title="" class="clsChannelPopup" data-original-title="View Channels">
+                                    ...
+                                </a>
+                            </font> 
+
+
+                        </td>
+                        <td class="action" align="center">
+                            <a alt title="@objMessageKey.Update" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="UpdateContent_OnClick(@srNo)"></a>&nbsp;
+                            <a alt title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelContent_OnClick()"></a>&nbsp;
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td align="center">@(ViewBag.SrNo_StartFrom + srNo)</td>
+                        <td>
+                            @item.Title_Name
+                            <input type="hidden" id="hdnContentName_@srNo" value="@item.Title_Name" />
+                        </td>
+                        <td>
+                            @item.Episode
+                            &nbsp;&nbsp;
+                            @if (item.NumberOfSongs != 0)
+                            {
+                                <a title="@objMessageKey.AssignedMusicTracks" data-toggle="modal" data-original-title="Assign Music" style="cursor: pointer;"
+                                   onclick="BindPartialPage('ASSIGN_MUSIC', 'N', @item.Title_Content_Code, '@srNo', '@item.Episode', '@item.Duration_In_Min','V')">
+                                    <text>[Songs ]: </text>  @item.NumberOfSongs <text></text>
+                                </a>
+                            }
+                        </td>
+                        <td style="text-align:center">@item.Duration_In_Min</td>
+                        <td>
+                            @item.Channel_Name
+                            <input type="hidden" value="@item.Title_Content_Code id=" @item.Title_Content_Code +"_hdntitlecontentcode" />
+                            @if (item.Channel_Name != null)
+                            {
+                                <font style="font-size : larger"> <a id=@item.Title_Content_Code +"_aviewchannels" href="#" title="" class="clsChannelPopup" data-original-title="View Channels">...</a></font>
+                            }
+                            <div id="Channels">
+
+                            </div>
+                        </td>
+                        <td class="action" align="center">
+                            @if (ViewBag.RightCode.Contains("~" + Convert.ToString(GlobalParams.RightCodeForView) + "~"))
+                            {
+                                <a alt title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" href='@Url.Action("Index", "Title_Content_View", new { Title_Content_Code = item.Title_Content_Code })'></a>
+                                <text>&nbsp;</text>
+                            }
+                            @if (ViewBag.RightCode.Contains("~" + Convert.ToString(GlobalParams.RightCodeForAssignMusic_Music) + "~"))
+                            {
+                                <a title="@objMessageKey.AssignMusic" data-toggle="modal" class="glyphicon glyphicon-music" data-original-title="Assign Music"
+                                   onclick="BindPartialPage('ASSIGN_MUSIC', 'N', @item.Title_Content_Code, '@srNo', '@item.Episode', '@item.Duration_In_Min','')"></a>
+
+                            }
+                        </td>
+
+                    </tr>
+                }
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

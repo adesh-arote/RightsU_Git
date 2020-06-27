@@ -1,0 +1,166 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }   
+}
+<script>
+    $(document).ready(function () {
+        debugger;
+        if(LayoutDirection_G == "RTL")
+        {
+            $('.btnRemoveTrack').css("float", "left");
+        }
+        else
+        {
+            $('.btnRemoveTrack').css("float", "right");
+        }
+    });
+</script>
+<style>
+    #divSearchedMusicList {
+        overflow: auto;
+        max-height: 200px;
+    }
+
+    #divSelectedMusicList {
+        overflow: auto;
+        max-height: 200px;
+    }
+
+    .timeTextBox {
+        width: 100px !important;
+        line-height: initial !important;
+    }
+
+    .numeric_Frame {
+        width: 40px !important;
+    }
+
+    .paging_area {
+        border-bottom: 1px dotted #777;
+        height: 36px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        <label id="lblHeading"></label>
+        <span></span>
+    </h2>
+    <div class="right_nav pull-right">
+    </div>
+</div>
+<div class="grid_area" style="margin: 0 auto">
+    @if (ViewBag.Mode != "V")
+    {
+        <div class="grid_area">
+            <div class="navigation_tabs">
+                <div class="tabbable">
+                    <ul class="nav nav-tabs nav-tab pull-left">
+                        <li class="active">
+                            <a data-toggle="tab" href="#" role="tab">@objMessageKey.SearchMusicTrack</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="tab-pane active" id="tabSearchMusic">
+                            <div class="scale_table_block" dir="@objMessageKey.LayoutDirection">
+                                <input type="text" id="txtSearchMusicTrack" placeholder="@objMessageKey.MusicTrack, @objMessageKey.MovieName, @objMessageKey.MusicLabel" style="width: 34%;">
+                                <input type="button" id="btnSearch" class="btn btn-primary" value="@objMessageKey.Search" style="margin-top: -4px;" onclick="SearchMusicTrack_OnClick()">
+                                <div class="paging_area clearfix">
+                                    <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                                    <span class="pull-left" id="lblRecordCountSMT"></span>
+                                    <input type="hidden" id="hdnPageNoSMT" name="hdnPageNo" value="1" />
+                                    <input type="hidden" id="hdnPagePerBatchSMT" name="hdnPagePerBatch" value="5" />
+                                    <input type="hidden" id="hdnRecordCountSMT" name="hdnRecordCount" value="0" />
+
+                                    <div id="PaginationSMT" class="pagination">
+                                    </div>
+                                    <span class="pull-right">
+                                        @objMessageKey.PageSize:
+                                        <input type="text" id="txtPageSizeSMT" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange('txtPageSizeSMT', '@ViewBag.Mode')" 
+                                               onkeypress="txtPageSize_OnChange('txtPageSizeSMT', '@ViewBag.Mode')" onblur="setDefaultPaging('txtPageSizeSMT')">
+                                    </span>
+                                </div>
+                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                    <div class="scale_table_block" id="divSearchedMusicList">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <ul class="nav nav-tabs nav-tab pull-left">
+                    <li class="active">
+                        <a data-toggle="tab" href="#" role="tab">@objMessageKey.AssignedMusicTracks</a>
+                    </li>
+                </ul>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabAssignMusic">
+                        <div class="scale_table_block">
+                            <div class="paging_area clearfix">
+                                <span style="margin-left: 1%;">
+                                    <input type="text" id="txtSearchASM" placeholder="@objMessageKey.MusicTrack, @objMessageKey.MovieName" style="width: 34%;">
+                                </span>
+                                <input type="button" id="btnSearchASM" class="btn btn-primary" value="@objMessageKey.Search" style="margin-top: -4px;" onclick="SearchAssignedMusicTrack_OnClick('S', '@ViewBag.Mode')">
+                                <input type="button" id="btnShowAllASM" class="btn btn-primary" value="@objMessageKey.ShowAll" style="margin-top: -4px;" onclick="SearchAssignedMusicTrack_OnClick('SA', '@ViewBag.Mode')">
+                            </div>
+                            <div class="paging_area clearfix">
+                                <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                                <span class="pull-left" id="lblRecordCountAMT"></span>
+                                <input type="hidden" id="hdnPageNoAMT" name="hdnPageNoAMT" value="1" />
+                                <input type="hidden" id="hdnPagePerBatchAMT" name="hdnPagePerBatchAMT" value="5" />
+                                <input type="hidden" id="hdnRecordCountAMT" name="hdnRecordCountAMT" value="0" />
+                                <input type="hidden" id="hdnSelectedContentLinkGUID" value="" />
+                                <input type="hidden" id="hdnAllContentLinkGUID" value="" />
+                                <input type="hidden" id="hdnRecordEffectedCount" value="0" />
+                                <div id="PaginationAMT" class="pagination">
+                                </div>
+                                <span class="pull-right">
+                                    @objMessageKey.PageSize:
+                                    <input type="text" id="txtPageSizeAMT" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange('txtPageSizeAMT', '@ViewBag.Mode')" 
+                                           onkeypress="txtPageSize_OnChange('txtPageSizeAMT', '@ViewBag.Mode')" onblur="setDefaultPaging('txtPageSizeAMT')">
+                                </span>
+                            </div>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="scale_table_block" id="divSelectedMusicList">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bottom_action">
+                        <ul class="modal_block clearfix" style="padding-top: 10px;">
+                            @if (ViewBag.Mode != "V")
+                            {
+                                <li>
+                                    <a class="btn btn-primary" id="SaveMusic" onclick="btnSave_OnClick()">@objMessageKey.Save</a>
+                                </li>
+                                <li>
+                                    <a class="btn btn-primary" onclick="btnCancel_OnClick('AM', false)">@objMessageKey.Cancel</a>
+                                </li>
+                                <li style="text-align:right;" class="btnRemoveTrack">
+                                    <a id="RemoveTitle" class="btn btn-primary" onclick="btnRemoveTitle_OnClick()">@objMessageKey.RemoveMusicTrack</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a class="btn btn-primary" onclick="btnCancel_OnClick('AM', true)">@objMessageKey.Cancel</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+﻿@model List<RightsU_Entities.USPRUBVMappingList_Result>
+@using UTOFrameWork.FrameworkClasses;
+<script>
+    $(document).ready(function () {
+        debugger;
+        $("#hdnRecordCount").val(@(ViewBag.RecordCount));
+        SetPaging();
+    });
+</script>
+<table class="table table-bordered table-hover" id="assettable">   
+    @if ((string)Session["SelectedValue2"] == "M")
+    {
+        <tr>
+            <th width="5%"></th>
+            <th width="25%">Title</th>
+            <th width="14%">Episode No</th>
+            <th width="11%">RU ID</th>
+            <th width="10%">BV ID</th>
+            <th width="20%">Request Time</th>
+            <th width="15%">Record Status</th>
+        </tr>
+        foreach (var item in Model)
+        {
+    <tr>
+        <td>
+            @Html.CheckBox("checkbox1", new { @value = @item.RUID })
+        </td>
+        <td>@item.Title</td>
+        <td>@item.EpisodeNo</td>
+        <td><span>RUBMSBVA</span>@item.RUID</td>
+        <td><input type="text" id="txtbvid_@item.RUID"></td>
+        @if (item.RecordStatus == "Waiting")
+        {
+            <td>@item.RequestTime</td>
+        }
+        else
+        {
+        <td></td>}
+        <td>@item.RecordStatus</td>
+    </tr>
+        }
+    }
+    else if ((string)Session["SelectedValue2"] == "E")
+    { <tr>
+            <th width="20%">Title</th>
+            <th width="15%">Episode No</th>
+            <th width="8%">RU ID</th>
+            <th width="8%">BVID</th>
+            <th width="20%">Request Time</th>
+            <th width="20%">Error Description</th>
+            <th width="9%">Record Status</th>
+        </tr>
+     foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.EpisodeNo</td>
+                <td><span>RUBMSBVA</span>@item.RUID</td>
+                <td>@item.BVID</td>  
+                <td>@item.RequestTime</td>        
+                <td>@item.ErrorDescription</td>
+                <td>@item.RecordStatus</td>
+            </tr>
+        }
+    }
+    else if ((string)Session["SelectedValue2"] == "P")
+    {
+    <tr>
+        <th width="25%">Title</th>
+        <th width="15%">Episode No</th>
+        <th width="12%">RU ID</th>
+        <th width="12%">BVID</th> 
+        <th width="20%">Request Time</th>     
+        <th width="16%">Record Status</th>
+    </tr>
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.EpisodeNo</td>
+                <td><span>RUBMSBVA</span>@item.RUID</td>
+                <td>@item.BVID</td> 
+                @if (item.RecordStatus == "Waiting")
+                {
+                <td>@item.RequestTime</td>
+                }
+                else
+                { <td></td>}
+                <td>@item.RecordStatus</td>
+            </tr>
+        }
+    }
+</table>

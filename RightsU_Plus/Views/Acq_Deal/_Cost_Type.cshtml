@@ -1,0 +1,544 @@
+﻿@model RightsU_Entities.Acq_Deal_Cost
+@using System.Linq;
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        debugger;
+       // BindTitle();
+        //if ($('#ddlSrchTitle').val() != undefined) {
+        if('@ViewBag.Mode' != '@GlobalParams.DEAL_MODE_VIEW' && '@ViewBag.Mode' != '@GlobalParams.DEAL_MODE_APPROVE'){
+            if (@Model.Acq_Deal_Cost_Costtype.Where(x => x.EntityState != RightsU_Entities.State.Deleted).Count() > 0)
+                $('#ddlSrchTitle')[0].sumo.disable();
+            else
+                $('#ddlSrchTitle')[0].sumo.enable();
+        }
+
+        //}
+        $('.modal').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: false
+        })
+        if ('@ViewBag.CTMessage' != '') {
+            showAlert('E', '@ViewBag.CTMessage');
+        }
+    });
+
+    function CheckAddEditMode() {
+
+        if ('@ViewBag.IsAddEditMode' == 'Y') {
+            message = '@objMessageKey.PleasecompletetheAddEditfirst.';
+            showAlert('E', message);
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+        function Save(acqDealCostTypeCode, rowIdex , key) {
+            debugger;
+            var dealtc = $('#hdn_DealTypeCode').val();
+            var costtypeCode = $('#ddlCostTypeCode_' + rowIdex).val();
+            var Amt = RemoveComa($('#txtAmt_' + rowIdex).val());
+
+            if (parseInt(costtypeCode) == 0) {
+                $('#ddlCostTypeCode_' + rowIdex).addClass("required");
+                return false;
+            }
+            else if (Amt == "") {
+                $('#ddlCostTypeCode_' + rowIdex).removeClass("required");
+                $('#txtAmt_' + rowIdex).attr('required', true);
+                return false;
+            }
+                //else if (Amt != "" && parseFloat(Amt) == 0) {
+                //    $('#ddlCostTypeCode_' + rowIdex).removeClass("required");
+                //    $('#txtAmt_' + rowIdex).addClass('required');
+                //    return false;
+                //}
+            else {
+                if (parseInt($('#ddlSrchTitle').val()) > 0) {
+                    EnableDisableTabs(false, 1);
+                    $('.required').removeClass('required');
+                    $("[required='required']").removeAttr("required");
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("SaveCostType", "Acq_Cost")',
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "html",
+                        data: JSON.stringify({
+                            AcqDealCostTypeCode: acqDealCostTypeCode,
+                            CostTypeCode: costtypeCode,
+                            BudgetedAmt: Amt,
+                            rowIndex: rowIdex,
+                            dealtc: parseInt(dealtc),
+                            key:key,
+                            Deal_Movie_Code:parseInt($('#ddlSrchTitle').val())
+                        }),
+                        success: function (result) {
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            else {
+                                $('#tabCostHead').html(result);
+                                initializeChosen();
+                                initializeTooltip();
+                            }
+                        },
+                        error: function (result) {
+                            alert('Error: ' + result.responseText);
+                        }
+                    });
+                }
+                else {
+                    showAlert('E', "@objMessageKey.Pleaseselectatleastonetitle");
+                    return false;
+                }
+            }
+
+        }
+
+        function DeleteCostType(acqDealCostTypeCode, rowIndex, Cost_Type_Code) {
+            debugger;
+
+            if (CheckAddEditMode()) {
+
+                /*---Collect Check Reference in Standard Returns---*/
+                var VarTypeList = new Array();
+                var StandReturns = $("#tblStdReturns tr:not(:has(th),.hide)");
+                var i = 1;
+                var isRef = 0;
+                StandReturns.each(function (rowId_outer) {
+                    var _costTypeCode_SR = 0;
+
+                    _costTypeCode_SR = $("#hdnCostTypeCode_" + i).val();
+
+                    if (Cost_Type_Code == _costTypeCode_SR && isRef == 0)
+                        isRef = 1;
+                    i = i + 1;
+                });
+                /*------------------------------------*/
+                if (isRef == 1) {
+                    showAlert('E', '@objMessageKey.ThisCostheadisalreadyassignedtoPaymentTerm');
+                    return false;
+                } else {
+                    CommandName = "CostType";
+                    tmp_acqDealCostTypeCode = acqDealCostTypeCode;
+                    tmp_rowIndex = rowIndex;
+                    showAlert("I", '@objMessageKey.AreyousureyouwanttodeletethisCostHead?', "OKCANCEL");
+                }
+            }
+
+        }
+
+        function EditCostType(acqcosttypecode, rowIndex, costtypeCode) {
+            debugger;
+            var dealtc = $('#hdn_DealTypeCode').val();
+            EnableDisableTabs(true, 1);
+
+            if (CheckAddEditMode()) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("EditCostType", "Acq_Cost")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    data: JSON.stringify({
+                        AcqDealCostTypeCode: acqcosttypecode,
+                        CostTypeCode: costtypeCode,
+                        dealtc: parseInt(dealtc)
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            $('#tabCostHead').html(result);
+                            initializeChosen();
+                            initializeTooltip();
+                            //$("#txtAmt_" + rowIndex).numeric({
+                            //    allowMinus: false,
+                            //    allowThouSep: false,
+                            //    allowDecSep: true,
+                            //    maxPreDecimalPlaces: 10,
+                            //    maxDecimalPlaces: 3
+                            //});
+                            $("#txtAmt_" + rowIndex).autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        }
+
+        function AddCancelUpdate(isAdd) {
+            debugger;
+            var dealtc = $('#hdn_DealTypeCode').val();
+            if (isAdd == 1) {
+                EnableDisableTabs(true, 1);
+            }
+            else {
+                EnableDisableTabs(false, 1);
+            }
+
+            if (isAdd == "0" || (CheckAddEditMode() && isAdd == "1")) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AddCancelCostType", "Acq_Cost")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    data: JSON.stringify({
+                        isAdd: isAdd,
+                        dealtc: parseInt(dealtc)
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            $('#tabCostHead').html(result);
+                            initializeChosen();
+                            initializeTooltip();
+                            if (isAdd == "1") {
+
+                                //$("#txtAmt_0").numeric({
+                                //    allowMinus: false,
+                                //    allowThouSep: false,
+                                //    allowDecSep: true,
+                                //    maxPreDecimalPlaces: 10,
+                                //    maxDecimalPlaces: 3
+                                //});
+                                $("#txtAmt_0").autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+
+                                $('#txtAmt_0').val('');
+                                $('#ddlCostTypeCode_0').val('0');
+
+                                $('#trAddEdit').show();
+                            }
+                            else { $('#trAddEdit').hide(); }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        }
+
+        function RemoveReqClassCT() {
+            $(txtBox).removeClass('required');
+        }
+
+</script>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<div class="pull-right">
+    @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+        { <span class="red_icon glyphicon glyphicon-plus" onclick="AddCancelUpdate(1);"></span>}}
+</div>
+<table class="table table-bordered table-hover" id="tblCostType">
+    <thead>
+        <tr>
+            <th style="width: 40%">@objMessageKey.CostType</th>
+            <th style="width: 40%">@objMessageKey.Amount</th>
+            @*@{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                {*@
+            <th style="width: 20%">@objMessageKey.Action</th>
+            @*}}*@
+        </tr>
+    </thead>
+    <tbody>
+
+        @{if (Model != null)
+            {
+                int i = 1;
+                foreach (var objADC in Model.Acq_Deal_Cost_Costtype)
+                {
+                    if (objADC.EntityState != RightsU_Entities.State.Deleted)
+                    {
+
+                        /*Edit*/
+                        if (ViewBag.AcqDealCostTypeCode > 0 && ViewBag.AcqDealCostTypeCode == objADC.Cost_Type_Code)
+                        {
+                            <tr>
+                                <td>
+                                    @if (ViewBag.DdlCostType != null)
+                                    {
+                                        if (ViewBag.IsRefPayTerm == false)
+                                        {
+                                            @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.DdlCostType, new { @id = "ddlCostTypeCode_" + i, @class = "form_input chosen-select" });
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.DdlCostType, new { @id = "ddlCostTypeCode_" + i, disabled = true });
+                                        }
+
+                                    }
+                                </td>
+                                <td>@Html.TextBox("BudgetedAmt", GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Amount)), new { @id = "txtAmt_" + i, @class = "text-right pull-right", @onkeyup = "RemoveReqClass(this)" })</td>
+                                <td>
+                                    <a title="@objMessageKey.Update" href="#" class="glyphicon glyphicon-ok-circle" onclick="Save(@objADC.Acq_Deal_Cost_Costtype_Code,@i,'EDIT')"></a>
+                                    <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelUpdate(0);"></a>
+                                </td>
+                            </tr>
+                        }
+                        else/*List*/
+                        {
+                            <tr>
+                                <td>
+                                    @{RightsU_BLL.Cost_Type_Service objCTS = new RightsU_BLL.Cost_Type_Service(objLoginEntity.ConnectionStringName);
+
+                                        string Cost_Type_Name = objCTS.GetById(Convert.ToInt32(objADC.Cost_Type_Code)).Cost_Type_Name;
+                                        @Html.Label("CostTypeName", Cost_Type_Name, new { @id = "lblCostTypeName" + i })
+                                    }
+                                </td>
+                                <td class="text-right">
+                                    @Html.Label("BudgetedAmt", GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Amount)), new { @id = "lblAmt" + i })
+                                    @Html.Hidden("hdn_BudgetedAmt_" + i, objADC.Amount)
+                                    @Html.Hidden("hdn_CostTypeCode_" + i, objADC.Cost_Type_Code)
+                                    @*<input type="hidden" id="hdn_Amt_@i" value="@objADC.Amount" />*@
+                                </td>
+                                @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                        <td>
+                                            <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick="EditCostType(@objADC.Acq_Deal_Cost_Costtype_Code,@i,@objADC.Cost_Type_Code)"></a>
+                                            <a title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash" onclick="DeleteCostType(@objADC.Acq_Deal_Cost_Costtype_Code,@i,@objADC.Cost_Type_Code)"></a>
+                                            @if (ViewBag.DTC != 1)
+                                            {
+                                                <a title="@objMessageKey.EpisodeCost" href="#" class="glyphicon glyphicon-bullhorn" onclick="AddEditEpisodeCost(@objADC.Acq_Deal_Cost_Costtype_Code,@i,@objADC.Cost_Type_Code,@objADC.Amount)"></a>
+                                            }
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @if (ViewBag.DTC != 1)
+                                            {
+                                                <a title="@objMessageKey.EpisodeCost" href="#" class="glyphicon glyphicon-bullhorn" onclick="AddEditEpisodeCost(@objADC.Acq_Deal_Cost_Costtype_Code,@i,@objADC.Cost_Type_Code,@objADC.Amount,'V')"></a>
+                                            }
+                                        </td>
+                                    }}
+                            </tr>
+                                                }
+                                                i++;
+                                            }
+                                        }
+                                    }
+        }
+        <tr id="trAddEdit" style="display: none" class="hideCT">
+            <td>
+                @if (ViewBag.DdlCostType != null)
+                {
+                    @Html.DropDownList("DdlCostType_Add", (List<SelectListItem>)ViewBag.DdlCostType, new { @id = "ddlCostTypeCode_0", @class = "form_input chosen-select" });
+
+                }
+            </td>
+            <td class="text-right">
+                <input class="text" id="txtAmt_0" type="text" value="" onkeyup="RemoveReqClass(this)" />
+            </td>
+            <td>
+                <a title="@objMessageKey.Save" href="#" class="glyphicon glyphicon-ok-circle" onclick="Save(0,0,'ADD')"></a>
+                <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelUpdate(0);"></a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="pull-right">
+    <br /><b>@objMessageKey.TotalAmount : </b>@if (ViewBag.TotalCostType != null)
+    {@ViewBag.TotalCostType}<br />
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup EpisodicCostHead" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var URL_AddEditEpisodeCost = '@Url.Action("AddEditEpisodeCost", "Acq_Cost")';
+    var URL_BindEpisodeCostView = '@Url.Action("BindEpisodeCostView", "Acq_Cost")';
+    var URL_AddEditEpisodeCost_List = '@Url.Action("AddEditEpisodeCost_List", "Acq_Cost")';
+
+    function checkCurrentAction() {
+        debugger;
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("E", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+
+    function AddEditEpisodeCost(acqcosttypecode, rowIndex, costtypeCode, amount, mode) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var TitleCode="";
+        if (mode == 'V') {
+            TitleCode = $("#titleCode_view").val();
+        }
+        else {
+            TitleCode = $("#ddlSrchTitle").val();
+            if(TitleCode === null)
+            {
+                $('#divddlSrchTitle').addClass("required");
+                return false;
+            }
+        }
+
+        $('#popup').modal();
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditEpisodeCost,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                AcqDealCostTypeCode: acqcosttypecode,
+                rowIndex:rowIndex,
+                CostTypeCode: costtypeCode,
+                TitleCode: parseInt(TitleCode),
+                Amount: amount
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    initializeChosen();
+                    BindEpisodeCostView();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindEpisodeCostView() {
+        showLoading();
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindEpisodeCostView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: '',
+            success: function (result) {
+                $('#divEpisodeCostList').empty();
+                $('#divEpisodeCostList').html(result);
+                hideLoading();
+                initializeTooltip();
+            },
+            error: function (result) {
+                hideLoading();
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+
+    function AddEditEpisodeCost_List(dummyGuid, commandName) {
+        debugger;
+        var prnct = 100;
+        if (commandName == "ADD") {
+            $(".percentage_view").each(function () {
+                debugger;
+                var value = $(this).val();
+                if (!isNaN(value) && value.length != 0) {
+                    prnct -= parseFloat(value);
+                }
+            });
+            if (prnct == 0) {
+                showAlert("E", "@objMessageKey.CannotaddaspercentageisHundred");
+                return false;
+            }
+        }
+
+        if (checkCurrentAction()) {
+
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: URL_AddEditEpisodeCost_List,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dummyGuid: dummyGuid,
+                    commandName: commandName,
+                    esp_start: parseInt($('#hdnEpisode_Starts_From').val()),
+                    esp_end: parseInt($('#hdnEpisode_End_To').val()),
+                    cost_type_Amount: parseFloat($('#hdnTotalAmt').val())
+                }),
+                async: false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            $('#hdnAction').val(commandName)
+                            BindEpisodeCostView();
+
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+
+    function ClosePopup() {
+        var action = $.trim($('#hdnAction').val());
+        if(checkCurrentAction())
+        {
+            $('#popup').modal('hide');
+            $('#pupupHtml').empty();
+        }
+    }
+
+</script>
