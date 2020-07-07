@@ -637,6 +637,8 @@
                             <label>@objMessageKey.Licensee:</label><br />
                             <select id="ddlSrchLicensor" multiple="multiple"></select>
                         </li>
+
+
                         <li class="AdSearch">
                             <a onclick="ShowMore('pnlShowmore')" id="showMore" class="a">Show more...</a>
                         </li>
@@ -644,9 +646,32 @@
                     </ul>
                     <br />
                     <div style="text-align:center;">
+                        <label class="checkbox-inline">
+
+                            @if (ViewBag.IncludeArchiveDeal == "true")
+                            {
+                                <input type="checkbox" id="chkArchiveDeal" value="Y" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkArchiveDeal" value="Y" />
+                            }
+                            Include Archive Deal
+                        </label>
+                        <label class="checkbox-inline">
+                            @if (ViewBag.IncludeSubDeal == "true")
+                            {
+                                <input type="checkbox" id="chkSubDeal" value="Y" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkSubDeal" value="Y" />
+                            }
+                            IncludeSubDeals
+                        </label><br><br>
+                        @*<br />*@
                         <a class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
                         <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
-                        @*@Html.Hidden("hdnClearAll")*@
                         <input type="hidden" id="hdnClearAll" />
                     </div>
                 </div>
