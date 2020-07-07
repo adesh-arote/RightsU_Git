@@ -48,6 +48,7 @@
 });
 
 function GetDealTypeCondition(selectedDealTypeCode) {
+    hideLoading();
     if (selectedDealTypeCode == Deal_Type_Content || selectedDealTypeCode == Deal_Type_Sports || selectedDealTypeCode == Deal_Type_Format_Program
         || selectedDealTypeCode == Deal_Type_Event || selectedDealTypeCode == Deal_Type_Documentary_Show || selectedDealTypeCode == Deal_Type_Webseries) {
         return Deal_Program;

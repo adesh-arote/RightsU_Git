@@ -297,6 +297,10 @@ function ClearAll() {
     $('#ddlSrchDealTag').val(0);
     $('#ddlWorkflowStatus').val('0');
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val());
+    $("#chkArchiveDeal").prop("checked", false);
+    $("#chkSubDeal").prop("checked", false);
+    
+    
     OnChangeBindTitle();
 
     $("#ddlSrchDirector").find("option").attr("selected", false);
