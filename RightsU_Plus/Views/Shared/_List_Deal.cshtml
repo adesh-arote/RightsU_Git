@@ -352,7 +352,7 @@
                                     if (Count > 3)
                                     {
                                         <script>
-                                        $("#extend_@tempCount").append($('#Archive_@tempCount'));
+                                            $("#extend_@tempCount").append($('#Archive_Remark_@tempCount'));
                                         </script>
                                     }
                                 }
@@ -380,7 +380,7 @@
                                 if (Count > 3)
                                 {
                                     <script>
-                                        $("#extend_@tempCount").append($('#Archive_@tempCount'));
+                                        $("#extend_@tempCount").append($('#Archive_Remark_@tempCount'));
                                     </script>
                                 }
                             }
@@ -417,7 +417,7 @@
                                     {
                                         Count = Count + 1;
 
-                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename0_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
+                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
                                         if (Count > 3)
                                         {
                                             <script>
@@ -613,7 +613,7 @@
                                     </script>
                                 }
                             }
-                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmort + ","))
+                            @*if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmort + ","))
                             {
                                 Count = Count + 1;
                                 <a title="@objMessageKey.Amort" id="Amort_@tempCount" class="glyphicon glyphicon-stats AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Amort')"></a>
@@ -624,7 +624,7 @@
                                         $("#extend_@tempCount").append($('#Amort_@tempCount'));
                                     </script>
                                 }
-                            }
+                            }*@
                             if (objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAcqReleaseContent + ","))
                             {
                                 Count = Count + 1;

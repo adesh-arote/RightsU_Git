@@ -20,7 +20,7 @@ namespace RightsU_HealthCheckup
             bool isSSJDTL = true;
 
             if (objRightsU_HC != null)
-                isSSJDTL = new string[] { "SSJ", "DTL" }.Contains(objRightsU_HC.Type) ? true : false;
+                isSSJDTL = new string[] { "SSJ", "DTL", "SDP" }.Contains(objRightsU_HC.Type) ? true : false;
 
 
             ColCount = 0;

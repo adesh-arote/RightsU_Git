@@ -1034,7 +1034,7 @@
                                 <label>@objLoginUser.DefaultEntityName</label>
                             </span>
                         </li>
-                        @*<li data-placement="left" id="Email-Head-Icon">
+                        <li data-placement="left" id="Email-Head-Icon">
                                                      <label class="glyphicon glyphicon-bell" id="NotifyEmail"></label>
                                                      @if (count > 99)
                                                      {
@@ -1067,7 +1067,7 @@
                                                                  objEmail.Count = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N"
                                                                  && x.User_Code == objLoginUser.Users_Code && string.IsNullOrEmpty(x.Email_Body) == false
                                                                  && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
-                                                                 //&& x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
+                                                                 && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
                                                                  )
                                                                  .Count();
                                                              }
@@ -1103,7 +1103,7 @@
                                                              </li>
                                                          }
                                                      </ul>
-                                                 </li>*@
+                                                 </li>
 
                         <li data-placement="left" id="User-Head-Icon">
                             <label class="glyphicon glyphicon-user2" id="collapse1"></label>

@@ -119,7 +119,7 @@ namespace RightsU_HealthCheckup
             }
             catch (Exception ex)
             {
-                StringBuilder sb = new StringBuilder("Found Exception : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : " + ex.Message);
+                StringBuilder sb = new StringBuilder("Found Exception While Sending Email : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : " + ex.Message);
                 while (ex.InnerException != null)
                 {
                     ex = ex.InnerException;

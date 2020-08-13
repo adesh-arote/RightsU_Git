@@ -296,7 +296,7 @@
                                     if (Count > 3)
                                     {
                                         <script>
-                                            $("#extend_@tempCount").append($('#Archive_@tempCount'));
+                                            $("#extend_@tempCount").append($('#Archive_Remark_@tempCount'));
                                         </script>
                                     }
                                 }
@@ -322,7 +322,7 @@
                                 if (Count > 3)
                                 {
                                     <script>
-                                        $("#extend_@tempCount").append($('#Archive_@tempCount'));
+                                        $("#extend_@tempCount").append($('#Archive_Remark_@tempCount'));
                                     </script>
                                 }
                             }
@@ -354,7 +354,7 @@
                                     if (Count > 3)
                                     {
                                         <script>
-                                            $("#extend_@tempCount").append($('#Approve_@tempCount'));
+                                            $("#extend_@tempCount").append($('#Approve_Remark_@tempCount'));
                                         </script>
                                     }
 
@@ -363,7 +363,7 @@
                                 {
                                     Count = Count + 1;
                                     @*<a title="@apprName" id="ApproveName_@tempCount" class="glyphicon glyphicon-send" href="#" onclick="Ask_Confirmation('SendForAuth',@objSynList.IntCode,0)"></a>*@
-                                    <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="approvename0_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objSynList.IntCode,0);"></a>
+                                    <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objSynList.IntCode,0);"></a>
 
                                     if (Count > 3)
                                     {
