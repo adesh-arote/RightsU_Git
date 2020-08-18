@@ -139,7 +139,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.BusineesUnitList = BindBUList();
             if (obj_Acq_Syn_List_Search.BUCode == null)
             {
-                ViewBag.BUCode = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)).Select(s => s.Business_Unit_Code).FirstOrDefault(); 
+                ViewBag.BUCode = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)).Select(s => s.Business_Unit_Code).FirstOrDefault();
             }
             if (obj_Acq_Syn_List_Search.isAdvanced == "Y")
             {
@@ -251,7 +251,7 @@ namespace RightsU_Plus.Controllers
                                     else
                                         sql += " AND Deal_Workflow_Status <> 'AR' AND is_active ='Y' ";
 
-                                    sql += " OR Business_Unit_Code =" + obj_Acq_Syn_List_Search.BUCode +" AND (agreement_no like '%" + commonStr[i - 1] + "%'"
+                                    sql += " OR Business_Unit_Code =" + obj_Acq_Syn_List_Search.BUCode + " AND (agreement_no like '%" + commonStr[i - 1] + "%'"
                                           + " OR Entity_Code IN (SELECT Entity_Code FROM Entity WHERE Entity_Name LIKE N'%" + commonStr[i - 1] + "%')"
                                           + " OR Vendor_Code IN (SELECT Vendor_Code FROM Vendor WHERE Vendor_Name LIKE N'%" + commonStr[i - 1] + "%')"
                                           + " OR Syn_Deal_Code IN (SELECT Syn_Deal_Code FROM Syn_Deal_Movie WHERE Title_Code IN (SELECT Title_Code FROM Title WHERE Title_name  LIKE N'%" + commonStr[i - 1] + "%')))";
@@ -275,9 +275,9 @@ namespace RightsU_Plus.Controllers
             int pageSize = 10;
             int RecordCount = 0;
             string isPaging = "Y";
-            string orderByCndition = "Last_Updated_Time DESC"; 
+            string orderByCndition = "Last_Updated_Time DESC";
             ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            var objList = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Syn(sql, obj_Acq_Syn_List_Search.PageNo, orderByCndition, isPaging, pageSize, objRecordCount, objLoginUser.Users_Code,commonSearch).ToList();
+            var objList = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Syn(sql, obj_Acq_Syn_List_Search.PageNo, orderByCndition, isPaging, pageSize, objRecordCount, objLoginUser.Users_Code, commonSearch).ToList();
             RecordCount = Convert.ToInt32(objRecordCount.Value);
             ViewBag.RecordCount = RecordCount;
             ViewBag.PageNo = obj_Acq_Syn_List_Search.PageNo;
@@ -449,7 +449,7 @@ namespace RightsU_Plus.Controllers
             }
             else if (CommandName == "Amendment")
             {
-              Mode = GlobalParams.DEAL_MODE_EDIT;
+                Mode = GlobalParams.DEAL_MODE_EDIT;
             }
             else if (CommandName == "Clone")
             {
@@ -619,7 +619,7 @@ namespace RightsU_Plus.Controllers
                     {
                         Syn_Deal objSyn_Deal = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).GetById(Syn_Deal_Code);
                         objSyn_Deal.Syn_Deal_Rights.Where(r => r.Is_Verified == "N").ToList().ForEach(r =>
-                        { 
+                        {
                             Syn_Deal_Rights objRights = AddRightUDT(r);
                             objRights.LstDeal_Rights_UDT.ForEach(rudt =>
                             { rudt.Check_For = ""; }
@@ -668,14 +668,14 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public JsonResult CheckRecordCurrentStatus(int Acq_Deal_Code , string Key = "", string CommandName = "")
+        public JsonResult CheckRecordCurrentStatus(int Acq_Deal_Code, string Key = "", string CommandName = "")
         {
             string message = "";
             string isValid = "Y";
             int RLCode = 0;
             int count = 0;
             bool isLocked = false;
-            string[] ErrorChk = { "W", "E", "P"};
+            string[] ErrorChk = { "W", "E", "P" };
             var objSynDeal = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(S => S.Syn_Deal_Code == Acq_Deal_Code).FirstOrDefault();
             List<Syn_Deal_Rights> objSynDealRights = new List<Syn_Deal_Rights>();
             objSynDealRights = objSynDeal.Syn_Deal_Rights.ToList();
@@ -684,7 +684,7 @@ namespace RightsU_Plus.Controllers
             if (ChkDealStatus)
                 isValid = "N";
 
-            
+
 
             CommonUtil objCommonUtil = new CommonUtil();
             if (Key != "" && Acq_Deal_Code > 0)
@@ -1077,6 +1077,34 @@ namespace RightsU_Plus.Controllers
 
             return PartialView("~/Views/Shared/_List_More_Title.cshtml");
         }
+        public JsonResult Archive(int Syn_Deal_Code, string IsZeroWorkFlow, string remarks_Approval = "")
+        {
+            string strViewBagMsg = "", strMsgType = "S";
+            try
+            {
+                if (IsZeroWorkFlow.Trim().Equals("Y") || IsZeroWorkFlow == "0")
+                {
+                    string uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
+                   .USP_Assign_Workflow(Syn_Deal_Code, GlobalParams.ModuleCodeForSynDeal, objLoginUser.Users_Code, "AR~" + remarks_Approval).ElementAt(0));
+
+                    if (uspResult == "N")
+                        strViewBagMsg = "Deal Archived Successfully";
+                    else
+                        strMsgType = "E";
+                }
+                else
+                    strMsgType = "E";
+            }
+            catch (Exception ex)
+            {
+                strViewBagMsg = ex.Message.Replace("'", "");
+            }
+
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("Message", strViewBagMsg);
+            obj.Add("strMsgType", strMsgType);
+            return Json(obj);
+        }
 
         public JsonResult SendForArchive(int Syn_Deal_Code, string remarks_Approval = "")
         {
@@ -1142,7 +1170,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        
+
 
     }
 }
