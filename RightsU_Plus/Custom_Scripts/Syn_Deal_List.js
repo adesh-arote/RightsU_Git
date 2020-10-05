@@ -272,7 +272,7 @@ function ShowAll() {
     $('#txtto').val('');
     $('#ddlSrchDealType').val(0).trigger("chosen:updated");
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
-    $('#ddlWorkflowStatus').val('0');
+    $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     OnChangeBindTitle();
 
@@ -295,7 +295,7 @@ function ClearAll() {
     SetMaxDt();
     $('#ddlSrchDealType').val(0).trigger("chosen:updated");
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
-    $('#ddlWorkflowStatus').val('0');
+    $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     $("#chkArchiveDeal").prop("checked", false);
     $("#chkSubDeal").prop("checked", false);

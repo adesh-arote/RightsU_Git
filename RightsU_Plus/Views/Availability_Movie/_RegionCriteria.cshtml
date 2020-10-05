@@ -252,13 +252,17 @@
         })
 
         $('#ddlTerritoryList').on('change', function (evt, params) {
+            debugger;
             //$('#ddlCountryList').val('')[0].sumo.reload();
             $('#chkMustHave').prop('checked', false);
             //$('#ddlListCountry').empty();
             //$('#ddlListCountry').prop('disabled', false)[0].sumo.reload();
-            $('#ddlMustHaveCountry').empty();
-            $('#ddlMustHaveCountry').val('')[0].sumo.reload();
-            $('#ddlMustHaveCountry').prop('disabled', true)[0].sumo.reload();
+
+            if ($('#ddlMustHaveCountry').val() != undefined) {
+                $('#ddlMustHaveCountry').empty();
+                $('#ddlMustHaveCountry').val('')[0].sumo.reload();
+                $('#ddlMustHaveCountry').prop('disabled', true)[0].sumo.reload();
+            }
         })
 
 
