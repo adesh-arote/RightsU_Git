@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Microsoft.Reporting.WebForms;
-using RightsU_Entities;
+using RightsU_Entities;    
 using RightsU_BLL;
 using System.Linq;
 
@@ -679,7 +679,8 @@ public partial class Reports_rptDealQuery : ParentPage
             {
                 string strSelect = "";
                 string ColColumns = "";
-                string strWhere1 = "'AND Business_Unit_Code = " + SelectedBusinessUnit + "'";
+                //string strWhere1 = "BUSINESS_UNIT_CODE~AND~IN~" + SelectedBusinessUnit + "|";
+                
 
                 string strOfGEC = new System_Parameter_New_Service(ObjLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
                 var arrayStrGEC = strOfGEC.Split(',');
@@ -687,24 +688,41 @@ public partial class Reports_rptDealQuery : ParentPage
 
                 string strWhere = string.Empty;
                 if (SelectedBusinessUnit == "0")
-                     strWhere = " AND Business_Unit_Code IN ( " + strGEC + ")";
+                {
+                    strWhere = "BUSINESS_UNIT_CODE~AND~IN~" + strGEC + "|";
+                    //strWhere = " AND Business_Unit_Code IN ( " + strGEC + ")";
+                }
                 else
-                     strWhere = " AND Business_Unit_Code = " + SelectedBusinessUnit;
+                {
+                    strWhere = "BUSINESS_UNIT_CODE~AND~IN~" + SelectedBusinessUnit + "|";
+                    //  strWhere = " AND Business_Unit_Code = " + SelectedBusinessUnit;
+                }
+
                 int ColCount = 0;
                 DataSet ds = new DataSet();
 
                 strSelect = rptMain.GetSelectedColumnList(isSort, out ColCount, out ColColumns);
-                strWhere = rptMain.GetWhereCondition(strWhere);
+              //  strWhere = rptMain.GetWhereCondition(strWhere);
 
                 ColCount++;
 
                 if (!ExpiredDeals)
-                    strWhere += " AND Expired='N'";
+                    strWhere += "EXPIRED~AND~=~N|";//" AND Expired='N'";
+
 
                 if (TheatricalTerritory)
-                    strWhere += " AND Is_Theatrical_Right='Y'";
+                    strWhere += "IS_THEATRICAL_RIGHT~=~Y|";
                 else
-                    strWhere += " AND Is_Theatrical_Right='N'";
+                    strWhere += "IS_THEATRICAL_RIGHT~=~N|";
+
+                for (int i = 0; i < rptMain._arrRptCond.Count; i++)
+                {
+                    strWhere += rptMain._arrRptCond[i].LeftCol.NameInDb.Trim().ToUpper() + "~"
+                        + rptMain._arrRptCond[i].logicalConnect.Trim().ToUpper() + "~"
+                        + rptMain._arrRptCond[i].theOp.Trim().ToUpper() + "~"
+                        + rptMain._arrRptCond[i].RightValue.Trim().ToUpper().Replace("'", "") + "|";
+                }
+                strWhere = strWhere.Replace("~~", "~AND~");
 
                 this.BindReport(ReportViewer1);
                 ReportParameter[] parm = null;
@@ -712,7 +730,8 @@ public partial class Reports_rptDealQuery : ParentPage
                 string ReportFolder = Convert.ToString(new GlobalParams().objLoginEntity.ReportingServerFolder);
                 if (curVW.ToUpper() == "VW_ACQ_DEALS")
                 {
-                    parm = new ReportParameter[13];
+                    ColCount = ColCount - 1;
+                    parm = new ReportParameter[12];
                     parm[0] = new ReportParameter("Sql_Select", strSelect);
                     parm[1] = new ReportParameter("Sql_Where", strWhere);
                     parm[2] = new ReportParameter("Column_Count", ColCount.ToString());
@@ -726,7 +745,7 @@ public partial class Reports_rptDealQuery : ParentPage
                     parm[9] = new ReportParameter("Report_Header", "Acquisition Query Report");
                     parm[10] = new ReportParameter("Channel_Codes", rptMain.Channel_Codes == "" ? " " : rptMain.Channel_Codes);
                     parm[11] = new ReportParameter("Category_Codes", rptMain.Cat_Codes == "" ? " " : rptMain.Cat_Codes);
-                    parm[12] = new ReportParameter("CBFCRating_Codes", rptMain.CBFC_Ratings_Codes == "" ? " " : rptMain.CBFC_Ratings_Codes);
+                    //parm[12] = new ReportParameter("CBFCRating_Codes", rptMain.CBFC_Ratings_Codes == "" ? " " : rptMain.CBFC_Ratings_Codes);
 
                     if (ReportViewer1.ServerReport.ReportPath == "")
                     {
@@ -735,7 +754,8 @@ public partial class Reports_rptDealQuery : ParentPage
                 }
                 else if (curVW.ToUpper() == "VW_SYN_DEALS")
                 {
-                    parm = new ReportParameter[11];
+                    ColCount = ColCount - 1;
+                    parm = new ReportParameter[10];
                     parm[0] = new ReportParameter("Sql_SELECT", strSelect);
                     parm[1] = new ReportParameter("Sql_WHERE", strWhere);
                     parm[2] = new ReportParameter("Column_Count", ColCount.ToString());
@@ -747,7 +767,9 @@ public partial class Reports_rptDealQuery : ParentPage
                     parm[8] = new ReportParameter("Country_Codes", rptMain.Country_Codes == "" ? " " : rptMain.Country_Codes);
                     //parm[9] = new ReportParameter("Report_Header", "Syndication Query Report");
                     parm[9] = new ReportParameter("Category_Codes", rptMain.Cat_Codes == "" ? " " : rptMain.Cat_Codes);
-                    parm[10] = new ReportParameter("CBFCRating_Codes", rptMain.CBFC_Ratings_Codes == "" ? " " : rptMain.CBFC_Ratings_Codes);
+                    //  parm[10] = new ReportParameter("CBFCRating_Codes", rptMain.CBFC_Ratings_Codes == "" ? " " : rptMain.CBFC_Ratings_Codes);
+
+                    
 
                     if (ReportViewer1.ServerReport.ReportPath == "")
                     {

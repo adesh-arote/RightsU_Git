@@ -4,13 +4,13 @@
 		<FullName>Viacom18 Motion Pictures</FullName>
 		<DatabaseName>RightsU_Plus_Testing</DatabaseName> 
 		<ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
-		<ReportingServerFolder>/RightsU_Plus</ReportingServerFolder>
+		<ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
 	</Entity>
 	<Entity>
 		<ShortName>VIACOM18 Network</ShortName>
 		<FullName>Viacom18 Network</FullName>
 		<DatabaseName>RightsU_Plus_Testing</DatabaseName>
 		<ConnectionStringName>RightsU_Broadcaster</ConnectionStringName>
-		<ReportingServerFolder>/RightsU_Plus</ReportingServerFolder>
+		<ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
 	</Entity>
 </RightsUEntities>
