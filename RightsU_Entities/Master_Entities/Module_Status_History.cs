@@ -22,7 +22,8 @@ namespace RightsU_Entities
         public Nullable<int> Status_Changed_By { get; set; }
         public Nullable<System.DateTime> Status_Changed_On { get; set; }
         public string Remarks { get; set; }
-    
+        public Nullable<int> Version_No { get; set; }
+
         public virtual System_Module System_Module { get; set; }
     }
 }

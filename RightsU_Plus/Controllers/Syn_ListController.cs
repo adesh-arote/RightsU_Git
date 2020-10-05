@@ -720,21 +720,21 @@ namespace RightsU_Plus.Controllers
             }
 
             End:
-            if (message == "" && Key == "AR")
-            {
-                List<int?> lstTitle_Code = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
-                    .SearchFor(x => x.Syn_Deal_Code == Acq_Deal_Code).Select(x => x.Title_Code).ToList();
+            //if (message == "" && Key == "AR")
+            //{
+            //    List<int?> lstTitle_Code = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
+            //        .SearchFor(x => x.Syn_Deal_Code == Acq_Deal_Code).Select(x => x.Title_Code).ToList();
 
-                int countContent_Music_Link = new Title_Content_Service(objLoginEntity.ConnectionStringName)
-                     .SearchFor(x => lstTitle_Code.Contains(x.Title_Code)).Where(x => x.Content_Music_Link.Count() > 0)
-                     .Select(x => x.Content_Music_Link).Count();
+            //    int countContent_Music_Link = new Title_Content_Service(objLoginEntity.ConnectionStringName)
+            //         .SearchFor(x => lstTitle_Code.Contains(x.Title_Code)).Where(x => x.Content_Music_Link.Count() > 0)
+            //         .Select(x => x.Content_Music_Link).Count();
 
-                if (countContent_Music_Link > 0)
-                {
-                    message = "Music track is assign to it so deal cannot send for archive.";
-                    isLocked = false;
-                }
-            }
+            //    if (countContent_Music_Link > 0)
+            //    {
+            //        message = "Music track is assign to it so deal cannot send for archive.";
+            //        isLocked = false;
+            //    }
+            //}
             var obj = new
             {
                 BindList = (count > 0) ? "Y" : "N",

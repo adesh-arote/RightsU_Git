@@ -6597,6 +6597,46 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class Deal_Description_Service
+    {
+        private readonly Deal_Description_Repository obj_Repository;
+
+        public Deal_Description_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Deal_Description_Repository(Connection_Str);
+        }
+
+        public IQueryable<Deal_Description> SearchFor(Expression<Func<Deal_Description, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Deal_Description GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
+    public class Deal_Segment_Service
+    {
+        private readonly Deal_Segment_Repository obj_Repository;
+
+        public Deal_Segment_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Deal_Segment_Repository(Connection_Str);
+        }
+
+        public IQueryable<Deal_Segment> SearchFor(Expression<Func<Deal_Segment, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Deal_Segment GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
 }
 
 

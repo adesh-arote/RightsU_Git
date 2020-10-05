@@ -66,6 +66,7 @@ namespace RightsU_InterimDb.Models
     	    public string Payment_Remarks { get; set; }
     	    public Nullable<int> Business_Unit_Code { get; set; }
     	    public string Deal_Complete_Flag { get; set; }
+    	    public Nullable<int> Deal_Segment_Code { get; set; }
     
         public virtual Category Category { get; set; }
         public virtual Currency Currency { get; set; }
@@ -84,5 +85,6 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<Syn_Deal_Material> Syn_Deal_Material { get; set; }
         public virtual Business_Unit Business_Unit { get; set; }
         public virtual ICollection<Syn_Deal_Run> Syn_Deal_Run { get; set; }
+        public virtual Deal_Segment Deal_Segment { get; set; }
     }
 }
