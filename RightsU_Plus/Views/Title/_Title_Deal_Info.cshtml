@@ -353,7 +353,7 @@
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th style="border-left: 4px solid #dddddd !important;"></th>
+                    @*<th style="border-left: 4px solid #dddddd !important;"></th>*@
                     <th style="width:20%;">@objMessageKey.Licensor</th>
                     <th style="width:20%;">@objMessageKey.Exclusive</th>
                     <th style="width:20%;">@objMessageKey.Platform</th>
@@ -388,11 +388,11 @@
                         @Html.Hidden("hdnRightCode", item.Rights_Code, new { id = counter + "_hdnRightCode" })
                         @Html.Hidden("hdnDealType", item.Deal_Type, new { id = counter + "_hdnDealType" })
                         <tr class="@(ClassName + ' ' + deal_Type_Css)" @*class=@ClassName*@>
-                            <td>
+                            @*<td>
                                 <ul>
                                     <li class="glyphicon glyphicon-triangle-bottom nav-toggle" onclick="@("#coll" + outer_counter)"></li>
                                 </ul>
-                            </td>
+                            </td>*@
                             <td>
                                 @*@if (Deal_No != item.Agreement_No)
                                     {*@
@@ -485,13 +485,13 @@
                                 <span class="expiry">@item.Expiring_In_Days</span>
                             </td>
                         </tr>
-                        <tr class="@(ClassName+' '+deal_Type_Css)" @*class=@ClassName*@ id="@("coll" + outer_counter)" style="display: none;">
+                        <tr class="@(ClassName+' '+deal_Type_Css)" @*class=@ClassName*@ @*id="@("coll" + outer_counter)" style="display: none;"*@>
                             @* <td>@if (inner_counter == 1)
                                     {
                                     @counter
                                     }
                                 </td>*@
-                            <td></td>
+                            @*<td></td>*@
                             <td>
                                 @*@if (Deal_No != item.Agreement_No)
                                     {
