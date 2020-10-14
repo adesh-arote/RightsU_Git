@@ -14,12 +14,12 @@ namespace RightsU_InterimDb.Models
     
     public partial class RunData
     {
-    	public State EntityState { get; set; }    public int Id { get; set; }
-    	public State EntityState { get; set; }    public int ChannelCode { get; set; }
-    	    public string ChannelName { get; set; }
-    	    public string ParameterName { get; set; }
-    	    public string ParameterValue { get; set; }
-    
+    	public State EntityState { get; set; }
+        public int Id { get; set; }
+    	public int ChannelCode { get; set; }
+    	public string ChannelName { get; set; }
+    	public string ParameterName { get; set; }
+    	public string ParameterValue { get; set; }
         public virtual Channel Channel { get; set; }
     }
 }
