@@ -45,7 +45,7 @@
 
     /* START : JavaScript Common Code */
     function BindPartialPage(key, IsMenu, titleContentCode, rowNo, episode, duration,mode)
-    {
+    {debugger;
         Mode_G = mode;
         var titleName = "";
         if(key != "LIST_PAGE")
@@ -114,6 +114,7 @@
             error: function (result) {
                 alert('Error: ' + result.responseText);
             }
+            
         });
     }
     function addNumeric() {

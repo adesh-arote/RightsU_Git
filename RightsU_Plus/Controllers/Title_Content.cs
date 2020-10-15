@@ -129,8 +129,9 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         #region --- List ---
-        public ViewResult Index(string IsMenu = "Y")
+        public ViewResult Index(string IsMenu = "Y", string TitleName = "", string callFrom = "")
         {
+
             System_Parameter_New_Service objSPService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
             if (objSPService.SearchFor(s => s.Parameter_Name == "FrameLimit").Count() > 0)
                 ViewBag.FrameLimit = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "FrameLimit").Select(s => s.Parameter_Value).First();
@@ -142,9 +143,47 @@ namespace RightsU_Plus.Controllers
             else
                 ViewBag.RecordPerPage = objSearch.RecordPerPage;
             ViewBag.PageNo = objSearch.PageNo;
+
+            //Dictionary<string, string> obj = new Dictionary<string, string>();
+            //// obj = 
+            //var Tmpdata = TempData["TitleName"];
+
+
+            //if(Convert.ToString(Tmpdata) != "")
+            //{
+
+            //    objSearch.SearchText = Convert.ToString(Tmpdata);
+            //}
+            objSearch.SearchText = TitleName + ('﹐');
+
+            TempData["TitleName"] = callFrom == "T" ? callFrom : "";
+            
+
+
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForContent);
             return View("~/Views/Title_Content/Index.cshtml");
         }
+
+        //public ViewResult IndexNew(string CommandName, string TitleName, string IsMenu = "Y")
+        //{
+
+        //    System_Parameter_New_Service objSPService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
+        //    if (objSPService.SearchFor(s => s.Parameter_Name == "FrameLimit").Count() > 0)
+        //        ViewBag.FrameLimit = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "FrameLimit").Select(s => s.Parameter_Value).First();
+        //    else
+        //        ViewBag.FrameLimit = "24";
+        //    ViewBag.IsMenu = IsMenu;
+        //    if (IsMenu == "Y")
+        //        ViewBag.RecordPerPage = "10";
+        //    else
+        //        ViewBag.RecordPerPage = objSearch.RecordPerPage;
+        //    ViewBag.PageNo = objSearch.PageNo;
+
+        //    objSearch.SearchText = TitleName  + ('﹐');
+
+        //    LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForContent);
+        //    return View("~/Views/Title_Content/Index.cshtml");
+        //}
 
         public PartialViewResult BindPartialPage(string key, string mode, string IsMenu = "Y")
         {
@@ -185,6 +224,11 @@ namespace RightsU_Plus.Controllers
         public JsonResult SearchProgram(string searchText, int episodeFrom, int episodeTo)
         {
             string Title_Content_Codes = "";
+            if (TempData.ContainsKey("TitleName")) {
+                searchText = TempData["TitleName"].ToString() == "T" ? objSearch.SearchText : searchText;
+            }
+           
+
             if (objSearch.SearchText != null && objSearch.EpisodeFrom > 0 && objSearch.EpisodeTo > 0)
             {
                 if (searchText == "" && episodeFrom == 0 && episodeTo == 0)

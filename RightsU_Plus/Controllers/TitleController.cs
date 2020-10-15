@@ -1399,6 +1399,17 @@ namespace RightsU_Plus.Controllers
             objJson.Add("Text", objTalent.Talent_Name);
             return Json(objJson);
         }
+        //public ActionResult ContentView(string TitleName,int TitleCode)
+        //{
+        //    Dictionary<string, string> obj = new Dictionary<string, string>();
+        //    TempData["TitleName"] = TitleName;
+        //    //obj.Add("TitleName",TitleName);
+        //    //obj.Add("TitleCode",Convert.ToString(TitleCode));
+        //    //TempData["TitleName"] = obj;
+        //    //lst_Deal_Info = null;
+        //    return RedirectToAction("Index", "Title_Content");
+        //}
+
         public JsonResult Save_Program(string Program_Name)
         {
             Dictionary<string, object> objJson = new Dictionary<string, object>();

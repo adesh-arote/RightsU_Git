@@ -51,7 +51,7 @@
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
     URL_Reload_Current_Page = '@Url.Action("View", "Title")';
-    //var URL_ContentView = '@Url.Action("BindPartialPage", "Title_Content")';
+    
     var chosenTerritory = [];
     var chosenCountry = [];
     $(document).ready(function () {
@@ -687,20 +687,31 @@
         });
     }*@
 
-    @*function ContentView() {
+    @*function ContentView(key,IsMenu) {
+        debugger;
         showLoading();
-        $('#searchCommon').val('@Model.Title_Name');
+        //IsMenu='N';
+        $('#searchCommon').val('@Model.Title_Name','﹐');
         var TitleName = '@Model.Title_Name';
+        var TitleCode = '@Model.Title_Code';
+        var mode = '@ViewBag.CommandName';
         $.ajax({
             type: "POST",
-            url: '@Url.Action("BindPartialPage", "Title_Content")',
+            url: '@Url.Action("ContentView", "Title")',
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                TitleName: TitleName
+                TitleName: TitleName,
+                TitleCode:TitleCode,
+                mode : mode,
+                IsMenu:IsMenu,
+                key:key
             }),
             success: function (result) {
+                debugger;
+                $('#divPartialTab').html(result);
+                
                 initializeChosen();
                 hideLoading();
             },
@@ -972,17 +983,26 @@
                                                                 </td>
                                                                 <td><div id="PDomain"></div></td>
                                                                 }
-                                                                <td><a href="" target="_blank" onclick="ContentView();">Content</a></td>
+
+
+                                                                <td>
+                                                                    <a href="@Url.Action("Index", "Title_Content", new
+                                                                    {TitleName = Model.Title_Name,IsMenu = "N",callFrom = "T" },null)">
+                                                                        <U>Content</U>
+                                                                    </a>
+                                                                </td>
+
+                                                                @*<td><a href="" data-toggle="tab" onclick="ContentView('ContentView');">Content</a></td>*@
                                                             </tr>
                                                             <tr>
                                                                 <td>@objMessageKey.Synopsis</td>
                                                                 @{
-                string synopsis = objMessageKey.NA;
-                                                                    if (@Model.Synopsis != null && @Model.Synopsis !="")
-                                                                    { 
-                                                                        synopsis = Model.Synopsis;
+                                                                        string synopsis = objMessageKey.NA;
+                                                                        if (@Model.Synopsis != null && @Model.Synopsis !="")
+                                                                        {
+                                                                            synopsis = Model.Synopsis;
+                                                                        }
                                                                     }
-                                                                } 
                                                                 <td class="" id="tdsynopsis">
                                                                     @synopsis
                                                                 </td>
