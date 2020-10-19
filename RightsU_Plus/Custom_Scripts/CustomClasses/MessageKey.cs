@@ -271,6 +271,7 @@ public class MessageKey
     public string ReferenceNo { get; set; }
     public string AgreementCost { get; set; }
     public string DealFor { get; set; }
+    public string DealSegment { get; set; }
     public string StartDate { get; set; }
     public string EndDate { get; set; }
     public string Noofsongs { get; set; }

@@ -258,6 +258,7 @@ function BasicValidationForAddTitle() {
 }
 
 function RequiredFieldValidation() {
+    debugger;
     var returnVal = true;
     returnVal = BasicValidationForAddTitle();
     var agreementDate = $("#txtAgreement_Date").val();
@@ -269,6 +270,7 @@ function RequiredFieldValidation() {
     var licensorCode = $("#ddlLicensor").val();
     var categoryCode = $("select[ID='ddlCategory'] option:selected").val();
     var titleCount = $("#tblMovie tr:not(:has(th))").length
+    var DealSegmentCode = $("select[ID='ddlDealSegment'] option:selected").val();
 
     if ($.trim(agreementDate) == "") {
         $('#txtAgreement_Date').attr('required', true)
@@ -301,6 +303,12 @@ function RequiredFieldValidation() {
     if (businessUnitCode == 0) {
         //$('#ddlBusinessUnit').attr('required', true)
         $('#ddlBusinessUnit').addClass("required");
+        returnVal = false;
+    }
+
+    if (DealSegmentCode == 0 || DealSegmentCode == "") {
+        //$('#ddlBusinessUnit').attr('required', true)
+        $('#ddlDealSegment').addClass("required");
         returnVal = false;
     }
 
@@ -1563,6 +1571,7 @@ function handleCancel() {
     SetNull();
 }
 function ValidateSave() {
+    debugger;
     if (!ValidatePageSize())
         return false;
 

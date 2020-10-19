@@ -162,6 +162,7 @@
                                         <td>@strYearType</td>
                                     }
                                 </tr>
+                               
                                 <tr>
                                     <td>@objMessageKey.DealFor</td>
                                     <td>
@@ -209,6 +210,19 @@
                                     <td>@objMessageKey.Email</td>
                                     <td>@vendorEmail</td>
                                 </tr>
+                                @if (ViewBag.DealSegment == "Y")
+                                {
+                                    <tr>
+                                        <td>@objMessageKey.DealSegment</td>
+                                        @if (Model.Deal_Segment != null)
+                                        {
+                                            <td>
+                                                @Model.Deal_Segment.Deal_Segment_Name
+                                            </td>
+                                        }
+
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
