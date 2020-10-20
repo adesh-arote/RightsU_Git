@@ -162,6 +162,15 @@ namespace RightsU_Plus.Controllers
                         objAcq_Deal_Rights.Disable_RightType = "M";
                 }
             }
+            //try
+            //{
+                ViewBag.AcqSyn_Rights_Thetrical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Rights_Thetrical").First().Parameter_Value; //.Select(x=>x.Parameter_Value="Y").
+            //}
+            //catch
+            //{
+            //    ViewBag.AcqSyn_Rights_Thetrical = "Y";
+            //}
+
             try
             {
                 ViewBag.Term_Perputity = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Perpertuity_Term_In_Year").First().Parameter_Value;

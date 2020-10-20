@@ -427,7 +427,7 @@
 
 
                             @*<a title="Edit" href="#" class="glyphicon glyphicon-pencil"  onclick="Edit_Pushback('@counter');"></a>
-            <a title="Delete" href="#" class="glyphicon glyphicon-trash " id="" onclick="return ValidateDelete('@counter');"></a>*@
+                                <a title="Delete" href="#" class="glyphicon glyphicon-trash " id="" onclick="return ValidateDelete('@counter');"></a>*@
 
                             if (item.Right_Status == "P")
                             {
@@ -440,7 +440,6 @@
                             {
                                 <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px; display: none;" />
                                 <a id="btnEdit" title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick="Edit_Pushback('@counter');"></a>
-                                <a title="Clone" href="#" class="glyphicon glyphicon-duplicate" onclick="Clone_Pushback('@counter','Clone');"></a>
                                 <a id="btnDelete" title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash " id="" onclick="return ValidateDelete('@counter');"></a>
                                 <a id="btnShowError" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" onclick="Show_Error_Popup('', $('#txtPageSize').val(), 0, @item.Rights_Code)"></a>
                             }

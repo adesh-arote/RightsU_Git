@@ -273,6 +273,13 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindTopAcqDetails()
         {
+            ViewBag.DealDesc = new SelectList(new Deal_Description_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Type == "A" && x.Deal_Desc_Name != objDeal_Schema.Deal_Desc).Distinct().ToList(), "Deal_Desc_Code", "Deal_Desc_Name",objDeal_Schema.Deal_Desc);
+            ViewBag.AcqSyn_Gen_Deal_Desc = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Desc_DDL").First().Parameter_Value; //.Select(x=>x.Parameter_Value="Y").                                                                                                                                                                                                
+            //catch
+            //{
+            //    ViewBag.AcqSyn_Rights_Thetrical = "Y";
+            //}
+
             return PartialView("~/Views/Shared/_Top_Acq_Details.cshtml");
         }
         #endregion
@@ -388,7 +395,7 @@ namespace RightsU_Plus.Controllers
             }
         }
         public PartialViewResult BindTopBand(int dealTypeCode, string dealDesc, string agreementDate, int dealTagCode, string IsAmort)
-        {
+        { 
             objDeal_Schema.Deal_Type_Code = dealTypeCode;
             objDeal_Schema.Agreement_Date = Convert.ToDateTime(GlobalUtil.MakedateFormat(agreementDate));
             objDeal_Schema.Deal_Desc = dealDesc;
@@ -473,6 +480,7 @@ namespace RightsU_Plus.Controllers
             obj.Add("Master_Deal_Movie_Code", objAD_Session.Master_Deal_Movie_Code_ToLink ?? 0);
             obj.Add("Vendor_Contact_List", new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "VPC"), "Display_Value", "Display_Text").ToList());
             obj.Add("Vendor_Contact_Code", objAD_Session.Vendor_Contacts_Code);
+            obj.Add("Deal_Desc_Name", objAD_Session.Deal_Desc);
             return Json(obj);
         }
         private List<Acq_Deal_Movie> GetAcqDealMovieList(int pageNo, int recordPerPage)
@@ -914,6 +922,10 @@ namespace RightsU_Plus.Controllers
             #region --- Update Original Object ---
             objAD_MVC.Agreement_Date = Convert.ToDateTime(GlobalUtil.MakedateFormat(agreementDate));
             objAD_Session.Agreement_Date = objAD_MVC.Agreement_Date;
+
+            int intdeal = Convert.ToInt32(dealDesc); 
+
+            dealDesc = new Deal_Description_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Desc_Code == intdeal).Select(x=>x.Deal_Desc_Name).First();
 
             objAD_Session.Deal_Desc = dealDesc; //objAD_MVC.Deal_Desc;
             objAD_Session.Deal_Tag_Code = dealTagCode; //objAD_MVC.Deal_Tag_Code;

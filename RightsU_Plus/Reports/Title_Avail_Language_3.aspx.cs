@@ -237,7 +237,7 @@ namespace RightsU_WebApp.Reports
                 hdnTitleCodes.Value = "";
                 ShowResults("N");
                 hdnIsCriteriaChange.Value = "N";
-                //BindGridView();
+                BindGridView();
             }
 
         }
@@ -952,32 +952,32 @@ namespace RightsU_WebApp.Reports
                     IFTA_Cluster = "Y";
                 }
 
-                ReportParameter[] parm = new ReportParameter[44];
+                ReportParameter[] parm = new ReportParameter[40];
                 parm[0] = new ReportParameter("Title_Code", sbMovie.ToString());
                 parm[1] = new ReportParameter("Platform_Code", platformCodes);
                 parm[2] = new ReportParameter("Country_Code", sbTerritory.ToString());
                 parm[3] = new ReportParameter("Is_Original_Language", isOriginalLang);
                 parm[4] = new ReportParameter("Dubbing_Subtitling", Dubbing_Subtitling);
                 parm[5] = new ReportParameter("Date_Type", rblPeriodType.SelectedValue);
-                parm[6] = new ReportParameter("StartDate", GlobalUtil.MakedateFormat(StartDate));
-                parm[7] = new ReportParameter("EndDate", GlobalUtil.MakedateFormat(EndDate));
-                parm[8] = new ReportParameter("Title_Language_Code", sbTitleLanguage.ToString());
-                parm[9] = new ReportParameter("RestrictionRemarks", strRestRemarks);
-                parm[10] = new ReportParameter("Platform_ExactMatch", (chkExact.SelectedValue == "") ? "False" : chkExact.SelectedValue);
-                parm[11] = new ReportParameter("MustHave_Platform", (chkExact.SelectedValue == "MH") ? uctabSelectedplt.PlatformCodes_Selected_Out : "0");
-                parm[12] = new ReportParameter("Exclusivity", ddlExclusive.SelectedValue);
-                parm[13] = new ReportParameter("SubLicense_Code", sbSublicensing.ToString());
-                parm[14] = new ReportParameter("Region_ExactMatch", (chkRegion.SelectedValue == "") ? "False" : chkRegion.SelectedValue);
-                parm[15] = new ReportParameter("Region_MustHave", hdnMustHaveRegionCode.Value);
-                parm[16] = new ReportParameter("Created_By", objLoginedUser.First_Name + " " + objLoginedUser.Last_Name);
-                parm[17] = new ReportParameter("StartMonth", StartMonth);
-                parm[18] = new ReportParameter("EndYear", EndYear);
-                parm[19] = new ReportParameter("Region_Exclusion", hdnExclusionRegionCode.Value);
-                parm[20] = new ReportParameter("Subtit_Language_Code", sbSubtitlingLanguage.ToString());
-                parm[21] = new ReportParameter("Dubbing_Language_Code", sbDubbingLanguage.ToString());
-                parm[22] = new ReportParameter("BU_Code", BU_Code.ToString());
-                parm[23] = new ReportParameter("OthersRemarks", chkOtherRemarks.Checked.ToString());
-                parm[24] = new ReportParameter("Is_Digital", Digital);
+                parm[6] = new ReportParameter("Title_Language_Code", sbTitleLanguage.ToString());
+                parm[7] = new ReportParameter("Platform_ExactMatch", (chkExact.SelectedValue == "") ? "False" : chkExact.SelectedValue);
+                parm[8] = new ReportParameter("Exclusivity", ddlExclusive.SelectedValue);
+                parm[9] = new ReportParameter("SubLicense_Code", sbSublicensing.ToString());
+                parm[10] = new ReportParameter("Region_ExactMatch", (chkRegion.SelectedValue == "") ? "False" : chkRegion.SelectedValue);
+                parm[11] = new ReportParameter("Region_MustHave", hdnMustHaveRegionCode.Value);
+                parm[12] = new ReportParameter("Created_By", objLoginedUser.First_Name + " " + objLoginedUser.Last_Name);
+                parm[13] = new ReportParameter("Region_Exclusion", hdnExclusionRegionCode.Value);
+                parm[14] = new ReportParameter("Subtit_Language_Code", sbSubtitlingLanguage.ToString());
+                parm[15] = new ReportParameter("Dubbing_Language_Code", sbDubbingLanguage.ToString());
+                parm[16] = new ReportParameter("BU_Code", BU_Code.ToString());
+                parm[17] = new ReportParameter("Is_Digital", Digital);
+                parm[18] = new ReportParameter("StartDate", GlobalUtil.MakedateFormat(StartDate));
+                parm[19] = new ReportParameter("EndDate", GlobalUtil.MakedateFormat(EndDate));
+                parm[20] = new ReportParameter("RestrictionRemarks", strRestRemarks);
+                parm[21] = new ReportParameter("OthersRemarks", chkOtherRemarks.Checked.ToString());
+                parm[22] = new ReportParameter("MustHave_Platform", (chkExact.SelectedValue == "MH") ? uctabSelectedplt.PlatformCodes_Selected_Out : "0");
+                parm[23] = new ReportParameter("StartMonth", StartMonth);
+                parm[24] = new ReportParameter("EndYear", EndYear);
                 parm[25] = new ReportParameter("Include_Metadata", Metadata);
                 parm[26] = new ReportParameter("Is_IFTA_Cluster", IFTA_Cluster);
                 parm[27] = new ReportParameter("Platform_Group_Code", "");
@@ -993,12 +993,6 @@ namespace RightsU_WebApp.Reports
                 parm[37] = new ReportParameter("Country_Level", "N");
                 parm[38] = new ReportParameter("Territory_Level", "Y");
                 parm[39] = new ReportParameter("TabName", "IF");
-
-                parm[40] = new ReportParameter("OthersRemark", "");
-                parm[41] = new ReportParameter("Language_Code", "0");
-                parm[42] = new ReportParameter("CallFrom", "3");
-                parm[43] = new ReportParameter("Include_Ancillary", "N");
-
                 ReportViewer1.ServerReport.ReportPath = string.Empty;
 
                 ReportCredential();

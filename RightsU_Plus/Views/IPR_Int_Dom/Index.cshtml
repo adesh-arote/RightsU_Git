@@ -145,7 +145,7 @@
         $('#ddlBusinessUnit,#ddlChannel').SumoSelect();
         $('#ddlBusinessUnit')[0].sumo.reload();
         $('#ddlChannel')[0].sumo.reload();
-        var a =  '@ViewBag.hdnIPR_Renewed_Untill_Year1';
+        var a =  @ViewBag.hdnIPR_Renewed_Untill_Year1;
         $(function() {
             $('#txtApplication_Date').change(function () {
                 debugger;
@@ -172,7 +172,7 @@
             allowDecSep: false,
             maxPreDecimalPlaces: 3,
             maxDecimalPlaces: 0 });
-        debugger;
+
         if(@Model.IPR_Rep_Code > 0)
         {
             if('@Model.IPR_For' == 'I')
@@ -199,7 +199,7 @@
                 $('#txtDate_Of_Use').attr("disabled", "disabled");
             }
         }
-        debugger;
+
         BindPlatform();
         if('@ViewBag.message' != "")
         {

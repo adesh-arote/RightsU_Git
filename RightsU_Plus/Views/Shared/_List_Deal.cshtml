@@ -325,37 +325,34 @@
                             }
 
                             @* DEAL ARCHIVE STARTS *@
-                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForArchive + ","))
+                        if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForArchive + ","))
+                        {
+
+                            string arrName = "Send For Archive";
+                            if (objAcqList.dealWorkFlowStatus.Trim() == "A")
                             {
+                                List<RightsU_Entities.Module_Status_History> lstMSH = new RightsU_BLL.Module_Status_History_Type_Service(objLoginEntity.ConnectionStringName)
+                                     .SearchFor(x => x.Record_Code == objAcqList.Acq_Deal_Code).OrderByDescending(x => x.Module_Status_Code).Take(2).ToList();
 
-                                string arrName = "Send For Archive";
-                                if (objAcqList.dealWorkFlowStatus.Trim() == "A")
+                                RightsU_Entities.Module_Status_History objMSH = lstMSH.LastOrDefault();
+
+                                if (objMSH.Status == "WA")
                                 {
-                                    List<RightsU_Entities.Module_Status_History> lstMSH = new RightsU_BLL.Module_Status_History_Type_Service(objLoginEntity.ConnectionStringName)
-                                         .SearchFor(x => x.Record_Code == objAcqList.Acq_Deal_Code).OrderByDescending(x => x.Module_Status_Code).Take(2).ToList();
-
-                                    RightsU_Entities.Module_Status_History objMSH = lstMSH.LastOrDefault();
-
-                                    if (objMSH.Status == "WA")
-                                    {
-                                        arrName = "Re-send For Archive";
-                                    }
+                                    arrName = "Re-send For Archive";
                                 }
+                            }
 
 
-                                if (@objAcqList.IsZeroWorkFlow == "Y")
-                                {
-                                    Count = Count + 1;
+                            if (@objAcqList.IsZeroWorkFlow == "Y")
+                            {
+                                Count = Count + 1;
 
-                                    @*<a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@objAcqList.Acq_Deal_Code"
-                    href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objAcqList.Acq_Deal_Code, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>*@
-
-                                    <a title="Archive" class="glyphicon glyphicon-briefcase AT_@objAcqList.Acq_Deal_Code" id="Archive_Remark_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Archive',@objAcqList.IntCode,0);"></a>
-
+                                    <a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@objAcqList.Acq_Deal_Code"
+                                       href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objAcqList.Acq_Deal_Code, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>
                                     if (Count > 3)
                                     {
                                         <script>
-                                            $("#extend_@tempCount").append($('#Archive_Remark_@tempCount'));
+                                        $("#extend_@tempCount").append($('#Archive_@tempCount'));
                                         </script>
                                     }
                                 }
@@ -383,7 +380,7 @@
                                 if (Count > 3)
                                 {
                                     <script>
-                                        $("#extend_@tempCount").append($('#Archive_Remark_@tempCount'));
+                                        $("#extend_@tempCount").append($('#Archive_@tempCount'));
                                     </script>
                                 }
                             }
@@ -420,7 +417,7 @@
                                     {
                                         Count = Count + 1;
 
-                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
+                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename0_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
                                         if (Count > 3)
                                         {
                                             <script>
@@ -616,18 +613,18 @@
                                     </script>
                                 }
                             }
-                            @*if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmort + ","))
-            {
-                Count = Count + 1;
-                <a title="@objMessageKey.Amort" id="Amort_@tempCount" class="glyphicon glyphicon-stats AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Amort')"></a>
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmort + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Amort" id="Amort_@tempCount" class="glyphicon glyphicon-stats AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Amort')"></a>
 
-                if (Count > 3)
-                {
-                    <script>
-                        $("#extend_@tempCount").append($('#Amort_@tempCount'));
-                    </script>
-                }
-            }*@
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Amort_@tempCount'));
+                                    </script>
+                                }
+                            }
                             if (objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAcqReleaseContent + ","))
                             {
                                 Count = Count + 1;
@@ -642,22 +639,22 @@
                             }
 
                             @*if (true)
-            {
-                Count = Count + 1;
-                <label for="btnExportToXml" class="glyphicon glyphicon-floppy-save" title="Export Agreement" id="Export_@tempCount">
-                    @using (Html.BeginForm("ExportToWord", "Acq_List"))
-                    {
-                        <input type="submit" style="display: none" id="btnExportToXml" />
-                        <input type="hidden" name="DealTypeC" value="" id="DealTypeC" />
-                    }
-                </label>
-                if (Count > 3)
-                {
-                    <script>
-                        $("#extend_@tempCount").append($('#Export_@tempCount'));
-                    </script>
-                }
-            }*@
+                                {
+                                    Count = Count + 1;
+                                    <label for="btnExportToXml" class="glyphicon glyphicon-floppy-save" title="Export Agreement" id="Export_@tempCount">
+                                        @using (Html.BeginForm("ExportToWord", "Acq_List"))
+                                        {
+                                            <input type="submit" style="display: none" id="btnExportToXml" />
+                                            <input type="hidden" name="DealTypeC" value="" id="DealTypeC" />
+                                        }
+                                    </label>
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                            $("#extend_@tempCount").append($('#Export_@tempCount'));
+                                        </script>
+                                    }
+                                }*@
 
                         }
                         @if (Count > 3)

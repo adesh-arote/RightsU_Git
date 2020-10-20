@@ -931,20 +931,20 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public JsonResult Archive(int Acq_Deal_Code, string IsZeroWorkFlow, string remarks_Approval = "")
+        /* commented by akshay rane
+
+        public JsonResult Archive(int Acq_Deal_Code, string remarks_Approval = "")
         {
-            string strViewBagMsg = "", strMsgType = "S";
+            string strViewBagMsg = "", strMsgType = "";
             try
             {
-                if (IsZeroWorkFlow.Trim().Equals("Y") || IsZeroWorkFlow == "0")
-                {
-                    string uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
+                string uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
                    .USP_Assign_Workflow(Acq_Deal_Code, GlobalParams.ModuleCodeForAcqDeal, objLoginUser.Users_Code, "AR~" + remarks_Approval).ElementAt(0));
 
-                    if (uspResult == "N")
-                        strViewBagMsg = "Deal Archived Successfully";
-                    else
-                        strMsgType = "E";
+                if (uspResult == "N")
+                {
+                    strMsgType = "S";
+                    strViewBagMsg = "Deal Archived Successfully";
                 }
                 else
                     strMsgType = "E";
@@ -959,6 +959,7 @@ namespace RightsU_Plus.Controllers
             obj.Add("strMsgType", strMsgType);
             return Json(obj);
         }
+              */
 
         public JsonResult Bind_Title(string Searched_Title = "", string dealTypeCode = "", string BUCode = "")
         {

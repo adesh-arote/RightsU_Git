@@ -300,14 +300,27 @@
                                                         </label>
                                                     </td>
                                                 </tr>
-                                                <tr style="margin-bottom: 4px;">
+                                                @if (ViewBag.AcqSyn_Rights_Thetrical == "Y")
+                                                {
+                                                <tr style="margin-bottom: 4px;display:none">
                                                     <td colspan="2">
                                                         <label class="checkbox-inline">
                                                             @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
                                                             @objMessageKey.DomesticTheatrical
                                                         </label>
                                                     </td>
-                                                </tr>
+                                                </tr>}
+                                                else
+                                                {
+                                                    <tr style="margin-bottom: 4px;">
+                                                        <td colspan="2">
+                                                            <label class="checkbox-inline">
+                                                                @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                                @objMessageKey.DomesticTheatrical
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                }
                                             </table>
                                         </div>
                                         @*<br>*@

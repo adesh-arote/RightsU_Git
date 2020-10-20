@@ -262,7 +262,7 @@ function RequiredFieldValidation() {
     var returnVal = true;
     returnVal = BasicValidationForAddTitle();
     var agreementDate = $("#txtAgreement_Date").val();
-    var dealDesc = $("#txtDeal_Desc").val();
+    var dealDesc =  $("select[ID='txtDeal_Desc'] option:selected").text();
     var dealTagCode = $("select[ID='ddlDeal_Tag'] option:selected").val();
     var currencyCode = $("select[ID='ddlCurrency'] option:selected").val();
     var licenseeCode = $("select[ID='ddlLicensee'] option:selected").val();
@@ -862,8 +862,10 @@ function BindTitleGridview() {
 }
 
 function BindTopBand() {
+    debugger;
     var dealTypeCode = GetDealTypeCode();
-    var dealDesc = $('#txtDeal_Desc').val();
+    debugger;
+    var dealDesc = $('#txtDeal_Desc').text();
     var agreementDate = $('#txtAgreement_Date').val();
     var dealTagCode = $('#ddlDeal_Tag').val();
     var prevTitleCode = $("#hdnDeal_Type_Code").val()
@@ -883,6 +885,7 @@ function BindTopBand() {
             }),
             async: false,
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -1609,7 +1612,8 @@ function ValidateSave() {
     var vendorCodes = $("#ddlLicensor").val();
     $('input[name=hdnVendorCodes]').val(vendorCodes.join(','));
     $('input[name=hdnAgreementDate]').val($("input[ID='txtAgreement_Date']").val());
-    $('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
+    //$('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
+    $('input[name=hdnDealDesc]').val($("select[ID='txtDeal_Desc'] option:selected").val());
     $('input[name=hdnDealTagStatusCode]').val($("select[ID='ddlDeal_Tag'] option:selected").val());
 
     showLoading();

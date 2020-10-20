@@ -2490,8 +2490,8 @@
                     $('#ddlMustHaveCountry').SumoSelect({ selectAll: true });
                     if(MustHaveSelected !=null)
                         $('#ddlMustHaveCountry').val(MustHaveSelected);
-                    if($('#ddlMustHaveCountry').val() != undefined)
-                        $('#ddlMustHaveCountry')[0].sumo.reload();
+
+                    $('#ddlMustHaveCountry')[0].sumo.reload();
                     $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css('text-align', 'left');
                     IsFirstTime = 'N';
                 }

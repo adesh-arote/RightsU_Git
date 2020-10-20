@@ -133,25 +133,20 @@ namespace RightsU_Plus.Controllers
             string strMsgType = "";
             try
             {
-                //RightsU_Entities.User objLoginUser = ((RightsU_Entities.RightsU_Session)Session[RightsU_Entities.RightsU_Session.SESS_KEY]).Objuser;
-                RightsU_BLL.USP_Service objUSP = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName);
 
-                string val = user_Action == "R" ? "R" : "AR";
+                string val = user_Action == "R" ? "A~" : "AR~";
 
+                
                 string uspResult = string.Empty;
                 if (moduleCode == 30)
                 {
-                   // uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
-                   //.USP_Assign_Workflow(Acq_Deal_Code, GlobalParams.ModuleCodeForAcqDeal, objLoginUser.Users_Code, val + remarks_Approval).ElementAt(0));
-                    uspResult = Convert.ToString(objUSP.USP_Process_Workflow(Acq_Deal_Code, 30, objLoginUser.Users_Code, val, remarks_Approval).ElementAt(0));
+                    uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
+                   .USP_Assign_Workflow(Acq_Deal_Code, GlobalParams.ModuleCodeForAcqDeal, objLoginUser.Users_Code, val + remarks_Approval).ElementAt(0));
                 }
                 else if(moduleCode == 35)
                 {
-                    // uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
-                    //.USP_Assign_Workflow(Acq_Deal_Code, GlobalParams.ModuleCodeForSynDeal, objLoginUser.Users_Code, val + remarks_Approval).ElementAt(0));
-
-                    uspResult = Convert.ToString(objUSP.USP_Process_Workflow(Acq_Deal_Code, 35, objLoginUser.Users_Code, val, remarks_Approval).ElementAt(0));
-
+                    uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
+                   .USP_Assign_Workflow(Acq_Deal_Code, GlobalParams.ModuleCodeForSynDeal, objLoginUser.Users_Code, val + remarks_Approval).ElementAt(0));
                 }
                 if (uspResult == "N")
                 {
@@ -183,7 +178,7 @@ namespace RightsU_Plus.Controllers
                     objAcq_Deal = ((Acq_Deal)TempData["RedirectAcqDeal"]);
                 }
                 string uspResult = string.Empty;
-                if (WorkFlowStatus.Contains("Waiting (Archive)"))
+                if (WorkFlowStatus == "Waiting (Archive)")
                 {
                     uspResult = Archive(user_Action,objAcq_Deal.Acq_Deal_Code, approvalremarks);
                 }
@@ -229,7 +224,7 @@ namespace RightsU_Plus.Controllers
                 }
 
                 string uspResult = String.Empty;
-                if (WorkFlowStatus.Contains("Waiting (Archive)"))
+                if (WorkFlowStatus == "Waiting (Archive)")
                 {
                     uspResult = Archive(user_Action, objSyn_Deal.Syn_Deal_Code, approvalremarks,35);
                 }

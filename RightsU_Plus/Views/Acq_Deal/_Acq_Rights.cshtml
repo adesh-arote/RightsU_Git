@@ -330,7 +330,9 @@
                                                     </td>
 
                                                 </tr>
-                                                <tr>
+                                                @*@if(ViewBag.AcqSyn_Rights_Thetrical == "Y")
+                                                {
+                                                <tr style="display:none;">
                                                     <td colspan="2">
                                                         <label class="checkbox-inline">
                                                             @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
@@ -338,8 +340,20 @@
                                                             @Html.Hidden("hdnIs_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
                                                         </label>
                                                     </td>
-
                                                 </tr>
+                                                }
+                                                else
+                                                {*@
+                                                <tr style="@(ViewBag.AcqSyn_Rights_Thetrical == 'Y' ? "display:none;" : "display:block;")" >
+                                                    <td colspan="2">
+                                                        <label class="checkbox-inline">
+                                                            @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                            @objMessageKey.DomesticTheatrical
+                                                            @Html.Hidden("hdnIs_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                @*}*@
                                             </table>
 
 

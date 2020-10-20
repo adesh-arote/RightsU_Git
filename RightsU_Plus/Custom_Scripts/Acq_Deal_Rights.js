@@ -1934,23 +1934,13 @@ function ValidateSave() {
         var txtYear = $('#Term_YY').val();
         var txtMonth = $('#Term_MM').val();
         var txtDay = $('#Term_DD').val();
-        var rightED = "";
-        if (isTentative == true && (txtYear == null || txtYear == '0' || txtYear == undefined || txtYear == '') && (txtMonth == null || txtMonth == '0' || txtMonth == undefined || txtMonth == '') && (txtDay == null || txtDay == '0' || txtDay == undefined || txtDay == '')) {
+        if (isTentative == true && (txtYear == null || txtYear == '0' || txtYear == undefined || txtYear == '') && (txtMonth == null || txtMonth == '0' || txtMonth == undefined || txtMonth == '')) {
             IsValidSave = false;
             showAlert("E", ShowMessage.MsgValidTerm);//MsgValidTerm = Please enter valid Term
         }
-        else {
-            debugger;
-            var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
-            var newDate = CalculateEndDate(rightSD, parseInt(txtYear), parseInt(txtMonth), parseInt(txtDay));
-            rightED = new Date(MakeDateFormate(newDate));
-        }
-
         if (IsValidSave) {
             var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
-            if (!isTentative)
-                rightED = new Date(MakeDateFormate(txtEndDate.val()));
-
+            var rightED = new Date(MakeDateFormate(txtEndDate.val()));
             rightED.setDate(rightED.getDate() + 1)
 
             var term = CalculateTerm(rightSD, rightED);
