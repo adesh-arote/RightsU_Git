@@ -301,6 +301,8 @@
                                             </span>
                                         </td>
                                     </tr>
+                                    
+
                                     <tr>
                                         <td>@objMessageKey.Licensee/ @objMessageKey.Assignee</td>
                                         <td>
@@ -360,6 +362,15 @@
                                             }
                                         </td>
                                     </tr>
+                                    @if (ViewBag.DealSegment == "Y")
+                                    {
+                                        <tr>
+                                            <td>@objMessageKey.DealSegment</td>
+                                            <td>
+                                                @Html.DropDownListFor(m => Model.Deal_Segment_Code, (List<SelectListItem>)ViewBag.Deal_Segment, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select" })
+                                            </td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>

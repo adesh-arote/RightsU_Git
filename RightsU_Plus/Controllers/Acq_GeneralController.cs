@@ -188,6 +188,10 @@ namespace RightsU_Plus.Controllers
 
             BindSchemaObject();
             string viewName = "~/Views/Acq_Deal/_Acq_General.cshtml";
+            string temp = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.DealSegment = temp;
+
+
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ARCHIVE && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_APPROVE && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
             {
                 ViewBag.Deal_Mode = objDeal_Schema.Mode;
@@ -450,6 +454,13 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Vendor_Email = objAD_Session.Vendor_Contacts.Email;
             }
             #endregion
+
+            string temp = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.DealSegment = temp;
+            if (temp == "Y")
+            {
+                ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Deal_Segment_Code", "Deal_Segment_Name").ToList();
+            }
         }
         public JsonResult BindAllPreReq_Async()
         {
@@ -743,6 +754,8 @@ namespace RightsU_Plus.Controllers
             objAD_Session.Work_Flow_Code = objExisting_Acq_Deal.Work_Flow_Code;
             objAD_Session.Year_Type = objExisting_Acq_Deal.Year_Type;
             objAD_Session.Is_Auto_Push = objExisting_Acq_Deal.Is_Auto_Push;
+            objAD_Session.Deal_Segment_Code = objExisting_Acq_Deal.Deal_Segment_Code;
+            objAD_Session.Deal_Segment = objExisting_Acq_Deal.Deal_Segment;
             objExisting_Acq_Deal.Acq_Deal_Movie.ToList().ForEach(a =>
             {
                 Acq_Deal_Movie objADM = new Acq_Deal_Movie();
@@ -936,6 +949,10 @@ namespace RightsU_Plus.Controllers
             objAD_Session.Business_Unit_Code = objAD_MVC.Business_Unit_Code;
 
             objAD_Session.Category_Code = objAD_MVC.Category_Code;
+
+            if(objAD_MVC.Deal_Segment_Code != null && objAD_MVC.Deal_Segment_Code != 0)
+                objAD_Session.Deal_Segment_Code = objAD_MVC.Deal_Segment_Code;
+
             objAD_Session.Vendor_Contacts_Code = objAD_MVC.Vendor_Contacts_Code;
             if (string.IsNullOrEmpty(objAD_MVC.Remarks))
                 objAD_MVC.Remarks = "";
