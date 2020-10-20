@@ -213,6 +213,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Term_Perputity = 0;
                 ViewBag.Enabled_Perpetuity = "N";
             }
+            ViewBag.AcqSyn_Rights_Thetrical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Rights_Thetrical").First().Parameter_Value; 
 
             Session["FileName"] = "";
             Session["FileName"] = "syn_Rights";

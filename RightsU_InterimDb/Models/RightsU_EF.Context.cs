@@ -418,6 +418,8 @@ namespace RightsU_InterimDb.Models
         public DbSet<Users_Configuration> Users_Configuration { get; set; }
         public DbSet<Users_Exclusion_Rights> Users_Exclusion_Rights { get; set; }
         public DbSet<Party_Group> Party_Group { get; set; }
+        public DbSet<Deal_Description> Deal_Description { get; set; }
+        public DbSet<Deal_Segment> Deal_Segment { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {

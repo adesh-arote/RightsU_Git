@@ -87,6 +87,7 @@ namespace RightsU_Entities
         public Nullable<int> Role_Code { get; set; }
         public Nullable<int> Channel_Cluster_Code { get; set; }
         public string Is_Auto_Push { get; set; }
+        public Nullable<int> Deal_Segment_Code { get; set; }
         private bool _SaveGeneralOnly = true;
         public bool SaveGeneralOnly
         {
@@ -124,5 +125,6 @@ namespace RightsU_Entities
         public virtual ICollection<Acq_Deal_Budget> Acq_Deal_Budget { get; set; }
         public virtual Channel_Cluster Channel_Cluster { get; set; }
         public virtual ICollection<Provisional_Deal> Provisional_Deal { get; set; }
+        public virtual Deal_Segment Deal_Segment { get; set; }
     }
 }
