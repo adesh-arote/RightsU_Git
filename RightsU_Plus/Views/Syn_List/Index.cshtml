@@ -237,7 +237,9 @@
     , URL_GetSynAsyncStatus = '@Url.Action("GetSynAsyncStatus", "Syn_List")'
     , URL_ActionButtons = '@Url.Action("ActionButtons", "Syn_List")';
         var BUCode = '@ViewBag.BUCode';
-
+         var URL_SendForArchive = '@Url.Action("SendForArchive", "Syn_List")'
+    , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Syn_List")'
+    , URL_Archive = '@Url.Action("Archive", "Syn_List")';
 
     function Validate_Record(dealCode, dealType, recordID) {
         var rid = recordID.id;
@@ -637,6 +639,8 @@
                             <label>@objMessageKey.Licensee:</label><br />
                             <select id="ddlSrchLicensor" multiple="multiple"></select>
                         </li>
+
+
                         <li class="AdSearch">
                             <a onclick="ShowMore('pnlShowmore')" id="showMore" class="a">Show more...</a>
                         </li>
@@ -644,9 +648,22 @@
                     </ul>
                     <br />
                     <div style="text-align:center;">
+                        <label class="checkbox-inline">
+
+                            @if (ViewBag.IncludeArchiveDeal == "true")
+                            {
+                                <input type="checkbox" id="chkArchiveDeal" value="Y" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkArchiveDeal" value="Y" />
+                            }
+                            Include Archive Deal
+                        </label>
+                       <br><br>
+                        @*<br />*@
                         <a class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
                         <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
-                        @*@Html.Hidden("hdnClearAll")*@
                         <input type="hidden" id="hdnClearAll" />
                     </div>
                 </div>
@@ -671,12 +688,12 @@
                             <label>@objMessageKey.Director:</label><br />
                             <select id="ddlSrchDirector" multiple="multiple"></select>
                         </li>
-                        <li class="AdSearch" id="spType">
+                        @*<li class="AdSearch" id="spType">
                             <label id="spType1">Sport Type:</label><br />
                             <select id="ddlSrchSportType" style="width: 174px;">
                                 <option value="" selected>Please Select </option>
                             </select>
-                        </li>
+                        </li>*@
                     </ul>
                     <br />
 

@@ -61,7 +61,7 @@
     }
 
     .four_column td.td_label {
-        width: 10% !important;
+        width: 13% !important;
     }
 
     #ddlMilestone_Type_Code_chosen {
@@ -283,7 +283,7 @@
                                                         <div style="width: 83%; float: right;">
                                                             <div id="divExclusiveRights" style="width:90px; height:23px">
                                                                 @{ string displayStyle = "none";
-                                                                 string attrDisabled1 = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
+                                                                    string attrDisabled1 = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
                                                                 }
                                                                 @if (Model.Is_Exclusive == "Y")
                                                                 {
@@ -330,16 +330,32 @@
                                                     </td>
 
                                                 </tr>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <label class="checkbox-inline">
-                                                            @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
-                                                            @objMessageKey.DomesticTheatrical
-                                                            @Html.Hidden("hdnIs_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
-                                                        </label>
-                                                    </td>
+                                                @if (ViewBag.AcqSyn_Rights_Thetrical == "Y")
+                                                {
+                                                    <tr style="display:none;">
+                                                        <td colspan="2">
+                                                            <label class="checkbox-inline">
+                                                                @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                                @objMessageKey.DomesticTheatrical
+                                                                @Html.Hidden("hdnIs_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                            </label>
+                                                        </td>
 
-                                                </tr>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <label class="checkbox-inline">
+                                                                @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                                @objMessageKey.DomesticTheatrical
+                                                                @Html.Hidden("hdnIs_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                            </label>
+                                                        </td>
+
+                                                    </tr>
+                                                }
                                             </table>
 
 

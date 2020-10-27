@@ -441,7 +441,13 @@
     <Compile Include="Models\Currency_Exchange_Rate.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Deal_Description.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Deal_Rights_Process.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Deal_Segment.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Deal_Tag.cs">
@@ -844,6 +850,9 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Revenue_Heads.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Revenue_Vertical.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Rights_Bulk_Update.cs">

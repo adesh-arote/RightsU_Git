@@ -291,12 +291,13 @@
                                 {
                                     Count = Count + 1;
 
-                                    <a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@objSynList.Syn_Deal_Code"
-                                       href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objSynList.Syn_Deal_Code, ModuleCode = 35, Record_Locking_Code = "RecordLockingCode", Is_Menu = "N" })'></a>
+                                    @*<a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@objSynList.Syn_Deal_Code"
+                    href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objSynList.Syn_Deal_Code, ModuleCode = 35, Record_Locking_Code = "RecordLockingCode", Is_Menu = "N" })'></a>*@
+                                    <a title="Archive" class="glyphicon glyphicon-briefcase AT_@objSynList.Syn_Deal_Code" id="Archive_Remark_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Archive',@objSynList.IntCode,0);"></a>
                                     if (Count > 3)
                                     {
                                         <script>
-                                            $("#extend_@tempCount").append($('#Archive_@tempCount'));
+                                            $("#extend_@tempCount").append($('#Archive_Remark_@tempCount'));
                                         </script>
                                     }
                                 }
@@ -322,7 +323,7 @@
                                 if (Count > 3)
                                 {
                                     <script>
-                                        $("#extend_@tempCount").append($('#Archive_@tempCount'));
+                                        $("#extend_@tempCount").append($('#Archive_Remark_@tempCount'));
                                     </script>
                                 }
                             }
@@ -354,7 +355,7 @@
                                     if (Count > 3)
                                     {
                                         <script>
-                                            $("#extend_@tempCount").append($('#Approve_@tempCount'));
+                                            $("#extend_@tempCount").append($('#Approve_Remark_@tempCount'));
                                         </script>
                                     }
 
@@ -363,7 +364,7 @@
                                 {
                                     Count = Count + 1;
                                     @*<a title="@apprName" id="ApproveName_@tempCount" class="glyphicon glyphicon-send" href="#" onclick="Ask_Confirmation('SendForAuth',@objSynList.IntCode,0)"></a>*@
-                                    <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="approvename0_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objSynList.IntCode,0);"></a>
+                                    <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objSynList.IntCode,0);"></a>
 
                                     if (Count > 3)
                                     {
@@ -503,8 +504,8 @@
                         @if (Count > 3)
                         {
                             <a title="@objMessageKey.MoreAction" id="show_hide1_@tempCount" href="#" class="glyphicon glyphicon-option-vertical show_hide AT_@objSynList.Syn_Deal_Code"></a>
-                                <div id="extend_@tempCount" class="MoreActionDiv" style="display:none;">
-                                </div>
+                            <div id="extend_@tempCount" class="MoreActionDiv" style="display:none;">
+                            </div>
                         }
                     </li>
                 </ul>

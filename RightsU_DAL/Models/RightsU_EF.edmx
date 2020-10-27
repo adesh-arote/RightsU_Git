@@ -59,6 +59,8 @@
           <Property Name="Role_Code" Type="int" />
           <Property Name="Channel_Cluster_Code" Type="int" />
           <Property Name="Is_Auto_Push" Type="char" MaxLength="1" />
+          <Property Name="Deal_Segment_Code" Type="int" />
+          <Property Name="Revenue_Vertical_Code" Type="int" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -1815,6 +1817,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Property Name="System_End_Date" Type="datetime" />
           <Property Name="Exchange_Rate" Type="numeric" Precision="10" Scale="3" />
         </EntityType>
+        <EntityType Name="Deal_Description">
+          <Key>
+            <PropertyRef Name="Deal_Desc_Code" />
+          </Key>
+          <Property Name="Deal_Desc_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Deal_Desc_Name" Type="nvarchar(max)" />
+          <Property Name="Type" Type="char" MaxLength="1" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
         <EntityType Name="Deal_Rights_Process">
           <Key>
             <PropertyRef Name="Deal_Rights_Process_Code" />
@@ -1832,6 +1843,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Property Name="Button_Visibility" Type="nvarchar" MaxLength="1000" />
           <Property Name="Rights_Bulk_Update_Code" Type="int" />
           <Property Name="Title_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Deal_Segment">
+          <Key>
+            <PropertyRef Name="Deal_Segment_Code" />
+          </Key>
+          <Property Name="Deal_Segment_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Deal_Segment_Name" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Deal_Tag">
           <Key>
@@ -3168,6 +3186,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Status_Changed_By" Type="int" />
           <Property Name="Status_Changed_On" Type="datetime" />
           <Property Name="Remarks" Type="nvarchar" MaxLength="4000" />
+          <Property Name="Version_No" Type="int" />
         </EntityType>
         <EntityType Name="Module_Workflow_Detail">
           <Key>
@@ -3913,6 +3932,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Rev_Hd_Name" Type="varchar" MaxLength="250" />
           <Property Name="Rev_Hd_Type" Type="int" />
         </EntityType>
+        <EntityType Name="Revenue_Vertical">
+          <Key>
+            <PropertyRef Name="Revenue_Vertical_Code" />
+          </Key>
+          <Property Name="Revenue_Vertical_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Revenue_Vertical_Name" Type="nvarchar(max)" />
+          <Property Name="Type" Type="char" MaxLength="1" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
         <EntityType Name="Right_Rule">
           <Key>
             <PropertyRef Name="Right_Rule_Code" />
@@ -4223,6 +4251,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Lock_Time" Type="datetime" />
           <Property Name="Last_Updated_Time" Type="datetime" />
           <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Deal_Segment_Code" Type="int" />
+          <Property Name="Revenue_Vertical_Code" Type="int" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary">
           <Key>
@@ -6246,6 +6276,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Acq_Deal_Deal_Segment">
+          <End Role="Deal_Segment" Type="Self.Deal_Segment" Multiplicity="0..1" />
+          <End Role="Acq_Deal" Type="Self.Acq_Deal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Deal_Segment">
+              <PropertyRef Name="Deal_Segment_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal">
+              <PropertyRef Name="Deal_Segment_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Acq_Deal_Entity">
           <End Role="Entity" Type="Self.Entity" Multiplicity="0..1" />
           <End Role="Acq_Deal" Type="Self.Acq_Deal" Multiplicity="*" />
@@ -6651,6 +6693,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Acq_Deal_Pushback_Title">
               <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Acq_Deal_Revenue_Vertical">
+          <End Role="Revenue_Vertical" Type="Self.Revenue_Vertical" Multiplicity="0..1" />
+          <End Role="Acq_Deal" Type="Self.Acq_Deal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Revenue_Vertical">
+              <PropertyRef Name="Revenue_Vertical_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal">
+              <PropertyRef Name="Revenue_Vertical_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -9846,6 +9900,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Syn_Deal_Deal_Segment">
+          <End Role="Deal_Segment" Type="Self.Deal_Segment" Multiplicity="0..1" />
+          <End Role="Syn_Deal" Type="Self.Syn_Deal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Deal_Segment">
+              <PropertyRef Name="Deal_Segment_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal">
+              <PropertyRef Name="Deal_Segment_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Syn_Deal_Deal_Tag">
           <End Role="Deal_Tag" Type="Self.Deal_Tag" Multiplicity="0..1" />
           <End Role="Syn_Deal" Type="Self.Syn_Deal" Multiplicity="*" />
@@ -10227,6 +10293,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Syn_Deal_Revenue_Variable_Cost">
               <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Revenue_Vertical">
+          <End Role="Revenue_Vertical" Type="Self.Revenue_Vertical" Multiplicity="0..1" />
+          <End Role="Syn_Deal" Type="Self.Syn_Deal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Revenue_Vertical">
+              <PropertyRef Name="Revenue_Vertical_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal">
+              <PropertyRef Name="Revenue_Vertical_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -12390,6 +12468,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Role_Code" Type="int" Mode="In" />
           <Parameter Name="Channel_Cluster_Code" Type="int" Mode="In" />
           <Parameter Name="Is_Auto_Push" Type="char" Mode="In" />
+          <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
+          <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Insert_Acq_Deal_Pushback_Dubbing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Pushback_Code" Type="int" Mode="In" />
@@ -12592,6 +12672,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Lock_Time" Type="datetime" Mode="In" />
           <Parameter Name="Last_Updated_Time" Type="datetime" Mode="In" />
           <Parameter Name="Last_Action_By" Type="int" Mode="In" />
+          <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
+          <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_INSERT_UPLOAD_ERR_DETAIL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="File_Code" Type="bigint" Mode="In" />
@@ -13259,6 +13341,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Role_Code" Type="int" Mode="In" />
           <Parameter Name="Channel_Cluster_Code" Type="int" Mode="In" />
           <Parameter Name="Is_Auto_Push" Type="char" Mode="In" />
+          <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
+          <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Update_IPR_Opp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IPR_Opp_Code" Type="int" Mode="In" />
@@ -13418,6 +13502,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Lock_Time" Type="datetime" Mode="In" />
           <Parameter Name="Last_Updated_Time" Type="datetime" Mode="In" />
           <Parameter Name="Last_Action_By" Type="int" Mode="In" />
+          <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
+          <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_UpdateContentHouseID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BV_HouseId_Data_Code" Type="int" Mode="In" />
@@ -13805,7 +13891,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Country_Language" EntityType="Self.Country_Language" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Currency" EntityType="Self.Currency" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Currency_Exchange_Rate" EntityType="Self.Currency_Exchange_Rate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Deal_Description" EntityType="Self.Deal_Description" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Deal_Rights_Process" EntityType="Self.Deal_Rights_Process" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Deal_Segment" EntityType="Self.Deal_Segment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Deal_Tag" EntityType="Self.Deal_Tag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Deal_Type" EntityType="Self.Deal_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Deal_Workflow_Status" EntityType="Self.Deal_Workflow_Status" Schema="dbo" store:Type="Tables" />
@@ -13937,6 +14025,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Report_Territory" EntityType="Self.Report_Territory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Territory_Country" EntityType="Self.Report_Territory_Country" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Revenue_Heads" EntityType="Self.Revenue_Heads" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Revenue_Vertical" EntityType="Self.Revenue_Vertical" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Right_Rule" EntityType="Self.Right_Rule" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rights_Bulk_Update" EntityType="Self.Rights_Bulk_Update" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ROFR" EntityType="Self.ROFR" Schema="dbo" store:Type="Tables" />
@@ -14672,6 +14761,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Currency" EntitySet="Currency" />
             <End Role="Acq_Deal" EntitySet="Acq_Deal" />
           </AssociationSet>
+          <AssociationSet Name="FK_Acq_Deal_Deal_Segment" Association="Self.FK_Acq_Deal_Deal_Segment">
+            <End Role="Deal_Segment" EntitySet="Deal_Segment" />
+            <End Role="Acq_Deal" EntitySet="Acq_Deal" />
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Entity" Association="Self.FK_Acq_Deal_Entity">
             <End Role="Entity" EntitySet="Entity" />
             <End Role="Acq_Deal" EntitySet="Acq_Deal" />
@@ -14807,6 +14900,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Acq_Deal_Pushback_Title_Title" Association="Self.FK_Acq_Deal_Pushback_Title_Title">
             <End Role="Title" EntitySet="Title" />
             <End Role="Acq_Deal_Pushback_Title" EntitySet="Acq_Deal_Pushback_Title" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Acq_Deal_Revenue_Vertical" Association="Self.FK_Acq_Deal_Revenue_Vertical">
+            <End Role="Revenue_Vertical" EntitySet="Revenue_Vertical" />
+            <End Role="Acq_Deal" EntitySet="Acq_Deal" />
           </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Right_Blackout_Acq_Deal_Rights" Association="Self.FK_Acq_Deal_Right_Blackout_Acq_Deal_Rights">
             <End Role="Acq_Deal_Rights" EntitySet="Acq_Deal_Rights" />
@@ -15872,6 +15969,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Currency" EntitySet="Currency" />
             <End Role="Syn_Deal" EntitySet="Syn_Deal" />
           </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Deal_Segment" Association="Self.FK_Syn_Deal_Deal_Segment">
+            <End Role="Deal_Segment" EntitySet="Deal_Segment" />
+            <End Role="Syn_Deal" EntitySet="Syn_Deal" />
+          </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Deal_Tag" Association="Self.FK_Syn_Deal_Deal_Tag">
             <End Role="Deal_Tag" EntitySet="Deal_Tag" />
             <End Role="Syn_Deal" EntitySet="Syn_Deal" />
@@ -15999,6 +16100,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Syn_Deal_Revenue_Variable_Cost_Vendor" Association="Self.FK_Syn_Deal_Revenue_Variable_Cost_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
             <End Role="Syn_Deal_Revenue_Variable_Cost" EntitySet="Syn_Deal_Revenue_Variable_Cost" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Revenue_Vertical" Association="Self.FK_Syn_Deal_Revenue_Vertical">
+            <End Role="Revenue_Vertical" EntitySet="Revenue_Vertical" />
+            <End Role="Syn_Deal" EntitySet="Syn_Deal" />
           </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Revenuetype_Cost_Type" Association="Self.FK_Syn_Deal_Revenuetype_Cost_Type">
             <End Role="Cost_Type" EntitySet="Cost_Type" />
@@ -20350,6 +20455,25 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Party_Group" EntitySet="Party_Group" />
             <End Role="Vendor" EntitySet="Vendors" />
           </AssociationSet>
+          <EntitySet Name="Deal_Description" EntityType="RightsU_NeoModel.Deal_Description" />
+          <EntitySet Name="Deal_Segment" EntityType="RightsU_NeoModel.Deal_Segment" />
+          <AssociationSet Name="FK_Acq_Deal_Deal_Segment" Association="RightsU_NeoModel.FK_Acq_Deal_Deal_Segment">
+            <End Role="Deal_Segment" EntitySet="Deal_Segment" />
+            <End Role="Acq_Deal" EntitySet="Acq_Deal" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Deal_Segment" Association="RightsU_NeoModel.FK_Syn_Deal_Deal_Segment">
+            <End Role="Deal_Segment" EntitySet="Deal_Segment" />
+            <End Role="Syn_Deal" EntitySet="Syn_Deal" />
+          </AssociationSet>
+          <EntitySet Name="Revenue_Vertical" EntityType="RightsU_NeoModel.Revenue_Vertical" />
+          <AssociationSet Name="FK_Acq_Deal_Revenue_Vertical" Association="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical">
+            <End Role="Revenue_Vertical" EntitySet="Revenue_Vertical" />
+            <End Role="Acq_Deal" EntitySet="Acq_Deal" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Revenue_Vertical" Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Vertical">
+            <End Role="Revenue_Vertical" EntitySet="Revenue_Vertical" />
+            <End Role="Syn_Deal" EntitySet="Syn_Deal" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -20435,6 +20559,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Channel_Cluster" Relationship="RightsU_NeoModel.FK_Acq_Deal_Channel_Cluster" FromRole="Acq_Deal" ToRole="Channel_Cluster" />
           <NavigationProperty Name="Provisional_Deal" Relationship="RightsU_NeoModel.FK_Provisional_Deal_Acq_Deal" FromRole="Acq_Deal" ToRole="Provisional_Deal" />
           <Property Name="Is_Auto_Push" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Deal_Segment_Code" Type="Int32" />
+          <NavigationProperty Name="Deal_Segment" Relationship="RightsU_NeoModel.FK_Acq_Deal_Deal_Segment" FromRole="Acq_Deal" ToRole="Deal_Segment" />
+          <Property Name="Revenue_Vertical_Code" Type="Int32" />
+          <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical" FromRole="Acq_Deal" ToRole="Revenue_Vertical" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -22219,6 +22347,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Status_Changed_On" Type="DateTime" Precision="3" />
           <Property Name="Remarks" Type="String" MaxLength="4000" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="System_Module" Relationship="RightsU_NeoModel.FK_Module_Status_History_System_Module" FromRole="Module_Status_History" ToRole="System_Module" />
+          <Property Name="Version_No" Type="Int32" />
         </EntityType>
         <EntityType Name="Module_Workflow_Detail">
           <Key>
@@ -22666,6 +22795,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Business_Unit" Relationship="RightsU_NeoModel.FK_Syn_Deal_Business_Unit" FromRole="Syn_Deal" ToRole="Business_Unit" />
           <Property Type="String" Name="Deal_Complete_Flag" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Syn_Deal_Run" Relationship="RightsU_NeoModel.FK_Syn_Deal_Run_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Run" />
+          <Property Name="Deal_Segment_Code" Type="Int32" />
+          <NavigationProperty Name="Deal_Segment" Relationship="RightsU_NeoModel.FK_Syn_Deal_Deal_Segment" FromRole="Syn_Deal" ToRole="Deal_Segment" />
+          <Property Name="Revenue_Vertical_Code" Type="Int32" />
+          <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Vertical" FromRole="Syn_Deal" ToRole="Revenue_Vertical" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary">
           <Key>
@@ -34808,6 +34941,83 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Deal_Description">
+          <Key>
+            <PropertyRef Name="Deal_Desc_Code" />
+          </Key>
+          <Property Name="Deal_Desc_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Deal_Desc_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Deal_Segment">
+          <Key>
+            <PropertyRef Name="Deal_Segment_Code" />
+          </Key>
+          <Property Name="Deal_Segment_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Deal_Segment_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Deal_Segment" FromRole="Deal_Segment" ToRole="Acq_Deal" />
+          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Deal_Segment" FromRole="Deal_Segment" ToRole="Syn_Deal" />
+        </EntityType>
+        <Association Name="FK_Acq_Deal_Deal_Segment">
+          <End Type="RightsU_NeoModel.Deal_Segment" Role="Deal_Segment" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal" Role="Acq_Deal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Deal_Segment">
+              <PropertyRef Name="Deal_Segment_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal">
+              <PropertyRef Name="Deal_Segment_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Deal_Segment">
+          <End Type="RightsU_NeoModel.Deal_Segment" Role="Deal_Segment" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Syn_Deal" Role="Syn_Deal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Deal_Segment">
+              <PropertyRef Name="Deal_Segment_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal">
+              <PropertyRef Name="Deal_Segment_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Revenue_Vertical">
+          <Key>
+            <PropertyRef Name="Revenue_Vertical_Code" />
+          </Key>
+          <Property Name="Revenue_Vertical_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Revenue_Vertical_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical" FromRole="Revenue_Vertical" ToRole="Acq_Deal" />
+          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Vertical" FromRole="Revenue_Vertical" ToRole="Syn_Deal" />
+        </EntityType>
+        <Association Name="FK_Acq_Deal_Revenue_Vertical">
+          <End Type="RightsU_NeoModel.Revenue_Vertical" Role="Revenue_Vertical" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal" Role="Acq_Deal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Revenue_Vertical">
+              <PropertyRef Name="Revenue_Vertical_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal">
+              <PropertyRef Name="Revenue_Vertical_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Revenue_Vertical">
+          <End Type="RightsU_NeoModel.Revenue_Vertical" Role="Revenue_Vertical" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Syn_Deal" Role="Syn_Deal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Revenue_Vertical">
+              <PropertyRef Name="Revenue_Vertical_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal">
+              <PropertyRef Name="Revenue_Vertical_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -34817,6 +35027,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <MappingFragment StoreEntitySet="Acq_Deal">
+                <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
+                <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
                 <ScalarProperty Name="Is_Auto_Push" ColumnName="Is_Auto_Push" />
                 <ScalarProperty Name="Channel_Cluster_Code" ColumnName="Channel_Cluster_Code" />
                 <ScalarProperty Name="Role_Code" ColumnName="Role_Code" />
@@ -34872,6 +35084,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <ModificationFunctionMapping>
                 <InsertFunction FunctionName="RightsU_NeoModel.Store.USP_INSERT_ACQ_DEAL">
+                  <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" />
+                  <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" />
                   <ScalarProperty Name="Is_Auto_Push" ParameterName="Is_Auto_Push" />
                   <ScalarProperty Name="Channel_Cluster_Code" ParameterName="Channel_Cluster_Code" />
                   <ScalarProperty Name="Role_Code" ParameterName="Role_Code" />
@@ -34922,6 +35136,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                   <ResultBinding Name="Agreement_No" ColumnName="Agreement_No" />
                 </InsertFunction>
                 <UpdateFunction FunctionName="RightsU_NeoModel.Store.USP_UPDATE_ACQ_DEAL">
+                  <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" Version="Current" />
+                  <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" Version="Current" />
                   <ScalarProperty Name="Is_Auto_Push" ParameterName="Is_Auto_Push" Version="Current" />
                   <ScalarProperty Name="Channel_Cluster_Code" ParameterName="Channel_Cluster_Code" Version="Current" />
                   <ScalarProperty Name="Role_Code" ParameterName="Role_Code" Version="Current" />
@@ -36644,6 +36860,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Module_Status_History">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Module_Status_History">
               <MappingFragment StoreEntitySet="Module_Status_History">
+                <ScalarProperty Name="Version_No" ColumnName="Version_No" />
                 <ScalarProperty Name="Module_Status_Code" ColumnName="Module_Status_Code" />
                 <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
                 <ScalarProperty Name="Record_Code" ColumnName="Record_Code" />
@@ -37013,6 +37230,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Syn_Deal">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal">
               <MappingFragment StoreEntitySet="Syn_Deal">
+                <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
+                <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
                 <ScalarProperty Name="Deal_Complete_Flag" ColumnName="Deal_Complete_Flag" />
                 <ScalarProperty Name="Business_Unit_Code" ColumnName="Business_Unit_Code" />
                 <ScalarProperty Name="Payment_Remarks" ColumnName="Payment_Remarks" />
@@ -37058,6 +37277,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal">
               <ModificationFunctionMapping>
                 <InsertFunction FunctionName="RightsU_NeoModel.Store.USP_INSERT_SYN_DEAL">
+                  <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" />
+                  <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" />
                   <ScalarProperty Name="Last_Action_By" ParameterName="Last_Action_By" />
                   <ScalarProperty Name="Last_Updated_Time" ParameterName="Last_Updated_Time" />
                   <ScalarProperty Name="Lock_Time" ParameterName="Lock_Time" />
@@ -37100,6 +37321,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                   <ResultBinding Name="Agreement_No" ColumnName="Agreement_No" />
                 </InsertFunction>
                 <UpdateFunction FunctionName="RightsU_NeoModel.Store.USP_UPDATE_SYN_DEAL">
+                  <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" Version="Current" />
+                  <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" Version="Current" />
                   <ScalarProperty Name="Last_Action_By" ParameterName="Last_Action_By" Version="Current" />
                   <ScalarProperty Name="Last_Updated_Time" ParameterName="Last_Updated_Time" Version="Current" />
                   <ScalarProperty Name="Lock_Time" ParameterName="Lock_Time" Version="Current" />
@@ -43599,6 +43822,34 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="InsertedOn" ColumnName="InsertedOn" />
                 <ScalarProperty Name="Party_Group_Name" ColumnName="Party_Group_Name" />
                 <ScalarProperty Name="Party_Group_Code" ColumnName="Party_Group_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Deal_Description">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Deal_Description">
+              <MappingFragment StoreEntitySet="Deal_Description">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Deal_Desc_Name" ColumnName="Deal_Desc_Name" />
+                <ScalarProperty Name="Deal_Desc_Code" ColumnName="Deal_Desc_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Deal_Segment">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Deal_Segment">
+              <MappingFragment StoreEntitySet="Deal_Segment">
+                <ScalarProperty Name="Deal_Segment_Name" ColumnName="Deal_Segment_Name" />
+                <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Revenue_Vertical">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Revenue_Vertical">
+              <MappingFragment StoreEntitySet="Revenue_Vertical">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Revenue_Vertical_Name" ColumnName="Revenue_Vertical_Name" />
+                <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -340,6 +340,7 @@ function RequiredFieldValidation() {
     var businessUnitCode = $("select[ID='ddlBusinessUnit'] option:selected").val();
     var categoryCode = $("select[ID='ddlCategory'] option:selected").val();
     var titleCount = $("#tblMovie tr:not(:has(th))").length
+    var DealSegmentCode = $("select[ID='ddlDealSegment'] option:selected").val();
     if ($.trim(agreementDate) == "") {
         $('#txtAgreement_Date').attr('required', true)
         returnVal = false;
@@ -377,6 +378,12 @@ function RequiredFieldValidation() {
 
     if (titleCount == 0 && returnVal) {
         showAlert("E", ShowMessage.Pleaseaddatleastonetitle)
+        returnVal = false;
+    }
+
+    if (DealSegmentCode == 0 || DealSegmentCode == "") {
+        //$('#ddlBusinessUnit').attr('required', true)
+        $('#ddlDealSegment').addClass("required");
         returnVal = false;
     }
 

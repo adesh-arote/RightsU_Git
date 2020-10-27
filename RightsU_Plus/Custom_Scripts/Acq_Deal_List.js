@@ -264,7 +264,6 @@ function validateSearch() {
 }
 
 function ShowAll() {
-    debugger
     $('#divSearch').hide();
     $('#srchCommon').val('');
     $("#chkSubDeal").prop("checked", "checked");
@@ -273,10 +272,10 @@ function ShowAll() {
     $('#txtSrchDealNo').val('');
     $('#txtfrom').val('');
     $('#txtto').val('');
-    $('#ddlSrchDealType').val(0);
-    $('#ddlSrchDealTag').val(0);
-    $('#ddlWorkflowStatus').val('0');
-    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val());
+    $('#ddlSrchDealType').val(0).trigger("chosen:updated");
+    $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
+    $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
+    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     OnChangeBindTitle();
     //$("#ddlSrchTitle")[0].sumo.unSelectAll();
 
@@ -299,6 +298,7 @@ function SetMinDt() {
 }
 
 function ClearAll() {
+    debugger;
     $('#hdnClearAll').val('Y');
     $('#txtSrchDealNo').val('');
     $('#txtfrom').val('');
@@ -306,10 +306,10 @@ function ClearAll() {
     $('#txtTitleSearch').val('');
     SetMinDt();
     SetMaxDt();
-    $('#ddlSrchDealType').val(0);
-    $('#ddlSrchDealTag').val(0);
-    $('#ddlWorkflowStatus').val('0');
-    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val());
+    $('#ddlSrchDealType').val(0).trigger("chosen:updated");
+    $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
+    $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
+    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     OnChangeBindTitle();
     //$("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#chkSubDeal").prop("checked", false);
@@ -390,7 +390,7 @@ function handleOk() {
     if (Command_Name_G == "Approve" || Command_Name_G == "SendForAuth") {
         CheckRecordCurrentStatus();
     }
-    else if (Command_Name_G == "SendForArchive") //Command_Name_G == "Archive" ||
+    else if (Command_Name_G == "SendForArchive" || Command_Name_G == "Archive") //Command_Name_G == "Archive" ||
     { 
         Chk_RecCrntStsForArchive();
     }
@@ -592,11 +592,11 @@ function ButtonEvents() {
             }
         });
     }
-    else if (1 == 0) {//(Command_Name == "Archive") { //need false
+    else if (Command_Name == "Archive") {
         debugger;
         if (remark == "") {
             $('#txtArea').val('').attr('required', true);
-            return false
+            return false;
         }
         showLoading();
         $.ajax({
@@ -607,11 +607,12 @@ function ButtonEvents() {
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 Acq_Deal_Code: tmpAcqDealCode,
+                IsZeroWorkFlow: tmp_IsZeroWorkFlow,
                 remarks_Approval: remark
             }),
             async: false,
             success: function (result) {
-                debugger;
+
                 hideLoading();
                 if (result == "true") {
                     redirectToLogin();

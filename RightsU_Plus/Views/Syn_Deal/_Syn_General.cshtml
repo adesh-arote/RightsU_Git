@@ -221,6 +221,13 @@
                                                     @Html.RadioButtonFor(m => Model.Year_Type, "DY", new { @id = "rblYear_Def_3" })@objMessageKey.DealYear
                                                 </label>
                                             </td>
+                                            @if (ViewBag.DealSegment == "Y")
+                                            {
+                                                <td>@objMessageKey.DealSegment</td>
+                                                <td>
+                                                    @Html.DropDownListFor(m => Model.Deal_Segment_Code, (List<SelectListItem>)ViewBag.Deal_Segment, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select", @onchange = "ddlOther_OnChange()" })
+                                                </td>
+                                            }
                                         </tr>
                                         <tr>
                                             <td>@objMessageKey.BusinessUnit</td>

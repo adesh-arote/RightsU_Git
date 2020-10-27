@@ -201,6 +201,12 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.BusinessUnitList = GetBusinessUnitList();
             }
+            var AllowDealSegment = ViewBag.AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+
+            if (AllowDealSegment == "Y")
+            {
+                ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList(), "Deal_Segment_Code", "Deal_Segment_Name");
+            }
             return View();
         }
         public ActionResult AuditTrailReport()
@@ -245,7 +251,7 @@ namespace RightsU_Plus.Controllers
 
         }
         public PartialViewResult BindAcqDealListReport(string businessUnitcode, string DealNo, string DealType, string Dealtag, string startDate, string endDate, string Title,
-            string IsPushBack, string subDeal, string masterDeal, string dateformat, string IsCheckRight)
+            string IsPushBack, string subDeal, string DealSegment, string masterDeal, string dateformat, string IsCheckRight)
         {
             if (businessUnitcode == "0")
             {
@@ -264,7 +270,7 @@ namespace RightsU_Plus.Controllers
             
             string title_names = TitleAutosuggest(Title);
             string Promoter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(t => true).Where(w => w.Parameter_Name == "Promoter_Tab").Select(s => s.Parameter_Value).FirstOrDefault();
-            ReportParameter[] parm = new ReportParameter[16];
+            ReportParameter[] parm = new ReportParameter[17];
 
             parm[0] = new ReportParameter("Agreement_No", DealNo);
             parm[1] = new ReportParameter("Is_Master_Deal", DealType);
@@ -282,6 +288,7 @@ namespace RightsU_Plus.Controllers
             parm[13] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
             parm[14] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
             parm[15] = new ReportParameter("IsCheckRight", IsCheckRight);
+            parm[16] = new ReportParameter("DealSegment", DealSegment);
             ReportViewer rptViewer = BindReport(parm, "ACQUITION_DEAL_LIST_REPORT");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
@@ -402,6 +409,12 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.BusinessUnitList = GetBusinessUnitList();
             }
+            var AllowDealSegment = ViewBag.AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+
+            if (AllowDealSegment == "Y")
+            {
+                ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList(), "Deal_Segment_Code", "Deal_Segment_Name");
+            }
             return View();
         }
         public JsonResult BindSynTitleList(int BU_Code, string keyword = "")
@@ -435,8 +448,8 @@ namespace RightsU_Plus.Controllers
             }
             return Json(result);
         }
-        public PartialViewResult BindSynDealListReport(string businessUnitcode, string DealNo, string status, string startDate, string endDate, string TitleCode,
-            string IsPushBack, string isTheatrical, bool isExpiredDeal, string dateformat, string IsCheckRight)
+        public PartialViewResult BindSynDealListReport(string businessUnitcode, string DealNo, string status, string startDate, string endDate, string TitleCode, string DealSegment,
+            string IsPushBack, string isTheatrical, bool isExpiredDeal, string dateformat, string IsCheckRight )
         {
             if (businessUnitcode == "0")
             {
@@ -463,7 +476,7 @@ namespace RightsU_Plus.Controllers
             {
                 ExpiredDeal = "N";
             }
-            ReportParameter[] parm = new ReportParameter[15];
+            ReportParameter[] parm = new ReportParameter[16];
 
             parm[0] = new ReportParameter("Agreement_No", DealNo);
             parm[1] = new ReportParameter("Title_Codes", title_names);
@@ -480,6 +493,7 @@ namespace RightsU_Plus.Controllers
             parm[12] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
             parm[13] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
             parm[14] = new ReportParameter("IsCheckRight", IsCheckRight);
+            parm[15] = new ReportParameter("DealSegment", DealSegment);
             ReportViewer rptViewer = BindReport(parm, "SYNDICATION_DEAL_LIST_REPORT");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");

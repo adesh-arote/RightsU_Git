@@ -48,6 +48,7 @@
 });
 
 function GetDealTypeCondition(selectedDealTypeCode) {
+    hideLoading();
     if (selectedDealTypeCode == Deal_Type_Content || selectedDealTypeCode == Deal_Type_Sports || selectedDealTypeCode == Deal_Type_Format_Program
         || selectedDealTypeCode == Deal_Type_Event || selectedDealTypeCode == Deal_Type_Documentary_Show || selectedDealTypeCode == Deal_Type_Webseries) {
         return Deal_Program;
@@ -257,6 +258,7 @@ function BasicValidationForAddTitle() {
 }
 
 function RequiredFieldValidation() {
+    debugger;
     var returnVal = true;
     returnVal = BasicValidationForAddTitle();
     var agreementDate = $("#txtAgreement_Date").val();
@@ -268,6 +270,7 @@ function RequiredFieldValidation() {
     var licensorCode = $("#ddlLicensor").val();
     var categoryCode = $("select[ID='ddlCategory'] option:selected").val();
     var titleCount = $("#tblMovie tr:not(:has(th))").length
+    var DealSegmentCode = $("select[ID='ddlDealSegment'] option:selected").val();
 
     if ($.trim(agreementDate) == "") {
         $('#txtAgreement_Date').attr('required', true)
@@ -300,6 +303,12 @@ function RequiredFieldValidation() {
     if (businessUnitCode == 0) {
         //$('#ddlBusinessUnit').attr('required', true)
         $('#ddlBusinessUnit').addClass("required");
+        returnVal = false;
+    }
+
+    if (DealSegmentCode == 0 || DealSegmentCode == "") {
+        //$('#ddlBusinessUnit').attr('required', true)
+        $('#ddlDealSegment').addClass("required");
         returnVal = false;
     }
 
@@ -853,6 +862,7 @@ function BindTitleGridview() {
 }
 
 function BindTopBand() {
+    debugger;
     var dealTypeCode = GetDealTypeCode();
     var dealDesc = $('#txtDeal_Desc').val();
     var agreementDate = $('#txtAgreement_Date').val();
@@ -1562,6 +1572,7 @@ function handleCancel() {
     SetNull();
 }
 function ValidateSave() {
+    debugger;
     if (!ValidatePageSize())
         return false;
 
@@ -1592,14 +1603,19 @@ function ValidateSave() {
 
     if (!ValidateEpisodeOverlapping())
         return false;
-    
+    debugger;
     $('input[name=hdnIs_Master_Deal]').val($("input[name='Is_Master_Deal']:radio:checked").val());
     $('input[name=hdnMaster_Deal_Movie_Code]').val($("select[ID='ddlMaster_Deal_List'] option:selected").val());
     $('input[name=hdnDeal_Type_Code]').val(GetDealTypeCode());
     var vendorCodes = $("#ddlLicensor").val();
     $('input[name=hdnVendorCodes]').val(vendorCodes.join(','));
     $('input[name=hdnAgreementDate]').val($("input[ID='txtAgreement_Date']").val());
+    if ($('#hdn_AcqSyn_Gen_Deal_Desc').val() === "Y") {
+        $('input[name=hdnDealDesc]').val($("select[ID='txtDeal_Desc'] option:selected").val());
+    }
+    else {
     $('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
+    }
     $('input[name=hdnDealTagStatusCode]').val($("select[ID='ddlDeal_Tag'] option:selected").val());
 
     showLoading();

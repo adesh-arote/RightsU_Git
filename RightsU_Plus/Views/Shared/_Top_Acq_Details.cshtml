@@ -260,8 +260,20 @@
                                                 @Html.Label("Deal_Desc", objSchema.Deal_Desc)
                                             </div>
                                         }
+
                                         else
-                                        { @Html.TextBox("Deal_Desc", objSchema.Deal_Desc, new { @class = "", @id = "txtDeal_Desc", @maxlength = "500" })}
+                                        {
+                                            <input type="hidden" id ="hdn_AcqSyn_Gen_Deal_Desc" value="@ViewBag.AcqSyn_Gen_Deal_Desc" />
+                                            if (ViewBag.AcqSyn_Gen_Deal_Desc == "Y")
+                                            {
+                                                @Html.DropDownList("Deal_Desc", ViewBag.DealDesc as SelectList,"Please Select", new { @id = "txtDeal_Desc", @class = "form_input chosen-select" })
+                                            }
+                                            else
+                                            {
+                                                 @Html.TextBox("Deal_Desc", objSchema.Deal_Desc, new { @class = "", @id = "txtDeal_Desc", @maxlength = "500" })
+                                            }
+                                        }
+                                         
                                     </span>
                                 </td>
                                 <td class="td_label">@objMessageKey.Status</td>

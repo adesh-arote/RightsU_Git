@@ -144,7 +144,14 @@
                                         <input type="hidden" value="@Model.Is_Title_Language_Right" id="Is_Title_Language_Right" />
                                         <label id="@objMessageKey.TitleLangauge">@ViewBag.TitleLanguageName @(Model.Is_Title_Language_Right == "Y" ? objMessageKey.Yes : objMessageKey.NO)</label>
                                         <br />
-                                        <label>@objMessageKey.DomesticTheatrical : @(Model.Is_Theatrical_Right == "Y" ? objMessageKey.Yes : objMessageKey.NO)</label>
+                                        @if (ViewBag.AcqSyn_Rights_Thetrical == "Y")
+                                        {
+                                            <label style="display:none">@objMessageKey.DomesticTheatrical : @(Model.Is_Theatrical_Right == "Y" ? objMessageKey.Yes : objMessageKey.NO)</label>
+                                        }
+                                        else
+                                        {
+                                            <label>@objMessageKey.DomesticTheatrical : @(Model.Is_Theatrical_Right == "Y" ? objMessageKey.Yes : objMessageKey.NO)</label>
+                                        }
                                     </div>
                                     <label>
                                         <font class="bold">@objMessageKey.Region :</font>&nbsp; @ViewBag.selected_Country_Count

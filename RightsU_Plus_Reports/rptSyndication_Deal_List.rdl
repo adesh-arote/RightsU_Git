@@ -43,30 +43,33 @@
           <QueryParameter Name="@SysLanguageCode">
             <Value>=Parameters!SysLanguageCode.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@DealSegment">
+            <Value>=Parameters!DealSegment.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USP_Syndication_Deal_List_Report</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
-        <Field Name="Title_Type">
-          <DataField>Title Type</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Director">
           <DataField>Director</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Title_Type">
+          <DataField>Title Type</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Deal_Description">
           <DataField>Deal Description</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Genre">
-          <DataField>Genre</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Reference_No">
           <DataField>Reference No</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Genre">
+          <DataField>Genre</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Agreement_Date">
@@ -77,12 +80,12 @@
           <DataField>Status</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Agreement_No">
-          <DataField>Agreement_No</DataField>
+        <Field Name="Deal_Segment">
+          <DataField>Deal Segment</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Party_Master">
-          <DataField>Party_Master</DataField>
+        <Field Name="Agreement_No">
+          <DataField>Agreement_No</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Program">
@@ -93,12 +96,16 @@
           <DataField>Title</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Party">
-          <DataField>Party</DataField>
+        <Field Name="Party_Master">
+          <DataField>Party_Master</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Star_Cast">
           <DataField>Star Cast</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Party">
+          <DataField>Party</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Title_Language">
@@ -125,12 +132,12 @@
           <DataField>Tentative</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Pushback">
-          <DataField>Pushback</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Subtitling">
           <DataField>Subtitling</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Pushback">
+          <DataField>Pushback</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Region">
@@ -141,25 +148,25 @@
           <DataField>Exclusive</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Dubbing">
-          <DataField>Dubbing</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Title_Language_Right">
           <DataField>Title Language Right</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Dubbing">
+          <DataField>Dubbing</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Sub_Licensing">
           <DataField>Sub Licensing</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Blackout">
-          <DataField>Blackout</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="ROFR">
           <DataField>ROFR</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Blackout">
+          <DataField>Blackout</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Restriction_Remark">
           <DataField>Restriction Remark</DataField>
@@ -173,12 +180,12 @@
           <DataField>Rights Holdback Remarks</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Rights_Remarks">
-          <DataField>Rights Remarks</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Term">
           <DataField>Term</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Rights_Remarks">
+          <DataField>Rights Remarks</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Reverse_Holdback_Platform">
@@ -235,6 +242,10 @@
         </Field>
         <Field Name="Self_Utilization_Remarks">
           <DataField>Self Utilization Remarks</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Category_Name">
+          <DataField>Category_Name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -787,6 +798,20 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
         <CommandText>SELECT TOP (1) Parameter_Value
 FROM     System_Parameter_New
 WHERE  (Parameter_Name = 'IsAllowPartyMaster')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AllowDealSegment">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT TOP (1) Parameter_Value
+FROM     System_Parameter_New
+WHERE  (Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment')</CommandText>
       </Query>
       <Fields>
         <Field Name="Parameter_Value">
@@ -2141,6 +2166,12 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                   <Width>1.21875in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1.54167in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.30439in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>1.04167in</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -2479,6 +2510,82 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox158</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!Category_Name.Value, "DataSet1")</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Deal Segment</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -4227,6 +4334,76 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Category_Name">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Category_Name.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Category_Name</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Deal_Segment">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Deal_Segment.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Deal_Segment</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Party1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -5605,6 +5782,12 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 <TablixMember />
                 <TablixMember>
                   <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDealSegment") = "Y",false,true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember />
+                <TablixMember>
+                  <Visibility>
                     <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowPartyMaster") = "Y", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
@@ -5666,7 +5849,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
             <Top>0.03in</Top>
             <Left>0.00372in</Left>
             <Height>0.5in</Height>
-            <Width>80.17852in</Width>
+            <Width>83.02458in</Width>
             <ZIndex>1</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", false, true)</Hidden>
@@ -10600,7 +10783,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
         <Height>7.74328in</Height>
         <Style />
       </Body>
-      <Width>80.24705in</Width>
+      <Width>83.0283in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -10613,16 +10796,31 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
   <ReportParameters>
     <ReportParameter Name="Start_Date">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value xml:space="preserve"> </Value>
+        </Values>
+      </DefaultValue>
       <AllowBlank>true</AllowBlank>
       <Prompt>Start Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="End_Date">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value xml:space="preserve"> </Value>
+        </Values>
+      </DefaultValue>
       <AllowBlank>true</AllowBlank>
       <Prompt>End Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="Title_Codes">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value xml:space="preserve"> </Value>
+        </Values>
+      </DefaultValue>
       <AllowBlank>true</AllowBlank>
       <Prompt>Title_Codes</Prompt>
     </ReportParameter>
@@ -10630,13 +10828,18 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>0</Value>
+          <Value>1</Value>
         </Values>
       </DefaultValue>
       <Prompt>Business_Unit_code</Prompt>
     </ReportParameter>
     <ReportParameter Name="Agreement_No">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>A-2020-00035</Value>
+        </Values>
+      </DefaultValue>
       <AllowBlank>true</AllowBlank>
       <Prompt>Agreement No</Prompt>
     </ReportParameter>
@@ -10651,15 +10854,30 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
     </ReportParameter>
     <ReportParameter Name="Is_Pushback">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
       <AllowBlank>true</AllowBlank>
       <Prompt>Is Pushback</Prompt>
     </ReportParameter>
     <ReportParameter Name="IS_Expired">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>IS Expired</Prompt>
     </ReportParameter>
     <ReportParameter Name="IS_Theatrical">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>IS Theatrical</Prompt>
     </ReportParameter>
     <ReportParameter Name="Title_Code">
@@ -10760,6 +10978,11 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
     </ReportParameter>
     <ReportParameter Name="SysLanguageCode">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Sys Language Code</Prompt>
     </ReportParameter>
     <ReportParameter Name="Module_Code">
@@ -10777,11 +11000,20 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
       <AllowBlank>true</AllowBlank>
       <Prompt>IsCheckRight</Prompt>
     </ReportParameter>
+    <ReportParameter Name="DealSegment">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Deal Segment</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>8</NumberOfColumns>
-      <NumberOfRows>7</NumberOfRows>
+      <NumberOfRows>10</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -10894,29 +11126,34 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
           <ParameterName>DateFormat</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
+          <ColumnIndex>4</ColumnIndex>
           <RowIndex>6</RowIndex>
           <ParameterName>IsPromoter</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>6</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>7</RowIndex>
           <ParameterName>SysLanguageCode</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>3</ColumnIndex>
-          <RowIndex>6</RowIndex>
+          <ColumnIndex>4</ColumnIndex>
+          <RowIndex>7</RowIndex>
           <ParameterName>Module_Code</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>4</ColumnIndex>
-          <RowIndex>6</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>8</RowIndex>
           <ParameterName>CallFrom</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>5</ColumnIndex>
-          <RowIndex>6</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>9</RowIndex>
           <ParameterName>IsCheckRight</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>9</RowIndex>
+          <ParameterName>DealSegment</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

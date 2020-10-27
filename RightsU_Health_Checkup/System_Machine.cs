@@ -107,7 +107,7 @@ namespace RightsU_HealthCheckup
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandText = "msdb.dbo.[sp_send_dbmail]";
 
-                    cmd.Parameters.Add("@profile_name", SqlDbType.VarChar).Value = "RightsU";// "FPCPlanner";
+                    cmd.Parameters.Add("@profile_name", SqlDbType.VarChar).Value = Convert.ToString(ConfigurationSettings.AppSettings["Sql_Profile_Name"]); //"RightsU";
                     cmd.Parameters.Add("@recipients", SqlDbType.VarChar).Value = toMailId;
                     cmd.Parameters.Add("@copy_recipients", SqlDbType.VarChar).Value = ccMailId;
                     cmd.Parameters.Add("@subject", SqlDbType.VarChar).Value = Subject;
@@ -119,7 +119,7 @@ namespace RightsU_HealthCheckup
             }
             catch (Exception ex)
             {
-                StringBuilder sb = new StringBuilder("Found Exception : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : " + ex.Message);
+                StringBuilder sb = new StringBuilder("Found Exception While Sending Email : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : " + ex.Message);
                 while (ex.InnerException != null)
                 {
                     ex = ex.InnerException;

@@ -147,6 +147,9 @@ namespace RightsU_Plus.Controllers
 
             BindSchemaObject();
             string viewName = "~/Views/Syn_Deal/_Syn_General.cshtml";
+            string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.DealSegment = AllowDealSegment;
+
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ARCHIVE && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_APPROVE)
             {
                 ViewBag.Deal_Mode = objDeal_Schema.Mode;
@@ -482,6 +485,14 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Sale_Agent_Phone = objVC.Phone_No;
                 ViewBag.Sale_Agent_Email = objVC.Email;
             }
+
+            string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.DealSegment = AllowDealSegment;
+            if (AllowDealSegment == "Y")
+            {
+                ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Deal_Segment_Code", "Deal_Segment_Name").ToList();
+            }
+
         }
         public JsonResult BindAllPreReq_Async()
         {
@@ -750,6 +761,8 @@ namespace RightsU_Plus.Controllers
             objSD_Session.Sales_Agent_Code = objExisting_Syn_Deal.Sales_Agent_Code;
             objSD_Session.Sales_Agent_Contact_Code = objExisting_Syn_Deal.Sales_Agent_Contact_Code;
             objSD_Session.Attach_Workflow = objExisting_Syn_Deal.Attach_Workflow;
+            objSD_Session.Deal_Segment_Code = objExisting_Syn_Deal.Deal_Segment_Code;
+            objSD_Session.Deal_Segment = objExisting_Syn_Deal.Deal_Segment;
             /*
                 public State EntityState { get; set; }
                 public int Syn_Deal_Movie_Code { get; set; }
@@ -865,6 +878,10 @@ namespace RightsU_Plus.Controllers
                 objSD_Session.Entity_Code = objLoginUser.Default_Entity_Code;
                 objSD_Session.Business_Unit_Code = objSD_MVC.Business_Unit_Code;
                 objSD_Session.Category_Code = objSD_MVC.Category_Code;
+
+                if (objSD_MVC.Deal_Segment_Code != null && objSD_MVC.Deal_Segment_Code != 0)
+                    objSD_Session.Deal_Segment_Code = objSD_MVC.Deal_Segment_Code;
+
                 objSD_Session.Vendor_Contact_Code = objSD_MVC.Vendor_Contact_Code > 0 ? objSD_MVC.Vendor_Contact_Code : null;
                 objSD_Session.Sales_Agent_Code = objSD_MVC.Sales_Agent_Code > 0 ? objSD_MVC.Sales_Agent_Code : null;
                 objSD_Session.Sales_Agent_Contact_Code = objSD_MVC.Sales_Agent_Contact_Code > 0 ? objSD_MVC.Sales_Agent_Contact_Code : null;

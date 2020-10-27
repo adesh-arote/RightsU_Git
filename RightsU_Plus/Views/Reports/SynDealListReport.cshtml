@@ -72,7 +72,11 @@
         {
             isTheatrical = 'Y';
         }
-
+        var AllowDealSegment = $('#AllowDealSegment').val();
+        if (AllowDealSegment == "Y")
+            var DealSegment = $('#ddlDealSegment').val();
+        else
+            var DealSegment = "";
         var expiredDeal = $('#chk_expiredDeals').is(":checked");
         var businessUnitcode = $('#ddlBusinessUnit').val();
         var DealNo = $('#txtDealNo').val();
@@ -141,6 +145,7 @@
                     status: status,
                     startDate: startDate,
                     endDate: endDate,
+                    DealSegment: DealSegment,
                     IsPushBack: IsPushBack,
                     TitleCode: TitleCode,
                     isExpiredDeal: expiredDeal,
@@ -435,7 +440,17 @@
                             <td style="width:8%"><b>@objMessageKey.DateFormat:</b></td>
                             <td style="width:17%">
                                 @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
-                        </td>
+                            </td>
+                            <input id="AllowDealSegment"
+                                   type="hidden"
+                                   value=@ViewBag.AllowDealSegment />
+                            @if (ViewBag.AllowDealSegment == "Y")
+                            {
+                                <td style="width:7%"><b>Deal Segment :</b></td>
+                                <td style="width:16%">
+                                    @Html.DropDownList("DealSegment", ViewBag.Deal_Segment as SelectList, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select" })
+                                </td>
+                            }
                         </tr>
 
                     </tbody>

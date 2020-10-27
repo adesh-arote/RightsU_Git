@@ -405,7 +405,9 @@ namespace RightsU_DAL
         public DbSet<Users_Configuration> Users_Configuration { get; set; }
         public DbSet<Users_Exclusion_Rights> Users_Exclusion_Rights { get; set; }
         public DbSet<Party_Group> Party_Group { get; set; }
-
+        public DbSet<Deal_Description> Deal_Description { get; set; }
+        public DbSet<Deal_Segment> Deal_Segment { get; set; }
+        public DbSet<Revenue_Vertical> Revenue_Vertical { get; set; }
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {
             var platformCodesParameter = platformCodes != null ?
@@ -1950,7 +1952,7 @@ namespace RightsU_DAL
                 new ObjectParameter("cur_email_id", cur_email_id) :
                 new ObjectParameter("cur_email_id", typeof(string));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_GetUserEMail_Body", user_NameParameter, first_NameParameter, last_NameParameter, pass_WordParameter, isLDAP_RequiredParameter, site_AddressParameter, statusParameter, cur_email_idParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_GetUserEMail_Body", user_NameParameter, first_NameParameter, last_NameParameter, pass_WordParameter, isLDAP_RequiredParameter, site_AddressParameter, system_NameP, statusParameter, cur_email_idParameter);
         }
         public virtual ObjectResult<USP_Get_Talent_Name_Result> USP_Get_Talent_Name()
         {

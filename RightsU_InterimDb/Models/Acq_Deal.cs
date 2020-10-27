@@ -86,6 +86,8 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Role_Code { get; set; }
     	    public Nullable<int> Channel_Cluster_Code { get; set; }
     	    public string Is_Auto_Push { get; set; }
+    	    public Nullable<int> Deal_Segment_Code { get; set; }
+    	    public Nullable<int> Revenue_Vertical_Code { get; set; }
     
         public virtual Deal_Tag Deal_Tag { get; set; }
         public virtual Deal_Type Deal_Type1 { get; set; }
@@ -117,5 +119,7 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<Acq_Deal_Budget> Acq_Deal_Budget { get; set; }
         public virtual Channel_Cluster Channel_Cluster { get; set; }
         public virtual ICollection<Provisional_Deal> Provisional_Deal { get; set; }
+        public virtual Deal_Segment Deal_Segment { get; set; }
+        public virtual Revenue_Vertical Revenue_Vertical { get; set; }
     }
 }
