@@ -124,7 +124,7 @@
                 data:'',
                 async: true,
                 success: function (result) {
-
+                    debugger;
                     if (result == "true") {
                         redirectToLogin();
                     }
@@ -135,8 +135,11 @@
                                 $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
 
                         });
-                        var obj_Search = $(result.Obj_Acq_Syn_List_Search);
-                        $("#ddlSrchDealType").trigger("chosen:updated");
+                        
+                            var obj_Search = $(result.Obj_Acq_Syn_List_Search);
+                            $("#ddlSrchDealType").trigger("chosen:updated");
+                        
+                       
                     }
                 },
                 error: function (result) {
@@ -3164,6 +3167,7 @@
         });
     }
     function btnSearch_OnClick(searchText) {
+        debugger;
        var searchText = $("#searchCommon").val();
         var BU_Code = $("#ddlBusinessUnit").val();
         var a = $('#ddlTitleList').val();
@@ -3720,16 +3724,18 @@
                         @*<div id="slimscroll" class="more searchChoice" style="text-align:left;max-height: 300px;
                             margin-bottom: 10px;line-height:2.5"></div>*@
                         @*</div>*@
+                        @if (ViewBag.Is_Allow_Avail_Deal_Type_Title == "Y")
+                        {
                         <select id="ddlSrchDealType" class="form_input chosen-select"></select>
+                        }
                         <div style="text-align:left;margin-top: 7px;">
                             <input type="text" placeholder="Title, Talent, StarCast, Genre, Director, Year of Production" style="width:430px; border-radius:3px;" class="search" name="srchCommon" id="searchCommon"
                                    autocomplete="on" onkeyup="btnSearch_OnClick(this)" />
 
-                          
+
                             <input type="hidden" name="" value="" id="hdnsearchTitleCode" />
                         </div>
-
-                    
+                                      
                         <br />
                         @if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
                         {
