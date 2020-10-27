@@ -270,10 +270,10 @@ function ShowAll() {
     $("#chkSubDeal").prop("checked", "checked");
     $('#txtfrom').val('');
     $('#txtto').val('');
-    $('#ddlSrchDealType').val(0);
-    $('#ddlSrchDealTag').val(0);
-    $('#ddlWorkflowStatus').val('0');
-    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val());
+    $('#ddlSrchDealType').val(0).trigger("chosen:updated");
+    $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
+    $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
+    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     OnChangeBindTitle();
 
     $("#ddlSrchDirector").find("option").attr("selected", false);
@@ -293,10 +293,10 @@ function ClearAll() {
     $('#txtTitleSearch').val('');
     SetMinDt();
     SetMaxDt();
-    $('#ddlSrchDealType').val(0);
-    $('#ddlSrchDealTag').val(0);
-    $('#ddlWorkflowStatus').val('0');
-    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val());
+    $('#ddlSrchDealType').val(0).trigger("chosen:updated");
+    $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
+    $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
+    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     $("#chkArchiveDeal").prop("checked", false);
     $("#chkSubDeal").prop("checked", false);
     
@@ -379,14 +379,15 @@ function handleOk() {
     if (Command_Name_G == "Approve" || Command_Name_G == "SendForAuth") {
         CheckRecordCurrentStatus();
     }
-    else if (Command_Name_G == "SendForArchive") //Command_Name_G == "Archive" ||
+    else if (Command_Name_G == "SendForArchive" || Command_Name_G == "Archive") //Command_Name_G == "Archive" ||
     {
         Chk_RecCrntStsForArchive();
     }
 
 }
 function ButtonEvents() {
-    var remark = $.trim($('#txtArea').val());;
+    debugger;
+    var remark = $.trim($('#txtArea').val());
 
     if (Command_Name == "TERMINATION") {
         Command_Name = "";
@@ -397,7 +398,7 @@ function ButtonEvents() {
     if (Command_Name == "Approve") {
         if (remark == "") {
             $('#txtArea').val('').attr('required', true);
-            return false
+            return false;
         }
         showLoading();
         $.ajax({
@@ -450,7 +451,7 @@ function ButtonEvents() {
                     else {
                         ShowValidationPopup("", 10, 0);
                         $('#pop_setRemark').modal('hide');
-                        $('#pop_setRemark').dialog("close")
+                        $('#pop_setRemark').dialog("close");
                         CloseApprovalRemark();
                         return false;
                     }
@@ -493,27 +494,27 @@ function ButtonEvents() {
                                 if (result.Message != '')
                                     showAlert("S", result.Message);
                                 $('#pop_setRemark').modal('hide');
-                                $('#pop_setRemark').dialog("close")
+                                $('#pop_setRemark').dialog("close");
                                 CloseApprovalRemark();
                             }
                             else {
                                 if (result.Message != '')
                                     showAlert("E", result.Message);
                                 $('#pop_setRemark').modal('hide');
-                                $('#pop_setRemark').dialog("close")
+                                $('#pop_setRemark').dialog("close");
                                 CloseApprovalRemark();
                             }
                         }
                         else
                             ShowValidationPopup("", 10, 0);
                         $('#pop_setRemark').modal('hide');
-                        $('#pop_setRemark').dialog("close")
+                        $('#pop_setRemark').dialog("close");
                         CloseApprovalRemark();
                     }
                     else {
                         showAlert('e', result.Message);
                         $('#pop_setRemark').modal('hide');
-                        $('#pop_setRemark').dialog("close")
+                        $('#pop_setRemark').dialog("close");
                         CloseApprovalRemark();
                         return false;
                     }
@@ -552,6 +553,54 @@ function ButtonEvents() {
             async: false,
             success: function (result) {
                 debugger;
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    showLD = 'N';
+                    LoadDeals(tmp_pageNo, tmp_IsAdvanced, 'N');
+                    if (result.strMsgType != null && result.strMsgType != '' && result.strMsgType == 'S') {
+                        if (result.Message != '')
+                            showAlert("S", result.Message);
+                        $('#pop_setRemark').modal('hide');
+                        CloseApprovalRemark();
+                    }
+                    else {
+                        if (result.Message != '')
+                            showAlert("E", result.Message);
+                        $('#pop_setRemark').modal('hide');
+                        CloseApprovalRemark();
+                    }
+                    $('.modal - backdrop.in').css("opacity", "0");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    else if (Command_Name == "Archive") {
+        debugger;
+        if (remark == "") {
+            $('#txtArea').val('').attr('required', true);
+            return false;
+        }
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_Archive,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Syn_Deal_Code: tmpSynDealCode,
+                IsZeroWorkFlow: tmp_IsZeroWorkFlow,
+                remarks_Approval: remark
+            }),
+            async: false,
+            success: function (result) {
+
                 hideLoading();
                 if (result == "true") {
                     redirectToLogin();

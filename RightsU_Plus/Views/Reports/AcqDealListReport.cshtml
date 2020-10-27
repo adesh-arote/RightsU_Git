@@ -38,6 +38,11 @@
 
         var businessUnitcode = $('#ddlBusinessUnit').val();
         var DealNo = $('#txtDealNo').val();
+        var AllowDealSegment = $('#AllowDealSegment').val();
+        if (AllowDealSegment == "Y")
+            var DealSegment = $('#ddlDealSegment').val();
+        else
+            var DealSegment = "";
         var DealType = "";
         var Dealtag = $('#ddlStatus').val();
         if ($('#txtTitle').val() != '0')
@@ -110,6 +115,7 @@
                     Dealtag: Dealtag,
                     startDate: startDate,
                     endDate: endDate,
+                    DealSegment: DealSegment,
                     IsPushBack: IsPushBack,
                     Title: Title,
                     subDeal: subDeal,
@@ -336,6 +342,16 @@
                             <td style="width:17%">
                                 @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
                             </td>
+                            <input id="AllowDealSegment"
+                                   type="hidden"
+                                   value=@ViewBag.AllowDealSegment />
+                            @if (ViewBag.AllowDealSegment == "Y")
+                            {
+                                <td style="width:7%"><b>Deal Segment :</b></td>
+                                <td style="width:16%">
+                                    @Html.DropDownList("DealSegment", ViewBag.Deal_Segment as SelectList, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select" })
+                                </td>
+                            }
                             <td></td>
                             <td></td>
                             <td></td>
@@ -343,7 +359,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            
+
                         </tr>
                     </tbody>
                 </table>

@@ -262,7 +262,7 @@ function RequiredFieldValidation() {
     var returnVal = true;
     returnVal = BasicValidationForAddTitle();
     var agreementDate = $("#txtAgreement_Date").val();
-    var dealDesc =  $("select[ID='txtDeal_Desc'] option:selected").text();
+    var dealDesc = $("#txtDeal_Desc").val();
     var dealTagCode = $("select[ID='ddlDeal_Tag'] option:selected").val();
     var currencyCode = $("select[ID='ddlCurrency'] option:selected").val();
     var licenseeCode = $("select[ID='ddlLicensee'] option:selected").val();
@@ -864,8 +864,7 @@ function BindTitleGridview() {
 function BindTopBand() {
     debugger;
     var dealTypeCode = GetDealTypeCode();
-    debugger;
-    var dealDesc = $('#txtDeal_Desc').text();
+    var dealDesc = $('#txtDeal_Desc').val();
     var agreementDate = $('#txtAgreement_Date').val();
     var dealTagCode = $('#ddlDeal_Tag').val();
     var prevTitleCode = $("#hdnDeal_Type_Code").val()
@@ -885,7 +884,6 @@ function BindTopBand() {
             }),
             async: false,
             success: function (result) {
-                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -1605,15 +1603,19 @@ function ValidateSave() {
 
     if (!ValidateEpisodeOverlapping())
         return false;
-    
+    debugger;
     $('input[name=hdnIs_Master_Deal]').val($("input[name='Is_Master_Deal']:radio:checked").val());
     $('input[name=hdnMaster_Deal_Movie_Code]').val($("select[ID='ddlMaster_Deal_List'] option:selected").val());
     $('input[name=hdnDeal_Type_Code]').val(GetDealTypeCode());
     var vendorCodes = $("#ddlLicensor").val();
     $('input[name=hdnVendorCodes]').val(vendorCodes.join(','));
     $('input[name=hdnAgreementDate]').val($("input[ID='txtAgreement_Date']").val());
-    //$('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
-    $('input[name=hdnDealDesc]').val($("select[ID='txtDeal_Desc'] option:selected").val());
+    if ($('#hdn_AcqSyn_Gen_Deal_Desc').val() === "Y") {
+        $('input[name=hdnDealDesc]').val($("select[ID='txtDeal_Desc'] option:selected").val());
+    }
+    else {
+    $('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
+    }
     $('input[name=hdnDealTagStatusCode]').val($("select[ID='ddlDeal_Tag'] option:selected").val());
 
     showLoading();

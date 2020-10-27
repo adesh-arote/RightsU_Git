@@ -188,8 +188,8 @@ namespace RightsU_Plus.Controllers
 
             BindSchemaObject();
             string viewName = "~/Views/Acq_Deal/_Acq_General.cshtml";
-            string temp = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
-            ViewBag.DealSegment = temp;
+            string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.DealSegment = AllowDealSegment;
 
 
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ARCHIVE && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_APPROVE && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
@@ -273,13 +273,9 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindTopAcqDetails()
         {
-            ViewBag.DealDesc = new SelectList(new Deal_Description_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Type == "A" && x.Deal_Desc_Name != objDeal_Schema.Deal_Desc).Distinct().ToList(), "Deal_Desc_Code", "Deal_Desc_Name",objDeal_Schema.Deal_Desc);
-            ViewBag.AcqSyn_Gen_Deal_Desc = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Desc_DDL").First().Parameter_Value; //.Select(x=>x.Parameter_Value="Y").                                                                                                                                                                                                
-            //catch
-            //{
-            //    ViewBag.AcqSyn_Rights_Thetrical = "Y";
-            //}
-
+            ViewBag.DealDesc = new SelectList(new Deal_Description_Service(objLoginEntity.ConnectionStringName)
+                                                .SearchFor(x => x.Is_Active == "Y" && x.Type == "A").Distinct().ToList(), "Deal_Desc_Name", "Deal_Desc_Name", objDeal_Schema.Deal_Desc); //&& x.Deal_Desc_Name != objDeal_Schema.Deal_Desc
+            ViewBag.AcqSyn_Gen_Deal_Desc = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Desc_DDL").First().Parameter_Value;
             return PartialView("~/Views/Shared/_Top_Acq_Details.cshtml");
         }
         #endregion
@@ -395,7 +391,7 @@ namespace RightsU_Plus.Controllers
             }
         }
         public PartialViewResult BindTopBand(int dealTypeCode, string dealDesc, string agreementDate, int dealTagCode, string IsAmort)
-        { 
+        {
             objDeal_Schema.Deal_Type_Code = dealTypeCode;
             objDeal_Schema.Agreement_Date = Convert.ToDateTime(GlobalUtil.MakedateFormat(agreementDate));
             objDeal_Schema.Deal_Desc = dealDesc;
@@ -455,9 +451,9 @@ namespace RightsU_Plus.Controllers
             }
             #endregion
 
-            string temp = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
-            ViewBag.DealSegment = temp;
-            if (temp == "Y")
+            string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.DealSegment = AllowDealSegment;
+            if (AllowDealSegment == "Y")
             {
                 ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Deal_Segment_Code", "Deal_Segment_Name").ToList();
             }
@@ -480,7 +476,6 @@ namespace RightsU_Plus.Controllers
             obj.Add("Master_Deal_Movie_Code", objAD_Session.Master_Deal_Movie_Code_ToLink ?? 0);
             obj.Add("Vendor_Contact_List", new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "VPC"), "Display_Value", "Display_Text").ToList());
             obj.Add("Vendor_Contact_Code", objAD_Session.Vendor_Contacts_Code);
-            obj.Add("Deal_Desc_Name", objAD_Session.Deal_Desc);
             return Json(obj);
         }
         private List<Acq_Deal_Movie> GetAcqDealMovieList(int pageNo, int recordPerPage)
@@ -923,10 +918,6 @@ namespace RightsU_Plus.Controllers
             objAD_MVC.Agreement_Date = Convert.ToDateTime(GlobalUtil.MakedateFormat(agreementDate));
             objAD_Session.Agreement_Date = objAD_MVC.Agreement_Date;
 
-            int intdeal = Convert.ToInt32(dealDesc); 
-
-            dealDesc = new Deal_Description_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Desc_Code == intdeal).Select(x=>x.Deal_Desc_Name).First();
-
             objAD_Session.Deal_Desc = dealDesc; //objAD_MVC.Deal_Desc;
             objAD_Session.Deal_Tag_Code = dealTagCode; //objAD_MVC.Deal_Tag_Code;
             objAD_Session.Role_Code = objAD_MVC.Role_Code;
@@ -952,6 +943,9 @@ namespace RightsU_Plus.Controllers
 
             if(objAD_MVC.Deal_Segment_Code != null && objAD_MVC.Deal_Segment_Code != 0)
                 objAD_Session.Deal_Segment_Code = objAD_MVC.Deal_Segment_Code;
+
+            if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_CLONE)
+                objAD_Session.Deal_Segment = null;
 
             objAD_Session.Vendor_Contacts_Code = objAD_MVC.Vendor_Contacts_Code;
             if (string.IsNullOrEmpty(objAD_MVC.Remarks))

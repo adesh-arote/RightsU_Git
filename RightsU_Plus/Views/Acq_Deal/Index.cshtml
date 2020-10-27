@@ -255,7 +255,7 @@
     function BindTopAcqDetails() {
         $.ajax({
             type: "POST",
-            url: '@Url.Action("BindTopAcqDetails", "Acq_General")',   
+            url: '@Url.Action("BindTopAcqDetails", "Acq_General")',
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -269,14 +269,9 @@
                     $('#divTopBand').empty();
                     $('#divTopBand').html(result);
 
-
                     var length = $('#ddlDeal_Tag').length;
                     if (length > 0)
                         $('#ddlDeal_Tag').chosen().trigger("chosen:updated");
-                        $('#txtDeal_Desc').chosen().trigger("chosen:updated");
-
-
-
                 }
             },
             error: function (result) {

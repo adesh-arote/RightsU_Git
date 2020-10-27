@@ -4394,7 +4394,11 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDealSegment") = "N", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -7135,7 +7139,7 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                   <Width>3.36022cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>3.24791cm</Width>
+                  <Width>3.41957cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>4.25978cm</Width>
@@ -7895,7 +7899,7 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
-                                    <Color>=IIf(Code.getString(Fields!ChangedColumnIndex.Value,10)="Y","Red","Black")</Color>
+                                    <Color>=IIf(Code.getString(Fields!ChangedColumnIndex.Value,16)="Y","Red","Black")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -8127,7 +8131,7 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
             <PageName>General</PageName>
             <Left>0.31898cm</Left>
             <Height>1.2cm</Height>
-            <Width>40.40834cm</Width>
+            <Width>40.58cm</Width>
             <ZIndex>4</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR" and CountRows() &gt; 1, False, True)</Hidden>

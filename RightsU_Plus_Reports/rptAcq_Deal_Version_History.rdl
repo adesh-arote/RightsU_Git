@@ -4629,7 +4629,7 @@ WHERE        (Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment')</CommandText>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
-                                    <Color>=IIf(Code.getString(Fields!ChangedColumnIndex.Value,10)="Y","Red","Black")</Color>
+                                    <Color>=IIf(Code.getString(Fields!ChangedColumnIndex.Value,16)="Y","Red","Black")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -8061,7 +8061,11 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDealSegment") = "N", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -42838,7 +42842,7 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>8</NumberOfColumns>
-      <NumberOfRows>4</NumberOfRows>
+      <NumberOfRows>5</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -42926,23 +42930,23 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
           <ParameterName>CreatedBy</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>7</ColumnIndex>
-          <RowIndex>2</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>3</RowIndex>
           <ParameterName>DateFormat</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
+          <ColumnIndex>6</ColumnIndex>
           <RowIndex>3</RowIndex>
           <ParameterName>Module_Code</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>3</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>4</RowIndex>
           <ParameterName>SysLanguageCode</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>3</RowIndex>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>4</RowIndex>
           <ParameterName>CallFrom</ParameterName>
         </CellDefinition>
       </CellDefinitions>

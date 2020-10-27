@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Microsoft.Reporting.WebForms;
-using RightsU_Entities;    
+using RightsU_Entities;
 using RightsU_BLL;
 using System.Linq;
 
@@ -680,7 +680,7 @@ public partial class Reports_rptDealQuery : ParentPage
                 string strSelect = "";
                 string ColColumns = "";
                 //string strWhere1 = "BUSINESS_UNIT_CODE~AND~IN~" + SelectedBusinessUnit + "|";
-                
+
 
                 string strOfGEC = new System_Parameter_New_Service(ObjLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
                 var arrayStrGEC = strOfGEC.Split(',');
@@ -702,7 +702,7 @@ public partial class Reports_rptDealQuery : ParentPage
                 DataSet ds = new DataSet();
 
                 strSelect = rptMain.GetSelectedColumnList(isSort, out ColCount, out ColColumns);
-              //  strWhere = rptMain.GetWhereCondition(strWhere);
+                //  strWhere = rptMain.GetWhereCondition(strWhere);
 
                 ColCount++;
 
@@ -769,7 +769,7 @@ public partial class Reports_rptDealQuery : ParentPage
                     parm[9] = new ReportParameter("Category_Codes", rptMain.Cat_Codes == "" ? " " : rptMain.Cat_Codes);
                     //  parm[10] = new ReportParameter("CBFCRating_Codes", rptMain.CBFC_Ratings_Codes == "" ? " " : rptMain.CBFC_Ratings_Codes);
 
-                    
+
 
                     if (ReportViewer1.ServerReport.ReportPath == "")
                     {
@@ -777,7 +777,7 @@ public partial class Reports_rptDealQuery : ParentPage
                     }
                 }
 
-                CommonUtil.WriteErrorLog( "Report path = " + ReportFolder + "/rptSyndication_Query", Err_filename);
+                CommonUtil.WriteErrorLog("Report path = " + ReportFolder + "/rptSyndication_Query", Err_filename);
                 ReportViewer1.ServerReport.SetParameters(parm);
                 CommonUtil.WriteErrorLog("SetParameters", Err_filename);
                 ReportViewer1.ServerReport.Refresh();

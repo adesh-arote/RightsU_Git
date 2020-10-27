@@ -199,6 +199,7 @@ namespace RightsU_Plus.Controllers
                 FillFormDetails();
                 SetVisibility();
             }
+            ViewBag.AcqSyn_Rights_Thetrical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Rights_Thetrical").First().Parameter_Value;
             objDeal_Schema.Page_From = GlobalParams.Page_From_Rights;
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ADD && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW)
                 ViewBag.Record_Locking_Code = objDeal_Schema.Record_Locking_Code;
@@ -213,7 +214,6 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Term_Perputity = 0;
                 ViewBag.Enabled_Perpetuity = "N";
             }
-            ViewBag.AcqSyn_Rights_Thetrical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Rights_Thetrical").First().Parameter_Value; 
 
             Session["FileName"] = "";
             Session["FileName"] = "syn_Rights";
@@ -258,6 +258,7 @@ namespace RightsU_Plus.Controllers
             SetVisibility();
             try
             {
+                ViewBag.AcqSyn_Rights_Thetrical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Rights_Thetrical").First().Parameter_Value.ToString();
                 ViewBag.Enabled_Perpetuity = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Enabled_Perpetuity").First().Parameter_Value;
             }
             catch (Exception e)
