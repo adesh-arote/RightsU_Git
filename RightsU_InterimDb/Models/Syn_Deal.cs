@@ -67,6 +67,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Business_Unit_Code { get; set; }
     	    public string Deal_Complete_Flag { get; set; }
     	    public Nullable<int> Deal_Segment_Code { get; set; }
+    	    public Nullable<int> Revenue_Vertical_Code { get; set; }
     
         public virtual Category Category { get; set; }
         public virtual Currency Currency { get; set; }
@@ -86,5 +87,6 @@ namespace RightsU_InterimDb.Models
         public virtual Business_Unit Business_Unit { get; set; }
         public virtual ICollection<Syn_Deal_Run> Syn_Deal_Run { get; set; }
         public virtual Deal_Segment Deal_Segment { get; set; }
+        public virtual Revenue_Vertical Revenue_Vertical { get; set; }
     }
 }

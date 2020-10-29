@@ -407,7 +407,7 @@ namespace RightsU_DAL
         public DbSet<Party_Group> Party_Group { get; set; }
         public DbSet<Deal_Description> Deal_Description { get; set; }
         public DbSet<Deal_Segment> Deal_Segment { get; set; }
-
+        public DbSet<Revenue_Vertical> Revenue_Vertical { get; set; }
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {
             var platformCodesParameter = platformCodes != null ?

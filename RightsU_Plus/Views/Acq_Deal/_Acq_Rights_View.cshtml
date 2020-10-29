@@ -141,7 +141,15 @@
                                         @objMessageKey.TitleLanguage :
                                         <label id="Title_Language">@ViewBag.TitleLanguageName @(Model.Is_Title_Language_Right == "Y" ? "Yes" : "No")</label>
                                         <br />
-                                        <label>Domestic Theatrical : @(Model.Is_Theatrical_Right == "Y" ? "Yes" : "No")</label>
+                                       
+                                        @if (ViewBag.AcqSyn_Rights_Thetrical == "Y")
+                                        {
+                                            <label style="display:none">Domestic Theatrical : @(Model.Is_Theatrical_Right == "Y" ? "Yes" : "No")</label>
+                                        }
+                                        else
+                                        {
+                                            <label>Domestic Theatrical : @(Model.Is_Theatrical_Right == "Y" ? "Yes" : "No")</label>
+                                        }
                                     </div>
                                     <label>
                                         <font class="bold">@objMessageKey.Region :</font>&nbsp;

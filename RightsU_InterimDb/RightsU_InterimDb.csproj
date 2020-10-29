@@ -852,6 +852,9 @@
     <Compile Include="Models\Revenue_Heads.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Revenue_Vertical.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Rights_Bulk_Update.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

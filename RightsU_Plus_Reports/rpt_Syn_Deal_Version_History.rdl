@@ -746,6 +746,10 @@
           <DataField>Inserted_By</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Deal_Segment">
+          <DataField>Deal_Segment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="dsReverseHB">
@@ -2183,6 +2187,20 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
         </Field>
         <Field Name="Col_Head30">
           <DataField>Col_Head30</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AllowDealSegment">
+      <Query>
+        <DataSourceName>dsReport</DataSourceName>
+        <CommandText>SELECT        Parameter_Value
+FROM            System_Parameter_New
+WHERE        (Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -4376,7 +4394,11 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDealSegment") = "N", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -7117,6 +7139,9 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                   <Width>3.36022cm</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>3.41957cm</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>4.25978cm</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -7382,6 +7407,43 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox130</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "dsFilter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Deal Segment</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "dsFilter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -7826,6 +7888,41 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Deal_Segment">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Deal_Segment.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <Color>=IIf(Code.getString(Fields!ChangedColumnIndex.Value,16)="Y","Red","Black")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Deal_Segment</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Vendor_Name1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -8005,6 +8102,11 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDealSegment") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -8029,7 +8131,7 @@ Fields!Milestone_Unit_Type.Value = "4","Years")</Value>
             <PageName>General</PageName>
             <Left>0.31898cm</Left>
             <Height>1.2cm</Height>
-            <Width>37.16043cm</Width>
+            <Width>40.58cm</Width>
             <ZIndex>4</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR" and CountRows() &gt; 1, False, True)</Hidden>

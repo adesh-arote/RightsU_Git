@@ -202,7 +202,16 @@ var Dealmode_SG_G = '@objSchema.Mode'
                                             }
                                             <td>@strYearType</td>
                                         }
-
+                                        @if(ViewBag.DealSegment == "Y")
+                                        {
+                                            <td>@objMessageKey.DealSegment</td>
+                                            if(Model.Deal_Segment != null)
+                                            {
+                                                <td>
+                                                    @Model.Deal_Segment.Deal_Segment_Name
+                                                </td>
+                                            }
+                                        }
                                     </tr>
                                     <tr>
                                         <td>@objMessageKey.BusinessUnit</td>

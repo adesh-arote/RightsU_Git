@@ -269,12 +269,9 @@
                     $('#divTopBand').empty();
                     $('#divTopBand').html(result);
 
-
                     var length = $('#ddlDeal_Tag').length;
                     if (length > 0)
                         $('#ddlDeal_Tag').chosen().trigger("chosen:updated");
-
-
                 }
             },
             error: function (result) {

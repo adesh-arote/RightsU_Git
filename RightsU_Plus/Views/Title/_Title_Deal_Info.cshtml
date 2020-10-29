@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<RightsU_Entities.USP_Title_Deal_Info_Result>
+@using RightsU_BLL;
+@using RightsU_Entities;
+
 @using UTOFrameWork.FrameworkClasses
 @{
     List<RightsU_Entities.USP_Title_Deal_Info_Result> lst_USP_Title_Deal_Info_Result = null;
@@ -6,7 +9,11 @@
 
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
-        objMessageKey = (MessageKey)Session["objMessageKey"];  
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
 }
 <script>
     var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Acq_Rights_List")';
@@ -15,7 +22,7 @@
             debugger;
             //$('.glyphicon').addClass('glyphicon-Head')
             $('.container').addClass('container-Head')
-}
+        }
         $('#txtPageSize').numeric();
 
         $('.nav-toggle').click(function () {
@@ -185,7 +192,8 @@
         /* min-height: 710px; */
         padding: 0px 80px 55px 0px !important;
     }
-      .container {
+
+    .container {
         /* width: 900px; */
         width: 95%;
         margin: 0 auto;
@@ -366,7 +374,7 @@
                 {
                     string DealType = "";
                     inner_counter = 0;
-                 
+
                     lst_USP_Title_Deal_Info_Result = Model.Where(i => i.Agreement_No == Distinct_dealNo).Select(i => i).ToList();
                     deal_Type_Css = lst_USP_Title_Deal_Info_Result.Select(i => i.Deal_Type).Distinct().FirstOrDefault() == "S" ? "syn" : "acq";
                     DealType = lst_USP_Title_Deal_Info_Result.Select(i => i.Deal_Type).Distinct().FirstOrDefault();
@@ -385,67 +393,67 @@
                     {
                         ClassName = "rowBg";
                     }
-                        @Html.Hidden("hdnRightCode", item.Rights_Code, new { id = counter + "_hdnRightCode" })
-                        @Html.Hidden("hdnDealType", item.Deal_Type, new { id = counter + "_hdnDealType" })
-                        <tr class="@(ClassName + ' ' + deal_Type_Css)" @*class=@ClassName*@>
-                            <td>
-                                <ul>
-                                    <li class="glyphicon glyphicon-triangle-bottom nav-toggle" onclick="@("#coll" + outer_counter)"></li>
-                                </ul>
-                            </td>
-                            <td>
-                                @*@if (Deal_No != item.Agreement_No)
-                                    {*@
-                                <h5 title="Licensor">@item.Vendor_Name</h5>
-                                @*}*@
-                            </td>
-                            <td>
-                                @if (item.Is_Exclusive == "Exclusive")
+                    @Html.Hidden("hdnRightCode", item.Rights_Code, new { id = counter + "_hdnRightCode" })
+                    @Html.Hidden("hdnDealType", item.Deal_Type, new { id = counter + "_hdnDealType" })
+                    <tr class="@(ClassName + ' ' + deal_Type_Css)" @*class=@ClassName*@>
+                        <td>
+                            <ul>
+                                <li class="glyphicon glyphicon-triangle-bottom nav-toggle" onclick="@("#coll" + outer_counter)"></li>
+                            </ul>
+                        </td>
+                        <td>
+                            @*@if (Deal_No != item.Agreement_No)
+                                {*@
+                            <h5 title="Licensor">@item.Vendor_Name</h5>
+                            @*}*@
+                        </td>
+                        <td>
+                            @if (item.Is_Exclusive == "Exclusive")
+                            {
+                                <span>Yes</span>
+                            }
+                            @if (item.Is_Exclusive == "Non Exclusive")
+                            {
+                                <span>No</span>
+                            }
+                            @*<h5>@Html.Label("Is_Exclusive", item.Is_Exclusive, new { @title = "Exclusive" })</h5>*@
+                        </td>
+                        <td>
+                            <div>
+                                @*<ul>
+                                    <li>*@
+                                @*@Html.Raw(item.Platform_Name.Replace("~", "<br>"))*@
+                                @* @Html.Raw(item.Platform_Name.Replace("~", "</li><li>"))*@
+                                @if (item.Platform_Name != null && item.Platform_Name != "")
                                 {
-                                    <span>Yes</span>
+                                    @Html.Raw(item.Platform_Name.Split('~').First())
+                                    <a id="@(counter)_aViewPlatform" title="View Platforms" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>
                                 }
-                                @if (item.Is_Exclusive == "Non Exclusive")
+                                @*</li>
+                                    </ul>*@
+                            </div>
+                        </td>
+                        <td>
+                            <div class="expandable">
+                                @if (item.Country_Name != null && item.Country_Name != "")
                                 {
-                                    <span>No</span>
+                                    @Html.Raw(item.Country_Name)
                                 }
-                                @*<h5>@Html.Label("Is_Exclusive", item.Is_Exclusive, new { @title = "Exclusive" })</h5>*@
-                            </td>
-                            <td>
-                                <div>
-                                    @*<ul>
-                                        <li>*@
-                                    @*@Html.Raw(item.Platform_Name.Replace("~", "<br>"))*@
-                                    @* @Html.Raw(item.Platform_Name.Replace("~", "</li><li>"))*@
-                                    @if (item.Platform_Name != null && item.Platform_Name != "")
-                                    {
-                                        @Html.Raw(item.Platform_Name.Split('~').First())
-                                        <a id="@(counter)_aViewPlatform" title="View Platforms" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>
-                                    }
-                                    @*</li>
-                                        </ul>*@
-                                </div>
-                            </td>
-                            <td>
-                                <div class="expandable">
-                                    @if (item.Country_Name != null && item.Country_Name != "")
-                                    {
-                                        @Html.Raw(item.Country_Name)
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw(item.Territory_Name)
-                                    }
-                                </div>
+                                else
+                                {
+                                    @Html.Raw(item.Territory_Name)
+                                }
+                            </div>
 
-                            </td>
-                            <td>
-                              
-                                @if (Deal_No != item.Agreement_No)
-                                {
-                                    <span class="deal_no">
-                                        @if (DealType == "S")
-                                        {
-                                            <a href="@Url.Action("ButtonEvents", "Syn_List", new
+                        </td>
+                        <td>
+
+                            @if (Deal_No != item.Agreement_No)
+                            {
+                                <span class="deal_no">
+                                    @if (DealType == "S")
+                                    {
+                                        <a href="@Url.Action("ButtonEvents", "Syn_List", new
                                                             {
                                                                 CommandName = "View",
                                                                 Syn_Deal_Code = @item.Deal_Code,
@@ -458,10 +466,10 @@
                                                                 DealListPageNo = @ViewBag.DealListPageNo,
                                                                 DealListPageSize = @ViewBag.DealListPageSize
                                                             })">@item.Agreement_No</a>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("ButtonEvents", "Acq_List", new
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("ButtonEvents", "Acq_List", new
                                                             {
                                                                 CommandName = "View",
                                                                 Acq_Deal_Code = @item.Deal_Code,
@@ -474,17 +482,29 @@
                                                                 DealListPageNo = @ViewBag.DealListPageNo,
                                                                 DealListPageSize = @ViewBag.DealListPageSize
                                                             })">@item.Agreement_No</a>
-                                        }
-                                    </span>
-                                    <span class=""></span>
-                                    if (item.Is_Gift_box_Show == "Y")
-                                    {
-                                        <span class="glyphicon glyphicon-gift"></span>
                                     }
+                                </span>
+                                    <span class=""></span>
+                                if (item.Is_Gift_box_Show == "Y")
+                                {
+                                    <span class="glyphicon glyphicon-gift"></span>
                                 }
-                                <span class="expiry">@item.Expiring_In_Days</span>
-                            </td>
-                        </tr>
+                            }
+                            <span class="expiry">@item.Expiring_In_Days</span>
+                            
+                            @{
+                                Acq_Deal objAcqDeal = new Acq_Deal();
+                                Syn_Deal objSynDeal = new Syn_Deal();
+                                string workflowstatus = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Acq_Deal_Code == item.Deal_Code).Select(w => w.Deal_Workflow_Status).FirstOrDefault();
+                                string workflowstatusSyn = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Syn_Deal_Code == item.Deal_Code).Select(w => w.Deal_Workflow_Status).FirstOrDefault();
+
+                                if (workflowstatus == "AR" || workflowstatusSyn == "AR")
+                                {
+                                    <span style="color:red"><b>(Archive)</b></span>
+                                }
+                            }
+                        </td>
+                    </tr>
                         <tr class="@(ClassName+' '+deal_Type_Css)" @*class=@ClassName*@ id="@("coll" + outer_counter)" style="display: none;">
                             @* <td>@if (inner_counter == 1)
                                     {
@@ -518,8 +538,8 @@
                                 }
 
                                 @if (item.R_Start_Date != null && item.R_END_Date != null && item.Right_Term != "Perpetuity" &&
-                        (Convert.ToDateTime(item.R_END_Date).ToString(GlobalParams.DateFormat_Display).Trim() != "31-Dec-9999"
-                        && Convert.ToDateTime(item.R_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim() != "31-Dec-9999"))
+            (Convert.ToDateTime(item.R_END_Date).ToString(GlobalParams.DateFormat_Display).Trim() != "31-Dec-9999"
+            && Convert.ToDateTime(item.R_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim() != "31-Dec-9999"))
                                 {
                                     <text> (</text>
                                     if (item.R_Start_Date != null)
@@ -585,15 +605,15 @@
                             <td>
 
                                 @{
-                        Deal_No = item.Agreement_No;
+                                    Deal_No = item.Agreement_No;
                                 }
                             </td>
                         </tr>
 
 
-                    }
+                                        }
 
-                }
+                                    }
             </tbody>
         </table>
 
