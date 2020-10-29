@@ -1952,7 +1952,7 @@ namespace RightsU_DAL
                 new ObjectParameter("cur_email_id", cur_email_id) :
                 new ObjectParameter("cur_email_id", typeof(string));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_GetUserEMail_Body", user_NameParameter, first_NameParameter, last_NameParameter, pass_WordParameter, isLDAP_RequiredParameter, site_AddressParameter, statusParameter, cur_email_idParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_GetUserEMail_Body", user_NameParameter, first_NameParameter, last_NameParameter, pass_WordParameter, isLDAP_RequiredParameter, site_AddressParameter, system_NameP, statusParameter, cur_email_idParameter);
         }
         public virtual ObjectResult<USP_Get_Talent_Name_Result> USP_Get_Talent_Name()
         {

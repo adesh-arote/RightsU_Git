@@ -1300,7 +1300,10 @@ namespace RightsU_Plus.Controllers
         private User validateUser(string strUserName)
         {
 
+            BindEntity("");
             User objUser = objUser_Service.SearchFor(x => x.Login_Name.ToUpper() == strUserName.ToUpper()).FirstOrDefault();
+            //User objUser = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Login_Name.ToUpper() == strUserName.ToUpper()).FirstOrDefault();
+
             if (objUser != null)
             {
                 return objUser;
