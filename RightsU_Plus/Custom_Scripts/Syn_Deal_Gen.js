@@ -341,6 +341,8 @@ function RequiredFieldValidation() {
     var categoryCode = $("select[ID='ddlCategory'] option:selected").val();
     var titleCount = $("#tblMovie tr:not(:has(th))").length
     var DealSegmentCode = $("select[ID='ddlDealSegment'] option:selected").val();
+    var RevenueVerticalCode = $("select[ID='ddlRevenueVertical'] option:selected").val();
+
     if ($.trim(agreementDate) == "") {
         $('#txtAgreement_Date').attr('required', true)
         returnVal = false;
@@ -387,6 +389,11 @@ function RequiredFieldValidation() {
         returnVal = false;
     }
 
+    if (RevenueVerticalCode == 0 || RevenueVerticalCode == "") {
+        $('#ddlRevenueVertical').addClass("required");
+        returnVal = false;
+    }
+
     if (!returnVal)
         $('#hdnTabName').val("");
 
@@ -421,7 +428,12 @@ function ValidateSave() {
     showLoading();
     $('input[name=hdnDeal_Type_Code]').val(GetDealTypeCode());
     $('input[name=hdnAgreementDate]').val($("input[ID='txtAgreement_Date']").val());
-    $('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
+    if ($('#hdn_AcqSyn_Gen_Deal_Desc').val() === "Y") {
+        $('input[name=hdnDealDesc]').val($("select[ID='txtDeal_Desc'] option:selected").val());
+    }
+    else {
+        $('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
+    }
     $('input[name=hdnDealTagStatusCode]').val($("select[ID='ddlDeal_Tag'] option:selected").val());
     return true;
 }

@@ -271,6 +271,7 @@ function RequiredFieldValidation() {
     var categoryCode = $("select[ID='ddlCategory'] option:selected").val();
     var titleCount = $("#tblMovie tr:not(:has(th))").length
     var DealSegmentCode = $("select[ID='ddlDealSegment'] option:selected").val();
+    var RevenueVerticalCode = $("select[ID='ddlRevenueVertical'] option:selected").val();
 
     if ($.trim(agreementDate) == "") {
         $('#txtAgreement_Date').attr('required', true)
@@ -309,6 +310,12 @@ function RequiredFieldValidation() {
     if (DealSegmentCode == 0 || DealSegmentCode == "") {
         //$('#ddlBusinessUnit').attr('required', true)
         $('#ddlDealSegment').addClass("required");
+        returnVal = false;
+    }
+
+    if (RevenueVerticalCode == 0 || RevenueVerticalCode == "") {
+        //$('#ddlBusinessUnit').attr('required', true)
+        $('#ddlRevenueVertical').addClass("required");
         returnVal = false;
     }
 

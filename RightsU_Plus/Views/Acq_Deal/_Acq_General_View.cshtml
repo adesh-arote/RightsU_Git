@@ -135,7 +135,7 @@
                                             strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == masterDealMovieCode).
                                                 Select(w => w.Title.Title_Name + " - " + w.Acq_Deal.Agreement_No).First();
 
-                                                <td>@strMasterDeal</td>
+                                        <td>@strMasterDeal</td>
                                     }
                                 </tr>
                                 <tr>
@@ -162,7 +162,7 @@
                                         <td>@strYearType</td>
                                     }
                                 </tr>
-                               
+
                                 <tr>
                                     <td>@objMessageKey.DealFor</td>
                                     <td>
@@ -210,17 +210,30 @@
                                     <td>@objMessageKey.Email</td>
                                     <td>@vendorEmail</td>
                                 </tr>
-                                @if (ViewBag.DealSegment == "Y")
+
+                                @if (ViewBag.DealSegment == "Y" || ViewBag.RevenueVertical == "Y")
                                 {
                                     <tr>
-                                        <td>@objMessageKey.DealSegment</td>
-                                        @if (Model.Deal_Segment != null)
+                                        @if (ViewBag.DealSegment == "Y")
                                         {
-                                            <td>
-                                                @Model.Deal_Segment.Deal_Segment_Name
-                                            </td>
+                                            <td>@objMessageKey.DealSegment</td>
+                                            if (Model.Deal_Segment != null)
+                                            {
+                                                <td>
+                                                    @Model.Deal_Segment.Deal_Segment_Name
+                                                </td>
+                                            }
                                         }
-
+                                        @if (ViewBag.RevenueVertical == "Y")
+                                        {
+                                            <td>Revenue Vertical</td>
+                                            if (Model.Revenue_Vertical != null)
+                                            {
+                                                <td>
+                                                    @Model.Revenue_Vertical.Revenue_Vertical_Name
+                                                </td>
+                                            }
+                                        }
                                     </tr>
                                 }
                             </tbody>

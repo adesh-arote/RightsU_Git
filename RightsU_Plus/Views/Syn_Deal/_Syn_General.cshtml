@@ -297,6 +297,15 @@
 
                                             </td>
                                         </tr>
+                                        @if (ViewBag.RevenueVertical == "Y")
+                                        {
+                                            <tr>
+                                                <td>@objMessageKey.RevenueVertical</td>
+                                                <td>
+                                                    @Html.DropDownListFor(m => Model.Revenue_Vertical_Code, (List<SelectListItem>)ViewBag.Revenue_Vertical, "Please Select", new { @id = "ddlRevenueVertical", @class = "form_input chosen-select", @onchange = "ddlOther_OnChange()" })
+                                                </td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>

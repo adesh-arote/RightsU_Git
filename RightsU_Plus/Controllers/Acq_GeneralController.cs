@@ -191,6 +191,8 @@ namespace RightsU_Plus.Controllers
             string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.DealSegment = AllowDealSegment;
 
+            string AllowRevenueVertical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Revenue_Vertical").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.RevenueVertical = AllowRevenueVertical;
 
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ARCHIVE && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_APPROVE && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
             {
@@ -453,10 +455,15 @@ namespace RightsU_Plus.Controllers
 
             string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.DealSegment = AllowDealSegment;
+
+            string AllowRevenueVertical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Revenue_Vertical").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.RevenueVertical = AllowRevenueVertical;
+
             if (AllowDealSegment == "Y")
-            {
                 ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Deal_Segment_Code", "Deal_Segment_Name").ToList();
-            }
+
+            if (AllowRevenueVertical == "Y")
+                ViewBag.Revenue_Vertical = new SelectList(new Revenue_Vertical_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Revenue_Vertical_Code", "Revenue_Vertical_Name").ToList();
         }
         public JsonResult BindAllPreReq_Async()
         {
@@ -751,6 +758,9 @@ namespace RightsU_Plus.Controllers
             objAD_Session.Is_Auto_Push = objExisting_Acq_Deal.Is_Auto_Push;
             objAD_Session.Deal_Segment_Code = objExisting_Acq_Deal.Deal_Segment_Code;
             objAD_Session.Deal_Segment = objExisting_Acq_Deal.Deal_Segment;
+            objAD_Session.Revenue_Vertical_Code = objExisting_Acq_Deal.Revenue_Vertical_Code;
+
+
             objExisting_Acq_Deal.Acq_Deal_Movie.ToList().ForEach(a =>
             {
                 Acq_Deal_Movie objADM = new Acq_Deal_Movie();
@@ -946,6 +956,12 @@ namespace RightsU_Plus.Controllers
 
             if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_CLONE)
                 objAD_Session.Deal_Segment = null;
+
+            if (objAD_MVC.Revenue_Vertical_Code != null && objAD_MVC.Revenue_Vertical_Code != 0)
+                objAD_Session.Revenue_Vertical_Code = objAD_MVC.Revenue_Vertical_Code;
+
+            if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_CLONE)
+                objAD_Session.Revenue_Vertical = null;
 
             objAD_Session.Vendor_Contacts_Code = objAD_MVC.Vendor_Contacts_Code;
             if (string.IsNullOrEmpty(objAD_MVC.Remarks))

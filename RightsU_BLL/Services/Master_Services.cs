@@ -6637,6 +6637,25 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+    public class Revenue_Vertical_Service
+    {
+        private readonly Revenue_Vertical_Repository obj_Repository;
+
+        public Revenue_Vertical_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Revenue_Vertical_Repository(Connection_Str);
+        }
+
+        public IQueryable<Revenue_Vertical> SearchFor(Expression<Func<Revenue_Vertical, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Revenue_Vertical GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
 }
 
 

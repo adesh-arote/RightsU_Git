@@ -31,19 +31,23 @@
         border: 0px solid !important;
         background-color: transparent !important;
     }
+
     .MoreActionDiv {
         right: 500px !important;
-       }
+    }
+
     .four_column td:nth-child(2n) {
-    width: 35% !important;
-        } 
-       .four_column td:nth-child(2n+1) {
-    width: 15% !important;
+        width: 35% !important;
+    }
+
+    .four_column td:nth-child(2n+1) {
+        width: 15% !important;
         font-weight: 700 !important;
     }
-        .sumo_Title_Search_List {
-            width: 600px !important;
-        }
+
+    .sumo_Title_Search_List {
+        width: 600px !important;
+    }
 </style>
 <script>
 var IsCall = 'Y';
@@ -142,7 +146,7 @@ var Dealmode_SG_G = '@objSchema.Mode'
         debugger;
         @*if('@TempData["approval"]'=="approvallist")
         {
-            
+
             $("#ancFileName").attr('href', '../Help/Masters/Layout.html?ApprovalListPage');
         }
         else{
@@ -154,7 +158,7 @@ var Dealmode_SG_G = '@objSchema.Mode'
         else{
             $('.remarks').css("padding-right", "0%");
         }
-        
+
     });
 </script>
 <form id="frmSynDeal" method="post">
@@ -202,10 +206,10 @@ var Dealmode_SG_G = '@objSchema.Mode'
                                             }
                                             <td>@strYearType</td>
                                         }
-                                        @if(ViewBag.DealSegment == "Y")
+                                        @if (ViewBag.DealSegment == "Y")
                                         {
                                             <td>@objMessageKey.DealSegment</td>
-                                            if(Model.Deal_Segment != null)
+                                            if (Model.Deal_Segment != null)
                                             {
                                                 <td>
                                                     @Model.Deal_Segment.Deal_Segment_Name
@@ -253,6 +257,18 @@ var Dealmode_SG_G = '@objSchema.Mode'
                                         <td>@objMessageKey.Email</td>
                                         <td>@ViewBag.SalesAgentEmail</td>
                                     </tr>
+                                    @if (ViewBag.DealSegment == "Y")
+                                    {
+                                        <tr>
+                                            <td>@objMessageKey.RevenueVertical</td>
+                                            @if (Model.Revenue_Vertical != null)
+                                            {
+                                                <td>
+                                                    @Model.Revenue_Vertical.Revenue_Vertical_Name
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>
