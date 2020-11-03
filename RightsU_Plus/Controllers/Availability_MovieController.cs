@@ -226,7 +226,9 @@ namespace RightsU_Plus.Controllers
         {
             string moduleCode = Request.QueryString["modulecode"];
             string Avail_All_Platform_Code = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Avail_All_Platform").ToList().FirstOrDefault().Parameter_Value;
+            string Is_Allow_Avail_Deal_Type_Title = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Parameter_Name == "Is_Allow_Avail_Deal_Type_Title").ToList().FirstOrDefault().Parameter_Value;
 
+            ViewBag.Is_Allow_Avail_Deal_Type_Title = Is_Allow_Avail_Deal_Type_Title;
             ViewBag.Code = moduleCode;
             module = moduleCode;
 
@@ -1145,6 +1147,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult BindAdvanced_Search_Controls()
         {
+
             Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
 
             List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
