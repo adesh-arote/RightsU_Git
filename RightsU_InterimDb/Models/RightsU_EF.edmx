@@ -1196,6 +1196,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Deal_Movie_Content_Channel_Rights_Code" Type="numeric" Precision="18" Scale="0" />
           <Property Name="IsRunCount" Type="varchar" MaxLength="10" />
         </EntityType>
+        <EntityType Name="Attrib_Group">
+          <Key>
+            <PropertyRef Name="Attrib_Group_Code" />
+          </Key>
+          <Property Name="Attrib_Group_Code" Type="int" Nullable="false" />
+          <Property Name="Attrib_Group_Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Attrib_Type" Type="varchar" MaxLength="4" />
+          <Property Name="Comment_Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Is_Multiple_Select" Type="char" MaxLength="1" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
         <EntityType Name="Avail_Acq">
           <Key>
             <PropertyRef Name="Avail_Acq_Code" />
@@ -5356,6 +5367,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Dashboard_Key" Type="nvarchar" MaxLength="200" />
           <Property Name="Dashboard_Value" Type="int" />
           <Property Name="Users_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Users_Detail">
+          <Key>
+            <PropertyRef Name="Users_Detail_Code" />
+          </Key>
+          <Property Name="Users_Detail_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Users_Code" Type="int" />
+          <Property Name="Attrib_Group_Code" Type="int" />
+          <Property Name="Attrib_Type" Type="varchar" MaxLength="4" />
         </EntityType>
         <EntityType Name="Users_Entity">
           <Key>
@@ -11532,6 +11552,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Users_Detail_Attrib_Group">
+          <End Role="Attrib_Group" Type="Self.Attrib_Group" Multiplicity="0..1" />
+          <End Role="Users_Detail" Type="Self.Users_Detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Users_Detail">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Users_Detail_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Users_Detail" Type="Self.Users_Detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Users_Code" />
+            </Principal>
+            <Dependent Role="Users_Detail">
+              <PropertyRef Name="Users_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Users_Entity_Users">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
           <End Role="Users_Entity" Type="Self.Users_Entity" Multiplicity="*" />
@@ -13854,6 +13898,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="AsRun_FileStatus" EntityType="Self.AsRun_FileStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ASRUN_Transaction" EntityType="Self.ASRUN_Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ASRUN_Transaction_Shows" EntityType="Self.ASRUN_Transaction_Shows" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Attrib_Group" EntityType="Self.Attrib_Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq" EntityType="Self.Avail_Acq" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Details" EntityType="Self.Avail_Acq_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Language" EntityType="Self.Avail_Acq_Language" Schema="dbo" store:Type="Tables" />
@@ -14136,6 +14181,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Users_Business_Unit" EntityType="Self.Users_Business_Unit" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users_Channel" EntityType="Self.Users_Channel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users_Configuration" EntityType="Self.Users_Configuration" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users_Detail" EntityType="Self.Users_Detail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users_Entity" EntityType="Self.Users_Entity" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users_Exclusion_Rights" EntityType="Self.Users_Exclusion_Rights" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users_Password_Detail" EntityType="Self.Users_Password_Detail" Schema="dbo" store:Type="Tables" />
@@ -16512,6 +16558,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Users_Connection_Users" Association="Self.FK_Users_Connection_Users">
             <End Role="Users" EntitySet="Users" />
             <End Role="Users_Configuration" EntitySet="Users_Configuration" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Users_Detail_Attrib_Group" Association="Self.FK_Users_Detail_Attrib_Group">
+            <End Role="Attrib_Group" EntitySet="Attrib_Group" />
+            <End Role="Users_Detail" EntitySet="Users_Detail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Users_Detail_Users" Association="Self.FK_Users_Detail_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Users_Detail" EntitySet="Users_Detail" />
           </AssociationSet>
           <AssociationSet Name="FK_Users_Entity_Users" Association="Self.FK_Users_Entity_Users">
             <End Role="Users" EntitySet="Users" />
@@ -20474,6 +20528,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Revenue_Vertical" EntitySet="Revenue_Vertical" />
             <End Role="Syn_Deal" EntitySet="Syn_Deal" />
           </AssociationSet>
+          <EntitySet Name="Attrib_Group" EntityType="RightsU_NeoModel.Attrib_Group" />
+          <EntitySet Name="Users_Detail" EntityType="RightsU_NeoModel.Users_Detail" />
+          <AssociationSet Name="FK_Users_Detail_Attrib_Group" Association="RightsU_NeoModel.FK_Users_Detail_Attrib_Group">
+            <End Role="Attrib_Group" EntitySet="Attrib_Group" />
+            <End Role="Users_Detail" EntitySet="Users_Detail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Users_Detail_Users" Association="RightsU_NeoModel.FK_Users_Detail_Users">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Users_Detail" EntitySet="Users_Detail" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -23480,6 +23544,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="MHUsers" Relationship="RightsU_NeoModel.FK_MHUsers_Users" FromRole="User" ToRole="MHUser" />
           <NavigationProperty Name="Users_Configuration" Relationship="RightsU_NeoModel.FK__Users_Con__Users__528FDD90" FromRole="User" ToRole="Users_Configuration" />
           <NavigationProperty Name="Users_Exclusion_Rights" Relationship="RightsU_NeoModel.FK__Users_Exc__Users__56606E74" FromRole="User" ToRole="Users_Exclusion_Rights" />
+          <NavigationProperty Name="Users_Detail" Relationship="RightsU_NeoModel.FK_Users_Detail_Users" FromRole="User" ToRole="Users_Detail" />
         </EntityType>
         <EntityType Name="Users_Business_Unit">
           <Key>
@@ -35018,6 +35083,53 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Attrib_Group">
+          <Key>
+            <PropertyRef Name="Attrib_Group_Code" />
+          </Key>
+          <Property Name="Attrib_Group_Code" Type="Int32" Nullable="false" />
+          <Property Name="Attrib_Group_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Attrib_Type" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="Comment_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Multiple_Select" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Users_Detail" Relationship="RightsU_NeoModel.FK_Users_Detail_Attrib_Group" FromRole="Attrib_Group" ToRole="Users_Detail" />
+        </EntityType>
+        <EntityType Name="Users_Detail">
+          <Key>
+            <PropertyRef Name="Users_Detail_Code" />
+          </Key>
+          <Property Name="Users_Detail_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Users_Code" Type="Int32" />
+          <Property Name="Attrib_Group_Code" Type="Int32" />
+          <Property Name="Attrib_Type" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Attrib_Group" Relationship="RightsU_NeoModel.FK_Users_Detail_Attrib_Group" FromRole="Users_Detail" ToRole="Attrib_Group" />
+          <NavigationProperty Name="User" Relationship="RightsU_NeoModel.FK_Users_Detail_Users" FromRole="Users_Detail" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Users_Detail_Attrib_Group">
+          <End Type="RightsU_NeoModel.Attrib_Group" Role="Attrib_Group" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Users_Detail" Role="Users_Detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Users_Detail">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Users_Detail_Users">
+          <End Type="RightsU_NeoModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Users_Detail" Role="Users_Detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Users_Code" />
+            </Principal>
+            <Dependent Role="Users_Detail">
+              <PropertyRef Name="Users_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -43850,6 +43962,28 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Revenue_Vertical_Name" ColumnName="Revenue_Vertical_Name" />
                 <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Attrib_Group">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Attrib_Group">
+              <MappingFragment StoreEntitySet="Attrib_Group">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Is_Multiple_Select" ColumnName="Is_Multiple_Select" />
+                <ScalarProperty Name="Comment_Name" ColumnName="Comment_Name" />
+                <ScalarProperty Name="Attrib_Type" ColumnName="Attrib_Type" />
+                <ScalarProperty Name="Attrib_Group_Name" ColumnName="Attrib_Group_Name" />
+                <ScalarProperty Name="Attrib_Group_Code" ColumnName="Attrib_Group_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users_Detail">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Users_Detail">
+              <MappingFragment StoreEntitySet="Users_Detail">
+                <ScalarProperty Name="Attrib_Type" ColumnName="Attrib_Type" />
+                <ScalarProperty Name="Attrib_Group_Code" ColumnName="Attrib_Group_Code" />
+                <ScalarProperty Name="Users_Code" ColumnName="Users_Code" />
+                <ScalarProperty Name="Users_Detail_Code" ColumnName="Users_Detail_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

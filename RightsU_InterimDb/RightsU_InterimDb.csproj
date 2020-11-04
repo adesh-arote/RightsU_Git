@@ -324,6 +324,9 @@
     <Compile Include="Models\ASRUN_Transaction_Shows.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Attrib_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Avail_Acq.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1195,6 +1198,9 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Users_Configuration.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Users_Detail.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Users_Entity.cs">
