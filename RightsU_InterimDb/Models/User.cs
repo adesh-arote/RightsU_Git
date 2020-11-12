@@ -26,6 +26,7 @@ namespace RightsU_InterimDb.Models
             this.MHUsers = new HashSet<MHUser>();
             this.Users_Configuration = new HashSet<Users_Configuration>();
             this.Users_Exclusion_Rights = new HashSet<Users_Exclusion_Rights>();
+            this.Users_Detail = new HashSet<Users_Detail>();
         }
     
     	public State EntityState { get; set; }    public int Users_Code { get; set; }
@@ -64,5 +65,6 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<MHUser> MHUsers { get; set; }
         public virtual ICollection<Users_Configuration> Users_Configuration { get; set; }
         public virtual ICollection<Users_Exclusion_Rights> Users_Exclusion_Rights { get; set; }
+        public virtual ICollection<Users_Detail> Users_Detail { get; set; }
     }
 }

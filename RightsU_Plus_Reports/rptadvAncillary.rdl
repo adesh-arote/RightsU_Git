@@ -1971,26 +1971,9 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             </Visibility>
             <Style>
               <Border>
+                <Color>White</Color>
                 <Style>Solid</Style>
               </Border>
-              <TopBorder>
-                <Color>Black</Color>
-                <Style>Solid</Style>
-              </TopBorder>
-              <BottomBorder>
-                <Color>Black</Color>
-                <Style>Solid</Style>
-              </BottomBorder>
-              <LeftBorder>
-                <Color>Black</Color>
-                <Style>Solid</Style>
-                <Width>1pt</Width>
-              </LeftBorder>
-              <RightBorder>
-                <Color>Black</Color>
-                <Style>Solid</Style>
-                <Width>1pt</Width>
-              </RightBorder>
             </Style>
           </Tablix>
           <Tablix Name="Tablix3">

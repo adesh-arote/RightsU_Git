@@ -57,6 +57,14 @@
           <DataField>Licensor</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Deal_Segment">
+          <DataField>Deal_Segment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Revenue_Vertical">
+          <DataField>Revenue_Vertical</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Right_Type">
           <DataField>Right_Type</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -561,6 +569,34 @@ WHERE        (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="AllowDealSegment">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT TOP (1) Parameter_Value
+FROM     System_Parameter_New
+WHERE  (Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AllowRevenueVertical">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT        TOP (1) Parameter_Value
+FROM            System_Parameter_New
+WHERE        (Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -986,6 +1022,12 @@ WHERE        (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
                   <Width>1.80208in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1.325in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.77083in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>3.3125in</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -1019,6 +1061,78 @@ WHERE        (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Due_Diligence</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Deal_Segment">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Deal_Segment.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Deal_Segment</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Revenue_Vertical">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Revenue_Vertical.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Revenue_Vertical</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1147,6 +1261,92 @@ WHERE        (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
                   </TablixHeader>
                   <Visibility>
                     <Hidden>=IIF(First(Fields!Parameter_Value.Value, "DS_System_Param") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.28292in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox52">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Deal Segment</Value>
+                                <Style>
+                                  <FontFamily>Calibri</FontFamily>
+                                  <FontSize>12pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox52</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDealSegment") = "Y",false,true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.28292in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox45">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Revenue Vertical</Value>
+                                <Style>
+                                  <FontFamily>Calibri</FontFamily>
+                                  <FontSize>12pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox45</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowRevenueVertical") = "Y", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
@@ -1715,7 +1915,7 @@ WHERE        (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
             <DataSetName>DataSet1</DataSetName>
             <Left>0.02646cm</Left>
             <Height>0.49292in</Height>
-            <Width>21.15627in</Width>
+            <Width>24.2521in</Width>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", false, true)</Hidden>
             </Visibility>
@@ -4550,7 +4750,7 @@ WHERE        (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
         <Height>5.96844in</Height>
         <Style />
       </Body>
-      <Width>21.16669in</Width>
+      <Width>24.26252in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -4749,7 +4949,7 @@ WHERE        (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>8</NumberOfColumns>
-      <NumberOfRows>7</NumberOfRows>
+      <NumberOfRows>8</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -4872,13 +5072,13 @@ WHERE        (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
           <ParameterName>Restriction_Remarks</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
+          <ColumnIndex>4</ColumnIndex>
           <RowIndex>6</RowIndex>
           <ParameterName>SysLanguageCode</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>6</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>7</RowIndex>
           <ParameterName>CallFrom</ParameterName>
         </CellDefinition>
       </CellDefinitions>

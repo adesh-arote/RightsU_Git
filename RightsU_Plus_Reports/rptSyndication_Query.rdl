@@ -43,9 +43,6 @@
           <QueryParameter Name="@Is_Debug">
             <Value>=Parameters!Is_Debug.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@CBFCRating_Codes">
-            <Value>=Parameters!CBFCRating_Codes.Value</Value>
-          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USP_Syn_Query_Report</CommandText>
@@ -204,6 +201,10 @@
           <DataField>COL38</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="COL39">
+          <DataField>COL39</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -327,6 +328,9 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.72917in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.89583in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1637,7 +1641,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!COL37.Value)</Value>
+                                  <Value>=First(Fields!COL38.Value)</Value>
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontWeight>Bold</FontWeight>
@@ -1649,6 +1653,41 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox40</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>SteelBlue</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!COL39.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Verdana</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2960,6 +2999,40 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="COL39">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!COL39.Value</Value>
+                                  <Style>
+                                    <FontFamily>Verdana</FontFamily>
+                                    <Color>=SWITCH(Fields!COL1.Value = "Critical", "red")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>COL39</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
@@ -2968,7 +3041,7 @@
               <TablixMembers>
                 <TablixMember>
                   <Visibility>
-                    <Hidden>true</Hidden>
+                    <Hidden>=IIF(Parameters!Column_Count.Value&lt;1,true,false)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
@@ -3156,6 +3229,11 @@
                     <Hidden>=IIF(Parameters!Column_Count.Value&lt;38,true,false)</Hidden>
                   </Visibility>
                 </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(Parameters!Column_Count.Value&lt;39,true,false)</Hidden>
+                  </Visibility>
+                </TablixMember>
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -3185,7 +3263,7 @@
             <NoRowsMessage>No Records Found</NoRowsMessage>
             <DataSetName>DataSet1</DataSetName>
             <Height>0.65458in</Height>
-            <Width>78.12736in</Width>
+            <Width>80.02319in</Width>
             <Visibility>
               <Hidden>=IIF(CountRows("DataSet1") &gt; 1, false, true)</Hidden>
             </Visibility>
@@ -3283,14 +3361,29 @@
     </ReportParameter>
     <ReportParameter Name="Sql_WHERE">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>BUSINESS_UNIT_CODE~AND~IN~1|EXPIRED~AND~=~N|IS_THEATRICAL_RIGHT~=~N|TIT.TITLE_CODE~AND~IN~21929|</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Sql WHERE</Prompt>
     </ReportParameter>
     <ReportParameter Name="Column_Count">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>41</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Column Count</Prompt>
     </ReportParameter>
     <ReportParameter Name="Column_Names">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Title,Agreement No,Deal Description,Status,Original Title,Platform,Licensee,Right Start Date,Right End Date,Country,Director,Star Cast,Holdback,Currency,Entity,Subtitling,Dubbing,Variable Cost,ROFR,Restriction Remarks,Business Unit,Agreement Date,Year of Release,Exclusive,Territory,Term,Customer Type,Sub-Licensing,Original/Dubbed,Deal Type,Deal Workflow Status,Sales Agent,Genre,Self Utilization Group,Self Utilization Remarks,Deal Category,CBFC Rating,Deal Segment,Revenue Vertical,</Value>
+        </Values>
+      </DefaultValue>
       <Prompt>Column Names</Prompt>
     </ReportParameter>
     <ReportParameter Name="Report_Query_Code">

@@ -362,13 +362,23 @@
                                             }
                                         </td>
                                     </tr>
-                                    @if (ViewBag.DealSegment == "Y")
+                                    @if (ViewBag.DealSegment == "Y" || ViewBag.RevenueVertical == "Y")
                                     {
-                                        <tr>
+                                    <tr>
+                                        @if (ViewBag.DealSegment == "Y")
+                                        {
                                             <td>@objMessageKey.DealSegment</td>
                                             <td>
                                                 @Html.DropDownListFor(m => Model.Deal_Segment_Code, (List<SelectListItem>)ViewBag.Deal_Segment, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select" })
                                             </td>
+                                        }
+                                        @if (ViewBag.RevenueVertical == "Y")
+                                        {
+                                            <td>Revenue Vertical</td>
+                                            <td>
+                                                @Html.DropDownListFor(m => Model.Revenue_Vertical_Code, (List<SelectListItem>)ViewBag.Revenue_Vertical, "Please Select", new { @id = "ddlRevenueVertical", @class = "form_input chosen-select" })
+                                            </td>
+                                        }
                                         </tr>
                                     }
                                 </tbody>

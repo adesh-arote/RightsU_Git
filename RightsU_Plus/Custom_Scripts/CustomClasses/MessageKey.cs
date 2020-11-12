@@ -272,6 +272,7 @@ public class MessageKey
     public string AgreementCost { get; set; }
     public string DealFor { get; set; }
     public string DealSegment { get; set; }
+    public string RevenueVertical { get; set; }
     public string StartDate { get; set; }
     public string EndDate { get; set; }
     public string Noofsongs { get; set; }

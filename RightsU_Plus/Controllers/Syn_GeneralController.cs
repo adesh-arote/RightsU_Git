@@ -147,8 +147,11 @@ namespace RightsU_Plus.Controllers
 
             BindSchemaObject();
             string viewName = "~/Views/Syn_Deal/_Syn_General.cshtml";
-            string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Revenue_Vertical").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.DealSegment = AllowDealSegment;
+
+            string AllowRevenueVertical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Revenue_Vertical").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.RevenueVertical = AllowRevenueVertical;
 
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ARCHIVE && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_APPROVE)
             {
@@ -493,6 +496,13 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Deal_Segment_Code", "Deal_Segment_Name").ToList();
             }
 
+            string AllowRevenueVertical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Revenue_Vertical").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.RevenueVertical = AllowRevenueVertical;
+            if (AllowRevenueVertical == "Y")
+            {
+                ViewBag.Revenue_Vertical = new SelectList(new Revenue_Vertical_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Revenue_Vertical_Code", "Revenue_Vertical_Name").ToList();
+            }
+
         }
         public JsonResult BindAllPreReq_Async()
         {
@@ -762,7 +772,9 @@ namespace RightsU_Plus.Controllers
             objSD_Session.Sales_Agent_Contact_Code = objExisting_Syn_Deal.Sales_Agent_Contact_Code;
             objSD_Session.Attach_Workflow = objExisting_Syn_Deal.Attach_Workflow;
             objSD_Session.Deal_Segment_Code = objExisting_Syn_Deal.Deal_Segment_Code;
-            objSD_Session.Deal_Segment = objExisting_Syn_Deal.Deal_Segment;
+            //objSD_Session.Deal_Segment = objExisting_Syn_Deal.Deal_Segment;
+            objSD_Session.Revenue_Vertical_Code = objExisting_Syn_Deal.Revenue_Vertical_Code;
+
             /*
                 public State EntityState { get; set; }
                 public int Syn_Deal_Movie_Code { get; set; }
@@ -881,6 +893,9 @@ namespace RightsU_Plus.Controllers
 
                 if (objSD_MVC.Deal_Segment_Code != null && objSD_MVC.Deal_Segment_Code != 0)
                     objSD_Session.Deal_Segment_Code = objSD_MVC.Deal_Segment_Code;
+
+                if (objSD_MVC.Revenue_Vertical_Code != null && objSD_MVC.Revenue_Vertical_Code != 0)
+                    objSD_Session.Revenue_Vertical_Code = objSD_MVC.Revenue_Vertical_Code;
 
                 objSD_Session.Vendor_Contact_Code = objSD_MVC.Vendor_Contact_Code > 0 ? objSD_MVC.Vendor_Contact_Code : null;
                 objSD_Session.Sales_Agent_Code = objSD_MVC.Sales_Agent_Code > 0 ? objSD_MVC.Sales_Agent_Code : null;
@@ -1490,6 +1505,9 @@ namespace RightsU_Plus.Controllers
         #region--------- View Index Action Methods-------
         public PartialViewResult BindTopSynDetails()
         {
+            ViewBag.DealDesc = new SelectList(new Deal_Description_Service(objLoginEntity.ConnectionStringName)
+                                                .SearchFor(x => x.Is_Active == "Y" && x.Type == "S").Distinct().ToList(), "Deal_Desc_Name", "Deal_Desc_Name", objDeal_Schema.Deal_Desc); //&& x.Deal_Desc_Name != objDeal_Schema.Deal_Desc
+            ViewBag.AcqSyn_Gen_Deal_Desc = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Desc_DDL").First().Parameter_Value;
             return PartialView("~/Views/Shared/_Top_Syn_Details.cshtml");
         }
         public JsonResult GetWorkflowStatusFromServer()

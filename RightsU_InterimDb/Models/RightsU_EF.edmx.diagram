@@ -998,6 +998,10 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Revenue_Vertical" Width="1.5" PointX="44.375" PointY="18.875" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Vertical" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Attrib_Group" Width="1.5" PointX="21" PointY="105.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Users_Detail" Width="1.5" PointX="23.25" PointY="0.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Detail_Attrib_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Detail_Users" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

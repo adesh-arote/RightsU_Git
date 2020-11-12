@@ -43,6 +43,14 @@
           <DataField>Title_Name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Deal_Segment">
+          <DataField>Deal_Segment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Revenue_Vertical">
+          <DataField>Revenue_Vertical</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Right_Type">
           <DataField>Right_Type</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -409,6 +417,34 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
       <Fields>
         <Field Name="Layout_Direction">
           <DataField>Layout_Direction</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AllowDealSegment">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT TOP (1) Parameter_Value
+FROM     System_Parameter_New
+WHERE  (Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AllowRevenueVertical">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT        TOP (1) Parameter_Value
+FROM            System_Parameter_New
+WHERE        (Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -838,6 +874,12 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <Width>4.3125in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1.66875in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.89583in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>1.96875in</Width>
                 </TablixColumn>
               </TablixColumns>
@@ -865,6 +907,72 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Restriction_Remarks</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Deal_Segment">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Deal_Segment.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Deal_Segment</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Revenue_Vertical">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Revenue_Vertical.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Revenue_Vertical</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -958,6 +1066,92 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   </TablixHeader>
                   <Visibility>
                     <Hidden>=IIF(Parameters!Restriction_Remarks.Value = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.25167in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox10">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Deal Segment</Value>
+                                <Style>
+                                  <FontFamily>Calibri</FontFamily>
+                                  <FontSize>12pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox10</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDealSegment") = "Y",false,true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.25167in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox7">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Revenue Vertical</Value>
+                                <Style>
+                                  <FontFamily>Calibri</FontFamily>
+                                  <FontSize>12pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox7</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowRevenueVertical") = "Y", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
@@ -1442,6 +1636,9 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                                                               </Textbox>
                                                             </CellContents>
                                                           </TablixHeader>
+                                                          <TablixMembers>
+                                                            <TablixMember />
+                                                          </TablixMembers>
                                                           <DataElementOutput>Output</DataElementOutput>
                                                           <KeepTogether>true</KeepTogether>
                                                         </TablixMember>
@@ -1482,7 +1679,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             <DataSetName>DataSet1</DataSetName>
             <Top>0.02083in</Top>
             <Height>0.46167in</Height>
-            <Width>20.91666in</Width>
+            <Width>24.48124in</Width>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", false, true)</Hidden>
             </Visibility>
@@ -4115,7 +4312,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>8</NumberOfColumns>
-      <NumberOfRows>5</NumberOfRows>
+      <NumberOfRows>7</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -4218,23 +4415,23 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
           <ParameterName>DateFormat</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>4</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>5</RowIndex>
           <ParameterName>Restriction_Remarks</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>3</ColumnIndex>
-          <RowIndex>4</RowIndex>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>5</RowIndex>
           <ParameterName>Module_Code</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>4</ColumnIndex>
-          <RowIndex>4</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>6</RowIndex>
           <ParameterName>SysLanguageCode</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>5</ColumnIndex>
-          <RowIndex>4</RowIndex>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>6</RowIndex>
           <ParameterName>CallFrom</ParameterName>
         </CellDefinition>
       </CellDefinitions>
