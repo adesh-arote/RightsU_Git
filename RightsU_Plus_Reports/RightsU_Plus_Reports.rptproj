@@ -109,6 +109,7 @@
     <Report Include="rptTitleMilestone.rdl" />
     <Report Include="rptTitleMilestoneList.rdl" />
     <Report Include="rpt_Acquisition_Expiry.rdl" />
+    <Report Include="rpt_Deal_WFStatus_Pending.rdl" />
     <Report Include="rpt_Episodic_Cost.rdl" />
     <Report Include="rpt_Self_Avail.rdl" />
     <Report Include="rpt_Syn_Deal_Version_History.rdl" />
