@@ -1684,6 +1684,7 @@
     <Content Include="Views\User\_UserGeneralInfo.cshtml" />
     <Content Include="Views\Title_Content_ImportExport\_AddMovieAlbum.cshtml" />
     <Content Include="Views\Title_Content_ImportExport\_AddMusicTitle.cshtml" />
+    <Content Include="Views\Reports\DealWorkflowStatusPending.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

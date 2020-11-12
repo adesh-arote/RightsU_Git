@@ -108,6 +108,58 @@ namespace RightsU_Plus.Controllers
         }
         #endregion
 
+        #region --- Deal Workflow Status Report ---
+        public ActionResult DealWorkflowStatusPending()
+        {
+            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForDealWorkflowStausPending);
+            BindFormatDDL();
+            List<SelectListItem> lstDeal = new List<SelectListItem>();
+            lstDeal.Add(new SelectListItem { Text = "Acquisition Deals", Value = GlobalParams.ModuleCodeForAcqDeal.ToString() });
+            lstDeal.Add(new SelectListItem { Text = "Syndication Deals", Value = GlobalParams.ModuleCodeForSynDeal.ToString() });
+            ViewBag.DealList = lstDeal;
+            ViewBag.BusinessUnitList = GetBusinessUnitList();
+            return View();
+        }
+
+
+
+
+        public PartialViewResult BindDealVersionHistoryReportA(string businessUnitcode, string dealCode)
+        {
+            ReportViewer rptViewer = new ReportViewer();
+            try
+            {
+                if (dealCode == GlobalParams.ModuleCodeForAcqDeal.ToString())
+                {
+                    ReportParameter[] parm = new ReportParameter[2];
+                    parm[0] = new ReportParameter("Content_Category", businessUnitcode);
+                    parm[1] = new ReportParameter("Deal_Type", dealCode);
+                   // parm[2] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    //parm[3] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
+                    //parm[4] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+                    rptViewer = BindReport(parm, "rpt_Deal_WFStatus_Pending");
+                }
+                else if (dealCode == GlobalParams.ModuleCodeForSynDeal.ToString())
+                {
+                    ReportParameter[] parm = new ReportParameter[2];
+                    parm[0] = new ReportParameter("Content_Category", businessUnitcode);
+                    parm[1] = new ReportParameter("Deal_Type", dealCode);
+                   // parm[2] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    //parm[3] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
+                    //parm[4] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+                    rptViewer = BindReport(parm, "rpt_Deal_WFStatus_Pending");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            ViewBag.ReportViewer = rptViewer;
+            return PartialView("~/Views/Shared/ReportViewer.cshtml");
+        }
+        #endregion
+
         #region --- Logged In Users Report ---
         public ActionResult LoggedInUsersReport()
         {

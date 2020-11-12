@@ -177,6 +177,8 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForPartyCategory = 209;
         public const int ModuleCodeForCustomer = 211;
         public const int ModuleCodeForAcq_Rights_Template = 213;
+        public const int ModuleCodeForDealWorkflowStausPending = 217;
+
         #endregion
 
         #region----------Define Right Codes-----------
@@ -1850,6 +1852,9 @@ namespace UTOFrameWork.FrameworkClasses
                 ReportPath = ReportFolder + "/rptProjectMilestone";
             else if (ReportName == "rptExportToExcelBulkImport")
                 ReportPath = ReportFolder + "/rptExportToExcelBulkImport";
+            else if (ReportName == "rpt_Deal_WFStatus_Pending")
+                ReportPath = ReportFolder + "/rpt_Deal_WFStatus_Pending";
+
 
             return ReportPath;
         }
