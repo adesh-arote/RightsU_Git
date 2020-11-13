@@ -256,7 +256,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Business Unit</td>
+                                <td>Content Category</td>
                                 <td>
                                     <asp:DropDownList ID="ddlBusinessUnit" runat="server" Width="200px" AutoPostBack="True"
                                         CssClass="select" OnSelectedIndexChanged="ddlBusinessUnit_SelectedIndexChanged">
@@ -264,7 +264,7 @@
                                     <asp:Label ID="Label1" runat="server"></asp:Label>
                                     &nbsp;<span style="color: #ff0000" id="Span1" runat="server">*</span>
                                     <asp:RequiredFieldValidator ID="rfvBusinessUnit" runat="server" ControlToValidate="ddlBusinessUnit"
-                                        Display="None" ErrorMessage="Please select Business Unit" SetFocusOnError="True"
+                                        Display="None" ErrorMessage="Please select Content Category" SetFocusOnError="True"
                                         InitialValue="0">
                                     </asp:RequiredFieldValidator>
                                   <%--  <AjaxToolkit:ValidatorCalloutExtender ID="vceBU" runat="server" Enabled="true"
@@ -480,7 +480,7 @@
                             </ItemTemplate>
                             <ItemStyle HorizontalAlign="left" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Business Unit">
+                        <asp:TemplateField HeaderText="Content Category">
                             <ItemTemplate>
                                 <asp:Label ID="lblBusinessUnitCode" Visible="false" runat="server" Text='<%# Eval("objWorkflow.Business_Unit_Code") %>'></asp:Label>
                                 <asp:Label ID="lblBusinessUnit" runat="server"></asp:Label>

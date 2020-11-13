@@ -93,7 +93,7 @@
                             </td>
                         </tr>--%>
                     <tr>
-                        <td>Business Unit</td>
+                        <td>Content Category</td>
                         <td>
                             <asp:Label ID="lblBusinessUnit" runat="server" CssClass="text3"></asp:Label>
                             <asp:Label ID="lblBusinessCode" Visible="false" runat="server" CssClass="text3"></asp:Label>

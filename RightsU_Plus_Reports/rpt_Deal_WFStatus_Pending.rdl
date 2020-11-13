@@ -501,7 +501,7 @@
                   <Width>0.27244in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>10.01076in</Width>
+                  <Width>4.16701in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -517,7 +517,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Business Unit</Value>
+                                  <Value>Content Category</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -849,7 +849,7 @@
             </PageBreak>
             <Top>0.64564in</Top>
             <Height>0.72244in</Height>
-            <Width>12.04762in</Width>
+            <Width>6.20387in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
