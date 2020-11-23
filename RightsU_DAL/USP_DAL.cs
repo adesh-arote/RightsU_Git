@@ -736,6 +736,15 @@ namespace RightsU_DAL
             return objContext.USP_DM_Title_PI(LstTitle_Import_UDT, User_Code);
         }
 
+        public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
+        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code
+          )
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code);
+        }
+
+
         public virtual ObjectResult<USP_Get_Termination_Title_Data_Result> USP_Get_Termination_Title_Data(Nullable<int> deal_Code, string type)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);

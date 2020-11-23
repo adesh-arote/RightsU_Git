@@ -2263,6 +2263,25 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Is_Ignore" Type="varchar" MaxLength="1" />
           <Property Name="Original_Language" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="DM_Title_Import_Utility">
+          <Key>
+            <PropertyRef Name="DM_Title_Import_Utility_Code" />
+          </Key>
+          <Property Name="DM_Title_Import_Utility_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Display_Name" Type="nvarchar(max)" />
+          <Property Name="Order_No" Type="int" />
+          <Property Name="Target_Table" Type="nvarchar(max)" />
+          <Property Name="Target_Column" Type="nvarchar(max)" />
+          <Property Name="Colum_Type" Type="nvarchar(max)" />
+          <Property Name="Is_Multiple" Type="char" MaxLength="1" />
+          <Property Name="Reference_Table" Type="nvarchar(max)" />
+          <Property Name="Reference_Text_Field" Type="nvarchar(max)" />
+          <Property Name="Reference_Value_Field" Type="nvarchar(max)" />
+          <Property Name="Reference_Whr_Criteria" Type="nvarchar(max)" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+          <Property Name="validation" Type="nvarchar(max)" />
+          <Property Name="Is_Allowed_For_Resolve_Conflict" Type="char" MaxLength="1" />
+        </EntityType>
         <EntityType Name="Document_Type">
           <Key>
             <PropertyRef Name="Document_Type_Code" />
@@ -13946,6 +13965,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="DM_Master_Import" EntityType="Self.DM_Master_Import" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Master_Log" EntityType="Self.DM_Master_Log" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Music_Title" EntityType="Self.DM_Music_Title" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DM_Title_Import_Utility" EntityType="Self.DM_Title_Import_Utility" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document_Type" EntityType="Self.Document_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config" EntityType="Self.Email_Config" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config_Detail" EntityType="Self.Email_Config_Detail" Schema="dbo" store:Type="Tables" />
@@ -20538,6 +20558,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="User" EntitySet="Users" />
             <End Role="Users_Detail" EntitySet="Users_Detail" />
           </AssociationSet>
+          <EntitySet Name="DM_Title_Import_Utility" EntityType="RightsU_NeoModel.DM_Title_Import_Utility" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35130,6 +35151,25 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="DM_Title_Import_Utility">
+          <Key>
+            <PropertyRef Name="DM_Title_Import_Utility_Code" />
+          </Key>
+          <Property Name="DM_Title_Import_Utility_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Display_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Order_No" Type="Int32" />
+          <Property Name="Target_Table" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Target_Column" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Colum_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Multiple" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Reference_Table" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Reference_Text_Field" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Reference_Value_Field" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Reference_Whr_Criteria" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="validation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Allowed_For_Resolve_Conflict" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -43984,6 +44024,26 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Attrib_Group_Code" ColumnName="Attrib_Group_Code" />
                 <ScalarProperty Name="Users_Code" ColumnName="Users_Code" />
                 <ScalarProperty Name="Users_Detail_Code" ColumnName="Users_Detail_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DM_Title_Import_Utility">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Import_Utility">
+              <MappingFragment StoreEntitySet="DM_Title_Import_Utility">
+                <ScalarProperty Name="Is_Allowed_For_Resolve_Conflict" ColumnName="Is_Allowed_For_Resolve_Conflict" />
+                <ScalarProperty Name="validation" ColumnName="validation" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Reference_Whr_Criteria" ColumnName="Reference_Whr_Criteria" />
+                <ScalarProperty Name="Reference_Value_Field" ColumnName="Reference_Value_Field" />
+                <ScalarProperty Name="Reference_Text_Field" ColumnName="Reference_Text_Field" />
+                <ScalarProperty Name="Reference_Table" ColumnName="Reference_Table" />
+                <ScalarProperty Name="Is_Multiple" ColumnName="Is_Multiple" />
+                <ScalarProperty Name="Colum_Type" ColumnName="Colum_Type" />
+                <ScalarProperty Name="Target_Column" ColumnName="Target_Column" />
+                <ScalarProperty Name="Target_Table" ColumnName="Target_Table" />
+                <ScalarProperty Name="Order_No" ColumnName="Order_No" />
+                <ScalarProperty Name="Display_Name" ColumnName="Display_Name" />
+                <ScalarProperty Name="DM_Title_Import_Utility_Code" ColumnName="DM_Title_Import_Utility_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

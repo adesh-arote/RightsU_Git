@@ -16,6 +16,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using OfficeOpenXml;
 using System.Data.Entity.Core.Objects;
+using System.Drawing;
 
 namespace RightsU_Plus.Controllers
 {
@@ -1204,7 +1205,7 @@ namespace RightsU_Plus.Controllers
 
             if (ColumnCode == Convert.ToInt32(str_Program_Category_Value))
             {
-                FieldNameDDL = "<select id='" + RowNum + "_ddlFieldNameList' class='form_input chosen-select' onchange='ControlType("+ str_Program_Category_Value + ",$(this).val())' disabled> ";
+                FieldNameDDL = "<select id='" + RowNum + "_ddlFieldNameList' class='form_input chosen-select' onchange='ControlType(" + str_Program_Category_Value + ",$(this).val())' disabled> ";
                 FieldNameDDL += "<option value='17' selected>Program Category";
             }
 
@@ -2624,6 +2625,65 @@ namespace RightsU_Plus.Controllers
         public void SampleDownload()
         {
             string filePath;
+            filePath = HttpContext.Server.MapPath("~/UploadFolder/Title_Import_" + DateTime.Now.ToString("ddMMyyyyhhmmss.fff") + ".xlsx");
+            FileInfo flInfo = new FileInfo(filePath);
+            FileInfo fliTemplate;
+
+            fliTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/Title_Import_Utility_Sample.xlsx"));
+            using (ExcelPackage package = new ExcelPackage(flInfo, fliTemplate))
+            {
+                List<DM_Title_Import_Utility> lstTIU = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName)
+                                                        .SearchFor(x => x.Is_Active == "Y")
+                                                        .OrderBy(y => y.Order_No)
+                                                        .ToList();
+
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+                int ColNo = 1, RowNo = 1;
+                Color colRed = System.Drawing.ColorTranslator.FromHtml("#F73131");
+                Color colGreen = System.Drawing.ColorTranslator.FromHtml("#8FD64B");
+
+                worksheet.Cells[RowNo, ColNo].Value = "Excel Sr. No";
+                worksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
+                worksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                worksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
+
+                foreach (DM_Title_Import_Utility item in lstTIU)
+                {
+                    ColNo++;
+                    worksheet.Cells[RowNo, ColNo].Value = item.Display_Name;
+                    worksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
+                    worksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    worksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                    if (item.validation.Contains("man"))
+                        worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
+                    else
+                        worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colGreen);
+                }
+
+                ColNo = 1;
+                for (int i = 1; i <= 10; i++)
+                {
+                    RowNo = i+1;
+                    worksheet.Cells[RowNo, ColNo].Value = i;
+                }
+                package.Save();
+            }
+            WebClient client = new WebClient();
+            Byte[] buffer = client.DownloadData(filePath);
+            Response.Clear();
+            Response.ContentType = "application/ms-excel";
+            Response.AddHeader("content-disposition", "Attachment;filename=" + flInfo.Name);
+            Response.BinaryWrite(buffer);
+
+            Response.End();
+        }
+
+        /*
+        public void SampleDownload()
+        {
+            string filePath;
             string Is_Allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
             filePath = HttpContext.Server.MapPath("~/UploadFolder/Title_Import_" + DateTime.Now.ToString("ddMMyyyyhhmmss.fff") + ".xlsx");
             FileInfo flInfo = new FileInfo(filePath);
@@ -2670,6 +2730,7 @@ namespace RightsU_Plus.Controllers
 
             Response.End();
         }
+        */
         #endregion
 
         #region---Deal Details - Title View ---

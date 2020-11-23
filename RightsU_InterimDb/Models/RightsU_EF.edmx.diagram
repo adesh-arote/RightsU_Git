@@ -1002,6 +1002,7 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Users_Detail" Width="1.5" PointX="23.25" PointY="0.75" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Users_Detail_Attrib_Group" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Users_Detail_Users" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Title_Import_Utility" Width="1.5" PointX="44.625" PointY="22.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

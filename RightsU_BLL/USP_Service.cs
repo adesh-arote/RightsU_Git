@@ -753,6 +753,13 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_DM_Title_PI(LstTitle_Import_UDT, User_Code);
         }
+        public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
+        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT,string CallFor, int User_Code
+          )
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor , User_Code);
+        }
         public virtual ObjectResult<USP_Get_Termination_Title_Data_Result> USP_Get_Termination_Title_Data(Nullable<int> deal_Code, string type)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
