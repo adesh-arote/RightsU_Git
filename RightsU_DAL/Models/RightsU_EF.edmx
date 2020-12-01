@@ -12147,6 +12147,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="DashboardDays" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Dashboard_Detail_Material_Type" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="DashboardType" Type="varchar" Mode="In" />
+          <Parameter Name="SearchFor" Type="nvarchar" Mode="In" />
+          <Parameter Name="User_Code" Type="int" Mode="In" />
+          <Parameter Name="DashboardDays" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Get_Dashboard_Detail_Payment_Term" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="DashboardType" Type="varchar" Mode="In" />
+          <Parameter Name="SearchFor" Type="nvarchar" Mode="In" />
+          <Parameter Name="User_Code" Type="int" Mode="In" />
+          <Parameter Name="DashboardDays" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_GET_DATA_FOR_APPROVED_TITLES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Title_Codes" Type="varchar" Mode="In" />
           <Parameter Name="Platform_Codes" Type="varchar(max)" Mode="In" />
@@ -20417,6 +20429,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Deal_Segment" EntitySet="Deal_Segment" />
             <End Role="Syn_Deal" EntitySet="Syn_Deal" />
           </AssociationSet>
+          <FunctionImport Name="USP_Get_Dashboard_Detail_Material_Type" ReturnType="Collection(RightsU_NeoModel.USP_Get_Dashboard_Detail_Material_Type_Result)">
+            <Parameter Name="DashboardType" Mode="In" Type="String" />
+            <Parameter Name="SearchFor" Mode="In" Type="String" />
+            <Parameter Name="User_Code" Mode="In" Type="Int32" />
+            <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Dashboard_Detail_Payment_Term" ReturnType="Collection(RightsU_NeoModel.USP_Get_Dashboard_Detail_Payment_Term_Result)">
+            <Parameter Name="DashboardType" Mode="In" Type="String" />
+            <Parameter Name="SearchFor" Mode="In" Type="String" />
+            <Parameter Name="User_Code" Mode="In" Type="Int32" />
+            <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -34922,6 +34946,21 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="USP_Get_Dashboard_Detail_Material_Type_Result">
+          <Property Type="Int32" Name="Deal_Code" Nullable="true" />
+          <Property Type="String" Name="Agreement_No" Nullable="true" />
+          <Property Type="String" Name="Material_Type_Name" Nullable="true" />
+          <Property Type="String" Name="Material_Medium_Name" Nullable="true" />
+          <Property Type="Int32" Name="Quantity" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Dashboard_Detail_Payment_Term_Result">
+          <Property Type="Int32" Name="Deal_Code" Nullable="true" />
+          <Property Type="String" Name="Agreement_No" Nullable="true" />
+          <Property Type="String" Name="Payment_Terms" Nullable="true" />
+          <Property Type="Int32" Name="Days_After" Nullable="true" />
+          <Property Type="String" Name="Cost_Percentage" Nullable="true" />
+          <Property Type="DateTime" Name="Due_Date" Nullable="false" Precision="23" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -43741,6 +43780,29 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Dashboard_Detail_Material_Type" FunctionName="RightsU_NeoModel.Store.USP_Get_Dashboard_Detail_Material_Type">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Dashboard_Detail_Material_Type_Result">
+                <ScalarProperty Name="Deal_Code" ColumnName="Deal_Code" />
+                <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
+                <ScalarProperty Name="Material_Type_Name" ColumnName="Material_Type_Name" />
+                <ScalarProperty Name="Material_Medium_Name" ColumnName="Material_Medium_Name" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Dashboard_Detail_Payment_Term" FunctionName="RightsU_NeoModel.Store.USP_Get_Dashboard_Detail_Payment_Term">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Dashboard_Detail_Payment_Term_Result">
+                <ScalarProperty Name="Deal_Code" ColumnName="Deal_Code" />
+                <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
+                <ScalarProperty Name="Payment_Terms" ColumnName="Payment_Terms" />
+                <ScalarProperty Name="Days_After" ColumnName="Days_After" />
+                <ScalarProperty Name="Cost_Percentage" ColumnName="Cost_Percentage" />
+                <ScalarProperty Name="Due_Date" ColumnName="Due_Date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

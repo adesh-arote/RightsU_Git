@@ -95,6 +95,36 @@ namespace RightsU_Plus.Controllers
                 Session["StartAcqDealListCount"] = value;
             }
         }
+
+        private int MTAcqDealListCount
+        {
+            get
+            {
+                if (Session["MTAcqDealListCount"] == null)
+                    Session["MTAcqDealListCount"] = 0;
+                return Convert.ToInt32(Session["MTAcqDealListCount"]);
+            }
+            set
+            {
+                Session["MTAcqDealListCount"] = value;
+            }
+        }
+
+        private int PTAcqDealListCount
+        {
+            get
+            {
+                if (Session["PTAcqDealListCount"] == null)
+                    Session["PTAcqDealListCount"] = 0;
+                return Convert.ToInt32(Session["PTAcqDealListCount"]);
+            }
+            set
+            {
+                Session["PTAcqDealListCount"] = value;
+            }
+        }
+
+
         private int StartSynDealListCount
         {
             get
@@ -200,6 +230,34 @@ namespace RightsU_Plus.Controllers
                 Session["StartAcqDealList_PageNo"] = value;
             }
         }
+
+        private int MTAcqDealList_PageNo
+        {
+            get
+            {
+                if (Session["MTAcqDealList_PageNo"] == null)
+                    Session["MTAcqDealList_PageNo"] = 0;
+                return Convert.ToInt32(Session["MTAcqDealList_PageNo"]);
+            }
+            set
+            {
+                Session["MTAcqDealList_PageNo"] = value;
+            }
+        }
+
+        private int PTAcqDealList_PageNo
+        {
+            get
+            {
+                if (Session["PTAcqDealList_PageNo"] == null)
+                    Session["PTAcqDealList_PageNo"] = 0;
+                return Convert.ToInt32(Session["PTAcqDealList_PageNo"]);
+            }
+            set
+            {
+                Session["PTAcqDealList_PageNo"] = value;
+            }
+        }
         private int StartSynDealList_PageNo
         {
             get
@@ -303,6 +361,34 @@ namespace RightsU_Plus.Controllers
             set
             {
                 Session["StartAcqDealList_LastPageNo"] = value;
+            }
+        }
+
+        private int MTAcqDealList_LastPageNo
+        {
+            get
+            {
+                if (Session["MTAcqDealList_LastPageNo"] == null)
+                    Session["MTAcqDealList_LastPageNo"] = 0;
+                return Convert.ToInt32(Session["MTAcqDealList_LastPageNo"]);
+            }
+            set
+            {
+                Session["MTAcqDealList_LastPageNo"] = value;
+            }
+        }
+
+        private int PTAcqDealList_LastPageNo
+        {
+            get
+            {
+                if (Session["PTAcqDealList_LastPageNo"] == null)
+                    Session["PTAcqDealList_LastPageNo"] = 0;
+                return Convert.ToInt32(Session["PTAcqDealList_LastPageNo"]);
+            }
+            set
+            {
+                Session["PTAcqDealList_LastPageNo"] = value;
             }
         }
         private int StartSynDealList_LastPageNo
@@ -500,7 +586,7 @@ namespace RightsU_Plus.Controllers
         }
 
         public ActionResult DashBoard(string Search = "")
-        {
+         {
             //   CommonUtil.WriteErrorLog("Called Dashboard Action of Base Controller", logFileName);
             int PageNo = 1;
             DealStartAndExp_Days = StartAndExpiryDays();
@@ -515,6 +601,8 @@ namespace RightsU_Plus.Controllers
                 ViewBag.DashBoardVissible = "F";
 
             StartAcqDealListCount = 0;
+            MTAcqDealListCount = 0;
+            PTAcqDealListCount = 0;
             StartSynDealListCount = 0;
             ExpireAcqDealListCount = 0;
             ExpireSynDealDataListCount = 0;
@@ -524,6 +612,8 @@ namespace RightsU_Plus.Controllers
             AproveSynDealListCount = 0;
 
             StartAcqDealList_PageNo = 1;
+            MTAcqDealList_PageNo = 1;
+            PTAcqDealList_PageNo = 1;
             StartSynDealList_PageNo = 1;
             ExpireAcqDealList_PageNo = 1;
             ExpireSynDealDataList_PageNo = 1;
@@ -550,6 +640,36 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                     ViewBag.StartAcqDealList = null;
+
+                if (arrUserRight.Contains(GlobalParams.RightsCodeForAcquisitionRightsStart))
+                {
+                    List<USP_Get_Dashboard_Detail_Material_Type_Result> MTAcqDealList = BindMaterialType(Search);
+
+                    MTAcqDealListCount = MTAcqDealList.Count();
+
+                    MTAcqDealList_LastPageNo = ((MTAcqDealListCount / PageSize) - (MTAcqDealListCount % PageSize == 0 ? 1 : 0)) + 1;
+
+                    MTAcqDealList = MTAcqDealList.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
+
+                    ViewBag.MTAcqDealList = MTAcqDealList;
+                }
+                else
+                    ViewBag.MTAcqDealList = null;
+
+                if (arrUserRight.Contains(GlobalParams.RightsCodeForAcquisitionRightsStart))
+                {
+                    List<USP_Get_Dashboard_Detail_Payment_Term_Result> PTAcqDealList = BindPaymentTerm(Search);
+
+                    PTAcqDealListCount = PTAcqDealList.Count();
+
+                    PTAcqDealList_LastPageNo = ((PTAcqDealListCount / PageSize) - (PTAcqDealListCount % PageSize == 0 ? 1 : 0)) + 1;
+
+                    PTAcqDealList = PTAcqDealList.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
+
+                    ViewBag.PTAcqDealList = PTAcqDealList;
+                }
+                else
+                    ViewBag.PTAcqDealList = null;
 
                 if (arrUserRight.Contains(GlobalParams.RightsCodeForAcquisitionRightsStart))
                 {
@@ -654,6 +774,8 @@ namespace RightsU_Plus.Controllers
 
                 #region ------ Title------
                 string startAcqDealListDays = "";
+                string mtAcqDealListDays = "";
+                string ptAcqDealListDays = "";
                 string startSynDealListDays = "";
                 string ExpireAcqDealListDays = "";
                 string ExpireSynDealListDays = "";
@@ -663,6 +785,8 @@ namespace RightsU_Plus.Controllers
                 string AproveSynDealListDays = "";
 
                 startAcqDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ADTS").Select(s => s.Dashboard_Value.ToString()).FirstOrDefault();
+                mtAcqDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ADTS").Select(s => s.Dashboard_Value.ToString()).FirstOrDefault();
+                ptAcqDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ADTS").Select(s => s.Dashboard_Value.ToString()).FirstOrDefault();
                 startSynDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-SDTS").Select(s => s.Dashboard_Value.ToString()).FirstOrDefault();
                 ExpireAcqDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ADTE").Select(s => s.Dashboard_Value.ToString()).FirstOrDefault();
                 ExpireSynDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-SDTE").Select(s => s.Dashboard_Value.ToString()).FirstOrDefault();
@@ -673,6 +797,10 @@ namespace RightsU_Plus.Controllers
 
                 if (startAcqDealListDays == null)
                     startAcqDealListDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADTS").Select(s => s.Parameter_Value).FirstOrDefault();
+                if (mtAcqDealListDays == null)
+                    mtAcqDealListDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADMT").Select(s => s.Parameter_Value).FirstOrDefault();
+                if (ptAcqDealListDays == null)
+                    ptAcqDealListDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADPT").Select(s => s.Parameter_Value).FirstOrDefault();
                 if (startSynDealListDays == null)
                     startSynDealListDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-SDTS").Select(s => s.Parameter_Value).FirstOrDefault();
                 if (ExpireAcqDealListDays == null)
@@ -689,6 +817,8 @@ namespace RightsU_Plus.Controllers
                     AproveSynDealListDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-SDTA").Select(s => s.Parameter_Value).FirstOrDefault();
 
                 string startAcqDealListTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADTS").Select(s => s.Description).FirstOrDefault();
+                string mtAcqDealListTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADMT").Select(s => s.Description).FirstOrDefault();
+                string ptAcqDealListTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADPT").Select(s => s.Description).FirstOrDefault();
                 string startSynDealListTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-SDTS").Select(s => s.Description).FirstOrDefault();
                 string ExpireAcqDealListTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADTE").Select(s => s.Description).FirstOrDefault();
                 string ExpireSynDealListTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-SDTE").Select(s => s.Description).FirstOrDefault();
@@ -699,6 +829,8 @@ namespace RightsU_Plus.Controllers
                 //string DealStartAndExp_Days = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADTA").Select(s => s.Description).FirstOrDefault();
 
                 ViewBag.StartAcqDealListTitle = startAcqDealListTitle + " " + startAcqDealListDays + " days";
+                ViewBag.MTAcqDealListTitle = mtAcqDealListTitle + " " + mtAcqDealListDays + " days";
+                ViewBag.PTAcqDealListTitle = ptAcqDealListTitle + " " + ptAcqDealListDays + " days";
                 ViewBag.StartSynDealListTitle = startSynDealListTitle + " " + startSynDealListDays + " days";
                 ViewBag.ExpireAcqDealListTitle = ExpireAcqDealListTitle + " " + ExpireAcqDealListDays + " days";
                 ViewBag.ExpireSynDealDataListTitle = ExpireSynDealListTitle + " " + ExpireSynDealListDays + " days";
@@ -994,6 +1126,26 @@ namespace RightsU_Plus.Controllers
             return StartAcqDealList;
         }
 
+        private List<USP_Get_Dashboard_Detail_Material_Type_Result> BindMaterialType(string Search)
+        {
+            int? startAcqDealListDays = 0;
+            startAcqDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ADTS").Select(s => s.Dashboard_Value).FirstOrDefault();
+            if (startAcqDealListDays == null)
+                startAcqDealListDays = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADTS").Select(w => w.Parameter_Value).FirstOrDefault());
+            List<USP_Get_Dashboard_Detail_Material_Type_Result> MTAcqDealList = objUSP_Service.USP_Get_Dashboard_Detail_Material_Type("AS", Search, objLoginUser.Users_Code, startAcqDealListDays).ToList();
+            return MTAcqDealList;
+        }
+
+        private List<USP_Get_Dashboard_Detail_Payment_Term_Result> BindPaymentTerm(string Search)
+        {
+            int? startAcqDealListDays = 0;
+            startAcqDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ADTS").Select(s => s.Dashboard_Value).FirstOrDefault();
+            if (startAcqDealListDays == null)
+                startAcqDealListDays = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADTS").Select(w => w.Parameter_Value).FirstOrDefault());
+            List<USP_Get_Dashboard_Detail_Payment_Term_Result> PTAcqDealList = objUSP_Service.USP_Get_Dashboard_Detail_Payment_Term("AS", Search, objLoginUser.Users_Code, startAcqDealListDays).ToList();
+            return PTAcqDealList;
+        }
+
         private List<USP_Get_Dashboard_Detail_Result> BindAproveAcqDeal(string Search)
         {
             int? AproveAcqDealListDays = 0;
@@ -1084,10 +1236,34 @@ namespace RightsU_Plus.Controllers
             bool srchaddRights = addRights.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForCost) + "~");
 
             List<USP_Get_Dashboard_Detail_Result> List = new List<USP_Get_Dashboard_Detail_Result>();
+            List<USP_Get_Dashboard_Detail_Material_Type_Result> MTList = new List<USP_Get_Dashboard_Detail_Material_Type_Result>();
+            List<USP_Get_Dashboard_Detail_Payment_Term_Result> PTList = new List<USP_Get_Dashboard_Detail_Payment_Term_Result>();
 
             if (type.ToUpper() == "AS")
             {
                 List = BindStarAcqDeal(Search);
+                StartAcqDealListCount = List.Count();
+                StartAcqDealList_LastPageNo = ((StartAcqDealListCount / PageSize) - (StartAcqDealListCount % PageSize == 0 ? 1 : 0)) + 1;
+                List = List.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
+                ViewBag.StartAcqDealList = List;
+                ViewBag.StartAcqDealList_PageNo = PageNo;
+                ViewBag.StartAcqDealList_LastPageNo = StartAcqDealList_LastPageNo;
+                LastPageNo = StartAcqDealList_LastPageNo;
+            }
+            else if (type.ToUpper() == "MT")
+            {
+                MTList = BindMaterialType(Search);
+                StartAcqDealListCount = List.Count();
+                StartAcqDealList_LastPageNo = ((StartAcqDealListCount / PageSize) - (StartAcqDealListCount % PageSize == 0 ? 1 : 0)) + 1;
+                List = List.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
+                ViewBag.StartAcqDealList = List;
+                ViewBag.StartAcqDealList_PageNo = PageNo;
+                ViewBag.StartAcqDealList_LastPageNo = StartAcqDealList_LastPageNo;
+                LastPageNo = StartAcqDealList_LastPageNo;
+            }
+            else if (type.ToUpper() == "PT")
+            {
+                PTList = BindPaymentTerm(Search);
                 StartAcqDealListCount = List.Count();
                 StartAcqDealList_LastPageNo = ((StartAcqDealListCount / PageSize) - (StartAcqDealListCount % PageSize == 0 ? 1 : 0)) + 1;
                 List = List.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
@@ -1200,6 +1376,30 @@ namespace RightsU_Plus.Controllers
                     Html = Html + " <td class=\"amount\">" + String.Format("{0:n}", Obj.Deal_Movie_Cost) + "</td>";
                 }
                 Html = Html + " <td>" + Obj.RightPeriod + "</td>" + "</tr>";
+            }
+
+            foreach (USP_Get_Dashboard_Detail_Material_Type_Result Obj in MTList)
+            {
+                string Material_Medium_Name = Obj.Material_Medium_Name.Length >= 33 ? Obj.Material_Medium_Name.Substring(0, 30) + "..." : Obj.Material_Medium_Name;
+                string Material_Type_Name = Obj.Material_Type_Name.Length >= 33 ? Obj.Material_Type_Name.Substring(0, 30) + "..." : Obj.Material_Type_Name;
+               // string Is_Deal_Right = Obj.Is_Deal_Rights != null ? Obj.Is_Deal_Rights : "Y";
+                string DealUrl = "";
+                if (type.ToUpper() == "SS" || type.ToUpper() == "SE")
+                {
+                    DealUrl = Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = Obj.Deal_Code });
+                }
+                else
+                {
+                    DealUrl = Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = Obj.Deal_Code });
+                }
+               
+                 html_Deal_No = Obj.Agreement_No;
+
+                Html = Html + "<tr>" + "<td><h5>" + html_Deal_No + "</h5></td>"
+                             + "<td>" + "<h5 title='" + Obj.Material_Medium_Name + "'>" + Material_Medium_Name + "</h5></td>"
+                             + "<td><div  title='" + Obj.Material_Type_Name + "'>" + Material_Type_Name + "</div></td>";
+                
+                Html = Html + " <td class=\"amount\">" + String.Format("{0:n}", Obj.Quantity) + "</td>";
             }
 
             return Json(new { Html = Html, PageNo = PageNo, LastPageNo = LastPageNo });

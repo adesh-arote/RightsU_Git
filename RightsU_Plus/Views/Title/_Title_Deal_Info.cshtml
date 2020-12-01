@@ -426,7 +426,7 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="expandable">
+                                <div class="">
                                     @if (item.Country_Name != null && item.Country_Name != "")
                                     {
                                         @Html.Raw(item.Country_Name)
@@ -439,13 +439,14 @@
 
                             </td>
                             <td>
-                              
-                                @if (Deal_No != item.Agreement_No)
-                                {
-                                    <span class="deal_no">
-                                        @if (DealType == "S")
+                                <ul style="list-style: none;">
+                                    <li>
+                                        @if (Deal_No != item.Agreement_No)
                                         {
-                                            <a href="@Url.Action("ButtonEvents", "Syn_List", new
+                                            <span class="deal_no">
+                                                @if (DealType == "S")
+                                                {
+                                                    <a href="@Url.Action("ButtonEvents", "Syn_List", new
                                                             {
                                                                 CommandName = "View",
                                                                 Syn_Deal_Code = @item.Deal_Code,
@@ -458,10 +459,10 @@
                                                                 DealListPageNo = @ViewBag.DealListPageNo,
                                                                 DealListPageSize = @ViewBag.DealListPageSize
                                                             })">@item.Agreement_No</a>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("ButtonEvents", "Acq_List", new
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="@Url.Action("ButtonEvents", "Acq_List", new
                                                             {
                                                                 CommandName = "View",
                                                                 Acq_Deal_Code = @item.Deal_Code,
@@ -474,15 +475,20 @@
                                                                 DealListPageNo = @ViewBag.DealListPageNo,
                                                                 DealListPageSize = @ViewBag.DealListPageSize
                                                             })">@item.Agreement_No</a>
+                                                        }
+                                            </span>
+                                            <span class=""></span>
+                                            if (item.Is_Gift_box_Show == "Y")
+                                            {
+                                                <span class="glyphicon glyphicon-gift"></span>
+                                            }
                                         }
-                                    </span>
-                                    <span class=""></span>
-                                    if (item.Is_Gift_box_Show == "Y")
-                                    {
-                                        <span class="glyphicon glyphicon-gift"></span>
-                                    }
-                                }
-                                <span class="expiry">@item.Expiring_In_Days</span>
+
+                                    </li>
+                                    <li> <span class="expiry" style="margin-top: 3px !important;">@item.Expiring_In_Days</span></li>
+                                </ul>
+                               
+                               
                             </td>
                         </tr>
                         <tr class="@(ClassName+' '+deal_Type_Css)" @*class=@ClassName*@ @*id="@("coll" + outer_counter)" style="display: none;"*@>
@@ -552,7 +558,7 @@
                                     </ul>*@
                             </td>
                             <td>
-                                <div class="expandable">
+                                <div class="">
                                     <strong>@objMessageKey.Subtitling -</strong>
                                     @if (item.Sub_Lang_Name != "")
                                     {
@@ -565,7 +571,7 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="expandable">
+                                <div class="">
                                     <strong>@objMessageKey.Dubbing -</strong>
                                     @if (item.Dub_Lang_Name != "")
                                     {

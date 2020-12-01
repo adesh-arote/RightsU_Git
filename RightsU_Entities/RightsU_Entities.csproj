@@ -435,6 +435,8 @@
     <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Rights_Holdback_Validation_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_List_Runs_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Add_ACQ_Milestone_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Dashboard_Detail_Payment_Term_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Dashboard_Detail_Material_Type_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Udt.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Audit_Log_Report_for_Territory_and_Language_Group_Result.cs" />

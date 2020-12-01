@@ -292,6 +292,18 @@ namespace RightsU_DAL
             return objContext.USP_Get_Dashboard_Detail(dashboardType, searchFor, user_Code, dashboardDays);
         }
 
+        public virtual ObjectResult<USP_Get_Dashboard_Detail_Material_Type_Result> USP_Get_Dashboard_Detail_Material_Type(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Dashboard_Detail_Material_Type(dashboardType, searchFor, user_Code, dashboardDays);
+        }
+
+        public virtual ObjectResult<USP_Get_Dashboard_Detail_Payment_Term_Result> USP_Get_Dashboard_Detail_Payment_Term(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Dashboard_Detail_Payment_Term(dashboardType, searchFor, user_Code, dashboardDays);
+        }
+
         public virtual ObjectResult<string> USP_Get_Title_Language(string title_Codes)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
