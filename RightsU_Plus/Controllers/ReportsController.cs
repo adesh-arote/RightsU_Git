@@ -121,9 +121,6 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-
-
-
         public PartialViewResult BindDealVersionHistoryReportA(string businessUnitcode, string dealCode)
         {
             ReportViewer rptViewer = new ReportViewer();
@@ -131,22 +128,18 @@ namespace RightsU_Plus.Controllers
             {
                 if (dealCode == GlobalParams.ModuleCodeForAcqDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[2];
+                    ReportParameter[] parm = new ReportParameter[3];
                     parm[0] = new ReportParameter("Content_Category", businessUnitcode);
                     parm[1] = new ReportParameter("Deal_Type", dealCode);
-                   // parm[2] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-                    //parm[3] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
-                    //parm[4] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+                    parm[2] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
                     rptViewer = BindReport(parm, "rpt_Deal_WFStatus_Pending");
                 }
                 else if (dealCode == GlobalParams.ModuleCodeForSynDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[2];
+                    ReportParameter[] parm = new ReportParameter[3];
                     parm[0] = new ReportParameter("Content_Category", businessUnitcode);
                     parm[1] = new ReportParameter("Deal_Type", dealCode);
-                   // parm[2] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-                    //parm[3] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
-                    //parm[4] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+                    parm[2] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
                     rptViewer = BindReport(parm, "rpt_Deal_WFStatus_Pending");
                 }
             }

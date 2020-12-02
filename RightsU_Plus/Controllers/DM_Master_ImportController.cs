@@ -140,7 +140,7 @@ namespace RightsU_Plus.Controllers
                 return (int)Session["PageNo"];
             }
             set { Session["PageNo"] = value; }
-        }   
+        }
         public int? DM_Master_Import_Code
         {
             get
@@ -226,7 +226,7 @@ namespace RightsU_Plus.Controllers
                 return (List<RightsU_Entities.USP_List_TitleBulkImport_Result>)Session["lstTitleBulkImport"];
             }
             set { Session["lstTitleBulkImport"] = value; }
-        }     
+        }
         private List<RightsU_Entities.USP_List_MusicTrackBulkImport_Result> lstMusicTrackBulkImport
         {
             get
@@ -435,7 +435,7 @@ namespace RightsU_Plus.Controllers
                                     {
                                         dynamic resultSet;
                                         List<Music_Title_Import_UDT> lst_Title_Import_UDT = new List<Music_Title_Import_UDT>();
-                                        
+
                                         obj_DM_Master_Import.File_Name = PostedFile.FileName;
                                         obj_DM_Master_Import.System_File_Name = PostedFile.FileName;
                                         obj_DM_Master_Import.Upoaded_By = Convert.ToInt32(objLoginUser.Users_Code);
@@ -477,7 +477,7 @@ namespace RightsU_Plus.Controllers
                                                 obj_Title_Import_UDT.Public_Domain = row["Public Domain"].ToString();
                                             }
                                             else
-                                              obj_Title_Import_UDT.Public_Domain = "";
+                                                obj_Title_Import_UDT.Public_Domain = "";
                                             lst_Title_Import_UDT.Add(obj_Title_Import_UDT);
                                         }
 
@@ -529,7 +529,7 @@ namespace RightsU_Plus.Controllers
             return PopulateMusicGrid(Convert.ToString(PageNo), txtpageSize, FilterBy);
             //return PartialView("_MusicTitleImport_List", lstError);
         }
-        public PartialViewResult PopulateMusicGrid(string PgNo = "0", string txtPageSize = "",string FilterBy = "")
+        public PartialViewResult PopulateMusicGrid(string PgNo = "0", string txtPageSize = "", string FilterBy = "")
         {
             TempData["FilterByStatus"] = FilterBy;
             string search = "";
@@ -549,7 +549,7 @@ namespace RightsU_Plus.Controllers
             string orderByCndition = "T.DM_Master_Import_Code desc";
             if (FilterBy == "A")
                 search += " AND DM.File_Type = 'M'";
-            else if(FilterBy == "Q")
+            else if (FilterBy == "Q")
                 search += " AND DM.File_Type = 'M' AND DM.Status IN('I','Q','W')";
             else if (FilterBy == "E")
                 search += " AND DM.File_Type = 'M' AND DM.Status IN('E','T')";
@@ -568,7 +568,7 @@ namespace RightsU_Plus.Controllers
             string recordStatus = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.DM_Master_Import_Code == dealCode).Select(s => s.Status).FirstOrDefault();
             double TotalCount = new RightsU_BLL.DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode).Count();
             double SuccessCount = new RightsU_BLL.DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "C").Count();
-            double ConflictCount = new RightsU_BLL.DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "N"  && (x.Record_Status == "R")).Count();
+            double ConflictCount = new RightsU_BLL.DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "N" && (x.Record_Status == "R")).Count();
             double IgnoreCount = new RightsU_BLL.DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "Y").Count();
             double WaitingCount = new RightsU_BLL.DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "N" && x.Is_Ignore != "Y").Count();
 
@@ -742,20 +742,20 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindMappingPopUp(string masterImportCode = "0", string FileType = "", int Code = 0)
         {
-            int RecordCount = 0;        
+            int RecordCount = 0;
             ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
             lstResolveConflict = new USP_Service(objLoginEntity.ConnectionStringName).USPListResolveConflict(masterImportCode, Code, FileType, 1, 10, objRecordCount).ToList();
             RecordCount = Convert.ToInt32(objRecordCount.Value);
-            ViewBag.RecordCount = RecordCount;  
+            ViewBag.RecordCount = RecordCount;
             ViewBag.DM_Master_Import_Code = masterImportCode;
             ViewBag.FileType = FileType;
-            ViewBag.Code = Code;          
+            ViewBag.Code = Code;
             return PartialView("~/Views/DM_Master_Import/_DM_Resolve_Conflict_Popup.cshtml", lstResolveConflict);
         }
         public PartialViewResult BindMusicView(int DM_Master_Import_Code, string fileType = "")
-        {           
+        {
             ViewBag.DM_Master_Import_Code = DM_Master_Import_Code;
-            ViewBag.FileType = fileType;  
+            ViewBag.FileType = fileType;
             return PartialView("~/Views/DM_Master_Import/_DM_View_List.cshtml", lstMusicTrackBulkImport);
         }
         public PartialViewResult BindMusicListView(int DM_Import_Master_Code, string SearchCriteria = "", int pageNo = 0, int txtpagesize = 10, string fileType = "", string Error = "", string IsShowAll = "")
@@ -767,29 +767,29 @@ namespace RightsU_Plus.Controllers
             string Status = "";
             objPg_Properties.MusicTrack_Search = objPg_Properties.MusicTrack_Search.Replace('﹐', ',');
             ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            if (Error == "Y" && objPg_Properties.Status_Search == "")       
-                Status = "E";             
+            if (Error == "Y" && objPg_Properties.Status_Search == "")
+                Status = "E";
             else if (Error == "N" && objPg_Properties.Status_Search == "")
-                Status = "C,R,P,N";        
+                Status = "C,R,P,N";
             else
                 Status = objPg_Properties.Status_Search;
             objPg_Properties.chkStatus_Search = Status;
             lstMusicTrackBulkImport = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_MusicTrackBulkImport(DM_Import_Master_Code, SearchCriteria, objPg_Properties.MusicTrack_Search, objPg_Properties.MovieAlbum_Search, objPg_Properties.MusicLabel_Search, objPg_Properties.TitleLanguage_Search, objPg_Properties.StarCast_Search, objPg_Properties.Singer_Search, Status, objPg_Properties.ErrorMsg_Search, objPg_Properties.MusicAlbumType_Search, objPg_Properties.Genres_Search, pgNo, txtpagesize, objRecordCount).ToList();
-            RecordCount = Convert.ToInt32(objRecordCount.Value);            
+            RecordCount = Convert.ToInt32(objRecordCount.Value);
             ViewBag.FileType = fileType;
             ViewBag.DM_Master_Import_Code = DM_Import_Master_Code;
             objDMMusic = null;
-            objDMMusicService = null;            
-            ViewBag.RecordCount = RecordCount;       
-            ViewBag.PageNo = pgNo;          
-            ViewBag.txtpageSize = txtpagesize;         
-            TempData["DM_Import_Master_CodeMT"] = DM_Import_Master_Code;       
+            objDMMusicService = null;
+            ViewBag.RecordCount = RecordCount;
+            ViewBag.PageNo = pgNo;
+            ViewBag.txtpageSize = txtpagesize;
+            TempData["DM_Import_Master_CodeMT"] = DM_Import_Master_Code;
             return PartialView("~/Views/DM_Master_Import/_Music_View_List.cshtml", lstMusicTrackBulkImport);
         }
         public PartialViewResult BindView(int DM_Master_Import_Code, string fileType = "")
-        {       
+        {
             ViewBag.DM_Master_Import_Code = DM_Master_Import_Code;
-            ViewBag.FileType = fileType;           
+            ViewBag.FileType = fileType;
             return PartialView("~/Views/DM_Master_Import/_DM_Title_View_List.cshtml");
         }
         public PartialViewResult BindTitleView(int DM_Import_Master_Code, string SearchCriteria = "", int pageNo = 0, int txtpagesize = 10, string fileType = "", string IsShowAll = "", string Error = "")
@@ -804,22 +804,22 @@ namespace RightsU_Plus.Controllers
             if (Error == "Y" && objPage_Properties.Status_Search == "")
                 Status = "E";
             else if (Error == "N" && objPage_Properties.Status_Search == "")
-                Status = "C,P,R,N";               
+                Status = "C,P,R,N";
             else
                 Status = objPage_Properties.Status_Search;
-            objPage_Properties.chkStatus_Search = Status;          
+            objPage_Properties.chkStatus_Search = Status;
             lstTitleBulkImport = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_TitleBulkImport(DM_Import_Master_Code, objPage_Properties.TitleName_Search, objPage_Properties.TitleType_Search, objPage_Properties.TitleLanguage_Search, objPage_Properties.KeyStarCast_Search, Status, objPage_Properties.ErrorMsg_Search, objPage_Properties.Director_Search, objPage_Properties.MusicLabel_Search, SearchCriteria, pgNo, txtpagesize, objRecordCount).ToList();
-            RecordCount = Convert.ToInt32(objRecordCount.Value);       
+            RecordCount = Convert.ToInt32(objRecordCount.Value);
             ViewBag.FileType = fileType;
             ViewBag.DM_Master_Import_Code = DM_Import_Master_Code;
             objDMTitle = null;
             objDMTitleService = null;
             ViewBag.RecordCount = RecordCount;
-            ViewBag.PageNo = pgNo;         
+            ViewBag.PageNo = pgNo;
             ViewBag.txtpageSize = txtpagesize;
             TempData["DM_Import_Master_CodeT"] = DM_Import_Master_Code;
             return PartialView("~/Views/DM_Master_Import/_Title_View_List.cshtml", lstTitleBulkImport);
-        }  
+        }
         public JsonResult GetTitleName(string Searched_User)
         {
             int DM_Import_Master_Code = 0;
@@ -840,7 +840,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult GetMusicTitleName(string Searched_User)
         {
-            int DM_Import_Master_Code = 0;           
+            int DM_Import_Master_Code = 0;
             if (TempData["DM_Import_Master_CodeMT"] != null)
                 DM_Import_Master_Code = Convert.ToInt32(TempData["DM_Import_Master_CodeMT"]);
             TempData.Keep("DM_Import_Master_CodeMT");
@@ -851,7 +851,7 @@ namespace RightsU_Plus.Controllers
             string searchString = terms.LastOrDefault().ToString().Trim();
 
             var result = new DM_Music_Title_Service(objLoginEntity.ConnectionStringName)
-                          .SearchFor(x =>x.DM_Master_Import_Code == DM_Import_Master_Code && x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper()))
+                          .SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code && x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper()))
                           .Select(R => new { Mapping_Name = R.Music_Title_Name, Mapping_Code = R.Music_Title_Name }).Distinct().ToList();
 
             return Json(result);
@@ -901,7 +901,7 @@ namespace RightsU_Plus.Controllers
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, ViewBag.RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if(MappedData == "U")
+                if (MappedData == "U")
                     lst = lstDMLog.Where(w => w.Master_Type == currentTabName).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else
                     lst = lstSystemDMLog.Where(w => w.Master_Type == currentTabName).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
@@ -991,7 +991,7 @@ namespace RightsU_Plus.Controllers
                     result = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Value.Contains(keyword.ToUpper()) && x.Columns_Code == Program_Category_Code).Distinct()
                                 .Select(R => new { Mapping_Name = R.Columns_Value, Mapping_Code = R.Columns_Value_Code }).Take(100).ToList();
                 }
-           }
+            }
             return Json(result);
         }
         public ActionResult ValidateTalent(List<RightsU_Entities.DM_Master_Log> lst)
@@ -1098,8 +1098,8 @@ namespace RightsU_Plus.Controllers
                         //}
                         //else
                         //{
-                            objDMLogT.Mapped_Name = objDMTemp.Mapped_Name;
-                            objDMLogT.Mapped_Code = objDMTemp.Mapped_Code;
+                        objDMLogT.Mapped_Name = objDMTemp.Mapped_Name;
+                        objDMLogT.Mapped_Code = objDMTemp.Mapped_Code;
                         //}
                     }
                     DM_Import_UDT objDMUDT = lst_DM_Import_UDT.Where(w => w.Key == objDMTemp.DM_Master_Log_Code.ToString()).FirstOrDefault();
@@ -1113,7 +1113,7 @@ namespace RightsU_Plus.Controllers
                     {
                         objDMUDT.Key = objDMTemp.DM_Master_Log_Code.ToString();
                         objDMUDT.DM_Master_Type = objDMLogT.Master_Type;
-                        objDMUDT.value = objDMTemp.Mapped_Code >0 ? objDMTemp.Mapped_Code.ToString(): objDMTemp.System_Mapped_Code.ToString();
+                        objDMUDT.value = objDMTemp.Mapped_Code > 0 ? objDMTemp.Mapped_Code.ToString() : objDMTemp.System_Mapped_Code.ToString();
                     }
                     else
                     {
@@ -1124,7 +1124,7 @@ namespace RightsU_Plus.Controllers
                 if (mappedCount == 0)
                     mappedCount = 1;
 
-            }   
+            }
             var obj = new
             {
                 Status = status,
@@ -1200,6 +1200,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+        /*
         public PartialViewResult UploadTitles(HttpPostedFileBase InputFile, string txtpageSize, string FilterBy)
         {
             string Is_allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
@@ -1218,7 +1219,7 @@ namespace RightsU_Plus.Controllers
                 string ext = System.IO.Path.GetExtension(PostedFile.FileName);
                 if (ext == ".xlsx" || ext == ".xls")
                 {
-                    /*Read Excel File*/
+                    //Read Excel File
                     ExcelReader objExcelReader = new ExcelReader();
                     DataSet ds = new DataSet();
 
@@ -1242,7 +1243,7 @@ namespace RightsU_Plus.Controllers
                             OleDbCommand cmdExcel = new OleDbCommand();
                             OleDbDataAdapter oda = new OleDbDataAdapter();
                             cmdExcel.Connection = cn;
-                            //string sheetName = "Sheet1$";
+                            sheetName = "Sheet1$";
 
                             OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "]", cn);
                             da.Fill(ds);
@@ -1290,7 +1291,7 @@ namespace RightsU_Plus.Controllers
                                     }
                                 }
                             }
-                            /*Data Insertion*/
+                            //Data Insertion
                             if (Is_allow_Program_Category == "Y")
                             {
                                 if (ds.Tables[0].Columns[0].ColumnName != "Sr. No" || ds.Tables[0].Columns[1].ColumnName != "Title"
@@ -1422,6 +1423,187 @@ namespace RightsU_Plus.Controllers
             //ViewBag.status = Acq_Status_HistoryController;
             return PopulateTitleGrid(Convert.ToString(PageNo), txtpageSize, FilterBy);
         }
+        */
+
+        public PartialViewResult UploadTitles(HttpPostedFileBase InputFile, string txtpageSize, string FilterBy)
+        {
+            string Is_allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
+            string Modified_Data = "N";
+            string message = "";
+            string status = "";
+            int pageSize = 10;
+            int PageNo = 0;
+            string sheetName = "Title$";
+            List<USP_DM_Title_PI> lstRE = new List<USP_DM_Title_PI>();
+            DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
+            if (System.Web.HttpContext.Current.Request.Files.AllKeys.Any())
+            {
+                var PostedFile = InputFile;
+                string fullPath = Server.MapPath("~") + "\\" + ConfigurationManager.AppSettings["UploadFilePath"];
+                string ext = System.IO.Path.GetExtension(PostedFile.FileName);
+                if (ext == ".xlsx" || ext == ".xls")
+                {
+                    /*Read Excel File*/
+                    ExcelReader objExcelReader = new ExcelReader();
+                    DataSet ds = new DataSet();
+
+                    try
+                    {
+                        string strActualFileNameWithDate;
+                        string fileExtension = "";
+                        string strFileName = System.IO.Path.GetFileName(PostedFile.FileName);
+                        fileExtension = System.IO.Path.GetExtension(PostedFile.FileName);
+                        strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
+                        string fullpathname = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadFilePath"] + strActualFileNameWithDate);
+                        PostedFile.SaveAs(fullpathname);
+                        StringBuilder sb1 = new StringBuilder();
+                        string strConn = string.Empty;
+                        bool hasHeaders = false;
+                        string HDR = hasHeaders ? "Yes" : "No";
+                        try
+                        {
+                            OleDbConnection cn = new OleDbConnection();
+                            cn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fullpathname + ";Extended Properties='Excel 12.0;HDR=No;IMEX=1'");
+                            OleDbCommand cmdExcel = new OleDbCommand();
+                            OleDbDataAdapter oda = new OleDbDataAdapter();
+                            cmdExcel.Connection = cn;
+                            sheetName = "Sheet1$";
+
+                            OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "]", cn);
+                            da.Fill(ds);
+                        }
+                        catch (Exception ex)
+                        {
+                            message = ex.ToString();
+                            status = "E";
+                        }
+                        finally
+                        {
+                            //Always delete uploaded excel file from folder.
+                            System.IO.File.Delete(fullpathname.Trim());
+                        }
+                        if (status != "E")
+                        {
+                            var count = ds.Tables.Count;
+                            if (count == 0)
+                            {
+                                message = "'" + sheetName.Trim('$') + "' " + " Sheet name should not be existing in uploaded excel";
+                                status = "E";
+                            }
+                        }
+                        if (ds.Tables.Count > 0)
+                        {
+                            if (ds.Tables[0].Rows.Count > 0)
+                            {
+                                dynamic resultSet;
+                                obj_DM_Master_Import.File_Name = PostedFile.FileName;
+                                obj_DM_Master_Import.System_File_Name = PostedFile.FileName;
+                                obj_DM_Master_Import.Upoaded_By = objLoginUser.Users_Code;
+                                obj_DM_Master_Import.Uploaded_Date = DateTime.Now;
+                                obj_DM_Master_Import.Action_By = objLoginUser.Users_Code;
+                                obj_DM_Master_Import.Action_On = DateTime.Now;
+                                obj_DM_Master_Import.Status = "N";
+                                obj_DM_Master_Import.File_Type = "T";
+                                obj_DM_Master_Import.EntityState = State.Added;
+                                lst_DM_Master_Import.Add(obj_DM_Master_Import);
+                                //objDMService.Save(obj_DM_Master_Import, out resultSet);
+
+
+                                List<Title_Import_Utility_UDT> lst_Title_Import_Utility_UDT = new List<Title_Import_Utility_UDT>();
+                                Title_Import_Utility_UDT obj_Title_Import_Utility_UDT = new Title_Import_Utility_UDT();
+                                DataRow HeaderRow = ds.Tables[0].Rows[0];
+
+                                int HRCount = 0;
+                                Type type = typeof(Title_Import_Utility_UDT);
+                                PropertyInfo[] properties = type.GetProperties();
+
+                                foreach (PropertyInfo property in properties)
+                                {
+                                    if (HRCount == HeaderRow.ItemArray.Count())
+                                        break;
+
+                                    property.SetValue(obj_Title_Import_Utility_UDT, HeaderRow.ItemArray.ElementAt(HRCount));
+                                    HRCount++;
+                                }
+                                lst_Title_Import_Utility_UDT.Add(obj_Title_Import_Utility_UDT);
+                                var a = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "HV", objLoginUser.Users_Code).ToList();
+
+                                //if header is proper den 
+
+                                lst_Title_Import_Utility_UDT = new List<Title_Import_Utility_UDT>();
+
+                                foreach (DataRow row in ds.Tables[0].Rows)
+                                {
+                                    HRCount = 0;
+                                    obj_Title_Import_Utility_UDT = new Title_Import_Utility_UDT();
+
+                                    foreach (PropertyInfo property in properties)
+                                    {
+                                        if (HRCount == row.ItemArray.Count())
+                                            break;
+
+                                        if (row.ItemArray.ElementAt(HRCount) is DBNull)                                 
+                                            property.SetValue(obj_Title_Import_Utility_UDT, "");
+                                        else
+                                            property.SetValue(obj_Title_Import_Utility_UDT, row.ItemArray.ElementAt(HRCount));
+
+                                        HRCount++;
+                                    }
+                                    lst_Title_Import_Utility_UDT.Add(obj_Title_Import_Utility_UDT);
+                                }
+
+                                var b = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "INS", objLoginUser.Users_Code).ToList();
+
+                                List<USP_DM_Title_PI> lstshow = new List<USP_DM_Title_PI>();
+                                if (lstRE.Count == 1)
+                                {
+                                    message = "File uploaded successfully";
+                                    status = "S";
+                                }
+                                else
+                                {
+                                    //foreach (USP_DM_Title_PI item in lstRE)
+                                    //    if (item.Error_Messages != "" && item.Error_Messages != null)
+                                    //        lstshow.Add(item);
+                                    //lstRE = lstshow;
+                                }
+                                //else
+                                //    return PartialView("_TitleImport_List", lstRE);
+                            }
+                            else
+                            {
+                                message = "Please fill the data in the excel file";
+                                status = "E";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        message = ex.Message;
+                        status = "E";
+
+                    }
+                }
+                else
+                {
+                    message = "Please select excel file...";
+                    status = "E";
+                }
+
+            }
+            else
+            {
+                message = "Please select excel file...";
+                status = "E";
+            }
+            //string File_Type = obj_DM_Master_Import.File_Type;
+            ViewBag.File_Type = obj_DM_Master_Import.File_Type;
+            ViewBag.Message = message;
+            ViewBag.status = status;
+            //ViewBag.status = Acq_Status_HistoryController;
+            return PopulateTitleGrid(Convert.ToString(PageNo), txtpageSize, FilterBy);
+        }
+
         public PartialViewResult PopulateTitleGrid(string PgNo = "0", string txtPageSize = "", string FilterBy = "")
         {
             TempData["FilterByStatusTitle"] = FilterBy;
@@ -1515,7 +1697,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult BindAdvanced_Search_Controls()
         {
             Dictionary<string, object> objJson = new Dictionary<string, object>();
-          
+
             int DM_Import_Master_Code = 0;
             string ErrorMsg = "";
             if (TempData["DM_Import_Master_CodeT"] != null)
@@ -1528,7 +1710,7 @@ namespace RightsU_Plus.Controllers
                .Select(i => new { Display_Value = i.Original_Language__Hindi_, Display_Text = i.Original_Language__Hindi_ }).Distinct().ToList(), "Display_Value", "Display_Text");
             var lstStarCast = lstDMTitle.Where(x => x.Key_Star_Cast != "" && x.Key_Star_Cast != null).Select(x => x.Key_Star_Cast).Distinct().ToArray();
             string StarCast = String.Join(",", lstStarCast);
-            string[] lstTemp = StarCast.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries); 
+            string[] lstTemp = StarCast.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             MultiSelectList lstTStarCast = new MultiSelectList(lstTemp.Select(i => new { Display_Value = i, Display_Text = i }).Distinct().ToList(), "Display_Value", "Display_Text");
             var lstDirector = lstDMTitle.Where(x => x.Director_Name != null && x.Director_Name != "").Select(x => x.Director_Name).Distinct().ToArray();
             string Director = String.Join(",", lstDirector);
@@ -1543,15 +1725,15 @@ namespace RightsU_Plus.Controllers
             {
                 ErrorMsg += Msg;
             }
-            string[] lstErrMsg = ErrorMsg.Split(new char[] { '~' }, StringSplitOptions.RemoveEmptyEntries); 
+            string[] lstErrMsg = ErrorMsg.Split(new char[] { '~' }, StringSplitOptions.RemoveEmptyEntries);
             MultiSelectList lstErrorMsg = new MultiSelectList(lstErrMsg.Select(i => new { Display_Value = i, Display_Text = i }),
                 "Display_Value", "Display_Text");
             List<SelectListItem> lstStatus = new List<SelectListItem>();
-            lstStatus.Add(new SelectListItem{Text = "Ignore", Value = "Y"});
-            lstStatus.Add(new SelectListItem{Text = "Success", Value = "C"});
-            lstStatus.Add(new SelectListItem{Text = "Error", Value = "E" });
-            lstStatus.Add(new SelectListItem{Text = "No Error", Value = "N" });
-            lstStatus.Add(new SelectListItem{Text = "Proceed", Value = "P" });
+            lstStatus.Add(new SelectListItem { Text = "Ignore", Value = "Y" });
+            lstStatus.Add(new SelectListItem { Text = "Success", Value = "C" });
+            lstStatus.Add(new SelectListItem { Text = "Error", Value = "E" });
+            lstStatus.Add(new SelectListItem { Text = "No Error", Value = "N" });
+            lstStatus.Add(new SelectListItem { Text = "Proceed", Value = "P" });
             lstStatus.Add(new SelectListItem { Text = "Resolve Conflict", Value = "R" });
             lstStatus.Insert(0, new SelectListItem() { Value = "", Text = "Please Select" });
 
@@ -1602,26 +1784,26 @@ namespace RightsU_Plus.Controllers
                 objPage_Properties.ErrorMsg_Search = objPage_Properties.ErrorMsg_Search;
             else
                 objPage_Properties.ErrorMsg_Search = "";
-         
+
             objJson.Add("objPage_Properties", objPage_Properties);
             return Json(objJson);
         }
         public JsonResult BindAdvanced_Search_Controls_MusicTrack()
         {
             Dictionary<string, object> objJson = new Dictionary<string, object>();
-            int DM_Import_Master_Code = 0; 
+            int DM_Import_Master_Code = 0;
             string ErrorMsg = "";
             if (TempData["DM_Import_Master_CodeMT"] != null)
                 DM_Import_Master_Code = Convert.ToInt32(TempData["DM_Import_Master_CodeMT"]);
             TempData.Keep("DM_Import_Master_CodeMT");
-            List<RightsU_Entities.DM_Music_Title> lstMusicTitle = new DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>  x.DM_Master_Import_Code == DM_Import_Master_Code ).ToList();
+            List<RightsU_Entities.DM_Music_Title> lstMusicTitle = new DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code).ToList();
             List<SelectListItem> lstMusicTrack = new SelectList(lstMusicTitle, "Music_Title_Name", "Music_Title_Name").ToList();
-            List<SelectListItem> lstMovieAlbum = new SelectList(lstMusicTitle.Where(x=>x.Movie_Album != "").Select(i => new { Display_Value = i.Movie_Album, Display_Text = i.Movie_Album }).Distinct().ToList(), "Display_Value", "Display_Text").ToList();
-            List<SelectListItem> lstMusicLabel = new SelectList(lstMusicTitle.Where(x=>x.Music_Label != "").Select(i => new { Display_Value = i.Music_Label, Display_Text = i.Music_Label }).Distinct().ToList(), "Display_Value", "Display_Text").ToList();
-            string[] lstTemp = String.Join(",", lstMusicTitle.Where(x => x.Singers != "" && x.Singers != null).Select(x => x.Singers).Distinct().ToArray()).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries); 
+            List<SelectListItem> lstMovieAlbum = new SelectList(lstMusicTitle.Where(x => x.Movie_Album != "").Select(i => new { Display_Value = i.Movie_Album, Display_Text = i.Movie_Album }).Distinct().ToList(), "Display_Value", "Display_Text").ToList();
+            List<SelectListItem> lstMusicLabel = new SelectList(lstMusicTitle.Where(x => x.Music_Label != "").Select(i => new { Display_Value = i.Music_Label, Display_Text = i.Music_Label }).Distinct().ToList(), "Display_Value", "Display_Text").ToList();
+            string[] lstTemp = String.Join(",", lstMusicTitle.Where(x => x.Singers != "" && x.Singers != null).Select(x => x.Singers).Distinct().ToArray()).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             MultiSelectList lstSingers = new MultiSelectList(lstTemp.Select(i => new { Display_Value = i, Display_Text = i }).Distinct().ToList(),
              "Display_Value", "Display_Text");
-            List<SelectListItem> lstGenres = new SelectList(lstMusicTitle.Where(x=>x.Genres != "").Select(i => new { Display_Value = i.Genres, Display_Text = i.Genres }).Distinct().ToList(), "Display_Value", "Display_Text", 0).ToList();
+            List<SelectListItem> lstGenres = new SelectList(lstMusicTitle.Where(x => x.Genres != "").Select(i => new { Display_Value = i.Genres, Display_Text = i.Genres }).Distinct().ToList(), "Display_Value", "Display_Text", 0).ToList();
             List<RightsU_Entities.DM_Music_Title> lstMAType = new DM_Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Type != null && x.DM_Master_Import_Code == DM_Import_Master_Code && x.Music_Album_Type != "").ToList();
             List<SelectListItem> lstMusicAlbumType = new SelectList(lstMAType.Select(i => new { Display_Value = i.Music_Album_Type, Display_Text = i.Music_Album_Type }).Distinct().ToList(), "Display_Value", "Display_Text", 0).ToList();
             lstMusicAlbumType.Insert(0, new SelectListItem() { Value = "", Text = "Please Select" });
@@ -1708,7 +1890,7 @@ namespace RightsU_Plus.Controllers
                 objPg_Properties.Status_Search = objPg_Properties.Status_Search;
             else
                 objPg_Properties.Status_Search = "";
-        
+
             objJson.Add("objPg_Properties", objPg_Properties);
             return Json(objJson);
         }
@@ -1749,7 +1931,8 @@ namespace RightsU_Plus.Controllers
             objPg_Properties.MusicAlbumType_Search = "";
             objPg_Properties.ErrorMsg_Search = "";
         }
-        public void ClearAllAdvanceSearchT(){
+        public void ClearAllAdvanceSearchT()
+        {
             objPage_Properties.TitleName_Search = "";
             objPage_Properties.TitleType_Search = "";
             objPage_Properties.TitleLanguage_Search = "";
@@ -1761,7 +1944,7 @@ namespace RightsU_Plus.Controllers
         }
         public void ExportToExcel(int DM_Import_Master_Code = 0, string FileType = "", string SearchCriteria = "")
         {
-            ReportViewer1 = new ReportViewer();        
+            ReportViewer1 = new ReportViewer();
             string extension;
             string encoding;
             string mimeType;
@@ -1769,20 +1952,20 @@ namespace RightsU_Plus.Controllers
             Warning[] warnings;
             string sql = "";
             ReportParameter[] parm = new ReportParameter[4];
-                  
+
             if (FileType == "M")
             {
-                 string searchMTString = objPg_Properties.MusicTrack_Search.Replace(",","','");
-                 string searchMATString = objPg_Properties.MusicAlbumType_Search.Replace(",","','");
-                 string searchTLString = objPg_Properties.TitleLanguage_Search.Replace(",", "','");
-                 string searchMAString = objPg_Properties.MovieAlbum_Search.Replace(",", "','");
-                 string searchSingersString = objPg_Properties.Singer_Search.Replace(",", "','");
-                 string searchGenreString = objPg_Properties.Genres_Search.Replace(",", "','");
-                 string searchStarCastString = objPg_Properties.Status_Search.Replace(",", "','");
-                 string searchStatusString = objPg_Properties.Status_Search.Replace(",", "','");
-                 string searchErrorMsgString = objPg_Properties.ErrorMsg_Search.Replace(",", "','");
-                 string searchMLString = objPg_Properties.MusicLabel_Search.Replace(",", "','");
-                 string searchChkStatusString = objPg_Properties.chkStatus_Search.Replace(",", "','");
+                string searchMTString = objPg_Properties.MusicTrack_Search.Replace(",", "','");
+                string searchMATString = objPg_Properties.MusicAlbumType_Search.Replace(",", "','");
+                string searchTLString = objPg_Properties.TitleLanguage_Search.Replace(",", "','");
+                string searchMAString = objPg_Properties.MovieAlbum_Search.Replace(",", "','");
+                string searchSingersString = objPg_Properties.Singer_Search.Replace(",", "','");
+                string searchGenreString = objPg_Properties.Genres_Search.Replace(",", "','");
+                string searchStarCastString = objPg_Properties.Status_Search.Replace(",", "','");
+                string searchStatusString = objPg_Properties.Status_Search.Replace(",", "','");
+                string searchErrorMsgString = objPg_Properties.ErrorMsg_Search.Replace(",", "','");
+                string searchMLString = objPg_Properties.MusicLabel_Search.Replace(",", "','");
+                string searchChkStatusString = objPg_Properties.chkStatus_Search.Replace(",", "','");
 
                 if (objPg_Properties.MusicTrack_Search != "")
                     sql += " AND [Music_Title_Name] IN(" + "'" + searchMTString + "')";
@@ -1801,7 +1984,7 @@ namespace RightsU_Plus.Controllers
                 if (objPg_Properties.Status_Search != "" && objPg_Properties.Status_Search == "Y")
                     sql += " AND [Is_Ignore] =" + "'" + searchStatusString + "'";
                 if (objPg_Properties.chkStatus_Search != "" && objPg_Properties.chkStatus_Search != "Y")
-                    sql += " AND [Record_Status] IN(" + "'" + searchChkStatusString + "')";               
+                    sql += " AND [Record_Status] IN(" + "'" + searchChkStatusString + "')";
                 if (objPg_Properties.ErrorMsg_Search != "")
                     sql += " AND  TEM.ErrorMessage IN (" + "'" + searchErrorMsgString + "')";
                 if (objPg_Properties.MusicLabel_Search != "")
@@ -1820,20 +2003,20 @@ namespace RightsU_Plus.Controllers
                 string searchTChkStatusString = objPage_Properties.chkStatus_Search.Replace(",", "','");
                 string searchMusicLabel = objPage_Properties.MusicLabel_Search.Replace(",", "','");
 
-                if(objPage_Properties.TitleName_Search != "")
+                if (objPage_Properties.TitleName_Search != "")
                     sql += " AND [Original Title (Tanil/Telugu)] IN(" + "'" + SearchTitleName + "')";
-                if(objPage_Properties.TitleType_Search != "")
+                if (objPage_Properties.TitleType_Search != "")
                     sql += " AND [Title Type] IN(" + "'" + SearchTitleType + "')";
-                if(objPage_Properties.TitleLanguage_Search != "")
+                if (objPage_Properties.TitleLanguage_Search != "")
                     sql += " AND [Original Language (Hindi)] IN(" + "'" + searchTLString + "')";
                 if (objPage_Properties.KeyStarCast_Search != "")
                     sql += " AND TKST.StarCast IN(" + "'" + searchStarCast + "')";
-                if(objPage_Properties.Status_Search != "" && objPage_Properties.Status_Search != "Y")
+                if (objPage_Properties.Status_Search != "" && objPage_Properties.Status_Search != "Y")
                     sql += " AND [Record_Status] IN(" + "'" + searchStatus + "')";
                 if (objPage_Properties.Status_Search != "" && objPage_Properties.Status_Search == "Y")
                     sql += " AND [Is_Ignore] =" + "'" + searchStatus + "'";
                 if (objPage_Properties.chkStatus_Search != "" && objPage_Properties.chkStatus_Search != "Y")
-                    sql += " AND [Record_Status] IN(" + "'" + searchTChkStatusString + "')";               
+                    sql += " AND [Record_Status] IN(" + "'" + searchTChkStatusString + "')";
                 if (objPage_Properties.ErrorMsg_Search != "")
                     sql += " AND TCEM.ErrorMessage  IN(" + "'" + searchErrorMsg + "')";
                 if (objPage_Properties.Director_Search != "")
@@ -1841,7 +2024,7 @@ namespace RightsU_Plus.Controllers
                 if (objPage_Properties.MusicLabel_Search != "")
                     sql += " AND TML.MusicLabel  IN(" + "'" + searchMusicLabel + "')";
             }
-         
+
             parm[0] = new ReportParameter("DM_Master_Import_Code", Convert.ToString(DM_Import_Master_Code));
             parm[1] = new ReportParameter("SearchCriteria", SearchCriteria);
             parm[2] = new ReportParameter("File_Type", FileType);
@@ -1858,7 +2041,7 @@ namespace RightsU_Plus.Controllers
             Byte[] buffer = ReportViewer1.ServerReport.Render("Excel", null, out extension, out encoding, out mimeType, out streams, out warnings);
             Response.Clear();
             Response.ContentType = "application/excel";
-            if(FileType == "T")
+            if (FileType == "T")
                 Response.AddHeader("Content-disposition", "filename=TitleDetails.xls");
             else
                 Response.AddHeader("Content-disposition", "filename=MusicTitleDetails.xls");
@@ -1930,7 +2113,7 @@ namespace RightsU_Plus.Controllers
             PropertyInfo propertyInfo = this.GetType().GetProperty(propertyName);
             propertyInfo.SetValue(this, Convert.ChangeType(value, propertyInfo.PropertyType), null);
 
-        }       
+        }
     }
     public class TitleBulkImportSearch
     {
@@ -1958,5 +2141,5 @@ namespace RightsU_Plus.Controllers
         public string chkStatus_Search { get; set; }
         public string ErrorMsg_Search { get; set; }
     }
-  
+
 }

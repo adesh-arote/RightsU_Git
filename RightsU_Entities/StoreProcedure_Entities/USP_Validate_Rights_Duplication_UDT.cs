@@ -924,7 +924,7 @@ namespace RightsU_Entities
     {
         [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Rights_Bulk_Update")]
         public List<Rights_Bulk_Update_UDT> Rights_Bulk_Update_UDT { get; set; }
-       
+
         public int Rights_Code { get; set; }
         public string Title_Name { get; set; }
         public string Platform_Name { get; set; }
@@ -1524,6 +1524,124 @@ namespace RightsU_Entities
 
         [StoredProcedureParameter(SqlDbType.Int, ParameterName = "UserCode")]
         public int UserCode { get; set; }
+    }
+
+    [UserDefinedTableType("Title_Import_Utility")]
+    public class Title_Import_Utility_UDT
+    {
+        [UserDefinedTableTypeColumn(1)] public string Col1 { get; set; }
+        [UserDefinedTableTypeColumn(2)] public string Col2 { get; set; }
+        [UserDefinedTableTypeColumn(3)] public string Col3 { get; set; }
+        [UserDefinedTableTypeColumn(4)] public string Col4 { get; set; }
+        [UserDefinedTableTypeColumn(5)] public string Col5 { get; set; }
+        [UserDefinedTableTypeColumn(6)] public string Col6 { get; set; }
+        [UserDefinedTableTypeColumn(7)] public string Col7 { get; set; }
+        [UserDefinedTableTypeColumn(8)] public string Col8 { get; set; }
+        [UserDefinedTableTypeColumn(9)] public string Col9 { get; set; }
+        [UserDefinedTableTypeColumn(10)] public string Col10 { get; set; }
+        [UserDefinedTableTypeColumn(11)] public string Col11 { get; set; }
+        [UserDefinedTableTypeColumn(12)] public string Col12 { get; set; }
+        [UserDefinedTableTypeColumn(13)] public string Col13 { get; set; }
+        [UserDefinedTableTypeColumn(14)] public string Col14 { get; set; }
+        [UserDefinedTableTypeColumn(15)] public string Col15 { get; set; }
+        [UserDefinedTableTypeColumn(16)] public string Col16 { get; set; }
+        [UserDefinedTableTypeColumn(17)] public string Col17 { get; set; }
+        [UserDefinedTableTypeColumn(18)] public string Col18 { get; set; }
+        [UserDefinedTableTypeColumn(19)] public string Col19 { get; set; }
+        [UserDefinedTableTypeColumn(20)] public string Col20 { get; set; }
+        [UserDefinedTableTypeColumn(21)] public string Col21 { get; set; }
+        [UserDefinedTableTypeColumn(22)] public string Col22 { get; set; }
+        [UserDefinedTableTypeColumn(23)] public string Col23 { get; set; }
+        [UserDefinedTableTypeColumn(24)] public string Col24 { get; set; }
+        [UserDefinedTableTypeColumn(25)] public string Col25 { get; set; }
+        [UserDefinedTableTypeColumn(26)] public string Col26 { get; set; }
+        [UserDefinedTableTypeColumn(27)] public string Col27 { get; set; }
+        [UserDefinedTableTypeColumn(28)] public string Col28 { get; set; }
+        [UserDefinedTableTypeColumn(29)] public string Col29 { get; set; }
+        [UserDefinedTableTypeColumn(30)] public string Col30 { get; set; }
+        [UserDefinedTableTypeColumn(31)] public string Col31 { get; set; }
+        [UserDefinedTableTypeColumn(32)] public string Col32 { get; set; }
+        [UserDefinedTableTypeColumn(33)] public string Col33 { get; set; }
+        [UserDefinedTableTypeColumn(34)] public string Col34 { get; set; }
+        [UserDefinedTableTypeColumn(35)] public string Col35 { get; set; }
+        [UserDefinedTableTypeColumn(36)] public string Col36 { get; set; }
+        [UserDefinedTableTypeColumn(37)] public string Col37 { get; set; }
+        [UserDefinedTableTypeColumn(38)] public string Col38 { get; set; }
+        [UserDefinedTableTypeColumn(39)] public string Col39 { get; set; }
+        [UserDefinedTableTypeColumn(40)] public string Col40 { get; set; }
+        [UserDefinedTableTypeColumn(41)] public string Col41 { get; set; }
+        [UserDefinedTableTypeColumn(42)] public string Col42 { get; set; }
+        [UserDefinedTableTypeColumn(43)] public string Col43 { get; set; }
+        [UserDefinedTableTypeColumn(44)] public string Col44 { get; set; }
+        [UserDefinedTableTypeColumn(45)] public string Col45 { get; set; }
+        [UserDefinedTableTypeColumn(46)] public string Col46 { get; set; }
+        [UserDefinedTableTypeColumn(47)] public string Col47 { get; set; }
+        [UserDefinedTableTypeColumn(48)] public string Col48 { get; set; }
+        [UserDefinedTableTypeColumn(49)] public string Col49 { get; set; }
+        [UserDefinedTableTypeColumn(50)] public string Col50 { get; set; }
+        [UserDefinedTableTypeColumn(51)] public string Col51 { get; set; }
+        [UserDefinedTableTypeColumn(52)] public string Col52 { get; set; }
+        [UserDefinedTableTypeColumn(53)] public string Col53 { get; set; }
+        [UserDefinedTableTypeColumn(54)] public string Col54 { get; set; }
+        [UserDefinedTableTypeColumn(55)] public string Col55 { get; set; }
+        [UserDefinedTableTypeColumn(56)] public string Col56 { get; set; }
+        [UserDefinedTableTypeColumn(57)] public string Col57 { get; set; }
+        [UserDefinedTableTypeColumn(58)] public string Col58 { get; set; }
+        [UserDefinedTableTypeColumn(59)] public string Col59 { get; set; }
+        [UserDefinedTableTypeColumn(60)] public string Col60 { get; set; }
+        [UserDefinedTableTypeColumn(61)] public string Col61 { get; set; }
+        [UserDefinedTableTypeColumn(62)] public string Col62 { get; set; }
+        [UserDefinedTableTypeColumn(63)] public string Col63 { get; set; }
+        [UserDefinedTableTypeColumn(64)] public string Col64 { get; set; }
+        [UserDefinedTableTypeColumn(65)] public string Col65 { get; set; }
+        [UserDefinedTableTypeColumn(66)] public string Col66 { get; set; }
+        [UserDefinedTableTypeColumn(67)] public string Col67 { get; set; }
+        [UserDefinedTableTypeColumn(68)] public string Col68 { get; set; }
+        [UserDefinedTableTypeColumn(69)] public string Col69 { get; set; }
+        [UserDefinedTableTypeColumn(70)] public string Col70 { get; set; }
+        [UserDefinedTableTypeColumn(71)] public string Col71 { get; set; }
+        [UserDefinedTableTypeColumn(72)] public string Col72 { get; set; }
+        [UserDefinedTableTypeColumn(73)] public string Col73 { get; set; }
+        [UserDefinedTableTypeColumn(74)] public string Col74 { get; set; }
+        [UserDefinedTableTypeColumn(75)] public string Col75 { get; set; }
+        [UserDefinedTableTypeColumn(76)] public string Col76 { get; set; }
+        [UserDefinedTableTypeColumn(77)] public string Col77 { get; set; }
+        [UserDefinedTableTypeColumn(78)] public string Col78 { get; set; }
+        [UserDefinedTableTypeColumn(79)] public string Col79 { get; set; }
+        [UserDefinedTableTypeColumn(80)] public string Col80 { get; set; }
+        [UserDefinedTableTypeColumn(81)] public string Col81 { get; set; }
+        [UserDefinedTableTypeColumn(82)] public string Col82 { get; set; }
+        [UserDefinedTableTypeColumn(83)] public string Col83 { get; set; }
+        [UserDefinedTableTypeColumn(84)] public string Col84 { get; set; }
+        [UserDefinedTableTypeColumn(85)] public string Col85 { get; set; }
+        [UserDefinedTableTypeColumn(86)] public string Col86 { get; set; }
+        [UserDefinedTableTypeColumn(87)] public string Col87 { get; set; }
+        [UserDefinedTableTypeColumn(88)] public string Col88 { get; set; }
+        [UserDefinedTableTypeColumn(89)] public string Col89 { get; set; }
+        [UserDefinedTableTypeColumn(90)] public string Col90 { get; set; }
+        [UserDefinedTableTypeColumn(91)] public string Col91 { get; set; }
+        [UserDefinedTableTypeColumn(92)] public string Col92 { get; set; }
+        [UserDefinedTableTypeColumn(93)] public string Col93 { get; set; }
+        [UserDefinedTableTypeColumn(94)] public string Col94 { get; set; }
+        [UserDefinedTableTypeColumn(95)] public string Col95 { get; set; }
+        [UserDefinedTableTypeColumn(96)] public string Col96 { get; set; }
+        [UserDefinedTableTypeColumn(97)] public string Col97 { get; set; }
+        [UserDefinedTableTypeColumn(98)] public string Col98 { get; set; }
+        [UserDefinedTableTypeColumn(99)] public string Col99 { get; set; }
+        [UserDefinedTableTypeColumn(100)] public string Col100 { get; set; }
+    }
+
+    [StoredProcedure("USP_Title_Import_Utility_PI")]
+    public class USP_Title_Import_Utility_PI
+    {
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Title_Import_Utility")]
+        public List<Title_Import_Utility_UDT> Title_Import_Utility { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Int, ParameterName = "User_Code")]
+        public int User_Code { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.NVarChar, ParameterName = "CallFor")]
+        public string callFor { get; set; }
     }
 }
 

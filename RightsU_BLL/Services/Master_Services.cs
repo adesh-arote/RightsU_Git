@@ -6656,6 +6656,26 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+
+    public class DM_Title_Import_Utility_Service
+    {
+        private readonly DM_Title_Import_Utility_Repository obj_Repository;
+
+        public DM_Title_Import_Utility_Service(string Connection_Str)
+        {
+            this.obj_Repository = new DM_Title_Import_Utility_Repository(Connection_Str);
+        }
+
+        public IQueryable<DM_Title_Import_Utility> SearchFor(Expression<Func<DM_Title_Import_Utility, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public DM_Title_Import_Utility GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
 }
 
 

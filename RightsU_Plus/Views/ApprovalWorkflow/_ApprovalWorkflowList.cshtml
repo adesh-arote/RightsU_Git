@@ -1,10 +1,17 @@
 ﻿@model List<RightsU_Entities.Workflow>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
 <table class="table table-bordered table-hover" id="tblMusicLink">
     <thead>
         <tr>
             <th style="width:30%;">Workflow Name</th>
             <th style="width:45%;">Description</th>
-            <th style="width:15%;">Business Unit</th>
+            <th style="width:15%;">@objMessageKey.BusinessUnit</th>
             @if (ViewData["Status"] != "V")
             {
                 <th style="width:10%;">Action</th>
@@ -28,14 +35,14 @@
                     </td>
                     <td align="center">
 
-                        @{  bool canDeactive = true;
-                          string toolTipMsg = "";
-                          if (item.Workflow_Module.Count > 0)
-                          {
-                              canDeactive = false;
-                              toolTipMsg = "Can not delete this Workflow as it is used in Assign Workflow";
-                              //Can not edit this Workflow as it is used in Assign Workflow
-                          }
+                        @{ bool canDeactive = true;
+                            string toolTipMsg = "";
+                            if (item.Workflow_Module.Count > 0)
+                            {
+                                canDeactive = false;
+                                toolTipMsg = "Can not delete this Workflow as it is used in Assign Workflow";
+                                //Can not edit this Workflow as it is used in Assign Workflow
+                            }
                         }
                         @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
                         {

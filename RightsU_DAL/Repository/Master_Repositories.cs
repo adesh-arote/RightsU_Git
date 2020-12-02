@@ -2845,4 +2845,8 @@ namespace RightsU_DAL
     {
         public Revenue_Vertical_Repository(string conStr) : base(conStr) { }
     }
+    public class DM_Title_Import_Utility_Repository : RightsU_Repository<DM_Title_Import_Utility>
+    {
+        public DM_Title_Import_Utility_Repository(string conStr) : base(conStr) { }
+    }
 }

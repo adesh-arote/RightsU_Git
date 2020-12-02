@@ -7,6 +7,11 @@
     {
         objWorkflow_Module = (RightsU_Entities.Workflow_Module)ViewData["MyWorkflow"];
     }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
 }
 
 <div class="title_block dotted_border clearfix">
@@ -52,7 +57,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Business Unit :</td>
+                            <td>@objMessageKey.BusinessUnit :</td>
                             <td>
                                 @if (ViewData["Status"] == "U")
                                 {
@@ -136,7 +141,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Business Unit :</td>
+                            <td>@objMessageKey.BusinessUnit :</td>
                             <td>
                                 @objWorkflow_Module.Business_Unit.Business_Unit_Name
                                 <input type="hidden" value="@objWorkflow_Module.Business_Unit_Code" id="hdnBUCode" />

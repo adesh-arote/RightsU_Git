@@ -1,68 +1,75 @@
 ﻿@model List<RightsU_Entities.Workflow_Module>
 @using UTOFrameWork.FrameworkClasses;
-<table class="table table-bordered table-hover" id="tblMusicLink">
-    <thead>
-        <tr>
-            <th style="width:15%;">Module Name</th>
-            <th style="width:30%;">Workflow Name</th>
-            <th style="width:15%;">Business Unit</th>
-            <th style="width:15%;">Effective Start Date</th>
-            <th style="width:15%;">Status</th>
-            @if (ViewData["Status"] != "V")
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+    <table class="table table-bordered table-hover" id="tblMusicLink">
+        <thead>
+            <tr>
+                <th style="width:15%;">Module Name</th>
+                <th style="width:30%;">Workflow Name</th>
+                <th style="width:15%;">@objMessageKey.BusinessUnit</th>
+                <th style="width:15%;">Effective Start Date</th>
+                <th style="width:15%;">Status</th>
+                @if (ViewData["Status"] != "V")
+                {
+                    <th style="width:10%;">Action</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
             {
-                <th style="width:10%;">Action</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Count > 0)
-        {
-            foreach (var item in Model)
-            {
-                //string strActive = "Active";
-                //if (item.Is_Active == "N")
-                //{
-                //    strActive = "Deactive";C
-                //}
-                <tr>
-                    <td>
-                        <span>@item.System_Module.Module_Name</span>
-                    </td>
-                    <td class="expandable">
-                        <span>@item.Workflow.Workflow_Name</span>
-                    </td>
-                    <td>
-                        <span>@item.Business_Unit.Business_Unit_Name</span>
-                    </td>
-                    <td align="center">
-                        <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", @item.Effective_Start_Date)</span>
-                    </td>
-                    <td align="center">
-                        <span>Upgrade</span>@*Please check the condition of upgrade*@
-                    </td>
-                    <td align="center">
+                foreach (var item in Model)
+                {
+                    //string strActive = "Active";
+                    //if (item.Is_Active == "N")
+                    //{
+                    //    strActive = "Deactive";C
+                    //}
+                    <tr>
+                        <td>
+                            <span>@item.System_Module.Module_Name</span>
+                        </td>
+                        <td class="expandable">
+                            <span>@item.Workflow.Workflow_Name</span>
+                        </td>
+                        <td>
+                            <span>@item.Business_Unit.Business_Unit_Name</span>
+                        </td>
+                        <td align="center">
+                            <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", @item.Effective_Start_Date)</span>
+                        </td>
+                        <td align="center">
+                            <span>Upgrade</span>@*Please check the condition of upgrade*@
+                        </td>
+                        <td align="center">
 
-                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForViewHistory + "~"))
-                        {
-                            <a title="View History" class="glyphicon glyphicon-eye-open glyphicon_orange" style="cursor: pointer;" onclick="BindPartialView('VIEWHistory',@item.Workflow_Module_Code)"></a>
-                        }
-                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForUpgrade + "~"))
-                        {
-                            <a title="Upgrade" class="glyphicon glyphicon-edit" style="cursor: pointer;" onclick="BindPartialView('EDIT',@item.Workflow_Module_Code)"></a>
-                        }
-                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + "~"))
-                        {
-                            <a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPartialView('VIEW',@item.Workflow_Module_Code)"></a>
-                        }
-                    </td>
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForViewHistory + "~"))
+                            {
+                                <a title="View History" class="glyphicon glyphicon-eye-open glyphicon_orange" style="cursor: pointer;" onclick="BindPartialView('VIEWHistory',@item.Workflow_Module_Code)"></a>
+                            }
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForUpgrade + "~"))
+                            {
+                                <a title="Upgrade" class="glyphicon glyphicon-edit" style="cursor: pointer;" onclick="BindPartialView('EDIT',@item.Workflow_Module_Code)"></a>
+                            }
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + "~"))
+                            {
+                                <a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPartialView('VIEW',@item.Workflow_Module_Code)"></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6">No record found</td>
                 </tr>
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="6">No record found</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>

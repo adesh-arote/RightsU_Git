@@ -410,6 +410,7 @@ namespace RightsU_DAL
         public DbSet<Revenue_Vertical> Revenue_Vertical { get; set; }
         public DbSet<Attrib_Group> Attrib_Group { get; set; }
         public DbSet<Users_Detail> Users_Detail { get; set; }
+        public DbSet<DM_Title_Import_Utility> DM_Title_Import_Utility { get; set; }
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {
             var platformCodesParameter = platformCodes != null ?
@@ -2392,6 +2393,17 @@ namespace RightsU_DAL
             proc.Title_Import = LstTitle_Import_UDT;
             proc.User_Code = User_Code;
             return this.Database.ExecuteStoredProcedure<USP_DM_Title_PI>(proc);
+        }
+
+        public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
+      List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code
+        )
+        {
+            var proc = new USP_Title_Import_Utility_PI();
+            proc.Title_Import_Utility = LstTitle_Import_Utility_UDT;
+            proc.callFor = CallFor;
+            proc.User_Code = User_Code;
+            return this.Database.ExecuteStoredProcedure<USP_Title_Import_Utility_PI>(proc);
         }
 
         public IEnumerable<USP_Bulk_Update> USP_Bulk_Update(List<Rights_Bulk_Update_UDT> LstRights_Bulk_Update_UDT, int Login_User_Code)

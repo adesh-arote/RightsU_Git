@@ -144,9 +144,9 @@
         if (Istabchange == 'Y')
             $('#searchCommon').val('');
         if (tab == 'D' || tab == 'I')
-            $("#searchCommon").attr('placeholder', 'Application No., Type, Business Unit, Channel, Trademark, Trademark Attorney, Application Status, Applicant, Class, Country')
+            $("#searchCommon").attr('placeholder', 'Application No., Type, Content Category, Channel, Trademark, Trademark Attorney, Application Status, Applicant, Class, Country')
         else
-            $("#searchCommon").attr('placeholder', 'Opposition No., Type, Business Unit, Channel, Trademark, Trademark Attorney, Class, Opposition Status')
+            $("#searchCommon").attr('placeholder', 'Opposition No., Type, Content Category, Channel, Trademark, Trademark Attorney, Class, Opposition Status')
 
         showLoading();
         tabChange(tab, istabchange);
@@ -913,7 +913,7 @@
                     </li>
 
                     <li>
-                        <label>Business Unit :</label>
+                        <label>Content Category :</label>
                         <br>
                         <span>
                             @if (ViewBag.BusinessUnitList != null)

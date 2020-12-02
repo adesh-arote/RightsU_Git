@@ -5,6 +5,11 @@
     {
         objWorkflow = (RightsU_Entities.Workflow)ViewData["MyWorkflow"];
     }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
 }
 <script>
     var IsCall = 'Y', Command_Name = "";
@@ -384,7 +389,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Business Unit :</td>
+                                <td>@objMessageKey.BusinessUnit :</td>
                                 <td id="Business_Unit">
                                     @if (ViewData["Status"] == "U")
                                     {
@@ -423,7 +428,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Business Unit :</td>
+                                <td>@objMessageKey.BusinessUnit :</td>
                                 <td>
                                     @objWorkflow.Business_Unit.Business_Unit_Name
                                     <input type="hidden" id="hdnBVCode_View" name="Workflow_Code" value="@objWorkflow.Business_Unit_Code" />

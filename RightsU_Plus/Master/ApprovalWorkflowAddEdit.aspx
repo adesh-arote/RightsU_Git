@@ -259,7 +259,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Business Unit</td>
+                            <td>Content Category</td>
                             <td >
                                 <asp:DropDownList ID="ddlBusinessUnit" CssClass="select" runat="server" ></asp:DropDownList> &nbsp;<%-- <span style="color: #ff0000">*</span>&nbsp;--%>
      
