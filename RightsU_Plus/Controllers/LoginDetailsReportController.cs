@@ -37,15 +37,15 @@ namespace RightsU_Plus.Controllers
             set { Session["lstUser"] = value; }
         }
 
-        private List<USP_Login_Details_Report_Result> lstUser_Searched
+        private List<USP_Login_Details_Report_Result> lstUser_SearchedLD
         {
             get
             {
-                if (Session["lstUser_Searched"] == null)
-                    Session["lstUser_Searched"] = new List<USP_Login_Details_Report_Result>();
-                return (List<USP_Login_Details_Report_Result>)Session["lstUser_Searched"];
+                if (Session["lstUser_SearchedLD"] == null)
+                    Session["lstUser_SearchedLD"] = new List<USP_Login_Details_Report_Result>();
+                return (List<USP_Login_Details_Report_Result>)Session["lstUser_SearchedLD"];
             }
-            set { Session["lstUser_Searched"] = value; }
+            set { Session["lstUser_SearchedLD"] = value; }
         }
         private string ModuleCode
         {
@@ -79,13 +79,13 @@ namespace RightsU_Plus.Controllers
             ViewBag.CommandName = commandName;
             List<USP_Login_Details_Report_Result> lst = new List<USP_Login_Details_Report_Result>();
             int RecordCount = 0;
-            RecordCount = lstUser_Searched.Count;
+            RecordCount = lstUser_SearchedLD.Count;
 
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                lst = lstUser_Searched.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                lst = lstUser_SearchedLD.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
 
             //ViewBag.UserModuleRights = GetUserModuleRights();
@@ -157,10 +157,10 @@ namespace RightsU_Plus.Controllers
 
 
 
-                lstUser_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USP_Login_Details_Report(query, pageNo, "LoginTime", "Y", pageSize, objRecordCount).ToList();
-                //lstUser_Searched.Clear();
+                lstUser_SearchedLD = new USP_Service(objLoginEntity.ConnectionStringName).USP_Login_Details_Report(query, pageNo, "LoginTime", "Y", pageSize, objRecordCount).ToList();
+                //lstUser_SearchedLD.Clear();
 
-                // lstUser_Searched = obj1;
+                // lstUser_SearchedLD = obj1;
                 //foreach (var item in obj1)
                 //{
                 //    USP_Login_Details_Report_Result objbvlog1 = new USP_Login_Details_Report_Result();
@@ -173,7 +173,7 @@ namespace RightsU_Plus.Controllers
                 //    objbvlog1.security_group_name = item.security_group_name;
                 //    objbvlog1.duration = item.duration;
 
-                //    lstUser_Searched.Add(objbvlog1);
+                //    lstUser_SearchedLD.Add(objbvlog1);
                 //}
 
 
@@ -182,7 +182,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 query = "AND 1=1";
-                lstUser_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USP_Login_Details_Report(query, pageNo, "LoginTime", "Y", pageSize, objRecordCount).ToList();
+                lstUser_SearchedLD = new USP_Service(objLoginEntity.ConnectionStringName).USP_Login_Details_Report(query, pageNo, "LoginTime", "Y", pageSize, objRecordCount).ToList();
             }
             //   lstUpload_Files_Searched = lstUpload_Files;
 
@@ -346,8 +346,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
             //int recordCount = 0;
             //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
-            //List<USP_Login_Details_Report_Result> lstUser_Searched = new USP_Service().USP_Login_Details_Report("AND 1=1",0,"first_name","N",10, objRecordCount).ToList();
-            lstUser_Searched.Clear();
+            //List<USP_Login_Details_Report_Result> lstUser_SearchedLD = new USP_Service().USP_Login_Details_Report("AND 1=1",0,"first_name","N",10, objRecordCount).ToList();
+            lstUser_SearchedLD.Clear();
             //var languageCode = objLanguage_Group.Language_Group_Details.Select(s => s.Language_Code).ToArray();
           
             return View("~/Views/LoginDetailsReport/Index.cshtml");
