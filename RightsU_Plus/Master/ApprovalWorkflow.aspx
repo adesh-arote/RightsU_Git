@@ -110,7 +110,7 @@
                             </ItemTemplate>
                             <HeaderStyle Width="40%" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Content Category">
+                        <asp:TemplateField HeaderText="Business Unit">
                             <ItemTemplate>
                                 <asp:Label ID="lblBusinessUnit" runat="server" Text='<%# Eval("Business_Unit_Code") %>' Visible="false"></asp:Label>
                                 <asp:Label ID="lblBusinessUnitName" runat="server"></asp:Label>
