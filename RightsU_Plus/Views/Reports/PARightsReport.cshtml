@@ -39,13 +39,18 @@
         //var dateInString = $("#txtfrom").val();
         //var txtto = $("#txtto").val();
         $('#ddlTitle').SumoSelect();
+        $('#ddlAncillaryType').SumoSelect();
+
+        $('#ddlAncillaryType').each(function () {
+            $(this)[0].sumo.reload();
+        });
 
         //$('#ddlBusinessUnit_chosen').click(function () {
         //    BindTitleList($('#ddlBusinessUnit').val());
         //});
 
     });
-   
+
     function btnShow_OnClick() {
         debugger;
         var businessUnitcode = $('#ddlBusinessUnit').val();
@@ -57,16 +62,22 @@
         }
         debugger;
         var IsAncillary = $('#hdnIsAncillary').val();
-        var platformCodes = "", AncillaryTypeCode = ""
+        var platformCodes = "";
+        var AncillaryTypeCode = {};
         if (IsAncillary == "Y") {
-            
-            if ($('#hdnTitleCode').val() == '0' && $('#ddlAncillaryType').val() == "") {
+
+            if ($('#hdnTitleCode').val() == '0' && ($('#ddlAncillaryType').val() == "" || $('#ddlAncillaryType').val() == null)) {
                 showAlert('E', '@objMessageKey.PleaseSelectatleastTitleOrAncillaryType');
                 return false;
             }
-            
+
             platformCodes = platformCodes_G;
-            AncillaryTypeCode = $('#ddlAncillaryType').val();
+            if ($('#ddlAncillaryType').val() != "" && $('#ddlAncillaryType').val() != 0 && $('#ddlAncillaryType').val() != null) {
+                AncillaryTypeCode = $('#ddlAncillaryType').val().join(',');//$('#ddlAncillaryType').val();
+            }
+            else
+                AncillaryTypeCode = "";
+
         }
         else {
             if ($('#hdnTitleCode').val() == '0' && ($('#txtAgreementNo').val() == null || agreementNo == "")) {
@@ -74,6 +85,12 @@
                 return false;
             }
         }
+        var IncludeExpired = "";
+        if ($('#IncludeExpired').is(':checked')) {
+            IncludeExpired = "Y";
+        }
+        else
+            var IncludeExpired = "N";
 
         $.ajax({
             type: "POST",
@@ -86,7 +103,8 @@
                 titleCodes: titleList,
                 agreementNo: agreementNo,
                 AncillaryTypeCode: AncillaryTypeCode,
-                platformCodes: platformCodes
+                platformCodes: platformCodes,
+                IncludeExpired : IncludeExpired
             }),
             async: false,
             success: function (result) {
@@ -96,6 +114,7 @@
                 else {
                     $('#divResult').empty();
                     $('#divResult').html(result);
+                    $("#ddlAncillaryType")[0].sumo.reload();
                 }
             },
             error: function (result) {
@@ -198,6 +217,7 @@
         selectedPlatform = '0';
         $('#selectedPlatofrms').text('');
         $('#selectedPlatofrms').text("@objMessageKey.SelectedPlatforms: " + selectedPlatform);
+        $("#ddlAncillaryType")[0].sumo.unSelectAll();
 
     }
     function PopulateTitleNameForPA(keyword) {
@@ -457,6 +477,15 @@
     td {
         padding: 1px;
     }
+        
+    .chosen-choices {
+        max-height: 55px !important;
+        overflow-y: auto;
+    }
+
+    .SumoSelect > .CaptionCont {
+        max-width: 100% !important;
+    }
 
 
 </style>
@@ -503,7 +532,8 @@
                                 </label>
                             </td>
                             <td style="width:20%;">
-                                @Html.DropDownList("AncillaryTypeList", ViewBag.AncillaryTypeList as SelectList,"Please Select", new { @id = "ddlAncillaryType", @class = "form_input chosen-select" })
+                                @Html.ListBox("AncillaryTypeList", ViewBag.AncillaryTypeList as MultiSelectList, new { @id = "ddlAncillaryType", @class = "multiple" })
+                                @*@Html.DropDownList("AncillaryTypeList", ViewBag.AncillaryTypeList as MultiSelectList, "Please Select", new { @id = "ddlAncillaryType", @class = "form_input chosen-select" })*@
                             </td>
                             <td colspan="2">
                                 <a title="@objMessageKey.SelectPlatforms" class="glyphicon glyphicon-flash" style="cursor: pointer;" onclick="BindPlatformPopup()"></a> <span id="selectedPlatofrms">@objMessageKey.SelectedPlatforms: 0</span>
@@ -512,16 +542,21 @@
                                 <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
                                 <input type="hidden" id="hdnPGCode" name="hdnPGCode" value="" />
                             </td>
-                            <td colspan="2" style="width:20%;text-align:right">
+                            <td colspan="2">
+                                <input type="checkbox" id="IncludeExpired" />
+                                Include Expired Titles
+                            </td>
+                            <td style="width:20%;text-align:right">
                                 <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
                                 <input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
                             </td>
+                            
                         </tr>
                     }
                     else
                     {
                         <tr>
-                            <td colspan="6" style="width:20%;text-align:right">
+                            <td colspan="4" style="width:20%;text-align:right">
                                 <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
                                 <input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
                             </td>
