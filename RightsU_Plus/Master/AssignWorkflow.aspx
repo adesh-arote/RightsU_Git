@@ -92,7 +92,7 @@
                                 </ItemTemplate>
                                 <HeaderStyle Width="15%" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Content Category">
+                            <asp:TemplateField HeaderText="Business Unit">
                                 <ItemTemplate>
                                     <asp:Label ID="lblBusinessUnitCode" Visible="false" runat="server" Text='<%#Eval("objWorkflow.Business_Unit_Code")%>'>
                                     </asp:Label>

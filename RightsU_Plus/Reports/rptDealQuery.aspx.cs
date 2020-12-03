@@ -682,7 +682,7 @@ public partial class Reports_rptDealQuery : ParentPage
                 //string strWhere1 = "BUSINESS_UNIT_CODE~AND~IN~" + SelectedBusinessUnit + "|";
 
 
-                string strOfGEC = new System_Parameter_New_Service(ObjLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
+                string strOfGEC = new System_Parameter_New_Service(ObjLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).FirstOrDefault();
                 var arrayStrGEC = strOfGEC.Split(',');
                 var strGEC = String.Join(",", new Business_Unit_Service(ObjLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginedUser.Users_Code) && arrayStrGEC.Contains(x.Business_Unit_Code.ToString())).Select(x => x.Business_Unit_Code).ToList());
 
@@ -755,7 +755,7 @@ public partial class Reports_rptDealQuery : ParentPage
                 else if (curVW.ToUpper() == "VW_SYN_DEALS")
                 {
                     ColCount = ColCount - 1;
-                    parm = new ReportParameter[10];
+                    parm = new ReportParameter[11];
                     parm[0] = new ReportParameter("Sql_SELECT", strSelect);
                     parm[1] = new ReportParameter("Sql_WHERE", strWhere);
                     parm[2] = new ReportParameter("Column_Count", ColCount.ToString());
@@ -767,7 +767,7 @@ public partial class Reports_rptDealQuery : ParentPage
                     parm[8] = new ReportParameter("Country_Codes", rptMain.Country_Codes == "" ? " " : rptMain.Country_Codes);
                     //parm[9] = new ReportParameter("Report_Header", "Syndication Query Report");
                     parm[9] = new ReportParameter("Category_Codes", rptMain.Cat_Codes == "" ? " " : rptMain.Cat_Codes);
-                    //  parm[10] = new ReportParameter("CBFCRating_Codes", rptMain.CBFC_Ratings_Codes == "" ? " " : rptMain.CBFC_Ratings_Codes);
+                    parm[10] = new ReportParameter("CBFCRating_Codes", rptMain.CBFC_Ratings_Codes == "" ? " " : rptMain.CBFC_Ratings_Codes);
 
 
 

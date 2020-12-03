@@ -121,7 +121,7 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        public PartialViewResult BindDealVersionHistoryReportA(string businessUnitcode, string dealCode)
+        public PartialViewResult BindDealWorkflowStatusReport(string businessUnitcode, string dealCode)
         {
             ReportViewer rptViewer = new ReportViewer();
             try
@@ -1623,7 +1623,7 @@ namespace RightsU_Plus.Controllers
             {
 
 
-                ViewBag.AncillaryTypeList = new SelectList(new Ancillary_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true)
+                ViewBag.AncillaryTypeList = new MultiSelectList(new Ancillary_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true)
                                         .Select(i => new { Display_Value = i.Ancillary_Type_Code, Display_Text = i.Ancillary_Type_Name }).ToList().Distinct(),
                                         "Display_Value", "Display_Text").ToList();
 
@@ -1648,7 +1648,7 @@ namespace RightsU_Plus.Controllers
             return Json(result);
 
         }
-        public PartialViewResult BindPARightsReport(string agreementNo, string businessUnitcode, string titleCodes, string AncillaryTypeCode = "", string platformCodes = "")
+        public PartialViewResult BindPARightsReport(string agreementNo, string businessUnitcode, string titleCodes, string AncillaryTypeCode = "", string platformCodes = "", string IncludeExpired = "N")
         {
             string title_names = TitleAutosuggest(titleCodes);
             string isAdvAncillary = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Ancillary_Advanced" && x.IsActive == "Y").Select(x => x.Parameter_Value.ToString()).FirstOrDefault();
@@ -1661,7 +1661,7 @@ namespace RightsU_Plus.Controllers
                 agreementNo = agreementNo == "" ? " " : agreementNo;
                 AncillaryTypeCode = AncillaryTypeCode == "" ? "0" : AncillaryTypeCode;
 
-                ReportParameter[] parm = new ReportParameter[8];
+                ReportParameter[] parm = new ReportParameter[9];
                 parm[0] = new ReportParameter("Agreement_No", agreementNo);
                 parm[1] = new ReportParameter("Title_Codes", title_names);//Title Name Means Title Codes
                 parm[2] = new ReportParameter("Business_Unit_Code", businessUnitcode.ToString());
@@ -1670,12 +1670,13 @@ namespace RightsU_Plus.Controllers
                 parm[5] = new ReportParameter("Platform_Codes", platformCodes);
                 parm[6] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
                 parm[7] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+                parm[8] = new ReportParameter("IncludeExpired", IncludeExpired);
                 ReportViewer rptViewer = BindReport(parm, "rpt_AdvAncillaryReport");
                 ViewBag.ReportViewer = rptViewer;
             }
             else
             {
-                ReportParameter[] parm = new ReportParameter[6];
+                ReportParameter[] parm = new ReportParameter[7];
                 parm[0] = new ReportParameter("Agreement_No", agreementNo);
                 parm[1] = new ReportParameter("Title_Name", title_names);//Title Name Means Title Codes
                 parm[2] = new ReportParameter("Business_Unit_Code", businessUnitcode.ToString());
