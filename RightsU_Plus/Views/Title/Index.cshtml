@@ -556,7 +556,7 @@
                         @if (ViewBag.CommandName == "E")
                         {
                             <h2 class="pull-left">
-                                @objMessageKey.EditTitle -
+                                @*@objMessageKey.EditTitle -*@
                                 <span>@Html.Label(objMessageKey.TitleName, Model.Title_Name, new { @id = "lblTitleHead" }) </span>
                                 @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
                             </h2>

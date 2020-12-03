@@ -919,6 +919,10 @@ namespace RightsU_Plus.Controllers
             string dealTypeCode = objFormCollection["hdnDeal_Type_Code"];
             string vendorCodes = objFormCollection["hdnVendorCodes"];
             string primaryVendorCode = objFormCollection["hdnPrimaryVendorCode"];
+            if(primaryVendorCode == "0")
+            {
+                primaryVendorCode = objFormCollection["hdnVendorCodes"];
+            }
             string tabName = objFormCollection["hdnTabName"];
             string dealDesc = objFormCollection["hdnDealDesc"];
             int dealTagCode = Convert.ToInt32(objFormCollection["hdnDealTagStatusCode"]);
@@ -1117,7 +1121,10 @@ namespace RightsU_Plus.Controllers
                         objADL.Vendor_Code = Convert.ToInt32(vendorCode);
                         selectVendors.Add(objADL);
                     }
-
+                    //if(selectVendors.Count == 1)
+                    //{
+                    //    objAD_Session.Acq_Deal_Licensor.Add(selectVendors);
+                    //}
                     IEqualityComparer<Acq_Deal_Licensor> comparerV = new LambdaComparer<Acq_Deal_Licensor>((x, y) => x.Vendor_Code == y.Vendor_Code && x.EntityState != State.Deleted);
 
                     var Deleted_Acq_Deal_Licensor = new List<Acq_Deal_Licensor>();
