@@ -93,7 +93,7 @@
                     
                 </td>--%>
                 <td style="width: 383px;">
-                    <b>Content Category:</b>
+                    <b>Business Unit:</b>
                     <asp:DropDownList runat="server" CssClass="select Chosenlb" ID="ddlBusinessUnit" Width="57%"
                         AutoPostBack="true" OnSelectedIndexChanged="ddlBusinessUnit_SelectedIndexChanged">
                     </asp:DropDownList>

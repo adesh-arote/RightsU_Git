@@ -178,7 +178,7 @@
                                 </td>
                             </tr>--%>
                             <tr>
-                                <td>Content Category</td>
+                                <td>Business Unit</td>
                                 <td><asp:Label ID="lblBusinessUnit" runat="server"></asp:Label></td>
                             </tr>
                             <tr>
