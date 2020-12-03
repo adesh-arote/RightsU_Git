@@ -608,6 +608,13 @@ namespace RightsU_Plus.Controllers
             List<RightsU_Entities.DM_Master_Log> lst = new List<RightsU_Entities.DM_Master_Log>();
             DM_Master_Log lstDMLog = new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.DM_Master_Import_Code.Contains(lstDMCodes)).FirstOrDefault();
             ViewBag.FileStatus = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.DM_Master_Import_Code == DM_Import_Master_Code).Select(s => s.Status).FirstOrDefault();
+       
+            ViewBag.IsResolveConflictTalent = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Reference_Table == "Talent").Select(x=>x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault();
+            ViewBag.IsResolveConflictLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Language Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
+            ViewBag.IsResolveConflictTitleType = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Type").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
+            ViewBag.IsResolveConflictTitleLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Language Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
+            ViewBag.IsResolveConflictOriginalLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Original Title Language  Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
+           
             return PartialView("~/Views/DM_Master_Import/_DM_Master_Log_List.cshtml", lstDMLog);
         }
         public JsonResult BindProceed(int DM_Import_Master_Code, string fileType = "")
@@ -1435,12 +1442,24 @@ namespace RightsU_Plus.Controllers
             int PageNo = 0;
             string sheetName = "Title$";
             List<USP_DM_Title_PI> lstRE = new List<USP_DM_Title_PI>();
+
+            //USP_Service 
+            //List<USP_Title_Import_Utility_PI_UDT> lstDealRights = new List<USP_Title_Import_Utility_PI_UDT>();
+            //List<USP_Title_Import_Utility_PI> lstVal = new List<USP_Title_Import_Utility_PI>();
+            //var List = USP_Title_Import_Utility_PI.Cast<USP_Title_Import_Utility_PI>()
+            //         .Select(s => s.GetInt32(0)).ToList();
+
+        
+
             DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
             if (System.Web.HttpContext.Current.Request.Files.AllKeys.Any())
             {
                 var PostedFile = InputFile;
                 string fullPath = Server.MapPath("~") + "\\" + ConfigurationManager.AppSettings["UploadFilePath"];
                 string ext = System.IO.Path.GetExtension(PostedFile.FileName);
+                //USP_Title_Import_Utility_PI
+                List<USP_Title_Import_Utility_PI> lst = new List<USP_Title_Import_Utility_PI>();
+               // lst.
                 if (ext == ".xlsx" || ext == ".xls")
                 {
                     /*Read Excel File*/
@@ -1526,9 +1545,10 @@ namespace RightsU_Plus.Controllers
                                     HRCount++;
                                 }
                                 lst_Title_Import_Utility_UDT.Add(obj_Title_Import_Utility_UDT);
-                                var a = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "HV", objLoginUser.Users_Code).ToList();
-
-                                //if header is proper den 
+                                var Status = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "HV", objLoginUser.Users_Code).ToList();
+                                var HeaderStatus = Status[0].Status;
+                                ViewBag.HeaderStatus = HeaderStatus;
+                                
 
                                 lst_Title_Import_Utility_UDT = new List<Title_Import_Utility_UDT>();
 
@@ -1553,6 +1573,7 @@ namespace RightsU_Plus.Controllers
                                 }
 
                                 var b = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "INS", objLoginUser.Users_Code).ToList();
+                                
 
                                 List<USP_DM_Title_PI> lstshow = new List<USP_DM_Title_PI>();
                                 if (lstRE.Count == 1)
@@ -1652,10 +1673,34 @@ namespace RightsU_Plus.Controllers
             //double div = @MessageCount / @totalMessageCount;
             //double quotient = Convert.ToDouble(div);
             double Completion = (SuccessCount / TotalCount) * 100;
+           // double.IsNaN.Completion
+            if (double.IsNaN(Completion))
+            {
+                Completion = 0;
+            }
+           
+ 
             double ErrorCompletion = (ErrorCount / TotalCount) * 100;
+            if (double.IsNaN(ErrorCompletion))
+            {
+                ErrorCompletion = 0;
+
+            }
             double ConflictCompletion = (ConflictCount / TotalCount) * 100;
+            if (double.IsNaN(ConflictCompletion))
+            {
+                ConflictCompletion = 0;
+            }
             double IgnoreCompletion = (IgnoreCount / TotalCount) * 100;
+            if (double.IsNaN(IgnoreCompletion))
+            {
+                IgnoreCompletion = 0;
+            }
             double WaitingCompletion = (WaitingCount / TotalCount) * 100;
+            if (double.IsNaN(WaitingCompletion))
+            {
+                WaitingCompletion = 0;
+            }
             var obj = new
             {
                 RecordStatus = recordStatus,
@@ -1671,6 +1716,7 @@ namespace RightsU_Plus.Controllers
                 IgnoreCompletion = Convert.ToInt32(IgnoreCompletion),
                 WaitingCompletion = Convert.ToInt32(WaitingCompletion)
             };
+
             return Json(obj);
 
 

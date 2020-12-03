@@ -121,7 +121,7 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        public PartialViewResult BindDealVersionHistoryReportA(string businessUnitcode, string dealCode)
+        public PartialViewResult BindDealWorkflowStatusReport(string businessUnitcode, string dealCode)
         {
             ReportViewer rptViewer = new ReportViewer();
             try

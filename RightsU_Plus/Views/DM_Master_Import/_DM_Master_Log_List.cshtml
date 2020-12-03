@@ -621,16 +621,20 @@
             <input type="hidden" id="hdnMasterImportCode" value="@Model.DM_Master_Import_Code" />
             <div class="tabbable">
                 <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
+                    @if (ViewBag.IsResolveConflictTalent == "Y")
+                    {
                     <li class="active">
                         <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
                     </li>
+                    }
                     <li class="">
                         <a data-toggle="tab" role="tab" data-tabname="LB">Music Label</a>
                     </li>
                     @if (ViewBag.FileType == "M")
                     {
+
                         <li class="">
-                            <a data-toggle="tab"  data-tabname="GE" role="tab">Genres</a>
+                            <a data-toggle="tab"  data-tabname="GE" role="tab">Genres</a>Y
                         </li>
                         <li class="">
                             <a data-toggle="tab"  data-tabname="MA" role="tab">Movie/Album</a>
@@ -641,24 +645,36 @@
                         <li class="">
                             <a data-toggle="tab"  data-tabname="MT" role="tab">Theme</a>
                         </li>
-                    }
+                     }
                     @if (ViewBag.FileType == "T")
                     {
+                        if (ViewBag.IsResolveConflictTitleType == "Y")
+                        {
                         <li class="">
                             <a data-toggle="tab" data-tabname="TT" role="tab">Title Type</a>
                         </li>
+                        }
+                        if (ViewBag.IsResolveConflictTitleLanguage == "Y")
+                        {
                         <li class="">
                             <a data-toggle="tab" data-tabname="TL" role="tab">Title Language</a>
                         </li>
+                        }
+                        if (ViewBag.IsResolveConflictOriginalLanguage == "Y")
+                        {
                         <li class="">
                             <a data-toggle="tab" data-tabname="OL" role="tab">Original Language</a>
                         </li>
+                        }
                         if (ViewBag.Is_Allow_Program_Category == "Y")
                         {
+                            if (ViewBag.IsResolveConflict == "Y")
+                            {
                             <li class="">
                                 <a data-toggle="tab" data-tabname="PC" role="tab">Program Category</a>
                             </li>
-                        }
+                               }
+                            }
                     }
                 </ul>
                 @*BindGrid(false, false, '', 'U');*@
