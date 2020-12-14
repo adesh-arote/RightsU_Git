@@ -2283,6 +2283,116 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Is_Allowed_For_Resolve_Conflict" Type="char" MaxLength="1" />
           <Property Name="ShortName" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="DM_Title_Import_Utility_Data">
+          <Key>
+            <PropertyRef Name="DM_Title_Import_Utility_Data_Code" />
+          </Key>
+          <Property Name="DM_Title_Import_Utility_Data_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DM_Master_Import_Code" Type="int" />
+          <Property Name="Col1" Type="nvarchar(max)" />
+          <Property Name="Col2" Type="nvarchar(max)" />
+          <Property Name="Col3" Type="nvarchar(max)" />
+          <Property Name="Col4" Type="nvarchar(max)" />
+          <Property Name="Col5" Type="nvarchar(max)" />
+          <Property Name="Col6" Type="nvarchar(max)" />
+          <Property Name="Col7" Type="nvarchar(max)" />
+          <Property Name="Col8" Type="nvarchar(max)" />
+          <Property Name="Col9" Type="nvarchar(max)" />
+          <Property Name="Col10" Type="nvarchar(max)" />
+          <Property Name="Col11" Type="nvarchar(max)" />
+          <Property Name="Col12" Type="nvarchar(max)" />
+          <Property Name="Col13" Type="nvarchar(max)" />
+          <Property Name="Col14" Type="nvarchar(max)" />
+          <Property Name="Col15" Type="nvarchar(max)" />
+          <Property Name="Col16" Type="nvarchar(max)" />
+          <Property Name="Col17" Type="nvarchar(max)" />
+          <Property Name="Col18" Type="nvarchar(max)" />
+          <Property Name="Col19" Type="nvarchar(max)" />
+          <Property Name="Col20" Type="nvarchar(max)" />
+          <Property Name="Col21" Type="nvarchar(max)" />
+          <Property Name="Col22" Type="nvarchar(max)" />
+          <Property Name="Col23" Type="nvarchar(max)" />
+          <Property Name="Col24" Type="nvarchar(max)" />
+          <Property Name="Col25" Type="nvarchar(max)" />
+          <Property Name="Col26" Type="nvarchar(max)" />
+          <Property Name="Col27" Type="nvarchar(max)" />
+          <Property Name="Col28" Type="nvarchar(max)" />
+          <Property Name="Col29" Type="nvarchar(max)" />
+          <Property Name="Col30" Type="nvarchar(max)" />
+          <Property Name="Col31" Type="nvarchar(max)" />
+          <Property Name="Col32" Type="nvarchar(max)" />
+          <Property Name="Col33" Type="nvarchar(max)" />
+          <Property Name="Col34" Type="nvarchar(max)" />
+          <Property Name="Col35" Type="nvarchar(max)" />
+          <Property Name="Col36" Type="nvarchar(max)" />
+          <Property Name="Col37" Type="nvarchar(max)" />
+          <Property Name="Col38" Type="nvarchar(max)" />
+          <Property Name="Col39" Type="nvarchar(max)" />
+          <Property Name="Col40" Type="nvarchar(max)" />
+          <Property Name="Col41" Type="nvarchar(max)" />
+          <Property Name="Col42" Type="nvarchar(max)" />
+          <Property Name="Col43" Type="nvarchar(max)" />
+          <Property Name="Col44" Type="nvarchar(max)" />
+          <Property Name="Col45" Type="nvarchar(max)" />
+          <Property Name="Col46" Type="nvarchar(max)" />
+          <Property Name="Col47" Type="nvarchar(max)" />
+          <Property Name="Col48" Type="nvarchar(max)" />
+          <Property Name="Col49" Type="nvarchar(max)" />
+          <Property Name="Col50" Type="nvarchar(max)" />
+          <Property Name="Col51" Type="nvarchar(max)" />
+          <Property Name="Col52" Type="nvarchar(max)" />
+          <Property Name="Col53" Type="nvarchar(max)" />
+          <Property Name="Col54" Type="nvarchar(max)" />
+          <Property Name="Col55" Type="nvarchar(max)" />
+          <Property Name="Col56" Type="nvarchar(max)" />
+          <Property Name="Col57" Type="nvarchar(max)" />
+          <Property Name="Col58" Type="nvarchar(max)" />
+          <Property Name="Col59" Type="nvarchar(max)" />
+          <Property Name="Col60" Type="nvarchar(max)" />
+          <Property Name="Col61" Type="nvarchar(max)" />
+          <Property Name="Col62" Type="nvarchar(max)" />
+          <Property Name="Col63" Type="nvarchar(max)" />
+          <Property Name="Col64" Type="nvarchar(max)" />
+          <Property Name="Col65" Type="nvarchar(max)" />
+          <Property Name="Col66" Type="nvarchar(max)" />
+          <Property Name="Col67" Type="nvarchar(max)" />
+          <Property Name="Col68" Type="nvarchar(max)" />
+          <Property Name="Col69" Type="nvarchar(max)" />
+          <Property Name="Col70" Type="nvarchar(max)" />
+          <Property Name="Col71" Type="nvarchar(max)" />
+          <Property Name="Col72" Type="nvarchar(max)" />
+          <Property Name="Col73" Type="nvarchar(max)" />
+          <Property Name="Col74" Type="nvarchar(max)" />
+          <Property Name="Col75" Type="nvarchar(max)" />
+          <Property Name="Col76" Type="nvarchar(max)" />
+          <Property Name="Col77" Type="nvarchar(max)" />
+          <Property Name="Col78" Type="nvarchar(max)" />
+          <Property Name="Col79" Type="nvarchar(max)" />
+          <Property Name="Col80" Type="nvarchar(max)" />
+          <Property Name="Col81" Type="nvarchar(max)" />
+          <Property Name="Col82" Type="nvarchar(max)" />
+          <Property Name="Col83" Type="nvarchar(max)" />
+          <Property Name="Col84" Type="nvarchar(max)" />
+          <Property Name="Col85" Type="nvarchar(max)" />
+          <Property Name="Col86" Type="nvarchar(max)" />
+          <Property Name="Col87" Type="nvarchar(max)" />
+          <Property Name="Col88" Type="nvarchar(max)" />
+          <Property Name="Col89" Type="nvarchar(max)" />
+          <Property Name="Col90" Type="nvarchar(max)" />
+          <Property Name="Col91" Type="nvarchar(max)" />
+          <Property Name="Col92" Type="nvarchar(max)" />
+          <Property Name="Col93" Type="nvarchar(max)" />
+          <Property Name="Col94" Type="nvarchar(max)" />
+          <Property Name="Col95" Type="nvarchar(max)" />
+          <Property Name="Col96" Type="nvarchar(max)" />
+          <Property Name="Col97" Type="nvarchar(max)" />
+          <Property Name="Col98" Type="nvarchar(max)" />
+          <Property Name="Col99" Type="nvarchar(max)" />
+          <Property Name="Col100" Type="nvarchar(max)" />
+          <Property Name="Record_Status" Type="nvarchar(max)" />
+          <Property Name="Error_Message" Type="nvarchar(max)" />
+          <Property Name="Is_Ignore" Type="nvarchar(max)" />
+        </EntityType>
         <EntityType Name="Document_Type">
           <Key>
             <PropertyRef Name="Document_Type_Code" />
@@ -13973,6 +14083,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="DM_Master_Log" EntityType="Self.DM_Master_Log" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Music_Title" EntityType="Self.DM_Music_Title" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Title_Import_Utility" EntityType="Self.DM_Title_Import_Utility" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DM_Title_Import_Utility_Data" EntityType="Self.DM_Title_Import_Utility_Data" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document_Type" EntityType="Self.Document_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config" EntityType="Self.Email_Config" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config_Detail" EntityType="Self.Email_Config_Detail" Schema="dbo" store:Type="Tables" />
@@ -20571,6 +20682,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="TabName" Mode="In" Type="String" />
             <Parameter Name="Roles" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="DM_Title_Import_Utility_Data" EntityType="RightsU_NeoModel.DM_Title_Import_Utility_Data" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35188,6 +35300,116 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="ValueField" Nullable="true" />
           <Property Type="String" Name="TextField" Nullable="true" />
         </ComplexType>
+        <EntityType Name="DM_Title_Import_Utility_Data">
+          <Key>
+            <PropertyRef Name="DM_Title_Import_Utility_Data_Code" />
+          </Key>
+          <Property Name="DM_Title_Import_Utility_Data_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DM_Master_Import_Code" Type="Int32" />
+          <Property Name="Col1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col3" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col4" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col5" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col6" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col7" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col8" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col9" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col10" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col11" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col12" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col13" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col14" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col15" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col16" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col17" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col18" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col19" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col20" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col21" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col22" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col23" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col24" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col25" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col26" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col27" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col28" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col29" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col30" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col31" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col32" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col33" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col34" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col35" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col36" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col37" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col38" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col39" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col40" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col41" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col42" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col43" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col44" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col45" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col46" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col47" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col48" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col49" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col50" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col51" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col52" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col53" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col54" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col55" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col56" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col57" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col58" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col59" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col60" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col61" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col62" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col63" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col64" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col65" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col66" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col67" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col68" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col69" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col70" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col71" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col72" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col73" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col74" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col75" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col76" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col77" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col78" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col79" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col80" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col81" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col82" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col83" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col84" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col85" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col86" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col87" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col88" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col89" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col90" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col91" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col92" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col93" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col94" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col95" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col96" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col97" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col98" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col99" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Col100" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Record_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Error_Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Ignore" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44075,6 +44297,117 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="DM_Title_Import_Utility_Data">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Import_Utility_Data">
+              <MappingFragment StoreEntitySet="DM_Title_Import_Utility_Data">
+                <ScalarProperty Name="Is_Ignore" ColumnName="Is_Ignore" />
+                <ScalarProperty Name="Error_Message" ColumnName="Error_Message" />
+                <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
+                <ScalarProperty Name="Col100" ColumnName="Col100" />
+                <ScalarProperty Name="Col99" ColumnName="Col99" />
+                <ScalarProperty Name="Col98" ColumnName="Col98" />
+                <ScalarProperty Name="Col97" ColumnName="Col97" />
+                <ScalarProperty Name="Col96" ColumnName="Col96" />
+                <ScalarProperty Name="Col95" ColumnName="Col95" />
+                <ScalarProperty Name="Col94" ColumnName="Col94" />
+                <ScalarProperty Name="Col93" ColumnName="Col93" />
+                <ScalarProperty Name="Col92" ColumnName="Col92" />
+                <ScalarProperty Name="Col91" ColumnName="Col91" />
+                <ScalarProperty Name="Col90" ColumnName="Col90" />
+                <ScalarProperty Name="Col89" ColumnName="Col89" />
+                <ScalarProperty Name="Col88" ColumnName="Col88" />
+                <ScalarProperty Name="Col87" ColumnName="Col87" />
+                <ScalarProperty Name="Col86" ColumnName="Col86" />
+                <ScalarProperty Name="Col85" ColumnName="Col85" />
+                <ScalarProperty Name="Col84" ColumnName="Col84" />
+                <ScalarProperty Name="Col83" ColumnName="Col83" />
+                <ScalarProperty Name="Col82" ColumnName="Col82" />
+                <ScalarProperty Name="Col81" ColumnName="Col81" />
+                <ScalarProperty Name="Col80" ColumnName="Col80" />
+                <ScalarProperty Name="Col79" ColumnName="Col79" />
+                <ScalarProperty Name="Col78" ColumnName="Col78" />
+                <ScalarProperty Name="Col77" ColumnName="Col77" />
+                <ScalarProperty Name="Col76" ColumnName="Col76" />
+                <ScalarProperty Name="Col75" ColumnName="Col75" />
+                <ScalarProperty Name="Col74" ColumnName="Col74" />
+                <ScalarProperty Name="Col73" ColumnName="Col73" />
+                <ScalarProperty Name="Col72" ColumnName="Col72" />
+                <ScalarProperty Name="Col71" ColumnName="Col71" />
+                <ScalarProperty Name="Col70" ColumnName="Col70" />
+                <ScalarProperty Name="Col69" ColumnName="Col69" />
+                <ScalarProperty Name="Col68" ColumnName="Col68" />
+                <ScalarProperty Name="Col67" ColumnName="Col67" />
+                <ScalarProperty Name="Col66" ColumnName="Col66" />
+                <ScalarProperty Name="Col65" ColumnName="Col65" />
+                <ScalarProperty Name="Col64" ColumnName="Col64" />
+                <ScalarProperty Name="Col63" ColumnName="Col63" />
+                <ScalarProperty Name="Col62" ColumnName="Col62" />
+                <ScalarProperty Name="Col61" ColumnName="Col61" />
+                <ScalarProperty Name="Col60" ColumnName="Col60" />
+                <ScalarProperty Name="Col59" ColumnName="Col59" />
+                <ScalarProperty Name="Col58" ColumnName="Col58" />
+                <ScalarProperty Name="Col57" ColumnName="Col57" />
+                <ScalarProperty Name="Col56" ColumnName="Col56" />
+                <ScalarProperty Name="Col55" ColumnName="Col55" />
+                <ScalarProperty Name="Col54" ColumnName="Col54" />
+                <ScalarProperty Name="Col53" ColumnName="Col53" />
+                <ScalarProperty Name="Col52" ColumnName="Col52" />
+                <ScalarProperty Name="Col51" ColumnName="Col51" />
+                <ScalarProperty Name="Col50" ColumnName="Col50" />
+                <ScalarProperty Name="Col49" ColumnName="Col49" />
+                <ScalarProperty Name="Col48" ColumnName="Col48" />
+                <ScalarProperty Name="Col47" ColumnName="Col47" />
+                <ScalarProperty Name="Col46" ColumnName="Col46" />
+                <ScalarProperty Name="Col45" ColumnName="Col45" />
+                <ScalarProperty Name="Col44" ColumnName="Col44" />
+                <ScalarProperty Name="Col43" ColumnName="Col43" />
+                <ScalarProperty Name="Col42" ColumnName="Col42" />
+                <ScalarProperty Name="Col41" ColumnName="Col41" />
+                <ScalarProperty Name="Col40" ColumnName="Col40" />
+                <ScalarProperty Name="Col39" ColumnName="Col39" />
+                <ScalarProperty Name="Col38" ColumnName="Col38" />
+                <ScalarProperty Name="Col37" ColumnName="Col37" />
+                <ScalarProperty Name="Col36" ColumnName="Col36" />
+                <ScalarProperty Name="Col35" ColumnName="Col35" />
+                <ScalarProperty Name="Col34" ColumnName="Col34" />
+                <ScalarProperty Name="Col33" ColumnName="Col33" />
+                <ScalarProperty Name="Col32" ColumnName="Col32" />
+                <ScalarProperty Name="Col31" ColumnName="Col31" />
+                <ScalarProperty Name="Col30" ColumnName="Col30" />
+                <ScalarProperty Name="Col29" ColumnName="Col29" />
+                <ScalarProperty Name="Col28" ColumnName="Col28" />
+                <ScalarProperty Name="Col27" ColumnName="Col27" />
+                <ScalarProperty Name="Col26" ColumnName="Col26" />
+                <ScalarProperty Name="Col25" ColumnName="Col25" />
+                <ScalarProperty Name="Col24" ColumnName="Col24" />
+                <ScalarProperty Name="Col23" ColumnName="Col23" />
+                <ScalarProperty Name="Col22" ColumnName="Col22" />
+                <ScalarProperty Name="Col21" ColumnName="Col21" />
+                <ScalarProperty Name="Col20" ColumnName="Col20" />
+                <ScalarProperty Name="Col19" ColumnName="Col19" />
+                <ScalarProperty Name="Col18" ColumnName="Col18" />
+                <ScalarProperty Name="Col17" ColumnName="Col17" />
+                <ScalarProperty Name="Col16" ColumnName="Col16" />
+                <ScalarProperty Name="Col15" ColumnName="Col15" />
+                <ScalarProperty Name="Col14" ColumnName="Col14" />
+                <ScalarProperty Name="Col13" ColumnName="Col13" />
+                <ScalarProperty Name="Col12" ColumnName="Col12" />
+                <ScalarProperty Name="Col11" ColumnName="Col11" />
+                <ScalarProperty Name="Col10" ColumnName="Col10" />
+                <ScalarProperty Name="Col9" ColumnName="Col9" />
+                <ScalarProperty Name="Col8" ColumnName="Col8" />
+                <ScalarProperty Name="Col7" ColumnName="Col7" />
+                <ScalarProperty Name="Col6" ColumnName="Col6" />
+                <ScalarProperty Name="Col5" ColumnName="Col5" />
+                <ScalarProperty Name="Col4" ColumnName="Col4" />
+                <ScalarProperty Name="Col3" ColumnName="Col3" />
+                <ScalarProperty Name="Col2" ColumnName="Col2" />
+                <ScalarProperty Name="Col1" ColumnName="Col1" />
+                <ScalarProperty Name="DM_Master_Import_Code" ColumnName="DM_Master_Import_Code" />
+                <ScalarProperty Name="DM_Title_Import_Utility_Data_Code" ColumnName="DM_Title_Import_Utility_Data_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

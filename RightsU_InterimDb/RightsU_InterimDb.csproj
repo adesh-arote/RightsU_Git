@@ -483,6 +483,9 @@
     <Compile Include="Models\DM_Title_Import_Utility.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DM_Title_Import_Utility_Data.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Document_Type.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
