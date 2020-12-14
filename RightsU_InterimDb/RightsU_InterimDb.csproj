@@ -1401,6 +1401,9 @@
     <Compile Include="Models\USP_Get_Release_Content_List_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Get_ResolveConflict_Data_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Get_Security_Group_Tree_Hierarchy_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

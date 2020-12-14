@@ -14,8 +14,8 @@
       <Query>
         <DataSourceName>DS_Reports</DataSourceName>
         <QueryParameters>
-          <QueryParameter Name="@Deal_Type">
-            <Value>=Parameters!Deal_Type.Value</Value>
+          <QueryParameter Name="@Module_Code">
+            <Value>=Parameters!Module_Code.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@Content_Category">
             <Value>=Parameters!Content_Category.Value</Value>
@@ -694,7 +694,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Parameters!Deal_Type.Value = 30,"Acquisition","Syndication")</Value>
+                                  <Value>=IIF(Parameters!Module_Code.Value = 30,"Acquisition","Syndication")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -912,6 +912,7 @@
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
+                                    <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -985,15 +986,6 @@
     </ReportSection>
   </ReportSections>
   <ReportParameters>
-    <ReportParameter Name="Deal_Type">
-      <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>30</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>Deal Type</Prompt>
-    </ReportParameter>
     <ReportParameter Name="Content_Category">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1338,17 +1330,16 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>Created_By</Prompt>
     </ReportParameter>
+    <ReportParameter Name="Module_Code">
+      <DataType>String</DataType>
+      <Prompt>Module Code</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
       <NumberOfRows>9</NumberOfRows>
       <CellDefinitions>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>Deal_Type</ParameterName>
-        </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>0</RowIndex>
@@ -1508,6 +1499,11 @@
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>8</RowIndex>
           <ParameterName>Created_By</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>8</RowIndex>
+          <ParameterName>Module_Code</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

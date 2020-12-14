@@ -737,11 +737,11 @@ namespace RightsU_DAL
         }
 
         public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
-        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code
+        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code
           )
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code);
+            return objContext.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code, DM_Master_Import_Code);
         }
 
 

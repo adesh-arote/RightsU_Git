@@ -2281,6 +2281,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Is_Active" Type="char" MaxLength="1" />
           <Property Name="validation" Type="nvarchar(max)" />
           <Property Name="Is_Allowed_For_Resolve_Conflict" Type="char" MaxLength="1" />
+          <Property Name="ShortName" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Document_Type">
           <Key>
@@ -5182,6 +5183,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Title_Content_Code" Type="int" />
           <Property Name="Version_Code" Type="int" />
           <Property Name="Duration" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MusicSystemCode" Type="int" />
         </EntityType>
         <EntityType Name="Title_Content_Version_Details">
           <Key>
@@ -12321,6 +12323,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USP_Get_Release_Content_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Get_ResolveConflict_Data" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Keyword" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="TabName" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Roles" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_Get_Security_Group_Tree_Hierarchy" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ModuleCodes" Type="varchar" Mode="In" />
@@ -20559,6 +20566,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Users_Detail" EntitySet="Users_Detail" />
           </AssociationSet>
           <EntitySet Name="DM_Title_Import_Utility" EntityType="RightsU_NeoModel.DM_Title_Import_Utility" />
+          <FunctionImport Name="USP_Get_ResolveConflict_Data" ReturnType="Collection(RightsU_NeoModel.USP_Get_ResolveConflict_Data_Result)">
+            <Parameter Name="Keyword" Mode="In" Type="String" />
+            <Parameter Name="TabName" Mode="In" Type="String" />
+            <Parameter Name="Roles" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -31576,6 +31588,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Duration" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Version" Relationship="RightsU_NeoModel.FK_Title_Content_Version_Version" FromRole="Title_Content_Version" ToRole="Version" />
           <NavigationProperty Name="Title_Content_Version_Details" Relationship="RightsU_NeoModel.FK__Title_Con__Title__5146B39C" FromRole="Title_Content_Version" ToRole="Title_Content_Version_Details" />
+          <Property Name="MusicSystemCode" Type="Int32" />
         </EntityType>
         <Association Name="FK_Content_Music_Link_Title_Content_Version">
           <End Type="RightsU_NeoModel.Title_Content_Version" Role="Title_Content_Version" Multiplicity="0..1" />
@@ -35169,7 +35182,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="validation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Is_Allowed_For_Resolve_Conflict" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="ShortName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
+        <ComplexType Name="USP_Get_ResolveConflict_Data_Result">
+          <Property Type="String" Name="ValueField" Nullable="true" />
+          <Property Type="String" Name="TextField" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -41725,6 +41743,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Title_Content_Version">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Content_Version">
               <MappingFragment StoreEntitySet="Title_Content_Version">
+                <ScalarProperty Name="MusicSystemCode" ColumnName="MusicSystemCode" />
                 <ScalarProperty Name="Duration" ColumnName="Duration" />
                 <ScalarProperty Name="Version_Code" ColumnName="Version_Code" />
                 <ScalarProperty Name="Title_Content_Code" ColumnName="Title_Content_Code" />
@@ -44030,6 +44049,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="DM_Title_Import_Utility">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Import_Utility">
               <MappingFragment StoreEntitySet="DM_Title_Import_Utility">
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
                 <ScalarProperty Name="Is_Allowed_For_Resolve_Conflict" ColumnName="Is_Allowed_For_Resolve_Conflict" />
                 <ScalarProperty Name="validation" ColumnName="validation" />
                 <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
@@ -44047,6 +44067,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_ResolveConflict_Data" FunctionName="RightsU_NeoModel.Store.USP_Get_ResolveConflict_Data">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_ResolveConflict_Data_Result">
+                <ScalarProperty Name="ValueField" ColumnName="ValueField" />
+                <ScalarProperty Name="TextField" ColumnName="TextField" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

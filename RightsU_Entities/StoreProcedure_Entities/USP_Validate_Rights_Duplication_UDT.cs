@@ -1636,12 +1636,13 @@ namespace RightsU_Entities
     {
         [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Title_Import_Utility")]
         public List<Title_Import_Utility_UDT> Title_Import_Utility { get; set; }
-
         [StoredProcedureParameter(SqlDbType.Int, ParameterName = "User_Code")]
         public int User_Code { get; set; }
-
         [StoredProcedureParameter(SqlDbType.NVarChar, ParameterName = "CallFor")]
         public string callFor { get; set; }
+        [StoredProcedureParameter(SqlDbType.Int, ParameterName = "DM_Master_Import_Code")]
+        public int DM_Master_Import_Code { get; set; }
+        public string Result { get; set; }
     }
 }
 

@@ -24,6 +24,7 @@ namespace RightsU_Entities
         public Nullable<int> Title_Content_Code { get; set; }
         public Nullable<int> Version_Code { get; set; }
         public Nullable<decimal> Duration { get; set; }
+        public Nullable<int> MusicSystemCode { get; set; }
 
         public virtual ICollection<Content_Music_Link> Content_Music_Link { get; set; }
         public virtual Title_Content Title_Content { get; set; }

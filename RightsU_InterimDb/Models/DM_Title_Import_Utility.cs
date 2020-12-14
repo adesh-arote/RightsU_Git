@@ -28,5 +28,6 @@ namespace RightsU_InterimDb.Models
     	    public string Is_Active { get; set; }
     	    public string validation { get; set; }
     	    public string Is_Allowed_For_Resolve_Conflict { get; set; }
+    	    public string ShortName { get; set; }
     }
 }

@@ -2396,13 +2396,14 @@ namespace RightsU_DAL
         }
 
         public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
-      List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code
+      List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code
         )
         {
             var proc = new USP_Title_Import_Utility_PI();
             proc.Title_Import_Utility = LstTitle_Import_Utility_UDT;
             proc.callFor = CallFor;
             proc.User_Code = User_Code;
+            proc.DM_Master_Import_Code = DM_Master_Import_Code;
             return this.Database.ExecuteStoredProcedure<USP_Title_Import_Utility_PI>(proc);
         }
 
@@ -5170,5 +5171,21 @@ namespace RightsU_DAL
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Syn_Deal_Right_Clone", new_Syn_Deal_CodeParameter, syn_Deal_Rights_CodeParameter, syn_Deal_Rights_Title_CodeParameter, title_CodeParameter, is_ProgramParameter);
         }
 
+        public virtual ObjectResult<USP_Get_ResolveConflict_Data_Result> USP_Get_ResolveConflict_Data(string keyword, string tabName, string roles)
+        {
+            var keywordParameter = keyword != null ?
+                new ObjectParameter("Keyword", keyword) :
+                new ObjectParameter("Keyword", typeof(string));
+
+            var tabNameParameter = tabName != null ?
+                new ObjectParameter("TabName", tabName) :
+                new ObjectParameter("TabName", typeof(string));
+
+            var rolesParameter = roles != null ?
+                new ObjectParameter("Roles", roles) :
+                new ObjectParameter("Roles", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_ResolveConflict_Data_Result>("USP_Get_ResolveConflict_Data", keywordParameter, tabNameParameter, rolesParameter);
+        }
     }
 }
