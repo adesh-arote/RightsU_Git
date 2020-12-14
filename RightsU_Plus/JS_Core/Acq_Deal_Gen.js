@@ -122,8 +122,17 @@ function setPrimaryLicensor(value) {
 }
 
 function getPrimaryLicensor() {
+    debugger;
     var index = $('#ddlLicensor_chosen li.search-choice.primary a').data("option-array-index");
-    if (isNaN(index))
+    var length = $('#ddlLicensor  :selected').length;
+
+    if (length == 1)
+    {
+        var index1 = $('#ddlLicensor  :selected').index();
+        index1 = parseInt(index1) + 1;
+        return $('#ddlLicensor option:nth-child(' + index1 + ')').val();
+    }   
+    else if (isNaN(index))
         return 0;
 
     index = parseInt(index) + 1;
@@ -1629,6 +1638,7 @@ function ValidateSave() {
     return true;
 }
 function Save_Success(result) {
+    debugger;
     if (result == "true") {
         redirectToLogin();
     }

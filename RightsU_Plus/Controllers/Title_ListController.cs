@@ -633,7 +633,8 @@ namespace RightsU_Plus.Controllers
 
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             if (Count > 0)
-                objJson.Add("Error", objMessageKey.CanNotDeactivateThisTitleAsTitleIsUsedInDeal);
+                //objJson.Add("Error", objMessageKey.CanNotDeactivateThisTitleAsTitleIsUsedInDeal);
+                objJson.Add("Error", "Title can not be deactivated due to active association with Deal");
             else
             {
                 dynamic resultSet;
