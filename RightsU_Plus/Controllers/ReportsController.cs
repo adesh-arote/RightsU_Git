@@ -130,7 +130,7 @@ namespace RightsU_Plus.Controllers
                 {
                     ReportParameter[] parm = new ReportParameter[3];
                     parm[0] = new ReportParameter("Content_Category", businessUnitcode);
-                    parm[1] = new ReportParameter("Deal_Type", dealCode);
+                    parm[1] = new ReportParameter("Module_Code", dealCode);
                     parm[2] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
                     rptViewer = BindReport(parm, "rpt_Deal_WFStatus_Pending");
                 }
@@ -138,7 +138,7 @@ namespace RightsU_Plus.Controllers
                 {
                     ReportParameter[] parm = new ReportParameter[3];
                     parm[0] = new ReportParameter("Content_Category", businessUnitcode);
-                    parm[1] = new ReportParameter("Deal_Type", dealCode);
+                    parm[1] = new ReportParameter("Module_Code", dealCode);
                     parm[2] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
                     rptViewer = BindReport(parm, "rpt_Deal_WFStatus_Pending");
                 }

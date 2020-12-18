@@ -2663,7 +2663,7 @@ namespace RightsU_Plus.Controllers
                 }
 
                 ColNo = 1;
-                for (int i = 1; i <= 10; i++)
+                for (int i = 1; i <= 2; i++)
                 {
                     RowNo = i+1;
                     worksheet.Cells[RowNo, ColNo].Value = i;
