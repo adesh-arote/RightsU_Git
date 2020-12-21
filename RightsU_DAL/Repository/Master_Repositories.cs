@@ -2849,4 +2849,8 @@ namespace RightsU_DAL
     {
         public DM_Title_Import_Utility_Repository(string conStr) : base(conStr) { }
     }
+    public class DM_Title_Import_Utility_Data_Repository : RightsU_Repository<DM_Title_Import_Utility_Data>
+    {
+        public DM_Title_Import_Utility_Data_Repository(string conStr) : base(conStr) { }
+    }
 }

@@ -27,7 +27,7 @@
 
 <div class="main_section" onclick="AllsubmenuHide();">
     <div class="container acq main_col">
-        <div class="top_area">
+        <div class="top_area" style="width:150%;">
             <div class="title_block  clearfix">
                 <h2 class="pull-left">
                     Title Details
@@ -48,17 +48,17 @@
             </div>
         </div>
         <input type="hidden" id="hdnPageNo" name="hdnPageNo" />
-        <div class="paging_area clearfix" style="margin-top: 5px;">
+        <div class="paging_area clearfix" style="margin-top: 5px;width:150%">
             <div id="ErrorPagination" class="pagination" style="margin-right: 10px;">
             </div>
-            <span class="pull-left" id="lblTotal">Total Records : </span>
+            <span class="pull-left" id="lblTotal">Total Records : @ViewBag.BulkImportCount</span>
             <span class="pull-right">
                 Page Size:
                 <input type="text" id="txtErrorPageSize" class="smallTextBox pagingSize" value="@(Convert.ToInt32(ViewBag.txtpageSize) == 0 || ViewBag.txtpageSize == null ? 10 : ViewBag.txtpageSize)"
                        onchange="return PageSize_OnChange();" onkeypress="return isNumber(event);" maxlength="3" onblur="setDefaultPaging('txtErrorPageSize')" />
             </span>
         </div>
-        <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="tab-content clearfix table-wrapper scale_table_container" style="width:150%;">
             <div class=" scale_table_block">
                 <div id="Title_View_List" class="deal clearfix">
                 </div>

@@ -1,5 +1,5 @@
 ﻿
-@model List<RightsU_Entities.USP_List_TitleBulkImport_Result>
+@model List<RightsU_Entities.DM_Title_Import_Utility_Data>
 @{
     string Message = Convert.ToString(Session["Message"]);
     MessageKey objMessageKey = new MessageKey();
@@ -22,9 +22,18 @@
         });
    
 </script>
+<style>
+    th {
+        font-weight: bold;
+    }
+
+    th {
+        width: 16%;
+    }
+</style>
 
 
-   <div id="AllsubmenuHide"  dir=@objMessageKey.LayoutDirection>
+   @*<div id="AllsubmenuHide"  dir=@objMessageKey.LayoutDirection>
     <table class="table table-bordered table-hover" id="tblDMImport">
         <thead>
             <tr>
@@ -68,8 +77,60 @@
             }
         </tbody>
     </table>
-</div>
+</div>*@
+<div id="AllsubmenuHide" dir=@objMessageKey.LayoutDirection>
+    <table class="table table-bordered table-hover" id="tblDMImport">
+        <thead>
+            <tr>
+                @{
+                    int Count = 0;
+                    foreach (var item in Model)
+                    {
+                        int i = 0;
+                        Count = Count + 1;
+                        var type = item.GetType(); 
+                        var properties = type.GetProperties();
+                    <tr>
+                        @foreach (var property in properties)
+                        {
+                            if (i > 2)
+                            {
+                                if (Count == 1)
+                                {
+                                    if (property.GetValue(item, null) != null)
+                                    {
+                                        <th style="width:16%;font-weight:900;"> @property.GetValue(item, null)</th>
+                                    }
 
+                                }
+                                else
+                                {
+
+                                    if (property.GetValue(item, null) != null)
+                                    {
+                                        if (i == 4)
+                                        {
+                                            <td style="width:16%;color:blue;" class="Highlight" onclick="BindMappingPopUp('@item.DM_Master_Import_Code')" onmouseover="this.style.cursor='pointer';"> @property.GetValue(item, null)</td>
+                                        }
+                                        else
+                                        {
+                                            <td style="width:16%;"> @property.GetValue(item, null)</td>
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                            i++;
+                        }
+
+                    </tr>
+                }
+                }
+
+            </thead>
+
+        </table>
+    </div>
 
 
     <script>

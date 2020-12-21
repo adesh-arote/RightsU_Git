@@ -12381,6 +12381,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="Deal_Type" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Get_ExcelSrNo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="DM_Master_Import_Code" Type="int" Mode="In" />
+          <Parameter Name="Keyword" Type="varchar(max)" Mode="In" />
+          <Parameter Name="CallFor" Type="varchar(max)" Mode="In" />
+        </Function>
         <Function Name="USP_Get_IPR_Class_Tree_Hierarchy" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IPR_ClassCodes" Type="varchar" Mode="In" />
         </Function>
@@ -20683,6 +20688,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Roles" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="DM_Title_Import_Utility_Data" EntityType="RightsU_NeoModel.DM_Title_Import_Utility_Data" />
+          <FunctionImport Name="USP_Get_ExcelSrNo" ReturnType="Collection(String)">
+            <Parameter Name="DM_Master_Import_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Keyword" Mode="In" Type="String" />
+            <Parameter Name="CallFor" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -44408,6 +44418,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_ExcelSrNo" FunctionName="RightsU_NeoModel.Store.USP_Get_ExcelSrNo" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -1555,5 +1555,11 @@ namespace RightsU_DAL
             return objContext.USP_Syn_Deal_Right_Clone(new_Syn_Deal_Code, Syn_Deal_Rights_Code, Syn_Deal_Rights_Title_Code, title_Code, is_Program);
         }
 
+        public virtual ObjectResult<string> USP_Get_ExcelSrNo(Nullable<int> dM_Master_Import_Code, string keyword, string callFor)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_ExcelSrNo(dM_Master_Import_Code, keyword, callFor);
+        }
+
     }
 }

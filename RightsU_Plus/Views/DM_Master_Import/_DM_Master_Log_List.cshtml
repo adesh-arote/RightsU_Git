@@ -270,7 +270,7 @@
             }
         });
     }
-    function PopulateAutoCompleteData(masterLogCode, tabName) {
+    function PopulateAutoCompleteData(masterLogCode, tabName, RoleName) {
         var keyword = $("#txtMappedName_" + masterLogCode).val();
         $("#txtMappedName_" + masterLogCode).autocomplete({
             focus: function () {
@@ -283,7 +283,8 @@
                 $("#hdnMappedCode_" + masterLogCode).val('');
                 var param = {
                     keyword: keyword,
-                    tabName: tabName
+                    tabName: tabName,
+                    RoleName: RoleName
                 };
                 $.ajax({
                     url: URL_PopulateAutoCompleteData,
@@ -623,9 +624,9 @@
                 <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
                     @if (ViewBag.IsResolveConflictTalent == "Y")
                     {
-                    <li class="active">
-                        <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
-                    </li>
+                        <li class="active">
+                            <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
+                        </li>
                     }
                     <li class="">
                         <a data-toggle="tab" role="tab" data-tabname="LB">Music Label</a>
@@ -634,47 +635,50 @@
                     {
 
                         <li class="">
-                            <a data-toggle="tab"  data-tabname="GE" role="tab">Genres</a>Y
+                            <a data-toggle="tab" data-tabname="GE" role="tab">Genres</a>Y
                         </li>
                         <li class="">
-                            <a data-toggle="tab"  data-tabname="MA" role="tab">Movie/Album</a>
+                            <a data-toggle="tab" data-tabname="MA" role="tab">Movie/Album</a>
                         </li>
                         <li class="">
-                            <a data-toggle="tab"  data-tabname="ML" role="tab">Language</a>
+                            <a data-toggle="tab" data-tabname="ML" role="tab">Language</a>
                         </li>
                         <li class="">
-                            <a data-toggle="tab"  data-tabname="MT" role="tab">Theme</a>
+                            <a data-toggle="tab" data-tabname="MT" role="tab">Theme</a>
                         </li>
-                     }
+                    }
                     @if (ViewBag.FileType == "T")
                     {
                         if (ViewBag.IsResolveConflictTitleType == "Y")
                         {
-                        <li class="">
-                            <a data-toggle="tab" data-tabname="TT" role="tab">Title Type</a>
-                        </li>
+                            <li class="">
+                                <a data-toggle="tab" data-tabname="TT" role="tab">Title Type</a>
+                            </li>
                         }
                         if (ViewBag.IsResolveConflictTitleLanguage == "Y")
                         {
-                        <li class="">
-                            <a data-toggle="tab" data-tabname="TL" role="tab">Title Language</a>
-                        </li>
+                            <li class="">
+                                <a data-toggle="tab" data-tabname="TL" role="tab">Title Language</a>
+                            </li>
                         }
                         if (ViewBag.IsResolveConflictOriginalLanguage == "Y")
                         {
-                        <li class="">
-                            <a data-toggle="tab" data-tabname="OL" role="tab">Original Language</a>
-                        </li>
+                            <li class="">
+                                <a data-toggle="tab" data-tabname="OL" role="tab">Original Language</a>
+                            </li>
                         }
+                        <li class="">
+                            <a data-toggle="tab" data-tabname="GE" role="tab">Genres</a>
+                        </li>
                         if (ViewBag.Is_Allow_Program_Category == "Y")
                         {
                             if (ViewBag.IsResolveConflict == "Y")
                             {
-                            <li class="">
-                                <a data-toggle="tab" data-tabname="PC" role="tab">Program Category</a>
-                            </li>
-                               }
+                                <li class="">
+                                    <a data-toggle="tab" data-tabname="PC" role="tab">Program Category</a>
+                                </li>
                             }
+                        }
                     }
                 </ul>
                 @*BindGrid(false, false, '', 'U');*@

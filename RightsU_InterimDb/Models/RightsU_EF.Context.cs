@@ -4907,5 +4907,22 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_ResolveConflict_Data_Result>("USP_Get_ResolveConflict_Data", keywordParameter, tabNameParameter, rolesParameter);
         }
+    
+        public virtual ObjectResult<string> USP_Get_ExcelSrNo(Nullable<int> dM_Master_Import_Code, string keyword, string callFor)
+        {
+            var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
+                new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
+                new ObjectParameter("DM_Master_Import_Code", typeof(int));
+    
+            var keywordParameter = keyword != null ?
+                new ObjectParameter("Keyword", keyword) :
+                new ObjectParameter("Keyword", typeof(string));
+    
+            var callForParameter = callFor != null ?
+                new ObjectParameter("CallFor", callFor) :
+                new ObjectParameter("CallFor", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_ExcelSrNo", dM_Master_Import_CodeParameter, keywordParameter, callForParameter);
+        }
     }
 }
