@@ -1523,18 +1523,7 @@ namespace RightsU_Plus.Controllers
                         {
                             if (ds.Tables[0].Rows.Count > 0)
                             {
-                                dynamic resultSet;
-                                obj_DM_Master_Import.File_Name = PostedFile.FileName;
-                                obj_DM_Master_Import.System_File_Name = PostedFile.FileName;
-                                obj_DM_Master_Import.Upoaded_By = objLoginUser.Users_Code;
-                                obj_DM_Master_Import.Uploaded_Date = DateTime.Now;
-                                obj_DM_Master_Import.Action_By = objLoginUser.Users_Code;
-                                obj_DM_Master_Import.Action_On = DateTime.Now;
-                                obj_DM_Master_Import.Status = "N";
-                                obj_DM_Master_Import.File_Type = "T";
-                                obj_DM_Master_Import.EntityState = State.Added;
-                                lst_DM_Master_Import.Add(obj_DM_Master_Import);
-                                objDMService.Save(obj_DM_Master_Import, out resultSet);
+                              
 
                                 List<Title_Import_Utility_UDT> lst_Title_Import_Utility_UDT = new List<Title_Import_Utility_UDT>();
                                 Title_Import_Utility_UDT obj_Title_Import_Utility_UDT = new Title_Import_Utility_UDT();
@@ -1560,7 +1549,7 @@ namespace RightsU_Plus.Controllers
                                 }
                                 lst_Title_Import_Utility_UDT.Add(obj_Title_Import_Utility_UDT);
 
-                                Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "HV", objLoginUser.Users_Code, obj_DM_Master_Import.DM_Master_Import_Code).FirstOrDefault().Result;
+                                Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "HV", objLoginUser.Users_Code,0).FirstOrDefault().Result;
 
                                 string _Status = Result.Split('~')[0];
                                 string _Message = Result.Split('~')[1];
@@ -1569,6 +1558,19 @@ namespace RightsU_Plus.Controllers
                                 #region Insertion along with headers
                                 if (_Status == "S")
                                 {
+                                    dynamic resultSet;
+                                    obj_DM_Master_Import.File_Name = PostedFile.FileName;
+                                    obj_DM_Master_Import.System_File_Name = PostedFile.FileName;
+                                    obj_DM_Master_Import.Upoaded_By = objLoginUser.Users_Code;
+                                    obj_DM_Master_Import.Uploaded_Date = DateTime.Now;
+                                    obj_DM_Master_Import.Action_By = objLoginUser.Users_Code;
+                                    obj_DM_Master_Import.Action_On = DateTime.Now;
+                                    obj_DM_Master_Import.Status = "N";
+                                    obj_DM_Master_Import.File_Type = "T";
+                                    obj_DM_Master_Import.EntityState = State.Added;
+                                    lst_DM_Master_Import.Add(obj_DM_Master_Import);
+                                    objDMService.Save(obj_DM_Master_Import, out resultSet);
+
                                     lst_Title_Import_Utility_UDT = new List<Title_Import_Utility_UDT>();
                                     foreach (DataRow row in ds.Tables[0].Rows)
                                     {
