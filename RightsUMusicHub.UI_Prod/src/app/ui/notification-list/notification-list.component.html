@@ -1,0 +1,88 @@
+<div class="content-wrapper">
+<section class="content-header">
+  <h1>Notifications List
+    <!-- <small> -  Quarter 1- (Apr'18 - Jun'18)</small> -->
+  </h1>
+  <!-- <ol class="breadcrumb" style="top:60px;">
+    <li><a href="home.htm"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li><a href="#">Notifications</a></li>
+  </ol> -->
+  <div class="pull-right" style="margin-top: -2%">
+      <div class="squareUnRead"></div>&nbsp;<label > Unread</label>&nbsp;&nbsp;
+      <div class="squareRead"></div>&nbsp;<label > Read</label>
+
+  </div>
+</section>
+<!-- Main content -->
+        <section class="content">
+           <div class="row">
+              <div class="col-xs-12">
+                <div class="box box-primary">
+   
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+          <br>
+            <div class="Row">
+                <div>
+                  <label>Search</label>&nbsp;
+                  <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30" placeholder="User, Description" [(ngModel)]="NotificationSearch"  (keyup)="filter(NotificationSearch)"
+                    pInputText >
+          
+                </div>
+          
+              </div>
+         <br>
+
+        <p-table  [value]="notificationFilterList" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25,50,75,100]" [responsive]="true">
+          <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 250px;font-size: 13px;">User</th>
+                <th style="font-size: 13px;">Description</th>
+                <th style="width: 150px;font-size: 13px;">Notification On</th>
+                
+            </tr>
+        </ng-template>
+          <ng-template pTemplate="body" let-rowData >
+              <tr [ngStyle]="{'background-color': changeColor(rowData)}">
+                  <!-- <td *ngFor="let col of columns" >
+                      {{rowData[col.field]}}
+                  </td> -->
+                  <td style="text-align: center;"><span style="font-size: 14px;">{{rowData.UserName}}</span></td>
+                  <td>
+                      <a (click)="notificationDetails(rowData)">
+                          <span style="color:mediumblue;font-size: 14px;">{{rowData.Subject}}</span></a>  
+                  </td>
+                  <td style="text-align: center;"><span style="font-size: 14px;">{{rowData.CreatedTime}}</span></td>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+              <tr style="position:absolute;">
+                  <td style="height:33px;font-weight:normal ;border-right: none;border-top: none;border-bottom: none;background:linear-gradient(to bottom, #f6f7f9 0%, #ebedf0 100%)">
+                      Total Records: {{totalCount}}
+                  </td>
+                  
+              </tr>
+          </ng-template>
+      </p-table>
+
+        </div>
+        <!-- /.box-body -->
+        
+        </div>
+              </div>
+           </div>
+        </section>
+        <p-dialog [(visible)]="displayMessage" [blockScroll]="true"  [modal]="true"  [positionTop]="60" [width]="900"   [responsive]="true" [draggable]="false">
+          <p-header>
+              {{alertHeader}}
+          </p-header>
+          <div id="NotifyMessage1" style="height:300px;">
+              test
+          </div>
+          <p-footer>
+            <button type="button" pButton (click)="alertClose()" label="Close"></button>
+            
+          </p-footer>
+        </p-dialog>
+        <div *ngIf="load" id="loadingDiv"></div>
+      </div>

@@ -1,0 +1,142 @@
+
+.requestgrid{
+  margin-top: 1%;
+}
+  input.SearchTextBox {
+    width:40% !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+  input.RequestTextBox {
+    width:15% !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+  input.RequestlistTextBox {
+    width:200px !important;
+    /* margin-right:2px !important; */
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+
+  input.RequestNumber {
+    width:30% !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+  input.ReqTextBox {
+    width:70% !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+  
+  input.searchReqTextBox {
+    width:147px !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+
+  label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: initial;
+}
+input.cueSheetFrame {
+  width:31% !important;
+  margin-right:2px !important;
+  border: 1px solid #bbb !important;
+  padding:2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 26px;
+}
+input.requestSongType {
+  width:90% !important;
+  margin-right:2px !important;
+  border: 1px solid #bbb !important;
+  padding:2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 30px;
+}
+.cueSheetRemark{
+  width: 100%;
+}
+/* p-calendar>span>input{
+  width: 10px !important;
+} */
+
+
+/* .dropdown-content:active {
+  display: block;
+} */
+
+
+
+
+
+.dropdwnbody li{
+  padding-left: 1%;
+}
+.dropdown-menu{
+  border: 1px solid #bbb !important;
+  width: 700px; 
+  z-index: 1003 !important;
+  top: -137px !important;
+  opacity: 1 !important;
+}
+.staticdropdown ul:after {
+  position: absolute;
+  left: 20%;
+  top: 130px;
+  width: 0;
+  height: 0;
+  content: '';
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid lightgray;
+}
+#tercondtndiv{
+  background-color: white;
+  border: 1px solid gray;
+}

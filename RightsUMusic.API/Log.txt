@@ -1,0 +1,686 @@
+5.12.35 PM 11 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CueSheetList (1)_132521605556476841.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :Found Exception : External table is not in the expected format.
+===========================================================================
+5.12.42 PM 11 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+5.13.57 PM 11 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CueSheetList (1)_132521606587640071.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :Found Exception : External table is not in the expected format.
+===========================================================================
+5.14.59 PM 11 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+5.15.21 PM 11 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_132521607221655771.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+  :STEP 4 A: Saving to Database Start
+  :Found Exception : Conversion failed when converting date and/or time from character string.
+===========================================================================
+5.17.04 PM 11 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+5.18.46 PM 11 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_132521609272340320.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+  :STEP 4 A: Saving to Database Start
+  :Found Exception : Conversion failed when converting the nvarchar value 'gg' to data type int.
+===========================================================================
+5.18.55 PM 11 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+12.19.57 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 136
+  :Found Exception : A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server) | Inner Exception : The network path was not found
+===========================================================================
+12.20.48 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+12.22.54 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 4 A: Saving to Database Start
+12.24.24 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+12.27.38 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+12.30.54 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+12.33.06 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+12.35.48 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+12.42.43 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+12.44.40 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_132524036963371275.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+12.54.55 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_132524042962802313.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+12.58.28 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_132524045088534873.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+1.00.16 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_132524046170321125.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+1.00.37 PM 14 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+12.40.41 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_132524466419130410.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+12.41.01 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+12.42.26 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_New_132524467571027152.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+  :STEP 4 A: Saving to Database Start
+  :STEP 4 B: Saving to Database End
+12.44.03 AM 15 December 2020
+---------------------------------------------------------------------------
+  :STEP 5: Upload Ended
+===========================================================================
+12.44.03 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+12.44.52 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_New_132524468931378959.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+12.50.21 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_New_132524472229027976.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :Found Exception : There is no row at position 0.
+===========================================================================
+12.50.49 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+12.51.24 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_New_132524472848000092.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+12.53.02 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_New_132524473839084486.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :Found Exception : There is no row at position 0.
+===========================================================================
+12.53.41 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+12.53.57 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_New_132524474378641424.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+12.56.16 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_New_132524475769360251.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+1.02.31 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (20)_New_132524479521550094.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+1.02.40 AM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+2.00.35 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132524946365818755.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+3.37.50 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525004725960522.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+3.48.01 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525010826178847.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+3.58.16 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+3.59.19 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525017599667353.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+4.01.00 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525018616669957.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+4.06.08 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525021691600200.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+4.06.19 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+4.07.04 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525022250172366.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+4.07.10 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+4.07.57 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525022780518070.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+  :STEP 4 A: Saving to Database Start
+  :STEP 4 B: Saving to Database End
+4.08.03 PM 15 December 2020
+---------------------------------------------------------------------------
+  :STEP 5: Upload Ended
+===========================================================================
+4.08.03 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+4.08.43 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525023242379054.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+4.11.51 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+4.13.16 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525025977749870.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+  :STEP 4 A: Saving to Database Start
+  :STEP 4 B: Saving to Database End
+4.14.13 PM 15 December 2020
+---------------------------------------------------------------------------
+  :STEP 5: Upload Ended
+===========================================================================
+4.14.13 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+4.14.35 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525026763354791.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+  :STEP 4 A: Saving to Database Start
+  :STEP 4 B: Saving to Database End
+4.15.04 PM 15 December 2020
+---------------------------------------------------------------------------
+  :STEP 5: Upload Ended
+===========================================================================
+4.15.04 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+4.16.14 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525027753056490.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+  :STEP 4 A: Saving to Database Start
+  :STEP 4 B: Saving to Database End
+4.19.58 PM 15 December 2020
+---------------------------------------------------------------------------
+  :STEP 5: Upload Ended
+===========================================================================
+4.19.58 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
+4.20.35 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Started
+===========================================================================
+  :STEP 1 A: User Veryfying
+  :STEP 1 B: User verified user code = 293
+  :STEP 2 A: File Upload Start
+  :Excel Function
+===========================================================================
+  :STEP 2 AA: OLEDB Con String
+===========================================================================
+  :STEP 2 AB: OLEDB Con string = {Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\UTO Projects\MusicHub\RightsUMusic.API\Uploads\CuesheetImport (22)_132525030357079062.xlsx;Extended Properties="Excel 12.0;HDR=No;IMEX=0"}
+===========================================================================
+  :STEP 2 AC: OLEDB open Connection 
+  :STEP 2 AC: OLEDB Close Conn
+  :STEP 2 A: File Upload Ended
+  :STEP 3 A: File Validation Started
+  :STEP 3 B: File Validation Ended
+4.21.11 PM 15 December 2020
+---------------------------------------------------------------------------
+  :Upload Ended
+===========================================================================
