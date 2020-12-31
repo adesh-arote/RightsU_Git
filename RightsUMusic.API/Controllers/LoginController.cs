@@ -14,6 +14,8 @@ using System.Configuration;
 using System.Web;
 using System.Threading.Tasks;
 using System.Security.Claims;
+using System.IO;
+using System.Web.Hosting;
 
 namespace RightsUMusic.API.Controllers
 {
@@ -946,6 +948,59 @@ namespace RightsUMusic.API.Controllers
 
             }
             return Request.CreateResponse(HttpStatusCode.Created, new { Password = password });
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage UploadImage()
+        {
+            Return _objRet = new Return();
+            try
+            {
+                var httpRequest = HttpContext.Current.Request;
+                //var UsersCode = httpRequest.Form["UsersCode"];
+                string UsersCode = Convert.ToString(this.ActionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
+                UsersCode = UsersCode.Replace("Bearer ", "");
+
+                var fileWithTimeStamp = "";
+                var fileWithOutTimeStamp = "";
+                User objUser = new User();
+                foreach (string file in httpRequest.Files)
+                {
+                    var postedFile = httpRequest.Files[file];
+                    fileWithOutTimeStamp = Path.GetFileNameWithoutExtension(postedFile.FileName) + Path.GetExtension(postedFile.FileName);
+                    fileWithTimeStamp = Path.GetFileNameWithoutExtension(postedFile.FileName) + "_" + DateTime.Now.ToFileTime() + Path.GetExtension(postedFile.FileName);
+                    var fileName = Path.GetFileNameWithoutExtension(postedFile.FileName) + Path.GetExtension(postedFile.FileName);
+                    var filePath = HttpContext.Current.Server.MapPath("~/Uploads/" + fileWithTimeStamp);
+                    postedFile.SaveAs(filePath);
+
+                    string sourcePath = HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["SourcePath"]); 
+                    //string sourcePath = @Convert.ToString(ConfigurationManager.AppSettings["SourcePath"]);
+                    Error.WriteLog("Source Path: " + sourcePath, includeTime: true, addSeperater: true);
+                    //string targetPathRU = HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["DestPathMH"]);
+                    string targetPathRU = @Convert.ToString(ConfigurationManager.AppSettings["DestPathMH"]);
+                    Error.WriteLog("Target RU Path: " + targetPathRU, includeTime: true, addSeperater: true);
+
+                    string sourceFile = Path.Combine(sourcePath, fileWithTimeStamp);
+                    Error.WriteLog("Source File 1: " + sourceFile, includeTime: true, addSeperater: true);
+                    string destFileRU = Path.Combine(targetPathRU, fileWithTimeStamp);
+                    Error.WriteLog("destFile RU 1: " + destFileRU, includeTime: true, addSeperater: true);
+
+                    File.Copy(sourceFile, destFileRU, true);
+
+                    objUser = objUserServices.GetUserByID(Convert.ToInt32(UsersCode));
+                    objUser.User_Image = fileWithTimeStamp;
+
+                    objUserServices.UpdateUser(objUser);
+
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, User = objUser }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                string msg = " Error at GetUsers : ";
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
         }
     }
 
