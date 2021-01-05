@@ -29,7 +29,7 @@ namespace RightsUMusic.API.Controllers
             Return _objRet = new Return();
             try
             {
-               lstNotificationList = obj.GetNotificationList(objNotficationListInput.RecordFor,Convert.ToInt32(UserCode),out RecordCount);
+                lstNotificationList = obj.GetNotificationList(objNotficationListInput.RecordFor, Convert.ToInt32(UserCode), out RecordCount);
                 _objRet.Message = "";
                 _objRet.IsSuccess = true;
                 return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, NotifiactionList = lstNotificationList, UnReadCount = RecordCount }, Configuration.Formatters.JsonFormatter);
@@ -56,11 +56,11 @@ namespace RightsUMusic.API.Controllers
 
             try
             {
-               objMHNotificationLog =  obj.ReadNotification(objMHNotificationLog);
+                objMHNotificationLog = obj.ReadNotification(objMHNotificationLog);
                 var UserName = obj.GetUserName("Select Login_Name From Users where Users_Code = " + objMHNotificationLog.User_Code).FirstOrDefault();
                 _objRet.Message = "Notification marked as read.";
                 _objRet.IsSuccess = true;
-                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet,NotificationDetail = objMHNotificationLog,UserName = UserName.Login_Name  }, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, NotificationDetail = objMHNotificationLog, UserName = UserName.Login_Name }, Configuration.Formatters.JsonFormatter);
             }
             catch (Exception ex)
             {
@@ -69,6 +69,8 @@ namespace RightsUMusic.API.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
             }
         }
+
+       
 
     }
 

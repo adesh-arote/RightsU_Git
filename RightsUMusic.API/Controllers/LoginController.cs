@@ -457,6 +457,7 @@ namespace RightsUMusic.API.Controllers
                 ProductionHouse = objVendor.Vendor_Name,
                 VendorShortName = objVendor.Short_Code ?? "",
                 FullName = objNewUser.First_Name + " " + objNewUser.Last_Name,
+                UserImage = objNewUser.User_Image ?? "",
                 Menu = lstMenu
             };
             return retObjUser;

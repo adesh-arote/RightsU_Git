@@ -34,7 +34,7 @@ namespace RightsUMusic.BLL.Services
         private readonly USPMHGetTalentsRepositories objUSPMHGetTalentsRepositories = new USPMHGetTalentsRepositories();
         private readonly MHMusicSongTypeRepositories objMHMusicSongTypeRepositories = new MHMusicSongTypeRepositories();
         private readonly USPMHGetChannelFromDealRepositories objUSPMHGetChannelFromDealRepositories = new USPMHGetChannelFromDealRepositories();
-
+        private readonly Music_LanguageRepositories objMusic_LanguageRepositories = new Music_LanguageRepositories();
         public IEnumerable<USPMHShowNameList> GetShowNameList(int UsersCode,int ChannelCode)
         {
           
@@ -205,6 +205,19 @@ namespace RightsUMusic.BLL.Services
             }
 
             return ChannelCode;
+        }
+
+        public IEnumerable<Music_Language> GetMusicLanguageList(string strSearch)
+        {
+            List<Music_Language> lstMusic_Language = new List<Music_Language>();
+            string strSQL = "Select Music_Language_Code, Language_Name from Music_Language Where 1 = 1 " + strSearch;
+            lstMusic_Language = objMusic_LanguageRepositories.GetDataWithSQLStmt(strSQL).ToList();
+            return lstMusic_Language;
+        }
+
+        public MHRequest GetMHRequest(int Id)
+        {
+            return objMHRequestRepositories.Get(Id);
         }
     }
 }

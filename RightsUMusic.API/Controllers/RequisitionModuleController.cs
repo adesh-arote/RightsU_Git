@@ -984,6 +984,88 @@ namespace RightsUMusic.API.Controllers
             }
 
         }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage GetMusicLanguage()
+        {
+            Return _objRet = new Return();
+            try
+            {
+                string strSearch = "AND Is_active = 'Y'";
+                var lstMusicLanguage = obj.GetMusicLanguageList(strSearch);/*.Select(x=> new { x.Genres_Code,x.Genres_Name});*/
+                _objRet.Message = "";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, MusicLanguage = lstMusicLanguage }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage GetNotificationHeader(MHRequest objMHRequest)
+        {
+            Return _objRet = new Return();
+            string UsersCode = Convert.ToString(this.ActionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
+            UsersCode = UsersCode.Replace("Bearer ", "");
+            int RecordCount = 0;
+            string Header = "";
+
+           
+            objMHRequest.UsersCode = Convert.ToInt32(UsersCode);
+            // objMHRequest.UsersCode = Convert.ToInt32(UserCode);
+            IEnumerable<USPMHConsumptionRequestList> lstConsumptionRequest = new List<USPMHConsumptionRequestList>();
+
+            try
+            {
+                if(objMHRequest.MHRequestTypeCode == 1)
+                {
+                    ConsumptionRequestListInput objConsumptionRequestList = new ConsumptionRequestListInput()
+                    {
+                        RecordFor = "L",
+                        PagingRequired = "Y",
+                        PageSize = 10,
+                        PageNo = 1,
+                        RequestID = "",
+                        ChannelCode = "",
+                        ShowCode = "",
+                        StatusCode = "",
+                        FromDate = "",
+                        ToDate = ""
+                    };
+                    lstConsumptionRequest = obj.GetConsumptionRequestList(objMHRequest, objConsumptionRequestList, out RecordCount);
+                    Header = lstConsumptionRequest.Where(x => x.RequestCode == objMHRequest.MHRequestCode).Select(x =>
+                                "Details: " + x.RequestID + " / " + x.ChannelName + " / " + x.Title_Name + " ( " + x.EpisodeFrom + " )").FirstOrDefault().ToString();
+                }
+                else if (objMHRequest.MHRequestTypeCode == 2)
+                {
+                     Header = "Music Detail for : "+ obj.GetMHRequest(Convert.ToInt32(objMHRequest.MHRequestCode)).RequestID.ToString();
+                }
+                else
+                {
+                    Header = "Movie / Album Detail for : " + obj.GetMHRequest(Convert.ToInt32(objMHRequest.MHRequestCode)).RequestID.ToString();
+                }
+              
+                _objRet.Message = "";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Return = _objRet,
+                    Header = Header
+                }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
     }
 
     public class MusicAlbum

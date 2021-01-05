@@ -19,6 +19,7 @@ namespace RightsUMusic.Entity
         public string StarCast { get; set; }
         public string Singers { get; set; }
         public string MusicComposer { get; set; }
+        public string MusicLanguage { get; set; }
 
     }
 
@@ -36,5 +37,6 @@ namespace RightsUMusic.Entity
         public int PageNo { get; set; }
         public int ChannelCode { get; set; }
         public int TitleCode { get; set; }
+        public string MusicLanguageCode { get; set; }
     }
 }

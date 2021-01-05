@@ -86,6 +86,7 @@
     <Compile Include="Master_Entities\MusicTrackRequestDetails.cs" />
     <Compile Include="Master_Entities\Music_Album.cs" />
     <Compile Include="Master_Entities\Music_Label.cs" />
+    <Compile Include="Master_Entities\Music_Language.cs" />
     <Compile Include="Master_Entities\Title.cs" />
     <Compile Include="Master_Entities\User.cs" />
     <Compile Include="Master_Entities\Users_Password_Detail.cs" />

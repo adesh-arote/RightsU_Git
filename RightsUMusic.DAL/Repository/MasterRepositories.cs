@@ -428,6 +428,21 @@ namespace RightsUMusic.DAL.Repository
     }
     #endregion
 
+    #region----------Music Language-----------------
+    public class Music_LanguageRepositories : MainRepository<Music_Language>
+    {
+        public IEnumerable<Music_Language> GetAll()
+        {
+            return base.GetAll<Music_Language>();
+        }
+        public IEnumerable<Music_Language> GetDataWithSQLStmt(string strSQL)
+        {
+            //string strSQL = "Select Genres_Code,Genres_Name From Genres Where 1 = 1 " + strSearch;
+            return base.ExecuteSQLStmt<Music_Language>(strSQL);
+        }
+
+    }
+    #endregion
     #region------USP---------------
     public class USPMHShowNameListRepositories : MainRepository<USPMHShowNameList>
     {
@@ -458,6 +473,7 @@ namespace RightsUMusic.DAL.Repository
             param.Add("@PageNo", objMusicTrackInput.PageNo);
             param.Add("@ChannelCode", objMusicTrackInput.ChannelCode);
             param.Add("@TitleCode", objMusicTrackInput.TitleCode);
+            param.Add("@MusicLanguageCode", objMusicTrackInput.MusicLanguageCode);
             param.Add("@RecordCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
             IEnumerable<USPMHSearchMusicTrack> lstUSPMHSearchMusicTrack = base.ExecuteSQLProcedure<USPMHSearchMusicTrack>("USPMHSearchMusicTrack", param);
             _RecordCount = param.Get<int>("@RecordCount");

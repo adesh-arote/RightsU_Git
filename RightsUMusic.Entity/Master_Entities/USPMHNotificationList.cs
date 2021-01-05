@@ -14,5 +14,7 @@ namespace RightsUMusic.Entity
         //public Nullable<System.DateTime> CreatedTime { get; set; }
         public string CreatedTime { get; set; }
         public string IsRead { get; set; }
+        public int MHRequestCode { get; set; }
+        public int MHRequestTypeCode { get; set; }
     }
 }
