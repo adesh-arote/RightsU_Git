@@ -1,10 +1,10 @@
 ﻿CREATE TABLE [dbo].[BMS_Deal_Content] (
     [BMS_Deal_Content_Code]    INT            IDENTITY (1, 1) NOT NULL,
     [BMS_Deal_Code]            INT            NULL,
-    [BMS_Deal_Ref_Key]         INT            NULL,
-    [BMS_Deal_Content_Ref_Key] INT            NULL,
+    [BMS_Deal_Ref_Key]         DECIMAL (38)   NULL,
+    [BMS_Deal_Content_Ref_Key] DECIMAL (38)   NULL,
     [BMS_Asset_Code]           INT            NULL,
-    [BMS_Asset_Ref_Key]        INT            NULL,
+    [BMS_Asset_Ref_Key]        DECIMAL (38)   NULL,
     [Asset_Type]               VARCHAR (3)    NULL,
     [Title]                    VARCHAR (80)   NULL,
     [Start_Date]               DATETIME       NULL,

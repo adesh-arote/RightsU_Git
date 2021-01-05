@@ -1,6 +1,4 @@
-﻿
-
-CREATE FUNCTION [dbo].[UFN_GetRegionNames_Report]
+﻿CREATE FUNCTION [dbo].[UFN_GetRegionNames_Report]
 (
 	@Regions NVARCHAR(MAX),
 	@Region_Type CHAR(1)

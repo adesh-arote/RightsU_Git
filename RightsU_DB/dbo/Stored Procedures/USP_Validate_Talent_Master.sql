@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE USP_Validate_Talent_Master
+﻿CREATE PROCEDURE USP_Validate_Talent_Master
 (
 	@Talent_Code INT,
 	@Selected_Role_Code VARCHAR(150)

@@ -13,7 +13,7 @@ BEGIN
   
   SET NOCOUNT ON;    
   --TRUNCATE TABLE DM_Title   
-  DECLARE @Error_Message NVARCHAR(MAX), @DM_Master_Import_Code INT  
+  DECLARE @Error_Message NVARCHAR(MAX), @DM_Master_Import_Code INT ,@Sql NVARCHAR(1000),@DB_Name VARCHAR(1000); 
   Select Top 1 @DM_Master_Import_Code = DM_Master_Import_Code From @Title_Import       
   INSERT INTO DM_Title  
   (  
@@ -79,7 +79,16 @@ BEGIN
 		  (ISNULL([Error_Message],'')) AS Error_Messages   
 	   FROM DM_Title   
 	   WHERE [Record_Status] = 'E'  
-	UPDATE DM_Master_Import Set [Status] = 'E' where DM_Master_Import_Code  = @DM_Master_Import_Code
+	   UPDATE DM_Master_Import Set [Status] = 'E' where DM_Master_Import_Code  = @DM_Master_Import_Code
+
+	   DECLARE @File_Name VARCHAR(MAX)
+	   SELECT @File_Name = File_Name FROM DM_Master_Import WHere DM_Master_Import_Code = @DM_Master_Import_Code AND [Status] = 'E'
+	   INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+	   SELECT GETDATE(),NULL,NULL,'USP_DM_Title_PI','Error in file: '+ @File_Name,'NA','NA','DB'
+	   
+	   SELECT @sql = 'Error in file: '+ @File_Name
+	   SELECT @DB_Name = DB_Name()
+	   EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_DM_Title_PI','AN','VN',@sql,'DB','IP','FR','TI'
 	END
 	ELSE
 	BEGIN
@@ -113,5 +122,4 @@ BEGIN
  -- WHERE [Record_Status] = 'E'  
  -- UPDATE DM_Master_Import Set [Status] = 'E' Where DM_Master_Import_Code = @DM_Master_Import_Code  
  --END  
-END   
-  
+END

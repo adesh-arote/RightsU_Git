@@ -1,10 +1,11 @@
-﻿ALTER PROC [dbo].[USP_Validate_Rights_Duplication_UDT_Syn]
+﻿
+CREATE PROC [dbo].[USP_Validate_Rights_Duplication_UDT_Syn]
 AS
 BEGIN 
 	IF((SELECT COUNT(*) From Syn_Deal_Rights_Process_Validation WHERE STATUS = 'W') = 0)
 	BEGIN
 		SET NOCOUNT ON;
-		DECLARE @IS_PUSH_BACK_SAME_DEAL CHAR(1) ='N', @Is_Autopush CHAR(1) = 'N'
+		DECLARE @IS_PUSH_BACK_SAME_DEAL CHAR(1) ='N', @Is_Autopush CHAR(1) = 'N',@Sql NVARCHAR(1000),@DB_Name VARCHAR(1000),@Agreement_No VARCHAR(100);
 		SELECT @IS_PUSH_BACK_SAME_DEAL  = Parameter_Value from System_Parameter_New WHERE Parameter_Name = 'VALIDATE_PUSHBACK_SAME_DEAL'
 		
 
@@ -1607,7 +1608,8 @@ BEGIN
 						Is_Sub_License, Is_Exclusive, Is_Pushback
 						InTo #Syn_Deal_Rights
 				From Syn_Deal_Rights SDR
-				Where 
+				inner join Syn_Deal SD ON SD.Syn_Deal_Code = SDR.Syn_Deal_Code
+				Where SD.Deal_Workflow_Status NOT IN ('AR') AND
 				(
 					(
 						SDR.Right_Type ='Y'
@@ -1921,7 +1923,7 @@ BEGIN
 						(
 							(
 							Select ', ' + t.Agreement_No From Syn_Deal t
-							Where t.Syn_Deal_Code In (
+							Where t.Deal_Workflow_Status NOT IN ('AR') AND t.Syn_Deal_Code In (
 								Select adrn.Syn_Deal_Code From #Syn_Rights_New adrn
 								Where a.Title_Code = adrn.Title_Code And a.Actual_Right_Start_Date = adrn.Actual_Right_Start_Date
 									AND ISNULL(a.Actual_Right_End_Date,'')=ISNULL(adrn.Actual_Right_End_Date,'')
@@ -1985,7 +1987,22 @@ BEGIN
 				Drop Table #Syn_Rights_Code_Lang
 
 			End  ------------------------ End
+			-----------------------------INSERTION  OF Error in UTO_ExcepitionLog and Trigger Mail to Dev team Table-------------------------------------
+			IF EXISTS(SELECT * FROM Syn_Deal_Rights WHERE Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code AND  Right_Status = 'E')
+			BEGIN
+				SELECT @Agreement_No = SD.Agreement_No FROM Syn_Deal_Rights SDR
+				INNER JOIN Syn_Deal SD ON SDR.Syn_Deal_Code = SD.Syn_Deal_Code
+				WHERE SD.Deal_Workflow_Status NOT IN ('AR') AND SDR.Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code 
 
+				SET @Sql = 'There is an error occured while validating a syndication rights. Syndication Agreement No : '+ @Agreement_No 
+
+				INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+				SELECT GETDATE(),null,null,'USP_Validate_Rights_Duplication_UDT_Syn',@Sql,'NA','NA','DB' 
+				FROM Syn_Deal_Rights WHERE Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code AND  Right_Status = 'E'
+
+				SELECT @DB_Name = DB_NAME()
+				EXEC [dbo].[USP_SendMail_Page_Crashed] 'SysDB User', @DB_Name,'RU','USP_Validate_Rights_Duplication_UDT_Syn','AN','VN',@sql,'DB','IP','FR','TI'
+			END
 
 		End Try
 		Begin Catch
@@ -1999,26 +2016,80 @@ BEGIN
 
 			Update Syn_Deal_Rights Set Right_Status = 'E' Where Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code
 
+			SELECT @Agreement_No = SD.Agreement_No FROM Syn_Deal_Rights SDR
+			INNER JOIN Syn_Deal SD ON SDR.Syn_Deal_Code = SD.Syn_Deal_Code
+			WHERE SD.Deal_Workflow_Status NOT IN ('AR') AND SDR.Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code 
+			 
+
+			SET @Sql = 'There is an error occured while validating a syndication rights. Syndication Agreement No : '+ @Agreement_No + ERROR_MESSAGE()
+			INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+			SELECT GETDATE(),null,null,'USP_Validate_Rights_Duplication_UDT_Syn',@Sql,'NA','NA','DB' 
+			FROM Syn_Deal_Rights WHERE Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code 
+
+			SELECT @DB_Name = DB_NAME()
+			EXEC [dbo].[USP_SendMail_Page_Crashed] 'SysDB User', @DB_Name,'RU','USP_Validate_Rights_Duplication_UDT_Syn','AN','VN',@sql ,'DB','IP','FR','TI'
+
 			Declare @UTO_Email_Id Varchar(1000) = ''
 			Select @UTO_Email_Id = Parameter_Value From System_Parameter_New Where Parameter_Name = 'UTO_Email_Id'
 
 			DECLARE @DatabaseEmail_Profile varchar(200), @EmailBody NVARCHAR(max) = ''
 			SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
-				
-		
-			Set @EmailBody = 'Hello RightsU Team <br/><br/>There is an error occured while validating a syndication rights. Syndication Right Code is - ' + Cast(@Syn_Deal_Rights_Code as Varchar(100)) +
-							 '<br/><br/>Below is error description - </br>'
-
-			SELECT @EmailBody = @EmailBody + ERROR_MESSAGE()
-
-			--EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile
-			--,@Recipients =  @UTO_Email_Id
-			--,@Copy_recipients = ''
-			--,@subject = 'RightsU Error On Syndication Rights Validation'
-			--,@body = @EmailBody, @body_format = 'HTML';
-
+			
 		End Catch
 
 		Update Syn_Deal_Rights_Process_Validation Set Status = 'D' Where Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code
 	End
+
+	IF OBJECT_ID('tempdb..#Acq_Avail_Title_Eps') IS NOT NULL DROP TABLE #Acq_Avail_Title_Eps
+	IF OBJECT_ID('tempdb..#Acq_Country') IS NOT NULL DROP TABLE #Acq_Country
+	IF OBJECT_ID('tempdb..#Acq_Deal_Rights') IS NOT NULL DROP TABLE #Acq_Deal_Rights
+	IF OBJECT_ID('tempdb..#Acq_Dub') IS NOT NULL DROP TABLE #Acq_Dub
+	IF OBJECT_ID('tempdb..#Acq_Sub') IS NOT NULL DROP TABLE #Acq_Sub
+	IF OBJECT_ID('tempdb..#Acq_Titles') IS NOT NULL DROP TABLE #Acq_Titles
+	IF OBJECT_ID('tempdb..#Acq_Titles_With_Rights') IS NOT NULL DROP TABLE #Acq_Titles_With_Rights
+	IF OBJECT_ID('tempdb..#AcqPromoter') IS NOT NULL DROP TABLE #AcqPromoter
+	IF OBJECT_ID('tempdb..#ApprovedAcqData') IS NOT NULL DROP TABLE #ApprovedAcqData
+	IF OBJECT_ID('tempdb..#Deal_Right_Title_WithEpsNo') IS NOT NULL DROP TABLE #Deal_Right_Title_WithEpsNo
+	IF OBJECT_ID('tempdb..#Deal_Rights_Territory') IS NOT NULL DROP TABLE #Deal_Rights_Territory
+	IF OBJECT_ID('tempdb..#Dup_Records_Language') IS NOT NULL DROP TABLE #Dup_Records_Language
+	IF OBJECT_ID('tempdb..#Min_Right_Start_Date') IS NOT NULL DROP TABLE #Min_Right_Start_Date
+	IF OBJECT_ID('tempdb..#NA_Country') IS NOT NULL DROP TABLE #NA_Country
+	IF OBJECT_ID('tempdb..#NA_Dubbing') IS NOT NULL DROP TABLE #NA_Dubbing
+	IF OBJECT_ID('tempdb..#NA_Platforms') IS NOT NULL DROP TABLE #NA_Platforms
+	IF OBJECT_ID('tempdb..#NA_Promoter_Dub') IS NOT NULL DROP TABLE #NA_Promoter_Dub
+	IF OBJECT_ID('tempdb..#NA_Promoter_Sub') IS NOT NULL DROP TABLE #NA_Promoter_Sub
+	IF OBJECT_ID('tempdb..#NA_Promoter_TL') IS NOT NULL DROP TABLE #NA_Promoter_TL
+	IF OBJECT_ID('tempdb..#NA_Subtitling') IS NOT NULL DROP TABLE #NA_Subtitling
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights') IS NOT NULL DROP TABLE #Syn_Deal_Rights
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_Dubbing') IS NOT NULL DROP TABLE #Syn_Deal_Rights_Dubbing
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_Platform') IS NOT NULL DROP TABLE #Syn_Deal_Rights_Platform
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_Subtitling') IS NOT NULL DROP TABLE #Syn_Deal_Rights_Subtitling
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_Territory') IS NOT NULL DROP TABLE #Syn_Deal_Rights_Territory
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_Title') IS NOT NULL DROP TABLE #Syn_Deal_Rights_Title
+	IF OBJECT_ID('tempdb..#Syn_Rights_Code_Lang') IS NOT NULL DROP TABLE #Syn_Rights_Code_Lang
+	IF OBJECT_ID('tempdb..#Syn_Rights_New') IS NOT NULL DROP TABLE #Syn_Rights_New
+	IF OBJECT_ID('tempdb..#Temp_Acq_Country') IS NOT NULL DROP TABLE #Temp_Acq_Country
+	IF OBJECT_ID('tempdb..#Temp_Acq_Dubbing') IS NOT NULL DROP TABLE #Temp_Acq_Dubbing
+	IF OBJECT_ID('tempdb..#Temp_Acq_Platform') IS NOT NULL DROP TABLE #Temp_Acq_Platform
+	IF OBJECT_ID('tempdb..#Temp_Acq_Subtitling') IS NOT NULL DROP TABLE #Temp_Acq_Subtitling
+	IF OBJECT_ID('tempdb..#Temp_Country') IS NOT NULL DROP TABLE #Temp_Country
+	IF OBJECT_ID('tempdb..#Temp_Dubbing') IS NOT NULL DROP TABLE #Temp_Dubbing
+	IF OBJECT_ID('tempdb..#Temp_Episode_No') IS NOT NULL DROP TABLE #Temp_Episode_No
+	IF OBJECT_ID('tempdb..#Temp_Exceptions') IS NOT NULL DROP TABLE #Temp_Exceptions
+	IF OBJECT_ID('tempdb..#Temp_NA_Title') IS NOT NULL DROP TABLE #Temp_NA_Title
+	IF OBJECT_ID('tempdb..#Temp_Platforms') IS NOT NULL DROP TABLE #Temp_Platforms
+	IF OBJECT_ID('tempdb..#Temp_Subtitling') IS NOT NULL DROP TABLE #Temp_Subtitling
+	IF OBJECT_ID('tempdb..#Temp_Syn_Dup_Records') IS NOT NULL DROP TABLE #Temp_Syn_Dup_Records
+	IF OBJECT_ID('tempdb..#Temp_Tit_Right') IS NOT NULL DROP TABLE #Temp_Tit_Right
+	IF OBJECT_ID('tempdb..#TempAcqPromoter_Dub') IS NOT NULL DROP TABLE #TempAcqPromoter_Dub
+	IF OBJECT_ID('tempdb..#TempAcqPromoter_Sub') IS NOT NULL DROP TABLE #TempAcqPromoter_Sub
+	IF OBJECT_ID('tempdb..#TempAcqPromoter_TL') IS NOT NULL DROP TABLE #TempAcqPromoter_TL
+	IF OBJECT_ID('tempdb..#TempCombination') IS NOT NULL DROP TABLE #TempCombination
+	IF OBJECT_ID('tempdb..#TempCombination_Session') IS NOT NULL DROP TABLE #TempCombination_Session
+	IF OBJECT_ID('tempdb..#TempPromoter') IS NOT NULL DROP TABLE #TempPromoter
+	IF OBJECT_ID('tempdb..#TempPromoter_Dub') IS NOT NULL DROP TABLE #TempPromoter_Dub
+	IF OBJECT_ID('tempdb..#TempPromoter_Sub') IS NOT NULL DROP TABLE #TempPromoter_Sub
+	IF OBJECT_ID('tempdb..#TempPromoter_TL') IS NOT NULL DROP TABLE #TempPromoter_TL
+	IF OBJECT_ID('tempdb..#Title_Not_Acquire') IS NOT NULL DROP TABLE #Title_Not_Acquire
+
 End

@@ -17,5 +17,3 @@
     CONSTRAINT [PK_Country] PRIMARY KEY CLUSTERED ([Country_Code] ASC)
 );
 
-
-

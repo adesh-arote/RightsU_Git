@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_DM_Music_Title_PIV]    
+﻿CREATE PROCEDURE [dbo].[USP_DM_Music_Title_PIV]    
 	@DM_Master_Import_Code VARCHAR(500),    
 	@User_Code INT=143    
 AS     
@@ -9,7 +9,7 @@ BEGIN
 	-- Temp Import Data    
 		ID INT IDENTITY(1,1),    
 		DM_Master_Import_Code VARCHAR(500),    
-		Name NVARCHAR(100),    
+		Name NVARCHAR(2000),    
 		Master_Type VARCHAR(100),    
 		Action_By INT,    
 		Action_On DATETIME,    
@@ -386,23 +386,23 @@ BEGIN
 		END 
 		
 		BEGIN
-			IF OBJECT_ID('TEMPDB..#TempMasterLog_Usermapped') IS NOT NULL
-				DROP TABLE #TempMasterLog_Usermapped
+		IF OBJECT_ID('TEMPDB..#TempMasterLog_Usermapped') IS NOT NULL
+			DROP TABLE #TempMasterLog_Usermapped
 
-			CREATE TABLE #TempMasterLog_Usermapped
-			(
-				Name NVARCHAR(500), 
-				Master_Type VARCHAR(10), 
-				Master_Code VARCHAR(1000), 
-				Roles VARCHAR(100),
-				Is_Ignore CHAR(1),
-				Mapped_By CHAR(1)
-			)
+		CREATE TABLE #TempMasterLog_Usermapped
+		(
+			Name NVARCHAR(500), 
+			Master_Type VARCHAR(10), 
+			Master_Code VARCHAR(1000), 
+			Roles VARCHAR(100),
+			Is_Ignore CHAR(1),
+			Mapped_By CHAR(1)
+		)
 
-			INSERT INTO #TempMasterLog_Usermapped(Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By)
-			SELECT Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By FROM DM_Master_Log
-			WHERE DM_Master_Import_Code = cast(@DM_Master_Import_Code as varchar) AND ISNULL(Master_Code, 0) = 0  AND Mapped_By = 'U'
-		END
+		INSERT INTO #TempMasterLog_Usermapped(Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By)
+		SELECT Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By FROM DM_Master_Log
+		WHERE DM_Master_Import_Code = cast(@DM_Master_Import_Code as varchar) AND ISNULL(Master_Code, 0) = 0  AND Mapped_By = 'U'
+	END
 
 	BEGIN 
 		INSERT INTO #Temp_DM_Music_Title_UserMapped(IntCode)
@@ -557,23 +557,23 @@ BEGIN
 		  BEGIN
 
 		  BEGIN
-			IF OBJECT_ID('TEMPDB..#TempMasterLog_systemMapped') IS NOT NULL
-				DROP TABLE #TempMasterLog_systemMapped
+		IF OBJECT_ID('TEMPDB..#TempMasterLog_systemMapped') IS NOT NULL
+			DROP TABLE #TempMasterLog_systemMapped
 
-			CREATE TABLE #TempMasterLog_systemMapped
-			(
-				Name NVARCHAR(500), 
-				Master_Type VARCHAR(10), 
-				Master_Code VARCHAR(1000), 
-				Roles VARCHAR(100),
-				Is_Ignore CHAR(1),
-				Mapped_By CHAR(1)
-			)
+		CREATE TABLE #TempMasterLog_systemMapped
+		(
+			Name NVARCHAR(500), 
+			Master_Type VARCHAR(10), 
+			Master_Code VARCHAR(1000), 
+			Roles VARCHAR(100),
+			Is_Ignore CHAR(1),
+			Mapped_By CHAR(1)
+		)
 
-			INSERT INTO #TempMasterLog_systemMapped(Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By)
-			SELECT Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By FROM DM_Master_Log
-			WHERE DM_Master_Import_Code = cast(@DM_Master_Import_Code as varchar) AND Master_Code > 0 AND Mapped_By = 'S'
-		END
+		INSERT INTO #TempMasterLog_systemMapped(Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By)
+		SELECT Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By FROM DM_Master_Log
+		WHERE DM_Master_Import_Code = cast(@DM_Master_Import_Code as varchar) AND Master_Code > 0 AND Mapped_By = 'S'
+	END
 
 	BEGIN 
 
@@ -716,18 +716,37 @@ BEGIN
 			
 	END
 END    
-	DROP TABLE #TempRolesDummy    
-	DROP TABLE #Temp_Genres    
-	DROP TABLE #Temp_Lyricist    
-	DROP TABLE #Temp_Movie_Album    
-	DROP TABLE #Temp_Movie_Star_Cast    
-	DROP TABLE #Temp_Music_Album    
-	DROP TABLE #Temp_Music_Director    
-	DROP TABLE #Temp_Music_Label    
-	DROP TABLE #Temp_Music_Language    
-	DROP TABLE #Temp_Music_Theme    
-	DROP TABLE #Temp_Singers    
-	DROP TABLE #Temp_Star_Cast    
-	DROP TABLE #Temp_Version    
-	DROP TABLE #Temp_Import    
-END    
+	--DROP TABLE #TempRolesDummy    
+	--DROP TABLE #Temp_Genres    
+	--DROP TABLE #Temp_Lyricist    
+	--DROP TABLE #Temp_Movie_Album    
+	--DROP TABLE #Temp_Movie_Star_Cast    
+	--DROP TABLE #Temp_Music_Album    
+	--DROP TABLE #Temp_Music_Director    
+	--DROP TABLE #Temp_Music_Label    
+	--DROP TABLE #Temp_Music_Language    
+	--DROP TABLE #Temp_Music_Theme    
+	--DROP TABLE #Temp_Singers    
+	--DROP TABLE #Temp_Star_Cast    
+	--DROP TABLE #Temp_Version    
+	--DROP TABLE #Temp_Import    
+
+	IF OBJECT_ID('tempdb..#Temp_DM_Music_Title_SystemMapped') IS NOT NULL DROP TABLE #Temp_DM_Music_Title_SystemMapped
+	IF OBJECT_ID('tempdb..#Temp_DM_Music_Title_UserMapped') IS NOT NULL DROP TABLE #Temp_DM_Music_Title_UserMapped
+	IF OBJECT_ID('tempdb..#Temp_Genres') IS NOT NULL DROP TABLE #Temp_Genres
+	IF OBJECT_ID('tempdb..#Temp_Import') IS NOT NULL DROP TABLE #Temp_Import
+	IF OBJECT_ID('tempdb..#Temp_Lyricist') IS NOT NULL DROP TABLE #Temp_Lyricist
+	IF OBJECT_ID('tempdb..#Temp_Movie_Album') IS NOT NULL DROP TABLE #Temp_Movie_Album
+	IF OBJECT_ID('tempdb..#Temp_Movie_Star_Cast') IS NOT NULL DROP TABLE #Temp_Movie_Star_Cast
+	IF OBJECT_ID('tempdb..#Temp_Music_Album') IS NOT NULL DROP TABLE #Temp_Music_Album
+	IF OBJECT_ID('tempdb..#Temp_Music_Director') IS NOT NULL DROP TABLE #Temp_Music_Director
+	IF OBJECT_ID('tempdb..#Temp_Music_Label') IS NOT NULL DROP TABLE #Temp_Music_Label
+	IF OBJECT_ID('tempdb..#Temp_Music_Language') IS NOT NULL DROP TABLE #Temp_Music_Language
+	IF OBJECT_ID('tempdb..#Temp_Music_Theme') IS NOT NULL DROP TABLE #Temp_Music_Theme
+	IF OBJECT_ID('tempdb..#Temp_Singers') IS NOT NULL DROP TABLE #Temp_Singers
+	IF OBJECT_ID('tempdb..#Temp_Star_Cast') IS NOT NULL DROP TABLE #Temp_Star_Cast
+	IF OBJECT_ID('tempdb..#Temp_Version') IS NOT NULL DROP TABLE #Temp_Version
+	IF OBJECT_ID('tempdb..#TempMasterLog_systemMapped') IS NOT NULL DROP TABLE #TempMasterLog_systemMapped
+	IF OBJECT_ID('tempdb..#TempMasterLog_Usermapped') IS NOT NULL DROP TABLE #TempMasterLog_Usermapped
+	IF OBJECT_ID('tempdb..#TempRolesDummy') IS NOT NULL DROP TABLE #TempRolesDummy
+END

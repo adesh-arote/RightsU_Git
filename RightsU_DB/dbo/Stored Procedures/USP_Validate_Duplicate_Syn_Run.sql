@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Validate_Duplicate_Syn_Run]
+﻿CREATE PROCEDURE [dbo].[USP_Validate_Duplicate_Syn_Run]
 	@TITLE_CODE VARCHAR(MAX),
 	@PLATFORM_CODE VARCHAR(MAX),
 	@SYN_DEAL_RUN_CODE int,

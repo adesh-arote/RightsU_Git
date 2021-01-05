@@ -1,28 +1,47 @@
-﻿CREATE  PROCEDURE [dbo].[USP_Assign_Workflow](
+﻿
+
+CREATE  PROCEDURE [dbo].[USP_Assign_Workflow](
 	@Record_Code Int,
 	@Module_Code Int,
-	@Login_User Int,
+	@Login_User Int, 
 	@Remarks_Approval NVARCHAR(MAX)  = Null
 )
 AS
-
 BEGIN	
 --DECLARE
---	@Record_Code Int =  15497,
+--	@Record_Code Int =  19606,
 --	@Module_Code Int = 30,
---	@Login_User Int = 221,
---	@Remarks_Approval NVARCHAR(MAX)  = 'WA~SAD'
+--	@Login_User Int = 136,
+--	@Remarks_Approval NVARCHAR(MAX)  = 'ok'
 
 	SET FMTONLY OFF	
 
 	DECLARE 
 			@BU_Code INT = 0, @Remarks NVARCHAR(MAX) = '', @Is_Email_Required VARCHAR(5) = '', @Error_Desc NVARCHAR(1000) = '',
-			@Created_By INT= 0, @Created_Date DATETIME = '' ,@Last_Action_By INT = 0, @Last_Updated_Date DATETIME = ''
+			@Created_By INT= 0, @Created_Date DATETIME = '' ,@Last_Action_By INT = 0, @Last_Updated_Date DATETIME = '',@Version_No INT=1
 
 	DECLARE @Waiting_Archive CHAR(2) = NULL, @AgreementNo NVARCHAR(MAX) = ''
 
 
 	SELECT @Is_Email_Required = ISNULL(Is_Email_Required, 'N') FROM System_Param
+			IF(@Module_Code = 30)
+			BEGIN
+				SELECT 
+				@Version_No=CAST  ([Version] as INT)
+				FROM Acq_Deal WHERE Acq_Deal_Code = @Record_Code
+			END
+			ELSE IF(@Module_Code = 35)
+			BEGIN
+				SELECT 
+				@Version_No=CAST  ([Version] as INT)
+				FROM Syn_Deal WHERE Syn_Deal_Code = @Record_Code
+			END
+			ELSE IF(@Module_Code = 163)
+			BEGIN
+				SELECT 
+				@Version_No=CAST  ([Version] as INT)
+				FROM Music_Deal WHERE Music_Deal_Code = @Record_Code
+			END
 
 	IF(@Module_Code = 30)
 	BEGIN
@@ -86,36 +105,104 @@ BEGIN
 		AND CAST(GETDATE() AS DATE) BETWEEN Effective_Start_Date AND ISNULL(System_End_Date, GETDATE())
 	)
 
-	
-
 	-- CHECKING IF REMARKS APROVAL STARTS WITH 'WA~'
 	IF (SELECT COUNT(*) FROM DBO.fn_Split_withdelemiter(@Remarks_Approval, '~')) > 1
 		SELECT top 1 @Waiting_Archive = number FROM DBO.fn_Split_withdelemiter(@Remarks_Approval, '~')
-
-	IF(ISNULL(@Waiting_Archive,'') <> '')
+	
+	IF(ISNULL(@Waiting_Archive,'') = 'WA' OR ISNULL(@Waiting_Archive,'') = 'AR' )
 	BEGIN
 		
+
+		--Create level wise rows in MWD
+		DELETE FROM Module_Workflow_Detail WHERE Module_Code = @Module_Code And Record_Code = @Record_Code
+
+		INSERT INTO Module_Workflow_Detail
+		(
+			Module_Code, Record_Code, Group_Code, Primary_User_Code, Role_Level, Is_Done, Next_Level_Group, Entry_Date
+		)
+
+		SELECT T1.Module_Code, T1.Record_Code, T1.Group_Code, T1.Primary_User_Code, T1.Id - 1, T1.Is_Done, T2.Group_Code, GETDATE() Entry_Date
+		FROM #Temp T1
+		LEFT OUTER JOIN #Temp T2 ON T1.Id + 1 = T2.Id
+
 		DECLARE @Is_Active CHAR(1) = 'Y'
 
-		IF @Waiting_Archive = 'AR'
-			SET @Is_Active = 'N' 
-
-		--INSERT INTO MSH TABLE
-		INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks)
-		SELECT @Module_Code, @Record_Code, @Waiting_Archive, @Created_By, GETDATE(), RIGHT(@Remarks_Approval, LEN(@Remarks_Approval) - 3)
-
-		--UPDATE DEAL WORKFLOW STATUS OF ACQ DEAL TABLE
-		UPDATE Acq_Deal SET Deal_Workflow_Status = @Waiting_Archive, Is_Active = @Is_Active, Last_Updated_Time = GETDATE() WHERE Acq_Deal_Code = @Record_Code
-		--SELECT * FROM Acq_Deal  WHERE Acq_Deal_Code = @Record_Code
-
-		SELECT @AgreementNo = Agreement_No FROM Acq_Deal  WHERE Acq_Deal_Code = @Record_Code
-
-		--UPDATE SUB DEAL WORKFLOW STATUS OF ACQ DEAL TABLE
-		UPDATE AD SET AD.Deal_Workflow_Status = @Waiting_Archive, Is_Active = @Is_Active, Last_Updated_Time = GETDATE() FROM Acq_Deal AD WHERE AD.Agreement_No LIKE '%'+@AgreementNo+'%' AND AD.Is_Master_Deal = 'N'
-
-		--SEND MAIL FOR WAITING FOR ARCHIVE AND ARCHIVE
 		DECLARE @Is_Error1 CHAR(1), @Module_Workflow_Detail_Code INT = 0
-		SELECT  @Module_Workflow_Detail_Code = MAX(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail WHERE Record_Code = @Record_Code and Module_Code = 30
+
+		DECLARE @IsZeroLevel INT = 0
+		SELECT @IsZeroLevel = COUNT(*) FROM #Temp
+
+		DECLARE @Workflow_Code_AR_WA INT = 0
+		SELECT @Workflow_Code_AR_WA = Workflow_Code FROM Workflow_Module 
+		WHERE Module_Code = @Module_Code And (Business_Unit_Code = @BU_Code Or @BU_Code < 1)
+		AND CAST(GETDATE() AS DATE) BETWEEN Effective_Start_Date AND ISNULL(System_End_Date, GETDATE())
+		
+		IF(@IsZeroLevel = 1)
+		BEGIN
+			IF(@Workflow_Code_AR_WA = 0)
+					SET @Workflow_Code_AR_WA = Null
+
+			IF @Waiting_Archive = 'AR'
+					SET @Is_Active = 'N' 
+
+			INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)
+			SELECT @Module_Code, @Record_Code, @Waiting_Archive, @Login_User, GETDATE(), RIGHT(@Remarks_Approval, LEN(@Remarks_Approval) - 3),@Version_No
+
+			IF(@Module_Code = 30)
+			BEGIN
+					UPDATE Acq_Deal SET Work_Flow_Code = @Workflow_Code_AR_WA ,Deal_Workflow_Status = @Waiting_Archive, Is_Active = @Is_Active, Last_Updated_Time = GETDATE() WHERE Acq_Deal_Code = @Record_Code
+
+					SELECT @AgreementNo = Agreement_No FROM Acq_Deal  WHERE Acq_Deal_Code = @Record_Code
+
+					UPDATE AD SET AD.Deal_Workflow_Status = @Waiting_Archive, Is_Active = @Is_Active, Last_Updated_Time = GETDATE() FROM Acq_Deal AD WHERE AD.Agreement_No LIKE '%'+@AgreementNo+'%' AND AD.Is_Master_Deal = 'N'
+				
+					SELECT  @Module_Workflow_Detail_Code = MAX(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail WHERE Record_Code = @Record_Code and Module_Code = 30
+
+					INSERT INTO Approved_Deal(Record_Code, Deal_Type, Deal_Status, Inserted_On, Is_Amend, Deal_Rights_Code)
+					SELECT @Record_Code, 'A', 'P', GETDATE(), 'N', NULL
+
+				END
+			IF(@Module_Code = 35)
+			BEGIN
+					UPDATE Syn_Deal SET Work_Flow_Code = @Workflow_Code_AR_WA, Deal_Workflow_Status = @Waiting_Archive, Is_Active = @Is_Active, Last_Updated_Time = GETDATE()
+					WHERE Syn_Deal_Code = @Record_Code
+
+					SELECT @AgreementNo = Agreement_No FROM Syn_Deal  WHERE Syn_Deal_Code = @Record_Code
+
+				
+					SELECT  @Module_Workflow_Detail_Code = MAX(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail WHERE Record_Code = @Record_Code and Module_Code = 35
+					
+					DELETE FROM Syn_Acq_Mapping WHERE Syn_Deal_Code = @Record_Code
+
+					INSERT INTO Approved_Deal(Record_Code, Deal_Type, Deal_Status, Inserted_On, Is_Amend, Deal_Rights_Code)
+					SELECT DISTINCT Syn_Deal_Code, 'S', 'P', GETDATE(), 'D', Syn_Deal_Rights_Code FROM Syn_Deal_Rights WHERE Syn_Deal_Code = @Record_Code
+
+		
+				END
+		END
+		ELSE 
+		BEGIN
+			--INSERT INTO MSH TABLE
+			INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)
+			SELECT @Module_Code, @Record_Code, @Waiting_Archive, @Login_User, GETDATE(), RIGHT(@Remarks_Approval, LEN(@Remarks_Approval) - 3),@Version_No
+
+			--UPDATE DEAL WORKFLOW STATUS OF ACQ DEAL TABLE
+		
+			IF @Module_Code = 30
+			BEGIN
+					UPDATE Acq_Deal SET Work_Flow_Code = @Workflow_Code_AR_WA, Deal_Workflow_Status = @Waiting_Archive, Is_Active = @Is_Active, Last_Updated_Time = GETDATE() WHERE Acq_Deal_Code = @Record_Code
+					SELECT @AgreementNo = Agreement_No FROM Acq_Deal  WHERE Acq_Deal_Code = @Record_Code
+					UPDATE AD SET Work_Flow_Code = @Workflow_Code_AR_WA, AD.Deal_Workflow_Status = @Waiting_Archive, Is_Active = @Is_Active, Last_Updated_Time = GETDATE() FROM Acq_Deal AD WHERE AD.Agreement_No LIKE '%'+@AgreementNo+'%' AND AD.Is_Master_Deal = 'N'
+					SELECT  @Module_Workflow_Detail_Code = MAX(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail WHERE Record_Code = @Record_Code and Module_Code = 30
+				END
+			ELSE IF @Module_Code = 35
+			BEGIN
+					UPDATE Syn_Deal SET Work_Flow_Code = @Workflow_Code_AR_WA, Deal_Workflow_Status = @Waiting_Archive, Is_Active = @Is_Active, Last_Updated_Time = GETDATE() WHERE Syn_Deal_Code = @Record_Code
+					SELECT @AgreementNo = Agreement_No FROM Syn_Deal  WHERE Syn_Deal_Code = @Record_Code
+					SELECT  @Module_Workflow_Detail_Code = MAX(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail WHERE Record_Code = @Record_Code and Module_Code = 35
+			
+				END
+		END
 
 		EXEC USP_SendMail_Intimation_New  @Record_Code, @Module_Workflow_Detail_Code, @Module_Code, @Waiting_Archive, @Login_User , @Is_Error1 Out
 
@@ -147,18 +234,18 @@ BEGIN
 	
 				IF(@Module_Status_History_Code = 0)
 				BEGIN
-					INSERT INTO Module_Status_History
-					SELECT @Module_Code, @Record_Code, 'C', @Created_By, @Created_Date, @Remarks
+					INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)
+					SELECT @Module_Code, @Record_Code, 'C', @Created_By, @Created_Date, @Remarks,@Version_No
 				END
 				ELSE IF(@Status  = 'A')
 				BEGIN
-					INSERT INTO Module_Status_History
-					SELECT @Module_Code, @Record_Code, 'AM', @Last_Action_By, @Last_Updated_Date, @Remarks
+					INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)
+					SELECT @Module_Code, @Record_Code, 'AM', @Last_Action_By, @Last_Updated_Date, @Remarks,@Version_No
 				END		
 				ELSE IF(@Status  = 'R')
 				BEGIN
-					INSERT INTO Module_Status_History
-					SELECT @Module_Code, @Record_Code, 'E', @Last_Action_By, @Last_Updated_Date, @Remarks
+					INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)
+					SELECT @Module_Code, @Record_Code, 'E', @Last_Action_By, @Last_Updated_Date, @Remarks,@Version_No
 				END	
 			END
 
@@ -207,8 +294,8 @@ BEGIN
 
 				IF(@Module_Code IN (30, 35, 163))
 				BEGIN    
-					INSERT INTO Module_Status_History    
-					SELECT @Module_Code, @Record_Code, 'A', @Login_User, GetDate(), @Remarks_Approval  
+					INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)    
+					SELECT @Module_Code, @Record_Code, 'A', @Login_User, GetDate(), @Remarks_Approval ,@Version_No 
 					SET @Is_Error = 'N'    
 				END   
 
@@ -217,8 +304,8 @@ BEGIN
 					UPDATE Music_Schedule_Transaction SET Workflow_Status = 'A' 
 					WHERE Music_Schedule_Transaction_Code = @Record_Code
 
-					INSERT INTO Module_Status_History
-					SELECT @Module_Code, @Record_Code, 'A', @Login_User, GetDate(), @Remarks
+					INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)
+					SELECT @Module_Code, @Record_Code, 'A', @Login_User, GetDate(), @Remarks,@Version_No
 					SET @Is_Error = 'N'	
 				END
 			END
@@ -243,8 +330,8 @@ BEGIN
 
 				IF(@Module_Code IN (30, 35, 163))
 				BEGIN    
-					INSERT INTO Module_Status_History    
-					Select @Module_Code, @Record_Code, 'W', @Login_User, GetDate(), @Remarks_Approval  
+					INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)    
+					Select @Module_Code, @Record_Code, 'W', @Login_User, GetDate(), @Remarks_Approval ,@Version_No 
 					SET @Is_Error = 'N'    
 				END    
     
@@ -253,8 +340,8 @@ BEGIN
 					UPDATE Music_Schedule_Transaction SET Workflow_Status = 'W' 
 					WHERE Music_Schedule_Transaction_Code = @Record_Code    
     
-					INSERT INTO Module_Status_History    
-					SELECT @Module_Code, @Record_Code, 'W', @Login_User, GetDate(), @Remarks    
+					INSERT INTO Module_Status_History( Module_Code, Record_Code, Status, Status_Changed_By, Status_Changed_On, Remarks,Version_No)    
+					SELECT @Module_Code, @Record_Code, 'W', @Login_User, GetDate(), @Remarks,@Version_No 
 					SET @Is_Error = 'N'     
 				END
 				IF(@Is_Email_Required = 'Y')

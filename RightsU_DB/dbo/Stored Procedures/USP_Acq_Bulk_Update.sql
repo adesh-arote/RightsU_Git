@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Acq_Bulk_Update]
+﻿CREATE PROCEDURE [dbo].[USP_Acq_Bulk_Update]
 (
 	@Rights_Bulk_Update Rights_Bulk_Update_UDT READONLY,
 	@Login_User_Code INT
@@ -1090,49 +1090,34 @@ BEGIN
 	Select * from #Error_Record
 
 	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
-	BEGIN
 		DROP TABLE #temp
-	END
 	IF OBJECT_ID('tempdb..#temp1') IS NOT NULL
-	BEGIN
 		DROP TABLE #temp1
-	END
 	IF OBJECT_ID('tempdb..#temp2') IS NOT NULL
-	BEGIN
 		DROP TABLE #temp2
-	END
 	IF OBJECT_ID('tempdb..#RightCode') IS NOT NULL
-	BEGIN
 		DROP TABLE #RightCode
-	END
 	IF OBJECT_ID('tempdb..#RightCodeTab') IS NOT NULL
-	BEGIN
 		DROP TABLE #RightCodeTab
-	END
 	IF OBJECT_ID('tempdb..#RCodeForHoldback') IS NOT NULL
-	BEGIN
 		DROP TABLE #RCodeForHoldback
-	END
 	IF OBJECT_ID('tempdb..#RCodeForSynMap') IS NOT NULL
-	BEGIN
 		DROP TABLE #RCodeForSynMap
-	END
 	IF OBJECT_ID('tempdb..#RCodeForRunDef') IS NOT NULL
-	BEGIN
 		DROP TABLE #RCodeForRunDef
-	END
 	IF OBJECT_ID('tempdb..#RCodeGrp') IS NOT NULL
-	BEGIN
 		DROP TABLE #RCodeGrp
-	END
 	IF OBJECT_ID('tempdb..#Result') IS NOT NULL
-	BEGIN
 		DROP TABLE #Result
-	END
-		IF OBJECT_ID('tempdb..#Error_Record') IS NOT NULL
-	BEGIN
+	IF OBJECT_ID('tempdb..#Error_Record') IS NOT NULL
 		DROP TABLE #Error_Record
-	END
+	IF OBJECT_ID('tempdb..#SelectedCodeTab') IS NOT NULL
+		DROP TABLE #SelectedCodeTab
+	IF OBJECT_ID('tempdb..#temp3') IS NOT NULL
+		DROP TABLE #temp3
+	
+
+
 END
 
 	--DECLARE @MyTable [dbo].[Rights_Bulk_Update_UDT]

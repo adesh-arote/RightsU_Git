@@ -43,11 +43,3 @@
     CONSTRAINT [FK_AT_Acq_Deal_Run_Right_Rule] FOREIGN KEY ([Right_Rule_Code]) REFERENCES [dbo].[Right_Rule] ([Right_Rule_Code])
 );
 
-
-
-
-
-
-
-
-

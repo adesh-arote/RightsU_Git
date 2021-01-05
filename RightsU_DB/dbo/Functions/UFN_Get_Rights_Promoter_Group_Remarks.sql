@@ -103,7 +103,7 @@ BEGIN
    SET @RetVal += @NewLineChar      
  END      
   END        
- ELSE        
+ ELSE  -----------------------------      
  BEGIN        
  Declare  @Promoter_RemarksS TABLE       
  (      
@@ -137,3 +137,5 @@ BEGIN
  RETURN Substring(@RetVal, 1, Len(@RetVal))        
          
 END
+
+

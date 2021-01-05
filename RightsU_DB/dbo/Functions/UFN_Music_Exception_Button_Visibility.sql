@@ -1,4 +1,4 @@
-﻿alter FUNCTION [dbo].[UFN_Music_Exception_Button_Visibility]
+﻿CREATE FUNCTION [dbo].[UFN_Music_Exception_Button_Visibility]
 (
 	--DECLARE
  	 @Music_Schedule_Transaction_Code INT=1193 
@@ -29,14 +29,12 @@ BEGIN
 		Right_Name  NVARCHAR(100),
 		Visible varchar(1)
 	)
-	declare @Security_Group_Code INT, @Right_Code INT
-	select @Security_Group_Code = Security_Group_Code From Users where Users_Code = @User_Code
 
 	INSERT INTO @Module_Rights (Right_Code, Right_Name,Visible)
 	SELECT DISTINCT sr.Right_Code, sr.Right_Name ,CASE WHEN ISNULL(sgr.Security_Group_Code,0)=0 THEN  'N' ELSE 'Y' END
 	FROM System_Module_Right smr 
 	INNER JOIN System_Right sr ON sr.Right_Code = smr.Right_Code
-	LEFT JOIN Security_Group_Rel sgr ON smr.Module_Right_Code = sgr.System_Module_Rights_Code AND sgr.Security_Group_Code=@Security_Group_Code
+	LEFT JOIN Security_Group_Rel sgr ON smr.Module_Right_Code = sgr.System_Module_Rights_Code AND sgr.Security_Group_Code=1
 	WHERE SR.Right_Code IN (1, 2, 6, 7, 8, 10, 11, 12, 18, 71, 79, 88, 89, 116, 127, 130, 134, 135) AND smr.Module_Code=154  
 	ORDER BY SR.Right_Code
 	
@@ -47,26 +45,26 @@ BEGIN
 
 		IF(@WorkFlowStatus = 'O' OR @WorkFlowStatus IS NULL)
 		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@APPROVE,@View)
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@SEND_FOR_APPROVAL,@View)
 		END
 
 		IF(@WorkFlowStatus = 'R')
 		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@APPROVE,@View)
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@SEND_FOR_APPROVAL,@View)
 		END
 		
 		
 	/*ZeroWorkFlow*/
 
-	--Select @IsZeroWorkFlow=[dbo].[UFN_Check_Workflow](154,@Music_Schedule_Transaction_Code) 
+	Select @IsZeroWorkFlow=[dbo].[UFN_Check_Workflow](154,@Music_Schedule_Transaction_Code) 
 
-	--IF(@IsZeroWorkFlow = 'Y')
-	--	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@APPROVE,@View)
+	IF(@IsZeroWorkFlow = 'Y')
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@SEND_FOR_APPROVAL,@View)
 
-	--IF(@WorkFlowStatus = 'W')
-	--BEGIN
-	--	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@APPROVE,@View)
-	--END
+	IF(@WorkFlowStatus = 'W')
+	BEGIN
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@APPROVE,@View)
+	END
 	--ELSE IF(@IsZeroWorkFlow != 'N')
 	--	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL)
 
@@ -80,64 +78,66 @@ BEGIN
 		--SELECT @hdnAllow_Edit_All_On_Rejection = Parameter_value FROM System_Parameter_New 
 		--WHERE Parameter_Name = 'Allow_Edit_All_On_Rejection' AND IsActive = 'Y'
 
+		Select Top 1 @RetValue = Group_Code From Module_Workflow_Detail 
+		Where Record_Code = @Music_Schedule_Transaction_Code And Module_Code = 154 And Role_Level = 0 Order By Module_Workflow_Detail_Code Desc
 		--select @UserSecCode
 		--select @RetValue
-	
-
-		SELECT @Right_Code =sr.Right_Code 	FROM 
-		System_Module_Right smr 
-		INNER JOIN System_Right sr on sr.Right_Code = smr.Right_Code
-		INNER JOIN Security_Group_Rel sgr on smr.Module_Right_Code = sgr.System_Module_Rights_Code and sgr.Security_Group_Code = @Security_Group_Code
-		WHERE smr.Module_Code=154  and sgr.Security_Group_Code=@Security_Group_Code and sr.Right_Code = @APPROVE
-
-		IF (@Right_Code = @APPROVE) 
+		IF (@UserSecCode = @RetValue) 
 		BEGIN
 			--IF(@IsZeroWorkFlow = 'N')
 			--BEGIN
-			UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code = @APPROVE
+			UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code = @SEND_FOR_APPROVAL
 			--END
 		END
 		ELSE
 		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@APPROVE)
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL,@APPROVE)
 		END
 	END
 	
 	--select @IsZeroWorkFlow
 	--select * from @Module_Rights
 	--For Approve
-	select @Security_Group_Code = Security_Group_Code From Users where Users_Code = 143
+	Declare @GCode INT=0,@UGCode INT=0,@DBUCode INT=0
+	--select @DBUCode=Business_Unit_Code from Acq_Deal where Acq_Deal_Code=@Acq_Deal_Code
+	SELECT @DBUCode=AD.Business_Unit_Code from Music_Schedule_Transaction AS MST
+		INNER JOIN BV_Schedule_Transaction AS BST ON BST.BV_Schedule_Transaction_Code= MST.BV_Schedule_Transaction_Code
+		INNER JOIN Content_Music_Link AS CML ON CML.Content_Music_Link_Code=MST.Content_Music_Link_Code
+		INNER JOIN Title_Content tc ON tc.Title_Content_Code = CML.Title_Content_Code
+		INNER JOIN Title_Content_Mapping AS TCM ON TCM.Title_Content_Code = TC.Title_Content_Code
+		INNER JOIN Acq_Deal_Movie adm ON adm.Acq_Deal_Movie_Code = TCM.Acq_Deal_Movie_Code
+		INNER JOIN Acq_Deal AS AD ON AD.Acq_Deal_Code=adm.Acq_Deal_Code 
+		WHERE AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND
+		MST.Music_Schedule_Transaction_Code=@Music_Schedule_Transaction_Code 
 
-	SELECT @Right_Code =sr.Right_Code 	FROM 
-	System_Module_Right smr 
-	INNER JOIN System_Right sr on sr.Right_Code = smr.Right_Code
-	INNER JOIN Security_Group_Rel sgr on smr.Module_Right_Code = sgr.System_Module_Rights_Code and sgr.Security_Group_Code = @Security_Group_Code
-	WHERE smr.Module_Code=154  and sgr.Security_Group_Code=@Security_Group_Code and sr.Right_Code = @APPROVE
-
-	IF( @Right_Code != @APPROVE)
+	select  @UGCode=Security_Group_Code from Users u
+	INNER JOIN Users_Business_Unit bu ON bu.Users_Code=u.Users_Code
+	 where u.Users_Code=@User_Code and @DBUCode=bu.Business_Unit_Code
+	select @GCode=ISNULL(dbo.UFN_Get_Current_Approver_Code(154,@Music_Schedule_Transaction_Code),0)
+	IF( @UGCode != @GCode)
 	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  = @Approve
 
 	
 
-	--Select  @BU_Code=AD.Business_Unit_Code
-	--			From Music_Schedule_Transaction AS MST
-	--			INNER JOIN BV_Schedule_Transaction AS BST ON BST.BV_Schedule_Transaction_Code= MST.BV_Schedule_Transaction_Code
-	--			INNER JOIN Acq_Deal_Movie AS ADM ON ADM.Acq_Deal_Movie_Code = BST.Deal_Movie_Code
-	--			INNER JOIN Acq_Deal AS AD ON AD.Acq_Deal_Code = ADM.Acq_Deal_Code
-	--			 WHERE MST.Music_Schedule_Transaction_Code=@Music_Schedule_Transaction_Code
+	Select  @BU_Code=AD.Business_Unit_Code
+				From Music_Schedule_Transaction AS MST
+				INNER JOIN BV_Schedule_Transaction AS BST ON BST.BV_Schedule_Transaction_Code= MST.BV_Schedule_Transaction_Code
+				INNER JOIN Acq_Deal_Movie AS ADM ON ADM.Acq_Deal_Movie_Code = BST.Deal_Movie_Code
+				INNER JOIN Acq_Deal AS AD ON AD.Acq_Deal_Code = ADM.Acq_Deal_Code
+				 WHERE  AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND MST.Music_Schedule_Transaction_Code=@Music_Schedule_Transaction_Code
 
 				 
-	--		Select @tmpCount=count(*)
-	--		From Workflow_Module_Role Where Workflow_Module_Code In (
-	--			Select Workflow_Module_Code From Workflow_Module 
-	--			Where Module_Code = 154 And (Business_Unit_Code = @BU_Code Or @BU_Code < 1)
-	--			And cast(GetDate()AS Date ) Between Effective_Start_Date And IsNull(System_End_Date, GetDate())
-	--		)
+			Select @tmpCount=count(*)
+			From Workflow_Module_Role Where Workflow_Module_Code In (
+				Select Workflow_Module_Code From Workflow_Module 
+				Where Module_Code = 154 And (Business_Unit_Code = @BU_Code Or @BU_Code < 1)
+				And cast(GetDate()AS Date ) Between Effective_Start_Date And IsNull(System_End_Date, GetDate())
+			)
 
-	--IF(@tmpCount=0)
-	--BEGIN
-	--UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View)
-	--END
+	IF(@tmpCount=0)
+	BEGIN
+	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View)
+	END
 	--IF(@WorkFlowStatus = 'R')
 	--UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  = @SEND_FOR_APPROVAL
 	--select * from @Module_Rights

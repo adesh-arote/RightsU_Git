@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Last_Month_Utilization_Report]
+﻿CREATE PROCEDURE [dbo].[USP_Last_Month_Utilization_Report]
 (
 	@Title_Codes VARCHAR(1000),
 	@BU_Code INT,
@@ -263,6 +263,10 @@ BEGIN
 	DROP TABLE #Temp_Channel_Code
 	------------------------------------------- END DROP TEMP TABLES -------------------------------------------	
 
+	IF OBJECT_ID('tempdb..#BV_Trans') IS NOT NULL DROP TABLE #BV_Trans
+	IF OBJECT_ID('tempdb..#Result') IS NOT NULL DROP TABLE #Result
+	IF OBJECT_ID('tempdb..#Temp_Channel_Code') IS NOT NULL DROP TABLE #Temp_Channel_Code
+	IF OBJECT_ID('tempdb..#Temp_Rights_Run') IS NOT NULL DROP TABLE #Temp_Rights_Run
 END
 /*
 --EXEC USP_Last_Month_Utilization_Report '' ,1 ,'23'

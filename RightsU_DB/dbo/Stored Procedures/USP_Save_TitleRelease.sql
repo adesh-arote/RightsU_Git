@@ -179,4 +179,8 @@ BEGIN
 	END CATCH
 	
 	SELECT @Is_Error
+
+	IF OBJECT_ID('tempdb..#Temp_Title_Release') IS NOT NULL DROP TABLE #Temp_Title_Release
+	IF OBJECT_ID('tempdb..#TempPlatform') IS NOT NULL DROP TABLE #TempPlatform
+	IF OBJECT_ID('tempdb..#TempRegion') IS NOT NULL DROP TABLE #TempRegion
 END

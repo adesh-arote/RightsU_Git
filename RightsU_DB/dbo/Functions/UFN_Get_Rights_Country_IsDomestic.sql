@@ -8,7 +8,7 @@ As
 -- =============================================
 Begin
 
-	Declare @RetVal nvarchar(MAX) = ''
+	Declare @RetVal Nvarchar(MAX) = ''
 	If(@Deal_Type = 'A')
 	Begin
 		Select @RetVal = @RetVal + c.Country_Name + ', ' From Acq_Deal_Rights_Territory adrt

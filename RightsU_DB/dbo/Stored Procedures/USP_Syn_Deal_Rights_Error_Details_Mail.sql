@@ -167,4 +167,3 @@ BEGIN
 	CLOSE CurMail2;
 	DEALLOCATE CurMail2;
 END
-

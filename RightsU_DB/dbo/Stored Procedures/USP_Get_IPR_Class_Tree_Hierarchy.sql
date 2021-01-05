@@ -42,7 +42,9 @@ Begin
 	From [IPR_Class] Where Is_Active = 'Y' And IPR_Class_Code In (Select IPR_Class_Code From #TempClass) Order By [Position]
 	
 	--Select IPR_Class_Code, [Description], IsNull(Parent_Class_Code, 0) Parent_Class_Code, Is_Last_Level, [Position] From [IPR_Class] Where Is_Active = 'Y' Order By [Position]
-	Drop Table #TempClass
+	--Drop Table #TempClass
+
+	IF OBJECT_ID('tempdb..#TempClass') IS NOT NULL DROP TABLE #TempClass
 End
 
 

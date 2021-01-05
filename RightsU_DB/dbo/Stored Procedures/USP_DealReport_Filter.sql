@@ -1,5 +1,5 @@
-﻿ALTER PROCEDURE [dbo].[USP_DealReport_Filter]      
-(      
+﻿CREATE PROCEDURE [dbo].[USP_DealReport_Filter]      
+(
  @Title_Code VARCHAR(MAX),       
  @Platform_Code VARCHAR(MAX),      
  @Country_Code VARCHAR(MAX),      
@@ -28,7 +28,8 @@
  @Deal_Type_Code VARCHAR(MAX) = '0',
  @MHProduction_House_Code VARCHAR(MAX) = '0',
  @MHStatus_Code VARCHAR(MAX) = '0',
- @MilestoneNatureCode VARCHAR(MAX) = '0'
+ @MilestoneNatureCode VARCHAR(MAX) = '0',
+ @ProjectMilestoneCodes VARCHAR(MAX) = '0'
 )      
 AS      
 BEGIN      
@@ -97,7 +98,8 @@ BEGIN
       
  Declare @territoryCodes varchar(max),@countryCodes varchar(max),@languageGroupCodes varchar(max),@subtiti_languageCodes varchar(max),@dubbing_languageCodes varchar(max) ,@userCodes varchar(max),@channelCodes varchar(max), @musicLabelCodes varchar(max), @contentCodes varchar(max)     
  DECLARE @MusicTitleNames NVARCHAR(MAX), @TitleNames NVARCHAR(MAX), @PlatformNames NVARCHAR(MAX),@BussinessUnitNames NVARCHAR(MAX), @DealTag_Names NVARCHAR(MAX), @TerritoryNames NVARCHAR(MAX), @CountryNames NVARCHAR(MAX), @Platform_MustHavesNames NVARCHAR(MAX) ,@UserNames NVARCHAR(MAX) ,
- @MusicTypeName NVARCHAR(MAX),@GenreName NVARCHAR(MAX),@MusicThemeName NVARCHAR(MAX),@TalentName NVARCHAR(MAX),@DocumentTypeNames NVARCHAR(MAX)
+ @MusicTypeName NVARCHAR(MAX),@GenreName NVARCHAR(MAX),@MusicThemeName NVARCHAR(MAX),@TalentName NVARCHAR(MAX),@DocumentTypeNames NVARCHAR(MAX),
+ @ProjectNames NVARCHAR(MAX)
     
  , @LanguageGroupNames NVARCHAR(MAX), @Subtit_LanguageNames NVARCHAR(MAX), @MustHaveCountryNames NVARCHAR(MAX), @Dubbing_LanguageNames NVARCHAR(MAX)    
  DECLARE @TitleLanguage_Names NVARCHAR(MAX)='', @ExclusionCountryNames NVARCHAR(MAX)='', @Tmp_MustHaveCountryNames NVARCHAR(MAX)='', @SubDub NVARCHAR(MAX) ='',@Agreement_No NVARCHAR(MAX) = '',@Channel_Names NVARCHAR(MAX), @Music_Label_Names NVARCHAR(MAX),
@@ -134,7 +136,14 @@ IF @Syn_Deal_Code > 0
 SET @TitleNames = Case when @Title_Code = '' Then 'NA' ELSE @TitleNames END
 	
    
- /*---End Title---*/      
+ /*---End Title---*/     
+ 
+  SET @ProjectNames =ISNULL(STUFF((SELECT DISTINCT ',' + P.ProjectName       
+ FROM ProjectMilestone P       
+ WHERE P.ProjectMilestoneCode IN (SELECT number FROM dbo.fn_Split_withdelemiter(@ProjectMilestoneCodes,',') WHERE number NOT IN('0', ''))      
+ FOR XML PATH(''), TYPE      
+    ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '') 
+SET @ProjectNames = Case when @ProjectMilestoneCodes = '' Then 'NA' ELSE @ProjectNames END
         
  /*---Start Platform---*/      
        
@@ -157,7 +166,7 @@ SET @TitleNames = Case when @Title_Code = '' Then 'NA' ELSE @TitleNames END
  AND b.Is_Active = 'Y'      
  FOR XML PATH(''), TYPE      
     ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')  
-	IF(@BussinessUnit_Code = 0)
+	IF(@BussinessUnit_Code = '0')
 	BEGIN
 		SET @BussinessUnitNames = 'All Business Unit'
 	END
@@ -477,7 +486,8 @@ SET @Content_Names_ID =ISNULL(STUFF((SELECT DISTINCT ',' + Co.Episode_Title
 
  SELECT @Production_House_Name Production_House_Name,@MHStatus_Name MHStatus_Name, @MusicTypeName Music_Type_Name,@GenreName Genres_Name,@MusicThemeName Music_Theme_Name,@TalentName Talent_Name, @Content_Names_ID ContentNameID,@Content_Names ContentNames,@Music_Label_Names MusicLabelNames,@Channel_Names ChannelNames,@Agreement_No AgreementNo,@DocumentTypeNames DocumentTypeNames,@UserNames UserNames,@TitleNames TitleNames, @PlatformNames PlatformNames,@BussinessUnitNames BussinessUnitNames,@DealTag_Names DealTagName, @CountryNames CountryNames, @TerritoryNames TerritoryNames, @MusicTitleNames MusicTitleNames,@Platform_MustHavesNames MustHavePlatformsNames      
  , @Subtit_LanguageNames Subtit_LanguageNames, @Dubbing_LanguageNames Dubbing_LanguageNames, getdate() Created_On, @MustHaveCountryNames MustHaveCountryNames,@Deal_Type_Name DealTypeName     
- ,@ExclusionCountryNames ExclusionCountryNames, @TitleLanguage_Names TitleLanguage_Names, @LanguageGroupNames LanguageGroupNames, @SubDub SubtitlingDubbing,@MilestoneNatureName Milestone_Nature_Name, Parameter_Value AS 'BGColor', GETDATE() AS CreatedOn,    
+ ,@ExclusionCountryNames ExclusionCountryNames, @TitleLanguage_Names TitleLanguage_Names, @LanguageGroupNames LanguageGroupNames, @SubDub SubtitlingDubbing,@MilestoneNatureName Milestone_Nature_Name,
+ @ProjectNames ProjectNames, Parameter_Value AS 'BGColor', GETDATE() AS CreatedOn,    
                              (SELECT        TOP (1) Parameter_Value    
                                FROM            System_Parameter_New    
                                WHERE        (Parameter_Name = 'FontColor')) AS 'FontColor'    
@@ -491,8 +501,15 @@ WHERE        (Parameter_Name = 'ReportBGColor')
  --DROP TABLE #Temp_LanguageGroup      
  --DROP TABLE #Temp_Territory      
  --DROP TABLE #Temp_MustHave      
-          
-      
+
+	IF OBJECT_ID('tempdb..#Temp_Country') IS NOT NULL DROP TABLE #Temp_Country
+	IF OBJECT_ID('tempdb..#Temp_Language') IS NOT NULL DROP TABLE #Temp_Language
+	IF OBJECT_ID('tempdb..#Temp_LanguageGroup') IS NOT NULL DROP TABLE #Temp_LanguageGroup
+	IF OBJECT_ID('tempdb..#Temp_MustHave') IS NOT NULL DROP TABLE #Temp_MustHave
+	IF OBJECT_ID('tempdb..#Temp_MustHave_Region') IS NOT NULL DROP TABLE #Temp_MustHave_Region
+	IF OBJECT_ID('tempdb..#Temp_Platform') IS NOT NULL DROP TABLE #Temp_Platform
+	IF OBJECT_ID('tempdb..#Temp_Territory') IS NOT NULL DROP TABLE #Temp_Territory
+	IF OBJECT_ID('tempdb..#Temp_Title') IS NOT NULL DROP TABLE #Temp_Title
 END   
   
- EXEC USP_DealReport_Filter '','','','','','','','','','','','','',0,'','','','','','','','','','','','','','',''
+ --EXEC USP_DealReport_Filter '','','','','','','','','','','','','',0,'','','','','','','','','','','','','','',''

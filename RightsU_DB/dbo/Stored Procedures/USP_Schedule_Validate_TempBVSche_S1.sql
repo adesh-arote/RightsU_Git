@@ -1,4 +1,4 @@
-﻿alter PROC usp_Schedule_Validate_TempBVSche_S1  
+﻿CREATE PROC usp_Schedule_Validate_TempBVSche_S1  
 (  
  @File_Code BIGINT,  
  @Channel_Code VARCHAR(10),  
@@ -186,5 +186,8 @@ PRINT '--===============4.0 PROCEES ALL MATCHED PROGRAMMIDS --==============='
  (  
   SELECT tbs.Temp_BV_Schedule_Code FROM #TMP_Temp_BV_Schedule tbs   
  )  
+	IF OBJECT_ID('tempdb..#TMP_Program_Episode_ID') IS NOT NULL DROP TABLE #TMP_Program_Episode_ID
+	IF OBJECT_ID('tempdb..#TMP_Temp_BV_Schedule') IS NOT NULL DROP TABLE #TMP_Temp_BV_Schedule
+	IF OBJECT_ID('tempdb..#tmpDealNotApprove') IS NOT NULL DROP TABLE #tmpDealNotApprove
   
-END  
+END

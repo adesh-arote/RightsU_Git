@@ -16,5 +16,3 @@
     CONSTRAINT [PK_Deal_Type] PRIMARY KEY CLUSTERED ([Deal_Type_Code] ASC)
 );
 
-
-

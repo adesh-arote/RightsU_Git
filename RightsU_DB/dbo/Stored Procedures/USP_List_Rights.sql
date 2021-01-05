@@ -1,4 +1,5 @@
-﻿create PROC [dbo].[USP_List_Rights]
+﻿
+CREATE PROC [dbo].[USP_List_Rights]
 (
 	@Right_Type Char(2), 
 	@View_Type Char(1), 
@@ -43,9 +44,9 @@ BEGIN
 
 	PRINT '  Getting ''Deal_Type_Code'' and ''Deal_Type_Condition'''
 	IF(@Right_Type In('AR', 'AP'))
-		Select @Selected_Deal_Type_Code = Deal_Type_Code From Acq_Deal Where Acq_Deal_Code = @Deal_Code
+		Select @Selected_Deal_Type_Code = Deal_Type_Code From Acq_Deal WITH(NOLOCK) Where Acq_Deal_Code = @Deal_Code
 	Else
-		Select @Selected_Deal_Type_Code = Deal_Type_Code From Syn_Deal Where Syn_Deal_Code = @Deal_Code
+		Select @Selected_Deal_Type_Code = Deal_Type_Code From Syn_Deal WITH(NOLOCK) Where Syn_Deal_Code = @Deal_Code
 
 	SELECT @Deal_Type_Condition = dbo.UFN_GetDealTypeCondition(@Selected_Deal_Type_Code)
 
@@ -230,12 +231,12 @@ BEGIN
 		IF(@Right_Type IN ('AR', 'AP'))
 		BEGIN
 			INSERT INTO #TempDealMovie(Deal_Movie_Code, Title_Code, Episode_From, Episode_To)
-			SELECT Acq_Deal_Movie_Code, Title_Code, Episode_Starts_From, Episode_End_To FROM Acq_Deal_Movie WHERE Acq_Deal_Code = @Deal_Code
+			SELECT Acq_Deal_Movie_Code, Title_Code, Episode_Starts_From, Episode_End_To FROM Acq_Deal_Movie WITH(NOLOCK) WHERE Acq_Deal_Code = @Deal_Code
 		END
 		ELSE
 		BEGIN
 			INSERT INTO #TempDealMovie(Deal_Movie_Code, Title_Code, Episode_From, Episode_To)
-			SELECT Syn_Deal_Movie_Code, Title_Code, Episode_From, Episode_End_To FROM Syn_Deal_Movie WHERE Syn_Deal_Code = @Deal_Code
+			SELECT Syn_Deal_Movie_Code, Title_Code, Episode_From, Episode_End_To FROM Syn_Deal_Movie WITH(NOLOCK) WHERE Syn_Deal_Code = @Deal_Code
 		END
 	END
 	ELSE
@@ -246,13 +247,13 @@ BEGIN
 		IF(@Right_Type IN ('AR', 'AP'))
 		BEGIN
 			UPDATE TDM SET TDM.Title_Code = ADM.Title_Code, TDM.Episode_From = ADM.Episode_Starts_From, TDM.Episode_To = ADM.Episode_End_To 
-			FROM Acq_Deal_Movie ADM 
+			FROM Acq_Deal_Movie ADM WITH(NOLOCK)
 			INNER JOIN #TempDealMovie TDM ON TDM.Deal_Movie_Code = ADM.Acq_Deal_Movie_Code
 		END
 		ELSE
 		BEGIN
 			UPDATE TDM SET TDM.Title_Code = SDM.Title_Code, TDM.Episode_From = SDM.Episode_From, TDM.Episode_To = SDM.Episode_End_To 
-			FROM Syn_Deal_Movie SDM 
+			FROM Syn_Deal_Movie SDM WITH(NOLOCK)
 			INNER JOIN #TempDealMovie TDM ON TDM.Deal_Movie_Code = SDM.Syn_Deal_Movie_Code
 		END
 	END
@@ -263,31 +264,31 @@ BEGIN
 		Select number AS Platform_Code From DBO.fn_Split_withdelemiter(@PlatformCodes, ',')  WHERE NUMBER <> ''
 
 		UPDATE TP SET TP.Platform_Hiearachy = P.Platform_Hiearachy FROM #TempPlatformCodes TP
-		INNER JOIN [Platform] P ON P.Platform_Code = TP.Platform_Code
+		INNER JOIN [Platform] P WITH(NOLOCK) ON P.Platform_Code = TP.Platform_Code
 	END
 
 	PRINT '  Select All ''Right_Code'' for current deal'
 	IF(@Right_Type = 'AR')
 	BEGIN
 		INSERT INTO #TempRightCodes(Right_Code, Is_Exclusive, Last_Updated_Time)
-		SELECT Acq_Deal_Rights_Code, Is_Exclusive, Last_Updated_Time FROM Acq_Deal_Rights WHERE Acq_Deal_Code = @Deal_Code 
+		SELECT Acq_Deal_Rights_Code, Is_Exclusive, Last_Updated_Time FROM Acq_Deal_Rights WITH(NOLOCK) WHERE Acq_Deal_Code = @Deal_Code 
 		AND(Is_Exclusive IN((Select number From DBO.fn_Split_withdelemiter(@ISExclusive, ',')  WHERE NUMBER <> '')) OR @ISExclusive = 'B')
 	END
 	ELSE IF(@Right_Type = 'AP')
 	BEGIN
 		INSERT INTO #TempRightCodes(Right_Code, Is_Exclusive, Last_Updated_Time)
-		SELECT Acq_Deal_Pushback_Code, 'Y', Last_Updated_Time FROM Acq_Deal_Pushback WHERE Acq_Deal_Code = @Deal_Code
+		SELECT Acq_Deal_Pushback_Code, 'Y', Last_Updated_Time FROM Acq_Deal_Pushback WITH(NOLOCK) WHERE Acq_Deal_Code = @Deal_Code
 	END
 	ELSE IF(@Right_Type = 'SR')
 	BEGIN
 		INSERT INTO #TempRightCodes(Right_Code, Is_Exclusive, Last_Updated_Time)
-		SELECT Syn_Deal_Rights_Code, Is_Exclusive, Last_Updated_Time FROM Syn_Deal_Rights WHERE Syn_Deal_Code = @Deal_Code AND ISNULL(Is_Pushback, 'N')  = 'N'
+		SELECT Syn_Deal_Rights_Code, Is_Exclusive, Last_Updated_Time FROM Syn_Deal_Rights WITH(NOLOCK) WHERE Syn_Deal_Code = @Deal_Code AND ISNULL(Is_Pushback, 'N')  = 'N'
 		AND(Is_Exclusive IN((Select number From DBO.fn_Split_withdelemiter(@ISExclusive, ',')  WHERE NUMBER <> '')) OR @ISExclusive = 'B')
 	END
 	ELSE IF(@Right_Type = 'SP')
 	BEGIN
 		INSERT INTO #TempRightCodes(Right_Code, Is_Exclusive, Last_Updated_Time)
-		SELECT Syn_Deal_Rights_Code, Is_Exclusive, Last_Updated_Time FROM Syn_Deal_Rights WHERE Syn_Deal_Code = @Deal_Code AND ISNULL(Is_Pushback, 'N')  = 'Y'
+		SELECT Syn_Deal_Rights_Code, Is_Exclusive, Last_Updated_Time FROM Syn_Deal_Rights WITH(NOLOCK) WHERE Syn_Deal_Code = @Deal_Code AND ISNULL(Is_Pushback, 'N')  = 'Y'
 	END
 
 	PRINT '  View Type : ' + CASE WHEN @View_Type = 'G' THEN 'Group'  WHEN @View_Type = 'S' THEN 'Summary' ELSE 'Detail' END
@@ -300,18 +301,18 @@ BEGIN
 			INSERT INTO #TempRightCodesGroup(Rights_Code)
 			SELECT Right_Code FROM (
 				SELECT DISTINCT ADR.Right_Code, ADR.Last_Updated_Time FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Platform ADRP ON ADRP.Acq_Deal_Rights_Code = ADR.Right_Code
+				INNER JOIN Acq_Deal_Rights_Platform ADRP WITH(NOLOCK) ON ADRP.Acq_Deal_Rights_Code = ADR.Right_Code
 				WHERE (ADRP.Platform_Code IN ((Select number From DBO.fn_Split_withdelemiter(@PlatformCodes, ',')  WHERE NUMBER <> '')) OR @PlatformCodes = '')
 				INTERSECT
 				SELECT DISTINCT ADR.Right_Code, ADR.Last_Updated_Time FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Territory ADRTT ON ADRTT.Acq_Deal_Rights_Code = ADR.Right_Code
+				INNER JOIN Acq_Deal_Rights_Territory ADRTT WITH(NOLOCK) ON ADRTT.Acq_Deal_Rights_Code = ADR.Right_Code
 				AND(
 					(ADRTT.Territory_Type = 'G' AND ADRTT.Territory_Code IN(SELECT REPLACE(number,'T','') as Territory_Code FROM fn_Split_withdelemiter(@RegionCodes, ',') WHERE number <> '' AND number LIKE 'T%')OR @RegionCodes = '') OR 
 					(ADRTT.Territory_Type = 'I' AND ADRTT.Country_Code IN(SELECT REPLACE(number,'C','') as Country_Code FROM fn_Split_withdelemiter(@RegionCodes, ',') WHERE number <> '' AND number LIKE 'C%') OR @RegionCodes = '')
 				)
 				INTERSECT
 				SELECT DISTINCT ADR.Right_Code, ADR.Last_Updated_Time FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Title ADRT ON ADRT.Acq_Deal_Rights_Code = ADR.Right_Code
+				INNER JOIN Acq_Deal_Rights_Title ADRT WITH(NOLOCK) ON ADRT.Acq_Deal_Rights_Code = ADR.Right_Code
 				INNER JOIN #TempDealMovie TDM ON ADRT.Title_Code  = TDM.Title_Code AND ADRT.Episode_From = TDM.Episode_From 
 				AND ADRT.Episode_To = TDM.Episode_To
 			)AS A
@@ -323,31 +324,31 @@ BEGIN
 			INSERT INTO #TempRightCodesGroup(Rights_Code)
 			SELECT Right_Code FROM (
 				SELECT DISTINCT ADR.Right_Code, ADR.Last_Updated_Time FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Platform ADRP ON ADRP.Acq_Deal_Rights_Code = ADR.Right_Code
-				INNER JOIN [Platform] P ON P.Platform_Code = ADRP.Platform_Code
+				INNER JOIN Acq_Deal_Rights_Platform ADRP WITH(NOLOCK) ON ADRP.Acq_Deal_Rights_Code = ADR.Right_Code
+				INNER JOIN [Platform] P WITH(NOLOCK) ON P.Platform_Code = ADRP.Platform_Code
 				WHERE P.Platform_Hiearachy LIKE '%' + @SearchText + '%'
 				UNION
 				SELECT DISTINCT ADR.Right_Code, ADR.Last_Updated_Time FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Title ADRT ON ADRT.Acq_Deal_Rights_Code = ADR.Right_Code
-				INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
+				INNER JOIN Acq_Deal_Rights_Title ADRT WITH(NOLOCK) ON ADRT.Acq_Deal_Rights_Code = ADR.Right_Code
+				INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = ADRT.Title_Code
 				WHERE T.Title_Name LIKE '%' + @SearchText + '%'
 				UNION
 				SELECT DISTINCT ADR.Right_Code, ADR.Last_Updated_Time FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Territory ADRC ON ADRC.Acq_Deal_Rights_Code = ADR.Right_Code
-				LEFT JOIN Country C ON C.Country_Code = ADRC.Country_Code AND ADRC.Territory_Type <> 'G' AND ADRC.Territory_Code IS NULL
-				LEFT JOIN Territory TC ON TC.Territory_Code = ADRC.Territory_Code AND ADRC.Territory_Type = 'G' AND ADRC.Country_Code IS NULL
+				INNER JOIN Acq_Deal_Rights_Territory ADRC WITH(NOLOCK) ON ADRC.Acq_Deal_Rights_Code = ADR.Right_Code
+				LEFT JOIN Country C WITH(NOLOCK) ON C.Country_Code = ADRC.Country_Code AND ADRC.Territory_Type <> 'G' AND ADRC.Territory_Code IS NULL
+				LEFT JOIN Territory TC WITH(NOLOCK) ON TC.Territory_Code = ADRC.Territory_Code AND ADRC.Territory_Type = 'G' AND ADRC.Country_Code IS NULL
 				WHERE C.Country_Name LIKE '%' + @SearchText + '%' OR TC.Territory_Name LIKE '%' + @SearchText + '%' 
 				UNION
 				SELECT DISTINCT ADR.Right_Code, ADR.Last_Updated_Time FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Subtitling ADRS ON ADRS.Acq_Deal_Rights_Code = ADR.Right_Code
-				LEFT JOIN [Language] LS ON LS.Language_Code = ADRS.Language_Code AND ADRS.Language_Type <> 'G' AND ADRS.Language_Group_Code IS NULL
-				LEFT JOIN [Language_Group] LSG ON LSG.Language_Group_Code = ADRS.Language_Group_Code AND ADRS.Language_Type = 'G' AND ADRS.Language_Code IS NULL
+				INNER JOIN Acq_Deal_Rights_Subtitling ADRS WITH(NOLOCK) ON ADRS.Acq_Deal_Rights_Code = ADR.Right_Code
+				LEFT JOIN [Language] LS WITH(NOLOCK) ON LS.Language_Code = ADRS.Language_Code AND ADRS.Language_Type <> 'G' AND ADRS.Language_Group_Code IS NULL
+				LEFT JOIN [Language_Group] LSG WITH(NOLOCK) ON LSG.Language_Group_Code = ADRS.Language_Group_Code AND ADRS.Language_Type = 'G' AND ADRS.Language_Code IS NULL
 				WHERE LS.Language_Name LIKE '%' + @SearchText + '%' OR LSG.Language_Group_Name LIKE '%' + @SearchText + '%'
 				UNION
 				SELECT DISTINCT ADR.Right_Code, ADR.Last_Updated_Time FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Dubbing ADRD ON ADRD.Acq_Deal_Rights_Code = ADR.Right_Code
-				LEFT JOIN [Language] LD ON LD.Language_Code = ADRD.Language_Code AND ADRD.Language_Type <> 'G' AND ADRD.Language_Group_Code IS NULL
-				LEFT JOIN [Language_Group] LDG ON LDG.Language_Group_Code = ADRD.Language_Group_Code 
+				INNER JOIN Acq_Deal_Rights_Dubbing ADRD WITH(NOLOCK) ON ADRD.Acq_Deal_Rights_Code = ADR.Right_Code
+				LEFT JOIN [Language] LD WITH(NOLOCK) ON LD.Language_Code = ADRD.Language_Code AND ADRD.Language_Type <> 'G' AND ADRD.Language_Group_Code IS NULL
+				LEFT JOIN [Language_Group] LDG WITH(NOLOCK) ON LDG.Language_Group_Code = ADRD.Language_Group_Code 
 					AND ADRD.Language_Type = 'G' AND ADRD.Language_Code IS NULL
 				WHERE LD.Language_Name LIKE '%' + @SearchText + '%' OR 
 					LDG.Language_Group_Name LIKE '%' + @SearchText + '%'
@@ -361,18 +362,18 @@ BEGIN
 		INSERT INTO #TempRightCodesGroup(Rights_Code)
 			SELECT Right_Code FROM (
 			SELECT DISTINCT ADP.Right_Code, ADP.Last_Updated_Time FROM #TempRightCodes ADP
-			INNER JOIN Acq_Deal_Pushback_Platform ADPP ON ADPP.Acq_Deal_Pushback_Code = ADP.Right_Code
+			INNER JOIN Acq_Deal_Pushback_Platform ADPP WITH(NOLOCK) ON ADPP.Acq_Deal_Pushback_Code = ADP.Right_Code
 			WHERE (ADPP.Platform_Code IN ((Select number From DBO.fn_Split_withdelemiter(@PlatformCodes, ',')  WHERE NUMBER <> '')) OR @PlatformCodes = '')
 			INTERSECT	
 			SELECT DISTINCT ADP.Right_Code, ADP.Last_Updated_Time FROM #TempRightCodes ADP
-			INNER JOIN Acq_Deal_Pushback_Territory ADPTT ON ADPTT.Acq_Deal_Pushback_Code = ADP.Right_Code 
+			INNER JOIN Acq_Deal_Pushback_Territory ADPTT WITH(NOLOCK) ON ADPTT.Acq_Deal_Pushback_Code = ADP.Right_Code 
 			WHERE (
 				(ADPTT.Territory_Type = 'G' AND ADPTT.Territory_Code IN(SELECT REPLACE(number,'T','') as Territory_Code FROM fn_Split_withdelemiter(@RegionCodes, ',') WHERE number <> '' AND number LIKE 'T%')OR @RegionCodes = '') OR 
 				(ADPTT.Territory_Type = 'I' AND ADPTT.Country_Code IN(SELECT REPLACE(number,'C','') as Country_Code FROM fn_Split_withdelemiter(@RegionCodes, ',') WHERE number <> '' AND number LIKE 'C%') OR @RegionCodes = '')
 			)
 			INTERSECT
 			SELECT DISTINCT ADP.Right_Code, ADP.Last_Updated_Time FROM #TempRightCodes ADP
-			INNER JOIN Acq_Deal_Pushback_Title ADPT ON ADPT.Acq_Deal_Pushback_Code = ADP.Right_Code
+			INNER JOIN Acq_Deal_Pushback_Title ADPT WITH(NOLOCK) ON ADPT.Acq_Deal_Pushback_Code = ADP.Right_Code
 			INNER JOIN #TempDealMovie TDM ON ADPT.Title_Code  = TDM.Title_Code AND ADPT.Episode_From = TDM.Episode_From 
 			AND ADPT.Episode_To = TDM.Episode_To
 			
@@ -388,18 +389,18 @@ BEGIN
 			INSERT INTO #TempRightCodesGroup(Rights_Code)
 			SELECT Right_Code FROM (
 				SELECT DISTINCT SDR.Right_Code, SDR.Last_Updated_Time FROM #TempRightCodes SDR
-				INNER JOIN Syn_Deal_Rights_Platform SDRP ON SDRP.Syn_Deal_Rights_Code = SDR.Right_Code
+				INNER JOIN Syn_Deal_Rights_Platform SDRP WITH(NOLOCK) ON SDRP.Syn_Deal_Rights_Code = SDR.Right_Code
 				WHERE (SDRP.Platform_Code IN ((Select number From DBO.fn_Split_withdelemiter(@PlatformCodes, ',')  WHERE NUMBER <> '')) OR @PlatformCodes = '')
 				INTERSECT
 				SELECT DISTINCT SDR.Right_Code, SDR.Last_Updated_Time FROM #TempRightCodes SDR
-				INNER JOIN Syn_Deal_Rights_Territory SDRTT ON SDRTT.Syn_Deal_Rights_Code = SDR.Right_Code
+				INNER JOIN Syn_Deal_Rights_Territory SDRTT WITH(NOLOCK) ON SDRTT.Syn_Deal_Rights_Code = SDR.Right_Code
 				WHERE(
 					(SDRTT.Territory_Type = 'G' AND SDRTT.Territory_Code IN(SELECT REPLACE(number,'T','') as Territory_Code FROM fn_Split_withdelemiter(@RegionCodes, ',') WHERE number <> '' AND number LIKE 'T%')OR @RegionCodes = '') OR 
 					(SDRTT.Territory_Type = 'I' AND SDRTT.Country_Code IN(SELECT REPLACE(number,'C','') as Country_Code FROM fn_Split_withdelemiter(@RegionCodes, ',') WHERE number <> '' AND number LIKE 'C%') OR @RegionCodes = '')
 				)
 				INTERSECT
 				SELECT DISTINCT SDR.Right_Code, SDR.Last_Updated_Time FROM #TempRightCodes SDR
-  				INNER JOIN Syn_Deal_Rights_Title SDRT ON SDRT.Syn_Deal_Rights_Code = SDR.Right_Code
+  				INNER JOIN Syn_Deal_Rights_Title SDRT WITH(NOLOCK) ON SDRT.Syn_Deal_Rights_Code = SDR.Right_Code
 				INNER JOIN #TempDealMovie TDM ON SDRT.Title_Code  = TDM.Title_Code AND SDRT.Episode_From = TDM.Episode_From 
 				AND SDRT.Episode_To = TDM.Episode_To
 			) AS A
@@ -412,31 +413,31 @@ BEGIN
 			INSERT INTO #TempRightCodesGroup(Rights_Code)
 			SELECT Right_Code FROM (
 				SELECT DISTINCT SDR.Right_Code, SDR.Last_Updated_Time FROM #TempRightCodes SDR
-				INNER JOIN Syn_Deal_Rights_Platform SDRP ON SDRP.Syn_Deal_Rights_Code = SDR.Right_Code
-				INNER JOIN [Platform] P ON P.Platform_Code = SDRP.Platform_Code
+				INNER JOIN Syn_Deal_Rights_Platform SDRP WITH(NOLOCK) ON SDRP.Syn_Deal_Rights_Code = SDR.Right_Code
+				INNER JOIN [Platform] P WITH(NOLOCK) ON P.Platform_Code = SDRP.Platform_Code
 				WHERE P.Platform_Hiearachy LIKE '%' + @SearchText + '%'
 				UNION
 				SELECT DISTINCT SDR.Right_Code, SDR.Last_Updated_Time FROM #TempRightCodes SDR 
-				INNER JOIN Syn_Deal_Rights_Title SDRT ON SDRT.Syn_Deal_Rights_Code = SDR.Right_Code
-				INNER JOIN Title T ON T.Title_Code = SDRT.Title_Code
+				INNER JOIN Syn_Deal_Rights_Title SDRT WITH(NOLOCK) ON SDRT.Syn_Deal_Rights_Code = SDR.Right_Code
+				INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = SDRT.Title_Code
 				WHERE T.Title_Name LIKE '%' + @SearchText + '%'
 				UNION
 				SELECT DISTINCT SDR.Right_Code, SDR.Last_Updated_Time FROM #TempRightCodes SDR 
-				INNER JOIN Syn_Deal_Rights_Territory SDRC ON SDRC.Syn_Deal_Rights_Code = SDR.Right_Code
-				LEFT JOIN Country C ON C.Country_Code = SDRC.Country_Code AND SDRC.Territory_Type <> 'G' AND SDRC.Territory_Code IS NULL
-				LEFT JOIN Territory TC ON TC.Territory_Code = SDRC.Territory_Code AND SDRC.Territory_Type = 'G' AND SDRC.Country_Code IS NULL
+				INNER JOIN Syn_Deal_Rights_Territory SDRC WITH(NOLOCK) ON SDRC.Syn_Deal_Rights_Code = SDR.Right_Code
+				LEFT JOIN Country C WITH(NOLOCK) ON C.Country_Code = SDRC.Country_Code AND SDRC.Territory_Type <> 'G' AND SDRC.Territory_Code IS NULL
+				LEFT JOIN Territory TC WITH(NOLOCK) ON TC.Territory_Code = SDRC.Territory_Code AND SDRC.Territory_Type = 'G' AND SDRC.Country_Code IS NULL
 				WHERE C.Country_Name LIKE '%' + @SearchText + '%' OR TC.Territory_Name LIKE '%' + @SearchText + '%'
 				UNION
 				SELECT DISTINCT SDR.Right_Code, SDR.Last_Updated_Time FROM #TempRightCodes SDR 
-				INNER JOIN Syn_Deal_Rights_Subtitling SDRS ON SDRS.Syn_Deal_Rights_Code = SDR.Right_Code
-				LEFT JOIN [Language] LS ON LS.Language_Code = SDRS.Language_Code AND SDRS.Language_Type <> 'G' AND SDRS.Language_Group_Code IS NULL
-				LEFT JOIN [Language_Group] LSG ON LSG.Language_Group_Code = SDRS.Language_Group_Code AND SDRS.Language_Type = 'G' AND SDRS.Language_Code IS NULL
+				INNER JOIN Syn_Deal_Rights_Subtitling SDRS WITH(NOLOCK) ON SDRS.Syn_Deal_Rights_Code = SDR.Right_Code
+				LEFT JOIN [Language] LS WITH(NOLOCK) ON LS.Language_Code = SDRS.Language_Code AND SDRS.Language_Type <> 'G' AND SDRS.Language_Group_Code IS NULL
+				LEFT JOIN [Language_Group] LSG WITH(NOLOCK) ON LSG.Language_Group_Code = SDRS.Language_Group_Code AND SDRS.Language_Type = 'G' AND SDRS.Language_Code IS NULL
 				WHERE LS.Language_Name LIKE '%' + @SearchText + '%' OR LSG.Language_Group_Name LIKE '%' + @SearchText + '%'
 				UNION
 				SELECT DISTINCT SDR.Right_Code, SDR.Last_Updated_Time FROM #TempRightCodes SDR 
-				INNER JOIN Syn_Deal_Rights_Dubbing SDRD ON SDRD.Syn_Deal_Rights_Code = SDR.Right_Code
-				LEFT JOIN [Language] LD ON LD.Language_Code = SDRD.Language_Code AND SDRD.Language_Type <> 'G' AND SDRD.Language_Group_Code IS NULL
-				LEFT JOIN [Language_Group] LDG ON LDG.Language_Group_Code = SDRD.Language_Group_Code AND SDRD.Language_Type = 'G' AND SDRD.Language_Code IS NULL
+				INNER JOIN Syn_Deal_Rights_Dubbing SDRD WITH(NOLOCK) ON SDRD.Syn_Deal_Rights_Code = SDR.Right_Code
+				LEFT JOIN [Language] LD WITH(NOLOCK) ON LD.Language_Code = SDRD.Language_Code AND SDRD.Language_Type <> 'G' AND SDRD.Language_Group_Code IS NULL
+				LEFT JOIN [Language_Group] LDG WITH(NOLOCK) ON LDG.Language_Group_Code = SDRD.Language_Group_Code AND SDRD.Language_Type = 'G' AND SDRD.Language_Code IS NULL
 				WHERE  LD.Language_Name LIKE '%' + @SearchText + '%' OR LDG.Language_Group_Name LIKE '%' + @SearchText + '%'
 			)AS A
 			ORDER BY A.Last_Updated_Time DESC
@@ -456,27 +457,27 @@ BEGIN
 		BEGIN
 			INSERT INTO #TempRightCodesSummary(Rights_Code, Title_Code, Episode_From, Episode_To)
 			SELECT ADRT.Acq_Deal_Rights_Code, ADRT.Title_Code, ADRT.Episode_From, ADRT.Episode_To FROM #TempRightCodesGroup ADR
-			INNER JOIN Acq_Deal_Rights_Title ADRT ON ADR.Rights_Code = ADRT.Acq_Deal_Rights_Code
+			INNER JOIN Acq_Deal_Rights_Title ADRT WITH(NOLOCK) ON ADR.Rights_Code = ADRT.Acq_Deal_Rights_Code
 			INNER JOIN #TempDealMovie TDM ON ADRT.Title_Code  = TDM.Title_Code AND ADRT.Episode_From = TDM.Episode_From AND ADRT.Episode_To = TDM.Episode_To
-			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
+			INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = ADRT.Title_Code
 			ORDER BY T.Title_Name
 		END
 		IF(@Right_Type = 'AP')
 		BEGIN
 			INSERT INTO #TempRightCodesSummary(Rights_Code, Title_Code, Episode_From, Episode_To)
 			SELECT ADPT.Acq_Deal_Pushback_Code, ADPT.Title_Code, ADPT.Episode_From, ADPT.Episode_To FROM #TempRightCodesGroup ADP
-			INNER JOIN Acq_Deal_Pushback_Title ADPT ON ADP.Rights_Code = ADPT.Acq_Deal_Pushback_Code
+			INNER JOIN Acq_Deal_Pushback_Title ADPT WITH(NOLOCK) ON ADP.Rights_Code = ADPT.Acq_Deal_Pushback_Code
 			INNER JOIN #TempDealMovie TDM ON ADPT.Title_Code  = TDM.Title_Code AND ADPT.Episode_From = TDM.Episode_From AND ADPT.Episode_To = TDM.Episode_To
-			INNER JOIN Title T ON T.Title_Code = ADPT.Title_Code
+			INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = ADPT.Title_Code
 			ORDER BY T.Title_Name
 		END
 		IF(@Right_Type = 'SR' OR @Right_Type = 'SP')
 		BEGIN
 			INSERT INTO #TempRightCodesSummary(Rights_Code, Title_Code, Episode_From, Episode_To)
 			SELECT SDRT.Syn_Deal_Rights_Code, SDRT.Title_Code, SDRT.Episode_From, SDRT.Episode_To FROM #TempRightCodesGroup SDR
-			INNER JOIN Syn_Deal_Rights_Title SDRT ON SDR.Rights_Code = SDRT.Syn_Deal_Rights_Code
+			INNER JOIN Syn_Deal_Rights_Title SDRT WITH(NOLOCK) ON SDR.Rights_Code = SDRT.Syn_Deal_Rights_Code
 			INNER JOIN #TempDealMovie TDM ON SDRT.Title_Code  = TDM.Title_Code AND SDRT.Episode_From = TDM.Episode_From AND SDRT.Episode_To = TDM.Episode_To
-			INNER JOIN Title T ON T.Title_Code = SDRT.Title_Code
+			INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = SDRT.Title_Code
 			ORDER BY T.Title_Name
 		END	
 
@@ -498,21 +499,21 @@ BEGIN
 				INSERT INTO #TempRightCodesDetails(Rights_Code, Platform_Code)
 				SELECT ADR.Right_Code, ADRP.Platform_Code
 				FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Rights_Platform ADRP ON ADRP.Acq_Deal_Rights_Code = ADR.Right_Code
+				INNER JOIN Acq_Deal_Rights_Platform ADRP WITH(NOLOCK) ON ADRP.Acq_Deal_Rights_Code = ADR.Right_Code
 			END
 			IF(@Right_Type = 'AP')
 			BEGIN
 				INSERT INTO #TempRightCodesDetails(Rights_Code, Platform_Code)
 				SELECT ADR.Right_Code, ADPP.Platform_Code
 				FROM #TempRightCodes ADR
-				INNER JOIN Acq_Deal_Pushback_Platform ADPP ON ADPP.Acq_Deal_Pushback_Code = ADR.Right_Code
+				INNER JOIN Acq_Deal_Pushback_Platform ADPP WITH(NOLOCK) ON ADPP.Acq_Deal_Pushback_Code = ADR.Right_Code
 			END
 			IF(@Right_Type = 'SR' OR @Right_Type = 'SP')
 			BEGIN
 				INSERT INTO #TempRightCodesDetails(Rights_Code, Platform_Code)
 				SELECT SDR.Right_Code, SDRP.Platform_Code
 				FROM #TempRightCodes SDR
-				INNER JOIN Syn_Deal_Rights_Platform SDRP ON SDRP.Syn_Deal_Rights_Code = SDR.Right_Code
+				INNER JOIN Syn_Deal_Rights_Platform SDRP WITH(NOLOCK) ON SDRP.Syn_Deal_Rights_Code = SDR.Right_Code
 			END
 
 			IF NOT EXISTS(SELECT TOP 1 Platform_Code FROM #TempPlatformCodes)
@@ -520,7 +521,7 @@ BEGIN
 				INSERT INTO #TempPlatformCodes(Platform_Code, Platform_Hiearachy)
 				SELECT A.Platform_Code, P.Platform_Hiearachy FROM (
 				SELECT DISTINCT Platform_Code FROM #TempRightCodesDetails
-				) AS A INNER JOIN [Platform] P ON P.Platform_Code = A.Platform_Code
+				) AS A INNER JOIN [Platform] P WITH(NOLOCK) ON P.Platform_Code = A.Platform_Code
 			END
 
 			INSERT INTO #TempRightsPagingData(Deal_Code, Rights_Code, Title_Code, Episode_From, Episode_To, Platform_Code)
@@ -553,19 +554,19 @@ BEGIN
 		BEGIN
 			INSERT INTO #TempTitle(Title_Code, Episode_From, Episode_To)
 			SELECT DISTINCT ADRT.Title_Code, ADRT.Episode_From, ADRT.Episode_To FROM #TempRights TR
-			INNER JOIN Acq_Deal_Rights_Title ADRT ON ADRT.Acq_Deal_Rights_Code = TR.Rights_Code
+			INNER JOIN Acq_Deal_Rights_Title ADRT WITH(NOLOCK) ON ADRT.Acq_Deal_Rights_Code = TR.Rights_Code
 		END
 		ELSE IF(@Right_Type = 'AP')
 		BEGIN
 			INSERT INTO #TempTitle(Title_Code, Episode_From, Episode_To)
 			SELECT DISTINCT ADPT.Title_Code, ADPT.Episode_From, ADPT.Episode_To FROM #TempRights TR
-			INNER JOIN Acq_Deal_Pushback_Title ADPT ON ADPT.Acq_Deal_Pushback_Code = TR.Rights_Code
+			INNER JOIN Acq_Deal_Pushback_Title ADPT WITH(NOLOCK) ON ADPT.Acq_Deal_Pushback_Code = TR.Rights_Code
 		END
 		ELSE
 		BEGIN
 			INSERT INTO #TempTitle(Title_Code, Episode_From, Episode_To)
 			SELECT DISTINCT SDRT.Title_Code, SDRT.Episode_From, SDRT.Episode_To FROM #TempRights TR
-			INNER JOIN Syn_Deal_Rights_Title SDRT ON SDRT.Syn_Deal_Rights_Code = TR.Rights_Code
+			INNER JOIN Syn_Deal_Rights_Title SDRT WITH(NOLOCK) ON SDRT.Syn_Deal_Rights_Code = TR.Rights_Code
 		END
 	END
 
@@ -573,14 +574,14 @@ BEGIN
 	BEGIN
 		UPDATE TT SET TT.Is_Closed = CASE WHEN  ISNULL(ADM.Is_Closed,'N') IN ('Y', 'X') THEN 'Y' ELSE 'N' END 
 		FROM #TempTitle TT
-		INNER JOIN Acq_Deal_Movie ADM ON ADM.Title_Code = TT.Title_Code 
+		INNER JOIN Acq_Deal_Movie ADM WITH(NOLOCK) ON ADM.Title_Code = TT.Title_Code 
 			AND ADM.Episode_Starts_From = TT.Episode_From AND ADM.Episode_End_To = TT.Episode_To
 	END
 	ELSE
 	BEGIN
 		UPDATE TT SET TT.Is_Closed = CASE WHEN  ISNULL(SDM.Is_Closed,'N') IN ('Y', 'X') THEN 'Y' ELSE 'N' END 
 		FROM #TempTitle TT
-		INNER JOIN Syn_Deal_Movie SDM ON SDM.Title_Code = TT.Title_Code 
+		INNER JOIN Syn_Deal_Movie SDM WITH(NOLOCK) ON SDM.Title_Code = TT.Title_Code 
 			AND SDM.Episode_From = TT.Episode_From AND SDM.Episode_End_To = TT.Episode_To
 	END
 
@@ -605,7 +606,7 @@ BEGIN
 		TR.Is_ROFR = ADR.Is_ROFR, 
 		TR.ROFR_Date = ADR.ROFR_Date,
 		TR.Last_Updated_Time = ADR.Last_Updated_Time
-		FROM Acq_Deal_Rights ADR 
+		FROM Acq_Deal_Rights ADR WITH(NOLOCK)
 		INNER JOIN #TempRights TR ON ADR.Acq_Deal_Rights_Code = tr.Rights_Code
 		WHERE Acq_Deal_Code = @Deal_Code
 	END
@@ -628,7 +629,7 @@ BEGIN
 		TR.Title_Language_Right = CASE ISNULL(ADP.Is_Title_Language_Right, 'N') WHEN 'Y' THEN 'Yes' ELSE 'No' END, 
 		TR.Right_Status = 'D',
 		TR.Last_Updated_Time = ADP.Last_Updated_Time
-		FROM Acq_Deal_Pushback ADP 
+		FROM Acq_Deal_Pushback ADP WITH(NOLOCK)
 		INNER JOIN #TempRights TR ON ADP.Acq_Deal_Pushback_Code = tr.Rights_Code
 		WHERE Acq_Deal_Code = @Deal_Code
 	END
@@ -653,7 +654,7 @@ BEGIN
 		TR.Is_ROFR = SDR.Is_ROFR, 
 		TR.ROFR_Date = SDR.ROFR_Date,
 		TR.Last_Updated_Time = SDR.Last_Updated_Time
-		FROM Syn_Deal_Rights SDR 
+		FROM Syn_Deal_Rights SDR WITH(NOLOCK)
 		INNER JOIN #TempRights TR ON SDR.Syn_Deal_Rights_Code = tr.Rights_Code
 		WHERE Syn_Deal_Code = @Deal_Code
 	END
@@ -691,13 +692,13 @@ BEGIN
 		IF(@Right_Type = 'AR')
 		BEGIN
 			UPDATE TR SET TR.Is_Holdback = (
-				CASE WHEN (SELECT COUNT(*) FROM Acq_Deal_Rights_Holdback ADRH WHERE ADRH.Acq_Deal_Rights_Code = TR.Rights_Code) = 0 THEN 'N' ELSE 'Y' END
+				CASE WHEN (SELECT COUNT(*) FROM Acq_Deal_Rights_Holdback ADRH WITH(NOLOCK) WHERE ADRH.Acq_Deal_Rights_Code = TR.Rights_Code) = 0 THEN 'N' ELSE 'Y' END
 			)FROM #TempRights TR
 		END
 		ELSE IF(@Right_Type = 'SR')
 		BEGIN
 			UPDATE TR SET TR.Is_Holdback = (
-				CASE WHEN (SELECT COUNT(*) FROM Syn_Deal_Rights_Holdback SDRH WHERE SDRH.Syn_Deal_Rights_Code = TR.Rights_Code) = 0 THEN 'N' ELSE 'Y' END
+				CASE WHEN (SELECT COUNT(*) FROM Syn_Deal_Rights_Holdback SDRH WITH(NOLOCK) WHERE SDRH.Syn_Deal_Rights_Code = TR.Rights_Code) = 0 THEN 'N' ELSE 'Y' END
 			)FROM #TempRights TR
 		END
 	END
@@ -713,7 +714,7 @@ BEGIN
 
 	UPDATE TT SET TT.Title_Name = DBO.UFN_GetTitleNameInFormat(@Deal_Type_Condition, T.Title_Name, TT.Episode_From, TT.Episode_To)
 	FROM #TempTitle TT
-	INNER JOIN Title T ON T.Title_Code = TT.Title_Code
+	INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = TT.Title_Code
 
 	IF(@View_Type <> 'D')
 	BEGIN
@@ -722,7 +723,7 @@ BEGIN
 			UPDATE TR SET 
 			TR.Platform_Code = (
 				Select TOP 1 ADRP.Platform_Code
-				FROM Acq_Deal_Rights_Platform ADRP
+				FROM Acq_Deal_Rights_Platform ADRP WITH(NOLOCK)
 				WHERE ADRP.Acq_Deal_Rights_Code = TR.Rights_Code
 			)
 			FROM #TempRights TR
@@ -731,14 +732,14 @@ BEGIN
 			BEGIN
 				UPDATE TR SET 
 				TR.Title_Name = (STUFF ((
-					Select ', ' + T.Title_Name FROM Acq_Deal_Rights_Title ADRT
+					Select ', ' + T.Title_Name FROM Acq_Deal_Rights_Title ADRT WITH(NOLOCK)
 					INNER JOIN #TempTitle T ON T.Title_Code = ADRT.Title_Code AND T.Episode_From = ADRT.Episode_From AND T.Episode_To = ADRT.Episode_To
 					WHERE ADRT.Acq_Deal_Rights_Code = TR.Rights_Code
 					ORDER BY T.Title_Name
 					FOR XML PATH(''),root('MyString'), type ).value('/MyString[1]','nvarchar(max)'), 1, 2, '')
 				),
 				TR.Is_Ref_Close_Title = (
-					SELECT TOP 1 T.Is_Closed FROM Acq_Deal_Rights_Title ADRT
+					SELECT TOP 1 T.Is_Closed FROM Acq_Deal_Rights_Title ADRT WITH(NOLOCK)
 					INNER JOIN #TempTitle T ON T.Title_Code = ADRT.Title_Code AND T.Episode_From = ADRT.Episode_From AND T.Episode_To = ADRT.Episode_To
 					WHERE ADRT.Acq_Deal_Rights_Code = TR.Rights_Code
 					ORDER BY T.Is_Closed DESC
@@ -751,7 +752,7 @@ BEGIN
 			UPDATE TR SET 
 			TR.Platform_Code = (
 				Select TOP 1 ADPP.Platform_Code
-				FROM Acq_Deal_Pushback_Platform ADPP
+				FROM Acq_Deal_Pushback_Platform ADPP WITH(NOLOCK)
 				WHERE ADPP.Acq_Deal_Pushback_Code = TR.Rights_Code
 			)
 			FROM #TempRights TR
@@ -760,13 +761,13 @@ BEGIN
 			BEGIN
 				UPDATE TR SET 
 				TR.Title_Name = (STUFF ((
-					Select ', ' + T.Title_Name FROM Acq_Deal_Pushback_Title ADPT
+					Select ', ' + T.Title_Name FROM Acq_Deal_Pushback_Title ADPT WITH(NOLOCK)
 					INNER JOIN #TempTitle T ON T.Title_Code = ADPT.Title_Code AND T.Episode_From = ADPT.Episode_From AND T.Episode_To = ADPT.Episode_To
 					WHERE ADPT.Acq_Deal_Pushback_Code = TR.Rights_Code
 					FOR XML PATH(''),root('MyString'), type ).value('/MyString[1]','nvarchar(max)'), 1, 2, '')
 				),
 				TR.Is_Ref_Close_Title = (
-					SELECT TOP 1 T.Is_Closed FROM Acq_Deal_Pushback_Title ADPT
+					SELECT TOP 1 T.Is_Closed FROM Acq_Deal_Pushback_Title ADPT WITH(NOLOCK)
 					INNER JOIN #TempTitle T ON T.Title_Code = ADPT.Title_Code AND T.Episode_From = ADPT.Episode_From AND T.Episode_To = ADPT.Episode_To
 					WHERE ADPT.Acq_Deal_Pushback_Code = TR.Rights_Code
 					ORDER BY T.Is_Closed DESC
@@ -779,7 +780,7 @@ BEGIN
 			UPDATE TR SET 
 			TR.Platform_Code = (
 				Select TOP 1 SDRP.Platform_Code
-				FROM Syn_Deal_Rights_Platform SDRP
+				FROM Syn_Deal_Rights_Platform SDRP WITH(NOLOCK)
 				WHERE SDRP.Syn_Deal_Rights_Code = TR.Rights_Code
 			)
 			FROM #TempRights TR
@@ -788,13 +789,13 @@ BEGIN
 			BEGIN
 				UPDATE TR SET 
 				TR.Title_Name = (STUFF ((
-					Select ', ' + T.Title_Name FROM Syn_Deal_Rights_Title SDRT
+					Select ', ' + T.Title_Name FROM Syn_Deal_Rights_Title SDRT WITH(NOLOCK)
 					INNER JOIN #TempTitle T ON T.Title_Code = SDRT.Title_Code AND T.Episode_From = SDRT.Episode_From AND T.Episode_To = SDRT.Episode_To
 					WHERE SDRT.Syn_Deal_Rights_Code = TR.Rights_Code
 					FOR XML PATH(''),root('MyString'), type ).value('/MyString[1]','nvarchar(max)'), 1, 2, '')
 				),
 				TR.Is_Ref_Close_Title = (
-					SELECT TOP 1 T.Is_Closed FROM Syn_Deal_Rights_Title SDRT
+					SELECT TOP 1 T.Is_Closed FROM Syn_Deal_Rights_Title SDRT WITH(NOLOCK)
 					INNER JOIN #TempTitle T ON T.Title_Code = SDRT.Title_Code AND T.Episode_From = SDRT.Episode_From AND T.Episode_To = SDRT.Episode_To
 					WHERE SDRT.Syn_Deal_Rights_Code = TR.Rights_Code
 					ORDER BY T.Is_Closed DESC
@@ -809,10 +810,13 @@ BEGIN
 				LEN(ISNULL(P.Platform_Hiearachy, '')) END
 			),
 		TR.Platform_Code = 0 FROM #TempRights TR 
-		INNER JOIN [Platform] P ON P.Platform_Code = TR.Platform_Code
+		INNER JOIN [Platform] P WITH(NOLOCK) ON P.Platform_Code = TR.Platform_Code
 
 		IF(@View_Type = 'G')
 		BEGIN
+			IF(@Deal_Type_Condition = 'DEAL_MOVIE')
+				UPDATE #TempRights SET Episode_From = 1, Episode_To = 1
+
 			INSERT INTO #TempResultData (
 				Deal_Code, Rights_Code, Title_Code, Platform_Code, Title_Name, Episode_From, Episode_To, Platform_Name, 
 				Is_Holdback, Is_Exclusive, Is_Sublicencing, Rights_Start_Date, Rights_End_Date, Term, Is_Theatrical, Country, 
@@ -868,7 +872,7 @@ BEGIN
 		FROM #TempRightsPagingData TRPD
 		INNER JOIN #TempRights TR ON TR.Rights_Code = TRPD.Rights_Code
 		INNER JOIN #TempTitle TT ON TT.Title_Code = TRPD.Title_Code AND TT.Episode_From = TRPD.Episode_From AND TT.Episode_To = TRPD.Episode_To
-		INNER JOIN [Platform] P ON P.Platform_Code = TRPD.Platform_Code
+		INNER JOIN [Platform] P WITH(NOLOCK) ON P.Platform_Code = TRPD.Platform_Code
 	END
 
 	if(@View_Type = 'D')
@@ -877,8 +881,8 @@ BEGIN
 		BEGIN
 			UPDATE TRD SET TRD.Is_Holdback = (
 				CASE WHEN (
-					SELECT COUNT(*) FROM Acq_Deal_Rights_Holdback ADRH 
-					INNER JOIN Acq_Deal_Rights_Holdback_Platform ADRHP ON ADRHP.Acq_Deal_Rights_Holdback_Code = ADRH.Acq_Deal_Rights_Holdback_Code
+					SELECT COUNT(*) FROM Acq_Deal_Rights_Holdback ADRH WITH(NOLOCK)
+					INNER JOIN Acq_Deal_Rights_Holdback_Platform ADRHP WITH(NOLOCK) ON ADRHP.Acq_Deal_Rights_Holdback_Code = ADRH.Acq_Deal_Rights_Holdback_Code
 							AND ADRHP.Platform_Code = TRD.Platform_Code
 					WHERE ADRH.Acq_Deal_Rights_Code = TRD.Rights_Code
 					) = 0 THEN 'N' ELSE 'Y' END
@@ -888,8 +892,8 @@ BEGIN
 		BEGIN
 			UPDATE TRD SET TRD.Is_Holdback = (
 				CASE WHEN (
-						SELECT COUNT(*) FROM Syn_Deal_Rights_Holdback SDRH 
-						INNER JOIN Syn_Deal_Rights_Holdback_Platform SDRHP ON SDRHP.Syn_Deal_Rights_Holdback_Code = SDRH.Syn_Deal_Rights_Holdback_Code
+						SELECT COUNT(*) FROM Syn_Deal_Rights_Holdback SDRH WITH(NOLOCK)
+						INNER JOIN Syn_Deal_Rights_Holdback_Platform SDRHP WITH(NOLOCK) ON SDRHP.Syn_Deal_Rights_Holdback_Code = SDRH.Syn_Deal_Rights_Holdback_Code
 							AND SDRHP.Platform_Code = TRD.Platform_Code
 						WHERE SDRH.Syn_Deal_Rights_Code = TRD.Rights_Code
 					) = 0 THEN 'N' ELSE 'Y' END
@@ -920,4 +924,15 @@ BEGIN
 	EXEC(@Query)
 
 	PRINT '  Process Ended at' + CAST(GETDATE() AS VARCHAR)
+
+	IF OBJECT_ID('tempdb..#TempDealMovie') IS NOT NULL DROP TABLE #TempDealMovie
+	IF OBJECT_ID('tempdb..#TempPlatformCodes') IS NOT NULL DROP TABLE #TempPlatformCodes
+	IF OBJECT_ID('tempdb..#TempResultData') IS NOT NULL DROP TABLE #TempResultData
+	IF OBJECT_ID('tempdb..#TempRightCodes') IS NOT NULL DROP TABLE #TempRightCodes
+	IF OBJECT_ID('tempdb..#TempRightCodesDetails') IS NOT NULL DROP TABLE #TempRightCodesDetails
+	IF OBJECT_ID('tempdb..#TempRightCodesGroup') IS NOT NULL DROP TABLE #TempRightCodesGroup
+	IF OBJECT_ID('tempdb..#TempRightCodesSummary') IS NOT NULL DROP TABLE #TempRightCodesSummary
+	IF OBJECT_ID('tempdb..#TempRights') IS NOT NULL DROP TABLE #TempRights
+	IF OBJECT_ID('tempdb..#TempRightsPagingData') IS NOT NULL DROP TABLE #TempRightsPagingData
+	IF OBJECT_ID('tempdb..#TempTitle') IS NOT NULL DROP TABLE #TempTitle
 END

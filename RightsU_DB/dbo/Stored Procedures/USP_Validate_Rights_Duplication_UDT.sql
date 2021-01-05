@@ -1,4 +1,7 @@
-﻿CREATE PROCEDURE [dbo].[USP_Validate_Rights_Duplication_UDT]
+﻿
+
+
+CREATE PROCEDURE [dbo].[USP_Validate_Rights_Duplication_UDT]
 (
 	@Deal_Rights Deal_Rights READONLY,
 	@Deal_Rights_Title Deal_Rights_Title  READONLY,

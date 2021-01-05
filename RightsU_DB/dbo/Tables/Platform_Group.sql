@@ -11,5 +11,3 @@
     CONSTRAINT [PK_Platform_Group] PRIMARY KEY CLUSTERED ([Platform_Group_Code] ASC)
 );
 
-
-

@@ -90,7 +90,7 @@ BEGIN
 		SELECT DISTINCT Acq_Deal_Code, Acq_Deal_Rights_Code,Title_Code,Country_Code,Territory_Code,Territory_Type,Platform_Code,Actual_Right_Start_Date,
 						Actual_Right_End_Date,IsProcessed, Expire_In_Days InTo #ACQ_EXPIRING_DEALS
 		FROM
-		(
+		(		 
 			SELECT DISTINCT adr.Acq_Deal_Rights_Code, ROW_NUMBER()OVER(PARTITION BY Title_Code,country_code,platform_code,
 					adr.Is_Title_Language_Right ORDER BY [Actual_Right_Start_Date] Desc ) AS [row],Platform_Code,Title_Code,
 					Country_Code, Territory_Code, Territory_Type,
@@ -101,7 +101,8 @@ BEGIN
 			Inner Join Acq_Deal_Rights_Title adrt On adr.Acq_Deal_Rights_Code = adrt.Acq_Deal_Rights_Code
 			Inner Join Acq_Deal_Rights_Platform adrp On adr.Acq_Deal_Rights_Code = adrp.Acq_Deal_Rights_Code
 			Inner Join Acq_Deal_Rights_Territory adrc On adr.Acq_Deal_Rights_Code = adrc.Acq_Deal_Rights_Code
-			Where  AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND  ((Right_Type = 'M' And Actual_Right_End_Date Is Not Null) Or Right_Type <> 'M') 
+			Where ((Right_Type = 'M' And Actual_Right_End_Date Is Not Null) Or Right_Type <> 'M') 
+			AND adr.Is_Tentative != 'Y'
 			--Where Actual_Right_End_Date Is Not Null
 		) b 
 		Where [row] = 1 And getdate() Between Actual_Right_Start_Date And Actual_Right_End_Date
@@ -144,7 +145,6 @@ BEGIN
 			FROM #ACQ_EXPIRING_DEALS t1
 			INNER join  Acq_Deal AD on ad.Acq_Deal_Code= t1.Acq_Deal_Code
 			INNER JOIN Title T ON T.Title_Code = t1.Title_Code
-			Where  AD.Deal_Workflow_Status NOT IN ('AR', 'WA') 
 			Group By AD.Acq_Deal_Code, Acq_Deal_Rights_Code,Ad.Agreement_No,T.Title_Code,T.title_name,
 						Actual_Right_Start_Date,Actual_Right_End_Date,IsProcessed,Business_Unit_Code,Territory_Type,Expire_In_Days--,Vendor_Name
 		) MainOutput
@@ -171,6 +171,7 @@ BEGIN
 			Inner Join Syn_Deal_Rights_Territory adrc On adr.Syn_Deal_Rights_Code = adrc.Syn_Deal_Rights_Code
 			Where ((Right_Type = 'M' And Actual_Right_End_Date Is Not Null) Or Right_Type <> 'M')
 			AND ISNULL(Right_Status,'') = 'C'
+			AND adr.Is_Tentative != 'Y'
 			--Where Actual_Right_End_Date Is Not Null
 		) b 
 		Where [row] = 1
@@ -688,8 +689,16 @@ BEGIN
 	BEGIN
 		DROP TABLE #EMAIL_ID_TEMP1
 	END
+
+	IF OBJECT_ID('tempdb..#ACQ_EXPIRING_DEALS') IS NOT NULL DROP TABLE #ACQ_EXPIRING_DEALS
+	IF OBJECT_ID('tempdb..#ACQ_EXPIRING_DEALS#DealDetails') IS NOT NULL DROP TABLE #ACQ_EXPIRING_DEALS#DealDetails
+	IF OBJECT_ID('tempdb..#ACQ_TENTATIVE_DEALS') IS NOT NULL DROP TABLE #ACQ_TENTATIVE_DEALS
+	IF OBJECT_ID('tempdb..#Alert_Range') IS NOT NULL DROP TABLE #Alert_Range
+	IF OBJECT_ID('tempdb..#DealDetails') IS NOT NULL DROP TABLE #DealDetails
+	IF OBJECT_ID('tempdb..#EMAIL_ID_TEMP1') IS NOT NULL DROP TABLE #EMAIL_ID_TEMP1
+	IF OBJECT_ID('tempdb..#SYN_EXPIRING_DEALS') IS NOT NULL DROP TABLE #SYN_EXPIRING_DEALS
 END
-/*
+/*k
 EXEC [dbo].[USP_Deal_Expiry_Email]  'D','ACE'
 
 */

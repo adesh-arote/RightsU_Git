@@ -159,6 +159,11 @@ BEGIN
 			ROLLBACK
 		END CATCH
 	END
+
+	IF OBJECT_ID('tempdb..#Temp_Content_Channel_Run') IS NOT NULL DROP TABLE #Temp_Content_Channel_Run
+	IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData
+	IF OBJECT_ID('tempdb..#TempData_New') IS NOT NULL DROP TABLE #TempData_New
+	IF OBJECT_ID('tempdb..#TempDummy') IS NOT NULL DROP TABLE #TempDummy
 END
 
 --EXEC [USP_Provisional_Content_Data_Generation]

@@ -45,7 +45,8 @@ BEGIN
 		 Module_Name,BaseAddress,RequestUri,Order_Id,BMS_Log_Code 
     FROM #Temp_Xml_Data    
     
-	DROP TABLE #Temp_Xml_Data    
+	DROP TABLE #Temp_Xml_Data 
+	IF OBJECT_ID('tempdb..#Temp_Xml_Data') IS NOT NULL DROP TABLE #Temp_Xml_Data
 END
 -- =============================================Execute========================
 

@@ -1,4 +1,5 @@
-﻿ ALTER PROCEDURE [dbo].[USPMHRequisitionList] 
+﻿
+CREATE PROCEDURE [dbo].[USPMHRequisitionList] 
 --DECLARE
 	@ProductionHouseCode VARCHAR(MAX) = '',
 	@MusicLabel VARCHAR(500) = '',
@@ -104,10 +105,13 @@ BEGIN
 	WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
 
 	SELECT MHRequestCode, MHRequestTypeCode , RequestID, ShowName, ChannelName, EpisodeNo, Songs , MusicLabels AS MusicLabel, [Status], RequestedBy, RequestedDate, PendingSince, PendingCount, AuthorisedSongsCount from #TempRightsPagingData
+
+	IF OBJECT_ID('tempdb..#Label') IS NOT NULL DROP TABLE #Label
+	IF OBJECT_ID('tempdb..#TempRightsPagingData') IS NOT NULL DROP TABLE #TempRightsPagingData
 END
 
 --DECLARE @RC INT  
---exec USPMHRequisitionList '','',0,'','','','','','',1,10,'','', @RC 
+--exec USPMHRequisitionList '','',0,'','','','','','',1,10,'','', @RC  
 
 --ALTER PROCEDURE [dbo].[USPMHRequisitionList]    
 --	@ProductionHouseCode VARCHAR(MAX) = '',

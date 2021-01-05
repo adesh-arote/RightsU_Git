@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Title_Deal_Info]
+﻿CREATE PROCEDURE [dbo].[USP_Title_Deal_Info]
 (
 	@Title_Code INT,
 	@User_Code INT
@@ -10,7 +10,7 @@ AS
 -- Description:	Get All Acq and Syn deals Using Title Codes
 -- =============================================
 BEGIN
-	--DECLARE @Title_Code INT = 1041
+	--DECLARE @Title_Code INT = 34385, @User_Code INT = 218
 	SET FMTONLY OFF
 	IF OBJECT_ID('TEMPDB..#Temp_Data') IS NOT NULL
 	BEGIN
@@ -51,7 +51,7 @@ BEGIN
 	VENDor_Code,Licensee_Code,Rights_Code,
 	Right_Type,Is_Tentative,R_Start_Date,
 	R_END_Date,Is_Title_Lang,Is_Exclusive,
-	Is_Sub_License,Term,M_Type_Code,M_No_Of_Unit,M_Unit_Type 
+	Is_Sub_License,Term,M_Type_Code,M_No_Of_Unit,M_Unit_Type
 	)				   
 	SELECT DISTINCT    
 		AD.Acq_Deal_Code , 30 Module_Code, AD.Agreement_No,
@@ -63,7 +63,7 @@ BEGIN
 	--INNER JOIN Acq_Deal_Movie ADM ON AD.Acq_Deal_Code = ADM.Acq_Deal_Code AND ADM.Title_Code = @Title_Code
 	INNER JOIN Acq_Deal_Rights ADR ON AD.Acq_Deal_Code = ADR.Acq_Deal_Code
 	INNER JOIN Acq_Deal_Rights_Title ADRT ON ADR.Acq_Deal_Rights_Code = ADRT.Acq_Deal_Rights_Code AND ADRT.Title_Code = @Title_Code  
-	Where  AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND AD.Business_Unit_Code IN(select Business_Unit_Code from Users_Business_Unit where Users_Code=@User_Code)
+	Where AD.Business_Unit_Code IN(select Business_Unit_Code from Users_Business_Unit where Users_Code=@User_Code)
 	UNION
 	SELECT SD.Syn_Deal_Code , 35 Module_Code , SD.Agreement_No,
 	SD.VENDor_Code,SD.Entity_Code,SDR.Syn_Deal_Rights_Code,
@@ -192,6 +192,7 @@ BEGIN
 		   ,TD.Rights_Code
 	FROM #Temp_Data TD
 	ORDER BY Deal_Type,Agreement_No
-	DROP TABLE #Temp_Data
-END
+	--DROP TABLE #Temp_Data
 
+	IF OBJECT_ID('tempdb..#Temp_Data') IS NOT NULL DROP TABLE #Temp_Data
+END

@@ -158,4 +158,6 @@ BEGIN
 
 	select * from #TempResultData
 
+	IF OBJECT_ID('tempdb..#TempProvisionalDeal') IS NOT NULL DROP TABLE #TempProvisionalDeal
+	IF OBJECT_ID('tempdb..#TempResultData') IS NOT NULL DROP TABLE #TempResultData
 END

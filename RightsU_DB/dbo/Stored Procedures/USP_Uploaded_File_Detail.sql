@@ -67,7 +67,8 @@ BEGIN
 	PRINT(@Sql)
 	EXEC(@Sql)
 		
-	DROP TABLE #Temp
+	--DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 
 END
 

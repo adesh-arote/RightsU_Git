@@ -22,4 +22,4 @@ BEGIN
 		) AS temp FOR XML PATH('')), 1, 1, '')
 	SELECT @TitleName = REPLACE(@TitleName, '&amp;', '&')
 	RETURN @TitleName
-END      
+END

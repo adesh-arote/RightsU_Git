@@ -1,5 +1,4 @@
-﻿
-CREATE FUNCTION [dbo].[UFN_GetDealTypeCondition](@Deal_Type_Code INT)
+﻿CREATE FUNCTION [dbo].[UFN_GetDealTypeCondition](@Deal_Type_Code INT)
 RETURNS VARCHAR(MAX)
 AS
 BEGIN

@@ -164,4 +164,7 @@ BEGIN
 	ISNULL(Lyricist, '') AS Lyricist, ISNULL(Deal_Type, '') AS Deal_Type, ISNULL(Title_Name, '') AS Title_Name, 
 	ISNULL(Episode_From, 0) AS Episode_From, ISNULL(Episode_To, 0) AS Episode_To, ISNULL(Episodes, '') AS Episodes, ISNULL(No_Of_Play, 0) AS No_Of_Play
 	FROM #Temp_Music_List
+
+	IF OBJECT_ID('tempdb..#Temp_Deal_Type') IS NOT NULL DROP TABLE #Temp_Deal_Type
+	IF OBJECT_ID('tempdb..#Temp_Music_List') IS NOT NULL DROP TABLE #Temp_Music_List
 END

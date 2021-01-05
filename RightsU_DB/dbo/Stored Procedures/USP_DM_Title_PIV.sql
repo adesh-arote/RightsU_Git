@@ -1,4 +1,5 @@
-﻿alter PROCEDURE [dbo].[USP_DM_Title_PIV]      
+﻿
+CREATE PROCEDURE [dbo].[USP_DM_Title_PIV]      
 	@DM_Master_Import_Code varchar(500),      
 	@User_Code INT=143      
 AS       
@@ -584,14 +585,28 @@ BEGIN
 	Drop Table #TempRolesDummy      
         
     
-	DROP TABLE #Temp_Director      
-	DROP TABLE #Temp_S      
-	DROP TABLE #Temp_Music_Label      
-	DROP TABLE #Temp_Deal_Type   
-	DROP TABLE #Temp_Program_Category 
-	DROP TABLE #Temp_Language   
-	DROP TABLE #Temp_Original_Language
-	DROP TABLE #Temp_Import      
-        
-END        
-  
+	--DROP TABLE #Temp_Director      
+	--DROP TABLE #Temp_S      
+	--DROP TABLE #Temp_Music_Label      
+	--DROP TABLE #Temp_Deal_Type   
+	--DROP TABLE #Temp_Program_Category 
+	--DROP TABLE #Temp_Language   
+	--DROP TABLE #Temp_Original_Language
+	--DROP TABLE #Temp_Import      
+   
+	IF OBJECT_ID('tempdb..#Temp_Deal_Type') IS NOT NULL DROP TABLE #Temp_Deal_Type
+	IF OBJECT_ID('tempdb..#Temp_Director') IS NOT NULL DROP TABLE #Temp_Director
+	IF OBJECT_ID('tempdb..#Temp_DM_Title_SystemMapped') IS NOT NULL DROP TABLE #Temp_DM_Title_SystemMapped
+	IF OBJECT_ID('tempdb..#Temp_DM_Title_UserMapped') IS NOT NULL DROP TABLE #Temp_DM_Title_UserMapped
+	IF OBJECT_ID('tempdb..#Temp_Import') IS NOT NULL DROP TABLE #Temp_Import
+	IF OBJECT_ID('tempdb..#Temp_Import_Program_Category') IS NOT NULL DROP TABLE #Temp_Import_Program_Category
+	IF OBJECT_ID('tempdb..#Temp_Language') IS NOT NULL DROP TABLE #Temp_Language
+	IF OBJECT_ID('tempdb..#Temp_Music_Label') IS NOT NULL DROP TABLE #Temp_Music_Label
+	IF OBJECT_ID('tempdb..#Temp_Original_Language') IS NOT NULL DROP TABLE #Temp_Original_Language
+	IF OBJECT_ID('tempdb..#Temp_Program_Category') IS NOT NULL DROP TABLE #Temp_Program_Category
+	IF OBJECT_ID('tempdb..#Temp_S') IS NOT NULL DROP TABLE #Temp_S
+	IF OBJECT_ID('tempdb..#TempMasterLog_systemMapped') IS NOT NULL DROP TABLE #TempMasterLog_systemMapped
+	IF OBJECT_ID('tempdb..#TempMasterLog_Usermapped') IS NOT NULL DROP TABLE #TempMasterLog_Usermapped
+	IF OBJECT_ID('tempdb..#TempRolesDummy') IS NOT NULL DROP TABLE #TempRolesDummy
+
+END

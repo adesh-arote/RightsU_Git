@@ -1,5 +1,4 @@
-﻿
-ALTER PROCEDURE USP_List_ContentBulkImport
+﻿CREATE PROCEDURE USP_List_ContentBulkImport
 (
 	@DM_Master_Import_Code INT = 0,
 	@SearchCriteria VARCHAR(MAX) = '',
@@ -139,6 +138,12 @@ BEGIN
 	DELETE from  #TempDM_Content_Music WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
 
 	SELECT  DMContentMusicCode, ExcelLineNo, Content, EpisodeNo, VersionName, MusicTrackName, TC_IN, TC_OUT, FromFrame, ToFrame, Duration, DurationFrame, Status, ErrorMessage FROM #TempDM_Content_Music
+
+	IF OBJECT_ID('tempdb..#TempContentName') IS NOT NULL DROP TABLE #TempContentName
+	IF OBJECT_ID('tempdb..#TempDM_Content_Music') IS NOT NULL DROP TABLE #TempDM_Content_Music
+	IF OBJECT_ID('tempdb..#TempErrorMsg') IS NOT NULL DROP TABLE #TempErrorMsg
+	IF OBJECT_ID('tempdb..#TempSplitErrorMsg') IS NOT NULL DROP TABLE #TempSplitErrorMsg
+	IF OBJECT_ID('tempdb..#TempSplitMusicTrack') IS NOT NULL DROP TABLE #TempSplitMusicTrack
 END
 
 --ALTER PROCEDURE USP_List_ContentBulkImport

@@ -10,7 +10,3 @@
     CONSTRAINT [PK_Music_Label] PRIMARY KEY CLUSTERED ([Music_Label_Code] ASC)
 );
 
-
-
-
-

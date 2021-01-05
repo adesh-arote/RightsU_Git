@@ -1,4 +1,4 @@
-CREATE PROC USP_GetContentMetadata
+﻿CREATE PROC USP_GetContentMetadata
 (
 	@Title_Content_Code BIGINT
 )

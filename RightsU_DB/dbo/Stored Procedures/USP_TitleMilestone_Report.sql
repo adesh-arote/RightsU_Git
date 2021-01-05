@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE USP_TitleMilestone_Report
+﻿ CREATE PROCEDURE USP_TitleMilestone_Report
  (
  	@TitleCode NVARCHAR(MAX),            
  	@TalentCode NVARCHAR(MAX),            
@@ -9,12 +9,16 @@
  AS 
  BEGIN
  --DECLARE
-	--@TitleCode NVARCHAR(MAX) ='27838',       
+	--@TitleCode NVARCHAR(MAX) ='35265,35266',       
 	--@TalentCode NVARCHAR(MAX)= '',            
 	--@MilestoneNatureCode NVARCHAR(MAX) = '',            
 	--@StartRange VARCHAR(30) = '',
 	--@EndRange VARCHAR(30) = ''
 	--@LastDate VARCHAR(30) = ''
+	
+
+	
+
 	SELECT 
 		T.Title_Name,
 		TL.Talent_Name,
@@ -43,6 +47,9 @@
 	--OR Expiry_Date BETWEEN GETDATE() AND @EndRange 
 	--AND GETDATE() > Expiry_Date
 	
+	IF OBJECT_ID('tempdb..#TempDateStatus') IS NOT NULL DROP TABLE #TempDateStatus
  END
 
  
+--Select * from Title_Milestone
+--Select * from Milestone_Nature

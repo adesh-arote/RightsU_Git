@@ -1,4 +1,5 @@
-﻿CREATE FUNCTION [dbo].[UFN_Get_Syn_Ancillary_Medium_BaseOn_AncillaryCode_AT]
+﻿
+CREATE FUNCTION [dbo].[UFN_Get_Syn_Ancillary_Medium_BaseOn_AncillaryCode_AT]
 (
 	@AT_Syn_Deal_Ancillary_Code INT
 )

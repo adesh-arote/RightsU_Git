@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[USP_Integration_Runs_Insert]        
+﻿
+CREATE PROCEDURE [dbo].[USP_Integration_Runs_Insert]        
 (        
  @Acq_Deal_Run_Channel_Code VARCHAR(MAX),  
  @Acq_Deal_Run_Yearwise_Run_Code VARCHAR(MAX)  
@@ -84,16 +85,6 @@ BEGIN
 				INSERT (Acq_Deal_Run_Code,Title_Code,Channel_Code,Schedule_Run,Prime_Runs_Sched,Off_Prime_Runs_Sched ,[Start_Date],End_Date)
 				VALUES (TIR.Acq_Deal_Run_Code,TIR.Title_Code,TIR.Channel_Code,TIR.Schedule_Run,TIR.Prime_Runs_Sched,TIR.Off_Prime_Runs_Sched ,TIR.[Start_Date],TIR.End_Date);	  						  
 	
-			IF OBJECT_ID('tempdb..#Temp_Integration_Runs') IS NOT NULL
-			BEGIN
-				DROP TABLE #Temp_Integration_Runs
-			END	
+
+			IF OBJECT_ID('tempdb..#Temp_Integration_Runs') IS NOT NULL DROP TABLE #Temp_Integration_Runs
 END
-/*
-EXEC  USP_Integration_Runs_Insert '2037,3038','147,148,149'
-EXEC  [dbo].[USP_Schedule_Process] 896,24
-*/
-
-
-
-

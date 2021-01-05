@@ -1,6 +1,7 @@
-﻿alter PROCEDURE [dbo].[USP_Syn_Deal_Title_Platform_Report]  
+﻿
+CREATE PROCEDURE [dbo].[USP_Syn_Deal_Title_Platform_Report]  
 (      
-	@Business_Unit_Code INT =1,  
+	@Business_Unit_Code VARCHAR(MAX),  
 	@Title_Codes VARCHAR(MAX)='',   
 	@Platform_Codes VARCHAR(MAX)='',  
 	@Show_Expired CHAR(1)='Y'  
@@ -15,8 +16,8 @@ BEGIN
 --PRINT 'Show Platform wise report'           	
 	--DECLARE
 	--	@Business_Unit_Code INT =1,  
-	--	@Title_Codes VARCHAR(MAX)='34084',   
-	--	@Platform_Codes VARCHAR(MAX)='3,4,6,7',
+	--	@Title_Codes VARCHAR(MAX)='27870',   
+	--	@Platform_Codes VARCHAR(MAX)='',
 	--	@Show_Expired CHAR(1)='N'  
 
 	CREATE TABLE #Temp_Platforms   
@@ -24,6 +25,8 @@ BEGIN
 	Agreement_No VARCHAR(MAX)    ,
 	Deal_Desc NVARCHAR(MAX)    ,
 	Title_Name NVARCHAR(MAX)    ,
+	Deal_Segment NVARCHAR(MAX),
+	Revenue_Vertical NVARCHAR(MAX),
 	Right_Type VARCHAR(MAX)    ,
 	Acq_Deal_Rights_Code INT    ,
 	Term VARCHAR(MAX)    ,
@@ -33,10 +36,13 @@ BEGIN
 	Platform_Hiearachy NVARCHAR(MAX)    ,
 	Platform_Code INT    ,
 	Available NVARCHAR(MAX),
-	Restriction_Remarks NVARCHAR(MAX)
-	,
+	Restriction_Remarks NVARCHAR(MAX),
 	Is_Exclusive VARCHAR(10)
 	)    
+
+	DECLARE @IsDealSegment AS VARCHAR(100), @IsRevenueVertical AS VARCHAR(100)
+	SELECT @IsDealSegment = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment' 
+	SELECT @IsRevenueVertical = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical' 
 	   
 	DECLARE @Deal_Type_Code_Music INT = 0   
 	  
@@ -60,7 +66,23 @@ BEGIN
 	SELECT DISTINCT number AS Title_Code INTO #Selected_Titles FROM fn_Split_withdelemiter(@Title_Codes, ',');   
 	--PRINT 'Splited and inserted in #Selected_Titles table'   PRINT 'Fetching data...'   
 		--Select * From #Selected_Platforms  			  
-	INSERT INTO #Temp_Platforms   
+	INSERT INTO #Temp_Platforms 
+	(    
+	    Agreement_No			
+		,Deal_Desc				
+		,Title_Name				
+		,Right_Type				
+		,Acq_Deal_Rights_Code	
+		,Term					
+		,Actual_Right_Start_Date	
+		,Actual_Right_End_Date	
+		,Title_Language			
+		,Platform_Hiearachy		
+		,Platform_Code			
+		,Available				
+		,Restriction_Remarks		
+		,Is_Exclusive					
+	)   
 	SELECT
 		DISTINCT SD.Agreement_No, SD.Deal_Description,      
 		DBO.UFN_GetTitleNameInFormat(dbo.UFN_GetDealTypeCondition(SD.Deal_Type_Code), t.Title_Name, SDRT.Episode_From, SDRT.Episode_To) AS Title_Name 
@@ -79,7 +101,8 @@ BEGIN
 		,ISNULL(sdr.Restriction_Remarks, '') AS [Restriction Remarks] 
 		,CASE ISNULL(SDR.Is_Exclusive, 'N') WHEN 'Y' THEN 'Yes' ELSE 'No' END AS Is_Exclusive
 		From Syn_Deal SD   
-		INNER JOIN Syn_Deal_Movie SDM On SD.Syn_Deal_Code = SDM.Syn_Deal_Code AND SD.Business_Unit_Code = @Business_Unit_Code    
+		--INNER JOIN Syn_Deal_Movie SDM On SD.Syn_Deal_Code = SDM.Syn_Deal_Code AND SD.Business_Unit_Code = @Business_Unit_Code   
+		INNER JOIN Syn_Deal_Movie SDM On SD.Syn_Deal_Code = SDM.Syn_Deal_Code AND SD.Business_Unit_Code IN (SELECT CAST(number as INT) from [dbo].[fn_Split_withdelemiter](@Business_Unit_code,','))
 		AND (Title_Code IN (SELECT Title_Code FROM #Selected_Titles) Or @Title_Codes = '')   
 		INNER JOIN Syn_Deal_Rights sdr On SD.Syn_Deal_Code = SDR.Syn_Deal_Code    
 		INNER JOIN Syn_Deal_Rights_Platform SDRP On SDR.Syn_Deal_Rights_Code = SDRP.Syn_Deal_Rights_Code AND    
@@ -89,14 +112,37 @@ BEGIN
 		INNER JOIN Platform p On p.Platform_Code = SDRP.Platform_Code   
 		INNER JOIN #Selected_Platforms pTEMP ON pTEMP.Platform_Code = P.Platform_Code   
 		LEFT JOIN Language L ON L.Language_Code = T.Title_Language_Code      
-		WHERE sdr.Is_Pushback='N'
+		WHERE 
+		SD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND  
+		sdr.Is_Pushback='N'
 
+		IF(@IsDealSegment = 'Y')
+		BEGIN
+			UPDATE TP
+			SET Deal_Segment = DS.Deal_Segment_Name
+			FROM #Temp_Platforms TP
+			INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = TP.Acq_Deal_Rights_Code
+			INNER JOIN Syn_Deal AD ON AD.Syn_Deal_Code = adr.Syn_Deal_Code
+			INNER JOIN Deal_Segment DS ON DS.Deal_Segment_Code = AD.Deal_Segment_Code
+		END
+
+		IF(@IsRevenueVertical = 'Y')
+		BEGIN
+			UPDATE TP
+			SET Revenue_Vertical = DS.Revenue_Vertical_Name
+			FROM #Temp_Platforms TP
+			INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = TP.Acq_Deal_Rights_Code
+			INNER JOIN Syn_Deal AD ON AD.Syn_Deal_Code = adr.Syn_Deal_Code
+			INNER JOIN Revenue_Vertical DS ON DS.Revenue_Vertical_Code = AD.Revenue_Vertical_Code
+		END
+	
 		--PRINT 'Fetched data'     
 		--PRINT 'Altering #Temp_Platforms table...'  
 		ALTER TABLE #Temp_Platforms   
 		ADD Region_Names NVARCHAR(Max),     
 		Subtitling_Names NVARCHAR(Max),    
-		Dubbing_Names NVARCHAR(Max)     
+		Dubbing_Names NVARCHAR(Max)
+		     
 		--PRINT 'Altered #Temp_Platforms table'     
 		--PRINT 'updating value of newly added column in #Temp_Platforms table...'   
 		Update #Temp_Platforms Set    Region_Names = DBO.UFN_Get_Rights_Country(Acq_Deal_Rights_Code, 'S',''),   
@@ -106,13 +152,19 @@ BEGIN
 		WHERE LTRIM(RTRIM(Region_Names)) = ''   
 		UPDATE #Temp_Platforms SET Subtitling_Names = 'No' WHERE LTRIM(RTRIM(Subtitling_Names)) = ''   
 		UPDATE #Temp_Platforms SET Dubbing_Names = 'No' WHERE LTRIM(RTRIM(Dubbing_Names)) = ''   
-	--  PRINT 'Updated'      
+	--  PRINT 'Updated'     
+
+	 
 	SELECT * FROM #Temp_Platforms     
-	Drop Table #Temp_Platforms   
-	Drop Table #Selected_Platforms   
-	Drop Table #Selected_Titles  END 
+	--Drop Table #Temp_Platforms   
+	--Drop Table #Selected_Platforms   
+	--Drop Table #Selected_Titles  
+
+	IF OBJECT_ID('tempdb..#Selected_Platforms') IS NOT NULL DROP TABLE #Selected_Platforms
+	IF OBJECT_ID('tempdb..#Selected_Titles') IS NOT NULL DROP TABLE #Selected_Titles
+	IF OBJECT_ID('tempdb..#Temp_Platforms') IS NOT NULL DROP TABLE #Temp_Platforms
+	IF OBJECT_ID('tempdb..#BusinessUnitCodes') IS NOT NULL DROP TABLE #BusinessUnitCodes
+END 
 /*
---EXEC USP_Syn_Deal_Title_Platform_Report 1, '6000', '', 'Y'  
-*/					     
-
-
+--EXEC USP_Syn_Deal_Title_Platform_Report 1, '', '1,2', 'Y'  
+*/

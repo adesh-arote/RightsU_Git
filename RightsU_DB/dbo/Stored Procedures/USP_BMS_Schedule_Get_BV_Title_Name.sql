@@ -14,7 +14,7 @@ BEGIN
 	FROM BMS_All_Masters WHERE Method_Type = 'G' AND Module_Name = @ModuleName AND Is_Active = 'Y'
 	
 	SELECT DISTINCT @BaseAddress AS BaseAddress, BHD.Program_Episode_ID AS BMS_Asset_Ref_Key,
-	@RequestUri + BHD.Program_Episode_ID AS RequestUri 
+	@RequestUri + BHD.Program_Episode_ID AS RequestUri  
 	FROM BV_HouseId_Data BHD 
 	WHERE ISNULL(BHD.BMS_Schedule_Process_Data_Temp_Code,0) > 0  AND ISNULL(BHD.Program_Episode_ID,0) > 0 AND ISNULL(BHD.BV_Title,'') = ''
 
@@ -22,5 +22,3 @@ END
 /*
 EXEC USP_BMS_Schedule_Get_BV_Title_Name
 */
-
-

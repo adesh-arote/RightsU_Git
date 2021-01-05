@@ -1,10 +1,9 @@
-﻿--CREATE Proc [dbo].[USP_Get_Security_Group_Tree_Hierarchy]      
---(  
-declare
-@ModuleCodes Varchar(2000) ='188'           
+﻿CREATE Proc [dbo].[USP_Get_Security_Group_Tree_Hierarchy]      
+(            
+@ModuleCodes Varchar(2000)            
 ,@Search_Module_Name NVARCHAR(500)            
---)            
---As            
+)            
+As            
 Begin            
      SET FMTONLY OFF      
  --Declare @PlatformCodes Varchar(2000) = '81,122,101,78,85,45,76,121,55,77,98,165,53,158'            
@@ -65,5 +64,7 @@ Begin
  Order By Module_Position            
              
  --Select Platform_Code, Platform_Name, IsNull(Parent_Platform_Code, 0) Parent_Platform_Code, Is_Last_Level, Module_Position From [Platform] Where Is_Active = 'Y' Order By Module_Position            
- Drop Table #TempPF            
-End 
+ --Drop Table #TempPF            
+
+ IF OBJECT_ID('tempdb..#TempPF') IS NOT NULL DROP TABLE #TempPF
+End

@@ -1,5 +1,4 @@
 ﻿
-
 CREATE PROCEDURE [dbo].[USP_Acq_Deal_Title_Platform_Report]
 (
 	@Business_Unit_Code INT,
@@ -28,11 +27,12 @@ BEGIN
 
 	--SELECT
 	--@Business_Unit_Code = 1,
-	--@Title_Codes = '30080',
-	--@Platform_Codes = '152,155',
+	--@Title_Codes = '33337,',
+	--@Platform_Codes = '',--1,0,3,4,0,6,7
 	--@Show_Expired = 'N',
 	--@Include_Sub_Deal = 'N',
 	--@Module_Code = 119
+	
 	
 	IF(@Module_Code <> 119 AND LTRIM(RTRIM(@Platform_Codes)) = '')
 	BEGIN
@@ -47,6 +47,8 @@ BEGIN
 		END
 	END
 
+	print @Title_Codes
+
 	create table #Temp_Platforms
 	(
 		Agreement_No VARCHAR(MAX)
@@ -54,6 +56,8 @@ BEGIN
 		,Deal_Desc NVARCHAR(MAX)
 		,Licensor NVARCHAR(MAX)
 		,Title_Name NVARCHAR(MAX)
+		,Deal_Segment NVARCHAR(MAX)
+		,Revenue_Vertical NVARCHAR(MAX)
 		,Right_Type VARCHAR(MAX)
 		,Acq_Deal_Rights_Code INT
 		,Sub_License NVARCHAR(MAX)
@@ -69,6 +73,10 @@ BEGIN
 		,Due_Diligence VARCHAR(10)
 		,Category_Name VARCHAR(MAX)
 	)
+
+	DECLARE @IsDealSegment AS VARCHAR(100), @IsRevenueVertical AS VARCHAR(100)
+	SELECT @IsDealSegment = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment' 
+	SELECT @IsRevenueVertical = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical' 
 
 	DECLARE @Deal_Type_Code_Music INT = 0
 	select top 1 @Deal_Type_Code_Music = CAST(Parameter_Value AS INT) from System_Parameter_New where Parameter_Name = 'Deal_Type_Music'
@@ -89,6 +97,27 @@ BEGIN
 	--Select * From #Selected_Platforms
 	
 	INSERT INTO #Temp_Platforms
+	(
+		Agreement_No		
+		,Agreement_Date			
+		,Deal_Desc				
+		,Licensor				
+		,Title_Name					
+		,Right_Type				
+		,Acq_Deal_Rights_Code	
+		,Sub_License			
+		,Is_Exclusive			
+		,Term					
+		,Actual_Right_Start_Date
+		,Actual_Right_End_Date	
+		,Title_Language			
+		,Platform_Hiearachy		
+		,Platform_Code			
+		,Available				
+		,Restriction_Remarks	
+		,Due_Diligence			
+		,Category_Name			
+	)
 	Select --*
 			Distinct ad.Agreement_No, 
 			CAST(ad.Agreement_Date as date),ad.Deal_Desc,V.Vendor_Name AS Licensor,
@@ -135,6 +164,27 @@ BEGIN
 	LEFT JOIN Sub_License SL ON adr.Sub_License_Code = sl.Sub_License_Code
 	INNER JOIN Category C ON AD.Category_Code = C.Category_Code
 	WHERE AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND (AD.Is_Master_Deal != @Include_Sub_Deal OR @Include_Sub_Deal = 'Y' OR AD.Deal_Type_Code = @Deal_Type_Code_Music)
+	
+	IF(@IsDealSegment = 'Y')
+	BEGIN
+		UPDATE TP
+		SET Deal_Segment = DS.Deal_Segment_Name
+		FROM #Temp_Platforms TP
+		INNER JOIN Acq_Deal_Rights adr ON adr.Acq_Deal_Rights_Code = TP.Acq_Deal_Rights_Code
+		INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = adr.Acq_Deal_Code
+		INNER JOIN Deal_Segment DS ON DS.Deal_Segment_Code = AD.Deal_Segment_Code
+	END
+
+	IF(@IsRevenueVertical = 'Y')
+	BEGIN
+		UPDATE TP
+		SET Revenue_Vertical = DS.Revenue_Vertical_Name
+		FROM #Temp_Platforms TP
+		INNER JOIN Acq_Deal_Rights adr ON adr.Acq_Deal_Rights_Code = TP.Acq_Deal_Rights_Code
+		INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = adr.Acq_Deal_Code
+		INNER JOIN Revenue_Vertical DS ON DS.Revenue_Vertical_Code = AD.Revenue_Vertical_Code
+	END
+
 	PRINT 'Fetched data'
 
 	PRINT 'Altering #Temp_Platforms table...'
@@ -155,6 +205,8 @@ BEGIN
 	UPDATE #Temp_Platforms SET Subtitling_Names = 'No' WHERE LTRIM(RTRIM(Subtitling_Names)) = ''
 	UPDATE #Temp_Platforms SET Dubbing_Names = 'No' WHERE LTRIM(RTRIM(Dubbing_Names)) = ''
 	PRINT 'Updated'
+
+	
 	
 	SELECT * FROM #Temp_Platforms
 	
@@ -163,7 +215,7 @@ BEGIN
 	IF OBJECT_ID('tempdb..#Temp_Platforms') IS NOT NULL DROP TABLE #Temp_Platforms
 END
 
---EXEC USP_Acq_Deal_Title_Platform_Report 1, '', '', 'Y', 'Y', 30
+--EXEC USP_Acq_Deal_Title_Platform_Report 1,'','1,0,3,4,0,6,7', 'N', 'N', 30
 
 --Select * from Acq_Deal ORDER BY 1 DESC
 --Select * from Acq_Deal where Acq_Deal_Code = 24974

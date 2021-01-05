@@ -8,8 +8,6 @@
 );
 
 
-
-
 GO
 CREATE TRIGGER [dbo].[Trg_Talent_Role_Del]      
 ON [dbo].[Talent_Role]

@@ -1,5 +1,4 @@
-﻿
-CREATE  PROCEDURE [dbo].[USP_Bind_Title]
+﻿CREATE  PROCEDURE [dbo].[USP_Bind_Title]
 (
 	@Deal_Code INT,
 	@Deal_Type_Code INT,
@@ -59,5 +58,3 @@ BEGIN
 END
 
 --EXEC USP_Bind_Title 3122,11
-
-

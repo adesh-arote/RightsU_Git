@@ -1,4 +1,4 @@
-﻿ALTER FUNCTION  [dbo].[UFN_Is_Deal_Added_For_Language_Group]
+﻿CREATE FUNCTION  [dbo].[UFN_Is_Deal_Added_For_Language_Group]
 (
 	@Language_Group_Code INT
 )

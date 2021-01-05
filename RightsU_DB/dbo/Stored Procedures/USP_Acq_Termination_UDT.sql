@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[USP_Acq_Termination_UDT] 
+﻿
+CREATE PROCEDURE [dbo].[USP_Acq_Termination_UDT] 
 	@Termination_Deals Termination_Deals  READONLY,
 	@Login_User_Code INT,
 	@Syn_Error_Body VARCHAR(MAX),
@@ -1105,5 +1106,10 @@ BEGIN
 	SELECT Tds.Deal_Code, Tds.Title_Code, Tds.Episode_No, Tds.Termination_Date, Tds.Is_Error, Tds.Error_Details 
 	FROM #Termination_Deals_Status Tds 
 	
+	IF OBJECT_ID('tempdb..#Linked_Episodes') IS NOT NULL DROP TABLE #Linked_Episodes
+	IF OBJECT_ID('tempdb..#RunDef') IS NOT NULL DROP TABLE #RunDef
+	IF OBJECT_ID('tempdb..#RunDef_Delete') IS NOT NULL DROP TABLE #RunDef_Delete
+	IF OBJECT_ID('tempdb..#TEMP_Run_Def') IS NOT NULL DROP TABLE #TEMP_Run_Def
+	IF OBJECT_ID('tempdb..#Termination_Deals_Status') IS NOT NULL DROP TABLE #Termination_Deals_Status
+	IF OBJECT_ID('tempdb..#Termination_Syn_Mail_Data') IS NOT NULL DROP TABLE #Termination_Syn_Mail_Data
 END
-

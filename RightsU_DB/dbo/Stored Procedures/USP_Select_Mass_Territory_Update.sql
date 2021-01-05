@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Select_Mass_Territory_Update]
+﻿CREATE PROCEDURE [dbo].[USP_Select_Mass_Territory_Update]
 	@StrSearch NVARCHAR(Max),
 	@PageNo Int,
 	@OrderByCndition Varchar(100),
@@ -99,5 +99,6 @@ BEGIN
 	
 	END
 
-	drop table #Temp
+	--drop table #Temp
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

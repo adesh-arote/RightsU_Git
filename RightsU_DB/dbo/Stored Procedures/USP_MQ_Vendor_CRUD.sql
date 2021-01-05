@@ -90,7 +90,7 @@ BEGIN
 			   END
 			   ELSE
 			   BEGIN
-				   IF NOT EXISTS (SELECT * FROM Vendor WHERE Vendor_Code = @RightsU_Vendor_ID )--AND Is_Active = 'Y')  
+				   IF NOT EXISTS (SELECT * FROM Vendor WHERE Vendor_Code = @RightsU_Vendor_ID AND Party_Type = 'V')--AND Is_Active = 'Y')  
 				   BEGIN  
 						PRINT 'Vendor Code not exists'  
 						SELECT @Is_Error = 'Y', @errorMessage = ISNULL(@errorMessage,'') + '101;Vendor Code does not exists;'  
@@ -98,7 +98,7 @@ BEGIN
 			   
 				   PRINT 'Vendor Name not exists'  
 				   SELECT TOP 1 @Is_Error = 'Y', @errorMessage = ISNULL(@errorMessage,'') + '108;Duplicate Vendor Name;'  FROM Vendor V 
-				   WHERE V.Vendor_Name = @Vendor_Name  AND V.Vendor_Code <> @RightsU_Vendor_ID AND V.Is_Active = 'Y'
+				   WHERE V.Vendor_Name = @Vendor_Name  AND V.Vendor_Code <> @RightsU_Vendor_ID AND V.Is_Active = 'Y' AND Party_Type = 'V'
 			   END   
 		  END  
 		  ELSE
@@ -180,8 +180,8 @@ BEGIN
 		 BEGIN  
 			  PRINT '  CREATE Records and insert in vendor'  
 			  --------------------------------------------------------------------------------------------------------------  
-			  INSERT INTO Vendor (Vendor_Name, [Address], Phone_No, Fax_No, ST_No, VAT_No, PAN_No, Inserted_On, Inserted_By, Is_Active, CST_No, GST_No, MQ_Ref_Code, MDM_Code, Is_BV_Push,Record_Status,Party_Type)  
-			  SELECT @Vendor_Name, @Address, @Phone_No, @Fax_No, @ST_No, @VAT_No, @PAN_No, GETDATE(), 143, @Block_Status, @CST_No, @GST_No, @MQ_Config_Code, @MDM_Code , 'N','P','V'
+			  INSERT INTO Vendor (Vendor_Name, [Address], Phone_No, Fax_No, ST_No, VAT_No, PAN_No, Inserted_On, Inserted_By, Is_Active, CST_No, GST_No, MQ_Ref_Code, MDM_Code, Is_BV_Push,Record_Status)  
+			  SELECT @Vendor_Name, @Address, @Phone_No, @Fax_No, @ST_No, @VAT_No, @PAN_No, GETDATE(), 143, @Block_Status, @CST_No, @GST_No, @MQ_Config_Code, @MDM_Code , 'N','P'
 			  SET @RightsU_Vendor_ID = IDENT_CURRENT('Vendor')  
 			  --------------------------------------------------------------------------------------------------------------  
 			  INSERT INTO Vendor_Country (Vendor_Code, Country_Code, Is_Theatrical)  
@@ -199,7 +199,7 @@ BEGIN
 			  PRINT '  Update Records and Update in vendor'  
 			  --------------------------------------------------------------------------------------------------------------  
 			  UPDATE Vendor SET Vendor_Name = @Vendor_Name, [Address] = @Address, Phone_No = @Phone_No, Fax_No = @Fax_No, ST_No = @ST_No, VAT_No = @VAT_No, PAN_No = @PAN_No,  
-			  Last_Updated_Time = GETDATE(), Last_Action_By = 143, Is_Active = @Block_Status, CST_No = @CST_No, GST_No = @GST_No, MQ_Ref_Code = @MQ_Config_Code,Party_Type ='V' 
+			  Last_Updated_Time = GETDATE(), Last_Action_By = 143, Is_Active = @Block_Status, CST_No = @CST_No, GST_No = @GST_No, MQ_Ref_Code = @MQ_Config_Code 
 			  WHERE Vendor_Code = @RightsU_Vendor_ID   
 			  --------------------------------------------------------------------------------------------------------------  
 			  DELETE FROM  Vendor_Country WHERE Vendor_Code  = @RightsU_Vendor_ID AND Country_Code NOT IN (SELECT id FROM #temp_Country)  
@@ -242,12 +242,11 @@ BEGIN
 	 END
 
 	 PRINT 'Drop temp table'  
-	 IF(OBJECT_ID('TEMPDB..#Temp') IS NOT NULL)  
-		DROP TABLE #Temp  
-	 IF(OBJECT_ID('TEMPDB..#temp_Country') IS NOT NULL)  
-		DROP TABLE #temp_Country  
-	 IF(OBJECT_ID('TEMPDB..#temp_Role_Code') IS NOT NULL)  
-		DROP TABLE #temp_Role_Code   
-  
+	  
 	 SELECT  ISNULL(@Message#,'')+'^'+ISNULL(@MDM_Code,'')+ '^'+ @RUBMSV_Vendor_ID +'^' +ISNULL(@BV_ID,'')+'^'+@SF+'^'+ ISNULL(@errorMessage,'')+'^'+CONVERT(VARCHAR(10), GETDATE(), 103)+'^'+ CAST(CONVERT (TIME, GETDATE())AS VARCHAR(8)) +'^'+ 'R' 
+
+	 
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#temp_Country') IS NOT NULL DROP TABLE #temp_Country
+	IF OBJECT_ID('tempdb..#temp_Role_Code') IS NOT NULL DROP TABLE #temp_Role_Code
 END

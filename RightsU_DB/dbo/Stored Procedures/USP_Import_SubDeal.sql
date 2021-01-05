@@ -292,4 +292,12 @@ BEGIN
  --BEGIN  
  -- EXEC [USP_Import_SubDeal_Insert] @UserCode        
  --END  
+
+	IF OBJECT_ID('tempdb..#Temp_Talent') IS NOT NULL DROP TABLE #Temp_Talent
+	IF OBJECT_ID('tempdb..#temp_Talent_Name') IS NOT NULL DROP TABLE #temp_Talent_Name
+	IF OBJECT_ID('tempdb..#Temp_Test_Talent') IS NOT NULL DROP TABLE #Temp_Test_Talent
+	IF OBJECT_ID('tempdb..#Temp_Title_Talent') IS NOT NULL DROP TABLE #Temp_Title_Talent
+	IF OBJECT_ID('tempdb..#TempErrorDetails') IS NOT NULL DROP TABLE #TempErrorDetails
+	IF OBJECT_ID('tempdb..#TempImportSubDeal') IS NOT NULL DROP TABLE #TempImportSubDeal
+	IF OBJECT_ID('tempdb..#TempYearOfDef') IS NOT NULL DROP TABLE #TempYearOfDef
 END

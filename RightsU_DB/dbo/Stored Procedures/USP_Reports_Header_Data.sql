@@ -1342,4 +1342,6 @@ DECLARE
 	END
 	----END SYNDICATION DEAL VERSION HISTORY REPORT--------------------------------------
 		select * from #TempHeaderData		
+
+		IF OBJECT_ID('tempdb..#TempHeaderData') IS NOT NULL DROP TABLE #TempHeaderData
 END

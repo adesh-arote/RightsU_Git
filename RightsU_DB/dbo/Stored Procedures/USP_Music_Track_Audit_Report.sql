@@ -57,8 +57,7 @@ BEGIN
 		BEGIN
 			SELECT * FROM #TempMusicTrackData
 		END
-			DROP TABLE #TempMusicTrackData
 
+			--DROP TABLE #TempMusicTrackData
+			IF OBJECT_ID('tempdb..#TempMusicTrackData') IS NOT NULL DROP TABLE #TempMusicTrackData
 END
-GO
-

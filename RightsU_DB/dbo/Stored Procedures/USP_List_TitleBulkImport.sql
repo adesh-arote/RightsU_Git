@@ -1,5 +1,6 @@
 ﻿
-ALTER PROCEDURE USP_List_TitleBulkImport
+
+CREATE PROCEDURE USP_List_TitleBulkImport
 	@DM_Master_Import_Code INT = 0,
 	@TitleName NVARCHAR(MAX) = '',
 	@TitleType NVARCHAR(MAX) = '',
@@ -203,6 +204,16 @@ BEGIN
 	DELETE from  #TempDM_Title WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
 
 	SELECT DMTitleCode, ExcelLineNo, TitleName, TitleType, TitleLanguage, KeyStarCast, Director, MusicLable, YearOfRelease, Status, ErrorMessage FROM #TempDM_Title
+
+	IF OBJECT_ID('tempdb..#TempDirector') IS NOT NULL DROP TABLE #TempDirector
+	IF OBJECT_ID('tempdb..#TempDM_Title') IS NOT NULL DROP TABLE #TempDM_Title
+	IF OBJECT_ID('tempdb..#TempErrorMsg') IS NOT NULL DROP TABLE #TempErrorMsg
+	IF OBJECT_ID('tempdb..#TempKeyStarCast') IS NOT NULL DROP TABLE #TempKeyStarCast
+	IF OBJECT_ID('tempdb..#TempMusicLabel') IS NOT NULL DROP TABLE #TempMusicLabel
+	IF OBJECT_ID('tempdb..#TempSplitErrorMsg') IS NOT NULL DROP TABLE #TempSplitErrorMsg
+	IF OBJECT_ID('tempdb..#TempSplitKeyStarCast') IS NOT NULL DROP TABLE #TempSplitKeyStarCast
+	IF OBJECT_ID('tempdb..#TempTitleLanguage') IS NOT NULL DROP TABLE #TempTitleLanguage
+	IF OBJECT_ID('tempdb..#TempTitleName') IS NOT NULL DROP TABLE #TempTitleName
 END
  
 --ALTER PROCEDURE USP_List_TitleBulkImport
@@ -229,5 +240,3 @@ END
 --SELECT @DMTitleCode  DMTitleCode, @ExcelLineNo ExcelLineNo, @TitleName TitleName, @TitleType TitleType, @TitleLanguage TitleLanguage, @KeyStarCast KeyStarCast, @Director Director, 
 --@MusicLable MusicLable, @YearOfRelease YearOfRelease, @Status Status, @ErrorMessage ErrorMessage
 --END
-
-

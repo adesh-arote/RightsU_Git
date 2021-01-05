@@ -184,6 +184,8 @@ BEGIN
 		BEGIN
 			SELECT * FROM #MusicExceptionHeader
 		END
+
+	IF OBJECT_ID('tempdb..#MusicExceptionHeader') IS NOT NULL DROP TABLE #MusicExceptionHeader
+	IF OBJECT_ID('tempdb..#TEMP') IS NOT NULL DROP TABLE #TEMP
 	--SELECT * FROM #TEMP
 END
-

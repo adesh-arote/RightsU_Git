@@ -16,6 +16,7 @@ CREATE PROC USP_ValidateIfHoldbackExist(
 	@Is_Title_Language_Right CHAR(1)
 )
 AS
+BEGIN
 SET FMTONLY OFF
 IF EXISTS(Select TOP 1 * FROM Syn_Deal_Rights_Holdback WHERE Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code AND Acq_Deal_Rights_Holdback_Code IS NOT NULL)
 BEGIN
@@ -390,6 +391,18 @@ BEGIN
 		----Release Holdback Type
 		--SELECT Holdback_Code FROM #Acq_Rights_Holdback ARH WHERE ARH.Holdback_Type = 'R'
 	END
+
+	
+END
+
+	IF OBJECT_ID('tempdb..#Acq_Rights_Holdback') IS NOT NULL DROP TABLE #Acq_Rights_Holdback
+	IF OBJECT_ID('tempdb..#Selected_Dubbing_Lang') IS NOT NULL DROP TABLE #Selected_Dubbing_Lang
+	IF OBJECT_ID('tempdb..#Selected_Platform') IS NOT NULL DROP TABLE #Selected_Platform
+	IF OBJECT_ID('tempdb..#Selected_Region') IS NOT NULL DROP TABLE #Selected_Region
+	IF OBJECT_ID('tempdb..#Selected_Subtitling_Lang') IS NOT NULL DROP TABLE #Selected_Subtitling_Lang
+	IF OBJECT_ID('tempdb..#Selected_Titles') IS NOT NULL DROP TABLE #Selected_Titles
+	IF OBJECT_ID('tempdb..#Temp_Acq_Rights_Title') IS NOT NULL DROP TABLE #Temp_Acq_Rights_Title
+	IF OBJECT_ID('tempdb..#Temp_Count') IS NOT NULL DROP TABLE #Temp_Count
 END
 
 

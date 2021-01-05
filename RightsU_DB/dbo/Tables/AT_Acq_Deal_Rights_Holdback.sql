@@ -13,5 +13,3 @@
     CONSTRAINT [FK_AT_Acq_Deal_Rights_Holdback_AT_Acq_Deal_Rights] FOREIGN KEY ([AT_Acq_Deal_Rights_Code]) REFERENCES [dbo].[AT_Acq_Deal_Rights] ([AT_Acq_Deal_Rights_Code])
 );
 
-
-

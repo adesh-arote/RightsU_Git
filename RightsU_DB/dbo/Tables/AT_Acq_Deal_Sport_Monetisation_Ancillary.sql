@@ -9,5 +9,3 @@
     CONSTRAINT [FK_AT_Acq_Deal_Sport_Monetisation_Ancillary_AT_Acq_Deal] FOREIGN KEY ([AT_Acq_Deal_Code]) REFERENCES [dbo].[AT_Acq_Deal] ([AT_Acq_Deal_Code])
 );
 
-
-

@@ -1,4 +1,4 @@
-﻿ALTER  PROC [dbo].[USP_BMS_Update_Key_Deal]
+﻿CREATE  PROC [dbo].[USP_BMS_Update_Key_Deal]
 (
 	@strXml VARCHAR(MAX),
     @Type VARCHAR(10),
@@ -186,4 +186,6 @@ BEGIN
     Record_Status = CASE WHEN UPPER(@Is_Error) = 'Y' THEN 'E' ELSE 'D' END,
     Error_Description = @Error_Details
     WHERE  BMS_Log_Code = @BMS_Log_Code
+
+	IF OBJECT_ID('tempdb..#Temp_Updated_Keys') IS NOT NULL DROP TABLE #Temp_Updated_Keys
 END

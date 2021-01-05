@@ -12,7 +12,3 @@
     CONSTRAINT [FK_Acq_Deal_Ancillary_Ancillary_Type] FOREIGN KEY ([Ancillary_Type_code]) REFERENCES [dbo].[Ancillary_Type] ([Ancillary_Type_Code])
 );
 
-
-
-
-

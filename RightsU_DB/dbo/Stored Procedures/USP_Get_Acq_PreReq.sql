@@ -1,4 +1,4 @@
-﻿ALTER PROC [dbo].[USP_Get_Acq_PreReq]  
+﻿CREATE PROC [dbo].[USP_Get_Acq_PreReq]  
 (  
 	@Data_For VARCHAR(MAX),  
 	@Call_From VARCHAR(3),  
@@ -27,7 +27,7 @@ Flag for All Masters :
 Applicable for List Page: 'DTG,DTP,DTC,BUT,VEN,DIR,TIT'  
 Applicable for General Tab: 'DTG,ROL,DTP,MDS,DTC,CTG,ENT,BUT,CUR,VEN,VPC'  
 =======================================================================================================================================*/  
-	BEGIN  
+BEGIN  
 		SET FMTONLY OFF  
 		SET NOCOUNT ON  
   
@@ -244,4 +244,7 @@ Applicable for General Tab: 'DTG,ROL,DTP,MDS,DTC,CTG,ENT,BUT,CUR,VEN,VPC'
  
 	SELECT Display_Value, Display_Text, Data_For FROM #PreReqData  
 	ORDER BY RowID  
-END  
+
+	IF OBJECT_ID('tempdb..#BusinessUnit') IS NOT NULL DROP TABLE #BusinessUnit
+	IF OBJECT_ID('tempdb..#PreReqData') IS NOT NULL DROP TABLE #PreReqData
+END

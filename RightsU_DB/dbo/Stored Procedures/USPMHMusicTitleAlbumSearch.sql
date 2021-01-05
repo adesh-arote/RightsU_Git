@@ -1,4 +1,4 @@
-﻿ALTER Proc USPMHMusicTitleAlbumSearch(
+﻿CREATE Proc USPMHMusicTitleAlbumSearch(
 	@keyword NVARCHAR(100), @Type NVARCHAR(50)
 )
 --Created By: Anchal Sikarwar

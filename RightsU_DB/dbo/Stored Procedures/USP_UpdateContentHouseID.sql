@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_UpdateContentHouseID]
+﻿CREATE PROCEDURE [dbo].[USP_UpdateContentHouseID]
 --DECLARE
 @BV_HouseId_Data_Code INT,
 @MappedDealTitleCode INT

@@ -20,4 +20,6 @@ BEGIN
 
 	SELECT DISTINCT EC.ERR_Code AS Error_Code,  EM.error_description AS Error_Description FROM #tblError_Code EC
 	INNER JOIN Error_Code_Master EM ON EC.ERR_Code = EM.upload_error_code AND error_for = @uploadType
+
+	IF OBJECT_ID('tempdb..#tblError_Code') IS NOT NULL DROP TABLE #tblError_Code
 END

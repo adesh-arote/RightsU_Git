@@ -104,6 +104,5 @@ BEGIN
 	--	EXEC [USP_Content_Music_PIII] @DM_Master_Import_Code
 	--END
 
+	IF OBJECT_ID('tempdb..#Temp_DM') IS NOT NULL DROP TABLE #Temp_DM
 END
-
-

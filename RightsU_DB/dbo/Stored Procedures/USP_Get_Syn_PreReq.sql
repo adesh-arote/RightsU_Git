@@ -6,7 +6,7 @@
  @Syn_Deal_Code INT,  
  @Deal_Type_Code INT,  
  @BusinessUnitCode INT  
-)  
+) 
 AS  
 /*=======================================================================================================================================  
 Author:   Abhaysingh N. Rajpurohit  
@@ -30,13 +30,13 @@ BEGIN
  SET NOCOUNT ON;  
  SET FMTONLY OFF;   
   
- --DECLARE  
- --@Data_For VARCHAR(MAX) = 'DTG,DTP,DTC,BUT,LAV,DIR,TIT',  
- --@Call_From VARCHAR(3) = 'LST',  
- --@LoginUserCode INT = 143,  
- --@Syn_Deal_Code INT = 0,  
- --@Deal_Type_Code INT = 0,  
- --@BusinessUnitCode INT = 0  
+ --declare  
+ --@data_for varchar(max) = 'ROL',  
+ --@call_from varchar(3) = 'GEN',  
+ --@loginusercode int = 143,  
+ --@syn_deal_code int = 0,  
+ --@deal_type_code int = 0,  
+ --@businessunitcode int = 0  
   
  IF(OBJECT_ID('TEMPDB..#PreReqData') IS NOT NULL)  
   DROP TABLE #PreReqData  
@@ -46,7 +46,7 @@ BEGIN
   RowID INT IDENTITY(1,1),  
   Display_Value INT,  
   Display_Text NVARCHAR(MAX),  
-  Data_For VARCHAR(3)  
+  Data_For VARCHAR(50)  
  )  
   
  DECLARE @Deal_Type_Code_Other INT = 17, @Deal_Type_ContentMusic INT = 30,  
@@ -79,21 +79,21 @@ BEGIN
   BusinessUnitName NVARCHAR(MAX)  
  )  
   
- DECLARE @paramCustomer_Types NVARCHAR(MAX) = '', @paramDefault_Customer NVARCHAR(MAX) = ''    
- SELECT TOP 1 @paramCustomer_Types = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'Customer_Types'  
- SELECT TOP 1 @paramDefault_Customer = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'Default_Customer'  
+ --DECLARE @paramCustomer_Types NVARCHAR(MAX) = '', @paramDefault_Customer NVARCHAR(MAX) = ''    
+ --SELECT TOP 1 @paramCustomer_Types = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'Customer_Types'  
+ --SELECT TOP 1 @paramDefault_Customer = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'Default_Customer'  
    
- SELECT number AS Customer_Type INTO #TempCT FROM dbo.fn_Split_withdelemiter(@paramCustomer_Types, ',')  
+ --SELECT number AS Customer_Type INTO #TempCT FROM dbo.fn_Split_withdelemiter(@paramCustomer_Types, ',')  
   
- INSERT INTO #CustomerType(Role_Code, Role_Name)  
- SELECT DISTINCT R.Role_Code, R.Role_Name FROM [Role] R  
- INNER JOIN #TempCT T ON R.Role_Name = T.Customer_Type  
- WHERE R.Role_Name = @paramDefault_Customer  
+ --INSERT INTO #CustomerType(Role_Code, Role_Name)  
+ --SELECT DISTINCT R.Role_Code, R.Role_Name FROM [Role] R  
+ --INNER JOIN #TempCT T ON R.Role_Name = T.Customer_Type  
+ --WHERE R.Role_Name = @paramDefault_Customer  
   
- INSERT INTO #CustomerType(Role_Code, Role_Name)  
- SELECT DISTINCT R.Role_Code, R.Role_Name FROM [Role] R  
- INNER JOIN #TempCT T ON R.Role_Name = T.Customer_Type  
- WHERE R.Role_Name <> @paramDefault_Customer  
+ --INSERT INTO #CustomerType(Role_Code, Role_Name)  
+ --SELECT DISTINCT R.Role_Code, R.Role_Name FROM [Role] R  
+ --INNER JOIN #TempCT T ON R.Role_Name = T.Customer_Type  
+ --WHERE R.Role_Name <> @paramDefault_Customer  
   
  INSERT INTO #BusinessUnit(BusinessUnitCode, BusinessUnitName)  
  SELECT DISTINCT BU.Business_Unit_Code, BU.Business_Unit_Name FROM Business_Unit BU  
@@ -115,7 +115,10 @@ BEGIN
  IF(CHARINDEX('ROL', @Data_For) > 0)  
  BEGIN  
   INSERT INTO #PreReqData(Display_Value, Display_Text, Data_For)  
-  SELECT Role_Code, Role_Name, 'ROL' AS Data_For FROM #CustomerType  
+  SELECT Role_Code, Role_Name, 'ROL' AS Data_For FROM Role where Role_Type like '%S%' --AND Is_Rate_Card = 'Y'
+  --UNION
+  --SELECT Role_Code, Role_Name, 'ROL_Other' AS Data_For FROM Role where Role_Type like '%S%' AND Is_Rate_Card = 'N'
+  --SELECT Role_Code, Role_Name, 'ROL' AS Data_For FROM #CustomerType  
  END  
   
  IF(CHARINDEX('DTP', @Data_For) > 0)  
@@ -267,4 +270,9 @@ BEGIN
   
  SELECT Display_Value, Display_Text, Data_For FROM #PreReqData  
  ORDER BY RowID  
+
+	IF OBJECT_ID('tempdb..#BusinessUnit') IS NOT NULL DROP TABLE #BusinessUnit
+	IF OBJECT_ID('tempdb..#CustomerType') IS NOT NULL DROP TABLE #CustomerType
+	IF OBJECT_ID('tempdb..#PreReqData') IS NOT NULL DROP TABLE #PreReqData
+	IF OBJECT_ID('tempdb..#TempCT') IS NOT NULL DROP TABLE #TempCT
 END

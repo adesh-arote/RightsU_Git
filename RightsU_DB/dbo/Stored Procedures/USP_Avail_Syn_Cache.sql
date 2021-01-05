@@ -204,4 +204,6 @@ BEGIN
 		WHERE Title_Code=578
 	*/
 	--COMMIT 
+	IF OBJECT_ID('tempdb..#TempAA') IS NOT NULL DROP TABLE #TempAA
+	IF OBJECT_ID('tempdb..#tmpCache') IS NOT NULL DROP TABLE #tmpCache
 END

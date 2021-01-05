@@ -8,7 +8,7 @@ As
 Begin
 	
 	--DECLARE @Rights_Code Int, @Right_Type Char(2)
-	--SELECT @Rights_Code = 75, @Right_Type = 'MD'
+	--SELECT @Rights_Code = 3111, @Right_Type = 'MD'
 	DECLARE @platformCode VARCHAR(MAX) = ''
 
 	IF(@Right_Type = 'AR')
@@ -50,7 +50,7 @@ Begin
 			Is_Last_Level Varchar(2),
 			TempCnt Int,
 			TableCnt Int,
-			Platform_Name NVarchar(1000)
+			Platform_Name NVarchar(MAX)
 		);
 
 		INSERT INTO @TempPlatform(Platform_Code, Parent_Platform_Code, Base_Platform_Code, Is_Display, Is_Last_Level, TempCnt, TableCnt, Platform_Name)
@@ -70,7 +70,7 @@ Begin
 			Is_Last_Level Varchar(2),
 			TempCnt Int,
 			TableCnt Int,
-			Platform_Name NVarchar(1000)
+			Platform_Name NVarchar(MAX)
 		);
 		INSERT INTO @MusicTempPlatform(Music_Platform_Code, Parent_Code, Is_Display, Is_Last_Level, TempCnt, TableCnt, Platform_Name)
 		Select Music_Platform_Code, Parent_Code, Is_Display, Is_Last_Level, TempCnt, TableCnt, Platform_Hierarchy from DBO.UFN_Get_Music_Platform_With_Parent(@platformCode)
@@ -98,6 +98,5 @@ End
 			--Select ROW_NUMBER() OVER(Order By tempMusic.Music_Platform_Code Asc) RowId, tempMusic.Platform_Name from @MusicTempPlatform tempMusic 
 
 
---Select * from Music_Platform
+--Select * from Music_Deal Where Agreement_No = 'M-2018-00017'
 --Select * from Platform
-

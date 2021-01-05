@@ -1,25 +1,24 @@
-﻿
-ALTER PROCEDURE [dbo].[USPListResolveConflict]
-@DM_Master_Import_Code VARCHAR(MAX) = '0',
-@Code INT = 0,	
-@FileType VARCHAR(1) = '',
-@PageNo INT = 1,
-@PageSize INT = 99,
-@RecordCount INT OUT
+﻿CREATE PROCEDURE [dbo].[USPListResolveConflict]
+	@DM_Master_Import_Code VARCHAR(MAX) = '0',
+	@Code INT = 0,	
+	@FileType VARCHAR(1) = '',
+	@PageNo INT = 1,
+	@PageSize INT = 99,
+	@RecordCount INT OUT
 AS
 /*=============================================
-Author:			Darshana
+Author:			
 Create date:	11 Feb, 2019
 Description:	
-===============================================*/
+--===============================================*/
 BEGIN
 --DECLARE
---	@DM_Master_Import_Code VARCHAR(MAX) = '7470',
---	@Code INT = 6275,	
---	@FileType VARCHAR(1) = 'M',
+--	@DM_Master_Import_Code VARCHAR(MAX) = '10169',
+--	@Code INT = 17,	
+--	@FileType VARCHAR(1) = 'T',
 --	@PageNo INT = 1,
---	@PageSize INT = 10,
---	@RecordCount INT OUT
+	--@PageSize INT = 10,
+	--@RecordCount INT 
 
 	IF(OBJECT_ID('TEMPDB..#TempRoles') IS NOT NULL)
 		DROP TABLE #TempRoles
@@ -54,8 +53,8 @@ BEGIN
 	)
 
 
-	SELECT DML.DM_Master_Log_Code , LTRIM(RTRIM(number)) AS Role Into #TempRoles
-	from DM_Master_Log DML 
+	SELECT DML.DM_Master_Log_Code , LTRIM(RTRIM(number)) AS ROLE INTO #TempRoles
+	FROM DM_Master_Log DML 
 	CROSS APPLY dbo.fn_Split_withdelemiter(Roles,',') 
 	WHERE LTRIM(RTRIM(ISNULL(Roles, ''))) <> '' 
 	AND DML.DM_Master_Import_Code = @DM_Master_Import_Code 
@@ -95,21 +94,21 @@ BEGIN
 		CASE WHEN DML.Master_Code IS NOT NULL THEN DML.Action_On
 			 ELSE NULL END,
 	DML.DM_Master_Import_Code
-	from DM_Master_Log DML
-	Left Join Users U ON DML.Action_By = U.Users_Code
-	Left Join Talent T ON T.Talent_Code = DML.Master_Code
-	Left Join Music_Label LB ON LB.Music_Label_Code = DML.Master_Code
-	Left Join Genres G ON G.Genres_Code = DML.Master_Code
-	Left Join Music_Album MA ON MA.Music_Album_Code = DML.Master_Code
-	Left Join Music_Language ML ON ML.Music_Language_Code = DML.Master_Code
-	Left Join Music_Theme MT ON MT.Music_Theme_Code = DML.Master_Code
-	Left Join Deal_Type DT ON DT.Deal_Type_Code = DML.Master_Code
-	Left Join Language TL ON TL.Language_Code = DML.Master_Code
-	Left Join Extended_Columns_Value ECV ON ECV.Columns_Value_Code = DML.Master_Code
-	Left Join Music_Title TM ON TM.Music_Title_Code = DML.Master_Code
-	Left Join #TempRoles TR ON DML.DM_Master_Log_Code = TR.DM_Master_Log_Code
+	FROM DM_Master_Log DML
+	LEFT JOIN Users U ON DML.Action_By = U.Users_Code
+	LEFT JOIN Talent T ON T.Talent_Code = DML.Master_Code
+	LEFT JOIN Music_Label LB ON LB.Music_Label_Code = DML.Master_Code
+	LEFT JOIN Genres G ON G.Genres_Code = DML.Master_Code
+	LEFT JOIN Music_Album MA ON MA.Music_Album_Code = DML.Master_Code
+	LEFT JOIN Music_Language ML ON ML.Music_Language_Code = DML.Master_Code
+	LEFT JOIN Music_Theme MT ON MT.Music_Theme_Code = DML.Master_Code
+	LEFT JOIN Deal_Type DT ON DT.Deal_Type_Code = DML.Master_Code
+	LEFT JOIN Language TL ON TL.Language_Code = DML.Master_Code
+	LEFT JOIN Extended_Columns_Value ECV ON ECV.Columns_Value_Code = DML.Master_Code
+	LEFT JOIN Music_Title TM ON TM.Music_Title_Code = DML.Master_Code
+	LEFT JOIN #TempRoles TR ON DML.DM_Master_Log_Code = TR.DM_Master_Log_Code
 	
-	Where @DM_Master_Import_Code = '0' OR DML.DM_Master_Import_Code IN(select number from dbo.fn_Split_withdelemiter(''+@DM_Master_Import_Code+'',','))  
+	WHERE @DM_Master_Import_Code = '0' OR DML.DM_Master_Import_Code IN(SELECT number FROM dbo.fn_Split_withdelemiter(''+@DM_Master_Import_Code+'',','))  
 					
 	IF(@FileType = 'M')
 	BEGIN
@@ -127,7 +126,7 @@ BEGIN
 			DROP TABLE #TempTheme
 
 		SELECT DMT.IntCode, LTRIM(RTRIM(number)) AS Singers INTO #TempSinger
-		from DM_Music_Title DMT
+		FROM DM_Music_Title DMT
 		CROSS APPLY dbo.fn_Split_withdelemiter([Singers],',') 
 		WHERE LTRIM(RTRIM(ISNULL([Singers], ''))) <> '' 
 		AND DMT.IntCode = @Code
@@ -164,109 +163,67 @@ BEGIN
 
 	    INSERT INTO #temp(Type, ImportData, MappedTo, MappedBy, ActionBy, MappedDate)
 		SELECT DISTINCT Type, 
-		CASE WHEN (t.MasterType = 'TA' AND t.Type = 'Music Composer')THEN (select TMS.Composers where TMS.Composers collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-			 WHEN (t.MasterType = 'TA' AND t.Type = 'Singers')THEN (select TS.Singers where TS.Singers collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-			 WHEN (t.MasterType = 'TA' AND t.Type = 'star cast')THEN (select TSC.StarCast where TSC.StarCast collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-			 WHEN (t.MasterType = 'TA' AND t.Type = 'Lyricist')THEN (select TL.Lyricist where TL.Lyricist collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-		     WHEN t.MasterType = 'GE' THEN (select DMT.Genres where DMT.Genres collate SQL_Latin1_General_CP1_CI_AS IN(select t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
-			 WHEN (t.MasterType = 'ML' OR t.MasterType = 'TL') THEN (select LT.Language where LT.Language collate SQL_Latin1_General_CP1_CI_AS IN(select t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
-			 WHEN t.MasterType = 'MA' THEN (select DMT.Movie_Album where DMT.Movie_Album collate SQL_Latin1_General_CP1_CI_AS IN(select t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
-			 WHEN t.MasterType = 'MT' THEN (select TT.Theme where TT.Theme collate SQL_Latin1_General_CP1_CI_AS IN(select t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
-			 WHEN t.MasterType = 'LB' THEN (select DMT.Music_Label where DMT.Music_Label collate SQL_Latin1_General_CP1_CI_AS IN(select t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
-		END as ImportData, 
+		CASE WHEN (t.MasterType = 'TA' AND t.Type = 'Music Composer')THEN (SELECT TMS.Composers where TMS.Composers COLLATE SQL_Latin1_General_CP1_CI_AS IN (t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS)) 
+			 WHEN (t.MasterType = 'TA' AND t.Type = 'Singers')THEN (SELECT TS.Singers where TS.Singers COLLATE SQL_Latin1_General_CP1_CI_AS IN (t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS)) 
+			 WHEN (t.MasterType = 'TA' AND t.Type = 'star cast')THEN (SELECT TSC.StarCast where TSC.StarCast COLLATE SQL_Latin1_General_CP1_CI_AS IN (t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS)) 
+			 WHEN (t.MasterType = 'TA' AND t.Type = 'Lyricist')THEN (SELECT TL.Lyricist where TL.Lyricist COLLATE SQL_Latin1_General_CP1_CI_AS IN (t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS)) 
+		     WHEN t.MasterType = 'GE' THEN (SELECT DMT.Genres where DMT.Genres COLLATE SQL_Latin1_General_CP1_CI_AS IN(SELECT t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS))
+			 WHEN (t.MasterType = 'ML' OR t.MasterType = 'TL') THEN (SELECT LT.Language where LT.Language COLLATE SQL_Latin1_General_CP1_CI_AS IN(SELECT t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS))
+			 WHEN t.MasterType = 'MA' THEN (SELECT DMT.Movie_Album WHERE DMT.Movie_Album COLLATE SQL_Latin1_General_CP1_CI_AS IN(SELECT t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
+			 WHEN t.MasterType = 'MT' THEN (SELECT TT.Theme WHERE TT.Theme COLLATE SQL_Latin1_General_CP1_CI_AS IN(SELECT t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS))
+			 WHEN t.MasterType = 'LB' THEN (SELECT DMT.Music_Label WHERE DMT.Music_Label COLLATE SQL_Latin1_General_CP1_CI_AS IN(SELECT t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS))
+		END AS ImportData, 
 		MappedTo, MappedBy, ActionBy, MappedDate
-		from #tempMasterLog t 
-		Inner Join DM_Music_Title DMT ON DMT.DM_Master_Import_Code = t.DMMasterImportCode
+		FROM #tempMasterLog t 
+		INNER JOIN DM_Music_Title DMT ON DMT.DM_Master_Import_Code = t.DMMasterImportCode
 		LEFT Join #TempSinger TS ON DMT.IntCode = TS.IntCode
 		LEFT JOIN #TempMusicComposer TMS ON DMT.IntCode = TMS.IntCode
 		LEFT JOIN #TempStarCast TSC ON DMT.IntCode = TSC.IntCode		
 		LEFT JOIN #TempLanguage LT ON DMT.IntCode = LT.IntCode
 		LEFT JOIN #TempTheme TT ON DMT.IntCode = TT.IntCode
 		LEFT JOIN #TempLyricist TL ON DMT.IntCode = TL.IntCode
-		Where DMT.IntCode = @Code   
-	END	
+		WHERE DMT.IntCode = @Code   
+	END		
 
 	IF(@FileType = 'T')
 	BEGIN
-		IF(OBJECT_ID('TEMPDB..#TempKeyStarCast') IS NOT NULL)
-			DROP TABLE #TempKeyStarCast
-		IF(OBJECT_ID('TEMPDB..#TempDirector') IS NOT NULL)
-			DROP TABLE #TempDirector
-		IF(OBJECT_ID('TEMPDB..#TempComposer') IS NOT NULL)
-			DROP TABLE #TempComposer
+		DECLARE @Str_Contenate NVARCHAR(MAX) 
 
-		SELECT DM_Title_Code, LTRIM(RTRIM(number)) AS StarCast INTO #TempKeyStarCast from DM_Title DMT
-		CROSS APPLY dbo.fn_Split_withdelemiter([Key Star Cast],',') 
-		WHERE LTRIM(RTRIM(ISNULL([Key Star Cast], ''))) <> '' 
-		AND DMT.DM_Title_Code = @Code
+		SELECT @Str_Contenate = CONCAT(Col3,'-',Col4,'-',Col5,'-',Col6,'-',Col7,'-',Col8,'-',Col9,'-',Col10,'-',Col11,'-',Col12,'-',Col13,'-',Col14,'-',Col15,'-',Col16,'-',Col17,'-',Col18,'-',Col19,'-',Col20,'-',Col21,'-',Col22,'-',Col23,'-',Col24,'-',Col25,'-',Col26,'-',Col27,'-',Col28,'-',Col29,'-',Col30,'-',Col31,'-',Col32,'-',Col33,'-',Col34,'-',Col35,'-',Col36,'-',Col37,'-',Col38,'-',Col39,'-',Col40,'-',Col41,'-',Col42,'-',Col43,'-',Col44,'-',Col45,'-',Col46,'-',Col47,'-',Col48,'-',Col49,'-',Col50,'-',Col51,'-',Col52,'-',Col53,'-',Col54,'-',Col55,'-',Col56,'-',Col57,'-',Col58,'-',Col59,'-',Col60,'-',Col61,'-',Col62,'-',Col63,'-',Col64,'-',Col65,'-',Col66,'-',Col67,'-',Col68,'-',Col69,'-',Col70,'-',Col71,'-',Col72,'-',Col73,'-',Col74,'-',Col75,'-',Col76,'-',Col77,'-',Col78,'-',Col79,'-',Col80,'-',Col81,'-',Col82,'-',Col83,'-',Col84,'-',Col85,'-',Col86,'-',Col87,'-',Col88,'-',Col89,'-',Col90,'-',Col91,'-',Col92,'-',Col93,'-',Col94,'-',Col95,'-',Col96,'-',Col97,'-',Col98,'-',Col99,'-',Col100)
+		FROM DM_Title_Import_Utility_Data  DT WHERE DM_Master_Import_Code =  @DM_Master_Import_Code AND DM_Title_Import_Utility_Data_Code = @Code
 
-		SELECT DM_Title_Code, LTRIM(RTRIM(number)) AS Director INTO #TempDirector from DM_Title DMT
-		CROSS APPLY dbo.fn_Split_withdelemiter([Director Name],',') 
-		WHERE LTRIM(RTRIM(ISNULL([Director Name], ''))) <> '' 
-		AND DMT.DM_Title_Code = @Code
-
-		SELECT DM_Title_Code, LTRIM(RTRIM(number)) AS Composer INTO #TempComposer from DM_Title DMT
-		CROSS APPLY dbo.fn_Split_withdelemiter([Music Composer],',') 
-		WHERE LTRIM(RTRIM(ISNULL([Music Composer], ''))) <> '' 
-		AND DMT.DM_Title_Code = @Code
-		
 		INSERT INTO #temp(Type, ImportData, MappedTo, MappedBy, ActionBy, MappedDate)
-		SELECT Distinct Type,
-		CASE WHEN t.MasterType = 'TT' THEN (select DT.[Title Type] where DT.[Title Type] collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-		  	 WHEN t.MasterType = 'TL' THEN (select DT.[Original Language (Hindi)] where DT.[Original Language (Hindi)] collate SQL_Latin1_General_CP1_CI_AS IN(select t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
-			 WHEN t.MasterType = 'OL' THEN (select DT.Original_Language where DT.Original_Language collate SQL_Latin1_General_CP1_CI_AS IN(select t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
-			 WHEN t.MasterType = 'LB' THEN (select DT.Music_Label where DT.Music_Label collate SQL_Latin1_General_CP1_CI_AS IN(select t.ImportData collate SQL_Latin1_General_CP1_CI_AS))
-			 WHEN (t.MasterType = 'TA' AND t.Type = 'Music Composer')THEN (select TC.Composer Where TC.Composer collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-			 WHEN (t.MasterType = 'TA' AND t.Type = 'Director')THEN (select TD.Director where TD.Director collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-			 WHEN (t.MasterType = 'TA' AND t.Type = 'Star Cast')THEN (select TKST.StarCast where TKST.StarCast collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-			 WHEN t.MasterType = 'PC' THEN (select DT.[Program Category] where DT.[Program Category] collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-		END as ImportData,
-		MappedTo, MappedBy, ActionBy, MappedDate
-		from #tempMasterLog t
-		LEFT Join DM_Title DT ON DT.DM_Master_Import_Code = t.DMMasterImportCode	
-		LEFT Join #TempKeyStarCast TKST ON DT.DM_Title_Code = TKST.DM_Title_Code
-		LEFT Join #TempDirector TD ON DT.DM_Title_Code = TD.DM_Title_Code
-		LEFT Join #TempComposer TC ON DT.DM_Title_Code = TC.DM_Title_Code
-		where DT.DM_Title_Code = @Code
+		SELECT Distinct Type,ImportData,MappedTo, MappedBy, ActionBy, MappedDate
+		FROM #tempMasterLog t
+		WHERE T.DMMasterLogCode IN (SELECT DM_Master_Log_Code FROM DM_Master_Log WHERE DM_Master_Import_Code = @DM_Master_Import_Code and @Str_Contenate like '%'+Name+'%')
 	END
+		
 	
 	IF(@FileType = 'C')
 	BEGIN
 		INSERT INTO #temp(Type, ImportData, MappedTo, MappedBy, ActionBy, MappedDate)
 		SELECT DISTINCT Type, 
-		CASE WHEN t.MasterType = 'CM' THEN (select DCM.Music_Track  where DCM.Music_Track collate SQL_Latin1_General_CP1_CI_AS IN (t.ImportData collate SQL_Latin1_General_CP1_CI_AS)) 
-		END as ImportData, 
+		CASE WHEN t.MasterType = 'CM' THEN (SELECT DCM.Music_Track  WHERE DCM.Music_Track COLLATE SQL_Latin1_General_CP1_CI_AS IN (t.ImportData COLLATE SQL_Latin1_General_CP1_CI_AS)) 
+		END AS ImportData, 
 		MappedTo, MappedBy, ActionBy, MappedDate
-		from #tempMasterLog t
-		Inner Join DM_Content_Music DCM ON DCM.DM_Master_Import_Code = t.DMMasterImportCode   
-		where  DCM.IntCode = @Code 
+		FROM #tempMasterLog t
+		INNER JOIN DM_Content_Music DCM ON DCM.DM_Master_Import_Code = t.DMMasterImportCode   
+		WHERE  DCM.IntCode = @Code 
 	END
 
-	select Type, ImportData, MappedTo, MappedBy, ActionBy, MappedDate from #temp t where t.ImportData IS NOT NULL
+	SELECT Type, ImportData, MappedTo, MappedBy, ActionBy, MappedDate FROM #temp t WHERE t.ImportData IS NOT NULL
+
+	IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
+	IF OBJECT_ID('tempdb..#TempComposer') IS NOT NULL DROP TABLE #TempComposer
+	IF OBJECT_ID('tempdb..#TempDirector') IS NOT NULL DROP TABLE #TempDirector
+	IF OBJECT_ID('tempdb..#TempKeyStarCast') IS NOT NULL DROP TABLE #TempKeyStarCast
+	IF OBJECT_ID('tempdb..#TempLanguage') IS NOT NULL DROP TABLE #TempLanguage
+	IF OBJECT_ID('tempdb..#TempLyricist') IS NOT NULL DROP TABLE #TempLyricist
+	IF OBJECT_ID('tempdb..#tempMasterLog') IS NOT NULL DROP TABLE #tempMasterLog
+	IF OBJECT_ID('tempdb..#TempMusicComposer') IS NOT NULL DROP TABLE #TempMusicComposer
+	IF OBJECT_ID('tempdb..#TempRoles') IS NOT NULL DROP TABLE #TempRoles
+	IF OBJECT_ID('tempdb..#TempSinger') IS NOT NULL DROP TABLE #TempSinger
+	IF OBJECT_ID('tempdb..#TempStarCast') IS NOT NULL DROP TABLE #TempStarCast
+	IF OBJECT_ID('tempdb..#TempTheme') IS NOT NULL DROP TABLE #TempTheme
+
 END
-
-
-
-
---DECLARE @RC INT = 0
---EXEC USPListResolveConflict '7470',6275,'M',1,10,@RC
-
---ALTER PROCEDURE [dbo].[USPListResolveConflict] 
---@DM_Master_Import_Code VARCHAR(MAX) = '0',
---@Code INT = 0,	
---@FileType VARCHAR(1) = '',
---@PageNo INT = 1,
---@PageSize INT = 99,
---@RecordCount INT OUT
---AS
---BEGIN
-
---DECLARE @Type VARCHAR(MAX) = '',
---		@ImportData NVARCHAR(MAX)='',
---		@MappedTo NVARCHAR(MAX)='',
---		@MappedBy NVARCHAR(MAX)='',	
---		@ActionBy NVARCHAR(MAX)='',
---		@MappedDate Datetime=GETDATE()
-
---select @Type Type, @ImportData ImportData, @MappedTo MappedTo, @MappedBy MappedBy, @MappedDate MappedDate, @ActionBy ActionBy 
---END

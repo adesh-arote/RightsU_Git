@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Edit_Without_Approval]
+﻿CREATE PROCEDURE [dbo].[USP_Edit_Without_Approval]
 (
 --Declare
 	@Acq_Deal_Code INT,

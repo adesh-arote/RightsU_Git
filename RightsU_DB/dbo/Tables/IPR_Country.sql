@@ -11,5 +11,3 @@
     PRIMARY KEY CLUSTERED ([IPR_Country_Code] ASC)
 );
 
-
-

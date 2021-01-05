@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Populate_Master_Deal_Titles]
+﻿CREATE PROCEDURE [dbo].[USP_Populate_Master_Deal_Titles]
 (
 	@Acq_Deal_Movie_Code INT
 )

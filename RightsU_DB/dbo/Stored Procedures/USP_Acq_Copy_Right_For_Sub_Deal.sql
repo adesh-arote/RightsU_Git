@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE USP_Acq_Copy_Right_For_Sub_Deal
+﻿
+CREATE PROCEDURE USP_Acq_Copy_Right_For_Sub_Deal
 (
 	@Acq_Deal_Code INT, 
 	@Master_Deal_Movie_Code INT, 
@@ -292,4 +293,10 @@ BEGIN
 	END CATCH
 
 	SELECT @Error_Message AS 'Error_Message'
+
+	IF OBJECT_ID('tempdb..#Title') IS NOT NULL DROP TABLE #Title
+	IF OBJECT_ID('tempdb..#Rights') IS NOT NULL DROP TABLE #Rights
+	IF OBJECT_ID('tempdb..#Rights_Holdback') IS NOT NULL DROP TABLE #Rights_Holdback
+	IF OBJECT_ID('tempdb..#Rights_Blackout') IS NOT NULL DROP TABLE #Rights_Blackout
+	IF OBJECT_ID('tempdb..#Rights_Promoter') IS NOT NULL DROP TABLE #Rights_Promoter
 END

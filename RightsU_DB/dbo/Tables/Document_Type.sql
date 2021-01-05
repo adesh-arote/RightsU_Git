@@ -10,5 +10,3 @@
     CONSTRAINT [PK_Document_Type] PRIMARY KEY CLUSTERED ([Document_Type_Code] ASC)
 );
 
-
-

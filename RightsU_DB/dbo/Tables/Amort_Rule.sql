@@ -16,5 +16,3 @@
     CONSTRAINT [PK_Amort_Rule] PRIMARY KEY CLUSTERED ([Amort_Rule_Code] ASC)
 );
 
-
-

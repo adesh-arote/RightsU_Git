@@ -1,4 +1,4 @@
-﻿alter PROCEDURE USP_List_Assign_Music
+﻿CREATE PROCEDURE USP_List_Assign_Music
 (
 	@Acq_Deal_Code INT
 )
@@ -118,4 +118,7 @@ BEGIN
 	ISNULL(Music_Library, '') AS Music_Library, ISNULL(Music_Title, '') AS Music_Title, ISNULL(Label, '') AS Label, ISNULL(Movie_Album, '') AS Movie_Album, 
 	ISNULL(Singer, '') AS Singer, ISNULL(Music_Composer, '') AS Music_Composer, ISNULL(Lyricist, '') AS Lyricist
 	FROM #Temp_Assign_Music_List
+
+	IF OBJECT_ID('tempdb..#Temp_Assign_Music_List') IS NOT NULL DROP TABLE #Temp_Assign_Music_List
+	IF OBJECT_ID('tempdb..#Temp_ProgramData') IS NOT NULL DROP TABLE #Temp_ProgramData
 END

@@ -71,6 +71,8 @@ BEGIN
 	WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
 
 	SELECT MHCueSheetCode, RequestID, [FileName], NoOfRecords, UploadStatus, CreatedBy, CreatedOn, SpecialInstruction FROM #TempRightsPagingData
+
+	IF OBJECT_ID('tempdb..#TempRightsPagingData') IS NOT NULL DROP TABLE #TempRightsPagingData
 END
 
 --DECLARE @RC INT  

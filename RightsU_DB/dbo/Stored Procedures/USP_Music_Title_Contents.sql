@@ -43,9 +43,10 @@ End
           
 SELECT Content,Episode_No,Title_Name, ISNULL( Duration_In_Min,0) Duration_In_Min,[FROM],[TO],Duration,From_Frame,To_Frame FROM #TEMP          
           
-DROP TABLE #TEMP                          
+	--DROP TABLE #TEMP                          
+	IF OBJECT_ID('tempdb..#TEMP') IS NOT NULL DROP TABLE #TEMP
 END        
         
 /*        
 exec USP_Music_Title_Contents 3679 ,'S',0,'Y',3,1        
-*/ 
+*/

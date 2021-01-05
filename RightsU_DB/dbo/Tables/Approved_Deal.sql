@@ -6,6 +6,7 @@
     [Inserted_On]        DATETIME NULL,
     [Is_Amend]           CHAR (1) NULL,
     [Deal_Rights_Code]   INT      NULL,
+    [GenerationStatus]   CHAR (4) NULL,
     PRIMARY KEY CLUSTERED ([Approved_Deal_Code] ASC)
 );
 

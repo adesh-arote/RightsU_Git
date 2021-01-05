@@ -43,4 +43,7 @@ BEGIN
 	) AS A
 	GROUP BY Title_Name, Version_Name, Month_Year
 	SELECT Title_Name, Version_Name, Month_Year, Music_Track_Count FROM #TempData
+
+	IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData
+	IF OBJECT_ID('tempdb..#Title_Temp') IS NOT NULL DROP TABLE #Title_Temp
 END

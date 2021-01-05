@@ -11,5 +11,3 @@
     CONSTRAINT [PK_System_Language] PRIMARY KEY CLUSTERED ([System_Language_Code] ASC)
 );
 
-
-

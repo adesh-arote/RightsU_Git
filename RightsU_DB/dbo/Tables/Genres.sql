@@ -11,5 +11,3 @@
     CONSTRAINT [PK_Genres] PRIMARY KEY CLUSTERED ([Genres_Code] ASC)
 );
 
-
-

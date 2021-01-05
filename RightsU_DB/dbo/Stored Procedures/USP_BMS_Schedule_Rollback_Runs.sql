@@ -241,5 +241,6 @@ BEGIN
 	DEALLOCATE CR_BMS_Schedule_Reprocess
 END		
 /************* End Cursor*/
+IF OBJECT_ID('tempdb..#Temp_BMS_Schedule_Process_Data') IS NOT NULL DROP TABLE #Temp_BMS_Schedule_Process_Data
 
 END

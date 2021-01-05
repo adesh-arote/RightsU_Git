@@ -68,8 +68,8 @@ BEGIN
              /* ==========  NEW USER CREATED  =============== */   
                
              /* ========== FORGOT PASSWORD  ================= */    
-             IF(@Status = 'FP')      
-     BEGIN        
+   IF(@Status = 'FP')      
+   BEGIN        
    SELECT @body1 = Template_Desc FROM Email_template WHERE Template_For='FB1'       
       
    IF (@IsLDAP_Required = 'N')      
@@ -79,12 +79,28 @@ BEGIN
    ELSE      
     BEGIN      
        SELECT @body2 = Template_Desc FROM Email_template WHERE Template_For = 'FB3'      
-             
     END      
           
    SELECT @body3 = Template_Desc FROM Email_template WHERE Template_For='FB4'       
          
-     END      
+  END   
+  
+  IF(@Status = 'NP')      
+   BEGIN        
+   SELECT @body1 = Template_Desc FROM Email_template WHERE Template_For='FB1'       
+      
+   IF (@IsLDAP_Required = 'N')      
+    BEGIN      
+       SELECT @body2 = Template_Desc FROM Email_template WHERE Template_For = 'FB2'       
+    END       
+   ELSE      
+    BEGIN      
+       SELECT @body2 = Template_Desc FROM Email_template WHERE Template_For = 'FB2'      
+    END      
+          
+   SELECT @body3 = Template_Desc FROM Email_template WHERE Template_For='FB4'       
+         
+  END   
                
              /* ========== FORGOT PASSWORD  ================= */    
                    

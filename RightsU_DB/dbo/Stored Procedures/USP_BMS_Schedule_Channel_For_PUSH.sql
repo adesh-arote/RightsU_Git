@@ -158,5 +158,8 @@ BEGIN
 	ORDER BY C.Order_For_schedule
 
 	SELECT DISTINCT * from #Temp2 where Request_XML IS NOT NULL 
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp2') IS NOT NULL DROP TABLE #Temp2
 END
 --exec [dbo].[USP_BMS_Schedule_Channel_For_PUSH]

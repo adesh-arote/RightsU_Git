@@ -48,7 +48,9 @@
     [All_Channel]                   VARCHAR (1)     NULL,
     [Role_Code]                     INT             NULL,
     [Channel_Cluster_Code]          INT             NULL,
-    [Is_Auto_Push]					CHAR(1)			DEFAULT 'N', 
+    [Is_Auto_Push]                  CHAR (1)        DEFAULT ('N') NULL,
+    [Deal_Segment_Code]             INT             NULL,
+    [Revenue_Vertical_Code]         INT             NULL,
     CONSTRAINT [PK_Acq_Deal] PRIMARY KEY CLUSTERED ([Acq_Deal_Code] ASC),
     CONSTRAINT [FK_Acq_Deal_Acq_Deal_Tag] FOREIGN KEY ([Deal_Tag_Code]) REFERENCES [dbo].[Deal_Tag] ([Deal_Tag_Code]),
     CONSTRAINT [FK_Acq_Deal_Acq_Deal_Type] FOREIGN KEY ([Deal_Type_Code]) REFERENCES [dbo].[Deal_Type] ([Deal_Type_Code]),
@@ -57,11 +59,11 @@
     CONSTRAINT [FK_Acq_Deal_Channel_Cluster] FOREIGN KEY ([Channel_Cluster_Code]) REFERENCES [dbo].[Channel_Cluster] ([Channel_Cluster_Code]),
     CONSTRAINT [FK_Acq_Deal_Cost_Center] FOREIGN KEY ([Cost_Center_Id]) REFERENCES [dbo].[Cost_Center] ([Cost_Center_Id]),
     CONSTRAINT [FK_Acq_Deal_Currency] FOREIGN KEY ([Currency_Code]) REFERENCES [dbo].[Currency] ([Currency_Code]),
+    CONSTRAINT [FK_Acq_Deal_Deal_Segment] FOREIGN KEY ([Deal_Segment_Code]) REFERENCES [dbo].[Deal_Segment] ([Deal_Segment_Code]),
     CONSTRAINT [FK_Acq_Deal_Entity] FOREIGN KEY ([Entity_Code]) REFERENCES [dbo].[Entity] ([Entity_Code]),
+    CONSTRAINT [FK_Acq_Deal_Revenue_Vertical] FOREIGN KEY ([Revenue_Vertical_Code]) REFERENCES [dbo].[Revenue_Vertical] ([Revenue_Vertical_Code]),
     CONSTRAINT [FK_Acq_Deal_Role] FOREIGN KEY ([Role_Code]) REFERENCES [dbo].[Role] ([Role_Code]),
     CONSTRAINT [FK_Acq_Deal_Vendor] FOREIGN KEY ([Vendor_Code]) REFERENCES [dbo].[Vendor] ([Vendor_Code]),
     CONSTRAINT [FK_Acq_Deal_Workflow] FOREIGN KEY ([Work_Flow_Code]) REFERENCES [dbo].[Workflow] ([Workflow_Code])
 );
-
-
 

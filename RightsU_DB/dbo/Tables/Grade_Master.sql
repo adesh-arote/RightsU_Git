@@ -10,5 +10,3 @@
     CONSTRAINT [PK_Grade] PRIMARY KEY CLUSTERED ([Grade_Code] ASC)
 );
 
-
-

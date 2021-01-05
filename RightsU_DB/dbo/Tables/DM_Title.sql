@@ -24,14 +24,7 @@
     [Music_Version]                  NVARCHAR (4000) NULL,
     [DM_Master_Import_Code]          INT             NULL,
     [Excel_Line_No]                  VARCHAR (50)    NULL,
-    [Is_Ignore]                      VARCHAR (1)     NULL
+    [Is_Ignore]                      VARCHAR (1)     NULL,
+    [Original_Language]              NVARCHAR (MAX)  NULL
 );
-
-
-
-
-
-
-
-
 

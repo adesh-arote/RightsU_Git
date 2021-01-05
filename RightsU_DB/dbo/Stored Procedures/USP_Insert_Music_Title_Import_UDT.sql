@@ -27,7 +27,8 @@ SET NOCOUNT ON;
 			[Theme],
 			[Music_Tag] ,
 			[Movie_Star_Cast],
-			[Music_Album_Type]
+			[Music_Album_Type],
+			[Public_Domain]
 		)		
 		SELECT  
 			LTRIM(RTRIM(Replace([Music_Title_Name], ' ', ' '))),
@@ -48,7 +49,8 @@ SET NOCOUNT ON;
 			[Theme],
 			[Music_Tag],
 			[Movie_Star_Cast],
-			[Music_Album_Type]
+			[Music_Album_Type],
+			[Public_Domain]
 		FROM @Music_Title_Import 
 		IF EXISTS(SELECT TOP 1 Record_Status FROM DM_Music_Title WHERE ISNULL(RTRIM(LTRIM(Record_Status)),'') = 'N')
 		BEGIN
@@ -488,14 +490,19 @@ SET NOCOUNT ON;
 		END		
 		
 		--select * from DM_Music_Title
-		END
 
+	IF OBJECT_ID('tempdb..#Temp_Genres') IS NOT NULL DROP TABLE #Temp_Genres
+	IF OBJECT_ID('tempdb..#Temp_Lyricist') IS NOT NULL DROP TABLE #Temp_Lyricist
+	IF OBJECT_ID('tempdb..#Temp_Movie_Album') IS NOT NULL DROP TABLE #Temp_Movie_Album
+	IF OBJECT_ID('tempdb..#Temp_Movie_Star_Cast') IS NOT NULL DROP TABLE #Temp_Movie_Star_Cast
+	IF OBJECT_ID('tempdb..#Temp_Music_Album') IS NOT NULL DROP TABLE #Temp_Music_Album
+	IF OBJECT_ID('tempdb..#Temp_Music_Director') IS NOT NULL DROP TABLE #Temp_Music_Director
+	IF OBJECT_ID('tempdb..#Temp_Music_Label') IS NOT NULL DROP TABLE #Temp_Music_Label
+	IF OBJECT_ID('tempdb..#Temp_Music_Language') IS NOT NULL DROP TABLE #Temp_Music_Language
+	IF OBJECT_ID('tempdb..#Temp_Music_Theme') IS NOT NULL DROP TABLE #Temp_Music_Theme
+	IF OBJECT_ID('tempdb..#Temp_S') IS NOT NULL DROP TABLE #Temp_S
+	IF OBJECT_ID('tempdb..#Temp_Singers') IS NOT NULL DROP TABLE #Temp_Singers
+	IF OBJECT_ID('tempdb..#Temp_Star_Cast') IS NOT NULL DROP TABLE #Temp_Star_Cast
+	IF OBJECT_ID('tempdb..#Temp_Version') IS NOT NULL DROP TABLE #Temp_Version
 
-
-
-
-
-
-
-
-
+END

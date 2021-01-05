@@ -26,5 +26,3 @@ BEGIN
 	SELECT dbo.UFN_Get_Music_Deal_Workflow_Status(@Acq_Deal_Code, @Deal_Workflow_Status, @User_Code) AS Workflow_Status
 	END
 END
-
-

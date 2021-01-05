@@ -1,4 +1,4 @@
-﻿ALTER ProcEDURE [dbo].[USP_Get_Data_Restriction_Remark_UDT]
+﻿CREATE ProcEDURE [dbo].[USP_Get_Data_Restriction_Remark_UDT]
 (
 	@Deal_Rights Deal_Rights READONLY,
 	@Deal_Rights_Title Deal_Rights_Title  READONLY,
@@ -546,13 +546,23 @@ BEGIN
 		SELECT * FROM #Temp_Restriction_Remark_Popup
 
 	-- =============================================Drop Temp Tables ========================================
-		DROP TABLE #Temp_Rights_Title
-		DROP TABLE #Temp_Rights_Platform	
-		DROP TABLE #Temp_Rights_Country	
-		DROP TABLE #Temp_Rights_SubTitle
-		DROP TABLE #Temp_Rights_Dubb	
-		DROP TABLE #Temp_Restriction_Remark_Popup		
-		DROP TABLE #Acq_Rights_Code_Lang
-		DROP TABLE #Temp_Selected_Lang_Code
-		DROP TABLE #Temp_Selected_Region_Code		
+		--DROP TABLE #Temp_Rights_Title
+		--DROP TABLE #Temp_Rights_Platform	
+		--DROP TABLE #Temp_Rights_Country	
+		--DROP TABLE #Temp_Rights_SubTitle
+		--DROP TABLE #Temp_Rights_Dubb	
+		--DROP TABLE #Temp_Restriction_Remark_Popup		
+		--DROP TABLE #Acq_Rights_Code_Lang
+		--DROP TABLE #Temp_Selected_Lang_Code
+		--DROP TABLE #Temp_Selected_Region_Code		
+
+	IF OBJECT_ID('tempdb..#Acq_Rights_Code_Lang') IS NOT NULL DROP TABLE #Acq_Rights_Code_Lang
+	IF OBJECT_ID('tempdb..#Temp_Restriction_Remark_Popup') IS NOT NULL DROP TABLE #Temp_Restriction_Remark_Popup
+	IF OBJECT_ID('tempdb..#Temp_Rights_Country') IS NOT NULL DROP TABLE #Temp_Rights_Country
+	IF OBJECT_ID('tempdb..#Temp_Rights_Dubb') IS NOT NULL DROP TABLE #Temp_Rights_Dubb
+	IF OBJECT_ID('tempdb..#Temp_Rights_Platform') IS NOT NULL DROP TABLE #Temp_Rights_Platform
+	IF OBJECT_ID('tempdb..#Temp_Rights_SubTitle') IS NOT NULL DROP TABLE #Temp_Rights_SubTitle
+	IF OBJECT_ID('tempdb..#Temp_Rights_Title') IS NOT NULL DROP TABLE #Temp_Rights_Title
+	IF OBJECT_ID('tempdb..#Temp_Selected_Lang_Code') IS NOT NULL DROP TABLE #Temp_Selected_Lang_Code
+	IF OBJECT_ID('tempdb..#Temp_Selected_Region_Code') IS NOT NULL DROP TABLE #Temp_Selected_Region_Code
 END

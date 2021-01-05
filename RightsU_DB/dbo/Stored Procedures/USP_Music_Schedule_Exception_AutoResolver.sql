@@ -35,4 +35,5 @@ BEGIN
 		SELECT TOP 1 @MusicScheduleTransactionCode = Music_Schedule_Transaction_Code, @BV_Schedule_Transaction_Code = BV_Schedule_Transaction_Code
 		FROM #TempMusicScheduleTransactionCodes WHERE Is_Processed = 'N'
 	END
+	IF OBJECT_ID('tempdb..#TempMusicScheduleTransactionCodes') IS NOT NULL DROP TABLE #TempMusicScheduleTransactionCodes
 END

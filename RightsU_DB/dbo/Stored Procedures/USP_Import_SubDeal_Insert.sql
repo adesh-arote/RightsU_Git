@@ -99,7 +99,7 @@ BEGIN
 							WHERE Agreement_No = @MasterDealAgreementNo AND Is_Active = 'Y'																							
 					SELECT @Title_Code = T.Title_Code, @Master_Deal_Movie_Code_ToLink = ADM.Acq_Deal_Movie_Code , @Title_Name = T.Title_Name
 							FROM Acq_Deal_Movie ADM INNER JOIN Title T on T.Title_Code = ADM.Title_Code 
-							WHERE  ADM.Acq_Deal_Code = @Acq_Deal_Code AND T.Title_Name = @MasterDealTitle	
+							WHERE ADM.Acq_Deal_Code = @Acq_Deal_Code AND T.Title_Name = @MasterDealTitle	
 
 
 					PRINT '  Insert in [Acq_Deal] table'
@@ -192,4 +192,11 @@ BEGIN
 		SELECT @Current_Status = 'E',@errorMessage = ERROR_MESSAGE()
 		SELECT @Current_Status AS Status ,@errorMessage AS [Error_Message]
 	END CATCH 
+
+	IF OBJECT_ID('tempdb..#ErrorForRights') IS NOT NULL DROP TABLE #ErrorForRights
+	IF OBJECT_ID('tempdb..#Temp_Talent') IS NOT NULL DROP TABLE #Temp_Talent
+	IF OBJECT_ID('tempdb..#Temp_Test_Talent') IS NOT NULL DROP TABLE #Temp_Test_Talent
+	IF OBJECT_ID('tempdb..#Temp_Title_Talent') IS NOT NULL DROP TABLE #Temp_Title_Talent
+	IF OBJECT_ID('tempdb..#TempErrorDetails') IS NOT NULL DROP TABLE #TempErrorDetails
+	IF OBJECT_ID('tempdb..#TempImportSubDeal') IS NOT NULL DROP TABLE #TempImportSubDeal
 END

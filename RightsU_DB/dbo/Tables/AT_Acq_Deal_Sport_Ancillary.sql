@@ -27,8 +27,6 @@
 );
 
 
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'P/M/F', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AT_Acq_Deal_Sport_Ancillary', @level2type = N'COLUMN', @level2name = N'Ancillary_For';
 

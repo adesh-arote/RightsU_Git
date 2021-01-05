@@ -9,5 +9,3 @@
     CONSTRAINT [FK_Music_Title_Label_Music_Title] FOREIGN KEY ([Music_Title_Code]) REFERENCES [dbo].[Music_Title] ([Music_Title_Code])
 );
 
-
-

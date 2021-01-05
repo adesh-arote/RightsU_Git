@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[USP_Avail_Acq_Amend] 
+﻿
+CREATE PROCEDURE [dbo].[USP_Avail_Acq_Amend] 
 	-- Add the parameters for the stored procedure here
 	@pDeal_Code INT = 0	
 AS
@@ -8,7 +9,7 @@ AS
 -- Description:	Calculate Availability After Acquisition changes
 -- Modified By : Reshma Kunjal
 -- =============================================
-
+BEGIN
 		SELECT 
 			 ADR.Acq_Deal_Rights_Code
 			,ADRT.Title_Code
@@ -539,4 +540,8 @@ AS
 
 	CLOSE curDMR
 	DEALLOCATE curDMR
+
+	
+	END
+	IF OBJECT_ID('tempdb..#tmpAVA') IS NOT NULL DROP TABLE #tmpAVA
 END

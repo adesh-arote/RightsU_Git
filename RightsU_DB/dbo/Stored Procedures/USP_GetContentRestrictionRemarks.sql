@@ -35,35 +35,20 @@ BEGIN
 	IF(OBJECT_ID('TEMPDB..#tempScheduleDate') IS NOT NULL)
 		DROP TABLE #tempScheduleDate
 
-	--SELECT CONVERT(DATETIME, BST.Schedule_Item_Log_Date, 121) AS Schedule_Date INTO #tempScheduleDate FROM Title_Content TC
-	--INNER JOIN Title_Content_Mapping TCM ON TCM.Title_Content_Code = TC.Title_Content_Code
-	--INNER JOIN BV_Schedule_Transaction BST ON BST.Deal_Movie_Code = TCM.Acq_Deal_Movie_Code AND  CAST(TC.Episode_No AS VARCHAR) = ISNULL(BST.Program_Episode_Number, '0')
-	--WHERE TC.Title_Content_Code = @TitleContentCode
-
-	SELECT CONVERT(DATETIME, BST.Schedule_Item_Log_Date, 121) AS Schedule_Date, CCR.Acq_Deal_Code INTO #tempScheduleDate FROM Title_Content TC
-	INNER JOIN Content_Channel_Run CCR ON CCR.Title_Content_Code = TC.Title_Content_Code
-	INNER JOIN BV_Schedule_Transaction BST ON BST.Content_Channel_Run_Code = CCR.Content_Channel_Run_Code AND  CAST(TC.Episode_No AS VARCHAR) = ISNULL(BST.Program_Episode_Number, '0')
+	SELECT CONVERT(DATETIME, BST.Schedule_Item_Log_Date, 121) AS Schedule_Date INTO #tempScheduleDate FROM Title_Content TC
+	INNER JOIN Title_Content_Mapping TCM ON TCM.Title_Content_Code = TC.Title_Content_Code
+	INNER JOIN BV_Schedule_Transaction BST ON BST.Deal_Movie_Code = TCM.Acq_Deal_Movie_Code AND  CAST(TC.Episode_No AS VARCHAR) = ISNULL(BST.Program_Episode_Number, '0')
 	WHERE TC.Title_Content_Code = @TitleContentCode
 
 	IF EXISTS (SELECT * FROM #tempScheduleDate)
 	BEGIN
-		--INSERT INTO #tempRestrictionRemarks(Music_Title_Code, Restriction_Remarks)
-		--SELECT DISTINCT TMT.Music_Title_Code, ADR.Restriction_Remarks FROM #tempMusicTitles TMT
-		--INNER JOIN Music_Title_Label MTL ON TMT.Music_Title_Code = MTL.Music_Title_Code AND MTL.Effective_To IS NULL
-		--INNER JOIN Title T ON T.Music_Label_Code = MTL.Music_Label_Code
-		--INNER JOIN Acq_Deal_Movie ADM ON ADM.Title_Code = T.Title_Code
-		--INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Code = ADM.Acq_Deal_Code
-		--INNER JOIN #tempScheduleDate SD ON (SD.Schedule_Date BETWEEN ADR.Actual_Right_Start_Date AND ADR.Actual_Right_End_Date) OR ADR.Right_Type = 'U'
-		--WHERE ISNULL(ADR.Restriction_Remarks, '') != ''
-
 		INSERT INTO #tempRestrictionRemarks(Music_Title_Code, Restriction_Remarks)
 		SELECT DISTINCT TMT.Music_Title_Code, ADR.Restriction_Remarks FROM #tempMusicTitles TMT
 		INNER JOIN Music_Title_Label MTL ON TMT.Music_Title_Code = MTL.Music_Title_Code AND MTL.Effective_To IS NULL
 		INNER JOIN Title T ON T.Music_Label_Code = MTL.Music_Label_Code
-		INNER JOIN Acq_Deal_Rights_Title ADRT ON ADRT.Title_Code = T.Title_Code
-		INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Code = ADRT.Acq_Deal_Code
-		INNER JOIN #tempScheduleDate SD ON ADR.Acq_Deal_Code = SD.Acq_Deal_Code AND (SD.Schedule_Date BETWEEN ADR.Actual_Right_Start_Date AND ADR.Actual_Right_End_Date) 
-		OR ADR.Right_Type = 'U'
+		INNER JOIN Acq_Deal_Movie ADM ON ADM.Title_Code = T.Title_Code
+		INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Code = ADM.Acq_Deal_Code
+		INNER JOIN #tempScheduleDate SD ON (SD.Schedule_Date BETWEEN ADR.Actual_Right_Start_Date AND ADR.Actual_Right_End_Date) OR ADR.Right_Type = 'U'
 		WHERE ISNULL(ADR.Restriction_Remarks, '') != ''
 
 		UPDATE TRR SET TRR.Music_Title_Name = MT.Music_Title_Name FROM #tempRestrictionRemarks TRR
@@ -72,4 +57,8 @@ BEGIN
 
 	SELECT DISTINCT Music_Title_Code, Music_Title_Name, Restriction_Remarks FROM #tempRestrictionRemarks
 	ORDER BY Music_Title_Name, Restriction_Remarks
+
+	IF OBJECT_ID('tempdb..#tempMusicTitles') IS NOT NULL DROP TABLE #tempMusicTitles
+	IF OBJECT_ID('tempdb..#tempRestrictionRemarks') IS NOT NULL DROP TABLE #tempRestrictionRemarks
+	IF OBJECT_ID('tempdb..#tempScheduleDate') IS NOT NULL DROP TABLE #tempScheduleDate
 END

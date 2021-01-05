@@ -20,5 +20,3 @@
     CONSTRAINT [FK_Acq_Deal_Pushback_Milestone_Type] FOREIGN KEY ([Milestone_Type_Code]) REFERENCES [dbo].[Milestone_Type] ([Milestone_Type_Code])
 );
 
-
-

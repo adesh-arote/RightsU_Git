@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Report_PlatformWise_Acquisition_Neo]
+﻿CREATE PROCEDURE [dbo].[USP_Report_PlatformWise_Acquisition_Neo]
 (
 	@Title_Code VARCHAR(MAX) = '0', 
 	@Platform_Code VARCHAR(MAX) = '0', 
@@ -1150,17 +1150,44 @@ BEGIN
 	------------------ END
 
 
-	DROP TABLE #Temp_Title
-	DROP TABLE #Temp_Main_Ctr
-	--DROP TABLE #Temp_Rights_Data
-	DROP TABLE #Temp_Titles
-	DROP TABLE #Temp_Right
-	DROP TABLE #Temp_Country
-	DROP TABLE #Temp_Platform
-	DROP TABLE #Temp_Title_Language
-	DROP TABLE #Temp_Language
-	DROP TABLE #Avail_Acq
-	DROP TABLE #Avail_TitLang
+	--DROP TABLE #Temp_Title
+	--DROP TABLE #Temp_Main_Ctr
+	----DROP TABLE #Temp_Rights_Data
+	--DROP TABLE #Temp_Titles
+	--DROP TABLE #Temp_Right
+	--DROP TABLE #Temp_Country
+	--DROP TABLE #Temp_Platform
+	--DROP TABLE #Temp_Title_Language
+	--DROP TABLE #Temp_Language
+	--DROP TABLE #Avail_Acq
+	--DROP TABLE #Avail_TitLang
+
+	IF OBJECT_ID('tempdb..#Avail_Acq') IS NOT NULL DROP TABLE #Avail_Acq
+	IF OBJECT_ID('tempdb..#Avail_Dubb') IS NOT NULL DROP TABLE #Avail_Dubb
+	IF OBJECT_ID('tempdb..#Avail_Dubb_V1') IS NOT NULL DROP TABLE #Avail_Dubb_V1
+	IF OBJECT_ID('tempdb..#Avail_Sub') IS NOT NULL DROP TABLE #Avail_Sub
+	IF OBJECT_ID('tempdb..#Avail_Sub_V1') IS NOT NULL DROP TABLE #Avail_Sub_V1
+	IF OBJECT_ID('tempdb..#Avail_TitLang') IS NOT NULL DROP TABLE #Avail_TitLang
+	IF OBJECT_ID('tempdb..#Avail_TitLang_V1') IS NOT NULL DROP TABLE #Avail_TitLang_V1
+	IF OBJECT_ID('tempdb..#Temp_Country') IS NOT NULL DROP TABLE #Temp_Country
+	IF OBJECT_ID('tempdb..#Temp_Country_Names') IS NOT NULL DROP TABLE #Temp_Country_Names
+	IF OBJECT_ID('tempdb..#Temp_Dates') IS NOT NULL DROP TABLE #Temp_Dates
+	IF OBJECT_ID('tempdb..#Temp_Dubs') IS NOT NULL DROP TABLE #Temp_Dubs
+	IF OBJECT_ID('tempdb..#Temp_Language') IS NOT NULL DROP TABLE #Temp_Language
+	IF OBJECT_ID('tempdb..#Temp_Language_Names') IS NOT NULL DROP TABLE #Temp_Language_Names
+	IF OBJECT_ID('tempdb..#Temp_Main') IS NOT NULL DROP TABLE #Temp_Main
+	IF OBJECT_ID('tempdb..#Temp_Main_Ctr') IS NOT NULL DROP TABLE #Temp_Main_Ctr
+	IF OBJECT_ID('tempdb..#Temp_Platform') IS NOT NULL DROP TABLE #Temp_Platform
+	IF OBJECT_ID('tempdb..#Temp_Platforms') IS NOT NULL DROP TABLE #Temp_Platforms
+	IF OBJECT_ID('tempdb..#Temp_Plt_Names') IS NOT NULL DROP TABLE #Temp_Plt_Names
+	IF OBJECT_ID('tempdb..#Temp_Right') IS NOT NULL DROP TABLE #Temp_Right
+	IF OBJECT_ID('tempdb..#Temp_Right_Remarks') IS NOT NULL DROP TABLE #Temp_Right_Remarks
+	IF OBJECT_ID('tempdb..#Temp_Rights_Code') IS NOT NULL DROP TABLE #Temp_Rights_Code
+	IF OBJECT_ID('tempdb..#Temp_Rights_Data') IS NOT NULL DROP TABLE #Temp_Rights_Data
+	IF OBJECT_ID('tempdb..#Temp_Subs') IS NOT NULL DROP TABLE #Temp_Subs
+	IF OBJECT_ID('tempdb..#Temp_Title') IS NOT NULL DROP TABLE #Temp_Title
+	IF OBJECT_ID('tempdb..#Temp_Title_Language') IS NOT NULL DROP TABLE #Temp_Title_Language
+	IF OBJECT_ID('tempdb..#Temp_Titles') IS NOT NULL DROP TABLE #Temp_Titles
+	IF OBJECT_ID('tempdb..#TMP_MAIN') IS NOT NULL DROP TABLE #TMP_MAIN
+	IF OBJECT_ID('tempdb..#Tmp_SL') IS NOT NULL DROP TABLE #Tmp_SL
 END
-
-

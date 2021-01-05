@@ -1,5 +1,4 @@
-﻿
-ALTER PROCEDURE [dbo].[USP_RollBack_Acq_Deal]
+﻿CREATE PROCEDURE [dbo].[USP_RollBack_Acq_Deal]
 	@Acq_Deal_Code INT,  
 	@User_Code INT ,
 	@Is_Edit_WO_Approval CHAR(1)='N'
@@ -13,7 +12,8 @@ AS
 -- Last Change : Added One column in AT_Acq_Deal_Cost_Costtype_Episode (Per_Eps_Amount)
 -- =============================================  
 BEGIN  
-	SET NOCOUNT ON   
+	SET NOCOUNT ON
+	SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 	
 	--DECLARE
 	--@Acq_Deal_Code INT = 17611,  
@@ -65,7 +65,9 @@ BEGIN
 			Acq_Deal.Last_Action_By = @User_Code, Acq_Deal.Lock_Time = NULL,  
 			Acq_Deal.All_Channel = AtAD.All_Channel,ACq_Deal.Role_Code = AtAD.Role_Code,  
 			Acq_Deal.Channel_Cluster_Code = AtAd.Channel_Cluster_Code,
-			Acq_Deal.Is_Auto_Push =  AtAD.Is_Auto_Push
+			Acq_Deal.Is_Auto_Push =  AtAD.Is_Auto_Push,
+			Acq_Deal.Deal_Segment_Code = AtAD.Deal_Segment_Code,
+			Acq_Deal.Revenue_Vertical_Code = AtAD.Revenue_Vertical_Code
 			FROM AT_Acq_Deal AtAD   
 			WHERE AT_Acq_Deal_Code = @AT_Acq_Deal_Code AND Acq_Deal.Acq_Deal_Code = @Acq_Deal_Code  
      
@@ -1565,5 +1567,16 @@ BEGIN
 
 		SELECT 'E' Flag, ERROR_MESSAGE() as Msg,ERROR_LINE() AS ErrorLine  
 		Update Deal_Process Set Record_Status  = 'E', Porcess_End = GETDATE(), Error_Messages = ERROR_MESSAGE() WHERE Deal_Code = @Acq_Deal_Code And Record_Status  = 'W'  AND Module_Code = 30
+		------INSERTION OF ERROR---------------------------------------------------------------------
+		INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+		SELECT GETDATE(),null,null,'USP_RollBack_Acq_Deal','Acq_Deal_Code : '+CAST(@Acq_Deal_Code AS VARCHAR)+' '+'in error state','NA',ERROR_MESSAGE(),'DB' 
+		FROM Deal_Process Where Deal_Code = @Acq_Deal_Code And Record_Status  = 'W'  AND Module_Code = 30
+		
+		
+		DECLARE  @sql NVARCHAR(MAX),@DB_Name VARCHAR(1000);
+		SELECT @sql = CAST(@Acq_Deal_Code AS VARCHAR) +' '+'Records are in pending state for AcqDeal' +' '+ ERROR_MESSAGE()
+		SELECT @DB_Name = DB_NAME()
+		EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin',@DB_Name,'RU','USP_RollBack_Acq_Deal','AN','VN',@sql ,'DB','IP','FR','TI'
+		
 	END CATCH
 END

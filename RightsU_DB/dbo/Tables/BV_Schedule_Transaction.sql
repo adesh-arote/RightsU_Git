@@ -41,11 +41,3 @@
     CONSTRAINT [PK_BV_Schedule_Transaction] PRIMARY KEY CLUSTERED ([BV_Schedule_Transaction_Code] ASC)
 );
 
-
-
-
-
-
-
-
-

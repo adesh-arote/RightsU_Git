@@ -95,6 +95,9 @@ BEGIN
 				SELECT 0, @Col_Head01, @Col_Head02, @Col_Head03, @Col_Head04, @Col_Head06, @Col_Head08, @Col_Head07, @Col_Head09, @Col_Head05
 			) X   
 	ORDER BY Sorter
+
+	IF OBJECT_ID('tempdb..#TempAcqAncillaryReport') IS NOT NULL
+		DROP TABLE #TempAcqAncillaryReport
 			
 END
 
@@ -104,4 +107,3 @@ EXEC [dbo].[USP_Acq_Ancillary_Report] '' , '5069','1'
 EXEC [dbo].[USP_Acq_Ancillary_Report] '' , '1904','1'
 EXEC [dbo].[USP_Acq_Ancillary_Report] 'A-2009-00002' , '','1'
 */
-

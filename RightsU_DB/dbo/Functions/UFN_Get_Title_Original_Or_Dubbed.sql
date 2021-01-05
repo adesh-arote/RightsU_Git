@@ -1,6 +1,4 @@
-﻿
-
--- =============================================
+﻿-- =============================================
 -- Author		: <Rushabh Gohil>
 -- Create date  : <22 Dec 2014>
 -- Description  : <Returns the 'Type of Film' of the Title (Original/Dubbed)>

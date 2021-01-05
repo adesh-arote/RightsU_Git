@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Title_Details_Report_Filter]      
+﻿CREATE PROCEDURE [dbo].[USP_Title_Details_Report_Filter]      
 (    
 	 @Title_Code VARCHAR(MAX) ='0',  
 	 @Deal_Type_Code VARCHAR(MAX) = '0',

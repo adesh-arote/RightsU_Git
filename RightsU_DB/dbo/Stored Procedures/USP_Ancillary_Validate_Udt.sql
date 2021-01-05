@@ -1,4 +1,5 @@
-﻿CREATE Procedure [dbo].[USP_Ancillary_Validate_Udt]	
+﻿
+CREATE Procedure [dbo].[USP_Ancillary_Validate_Udt]	
 	@Acq_Deal_Code INT,
 	@Acq_Deal_Ancillary_Code INT,
 	@Ancillary_Type_code INT,
@@ -34,7 +35,7 @@ BEGIN
 			[Title_Code] [int] NULL,
 			[Platform_Code] [int] NULL
 		)
-		INSERT INTO #Acq_Ancillary_Validate_UDT
+		INSERT INTO #Adv_Acq_Ancillary_Validate_UDT
 		SELECT 
 			AT.Deal_Ancillary_Code,
 			AT.Title_Code,
@@ -55,7 +56,7 @@ BEGIN
 			AND ADA.Acq_Deal_Ancillary_Code<>@Acq_Deal_Ancillary_Code	
 			AND ADA.Acq_Deal_Code=@Acq_Deal_Code
 		) AS A
-		INNER JOIN #Acq_Ancillary_Validate_UDT UDT ON 
+		INNER JOIN #Adv_Acq_Ancillary_Validate_UDT UDT ON 
 		A.Title_Code=UDT.Title_Code AND A.Platform_code = UDT.Platform_Code
 	END
 	ELSE
@@ -110,8 +111,7 @@ BEGIN
 		--(A.Title_Code=UDT.Title_Code AND A.Ancillary_Platform_code = UDT.Ancillary_Platform_Code )OR 
 		(ISNULL(A.Ancillary_Platform_Medium_Code, 0)=IsNull(UDT.Ancillary_Platform_Medium_Code, 0) AND A.Title_Code=UDT.Title_Code AND A.Ancillary_Platform_code = UDT.Ancillary_Platform_Code)
 	END
+
+	IF OBJECT_ID('tempdb..#Acq_Ancillary_Validate_UDT') IS NOT NULL DROP TABLE #Acq_Ancillary_Validate_UDT
+	IF OBJECT_ID('tempdb..#Adv_Acq_Ancillary_Validate_UDT') IS NOT NULL DROP TABLE #Adv_Acq_Ancillary_Validate_UDT
 END
-
-
-
-

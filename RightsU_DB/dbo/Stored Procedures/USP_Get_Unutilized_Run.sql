@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Get_Unutilized_Run] 
+﻿CREATE PROCEDURE [dbo].[USP_Get_Unutilized_Run] 
 	-- =============================================
 -- Author:		Rajesh Godse
 -- Create date: 12 Jan 2015
@@ -211,4 +211,7 @@ BEGIN
 		END
 	CLOSE cPointer
 	DEALLOCATE cPointer
+
+	IF OBJECT_ID('tempdb..#RunDetail') IS NOT NULL DROP TABLE #RunDetail
+	IF OBJECT_ID('tempdb..#RunDetailFilter') IS NOT NULL DROP TABLE #RunDetailFilter
 END

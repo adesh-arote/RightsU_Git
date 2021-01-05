@@ -17,19 +17,10 @@
 );
 
 
-
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'P- Prime, O - Offprime, N -No', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BMS_Schedule_Runs', @level2type = N'COLUMN', @level2name = N'Is_Prime';
 
 
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'S- Schedule, A- AsRun', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BMS_Schedule_Runs', @level2type = N'COLUMN', @level2name = N'Record_Type';
 
-
-GO
-
-
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'P- Prime, O - Offprime, N -No' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BMS_Schedule_Runs', @level2type=N'COLUMN',@level2name=N'Is_Prime'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'S- Schedule, A- AsRun' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'BMS_Schedule_Runs', @level2type=N'COLUMN',@level2name=N'Record_Type'
-GO

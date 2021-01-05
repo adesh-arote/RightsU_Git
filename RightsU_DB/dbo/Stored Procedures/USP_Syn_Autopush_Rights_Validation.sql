@@ -1243,6 +1243,53 @@ BEGIN
 	CLOSE CUR_DestSynRights    
 	DEALLOCATE CUR_DestSynRights   
 	Select @Is_Error
+
+	IF OBJECT_ID('tempdb..#Acq_Avail_Title_Eps') IS NOT NULL DROP TABLE #Acq_Avail_Title_Eps
+	IF OBJECT_ID('tempdb..#CurrentDubbing') IS NOT NULL DROP TABLE #CurrentDubbing
+	IF OBJECT_ID('tempdb..#CurrentDubbing_AP') IS NOT NULL DROP TABLE #CurrentDubbing_AP
+	IF OBJECT_ID('tempdb..#CurrentPlatform') IS NOT NULL DROP TABLE #CurrentPlatform
+	IF OBJECT_ID('tempdb..#CurrentPlatform_AP') IS NOT NULL DROP TABLE #CurrentPlatform_AP
+	IF OBJECT_ID('tempdb..#CurrentRegion') IS NOT NULL DROP TABLE #CurrentRegion
+	IF OBJECT_ID('tempdb..#CurrentRegion_AP') IS NOT NULL DROP TABLE #CurrentRegion_AP
+	IF OBJECT_ID('tempdb..#CurrentSubtitling') IS NOT NULL DROP TABLE #CurrentSubtitling
+	IF OBJECT_ID('tempdb..#CurrentSubtitling_AP') IS NOT NULL DROP TABLE #CurrentSubtitling_AP
+	IF OBJECT_ID('tempdb..#CurrentTitle_AP') IS NOT NULL DROP TABLE #CurrentTitle_AP
+	IF OBJECT_ID('tempdb..#Deal_Right_Title_WithEpsNo') IS NOT NULL DROP TABLE #Deal_Right_Title_WithEpsNo
+	IF OBJECT_ID('tempdb..#Deal_Rights_Territory') IS NOT NULL DROP TABLE #Deal_Rights_Territory
+	IF OBJECT_ID('tempdb..#DstSynRights') IS NOT NULL DROP TABLE #DstSynRights
+	IF OBJECT_ID('tempdb..#Dup_Records_Language_AP') IS NOT NULL DROP TABLE #Dup_Records_Language_AP
+	IF OBJECT_ID('tempdb..#Min_Right_Start_Date_AP') IS NOT NULL DROP TABLE #Min_Right_Start_Date_AP
+	IF OBJECT_ID('tempdb..#NA_Country_AP') IS NOT NULL DROP TABLE #NA_Country_AP
+	IF OBJECT_ID('tempdb..#NA_Dubbing_AP') IS NOT NULL DROP TABLE #NA_Dubbing_AP
+	IF OBJECT_ID('tempdb..#NA_Platforms_AP') IS NOT NULL DROP TABLE #NA_Platforms_AP
+	IF OBJECT_ID('tempdb..#NA_Subtitling_AP') IS NOT NULL DROP TABLE #NA_Subtitling_AP
+	IF OBJECT_ID('tempdb..#Syn_Avail_Title_Eps') IS NOT NULL DROP TABLE #Syn_Avail_Title_Eps
+	IF OBJECT_ID('tempdb..#Syn_Country_AP') IS NOT NULL DROP TABLE #Syn_Country_AP
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_AP') IS NOT NULL DROP TABLE #Syn_Deal_Rights_AP
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_AP_Dubbing') IS NOT NULL DROP TABLE #Syn_Deal_Rights_AP_Dubbing
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_AP_Platform') IS NOT NULL DROP TABLE #Syn_Deal_Rights_AP_Platform
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_AP_Subtitling') IS NOT NULL DROP TABLE #Syn_Deal_Rights_AP_Subtitling
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_AP_Territory') IS NOT NULL DROP TABLE #Syn_Deal_Rights_AP_Territory
+	IF OBJECT_ID('tempdb..#Syn_Deal_Rights_AP_Title') IS NOT NULL DROP TABLE #Syn_Deal_Rights_AP_Title
+	IF OBJECT_ID('tempdb..#Syn_Dub_AP') IS NOT NULL DROP TABLE #Syn_Dub_AP
+	IF OBJECT_ID('tempdb..#Syn_Rights_Code_Lang') IS NOT NULL DROP TABLE #Syn_Rights_Code_Lang
+	IF OBJECT_ID('tempdb..#Syn_Rights_New') IS NOT NULL DROP TABLE #Syn_Rights_New
+	IF OBJECT_ID('tempdb..#Syn_Sub_AP') IS NOT NULL DROP TABLE #Syn_Sub_AP
+	IF OBJECT_ID('tempdb..#Syn_Titles_AP') IS NOT NULL DROP TABLE #Syn_Titles_AP
+	IF OBJECT_ID('tempdb..#Syn_Titles_With_Rights_AP') IS NOT NULL DROP TABLE #Syn_Titles_With_Rights_AP
+	IF OBJECT_ID('tempdb..#Temp_Country_AP') IS NOT NULL DROP TABLE #Temp_Country_AP
+	IF OBJECT_ID('tempdb..#Temp_Dubbing_AP') IS NOT NULL DROP TABLE #Temp_Dubbing_AP
+	IF OBJECT_ID('tempdb..#Temp_Episode_No') IS NOT NULL DROP TABLE #Temp_Episode_No
+	IF OBJECT_ID('tempdb..#Temp_NA_Title') IS NOT NULL DROP TABLE #Temp_NA_Title
+	IF OBJECT_ID('tempdb..#Temp_Platforms_AP') IS NOT NULL DROP TABLE #Temp_Platforms_AP
+	IF OBJECT_ID('tempdb..#Temp_Subtitling_AP') IS NOT NULL DROP TABLE #Temp_Subtitling_AP
+	IF OBJECT_ID('tempdb..#Temp_Syn_Country_AP') IS NOT NULL DROP TABLE #Temp_Syn_Country_AP
+	IF OBJECT_ID('tempdb..#Temp_Syn_Dubbing_AP') IS NOT NULL DROP TABLE #Temp_Syn_Dubbing_AP
+	IF OBJECT_ID('tempdb..#Temp_Syn_Platform_AP') IS NOT NULL DROP TABLE #Temp_Syn_Platform_AP
+	IF OBJECT_ID('tempdb..#Temp_Syn_Subtitling_AP') IS NOT NULL DROP TABLE #Temp_Syn_Subtitling_AP
+	IF OBJECT_ID('tempdb..#TempCombination_AP') IS NOT NULL DROP TABLE #TempCombination_AP
+	IF OBJECT_ID('tempdb..#TempCombination_Session_AP') IS NOT NULL DROP TABLE #TempCombination_Session_AP
+	IF OBJECT_ID('tempdb..#Title_Not_Acquire') IS NOT NULL DROP TABLE #Title_Not_Acquire
 END
 --Select @Is_Error
 --Select @AcqDealRightsCode
@@ -1279,6 +1326,3 @@ END
 		--Drop Table #Syn_Deal_Rights_AP_Subtitling
 		--Drop Table #Syn_Deal_Rights_AP_Dubbing
 		--Drop Table #Syn_Rights_Code_Lang
-
-
-		

@@ -1,5 +1,5 @@
-
-ALTER PROCEDURE USPExportToExcelBulkImport
+﻿
+CREATE PROCEDURE USPExportToExcelBulkImport
 	@DM_Master_Import_Code INT = 0,
 	@SearchCriteria VARCHAR(MAX) = '',
 	@File_Type VARCHAR(1) = '',
@@ -362,6 +362,19 @@ BEGIN
 		  Exec(@SqlQuery)   
 		SELECT COL02, COL03, COL04, COL05, COL06, COL07, COL08, COL09, COL10, COL11, COL12, COL13, COL14, COL15, COL16, COL17, COL18 FROM #tempBulkImportExport_To_Excel 
 	END
+
+	IF OBJECT_ID('tempdb..#tempBulkImportExport_To_Excel') IS NOT NULL DROP TABLE #tempBulkImportExport_To_Excel
+	IF OBJECT_ID('tempdb..#TempContentErrorMsg') IS NOT NULL DROP TABLE #TempContentErrorMsg
+	IF OBJECT_ID('tempdb..#TempDirector') IS NOT NULL DROP TABLE #TempDirector
+	IF OBJECT_ID('tempdb..#TempErrorMsg') IS NOT NULL DROP TABLE #TempErrorMsg
+	IF OBJECT_ID('tempdb..#TempKeyStarCast') IS NOT NULL DROP TABLE #TempKeyStarCast
+	IF OBJECT_ID('tempdb..#TempLanguage') IS NOT NULL DROP TABLE #TempLanguage
+	IF OBJECT_ID('tempdb..#TempMasterImportCode') IS NOT NULL DROP TABLE #TempMasterImportCode
+	IF OBJECT_ID('tempdb..#TempMusicLabel') IS NOT NULL DROP TABLE #TempMusicLabel
+	IF OBJECT_ID('tempdb..#TempMusicTitle') IS NOT NULL DROP TABLE #TempMusicTitle
+	IF OBJECT_ID('tempdb..#TempSinger') IS NOT NULL DROP TABLE #TempSinger
+	IF OBJECT_ID('tempdb..#TempStarCast') IS NOT NULL DROP TABLE #TempStarCast
+	IF OBJECT_ID('tempdb..#TempTitleErrorMsg') IS NOT NULL DROP TABLE #TempTitleErrorMsg
 END
 
 --Select * from DM_Title where [Title Type] = 'Program'

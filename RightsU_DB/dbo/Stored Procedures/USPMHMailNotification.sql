@@ -205,17 +205,17 @@ BEGIN
 				BEGIN
 					IF(@MHCueSheetCode = 0)
 					BEGIN
-						  SET @Emailbody=@Emailbody + '<tr><th border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold align="center" width="20%" class="tblHead">Request Date</th>
-						  <th border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold align="center" width="40%" class="tblHead">Request Description</th>
-						  <th border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold align="center" width="20%" class="tblHead">Authorised By</th>
-						  <th border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold align="center" width="20%" class="tblHead">Authorised Date</th></tr>'
+						  SET @Emailbody=@Emailbody + '<tr><th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Request Date</th>
+						  <th align="center" width="40%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Request Description</th>
+						  <th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Authorised By</th>
+						  <th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Authorised Date</th></tr>'
 					 END
 					 ELSE
 					 BEGIN
-						  SET @Emailbody=@Emailbody + '<tr><th border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold align="center" width="20%" class="tblHead" style="border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold; padding:5px;">Request Date</th>
-						  <th border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold align="center" width="20%" class="tblHead" style="border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold; padding:5px;">Request Description</th>
-						  <th border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold align="center" width="20%" class="tblHead" style="border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold; padding:5px;">Requested By</th>
-						  <th border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold align="center" width="20%" class="tblHead" style="border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold; padding:5px;">Uploaded On</th></tr>'
+						  SET @Emailbody=@Emailbody + '<tr><th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Request Date</th>
+						  <th align="center" width="40%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Request Description</th>
+						  <th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Requested By</th>
+						  <th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Uploaded On</th></tr>'
 					 END
 				END
 				SET @RowCount  = @RowCount  + 1
@@ -228,10 +228,10 @@ BEGIN
 
 					EXEC sp_executesql @SQL,N'@Count INT OUTPUT',@Count=@returnCount OUTPUT
 
-					SELECT @Emailbody=@Emailbody +'<tr><td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px" rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' >'+ CAST  (ISNULL(@RequestDate, '') as varchar(MAX))+' </td>		
+					SELECT @Emailbody=@Emailbody +'<tr><td align="center" class="tblData" rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' >'+ CAST  (ISNULL(@RequestDate, '') as varchar(MAX))+' </td>		
 								{{DYNAMIC}}
-								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px"  rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' >'+ CAST (ISNULL(@AuthorisedBy,'') AS NVARCHAR(MAX)) +' </td>
-								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px"  rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' >'+ CAST (IsNull(@AuthorisedDate,'') AS NVARCHAR(MAX)) +' </td></tr>'
+								<td align="center" class="tblData" rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ CAST (ISNULL(@AuthorisedBy,'') AS NVARCHAR(MAX)) +' </td>
+								<td align="center" class="tblData" rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ CAST (IsNull(@AuthorisedDate,'') AS NVARCHAR(MAX)) +' </td></tr>'
 
 					DECLARE @i INT = 0
 
@@ -247,42 +247,41 @@ BEGIN
 
 						 IF	(@i = 1)
 						 BEGIN
-							SELECT @Emailbody = REPLACE(@Emailbody, '{{DYNAMIC}}', '<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px" >'+@ColName +' - '+ @ColVal+'</td>');
+							SELECT @Emailbody = REPLACE(@Emailbody, '{{DYNAMIC}}', '<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>'+@ColName +'</b> '+ @ColVal+'</td>');
 						 END
 						 ELSE
 						 BEGIN
-							SELECT @Emailbody=@Emailbody+ '<tr><td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px" >'+@ColName +' - '+ @ColVal+'</td></tr>'
+							SELECT @Emailbody=@Emailbody+ '<tr><td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>'+@ColName +'</b> '+ @ColVal+'</td></tr>'
 						 END
 						 DELETE FROM @temptable	
 					END
 				END
 				ELSE
 				BEGIN
-					SELECT @Emailbody=@Emailbody +'<tr>
-								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px" >'+ CAST  (ISNULL(@ApprovedOn, '') as varchar(MAX))+' </td>		
-								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px" >'+ CAST (ISNULL(@FileName,'') AS NVARCHAR(MAX)) +' </td>
-								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px" >'+ CAST (ISNULL(@SubmitBy,'') AS NVARCHAR(MAX)) +' </td>
-								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:10px; padding:5px" >'+ CAST (IsNull(@SubmitOn,'') AS NVARCHAR(MAX)) +' </td></tr>'
+					SELECT @Emailbody=@Emailbody +'<tr><td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px" >'+ CAST  (ISNULL(@ApprovedOn, '') as varchar(MAX))+' </td>		
+								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ CAST (ISNULL(@FileName,'') AS NVARCHAR(MAX)) +' </td>
+								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ CAST (ISNULL(@SubmitBy,'') AS NVARCHAR(MAX)) +' </td>
+								<td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ CAST (IsNull(@SubmitOn,'') AS NVARCHAR(MAX)) +' </td></tr>'
 				END
 				IF(@Emailbody!='')
 					SET @Emailbody = @Emailbody + '</table>'
 
-				SET @EmailHead= '<html><head>
-				
-				</head><body>
+				SET @EmailHead= '<html><head></head><body>
 				<p>Dear '+@UserName+',</p>
 				<p>The Request No: '+ @RequestID +' is <b>'+ UPPER(@RequestStatusName) +'</b>. </p>
 				<p>Please click <a href="'+@DefaultSiteUrl+'">here</a> to access Music Hub to view the request.</p>
 				<p>The details are as follows: </p>'
 
-
 				SET @EMailFooter ='</br>
-				If you have any questions or need assistance, please feel free to reach us at 
-				<a href=''mailto:rightsusupport@uto.in''>rightsusupport@uto.in</a>
-				<p>Regards,</br>
-				RightsU Support</br>
-				U-TO Solutions</p>
 				</body></html>'
+
+				--SET @EMailFooter ='</br>
+				--If you have any questions or need assistance, please feel free to reach us at 
+				--<a href=''mailto:rightsusupport@uto.in''>rightsusupport@uto.in</a>
+				--<p>Regards,</br>
+				--RightsU Support</br>
+				--U-TO Solutions</p>
+				--</body></html>'
 
 				SET @EmailUser_Body= @EmailHead+@Emailbody+@EMailFooter
 		
@@ -319,6 +318,9 @@ BEGIN
 			
 			SELECT ERROR_MESSAGE() as Result  
 	END CATCH
+	IF OBJECT_ID('tempdb..#MusicTracksRequest') IS NOT NULL DROP TABLE #MusicTracksRequest
+	IF OBJECT_ID('tempdb..#NewMovieRequest') IS NOT NULL DROP TABLE #NewMovieRequest
+	IF OBJECT_ID('tempdb..#UsageRequest') IS NOT NULL DROP TABLE #UsageRequest
 END
 
 --exec USPMHMailNotification 10466,1,0

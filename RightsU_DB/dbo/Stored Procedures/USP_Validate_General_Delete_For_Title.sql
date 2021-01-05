@@ -1,25 +1,19 @@
-﻿--ALTER PROCEDURE [dbo].[USP_Validate_General_Delete_For_Title]
---(
---	@Syn_Deal_Code INT,
---	@Title_Code INT,
---	@Episode_From INT,
---	@Episode_To INT,
---	@CheckFor varchar(1)
---)
---AS
+﻿CREATE PROCEDURE [dbo].[USP_Validate_General_Delete_For_Title]
+(
+	@Syn_Deal_Code INT,
+	@Title_Code INT,
+	@Episode_From INT,
+	@Episode_To INT,
+	@CheckFor varchar(1)
+)
+AS
 -- =============================================
 -- Author:		Rajesh Godse
 -- Create date: <Create Date,,>
 -- Description:	Check before deleting title from deal movie if it is assigned anywhere in deals
 -- =============================================
-
-
 BEGIN
-	DECLARE @Syn_Deal_Code INT = 15108,
-	@Title_Code INT = 27510,
-	@Episode_From INT =1,
-	@Episode_To INT = 2,
-	@CheckFor varchar(1) = 'A'
+	
 	Declare @status CHAR(1) = 'S', @tabNames NVARCHAR(MAX) = NULL
 	IF(@CheckFor = 'S')
 	BEGIN
@@ -220,4 +214,3 @@ BEGIN
 		
 	SELECT  @status AS [Status], ISNULL(@tabNames, '') AS [Message]
 END
-go

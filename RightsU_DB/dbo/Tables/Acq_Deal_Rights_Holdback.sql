@@ -13,8 +13,6 @@
 );
 
 
-
-
 GO
 CREATE NONCLUSTERED INDEX [IX_Acq_Deal_Rights_Holdback_1]
     ON [dbo].[Acq_Deal_Rights_Holdback]([Acq_Deal_Rights_Code] ASC);

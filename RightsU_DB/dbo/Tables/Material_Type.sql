@@ -10,5 +10,3 @@
     CONSTRAINT [PK_Material_Type] PRIMARY KEY CLUSTERED ([Material_Type_Code] ASC)
 );
 
-
-

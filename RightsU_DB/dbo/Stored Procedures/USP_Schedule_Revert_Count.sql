@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Schedule_Revert_Count]      
+﻿CREATE PROCEDURE [dbo].[USP_Schedule_Revert_Count]      
 (
 	 @File_Code BIGINT = 0,      
 	 @Channel_Code VARCHAR(10) = 0,      
@@ -736,7 +736,15 @@ Steps:- Revert the Schedule Count if same DATE file is reloaded.
 	END
 	CLOSE CR_BV_Schedule_Transaction
 	DEALLOCATE CR_BV_Schedule_Transaction
-	------------------------------------ 3.0 END_CURSOR_FOR_UPDATE_SCHEDULE_COUNT------------------------------------              
+	------------------------------------ 3.0 END_CURSOR_FOR_UPDATE_SCHEDULE_COUNT------------------------------------   
+	IF OBJECT_ID('tempdb..#AcqRightsData') IS NOT NULL DROP TABLE #AcqRightsData
+	IF OBJECT_ID('tempdb..#AcqRightsData_Final') IS NOT NULL DROP TABLE #AcqRightsData_Final
+	IF OBJECT_ID('tempdb..#AcqRightsData_Final_Revert') IS NOT NULL DROP TABLE #AcqRightsData_Final_Revert
+	IF OBJECT_ID('tempdb..#AcqRightsData_Revert') IS NOT NULL DROP TABLE #AcqRightsData_Revert
+	IF OBJECT_ID('tempdb..#anchaltemp') IS NOT NULL DROP TABLE #anchaltemp
+	IF OBJECT_ID('tempdb..#BVScheduleTransaction') IS NOT NULL DROP TABLE #BVScheduleTransaction
+	IF OBJECT_ID('tempdb..#BVScheduleTransaction_Revert') IS NOT NULL DROP TABLE #BVScheduleTransaction_Revert
+	IF OBJECT_ID('tempdb..#DealRightsData') IS NOT NULL DROP TABLE #DealRightsData
 END      
       
 /*      

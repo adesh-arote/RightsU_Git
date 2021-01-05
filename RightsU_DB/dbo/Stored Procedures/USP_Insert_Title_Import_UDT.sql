@@ -1,4 +1,5 @@
-﻿--DROP PROCEDURE [dbo].[USP_Insert_Title_Import_UDT]
+﻿
+--DROP PROCEDURE [dbo].[USP_Insert_Title_Import_UDT]
 --Drop TYPE [dbo].[Title_Import]
 --CREATE TYPE [dbo].[Title_Import] AS TABLE (
 --    [Title_Name]      VARCHAR (5000) NULL,
@@ -16,7 +17,7 @@
 --	select * from DM_Title
 
 
-Create PROCEDURE [dbo].[USP_Insert_Title_Import_UDT]
+CREATE PROCEDURE [dbo].[USP_Insert_Title_Import_UDT]
 (
 	@Title_Import Title_Import READONLY,
 	@User_Code INT
@@ -259,8 +260,11 @@ BEGIN
 		END
 
 		END		
-		
-		END
+
+	IF OBJECT_ID('tempdb..#Temp_Director') IS NOT NULL DROP TABLE #Temp_Director
+	IF OBJECT_ID('tempdb..#Temp_Music_Label') IS NOT NULL DROP TABLE #Temp_Music_Label
+	IF OBJECT_ID('tempdb..#Temp_S') IS NOT NULL DROP TABLE #Temp_S		
+END
 
 
 --		select Parameter_Value  from System_Parameter_new where Parameter_Name='Title_CountryOfOrigin'

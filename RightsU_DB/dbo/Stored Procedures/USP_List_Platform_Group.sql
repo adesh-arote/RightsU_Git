@@ -53,7 +53,9 @@ BEGIN
 	--PRINT @Sql
 	EXEC(@Sql)
 
-	DROP TABLE #Temp
+	--DROP TABLE #Temp
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END
 
 /*
@@ -63,5 +65,3 @@ Exec USP_List_Platform_Group ' AND Platform_Group_NAme like ''Linear and Home Vi
 Select @RCount
 
 */
-
-

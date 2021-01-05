@@ -36,12 +36,13 @@ BEGIN
 	)
 	
 	;MERGE BMS_WBS BW
-	USING #Temp_BMS_WBS TBW On LTRIM(RTRIM(TBW.WBS_Code)) = LTRIM(RTRIM(BW.WBS_Code)) AND BW.IS_Process= 'P' 
+	USING #Temp_BMS_WBS TBW On LTRIM(RTRIM(TBW.WBS_Code)) = LTRIM(RTRIM(BW.WBS_Code)) --AND BW.IS_Process= 'P' 
 	WHEN MATCHED
 		THEN UPDATE SET BW.WBS_Description = TBW.WBS_Description,
 					--	BW.Studio_Vendor = TBW.Studio_Vendor,						
 						BW.[Status] = TBW.[Status],
-						BW.Short_ID = TBW.Short_ID
+						BW.Short_ID = TBW.Short_ID,
+						BW.IS_Process = 'P'
 						--,BW.Sport_Type = TBW.Sport_Type
 	WHEN NOT MATCHED BY TARGET
 		THEN  INSERT  ([SAP_WBS_Code], [WBS_Code], [WBS_Description], [Short_ID], [Is_Archive], [Status], [Error_Details], [Is_Process], [File_Code], [BMS_Key])
@@ -68,4 +69,6 @@ BEGIN
 		SET @WBS_CODES = SUBSTRING(@WBS_CODES, LEN(@WBS_CODES), 1)
 		EXEC USP_Send_Mail_WBS_Linked_Titles @WBS_CODES
 	END
+
+	IF OBJECT_ID('tempdb..#Temp_BMS_WBS') IS NOT NULL DROP TABLE #Temp_BMS_WBS
 END

@@ -274,5 +274,11 @@ U-TO Solutions</body></html>'
 		DEALLOCATE curOuter	
 	END
 	----------------------------------------------------------------------------------
+	
+	IF OBJECT_ID('tempdb..#Html_Table') IS NOT NULL DROP TABLE #Html_Table
+	IF OBJECT_ID('tempdb..#Result') IS NOT NULL DROP TABLE #Result
+	IF OBJECT_ID('tempdb..#Result1') IS NOT NULL DROP TABLE #Result1
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp_Channel') IS NOT NULL DROP TABLE #Temp_Channel
 
 END

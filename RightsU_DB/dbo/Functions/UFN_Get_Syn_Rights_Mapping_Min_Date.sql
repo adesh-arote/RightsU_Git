@@ -27,9 +27,3 @@ BEGIN
 	RETURN @MinStartDate
 
 END
-
-
-
-
-
-

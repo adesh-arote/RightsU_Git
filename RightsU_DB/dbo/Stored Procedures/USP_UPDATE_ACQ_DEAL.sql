@@ -1,11 +1,13 @@
-﻿CREATE PROCEDURE [dbo].[USP_UPDATE_ACQ_DEAL]
+﻿
+
+CREATE PROCEDURE [dbo].[USP_UPDATE_ACQ_DEAL]
 (
  @Acq_Deal_Code INT
 ,@Version varchar(50)
 ,@Agreement_Date datetime
 ,@Deal_Desc NVARCHAR(1000)
 ,@Deal_Type_Code int
-,@Year_Type char(2)
+,@Year_Type char(2) 
 ,@Entity_Code int
 ,@Is_Master_Deal char(1)
 ,@Category_Code int
@@ -47,6 +49,8 @@
 ,@Role_Code Int
 ,@Channel_Cluster_Code Int
 ,@Is_Auto_Push CHAR(1)
+,@Deal_Segment_Code INT
+,@Revenue_Vertical_Code INT
 )
 AS
 -- =============================================
@@ -103,6 +107,8 @@ UPDATE [Acq_Deal]
 	  ,[Role_Code] = @Role_Code
 	  ,[Channel_Cluster_Code] = @Channel_Cluster_Code
 	  ,[Is_Auto_Push] = @Is_Auto_Push
+	  ,[Deal_Segment_Code] = @Deal_Segment_Code
+	  ,[Revenue_Vertical_Code] = @Revenue_Vertical_Code
  WHERE Acq_Deal_Code = @Acq_Deal_Code
 
 END

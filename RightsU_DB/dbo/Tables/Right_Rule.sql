@@ -21,7 +21,3 @@
     CONSTRAINT [PK_Right_Rule] PRIMARY KEY CLUSTERED ([Right_Rule_Code] ASC)
 );
 
-
-
-
-

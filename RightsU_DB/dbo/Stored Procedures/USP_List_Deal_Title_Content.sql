@@ -76,4 +76,6 @@ BEGIN
 	SELECT Acq_Deal_Code, Acq_Deal_Movie_Code, Title_Code, Title_Name, Title_Content_Code, 
 		Episode_No, Ref_BMS_Content_Code,  Duration, IsTerminate, Movie_Closed_Date 
 	FROM #TempTitleContent
+
+	IF OBJECT_ID('tempdb..#TempTitleContent') IS NOT NULL DROP TABLE #TempTitleContent
 END

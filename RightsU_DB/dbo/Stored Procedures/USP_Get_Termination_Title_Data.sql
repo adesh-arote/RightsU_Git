@@ -214,6 +214,10 @@ BEGIN
 		Syndication_Episode_No,Syndication_End_Date,Schedule_Episode_No,Schedule_End_Date,Termination_Eps_No,Termination_Date
 	FROM 
 		#Title_Data
+
+	IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
+	IF OBJECT_ID('tempdb..#temp_termination_Entry') IS NOT NULL DROP TABLE #temp_termination_Entry
+	IF OBJECT_ID('tempdb..#Title_Data') IS NOT NULL DROP TABLE #Title_Data
 END
 
 /*
@@ -224,4 +228,3 @@ GROUP BY AD.Acq_Deal_Code, AD.Agreement_No, AD.Deal_Type_Code, ADM.Title_Code
 HAVING COUNT(ADM.Title_Code) >= 2
 ORDER BY AD.Acq_Deal_Code, AD.Deal_Type_Code, ADM.Title_Code
 */
-

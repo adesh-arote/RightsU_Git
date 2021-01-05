@@ -46,8 +46,6 @@
 );
 
 
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'C = Channel, G = Category', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AT_Music_Deal', @level2type = N'COLUMN', @level2name = N'Channel_Or_Category';
 

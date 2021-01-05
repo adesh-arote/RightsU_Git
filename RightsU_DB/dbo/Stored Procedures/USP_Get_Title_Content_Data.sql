@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE USP_Get_Title_Content_Data
+﻿CREATE pROCEDURE USP_Get_Title_Content_Data
 (
 	@Data_For varchar(max)
 )
@@ -16,6 +16,7 @@ CREATE TABLE #PreReqData
 		select MIN(Title_Content_Code),Episode_Title From Title_Content
 		group by Episode_Title
 	END
-		select * from #PreReqData
-END
+	select * from #PreReqData
 
+	IF OBJECT_ID('tempdb..#PreReqData') IS NOT NULL DROP TABLE #PreReqData
+END

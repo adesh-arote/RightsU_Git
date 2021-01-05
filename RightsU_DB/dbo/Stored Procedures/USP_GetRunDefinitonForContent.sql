@@ -1,7 +1,7 @@
 ﻿--exec USP_GetRunDefinitonForContent 17065,'',0,'','','','C'
 
                         
-ALTER PROCEDURE USP_GetRunDefinitonForContent                
+CREATE PROCEDURE USP_GetRunDefinitonForContent                
 (                
 @Title_Content_Code INT,                
 @Type CHAR(1),        
@@ -15,13 +15,13 @@ AS
 BEGIN    
 
 --declare
---@Title_Content_Code INT = 22432,          
---@Type CHAR(1) = 'N',        
+--@Title_Content_Code INT = 22433,          
+--@Type CHAR(1) = '',        
 --@Channel_Code INT = 0,        
 --@Start_Date VARCHAR(10)='',        
 --@End_Date VARCHAR(10)='',        
 --@Deal_Type CHAR(1)='',        
---@Is_active CHAR(1)='Y'        
+--@Is_active CHAR(1)='C'        
 
 IF(@Is_Active = 'Y' AND @Deal_Type != '')        
 BEGIN               
@@ -95,19 +95,47 @@ BEGIN
   ORDER BY CCR.Rights_Start_Date ASC,C.Channel_Name Asc        
 END        
 ELSE IF(@Is_active = 'C')        
-BEGIN        
-  SELECT DISTINCT CCR.Channel_Code, IIF(Acq_Deal_Code IS NULL,DBO.UFN_GetAGreement_No(Provisional_Deal_Code,'P'),DBO.UFN_GetAGreement_No(Acq_Deal_Code,'A')) AS Agreement_No,IIF(Acq_Deal_Code IS NULL,'Provisional','Acquisition') AS Deal_Type,Replace(CONVERT(VARCHAR,Rights_Start_Date, 106),' ','-')  AS Rights_Start_Date,Replace(CONVERT(VARCHAR,Rights_End_Date, 106),' ','-')  AS Rights_End_Date, C.Channel_Name,RU.Right_Rule_Name,CCR.Defined_Runs,CCR.Schedule_Runs                
-   ,IIF(Defined_Runs IS NULL,'',Defined_Runs-Schedule_Runs) AS Balanced_Runs  FROM Content_channel_Run CCR                 
-   LEFT JOIN Right_Rule RU ON RU.Right_Rule_Code = CCR.Right_Rule_Code                
-   INNER JOIN Channel C ON C.Channel_Code = CCR.Channel_Code WHERE Title_Content_Code = @Title_Content_Code      
+BEGIN     
+
+  SELECT DISTINCT 
+	C.Channel_Code, 
+	IIF(Acq_Deal_Code IS NULL,DBO.UFN_GetAGreement_No(Provisional_Deal_Code,'P'),
+	DBO.UFN_GetAGreement_No(Acq_Deal_Code,'A')) AS Agreement_No,
+	IIF(Acq_Deal_Code IS NULL,'Provisional','Acquisition') AS Deal_Type,
+	Replace(CONVERT(VARCHAR,Rights_Start_Date, 106),' ','-')  AS Rights_Start_Date,
+	Replace(CONVERT(VARCHAR,Rights_End_Date, 106),' ','-')  AS Rights_End_Date, 
+	C.Channel_Name,
+	RU.Right_Rule_Name,
+	CCR.Defined_Runs,CCR.Schedule_Runs                
+   ,IIF(Defined_Runs IS NULL,'',Defined_Runs-Schedule_Runs) AS Balanced_Runs 
+   INTO #TEMPContent_channel_Run 
+   FROM Content_channel_Run CCR                 
+	 LEFT JOIN Right_Rule RU ON RU.Right_Rule_Code = CCR.Right_Rule_Code                
+	 LEFT JOIN Channel C ON C.Channel_Code = CCR.Channel_Code AND CCR.Run_Def_Type = 'C'
+   WHERE Title_Content_Code = @Title_Content_Code      
    AND CCR.IS_Archive = 'N'    
    AND CONVERT(date,GETDATE(),103) BETWEEN CONVERT(date,CCR.Rights_Start_Date,103) AND CONVERT(date,CCR.Rights_End_Date,103)
-  ORDER BY CCR.Channel_Code       
+  --ORDER BY CCR.Channel_Code    
+  
+
+   UPDATE TC  set TC.Channel_Name =	STUFF(
+			(Select Distinct ', ' + CAST(C.Channel_Name as NVARCHAR) From Channel C
+			INNER JOIN Content_Channel_Run CCR ON CCR.Channel_Code = C.Channel_Code
+			 WHERE CCR.Title_Content_Code = @Title_Content_Code AND CCR.Run_Def_Type <> 'C' and CCR.Defined_Runs = TC.Defined_Runs 
+				--Where ADRC.Acq_Deal_Run_Code = ADR.Acq_Deal_Run_Code
+			FOR XML PATH('')), 1, 1, '') FROM #TEMPContent_channel_Run TC WHERE   TC.Channel_Name IS NULL 
+			
+	SELECT * FROM #TEMPContent_channel_Run
+	DROP TABLE #TEMPContent_channel_Run
+
 END        
 ELSE        
 BEGIN        
  SELECT distinct CCR.Channel_Code, '' AS Agreement_No,'' AS Deal_Type,''  AS Rights_Start_Date,''  AS Rights_End_Date, C.Channel_Name,'' as Right_Rule_Name,CCR.Defined_Runs,CCR.Schedule_Runs                
    ,0 AS Balanced_Runs  FROM Content_channel_Run CCR             
    INNER JOIN Channel C ON C.Channel_Code = CCR.Channel_Code WHERE Title_Content_Code = @Title_Content_Code AND CCR.Is_Archive = 'N'        
-END        
+END
+
+	IF OBJECT_ID('tempdb..#Temp_Content_channel_Run') IS NOT NULL DROP TABLE #Temp_Content_channel_Run
+	IF OBJECT_ID('tempdb..#TEMPContent_channel_Run') IS NOT NULL DROP TABLE #TEMPContent_channel_Run
 END

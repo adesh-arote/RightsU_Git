@@ -106,4 +106,3 @@ END
 3263	2973	3
 select [dbo].[UFN_IS_Delete_Right] (3,3263,2973,1,1)
 */
-

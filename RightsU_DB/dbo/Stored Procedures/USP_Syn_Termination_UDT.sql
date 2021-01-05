@@ -632,5 +632,9 @@ BEGIN
 	EXEC USP_Assign_Workflow @lastDealCode, 35, @Login_User_Code
 
 	SELECT Deal_Code, Title_Code, Episode_No, Termination_Date, Is_Error, Error_Details FROM #Termination_Deals_Status
-END
 
+	IF OBJECT_ID('tempdb..#RunDef') IS NOT NULL DROP TABLE #RunDef
+	IF OBJECT_ID('tempdb..#RunDef_Delete') IS NOT NULL DROP TABLE #RunDef_Delete
+	IF OBJECT_ID('tempdb..#TEMP_Run_Def') IS NOT NULL DROP TABLE #TEMP_Run_Def
+	IF OBJECT_ID('tempdb..#Termination_Deals_Status') IS NOT NULL DROP TABLE #Termination_Deals_Status
+END

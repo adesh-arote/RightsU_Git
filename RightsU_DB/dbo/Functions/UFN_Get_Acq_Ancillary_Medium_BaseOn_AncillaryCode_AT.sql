@@ -16,4 +16,4 @@ BEGIN
 	FOR XML PATH(''))                   
 	, 1, 1, '')                    
 	RETURN @MediumName                       
-END 
+END

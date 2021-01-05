@@ -38,5 +38,6 @@ BEGIN
  FROM #TempTerritory TT      
     
   SELECT * FROM #TempTerritory ORDER BY Last_Updated_Time DESC  
+
+  IF OBJECT_ID('tempdb..#TempTerritory') IS NOT NULL DROP TABLE #TempTerritory
   END
-  

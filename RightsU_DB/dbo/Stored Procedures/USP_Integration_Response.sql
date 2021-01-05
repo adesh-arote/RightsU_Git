@@ -108,7 +108,9 @@ BEGIN
  --SELECT 'Success' AS Result,@Is_Error as Is_Error,@Error_Details AS Error_Details       
        
  SET  @xmlData ='<Response><Result>'+@Result+'</Result><Is_Error>'+@Is_Error+'</Is_Error><Error_Details>'+@Error_Details+'</Error_Details></Response>'       
- SELECT @xmlData AS  ResultXML,@Is_Error as Is_Error,@Error_Details AS Error_Details      
+ SELECT @xmlData AS  ResultXML,@Is_Error as Is_Error,@Error_Details AS Error_Details 
+ 
+	IF OBJECT_ID('tempdb..#Temp_Updated_Keys') IS NOT NULL DROP TABLE #Temp_Updated_Keys
       
 END      
    
@@ -140,6 +142,4 @@ EXEC [dbo].[USP_Integration_Response] '<?xml version="1.0" ?><Roles><Role><Role_
 <Foreign_Code>2</Foreign_Code><Role_Name>Star Cast</Role_Name><Is_Active>Y</Is_Active></Role></Roles>'    
 ,'N','',2    
 */    
-*/  
-  
-  
+*/

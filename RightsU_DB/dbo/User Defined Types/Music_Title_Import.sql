@@ -1,4 +1,4 @@
-﻿	CREATE TYPE [dbo].[Music_Title_Import] AS TABLE (
+﻿CREATE TYPE [dbo].[Music_Title_Import] AS TABLE (
     [Music_Title_Name]      NVARCHAR (1000) NULL,
     [Duration]              NVARCHAR (100)  NULL,
     [Movie_Album]           NVARCHAR (1000) NULL,
@@ -18,5 +18,6 @@
     [Movie_Star_Cast]       NVARCHAR (1000) NULL,
     [Music_Album_Type]      NVARCHAR (100)  NULL,
     [DM_Master_Import_Code] NVARCHAR (100)  NULL,
-    [Excel_Line_No]         VARCHAR (50)    NULL);
+    [Excel_Line_No]         VARCHAR (50)    NULL,
+    [Public_Domain]         VARCHAR (10)    NULL);
 

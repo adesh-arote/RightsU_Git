@@ -1,6 +1,4 @@
-﻿
-
-CREATE PROCEDURE [dbo].[USP_Report_PlatformWise_Acquisition_Neo_Avail_Indiacast]
+﻿CREATE PROCEDURE [dbo].[USP_Report_PlatformWise_Acquisition_Neo_Avail_Indiacast]
 (
 	@Title_Code VARCHAR(MAX) = '0', 
 	@Platform_Code VARCHAR(MAX) = '0', 
@@ -84,8 +82,7 @@ BEGIN
 	)
 
 	INSERT INTO #Temp_Country_Neo
-	SELECT DISTINCT number FROM fn_Split_withdelemiter(@Country_Code , ',') WHERE number NOT LIKE 'T%' AND number NOT IN('0') 
-
+	SELECT DISTINCT number FROM fn_Split_withdelemiter(@Country_Code , ',') WHERE number NOT LIKE 'T%' AND number NOT IN('0')
 	
 	IF(@Is_IFTA_Cluster = 'N')
 	BEGIn
@@ -141,7 +138,7 @@ BEGIN
 	IF NOT EXISTS(SELECT * FROM #Temp_Country_Neo)
 	BEGIN
 		INSERT INTO #Temp_Country_Neo
-		SELECT c.Country_Code FROM Country c WHERE ISNULL(c.Is_Active, 'N') = 'Y' and c.Country_Code <> 42
+		SELECT c.Country_Code FROM Country c WHERE ISNULL(c.Is_Active, 'N') = 'Y' and c.Country_Code <> 3
 	END
 	
 	IF NOT EXISTS(SELECT * FROM #Temp_Language_Neo WHERE Language_Type = 'S')
@@ -201,13 +198,13 @@ BEGIN
 		Sub_License_Code INT,
 		Episode_From INT,
 		Episode_To INT,
-		Deal_Type_Name VARCHAR(100)
+		Is_Title_Language_Right CHAR(1)
 
 	)
 
 	
 	INSERT INTO #Temp_Right_Neo(Acq_Deal_Code, Acq_Deal_Rights_Code, Restriction_Remarks, Platform_Code, Title_Code,
-		   Is_Master_Deal, Remarks, Rights_Remarks, Sub_Deal_Restriction_Remark, Rights_Start_Date, Rights_End_Date, Is_Exclusive, Sub_License_Code, Episode_From, Episode_To,Deal_Type_Name)
+		   Is_Master_Deal, Remarks, Rights_Remarks, Sub_Deal_Restriction_Remark, Rights_Start_Date, Rights_End_Date, Is_Exclusive, Sub_License_Code, Episode_From, Episode_To, Is_Title_Language_Right)
 	SELECT ar.Acq_Deal_Code, ar.Acq_Deal_Rights_Code, ar.Restriction_Remarks, adrp.Platform_Code, ADRT.Title_Code,
 		   ad.Is_Master_Deal, ad.Remarks, ad.Rights_Remarks, 
 		   (STUFF((
@@ -219,12 +216,11 @@ BEGIN
 			FOR XML PATH(''),type).value('.', 'nvarchar(max)'),1,1,'')) 
 			, ar.Actual_Right_Start_Date, ar.Actual_Right_End_Date
 			,ar.Is_Exclusive, ISNULL(ar.Sub_License_Code, 0)
-			, adrt.Episode_From, adrt.Episode_To,DT.Deal_Type_Name
+			, adrt.Episode_From, adrt.Episode_To, ar.Is_Title_Language_Right
 	FROM Acq_Deal_Rights AS ar
 	INNER JOIN Acq_Deal_Rights_Platform AS adrp ON adrp.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 	INNER JOIN Acq_Deal_Rights_Title AS adrt ON adrt.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 	INNER JOIN Acq_Deal ad ON ar.Acq_Deal_Code = ad.Acq_Deal_Code
-	INNER JOIN Deal_Type DT ON DT.Deal_Type_Code = ad.Deal_Type_Code
 	WHERE 
 	ad.Is_Master_Deal = 'Y'
 	AND ar.Is_Tentative = 'N'
@@ -260,7 +256,7 @@ BEGIN
 		Sub_License_Code INT,
 		Episode_From INT,
 		Episode_To INT,
-		Deal_Type_Name VARCHAR(100)
+		Is_Title_Language_Right CHAR(1)
 	)
 		
 	------------------ END
@@ -270,11 +266,11 @@ BEGIN
 	BEGIN
 		
 		INSERT INTO #Avail_Acq_Neo(Acq_Deal_Rights_Code ,Title_Code ,Platform_Code ,Country_Code ,Rights_Start_Date ,Rights_End_Date ,Is_Exclusive ,
-		Sub_License_Code, Episode_From, Episode_To,Deal_Type_Name)
+		Sub_License_Code, Episode_From, Episode_To, Is_Title_Language_Right)
 		SELECT DISTINCT tr.Acq_Deal_Rights_Code , tr.Title_Code, tr.Platform_Code, 
 					   CASE WHEN adrter.Territory_Type = 'G' THEN td.Country_Code ELSE adrter.Country_Code END, 
 					   tr.Rights_Start_Date, tr.Rights_End_Date, tr.Is_Exclusive, ISNULL(tr.Sub_License_Code, 0)
-					   , Episode_From, Episode_To,Deal_Type_Name
+					   , Episode_From, Episode_To, tr.Is_Title_Language_Right
 		FROM 
 		#Temp_Right_Neo tr 
 		INNER JOIN Acq_Deal_Rights_Territory adrter on adrter.Acq_Deal_Rights_Code = tr.Acq_Deal_Rights_Code
@@ -290,10 +286,10 @@ BEGIN
 	BEGIN
 
 		INSERT INTO #Avail_Acq_Neo(Acq_Deal_Rights_Code ,Title_Code ,Platform_Code ,Country_Code ,Rights_Start_Date ,Rights_End_Date ,Is_Exclusive ,
-		Sub_License_Code, Episode_From, Episode_To,Deal_Type_Name)
+		Sub_License_Code, Episode_From, Episode_To, Is_Title_Language_Right)
 		SELECT DISTINCT tr.Acq_Deal_Rights_Code , tr.Title_Code, tr.Platform_Code, 
 			   CASE WHEN adrter.Territory_Type = 'G' THEN td.Country_Code ELSE adrter.Country_Code END, 
-			   tr.Rights_Start_Date, tr.Rights_End_Date, tr.Is_Exclusive, ISNULL(tr.Sub_License_Code, 0), Episode_From, Episode_To,Deal_Type_Name
+			   tr.Rights_Start_Date, tr.Rights_End_Date, tr.Is_Exclusive, ISNULL(tr.Sub_License_Code, 0), Episode_From, Episode_To, tr.Is_Title_Language_Right
 		FROM 
 		#Temp_Right_Neo tr 
 		INNER JOIN Acq_Deal_Rights_Territory adrter on adrter.Acq_Deal_Rights_Code = tr.Acq_Deal_Rights_Code
@@ -364,6 +360,7 @@ BEGIN
 		FROM #Avail_Acq_Neo AA
 		INNER JOIN Title tit ON AA.Title_Code = tit.Title_Code
 		INNER JOIN #Temp_Title_Language_Neo TTL ON TTL.number = tit.Title_Language_Code
+		WHERE AA.Is_Title_Language_Right = 'Y'
 		
 	END
 
@@ -602,7 +599,7 @@ BEGIN
 
 	SELECT AA.Acq_Deal_Rights_Code, AA.Title_Code, AA.Platform_Code, AA.Country_Code, TD.Right_Start_Date, TD.Rights_End_Date, TD.Is_Exclusive, TD.Sub_License_Code
 	,AA.Episode_From, AA.Episode_To, CAST('' AS VARCHAR(2000)) AS Country_Cd_Str ,
-	CAST('' AS CHAR(1)) AS Region_Type , CAST('' AS VARCHAR(2000)) AS Country_Names,AA.Deal_Type_Name 
+	CAST('' AS CHAR(1)) AS Region_Type , CAST('' AS VARCHAR(2000)) AS Country_Names 
 	INTO #TMP_MAIN
 	FROM #Temp_Dates TD
 	INNER JOIN #Avail_Acq_Neo AA ON AA.Acq_Deal_Rights_Code = TD.Acq_Deal_Rights_Code
@@ -646,7 +643,8 @@ BEGIN
 	
 	INSERT INTO #Temp_Country_Names_Neo(Country_Codes, Country_Names)
 	SELECT DISTINCT Country_Cd_Str, NULL FROM #TMP_MAIN
-
+	
+	
 	--SELECT * FROM #Temp_Country_Names_Neo
 	PRINT 'PA-STEP-9.1- Country Exact Match ' + convert(varchar(30),getdate() ,109)
 	-----------------IF Country = Exact Match
@@ -726,7 +724,7 @@ BEGIN
 	---------- PARTIATIOn BY QUERY FOR DELETING DUPLICATE RECORDS
 
 	SELECT Acq_Deal_Rights_Code, Title_Code, Right_Start_Date, Rights_End_Date, Is_Exclusive, Sub_License_Code, 
-						   Platform_Code, Country_Cd_Str, Country_Names, Region_Type , Episode_From, Episode_To,Deal_Type_Name
+						   Platform_Code, Country_Cd_Str, Country_Names, Region_Type , Episode_From, Episode_To
 	INTO #Temp_Main_Ctr_Neo
 	FROM (
 		SELECT ROW_NUMBER() OVER(
@@ -905,7 +903,7 @@ BEGIN
 
 	print 'PA-STEP-13 .1.1'
 	SELECT DISTINCT 
-			trt.Title_Name,tm.Deal_Type_Name, pt.Platform_Hiearachy AS Platform_Name, tm.Country_Names AS Country_Name, 
+			trt.Title_Name, pt.Platform_Hiearachy AS Platform_Name, tm.Country_Names AS Country_Name, 
 			CAST(tm.Right_Start_Date AS DATETIME) Rights_Start_Date, 
 			CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME) Rights_End_Date,
 			Title_Language_Names, Sub_Language_Names, Dub_Language_Names, trt.Genres_Name, trt.Star_Cast, trt.Director, trt.Duration_In_Min, trt.Year_Of_Production, 
@@ -921,6 +919,7 @@ BEGIN
 			INNER JOIN #Temp_Titles_Neo trt ON trt.Title_Code = tm.Title_Code
 			INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code
 			LEFT JOIN Sub_License sl ON tm.Sub_License_Code = sl.Sub_License_Code
+
 		DROP TABLE #Temp_Right_Remarks
 	END
 	ELSE
@@ -928,7 +927,7 @@ BEGIN
 	
 	print 'PA-STEP-13 .1.2'
 		SELECT DISTINCT 
-			trt.Title_Name,tm.Deal_Type_Name, pt.Platform_Hiearachy AS Platform_Name, tm.Country_Names AS Country_Name, 
+			trt.Title_Name, pt.Platform_Hiearachy AS Platform_Name, tm.Country_Names AS Country_Name, 
 			CAST(tm.Right_Start_Date AS DATETIME) Rights_Start_Date, 
 			CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME) Rights_End_Date,
 			Title_Language_Names , Sub_Language_Names, Dub_Language_Names, trt.Genres_Name, trt.Star_Cast, trt.Director, trt.Duration_In_Min, trt.Year_Of_Production, 
@@ -958,4 +957,32 @@ BEGIN
 	DROP TABLE #Avail_Acq_Neo
 	DROP TABLE #Avail_TitLang_Neo
 END
+
+
+	IF OBJECT_ID('tempdb..#Avail_Acq_Neo') IS NOT NULL DROP TABLE #Avail_Acq_Neo
+	IF OBJECT_ID('tempdb..#Avail_Dubb_Neo') IS NOT NULL DROP TABLE #Avail_Dubb_Neo
+	IF OBJECT_ID('tempdb..#Avail_Dubb_V1_Neo') IS NOT NULL DROP TABLE #Avail_Dubb_V1_Neo
+	IF OBJECT_ID('tempdb..#Avail_Sub_Neo') IS NOT NULL DROP TABLE #Avail_Sub_Neo
+	IF OBJECT_ID('tempdb..#Avail_Sub_V1_Neo') IS NOT NULL DROP TABLE #Avail_Sub_V1_Neo
+	IF OBJECT_ID('tempdb..#Avail_Sub_V1_Neo') IS NOT NULL DROP TABLE #Avail_Sub_V1_Neo
+	IF OBJECT_ID('tempdb..#Avail_TitLang_Neo') IS NOT NULL DROP TABLE #Avail_TitLang_Neo
+	IF OBJECT_ID('tempdb..#Avail_TitLang_V1') IS NOT NULL DROP TABLE #Avail_TitLang_V1
+	IF OBJECT_ID('tempdb..#Temp_Country_Names_Neo') IS NOT NULL DROP TABLE #Temp_Country_Names_Neo
+	IF OBJECT_ID('tempdb..#Temp_Country_Neo') IS NOT NULL DROP TABLE #Temp_Country_Neo
+	IF OBJECT_ID('tempdb..#Temp_Dates') IS NOT NULL DROP TABLE #Temp_Dates
+	IF OBJECT_ID('tempdb..#Temp_Dubs') IS NOT NULL DROP TABLE #Temp_Dubs
+	IF OBJECT_ID('tempdb..#Temp_Language_Names_Neo') IS NOT NULL DROP TABLE #Temp_Language_Names_Neo
+	IF OBJECT_ID('tempdb..#Temp_Language_Neo') IS NOT NULL DROP TABLE #Temp_Language_Neo
+	IF OBJECT_ID('tempdb..#Temp_Main') IS NOT NULL DROP TABLE #Temp_Main
+	IF OBJECT_ID('tempdb..#Temp_Main_Ctr_Neo') IS NOT NULL DROP TABLE #Temp_Main_Ctr_Neo
+	IF OBJECT_ID('tempdb..#Temp_Platform_Neo') IS NOT NULL DROP TABLE #Temp_Platform_Neo
+	IF OBJECT_ID('tempdb..#Temp_Plt_Names') IS NOT NULL DROP TABLE #Temp_Plt_Names
+	IF OBJECT_ID('tempdb..#Temp_Right_Neo') IS NOT NULL DROP TABLE #Temp_Right_Neo
+	IF OBJECT_ID('tempdb..#Temp_Right_Remarks') IS NOT NULL DROP TABLE #Temp_Right_Remarks
+	IF OBJECT_ID('tempdb..#Temp_Subs') IS NOT NULL DROP TABLE #Temp_Subs
+	IF OBJECT_ID('tempdb..#Temp_Title_Language_Neo') IS NOT NULL DROP TABLE #Temp_Title_Language_Neo
+	IF OBJECT_ID('tempdb..#Temp_Title_Neo') IS NOT NULL DROP TABLE #Temp_Title_Neo
+	IF OBJECT_ID('tempdb..#Temp_Titles_Neo') IS NOT NULL DROP TABLE #Temp_Titles_Neo
+	IF OBJECT_ID('tempdb..#TMP_MAIN') IS NOT NULL DROP TABLE #TMP_MAIN
+	IF OBJECT_ID('tempdb..#Tmp_SL_Neo') IS NOT NULL DROP TABLE #Tmp_SL_Neo
 END

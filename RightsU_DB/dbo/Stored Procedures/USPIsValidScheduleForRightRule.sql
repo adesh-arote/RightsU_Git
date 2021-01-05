@@ -1,18 +1,17 @@
-﻿--CREATE PROCEDURE [dbo].[USPIsValidScheduleForRightRule]
---(
-DECLARE
-	@BV_Schedule_Transaction_Code INT = 691731,
-	--@VW_DMR_Run_Code_Cr INT,
+﻿CREATE PROCEDURE [dbo].[USPIsValidScheduleForRightRule]
+(
+	@BV_Schedule_Transaction_Code INT,
+	@VW_DMR_Run_Code_Cr INT,
 	@Schedule_Item_Log_Date VARCHAR(500),
 	@Schedule_Item_Log_Time VARCHAR(500),
 	@Title_Code INT,
-	--@ACQ_DEAL_Movie_Code INT,
+	@ACQ_DEAL_Movie_Code INT,
 	@Channel_Code INT,
 	@EpisodeNumber INT,
 	@VW_CCRCode_Cr INT,
 	@Result CHAR(1) OUTPUT
---)
---AS
+)
+AS
 BEGIN
 
 	DECLARE @Is_RULE_Right VARCHAR(100), @Right_Rule_Code INT, @Repeat_Within_Days_Hrs VARCHAR(100), @No_of_days_hrs VARCHAR(100), @IS_First_AIR VARCHAR(10)
@@ -46,8 +45,10 @@ BEGIN
 				
 		IF( @IS_FIRST_AIR = 'Y')
 		BEGIN
-			SELECT @SCHEDULE_ITEM_LOG_DATE_Inner = MAX(SCHEDULE_ITEM_LOG_DATE),
-				@Schedule_Item_Log_Time_Inner = MAX(Schedule_Item_Log_Time) 
+			SELECT 
+			--@SCHEDULE_ITEM_LOG_DATE_Inner = MAX(SCHEDULE_ITEM_LOG_DATE),
+				--@Schedule_Item_Log_Time_Inner = MAX(Schedule_Item_Log_Time) 
+				@Min_dt_time = MAX(CAST(CAST(SCHEDULE_ITEM_LOG_DATE AS DATETIME) + CAST(Schedule_Item_Log_Time AS DATETIME) AS DATETIME))
 			FROM BV_SCHEDULE_TRANSACTION WHERE 1=1
 			AND Content_Channel_Run_Code = @VW_CCRCode_Cr 
 			--AND DEAL_MOVIE_CODE IN (@ACQ_DEAL_MOVIE_CODE)
@@ -58,7 +59,10 @@ BEGIN
 			AND ISNULL(IsIgnore,'N') = 'N'
 					
 			SET @Schedule_DAY = DATENAME(dw, @Schedule_Item_Log_Date)
-			SET @Min_dt_time = CAST(@SCHEDULE_ITEM_LOG_DATE_Inner AS DATETIME) + CAST(@Schedule_Item_Log_Time_Inner AS DATETIME)
+			IF(@Min_dt_time IS NULL)
+			BEGIN
+				SET @Min_dt_time = CAST(@SCHEDULE_ITEM_LOG_DATE_Inner AS DATETIME) + CAST(@Schedule_Item_Log_Time_Inner AS DATETIME)
+			END
 		END
 		ELSE 
 		BEGIN
@@ -121,7 +125,7 @@ BEGIN
 					AND BST.Title_Code IN (@Title_Code)
 	 				AND BST.Channel_Code IN (@Channel_Code)
 					AND (CASE WHEN LTRIM(RTRIM(Program_Episode_Number)) = '' THEN '1' ELSE ISNULL(Program_Episode_Number,'1') END) IN (@EpisodeNumber)
-					AND ISNULL(IsProcessed,'N') = 'Y'
+					AND ISNULL(IsProcessed,'N') = 'Y' and BST.BV_Schedule_Transaction_Code <= @BV_Schedule_Transaction_Code
 					--PRINT '@Count_schedule ' + cast(@Count_schedule as varchar)
 				END
 				ELSE
@@ -137,7 +141,7 @@ BEGIN
 				END
 						
 				--PRINT ' ' + cast(@Count_schedule as varchar) + cast(@No_Of_Repeat as varchar) + cast(@Play_Per_Day as varchar)
-				IF( @Count_schedule >= (@No_Of_Repeat + @Play_Per_Day) )
+				IF( @Count_schedule > (@No_Of_Repeat + @Play_Per_Day) )
 				BEGIN
 					SET @Result = 'N'
 				END

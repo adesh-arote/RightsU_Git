@@ -16,7 +16,7 @@
     [ROFRDays]                 INT            NULL,
     [Region_Type]              CHAR (1)       NULL,
     [Region_Codes]             VARCHAR (1000) NULL,
-    [Platform_Codes]           VARCHAR (1000) NULL,
+    [Platform_Codes]           VARCHAR (MAX)  NULL,
     [Subtitling_Type]          CHAR (1)       NULL,
     [Subtitling_Codes]         VARCHAR (1000) NULL,
     [Dubbing_Type]             CHAR (1)       NULL,

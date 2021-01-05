@@ -23,5 +23,4 @@
     [Schedule_Log_Time]             DATETIME     NULL,
     [Timeline_ID]                   INT          NULL,
     [Title_Code]                    INT          NULL);
-GO
 

@@ -22,5 +22,3 @@
     CONSTRAINT [PK_Temp_BV_Schedule] PRIMARY KEY CLUSTERED ([Temp_BV_Schedule_Code] ASC)
 );
 
-
-

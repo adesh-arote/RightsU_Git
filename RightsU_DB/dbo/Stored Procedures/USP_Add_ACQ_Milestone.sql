@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Add_ACQ_Milestone]
+﻿CREATE PROCEDURE [dbo].[USP_Add_ACQ_Milestone]
 (
 	@Acq_Deal_Code Int, 
 	@IsDebug CHAR(1)

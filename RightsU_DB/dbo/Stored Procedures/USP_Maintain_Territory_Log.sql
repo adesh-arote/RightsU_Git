@@ -31,7 +31,9 @@ BEGIN
 	) AND SDRT.Territory_Code = @Territory_Code
 
 
-	DROP TABLE #TempTerritory
+	--DROP TABLE #TempTerritory
+
+	IF OBJECT_ID('tempdb..#TempTerritory') IS NOT NULL DROP TABLE #TempTerritory
 END
 
 /*

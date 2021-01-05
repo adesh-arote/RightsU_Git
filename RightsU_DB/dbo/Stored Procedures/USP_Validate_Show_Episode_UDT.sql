@@ -53,8 +53,13 @@ BEGIN
 	FROM #NAEps b
 	INNER JOIN Title t on b.Title_Code = t.Title_Code
 	GROUP BY b.Title_Code, t.Title_Name
-	DROP TABLE #TmpNums
-	DROP TABLE #NAEps
-	DROP TABLE #Temp_Syn_Title
-	DROP TABLE #Acq_Title_Eps
+	--DROP TABLE #TmpNums
+	--DROP TABLE #NAEps
+	--DROP TABLE #Temp_Syn_Title
+	--DROP TABLE #Acq_Title_Eps
+
+	IF OBJECT_ID('tempdb..#Acq_Title_Eps') IS NOT NULL DROP TABLE #Acq_Title_Eps
+	IF OBJECT_ID('tempdb..#NAEps') IS NOT NULL DROP TABLE #NAEps
+	IF OBJECT_ID('tempdb..#Temp_Syn_Title') IS NOT NULL DROP TABLE #Temp_Syn_Title
+	IF OBJECT_ID('tempdb..#TmpNums') IS NOT NULL DROP TABLE #TmpNums
 END

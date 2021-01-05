@@ -135,5 +135,6 @@ BEGIN
         
 	/********************************Result****************/        
 	SELECT @xmlData AS XML_Data, @Error_Desc AS Error_Desc,@Is_Error AS IS_Error
-END
 
+	IF OBJECT_ID('tempdb..#Temp_Title') IS NOT NULL DROP TABLE #Temp_Title
+END

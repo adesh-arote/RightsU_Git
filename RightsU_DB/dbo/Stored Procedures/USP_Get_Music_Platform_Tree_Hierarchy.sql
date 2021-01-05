@@ -49,7 +49,9 @@
 						--AND (Platform_Hiearachy LIKE  '%'+@Search_Platform_Name+'%' or ISNULL(@Search_Platform_Name,'') = '')  
 			 ORDER BY Module_Position  
     --Select Platform_Code, Platform_Name, IsNull(Parent_Platform_Code, 0) Parent_Platform_Code, Is_Last_Level, Module_Position From [Platform] Where Is_Active = 'Y' Order By Module_Position  
-	 DROP TABLE #TEMP_MPF  
+	 --DROP TABLE #TEMP_MPF  
+
+	 IF OBJECT_ID('tempdb..#TEMP_MPF') IS NOT NULL DROP TABLE #TEMP_MPF
  END  
   
 --/*  

@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_BV_Title_Mapping_Shows]
+﻿CREATE PROCEDURE [dbo].[USP_BV_Title_Mapping_Shows]
 	@BV_HouseID_Data_Code VARCHAR(500)
 AS
 BEGIN
@@ -31,6 +31,7 @@ BEGIN
 	FROM BV_HouseId_Data B
 	INNER JOIN #TEMP_BVDATA TB ON TB.BV_HouseId_Data_Code = B.BV_HouseId_Data_Code
 	WHERE B.Is_Mapped = 'N'
-END
-GO
 
+	IF OBJECT_ID('tempdb..#TEMP_BVDATA') IS NOT NULL DROP TABLE #TEMP_BVDATA
+	IF OBJECT_ID('tempdb..#TempBv') IS NOT NULL DROP TABLE #TempBv
+END

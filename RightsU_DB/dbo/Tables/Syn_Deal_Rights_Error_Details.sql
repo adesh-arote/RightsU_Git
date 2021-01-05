@@ -22,7 +22,3 @@
     CONSTRAINT [PK_Syn_Deal_Rights_Error_Details] PRIMARY KEY CLUSTERED ([Syn_Deal_Rights_Error_Details_Code] ASC)
 );
 
-
-
-
-

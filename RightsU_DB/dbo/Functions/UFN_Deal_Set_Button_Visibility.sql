@@ -1,6 +1,5 @@
 ﻿
-
-ALTER FUNCTION [dbo].[UFN_Deal_Set_Button_Visibility]
+CREATE FUNCTION [dbo].[UFN_Deal_Set_Button_Visibility]
 (
 	--DECLARE
  	 @Acq_Deal_Code INT=2729 
@@ -12,10 +11,13 @@ RETURNS VARCHAR(MAX)
 AS
 BEGIN
 	-- DECLARE
-	-- @Acq_Deal_Code INT=15523--14971--15344 
+	-- @Acq_Deal_Code INT=15523
 	--,@Version FLOAT=0001
 	--,@User_Code INT=203
 	--,@WorkFlowStatus VARCHAR(50)='WA'
+
+	--select @Acq_Deal_Code = Acq_Deal_Code, @WorkFlowStatus = Deal_Workflow_Status, @Version = [Version] 
+	--from Acq_Deal where Agreement_No = 'A-2020-00040'
 
 	DECLARE @Is_Right_Available VARCHAR(MAX) , @IsZeroWorkFlow VARCHAR(2), @IsShowAmmendment INT, @ParentDealCode INT ,
 			@DealtagDescription NVARCHAR(50), @TotalMilestoneCount INT, @CountMovieClosed INT, @IsCompleted VARCHAR(2),
@@ -113,7 +115,7 @@ BEGIN
 	SELECT @CountMovieClosed = COUNT(*) from Acq_Deal_Movie With(NoLock) where Acq_Deal_Code in (@Acq_Deal_Code)  and ISNULL(is_closed,'N')='Y' 
 	SELECT @IsMasterDeal=Is_Master_Deal from Acq_Deal With(NoLock) where Acq_Deal_Code=@Acq_Deal_Code
 	IF(@IsZeroWorkFlow = 'Y')
-		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code in( @SEND_FOR_APPROVAL, @SEND_FOR_ARCHIVE)
+		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code in( @SEND_FOR_APPROVAL,@SEND_FOR_ARCHIVE )
 	ELSE IF(@IsZeroWorkFlow != 'N')
 		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL,@APPROVE, @SEND_FOR_ARCHIVE, @ARCHIVE)
 
@@ -124,11 +126,10 @@ BEGIN
 	--Not Completed
 	IF(@IsCompleted!='Y')
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @Clone,@SEND_FOR_ARCHIVE, @ARCHIVE, @Amendment, @Content, @AMENDMENT_SYN, @APPROVE, @CLOSE_DEAL, @Terminate, @AssignMusic_List)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @Clone, @Amendment, @Content, @AMENDMENT_SYN, @APPROVE, @CLOSE_DEAL, @Terminate, @AssignMusic_List)
 		SET @MileStone ='N'
 	END
-	--select * from @Module_Rights
-	--select @WorkFlowStatus
+
 	IF(@WorkFlowStatus = 'A' AND EXISTS(select * from @Module_Rights WHERE Right_Code IN (@Edit_Without_Approval) AND Visible='Y'))
 		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code IN (@Edit_Without_Approval)
 	ELSE IF(@WorkFlowStatus != 'EO' )
@@ -170,14 +171,30 @@ BEGIN
 	BEGIN
 		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  = @Rollback 
 	END
-	--ELSE
-	--	SEND THE VERSION NO> BUTTON NAME
+	
+	IF(@Version = 1 AND @WorkFlowStatus <> 'R')
+	BEGIN
+		IF @WorkFlowStatus <> 'A'
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  IN( @SEND_FOR_ARCHIVE)
+
+		IF @WorkFlowStatus = 'N'
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  IN( @ARCHIVE)
+	END
 
 	--Waiting for Authorization
 	IF(@WorkFlowStatus = 'W')
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @SEND_FOR_ARCHIVE, @ARCHIVE, @Amendment, @Content,  @AMENDMENT_SYN, 
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL,@SEND_FOR_ARCHIVE,@ARCHIVE, @Amendment, @Content,  @AMENDMENT_SYN, 
 				 @Rollback, @Terminate, @AssignMusic_List, @ReleaseContent)
+
+		SET @MileStone ='N'
+	END
+
+	--Waiting for ARCHIVE
+	IF(@WorkFlowStatus = 'WA')
+	BEGIN
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @RE_OPEN_DEAL, @Reject, @APPROVE ,@SEND_FOR_ARCHIVE, @Amendment,@Content, @AMENDMENT_SYN,
+		@Rollback,@Terminate, @AssignMusic_List, @ReleaseContent)
 
 		SET @MileStone ='N'
 	END
@@ -202,16 +219,22 @@ BEGIN
 	ELSE
 		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@AssignMusic_List)
 
-
+	BEGIN
+		SELECT @IsShowAmmendment = COUNT(Deal_Code) from Syn_Acq_Mapping With(NoLock) where Deal_Code = @Acq_Deal_Code
+		IF(@IsShowAmmendment > 0)
+		BEGIN
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_ARCHIVE, @ARCHIVE)
+		END
+	END
 		--Approved
 	IF(@WorkFlowStatus = 'A' OR @WorkFlowStatus ='EO')
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @AMENDMENT_SYN, @APPROVE, @Rollback, @ReleaseContent)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @AMENDMENT_SYN, @APPROVE,@ARCHIVE, @Rollback, @ReleaseContent)
 		Select @IsShowAmmendment = COUNT(Deal_Code) from Syn_Acq_Mapping With(NoLock) where Deal_Code = @Acq_Deal_Code
 
 		IF(@IsShowAmmendment > 0)
 		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_ARCHIVE, @ARCHIVE, @Amendment)
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Amendment,@SEND_FOR_ARCHIVE, @ARCHIVE)
 
 			IF NOT EXISTS (SELECT * FROM Acq_Deal_Rights ADR With(NoLock) WHERE Acq_Deal_Code = @Acq_Deal_Code 
 				AND ADR.Acq_Deal_Rights_Code NOT IN (SELECT DISTINCT Deal_Rights_Code FROM Syn_Acq_Mapping With(NoLock) where Deal_Code = @Acq_Deal_Code))
@@ -239,7 +262,7 @@ BEGIN
 	
 	IF(@WorkFlowStatus = 'R')
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_ARCHIVE, @ARCHIVE, @Amendment, @Delete, @AMENDMENT_SYN, @Terminate, @AssignMusic_List)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Amendment, @Delete, @AMENDMENT_SYN, @Terminate, @AssignMusic_List)
 		SET @MileStone = 'N'
 
 		Declare @hdnAllow_Edit_All_On_Rejection VARCHAR(1), @RetValue Int = 0
@@ -279,25 +302,10 @@ BEGIN
 
 	IF( @UGCode != @GCode)
 	BEGIN
-		IF (select Deal_Workflow_Status from Acq_Deal where Acq_Deal_Code = @Acq_Deal_Code) = 'WA'
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code in( @Approve)
-		ELSE
 			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code in( @Approve, @ARCHIVE)
 	END
-	ELSE
-	BEGIN
-			DECLARE @MSC INT = 0 , @ST VARCHAR(MAX)= ''
-			SELECT TOP 1  @MSC = A.Module_Status_Code, @ST = A.Status FROM (SELECT TOP 2 * from Module_Status_History WHERE Record_Code = @Acq_Deal_Code ORDER BY Status_Changed_On DESC ) AS A ORDER BY 1 
+	
 
-			IF @ST = 'WA'
-				UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code in( @Approve, @ARCHIVE)
-
-	END
-
-	--select Top 1 Is_Done from Module_Workflow_detail where Record_Code=@Acq_Deal_Code order By Module_Workflow_detail_Code desc
-	--else
-	--UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  = @Approve
-	--For Pending Rights
 	DECLARE @IsCompleted_R VARCHAR(50)
 			SELECT @IsCompleted_R =[dbo].[UFN_Get_Deal_IsComplete](@Acq_Deal_Code)
 	IF(@WorkFlowStatus = 'R' AND @IsCompleted_R <>'Y')
@@ -305,7 +313,7 @@ BEGIN
 
 	IF(@WorkFlowStatus = 'RS')
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @AMENDMENT_SYN, @Close_Deal, @Clone, @SEND_FOR_ARCHIVE, @ARCHIVE, @Amendment, @Terminate, @AssignMusic_List)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @AMENDMENT_SYN, @Close_Deal, @Clone, @Amendment, @Terminate, @AssignMusic_List)
 		SET @MileStone = 'N'
 	END
 
@@ -320,7 +328,7 @@ BEGIN
 	ELSE
 	BEGIN
 		DECLARE @cntP INT
-		SELECT @cntP = COUNT(Acq_Deal_Code) from Acq_Deal_Rights With(NoLock) where Acq_Deal_Code = @Acq_Deal_Code and ISNULL(Right_Status,'C') in ('P')
+		SELECT @cntP = COUNT(Acq_Deal_Code) from Acq_Deal_Rights With(NoLock) where Acq_Deal_Code = @Acq_Deal_Code and ISNULL(Right_Status,'C') in ('P','W')
 		
 		IF (@cntP > 0)
 			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @APPROVE)
@@ -330,30 +338,17 @@ BEGIN
 	IF(@WorkFlowStatus = 'RO')
 	BEGIN
 		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code IN (@EDIT,@View)
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Delete,@Clone,@SEND_FOR_APPROVAL,@APPROVE,@Reject,@SEND_FOR_ARCHIVE, @ARCHIVE, @Amendment,@CLOSE_DEAL,@RE_OPEN_DEAL,@Rollback,@Terminate)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Delete,@Clone,@SEND_FOR_APPROVAL,@APPROVE,@Reject, @Amendment,@CLOSE_DEAL,@RE_OPEN_DEAL,@Rollback,@Terminate)
 	END
 	IF(@WorkFlowStatus = 'EO')
 	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@Edit_Without_Approval,@RollbackWithoutApproval,@View)
 	IF(@ParentDealCode > 0)
 		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code = @Delete
 
-	-- Waiting for archive
-	IF(@WorkFlowStatus = 'WA')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View, @ARCHIVE) 
-	END
-	ELSE IF(@WorkFlowStatus = 'AR')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View) 
-	END
-	ELSE IF(@WorkFlowStatus <> 'A')
-	BEGIN 
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN ( @SEND_FOR_ARCHIVE, @ARCHIVE)
-	END
 	
 	IF(@DealtagDescription = 'Close')
 	BEGIn
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL,@SEND_FOR_ARCHIVE, @ARCHIVE, @Amendment, @AMENDMENT_SYN, @Terminate, @AssignMusic_List)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @Amendment, @AMENDMENT_SYN, @Terminate, @AssignMusic_List)
 		SET @MileStone = 'N'
 	END
 
@@ -361,6 +356,13 @@ BEGIN
 	BEGIN
 		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Content, @ARCHIVE, @SEND_FOR_ARCHIVE)
 	END
+
+	IF(@WorkFlowStatus = 'AR')
+	BEGIN
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View)
+		SET @MileStone ='N'
+	END
+
 
 	IF(@TotalMilestoneCount = 0)
 	BEGIn
@@ -375,6 +377,16 @@ BEGIN
 	IF (@ShowError = 'Y' AND @Is_Terminated = 'N')
 		RETURN  @Is_Right_Available + ',' +'E,'
 
-	RETURN   ','+@Is_Right_Available +','
+	--RETURN   ','+@Is_Right_Available +','
+	RETURN    ','+@Is_Right_Available +','
 	--select ','+@Is_Right_Available +','+ @MileStone +','
 END
+
+
+--exec USP_Deal_Process
+
+--select * from workflow_Module where module_code = 30 and  Business_Unit_Code = 5 order by Last_Updated_Time
+--select * from Business_Unit
+
+--Update workflow_Module set Effective_Start_Date = getdate() , System_End_Date = null where Workflow_module_code = 1250
+

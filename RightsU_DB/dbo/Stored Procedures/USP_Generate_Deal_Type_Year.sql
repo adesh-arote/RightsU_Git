@@ -3,8 +3,8 @@ CREATE Procedure [dbo].[USP_Generate_Deal_Type_Year]
 	 @yearDefinition varChar(2)=null -- FY (Apr- Mar)-'FY' ,Jan - Dec- 'CY', Deal Year - 'FS'
 	, @stDt dateTime=null --Period Start Dt
 	, @enDt dateTime=null --Period end Dt
-as
-
+AS
+BEGIN
 /*
 -- Author:	 Bhavesh Desai	
 -- Create DATE: 7 Oct 2014
@@ -98,5 +98,7 @@ select convert(varchar,startdate,103)start_date,convert(varchar,enddate,103)end_
 --select convert(datetime,startdate,103)start_date,convert(datetime,enddate,103)end_date from #temp1
 --select startdate,enddate  from #temp1
 
-IF OBJECT_ID('tempdb..#temp1') IS NOT NULL DROP TABLE #temp1
+	IF OBJECT_ID('tempdb..#temp1') IS NOT NULL DROP TABLE #temp1
+
+END
 --select convert(varchar,GETDATE(),103)start_date,convert(varchar,GETDATE(),103)end_date ,3

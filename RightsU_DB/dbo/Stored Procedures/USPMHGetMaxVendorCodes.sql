@@ -1,9 +1,7 @@
-﻿ALTER PROCEDURE USPMHGetMaxVendorCodes
+﻿CREATE PROCEDURE USPMHGetMaxVendorCodes
 	@LastRequiredDate VARCHAR(20) = '',
 	@DealTypeCode VARCHAR(MAX) = '',
 	@BusinessUnitCode VARCHAR(MAX) = ''
-
---Created By : Darshana
 AS
 BEGIN
 		IF(OBJECT_ID('TEMPDB..#TempVendor') IS NOT NULL)  
@@ -32,17 +30,8 @@ BEGIN
             SELECT DISTINCT  ',' + CAST(VendorCode AS NVARCHAR(MAX)) FROM #TempProdVendors FOR XML PATH('')
             ), 1, 1, '') AS VendorCodes
 	
+	IF OBJECT_ID('tempdb..#TempProdVendors') IS NOT NULL DROP TABLE #TempProdVendors
+	IF OBJECT_ID('tempdb..#TempVendor') IS NOT NULL DROP TABLE #TempVendor
 END
 
---EXEC USPMHGetMaxVendorCodes '','',''
-
---CREATE PROCEDURE USPMHGetMaxVendorCodes
---	@LastRequiredDate VARCHAR(20) = ''
---AS
---BEGIN
---	SELECT  '' AS VendorCodes
---END
-
-
-
-
+--EXEC USPMHGetMaxVendorCodes  '','',''

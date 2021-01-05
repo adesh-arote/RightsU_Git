@@ -108,5 +108,5 @@ BEGIN
 	Select Title_Code ,Title_Name,Is_Rights_Added,Is_Pushback_Added,Is_Run_Added,Is_Ancillary_Added,Is_Cost_Added ,Is_Budget_Added
 	from #Deal_Status ORDER BY Title_Name
 	
-	DROP Table #Deal_Status
+	IF OBJECT_ID('tempdb..#Deal_Status') IS NOT NULL DROP TABLE #Deal_Status
 END

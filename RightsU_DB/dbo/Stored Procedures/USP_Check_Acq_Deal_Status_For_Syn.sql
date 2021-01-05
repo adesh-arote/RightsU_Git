@@ -3,7 +3,7 @@
 -- Create date: 28 Feb 2015
 -- Description:	Checking acquisition deal status for syndication deal editing and amendment
 -- =============================================
-ALTER PROCEDURE [dbo].[USP_Check_Acq_Deal_Status_For_Syn]
+CREATE PROCEDURE [dbo].[USP_Check_Acq_Deal_Status_For_Syn]
 	@Syn_Deal_Code INT
 AS
 BEGIN

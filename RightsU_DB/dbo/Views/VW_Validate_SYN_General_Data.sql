@@ -37,5 +37,3 @@ INNER JOIN dbo.Acq_Deal_Rights_Territory ADRC ON ADR.Acq_Deal_Rights_Code = ADRC
 AND ADR.Is_Sub_License='Y'
 AND ADR.Is_Tentative='N'
 AND ADR.Actual_Right_Start_Date IS NOT NULL
-
-

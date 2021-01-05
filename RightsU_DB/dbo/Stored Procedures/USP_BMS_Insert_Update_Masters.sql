@@ -624,4 +624,3 @@ END
 --EXEC [dbo].[USP_BMS_Insert_Update_Masters] '', 'BMS_TRAFFICCATEGORY',143
 --EXEC [dbo].[USP_BMS_Insert_Update_Masters] '', 'BMS_VERSIONTYPE',143
 --EXEC [dbo].[USP_BMS_Insert_Update_Masters] '', 'BMS_Media_Type',143
-

@@ -21,14 +21,13 @@ BEGIN TRY
 	
 	IF(@Is_Mail_Send_ScheduleAsRun = 'Y')
 	BEGIN
-		--DECLARE @TitleName NVARCHAR(MAX),
-		DECLARE @ChannelName NVARCHAR(MAX)
-		--set @TitleName = ''
+		DECLARE @TitleName NVARCHAR(MAX),@ChannelName NVARCHAR(MAX)
+		set @TitleName = ''
 		set @ChannelName  = ''
 		
-		--SElect @TitleName = T.Title_Name  from Acq_Deal_Movie ADM 
-		--inner join Title T on T.Title_Code = ADM.Acq_Deal_Movie_Code
-		--where ADm.Acq_Deal_Movie_Code = @DEAL_MOVIE_CODE
+		SElect @TitleName = T.Title_Name  from Acq_Deal_Movie ADM 
+		inner join Title T on T.Title_Code = ADM.Acq_Deal_Movie_Code
+		where ADm.Acq_Deal_Movie_Code = @DEAL_MOVIE_CODE
 		
 		
 		select @ChannelName = Channel_Name from Channel where Channel_Code = @ChannelName
@@ -254,6 +253,8 @@ BEGIN CATCH
 	ERROR_LINE() AS ERRORLINE,
 	ERROR_MESSAGE() AS ERRORMESSAGE;
 END CATCH
+
+IF OBJECT_ID('tempdb..#Users_Data') IS NOT NULL DROP TABLE #Users_Data
 	
 END
 

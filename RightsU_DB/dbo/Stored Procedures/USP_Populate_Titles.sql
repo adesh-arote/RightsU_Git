@@ -88,13 +88,17 @@ BEGIN
 		SELECT DISTINCT T.Title_Code, T.Title_Name FROM Acq_Deal AD
 		INNER JOIN Acq_Deal_Movie ADM ON AD.Acq_Deal_Code = ADM.Acq_Deal_Code
 		INNER JOIN Acq_Deal_Rights ADR ON AD.Acq_Deal_Code = ADR.Acq_Deal_Code AND ISNULL(ADR.Is_Sub_License, '') = 'Y'	AND ISNULL(ADR.Is_Tentative,'N') = 'N' 
-		AND ISNULL(ADR.Actual_Right_Start_Date,'') <> '' 
+			AND ISNULL(ADR.Actual_Right_Start_Date,'') <> ''
 		INNER JOIN Title T ON ISNULL(Reference_Flag, '') <> 'T'  AND ISNULL(T.Is_Active, '') = 'Y' AND T.Title_Code = ADM.Title_Code
 		AND T.Deal_Type_Code = @Deal_Type_Code AND T.Title_Code NOT IN (SELECT Title_Code FROM #Selected_Titles)
 		WHERE AD.Deal_Workflow_Status = 'A'
 	END
 
 	SELECT DISTINCT Title_Code, Title_Name FROM #Populated_Titles
-	DROP TABLE #Selected_Titles
-	DROP TABLE #Populated_Titles
+	--DROP TABLE #Selected_Titles
+	--DROP TABLE #Populated_Titles
+
+	IF OBJECT_ID('tempdb..#Populated_Titles') IS NOT NULL DROP TABLE #Populated_Titles
+	IF OBJECT_ID('tempdb..#Selected_Titles') IS NOT NULL DROP TABLE #Selected_Titles
+
 END

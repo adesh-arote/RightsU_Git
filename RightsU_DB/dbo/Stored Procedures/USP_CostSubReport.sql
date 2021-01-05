@@ -1,4 +1,4 @@
-﻿ alter PROCEDURE [dbo].[USP_CostSubReport]    
+﻿ CREATE PROCEDURE [dbo].[USP_CostSubReport]    
 (    
 	@Deal_Code VARCHAR(10),
 	@ModuleCode varchar(10),

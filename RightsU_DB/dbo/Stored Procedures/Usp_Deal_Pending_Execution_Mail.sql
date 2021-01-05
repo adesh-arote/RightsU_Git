@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[Usp_deal_pending_execution_mail] 
+﻿CREATE PROCEDURE [dbo].[Usp_Deal_Pending_Execution_Mail] 
 --Author:  Vipul Surve             
 -- Create date: 25-07-2017              
 AS 
@@ -310,5 +310,8 @@ END
     CLOSE curmail1 
 
     DEALLOCATE curmail1 
+	IF OBJECT_ID('tempdb..#email_config_alert') IS NOT NULL DROP TABLE #email_config_alert
+	IF OBJECT_ID('tempdb..#tempa') IS NOT NULL DROP TABLE #tempa
+	IF OBJECT_ID('tempdb..#TempS') IS NOT NULL DROP TABLE #TempS
 END 
 --EXEC Usp_deal_pending_execution_mail  

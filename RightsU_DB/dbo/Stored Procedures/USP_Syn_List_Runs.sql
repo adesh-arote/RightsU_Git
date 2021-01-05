@@ -68,4 +68,6 @@ Begin
 
 	SELECT Syn_Deal_Run_Code,Title_Name,Platform_Hiearachy,Run_Type,No_Of_Runs,Is_Rule_Right FROM #Temp
 	Order by ISNULL(Last_updated_Time,Inserted_On) DESC
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 End

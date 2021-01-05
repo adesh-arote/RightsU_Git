@@ -1,4 +1,4 @@
-﻿Create PROCEDURE [dbo].[USP_Avail_Syn_Amend_Old]
+﻿CREATE PROCEDURE [dbo].[USP_Avail_Syn_Amend_Old]
 	@Syn_Deal_Code INT = 0
 AS
 --=============================================
@@ -201,9 +201,10 @@ BEGIN
 	CLOSE curCalculateAvail
 	DEALLOCATE curCalculateAvail	
 
+	IF OBJECT_ID('tempdb..#tmpAvailSyn') IS NOT NULL DROP TABLE #tmpAvailSyn
 END
 
-print 'Proc [USP_Avail_Syn_Amend] called '
+--print 'Proc [USP_Avail_Syn_Amend] called '
 
 
-drop table #tmpAvailSyn
+--drop table #tmpAvailSyn

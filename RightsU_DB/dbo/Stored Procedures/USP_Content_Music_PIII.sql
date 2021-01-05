@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Content_Music_PIII]    
+﻿CREATE PROCEDURE [dbo].[USP_Content_Music_PIII]    
     @DM_Master_Import_Code Int    
 AS  
 --declare
@@ -179,4 +179,7 @@ BEGIN
 		ROLLBACK
 		UPDATE DM_Master_Import SET Status = 'T' where DM_Master_Import_Code = @DM_Master_Import_Code    
 	END CATCH
+
+	IF OBJECT_ID('tempdb..#Temp_Music_Track') IS NOT NULL DROP TABLE #Temp_Music_Track
+	IF OBJECT_ID('tempdb..#TempContentStatusHistory') IS NOT NULL DROP TABLE #TempContentStatusHistory
 END

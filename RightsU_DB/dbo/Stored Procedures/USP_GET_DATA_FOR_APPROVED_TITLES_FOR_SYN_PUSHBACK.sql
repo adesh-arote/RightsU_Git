@@ -1,4 +1,4 @@
-﻿ALTER Procedure [dbo].[USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK]
+﻿CREATE Procedure [dbo].[USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK]
 	@Title_Codes Varchar(1000),
 	@Platform_Codes Varchar(1000),
 	@Platform_Type Varchar(10),   ----- PL / TPL / ''
@@ -682,5 +682,31 @@ Begin
 		End
 	End
 	Select @Required_Codes As RequiredCodes,@SubTitle_Lang_Code As SubTitle_Lang_Code,@Dubb_Lang_Code As Dubb_Lang_Code
-End
 
+	IF OBJECT_ID('tempdb..#AcquiredTitles') IS NOT NULL DROP TABLE #AcquiredTitles
+	IF OBJECT_ID('tempdb..#AcquiredTitlesNew') IS NOT NULL DROP TABLE #AcquiredTitlesNew
+	IF OBJECT_ID('tempdb..#Deal_Rights_Lang') IS NOT NULL DROP TABLE #Deal_Rights_Lang
+	IF OBJECT_ID('tempdb..#Rights_Country') IS NOT NULL DROP TABLE #Rights_Country
+	IF OBJECT_ID('tempdb..#Rights_Country_Dubbing') IS NOT NULL DROP TABLE #Rights_Country_Dubbing
+	IF OBJECT_ID('tempdb..#Rights_Country_Final') IS NOT NULL DROP TABLE #Rights_Country_Final
+	IF OBJECT_ID('tempdb..#Rights_Country_New') IS NOT NULL DROP TABLE #Rights_Country_New
+	IF OBJECT_ID('tempdb..#Rights_Country_Subtitling') IS NOT NULL DROP TABLE #Rights_Country_Subtitling
+	IF OBJECT_ID('tempdb..#Rights_Dubbing') IS NOT NULL DROP TABLE #Rights_Dubbing
+	IF OBJECT_ID('tempdb..#Rights_Dubs') IS NOT NULL DROP TABLE #Rights_Dubs
+	IF OBJECT_ID('tempdb..#Rights_Platform') IS NOT NULL DROP TABLE #Rights_Platform
+	IF OBJECT_ID('tempdb..#Rights_Platform_Country') IS NOT NULL DROP TABLE #Rights_Platform_Country
+	IF OBJECT_ID('tempdb..#Rights_Platform_Dubbing') IS NOT NULL DROP TABLE #Rights_Platform_Dubbing
+	IF OBJECT_ID('tempdb..#Rights_Platform_Dubbing_New') IS NOT NULL DROP TABLE #Rights_Platform_Dubbing_New
+	IF OBJECT_ID('tempdb..#Rights_Platform_Subtitling') IS NOT NULL DROP TABLE #Rights_Platform_Subtitling
+	IF OBJECT_ID('tempdb..#Rights_Platform_Subtitling_New') IS NOT NULL DROP TABLE #Rights_Platform_Subtitling_New
+	IF OBJECT_ID('tempdb..#Rights_Subs') IS NOT NULL DROP TABLE #Rights_Subs
+	IF OBJECT_ID('tempdb..#Rights_Subtitling') IS NOT NULL DROP TABLE #Rights_Subtitling
+	IF OBJECT_ID('tempdb..#Rights_Title_Country') IS NOT NULL DROP TABLE #Rights_Title_Country
+	IF OBJECT_ID('tempdb..#Rights_Title_Dubbing') IS NOT NULL DROP TABLE #Rights_Title_Dubbing
+	IF OBJECT_ID('tempdb..#Rights_Title_Dubbing_New') IS NOT NULL DROP TABLE #Rights_Title_Dubbing_New
+	IF OBJECT_ID('tempdb..#Rights_Title_Subtitling') IS NOT NULL DROP TABLE #Rights_Title_Subtitling
+	IF OBJECT_ID('tempdb..#Rights_Title_Subtitling_New') IS NOT NULL DROP TABLE #Rights_Title_Subtitling_New
+	IF OBJECT_ID('tempdb..#Temp_Dubbing') IS NOT NULL DROP TABLE #Temp_Dubbing
+	IF OBJECT_ID('tempdb..#Temp_SUbTit') IS NOT NULL DROP TABLE #Temp_SUbTit
+	IF OBJECT_ID('tempdb..#Temp_Tit_Right') IS NOT NULL DROP TABLE #Temp_Tit_Right
+End

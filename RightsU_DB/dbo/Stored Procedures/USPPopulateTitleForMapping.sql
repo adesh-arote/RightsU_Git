@@ -1,5 +1,5 @@
 ﻿--DROP PROCEDURE [dbo].[USPPopulateTitleForMapping]
-alter PROCEDURE [dbo].[USPPopulateTitleForMapping]
+CREATE PROCEDURE [dbo].[USPPopulateTitleForMapping]
 	@SearchKey NVARCHAR(MAX)
 AS
 BEGIN

@@ -159,6 +159,8 @@ BEGIN
 					@body = @EmailUser_Body, 
 					@body_format = 'HTML';  				
 	END
+
+	IF OBJECT_ID('tempdb..#Log_Data') IS NOT NULL DROP TABLE #Log_Data
 END
 /*
 IF NOT EXISTS (SELECT 1 FROM Email_Template WHERE Template_For = 'RU_BMS_Integration_Exception')
@@ -175,11 +177,3 @@ PRINT  'Already Inserted'
 END
 --EXEC USP_BMS_Integration_Send_Exception_Email 	41,0,0,'' 
 */
-
-
-
-
-
-
-
-

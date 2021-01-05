@@ -1,16 +1,16 @@
 ﻿CREATE TABLE [dbo].[BMS_Deal_Content_Rights] (
     [BMS_Deal_Content_Rights_Code]    INT             IDENTITY (1, 1) NOT NULL,
     [BMS_Deal_Content_Code]           INT             NULL,
-    [BMS_Deal_Content_Ref_Key]        INT             NULL,
+    [BMS_Deal_Content_Ref_Key]        DECIMAL (38)    NULL,
     [RU_Channel_Code]                 INT             NULL,
-    [BMS_Deal_Content_Rights_Ref_Key] INT             NULL,
+    [BMS_Deal_Content_Rights_Ref_Key] DECIMAL (38)    NULL,
     [BMS_Station_Code]                INT             NULL,
     [RU_Right_Rule_Code]              INT             NULL,
     [BMS_Right_Rule_Ref_Key]          INT             NULL,
     [SAP_WBS_Code]                    INT             NULL,
     [SAP_WBS_Ref_Key]                 INT             NULL,
     [BMS_Asset_Code]                  INT             NULL,
-    [BMS_Asset_Ref_Key]               INT             NULL,
+    [BMS_Asset_Ref_Key]               DECIMAL (38)    NULL,
     [Asset_Type]                      VARCHAR (3)     NULL,
     [Title]                           VARCHAR (80)    NULL,
     [License_Fees]                    DECIMAL (18, 3) NULL,
@@ -39,6 +39,4 @@
     CONSTRAINT [PK_BMS_Deal_Content_Rights] PRIMARY KEY CLUSTERED ([BMS_Deal_Content_Rights_Code] ASC),
     CONSTRAINT [FK_BMS_Deal_Content_Rights_BMS_Deal_Content] FOREIGN KEY ([BMS_Deal_Content_Code]) REFERENCES [dbo].[BMS_Deal_Content] ([BMS_Deal_Content_Code])
 );
-
-
 

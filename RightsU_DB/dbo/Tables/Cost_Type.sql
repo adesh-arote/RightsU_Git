@@ -11,5 +11,3 @@
     CONSTRAINT [PK_Cost_Type] PRIMARY KEY CLUSTERED ([Cost_Type_Code] ASC)
 );
 
-
-

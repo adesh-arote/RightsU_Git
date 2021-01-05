@@ -7,5 +7,3 @@
     CONSTRAINT [PK_BMS_Schedule_Exception] PRIMARY KEY CLUSTERED ([BMS_Schedule_Exception_Code] ASC)
 );
 
-
-

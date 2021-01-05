@@ -12,7 +12,3 @@
     CONSTRAINT [FK_Acq_Deal_Run_Shows_Acq_Deal_Run] FOREIGN KEY ([Acq_Deal_Run_Code]) REFERENCES [dbo].[Acq_Deal_Run] ([Acq_Deal_Run_Code])
 );
 
-
-
-
-

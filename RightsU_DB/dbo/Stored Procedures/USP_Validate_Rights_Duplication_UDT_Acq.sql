@@ -733,53 +733,19 @@ Begin
 	(
 		Select * From [dbo].[UFN_Get_Platform_With_Parent](MainOutput.Platform_Code)
 	) as abcd
-		
-
-
-	Drop Table #ACQ_RIGHTS_NEW
-	IF OBJECT_ID('tempdb..#Acq_Deal_Rights') IS NOT NULL
-	BEGIN
-		DROP TABLE #Acq_Deal_Rights
-	END
-	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Title') IS NOT NULL
-	BEGIN
-		DROP TABLE #Acq_Deal_Rights_Title
-	END
-	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Territory') IS NOT NULL
-	BEGIN
-		DROP TABLE #Acq_Deal_Rights_Territory
-	END
-	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Platform') IS NOT NULL
-	BEGIN
-		DROP TABLE #Acq_Deal_Rights_Platform
-	END
-	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Subtitling') IS NOT NULL
-	BEGIN
-		DROP TABLE #Acq_Deal_Rights_Subtitling
-	END
-	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Dubbing') IS NOT NULL
-	BEGIN
-		DROP TABLE #Acq_Deal_Rights_Dubbing
-	END
-	IF OBJECT_ID('tempdb..#TempDupComb') IS NOT NULL
-	BEGIN
-		DROP TABLE #TempDupComb
-	END			
-	IF OBJECT_ID('tempdb..#Dup_Records_Language1') IS NOT NULL
-	BEGIN
-		DROP TABLE #Dup_Records_Language1	
-	END			
-	IF OBJECT_ID('tempdb..#Dup_Records_Language') IS NOT NULL
-	BEGIN
-		DROP TABLE #Dup_Records_Language	
-	END			
-	IF OBJECT_ID('tempdb..#Deal_Rights_Dubbing') IS NOT NULL
-	BEGIN
-		DROP TABLE #Deal_Rights_Dubbing
-	END
-	IF OBJECT_ID('tempdb..#Deal_Rights_Subtitling') IS NOT NULL
-	BEGIN
-		DROP TABLE #Deal_Rights_Subtitling
-	END
 	
+	IF OBJECT_ID('tempdb..#Acq_Deal_Rights') IS NOT NULL DROP TABLE #Acq_Deal_Rights
+	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Dubbing') IS NOT NULL DROP TABLE #Acq_Deal_Rights_Dubbing
+	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Platform') IS NOT NULL DROP TABLE #Acq_Deal_Rights_Platform
+	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Subtitling') IS NOT NULL DROP TABLE #Acq_Deal_Rights_Subtitling
+	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Territory') IS NOT NULL DROP TABLE #Acq_Deal_Rights_Territory
+	IF OBJECT_ID('tempdb..#Acq_Deal_Rights_Title') IS NOT NULL DROP TABLE #Acq_Deal_Rights_Title
+	IF OBJECT_ID('tempdb..#Acq_Rights_Code_Lang') IS NOT NULL DROP TABLE #Acq_Rights_Code_Lang
+	IF OBJECT_ID('tempdb..#ACQ_RIGHTS_NEW') IS NOT NULL DROP TABLE #ACQ_RIGHTS_NEW
+	IF OBJECT_ID('tempdb..#Deal_Rights_Dubbing') IS NOT NULL DROP TABLE #Deal_Rights_Dubbing
+	IF OBJECT_ID('tempdb..#Deal_Rights_Subtitling') IS NOT NULL DROP TABLE #Deal_Rights_Subtitling
+	IF OBJECT_ID('tempdb..#Deal_Rights_Territory') IS NOT NULL DROP TABLE #Deal_Rights_Territory
+	IF OBJECT_ID('tempdb..#Dup_Records_Language') IS NOT NULL DROP TABLE #Dup_Records_Language
+	IF OBJECT_ID('tempdb..#Dup_Records_Language1') IS NOT NULL DROP TABLE #Dup_Records_Language1
+	IF OBJECT_ID('tempdb..#TempDupComb') IS NOT NULL DROP TABLE #TempDupComb
 END

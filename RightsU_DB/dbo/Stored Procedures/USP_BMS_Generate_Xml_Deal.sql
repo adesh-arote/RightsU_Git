@@ -553,4 +553,9 @@ BEGIN
     --- End BMS_Log Code ---
 
     SELECT * FROM #Temp_Xml_Data
+
+	IF OBJECT_ID('tempdb..#Temp_Xml_Data') IS NOT NULL DROP TABLE #Temp_Xml_Data
+	IF OBJECT_ID('tempdb..#TempAsset') IS NOT NULL DROP TABLE #TempAsset
+	IF OBJECT_ID('tempdb..#TempDummy') IS NOT NULL DROP TABLE #TempDummy
+	IF OBJECT_ID('tempdb..#TempTitleAndEpisodes') IS NOT NULL DROP TABLE #TempTitleAndEpisodes
 END

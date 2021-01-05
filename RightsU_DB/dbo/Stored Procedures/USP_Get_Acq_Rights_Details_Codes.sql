@@ -1,4 +1,4 @@
-﻿ALTER PROC [dbo].[USP_Get_Acq_Rights_Details_Codes]
+﻿CREATE PROC [dbo].[USP_Get_Acq_Rights_Details_Codes]
 (
 	@Title_Code VARCHAR(MAX) = '',
 	@Deal_Code INT
@@ -173,9 +173,15 @@ BEGIN
 
 	SELECT @platformCode as Platform_Codes,  @countryCode as Country_Codes, @subtitlingCode as Subtitling_Codes, @dubbingCode as Dubbing_Codes
 
-	DROP TABLE #Deal_Movie_Temp
-	DROP TABLE #Temp_Tit_Right
-	DROP TABLE #Rights_Code
-	DROP TABLE #Temp_SUbTit
-	DROP TABLE #Temp_Dubbing
+	--DROP TABLE #Deal_Movie_Temp
+	--DROP TABLE #Temp_Tit_Right
+	--DROP TABLE #Rights_Code
+	--DROP TABLE #Temp_SUbTit
+	--DROP TABLE #Temp_Dubbing
+
+	IF OBJECT_ID('tempdb..#Deal_Movie_Temp') IS NOT NULL DROP TABLE #Deal_Movie_Temp
+	IF OBJECT_ID('tempdb..#Rights_Code') IS NOT NULL DROP TABLE #Rights_Code
+	IF OBJECT_ID('tempdb..#Temp_Dubbing') IS NOT NULL DROP TABLE #Temp_Dubbing
+	IF OBJECT_ID('tempdb..#Temp_SUbTit') IS NOT NULL DROP TABLE #Temp_SUbTit
+	IF OBJECT_ID('tempdb..#Temp_Tit_Right') IS NOT NULL DROP TABLE #Temp_Tit_Right
 END

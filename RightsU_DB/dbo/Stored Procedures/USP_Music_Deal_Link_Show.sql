@@ -94,7 +94,9 @@ BEGIN
 	SELECT Title_Code, Title_Name, Music_Deal_LinkShow_Code, (Channel_Name_Selected + '~' + ISNULL(Channel_Name_UnSelected, '')) AS Channel_Name
 	FROM #TEMP2
 
+	IF OBJECT_ID('tempdb..#TEMP') IS NOT NULL DROP TABLE #TEMP
+	IF OBJECT_ID('tempdb..#TEMP2') IS NOT NULL DROP TABLE #TEMP2
+
 END
 
 --exec USP_Music_Deal_Link_Show '4,5','a','E','33',''
-

@@ -62,9 +62,12 @@ AS
 		@Col_Head13 NVARCHAR(MAX) = '',
 		@Col_Head14 NVARCHAR(MAX) = '',     
 		@Col_Head16 NVARCHAR(MAX) = '',
-		@Col_Head17 NVARCHAR(MAX) = ''              
+		@Col_Head17 NVARCHAR(MAX) = '',
+		@Col_Head18 NVARCHAR(MAX) = '',
+		@Col_Head19 NVARCHAR(MAX) = '',
+		@Col_Head20 NVARCHAR(MAX) = ''
             
-	--SET @MusicTitleName ='AND Masters_Value like ''%Yeh raaten%'''            
+	--SET @MusicTitleName ='AND Masters_Value like ''%akela%'''            
 	--SET @PageNo = 1            
 	--SET @RecordCount = 10            
 	--SET @IsPaging = 'Y'            
@@ -285,23 +288,23 @@ AS
 			  Begin            
 				  print 'union'            
 					   Insert InTo #TempAllCodes            
-					   Select Music_Title_Code From @TblMusicLabel            
+					   Select Music_Title_Code From @TblMusicLabel WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                            
 					   Union            
-					   Select Music_Title_Code From @TblTheme            
+					   Select Music_Title_Code From @TblTheme WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                                 
 					   Union            
-					   Select Music_Title_Code From @TblLanguage            
+					   Select Music_Title_Code From @TblLanguage WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                                
 					   Union            
-					   Select Music_Title_Code From @TblLyricist            
+					   Select Music_Title_Code From @TblLyricist WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                                
 					   Union
-					   Select Music_Title_Code From @TblGenres            
+					   Select Music_Title_Code From @TblGenres WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                               
 					   Union                        
-					   Select Music_Title_Code From @TblComposer            
+					   Select Music_Title_Code From @TblComposer WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                                
 					   Union            
-					   Select Music_Title_Code From @TblSinger          
+					   Select Music_Title_Code From @TblSinger WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                             
 					   Union            
-					   Select Music_Title_Code From @TblStarCast
+					   Select Music_Title_Code From @TblStarCast WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                     
 					   Union
-					   Select Music_Title_Code From @TblDealType            
+					   Select Music_Title_Code From @TblDealType WHERE Music_Title_Code  IN(Select DISTINCT Music_Title_Code FROM Music_Title Where Is_Active = 'Y')                                
             
 				   If (Not Exists(Select Top 1 Music_Title_Code From @TblMusicLabel) AND @MusicLabelCode = '')            
 				   Begin            
@@ -450,7 +453,7 @@ SELECT
  ,ISNULL(Ma.Music_Album_Name, mt.Movie_Album) Movie_Album, MTV.Music_Type_Name as Music_Version_Name , MTY.Music_Type_Name,
   MT.Last_UpDated_Time            
  ,MT.Music_Tag,MTS.Masters_Value,MT.Duration_In_Min,MT.Language_Code,MT.Music_Type_Code            
- ,MT.Image_Path,MT.Is_Active,MT.Public_Domain,G.Genres_Name, 
+ ,MT.Image_Path,MT.Is_Active,MT.Public_Domain,G.Genres_Name,
    REVERSE(STUFF(REVERSE(  STUFF(                
       (                 
         SELECT                      
@@ -525,7 +528,27 @@ SELECT
         Tal.Talent_Name                
        FOR XML PATH(''), root('Music_Composer'), type                
   ).value('/Music_Composer[1]','Nvarchar(max)'                
- ),2,0, '')), 1, 2, ''))  as [Music Composer],                
+ ),2,0, '')), 1, 2, ''))  as [Music Composer], 
+ 
+ REVERSE(STUFF(REVERSE(  STUFF(                
+      (                 
+      SELECT                 
+        CAST(Tal.Talent_Name  AS NVARCHAR(MAX)) + ', '                 
+       FROM                 
+        Music_Title TT                
+        --INNER JOIN Role R ON R.Role_Code = TT.Role_Code                
+        --INNER JOIN Talent Tal ON tal.talent_Code = TT.Talent_code
+		INNER JOIN Music_Album MA ON MA.Music_Album_Code = TT.Music_Album_Code
+		INNER JOIN Music_Album_Talent MAT ON MAT.Music_Album_Code =  MA.Music_Album_Code
+		INNER JOIN Talent Tal On Tal.Talent_Code = MAT.Talent_Code
+       WHERE                 
+        TT.Music_Title_Code = Tmp.Music_Title_Code           
+       ORDER BY                
+        Tal.Talent_Name       
+
+       FOR XML PATH(''), root('Movie_Starcast'), type                
+  ).value('/Movie_Starcast[1]','Nvarchar(max)'                
+ ),2,0, '')), 1, 2, ''))  as [Movie Starcast],
      --REVERSE(STUFF(REVERSE(  STUFF(                
      -- (                 
        (SELECT TOP 1 TT.Music_Label_Name                
@@ -534,14 +557,25 @@ SELECT
         Music_Label TT                
         INNER JOIN Music_Title_Label R ON R.Music_Label_Code = TT.Music_Label_Code                 
        WHERE                 
-        R.Music_Title_Code = Tmp.Music_Title_Code AND Effective_To IS NULL                
+        R.Music_Title_Code = Tmp.Music_Title_Code AND Effective_From <= GETDATE()
        ORDER BY                
         TT.Music_Label_Code DESC)                
      --  FOR XML PATH('')                
      -- ),1,0, ''           
      --)                
      --),1,2,''))                 
-      as [Music Label] ,                
+      as [Music Label] ,    
+
+	  (SELECT TOP 1  
+	  CONVERT(VARCHAR(11), CAST(Effective_From AS DATETIME), 106)
+	  FROM
+	  Music_Label TT
+	  INNER JOIN Music_Title_Label MTL ON MTL.Music_Label_Code = TT.Music_Label_Code
+	   WHERE                 
+        MTL.Music_Title_Code = Tmp.Music_Title_Code AND Effective_To IS NULL                
+       ORDER BY                
+        TT.Music_Label_Code DESC
+	  ) as [Effective_From],
      REVERSE(STUFF(REVERSE(  STUFF(                
       (                 
        SELECT                 
@@ -555,12 +589,13 @@ SELECT
         ML.Language_Name                
        FOR XML PATH(''), root('Language_Name'), type                
   ).value('/Language_Name[1]','Nvarchar(max)'                
- ),2,0, '')), 1, 2, '')) as [Language_Name]     
+ ),2,0, '')), 1, 2, '')) as [Language_Name] ,
+ ma.Album_Type AS [Movie/Album Type]
 	 into #Temp_Header	                           
  FROM                 
   #Temp Tmp    
 
- INNER JOIN Music_Title MT ON Tmp.Music_Title_Code = MT.Music_Title_Code   
+ INNER JOIN Music_Title MT ON Tmp.Music_Title_Code = MT.Music_Title_Code 
  LEFT JOIN Genres G ON G.Genres_Code = MT.Genres_Code                
  LEFT JOIN Music_Type (nolock) MTY ON MTY.Music_type_Code = MT.Music_type_Code   
  LEFT JOIN Music_Type (nolock) MTV ON MTV.Music_type_Code = MT.Music_Version_Code                  
@@ -591,16 +626,20 @@ SELECT
 		 @Col_Head13 = CASE WHEN  SM.Message_Key = 'SongStarCast' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head13 END,
 		 @Col_Head14 = CASE WHEN  SM.Message_Key = 'GenresName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head14 END,
 		 @Col_Head16 = CASE WHEN  SM.Message_Key = 'MusicVersion' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head16 END,
-		 @Col_Head17 = CASE WHEN  SM.Message_Key = 'MusicTheme' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head17 END
+		 @Col_Head17 = CASE WHEN  SM.Message_Key = 'MusicTheme' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head17 END,
+		 @Col_Head18 = CASE WHEN  SM.Message_Key = 'EffectiveStartDate' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head18 END,
+		 @Col_Head19 = CASE WHEN  SM.Message_Key = 'MovieAlbumType' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head19 END,
+		 @Col_Head20 = CASE WHEN  SM.Message_Key = 'MovieStarCast' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head20 END
+	
 
 		    	
 	  FROM System_Message SM  
 		 INNER JOIN System_Module_Message SMM ON SMM.System_Message_Code = SM.System_Message_Code  
-		 AND SM.Message_Key IN ('MusicTrackName','MovieAlbum','MusicTypeName','MusicTag','Lengthmin','MusicLanguage','Singer','Lyricist','MusicComposer','MusicLabel','YearOfRelease','PublicDomain','SongStarCast','GenresName', 'MusicVersion','MusicTheme')  
+		 AND SM.Message_Key IN ('MusicTrackName','MovieAlbum','MusicTypeName','MusicTag','Lengthmin','MusicLanguage','Singer','Lyricist','MusicComposer','MusicLabel','YearOfRelease','PublicDomain','SongStarCast','GenresName', 'MusicVersion','MusicTheme','EffectiveStartDate','MovieAlbumType','MovieStarCast')  
 		 INNER JOIN System_Language_Message SLM ON SLM.System_Module_Message_Code = SMM.System_Module_Message_Code AND SLM.System_Language_Code = @SysLanguageCode  
 
     SELECT [ID],[RowNumber],[Sort],[Music_Title_Code],[Genres_Code],[Release_Year],[Music_Album_Name],[Music_Title_Name],[Movie_Album],[Music_Type_Name],[Last_UpDated_Time],
-		[Music_Tag],[Masters_Value],[Duration_In_Min],[Language_Code],[Music_Type_Code],[Image_Path],[Is_Active],[Singer],[Lyricist],[Music Composer],[Music Label],[Language_Name],[Public_Domain],[StarCast],[Genres_Name],[Music_Version],[Music_Theme]
+		[Music_Tag],[Masters_Value],[Duration_In_Min],[Language_Code],[Music_Type_Code],[Image_Path],[Is_Active],[Singer],[Lyricist],[Music Composer],[Music Label],[Effective_From],[Movie StarCast],[Movie/Album Type],[Language_Name],[Public_Domain],[StarCast],[Genres_Name],[Music_Version],[Music_Theme]
 	 FROM (
 		 SELECT
 			   sorter = 1,
@@ -610,14 +649,15 @@ SELECT
 			   CAST(Music_Type_Name AS VARCHAR(200)) AS [Music_Type_Name],Last_UpDated_Time,CAST(Music_Tag AS VARCHAR(200)) AS [Music_Tag],CAST(Masters_Value AS VARCHAR(200)) AS [Masters_Value],
 			   CAST(Duration_In_Min AS VARCHAR (200)) AS [Duration_In_Min],CAST(Language_Code AS VARCHAR(200)) AS [Language_Code],CAST(Music_Type_Code AS VARCHAR(200)) AS [Music_Type_Code],
 			   CAST(Image_Path AS VARCHAR(200)) AS [Image_Path],CAST(Is_Active AS VARCHAR(200)) AS [Is_Active],CAST(Singer AS VARCHAR(200)) AS [Singer],CAST(Lyricist AS VARCHAR(200)) AS [Lyricist],
-			   CAST([Music Composer] AS VARCHAR(200)) AS [Music Composer],CAST( [Music Label] AS VARCHAR(200)) AS [Music Label],CAST(Language_Name AS VARCHAR(200)) AS [Language_Name],
+			   CAST([Music Composer] AS VARCHAR(200)) AS [Music Composer],CAST( [Music Label] AS VARCHAR(200)) AS [Music Label], CAST([Effective_From] AS VARCHAR(MAX)) AS [Effective_From] ,
+			   CAST([Movie StarCast] AS VARCHAR(200)) AS [Movie StarCast],CAST([Movie/Album Type] AS VARCHAR(200)) AS [Movie/Album Type],CAST(Language_Name AS VARCHAR(200)) AS [Language_Name],
 			   CAST(Public_Domain AS VARCHAR(200)) AS [Public_Domain],CAST(StarCast AS VARCHAR(MAX)) AS [StarCast],CAST(Genres_Name AS VARCHAR(MAX)) AS [Genres_Name],
 			   CAST([Music_Version_Name] AS VARCHAR(MAX)) AS Music_Version, CAST([Music_Theme_Name] AS VARCHAR(MAX)) AS Music_Theme
 			  
 		   From #Temp_Header
 	  UNION ALL
 			  SELECT 0, 1,'RowNumber','Sort','Music Title Code','Genres Code',@Col_Head11,'Music Album Name',@Col_Head01,@Col_Head02,@Col_Head03,GETDATE(),
-			  @Col_Head04,'Masters_Value',@Col_Head05,'Language_Code','Music_Type_Code','Image_Path','Is_Active',@Col_Head07,@Col_Head08,@Col_Head09,@Col_Head10,@Col_Head06,@Col_Head12,@Col_Head13,@Col_Head14,@Col_Head16,@Col_Head17
+			  @Col_Head04,'Masters_Value',@Col_Head05,'Language_Code','Music_Type_Code','Image_Path','Is_Active',@Col_Head07,@Col_Head08,@Col_Head09,@Col_Head10,@Col_Head18,@Col_Head20,@Col_Head19,@Col_Head06,@Col_Head12,@Col_Head13,@Col_Head14,@Col_Head16,@Col_Head17
 		) X   
 		ORDER BY Sorter
 
@@ -625,8 +665,13 @@ SELECT
 	--select * from #Temp_Header
 	--Select * from #Temp
 
-       DROP TABLE #temp     
-	   DROP TABLE #Temp_Header              
+    --   DROP TABLE #temp     
+	   --DROP TABLE #Temp_Header  
+	   
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp_Header') IS NOT NULL DROP TABLE #Temp_Header
+	IF OBJECT_ID('tempdb..#TempAllCodes') IS NOT NULL DROP TABLE #TempAllCodes
+	IF OBJECT_ID('tempdb..#TempMusicTitleCodes') IS NOT NULL DROP TABLE #TempMusicTitleCodes
 END 
 
 --ID,	RowNumber,	Sort,	Music_Title_Code,	Genres_Code	Release_Year,	Music_Album_Name,	Music_Title_Name,	Movie_Album,	Music_Type_Name,	Last_UpDated_Time,	Music_Tag,	Masters_Value,	Duration_In_Min,	Language_Code,	Music_Type_Code,	Image_Path,	Is_Active,	Singer,	Lyricist,	Music Composer,	Music Label,	Language_Name 

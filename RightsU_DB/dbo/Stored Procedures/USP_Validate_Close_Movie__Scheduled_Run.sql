@@ -27,10 +27,11 @@ Condition-3 : Close date greater than Max of BV_Schedule_Transaction
 	DECLARE @maxdate DATETIME ='', @mindate DATETIME ='', @syn_maxdate DATETIME ='', @syn_mindate DATETIME ='', @bv_maxdate DATETIME =''			
 	DECLARE @type varchar(500) =''
 	DECLARE @alert varchar(500) ='N'
+	DECLARE @Acq_Deal_Code INT = NULL
 	
 	DECLARE @Deal_Type_Condition VARCHAR(MAX) = '', @isError CHAR(1) = 'N'
 
-	SELECT TOP 1 @Deal_Type_Condition = dbo.UFN_GetDealTypeCondition(AD.Deal_Type_Code) FROM Acq_Deal_Movie ADM 
+	SELECT TOP 1 @Deal_Type_Condition = dbo.UFN_GetDealTypeCondition(AD.Deal_Type_Code), @Acq_Deal_Code = ADM.Acq_Deal_Code FROM Acq_Deal_Movie ADM 
 	INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = ADM.Acq_Deal_Code AND ADM.Acq_Deal_Movie_Code = @Acq_Deal_Movie_Code
 
 	SELECT @mindate = MIN(adr.Right_Start_Date), @maxdate =  ISNULL(MAX(adr.Right_End_Date), CONVERT(DATETIME, @Deal_Movie_Close_Date))
@@ -51,18 +52,20 @@ Condition-3 : Close date greater than Max of BV_Schedule_Transaction
 		SET @maxdate = ''
 	END
 	ELSE IF (
-		(SELECT COUNT(*) AS Rec_Count FROM Acq_Deal_Movie_Music_Link WHERE Link_Acq_Deal_Movie_Code = @Acq_Deal_Movie_Code AND ( 
-			Episode_No > @Episode_To OR Episode_No < @Episode_From )) > 0 AND 
-			@Deal_Type_Condition = 'DEAL_PROGRAM'
-	)
+				(
+					SELECT COUNT(*) AS Rec_Count FROM Acq_Deal_Movie_Music_Link WHERE Link_Acq_Deal_Movie_Code = @Acq_Deal_Movie_Code AND 
+					(Episode_No > @Episode_To OR Episode_No < @Episode_From )
+				) > 0 
+				AND 
+				@Deal_Type_Condition = 'DEAL_PROGRAM'
+			)
 	BEGIN
 		SET @type = STUFF
 			(
 				(
 					SELECT ', Episode-' + CAST(Episode_No AS VARCHAR) FROM 
 					(
-						SELECT DISTINCT Episode_No FROM Acq_Deal_Movie_Music_Link WHERE Link_Acq_Deal_Movie_Code = @Acq_Deal_Movie_Code AND ( 
-						Episode_No > @Episode_To OR Episode_No < @Episode_From)
+						SELECT DISTINCT Episode_No FROM Acq_Deal_Movie_Music_Link WHERE Link_Acq_Deal_Movie_Code = @Acq_Deal_Movie_Code AND (Episode_No > @Episode_To OR Episode_No < @Episode_From)
 					) AS A
 					ORDER BY Episode_No
 					FOR XML PATH('')
@@ -70,17 +73,19 @@ Condition-3 : Close date greater than Max of BV_Schedule_Transaction
 			) + ' are already linked with music title'
 		SET @maxdate = ''
 	END
-	ELSE IF (
-		(SELECT COUNT(*) AS Rec_Count FROM Acq_Deal_Movie_Music WHERE Acq_Deal_Movie_Code = @Acq_Deal_Movie_Code) > @Episode_From AND @Episode_From > 0 AND
-			@Deal_Type_Condition = 'DEAL_MUSIC'
-	)
+	ELSE IF ( 
+				(SELECT COUNT(*) AS Rec_Count FROM Acq_Deal_Movie_Music WHERE Acq_Deal_Movie_Code = @Acq_Deal_Movie_Code) > @Episode_From 
+				AND 
+				@Episode_From > 0 
+				AND
+				@Deal_Type_Condition = 'DEAL_MUSIC' 
+			)
 	BEGIN
 		SET @type = 'No. of Songs must be greater than equal to ' + CAST(@Episode_From AS VARCHAR)
 		SET @maxdate = ''
 	END
 	ELSE IF(CONVERT(DATETIME, @Deal_Movie_Close_Date) <= @maxdate)
-	BEGIN
-				
+	BEGIN	
 		SELECT @syn_maxdate = MAX(ISNULL(sdr.Right_End_Date, @Deal_Movie_Close_Date)) ,@syn_mindate = MIN(sdr.Right_Start_Date)
 		FROM Syn_Deal_Rights sdr
 		INNER JOIN Syn_Deal_Rights_Title sdrt ON sdrt.Syn_Deal_Rights_Code = sdr.Syn_Deal_Rights_Code
@@ -88,41 +93,36 @@ Condition-3 : Close date greater than Max of BV_Schedule_Transaction
 
 		IF(ISNULL(@syn_mindate, '')!= '' AND CONVERT(DATETIME, @Deal_Movie_Close_Date) < @syn_maxdate)
 		BEGIN
-
-				
 			SET @type = 'The selected Title closed date should be greater than or equal to Syndicated date'
 			SET @maxdate = @syn_maxdate
-
 		END	
 		ELSE
 		BEGIN
-			
+			--SELECT @bv_maxdate = MAX(ISNULL(Schedule_Item_Log_Date, @Deal_Movie_Close_Date)) 
+			--FROM BV_Schedule_Transaction
+			--WHERE Deal_Movie_Code = @Acq_Deal_Movie_Code AND Title_Code = @Title_Code
+
 			SELECT @bv_maxdate = MAX(ISNULL(Schedule_Item_Log_Date, @Deal_Movie_Close_Date)) 
 			FROM BV_Schedule_Transaction
-			WHERE Deal_Movie_Code = @Acq_Deal_Movie_Code AND Title_Code = @Title_Code 
-		
+			WHERE Content_Channel_Run_Code IN( Select Content_Channel_Run_Code From Content_Channel_Run Where Acq_Deal_Code = @Acq_Deal_Code AND Title_Code = @Title_Code)
+
 			IF(ISNULL(@bv_maxdate,'') != '' AND @bv_maxdate > CONVERT(DATETIME, @Deal_Movie_Close_Date))
 			BEGIN
-					SET @type = 'The selected Title is already scheduled for run after your specified close date.Please select maximum closed date.'
-					SET @maxdate = @bv_maxdate
+				SET @type = 'The selected Title is already scheduled for run after your specified close date.Please select maximum closed date.'
+				SET @maxdate = @bv_maxdate
 			END
 			ELSE IF(CONVERT(DATETIME, @Deal_Movie_Close_Date) < @mindate)
 			BEGIN
-		
 				SET @type = 'The selected Titles rights will be deleted'
 				SET @alert = 'Y'
-		
 			END
 		END
-
 	END
 	ELSE IF(CONVERT(DATETIME, @Deal_Movie_Close_Date) > @maxdate)
 	BEGIN
 		SET @type = 'The selected Title closed date should be less than or equal to maximum rights date '
 	END
-
 	
 	SELECT RTRIM(LTRIM(@type)) AS Msg, @maxdate AS Max_Date, @alert AS Show_Confirmation
-	
 	
 END

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[USP_Syn_Query_Report]
+﻿ CREATE PROCEDURE [dbo].[USP_Syn_Query_Report]
 	@Sql_SELECT VARCHAR(MAX),
 	@Sql_WHERE NVARCHAR(MAX),
 	@Column_Count INT,
@@ -8,569 +8,3314 @@
 	@Dubbing_Codes VARCHAR(MAX),
 	@Country_Codes VARCHAR(MAX),
 	@Category_Codes VARCHAR(MAX),
-	@Is_Debug CHAR(1),
-	@CBFCRating_Codes VARCHAR(MAX)
+	@Is_Debug CHAR(1)	--@CBFCRating_Codes VARCHAR(MAX)
 AS
-BEGIN 
-	--DECLARE @Sql_SELECT VARCHAR(MAX),
-	--@Sql_WHERE VARCHAR(MAX),
-	--@Column_Count INT,
-	--@Column_Names VARCHAR(MAX),
-	--@Report_Query_Code INT=0,
-	--@Subtitling_Codes VARCHAR(MAX),
-	--@Dubbing_Codes VARCHAR(MAX),
-	--@Country_Codes VARCHAR(MAX),
-	--@Is_Debug CHAR(1),
-	--@Category_Codes VARCHAR(MAX),
-	-- @CBFCRating_Codes VARCHAR(MAX)
 
+BEGIN
+	SET NOCOUNT ON 
+	--INsert into QueryTest(Sql_SELECT,Sql_WHERE,Column_Count,Column_Names,Report_Query_Code,Subtitling_Codes,Dubbing_Codes,Country_Codes,Category_Codes,Is_Debug)
+	--Select @Sql_SELECT,@Sql_WHERE,@Column_Count,@Column_Names,@Report_Query_Code,@Subtitling_Codes,@Dubbing_Codes,@Country_Codes,@Category_Codes,@Is_Debug
+	--Linear Rights -- Free TV -- Cable -- Digital
+	--DECLARE @Condition NVARCHAR(MAX) = 'BUSINESS_UNIT_CODE~AND~IN~5|EXPIRED~AND~=~N|IS_THEATRICAL_RIGHT~=~N|TIT.TITLE_CODE~AND~IN~21929|REVENUE_VERTICAL~OR~IN~16|'
+	--DECLARE @ColNames NVARCHAR(MAX) = 'Title,Agreement No,Deal Description,Status,Original Title,Platform,Licensee,Right Start Date,Right End Date,Country,Director,Star Cast,Holdback,Currency,Entity,Subtitling,Dubbing,Variable Cost,ROFR,Restriction Remarks,Business Unit,Agreement Date,Year of Release,Exclusive,Territory,Term,Customer Type,Sub-Licensing,Original/Dubbed,Deal Type,Deal Workflow Status,Sales Agent,Genre,Self Utilization Group,Self Utilization Remarks,Deal Category,CBFC Rating,Deal Segment,Revenue Vertical,'
+	DECLARE @Condition NVARCHAR(MAX) = @Sql_Where
+	DECLARE @ColNames NVARCHAR(MAX) = @Column_Names
+	DECLARE @PlatformCriteria VARCHAR(MAX) = '';
 
-
-	--SELECT @Sql_SELECT = 'Title_Name [Title], Agreement_No [Agreement No], Deal_Description [Deal Description], Deal_Tag_Description [Status], Original_Title [Original Title], Platform_Name [Platform], Vendor_Name [Licensee], CONVERT(VARCHAR,Actual_Right_Start_Date,103) [Right Start Date], CONVERT(VARCHAR,Actual_Right_End_Date,103) [Right End Date], Country_Name [Country], Director_Names_Comma_Seperate [Director], Star_Cast_Names_Comma_Seperate [Star Cast], Is_Holdback [Holdback], Currency_Name [Currency], Entity_Name [Entity], Subtitling_Languages [Subtitling], Dubbing_Languages [Dubbing], Variable_Cost_Type [Variable Cost], CONVERT(VARCHAR,ROFR,103) [ROFR], Restriction_Remarks [Restriction Remarks], Business_Unit_Name [Business Unit], CONVERT(VARCHAR,Agreement_Date,103) [Agreement Date], CONVERT(VARCHAR,Year_Of_Production,103) [Year of Release], Is_Exclusive [Exclusive], Territory_Name [Territory], Term [Term], Role_Name [Customer Type], Sub_Licensing [Sub-Licensing], Original_Dubbed [Original/Dubbed], Deal_Type_Name [Deal Type], Deal_Workflow_Status_Name [Deal Workflow Status], Sales_Agent [Sales Agent], Genre_Names_Comma_Seperate [Genre], Promoter_Group_Name [Self Utilization Group], Promoter_Remark_Desc [Self Utilization Remarks], Cat_Name [Deal Category], CBFC_Rating [CBFC Rating]',
-	--@Sql_WHERE = ' AND (  P.Platform_Code  in  (''72'')) AND Business_Unit_Code = 1 AND Expired=''N'' AND Is_Theatrical_Right=''N''',
-	--@Column_Count = 38,  
-	--@Column_Names = 'Title,Agreement No,Deal Description,Status,Original Title,Platform,Licensee,Right Start Date,Right End Date,Country,Director,Star Cast,Holdback,Currency,Entity,Subtitling,Dubbing,Variable Cost,ROFR,Restriction Remarks,Business Unit,Agreement Date,Year of Release,Exclusive,Territory,Term,Customer Type,Sub-Licensing,Original/Dubbed,Deal Type,Deal Workflow Status,Sales Agent,Genre,Self Utilization Group,Self Utilization Remarks,Deal Category,CBFC Rating,',
-	--@Subtitling_Codes = '',
-	--@Dubbing_Codes = '',
-	--@Country_Codes = '',
-	--@Is_Debug = '',
-	--@Category_Codes = '',
-	--@CBFCRating_Codes = 'IN~7'
-
-	-- AND (  SD.Deal_Workflow_Status  in  ('N'))  AND Business_Unit_Code = 1 AND Expired='N' AND Is_Theatrical_Right='N'
-
-	--Hnadle for deal critical report aditya
-	SELECT @Sql_SELECT = 'Cat_Name [CategoryName], '+ @Sql_SELECT
-	--SELECT @Column_Count = @Column_Count+ 1
-	SELECT @Column_Names = 'CategoryName,' + @Column_Names
-
-	DECLARE @Counter INT 
-	DECLARE @Country_Not_In_Where VARCHAR(2000) = '' , @Category_Not_In_Where VARCHAR(2000) = '', @CBFCRating_Not_In_Where  VARCHAR(2000) = ''
-	SET @Counter=2  /* set counter = 2 bcoz we are already creating temp table with single column */ 
-	DECLARE @Script_Alter_TempTable VARCHAR(MAX)
-
-	/* Create temp table with single column */
-
-	CREATE TABLE #TEMPVIEW(COL1 NVARCHAR(MAX))
+	IF(OBJECT_ID('tempdb..#buwiseSyn_deal_code') IS NOT NULL) DROP TABLE #buwiseSyn_deal_code
+	IF(OBJECT_ID('tempdb..#Temp_Condition') IS NOT NULL) DROP TABLE #Temp_Condition
+	IF(OBJECT_ID('tempdb..#TempOutput') IS NOT NULL) DROP TABLE #TempOutput
+	IF(OBJECT_ID('tempdb..#tempTitle') IS NOT NULL) DROP TABLE #tempTitle
+	IF(OBJECT_ID('tempdb..#tempDeal') IS NOT NULL) DROP TABLE #tempDeal
+	IF(OBJECT_ID('tempdb..#tempRights') IS NOT NULL) DROP TABLE #tempRights
+	IF(OBJECT_ID('tempdb..#dummyRights') IS NOT NULL) DROP TABLE #dummyRights
+	IF(OBJECT_ID('tempdb..#dummyCriteria') IS NOT NULL) DROP TABLE #dummyCriteria
+	IF(OBJECT_ID('tempdb..#tmpDisplay') IS NOT NULL) DROP TABLE #tmpDisplay
+	IF(OBJECT_ID('tempdb..#Platform_Search') IS NOT NULL) DROP TABLE #Platform_Search
+	IF(OBJECT_ID('tempdb..#TempLang') IS NOT NULL) DROP TABLE #TempLang
+	IF(OBJECT_ID('tempdb..#tempRunDef') IS NOT NULL) DROP TABLE #tempRunDef
+	IF(OBJECT_ID('tempdb..#RunDef') IS NOT NULL) DROP TABLE #RunDef
+	IF(OBJECT_ID('tempdb..#TempTerritory') IS NOT NULL) DROP TABLE #TempTerritory
+	IF(OBJECT_ID('tempdb..#tempBusinessUnit') IS NOT NULL) DROP TABLE #tempBusinessUnit
+	IF(OBJECT_ID('tempdb..#tbl_Platform_RightCodes') IS NOT NULL) DROP TABLE #tbl_Platform_RightCodes
+	IF(OBJECT_ID('tempdb..#Temp_ColNames') IS NOT NULL) DROP TABLE #Temp_ColNames
+	IF(OBJECT_ID('tempdb..#OriDub_Title_Code') IS NOT NULL) DROP TABLE #OriDub_Title_Code
+	IF(OBJECT_ID('tempdb..#tblRights_Newholdback') IS NOT NULL) DROP TABLE #tblRights_Newholdback
+	IF(OBJECT_ID('tempdb..#tblRightsPlatforms') IS NOT NULL) DROP TABLE #tblRightsPlatforms
 	
-	IF(@Report_Query_Code>0)
+	CREATE TABLE #TempOutput
+	(
+		COL1 NVARCHAR(MAX),
+		COL2 NVARCHAR(MAX),
+		COL3 NVARCHAR(MAX),
+		COL4 NVARCHAR(MAX),
+		COL5 NVARCHAR(MAX),
+		COL6 NVARCHAR(MAX),
+		COL7 NVARCHAR(MAX),
+		COL8 NVARCHAR(MAX),
+		COL9 NVARCHAR(MAX),
+		COL10 NVARCHAR(MAX),
+		COL11 NVARCHAR(MAX),
+		COL12 NVARCHAR(MAX),
+		COL13 NVARCHAR(MAX),
+		COL14 NVARCHAR(MAX),
+		COL15 NVARCHAR(MAX),
+		COL16 NVARCHAR(MAX),
+		COL17 NVARCHAR(MAX),
+		COL18 NVARCHAR(MAX),
+		COL19 NVARCHAR(MAX),
+		COL20 NVARCHAR(MAX),
+		COL21 NVARCHAR(MAX),
+		COL22 NVARCHAR(MAX),
+		COL23 NVARCHAR(MAX),
+		COL24 NVARCHAR(MAX),
+		COL25 NVARCHAR(MAX),
+		COL26 NVARCHAR(MAX),
+		COL27 NVARCHAR(MAX),
+		COL28 NVARCHAR(MAX),
+		COL29 NVARCHAR(MAX),
+		COL30 NVARCHAR(MAX),
+		COL31 NVARCHAR(MAX),
+		COL32 NVARCHAR(MAX),
+		COL33 NVARCHAR(MAX),
+		COL34 NVARCHAR(MAX),
+		COL35 NVARCHAR(MAX),
+		COL36 NVARCHAR(MAX),
+		COL37 NVARCHAR(MAX),
+		COL38 NVARCHAR(MAX),
+		COL39 NVARCHAR(MAX),
+		COL40 NVARCHAR(MAX),
+		COL41 NVARCHAR(MAX),
+		COL42 NVARCHAR(MAX),
+		COL43 NVARCHAR(MAX),
+		COL44 NVARCHAR(MAX),
+		COL45 NVARCHAR(MAX)
+	)
+	
+	CREATE TABLE #BUWiseSyn_Deal_Code (Syn_Deal_Code INT)
+	CREATE TABLE #tbl_Platform_RightCodes (Syn_Deal_Code INT, Syn_Deal_Rights_Code INT)
+	CREATE TABLE #tempTitle(
+		Title_Code INT,
+		Title NVARCHAR(MAX),
+		[Original_Title] NVARCHAR(MAX),
+		Original_Dubbed NVARCHAR(MAX),
+		Genre NVARCHAR(MAX),
+		Year_of_Release VARCHAR(100),
+		Director NVARCHAR(MAX),
+		Star_Cast NVARCHAR(MAX),
+		CBFC_Rating INT,
+		CoLumn_Value VARCHAR(MAX)
+	)
+
+	CREATE TABLE #tblRightsPlatforms(
+		Syn_Deal_Rights_Code INT,
+		PlatformName NVARCHAR(MAX),
+	)
+	
+	CREATE TABLE #tempDeal(
+		Syn_Deal_Code INT,
+		Agreement_Date NVARCHAR(MAX),
+		Agreement_No NVARCHAR(MAX),
+		Business_Unit NVARCHAR(MAX),
+		Currency NVARCHAR(MAX),
+		Deal_Category NVARCHAR(MAX),
+		Deal_Description NVARCHAR(MAX),
+		Deal_Type NVARCHAR(MAX),
+		Deal_Workflow_Status NVARCHAR(MAX),
+		Entity NVARCHAR(MAX),
+		[Licensor] NVARCHAR(MAX),
+		Status NVARCHAR(MAX),
+		Currency_Code INT,
+		Deal_Category_Code INT,
+		Entity_Code INT,
+		Vendor_Code INT,
+		Deal_Tag_Code INT,
+		Deal_Type_Code INT,
+		Customer_Type NVARCHAR(4000),
+		Sales_Agent_Code INT,
+		Sales_Agent NVARCHAR(MAX),
+		Variable_Cost_Type  NVARChar(MAX),
+		Restriction_Remarks NVARChar(MAX),
+		ROFR NVARChar(MAX),
+		Deal_Segment_Name VARCHAR(MAX),
+		Deal_Segement_Code INT,
+		Revenue_Vertical_Name  VARCHAR(MAX),
+		Revenue_Vertical_Code INT
+	)
+	
+	CREATE TABLE #tempRights(
+		Syn_Deal_Rights_Code INT,
+		Syn_Deal_Code INT,
+		Title_Code INT,
+		Country NVARCHAR(MAX),
+		Dubbing NVARCHAR(MAX),
+		Exclusive NVARCHAR(MAX),
+		[Platform] NVARCHAR(MAX),
+		Right_End_Date DATE,
+		Right_Start_Date DATE,
+		[Sub-Licensing] NVARCHAR(MAX),
+		Subtitling NVARCHAR(MAX),
+		Term NVARCHAR(MAX),
+		Territory NVARCHAR(MAX),
+		Episode_From INT,
+		Episode_To INT,
+		Title_Name NVARCHAR(MAX),
+		Milestone_Type_Code INT,
+		Milestone_Type_Name VARCHAR(MAX),
+		Self_Utilization_Group VARCHAR(MAX),
+		Is_holdback varchar(max),
+		Self_Utilization_Remark VArchar(MAx),
+		Expired_deal VArchar(MAX)
+		
+	)
+	
+	CREATE TABLE #tempRunDef(
+		Syn_Deal_Code INT,
+		Title_Code INT,
+		[Channel] NVARCHAR(MAX),
+		Run_Limitation VARCHAR(MAX)
+		
+	)
+	
+	DECLARE @tblTitle TABLE(Title_Code INT, Original_Title NVARCHAR(MAX), Original_Dubbed NVARCHAR(MAX), Year_of_Release INT,CBFC_Rating INT,CoLumn_Value VARCHAR(MAX))
+	
+	DECLARE @tblDeal TABLE (
+		Syn_Deal_Code INT,
+		Agreement_Date NVARCHAR(MAX),
+		Agreement_No NVARCHAR(MAX),
+		Business_Unit NVARCHAR(MAX),
+		Currency NVARCHAR(MAX),
+		Deal_Category NVARCHAR(MAX),
+		Deal_Description NVARCHAR(MAX),
+		Deal_Type NVARCHAR(MAX),
+		Deal_Workflow_Status NVARCHAR(MAX),
+		Entity NVARCHAR(MAX),
+		[Licensor] NVARCHAR(MAX),
+		Status NVARCHAR(MAX),
+		Currency_Code INT,
+		Deal_Category_Code INT,
+		Entity_Code INT,
+		Vendor_Code INT,
+		Deal_Tag_Code INT,
+		Deal_Type_Code INT,
+		Customer_Type NVARCHAR(4000),
+		Role_Code INT,
+		Sales_Agent_Code INT,
+		Sales_Agent NVARCHAR(MAX),
+		Variable_Cost_Type  NVARChar(MAX),
+		Restriction_Remarks NVARChar(MAX),
+		ROFR NVARChar(MAX),
+		Deal_Segment_Name VARCHAR(MAX),
+		Deal_Segement_Code INT,
+		Revenue_Vertical_Name  VARCHAR(MAX),
+		Revenue_Vertical_Code INT
+	)
+	
+	DECLARE @tblRights_New TABLE(
+		Syn_Deal_Rights_Code INT,
+		Syn_Deal_Code INT,
+		Title_Code INT,
+		Country NVARCHAR(MAX),
+		Dubbing NVARCHAR(MAX),
+		Exclusive NVARCHAR(MAX),
+		Platform NVARCHAR(MAX),
+		Right_End_Date DATE,
+		Right_Start_Date DATE,
+		[Sub-Licensing] NVARCHAR(MAX),
+		Subtitling NVARCHAR(MAX),
+		Term NVARCHAR(MAX),
+		Territory NVARCHAR(MAX),
+		Episode_From INT,
+		Episode_To INT,
+		Title_Name NVARCHAR(MAX),
+		Milestone_Type_Code INT,
+		Milestone_Type_Name VARCHAR(MAX),
+		Self_Utilization_Group VARCHAR(MAX),
+		Is_holdback varchar(max),
+		Self_Utilization_Remark VArchar(MAx),
+		Expired_deal VArchar(MAX)
+	)
+
+	Create TABLE #tblRights_Newholdback (
+		Syn_Deal_Rights_Code INT,
+		Syn_Deal_Code INT,
+		Title_Code INT,
+		Country NVARCHAR(MAX),
+		Dubbing NVARCHAR(MAX),
+		Exclusive NVARCHAR(MAX),
+		Platform NVARCHAR(MAX),
+		Right_End_Date DATE,
+		Right_Start_Date DATE,
+		[Sub-Licensing] NVARCHAR(MAX),
+		Subtitling NVARCHAR(MAX),
+		Term NVARCHAR(MAX),
+		Territory NVARCHAR(MAX),
+		Episode_From INT,
+		Episode_To INT,
+		Title_Name NVARCHAR(MAX),
+		Milestone_Type_Code INT,
+		Milestone_Type_Name VARCHAR(MAX),
+		Self_Utilization_Group VARCHAR(MAX),
+		Is_holdback varchar(MAX),
+		Self_Utilization_Remark VArchar(MAX),
+		Expired_Deal VArchar(MAX)
+	)
+	
+	DECLARE @tblRunDef TABLE(
+		Syn_Deal_Code INT,
+		Title_Code INT,
+		[Channel] NVARCHAR(MAX),
+		Run_Limitation VARCHAR(MAX)
+	)
+
+	SELECT 
+		ECV.Columns_Value,
+		Record_Code
+	INTO #OriDub_Title_Code
+	FROM Map_Extended_Columns MEC
+		INNER JOIN Title T ON T.Title_Code = MEC.Record_Code
+		LEFT JOIN Extended_Columns_Value ECV ON ECV.Columns_Value_Code = MEC.Columns_Value_Code
+	WHERE 
+		MEC.Table_Name='TITLE' 
+		AND MEC.Columns_Code IN (SELECT Columns_Code FROM Extended_Columns WHERE Columns_Name = 'Type of Film')
+
+	DECLARE @tblCriteria TABLE(Id INT, ColCriteria NVARCHAR(MAX))
+	
+	DECLARE --Conditions
+		@whTitle  NVARCHAR(MAX) = ' 1=1 ',
+		@whDeal	  NVARCHAR(MAX) = ' 1=1 ',
+		@whRights VARCHAR(MAX) = ' 1=1 ',
+		@whRunDef NVARCHAR(MAX) = ' 1=1 '
+	----------------------------------------------------
+	
+	
+	PRINT'INSERTING INTO #TEMP TABLE'
+	SELECT id as SrNo, number as Operation INTO #Temp_Condition FROM DBO.fn_Split_withdelemiter(@Condition,'|') WHERE number <> ''
+	
+	PRINT'DECLARATION'
+	DECLARE @Counter INT = 1, @Cnt_TempCond INT = 0, @Operation NVARCHAR(MAX), @IncludeExpired CHAR(1) = 'Y',@IsTheatrical CHAR(1)='Y'
+	DECLARE @LeftColDbname NVARCHAR(MAX),
+			@logicalConnect NVARCHAR(MAX),
+			@theOp NVARCHAR(MAX),
+			@Value NVARCHAR(MAX)
+	DECLARE @Start_Date varchar(10), @End_Date varchar(10)
+	
+	SELECT @Cnt_TempCond = COUNT(*) FROM #Temp_Condition
+
+	IF EXISTS(SELECT * FROM #Temp_Condition where Operation ='EXPIRED~AND~=~N')
+		SET @IncludeExpired = 'N'
+	IF EXISTS(SELECT * FROM #Temp_Condition where Operation ='IS_THEATRICAL_RIGHT~=~N')
+		SET @IsTheatrical = 'N'
+
+		print  @IsTheatrical
+	PRINT'LOOPING THROUGHOUT CONDITION'
+	PRINT'TITLE_RELATED CRITERIA STARTS'
+	WHILE ( @Counter <= @Cnt_TempCond)
 	BEGIN
-		SELECT @Column_Count=COUNT(RC.Column_Code)
-		FROM Report_Column RC
-		INNER JOIN Report_Column_Setup RCS ON RC.Column_Code=RCS.Column_Code
-		WHERE RC.Query_Code=@Report_Query_Code AND Is_Select='Y'
-	END
+		SELECT @Operation = '', @LeftColDbname = '', @logicalConnect = '', @theOp = '', @Value = '',@Start_Date ='', @End_Date =''
+		DELETE FROM @tblCriteria
 	
-	/* Alter temp table and add more column (like col1, col2, col3) */
-	IF(@Column_Count > 1 )  
-	BEGIN  
-		SET @Script_Alter_TempTable = 'ALTER TABLE #TEMPVIEW ADD'  
-		
-		WHILE(@Counter <= @Column_Count)  
-		BEGIN  
-			SET @Script_Alter_TempTable += ' COL' + CAST(@counter AS NVARCHAR(100)) + ' NVARCHAR(MAX) NULL'  
-			
-			IF(@Counter <> @Column_Count)
-				SET @Script_Alter_TempTable += ','
-
-			SET @Counter += 1
-		END
-		
-		IF(@Is_Debug = 'Y')
-			PRINT 'Script of Alter TempTable :- ' + @Script_Alter_TempTable 
-		
-		EXEC (@Script_Alter_TempTable)  
-	END
-
-	/* Create SQL for Insert actual column name in first row */
-	DECLARE @Script_Insert_Column_Names VARCHAR(MAX)  
-	SET @Script_Insert_Column_Names = 'INSERT INTO #TEMPVIEW SELECT '
-
-
-	IF(@Report_Query_Code>0)
-	BEGIN
-			SELECT @Column_Names = STUFF(
-			(  
-				SELECT ',' + A.Display_Name 
-				FROM (
-					SELECT RCS.Display_Name,Sort_Ord
-					FROM Report_Column RC
-					INNER JOIN Report_Column_Setup RCS ON RC.Column_Code=RCS.Column_Code
-					where RC.Query_Code=@Report_Query_Code and Is_Select='Y'
-				) A order by Sort_Ord	
-			FOR XML PATH('')), 1, 1, '') + ','
-		 	
-		SET @Column_Names = LEFT(@Column_Names,LEN(@Column_Names)-1)  
-		SELECT @Script_Insert_Column_Names = @Script_Insert_Column_Names + ' ''' + CONVERT(NVARCHAR(100),NUMBER) + ''',' FROM DBO.FN_SPLIT_WITHDELEMITER(@Column_Names,',')    
-	END
-	ELSE BEGIN
-		SET @Column_Names = LEFT(@Column_Names,LEN(@Column_Names)-1)  
-		SELECT @Script_Insert_Column_Names = @Script_Insert_Column_Names + ' ''' + CONVERT(NVARCHAR(100),NUMBER) + ''',' FROM DBO.FN_SPLIT_WITHDELEMITER(@Column_Names,',')    
-	END
-
-	SET @Script_Insert_Column_Names = LEFT(@Script_Insert_Column_Names,LEN(@Script_Insert_Column_Names)-1)  
+		SELECT @Operation = Operation FROM #Temp_Condition WHERE SrNo = @Counter
 	
-	/* Execute SQL for Insert actual column name in first row */
-	PRINT 'Script of Insert Column Names in TempTable :- ' + @Script_Insert_Column_Names
-	EXEC (@Script_Insert_Column_Names)  
-
-	Set @Subtitling_Codes = IsNull(@Subtitling_Codes, '')
-	Set @Dubbing_Codes = IsNull(@Dubbing_Codes, '')
-	Set @Country_Codes = IsNull(@Country_Codes, '')
-	Set @Category_Codes = IsNull(@Category_Codes, '')
-
-	Declare @RightsSql Varchar(Max) = '', @InNotIn Varchar(20) = ''
-
-	Set @RightsSql = 'SELECT 
-		CASE LEN(Subtitling_Lang) WHEN 0 THEN ''No'' ELSE Subtitling_Lang END AS Subtitling_Languages,
-		CASE LEN(Dubbing_Lang) WHEN 0 THEN ''No'' ELSE Dubbing_Lang END AS Dubbing_Languages, 
-		CASE LEN(Countries) WHEN 0 THEN ''No'' ELSE Countries END AS Country_Name, 
-		CASE LEN(Territories) WHEN 0 THEN ''No'' ELSE Territories END AS Territory_Name, *
-		INTO #Syn_Deal_Rights
-		FROM
-		(
-			SELECT SDR.*,
-			DBO.UFN_Get_Rights_Subtitling(Syn_Deal_Rights_Code, ''S'') AS Subtitling_Lang, 
-			DBO.UFN_Get_Rights_Dubbing(Syn_Deal_Rights_Code, ''S'') AS Dubbing_Lang,
-			DBO.UFN_Get_Rights_Country_Query(Syn_Deal_Rights_Code, ''S'') AS Countries,
-			DBO.UFN_Get_Rights_Territory(Syn_Deal_Rights_Code, ''S'') AS Territories,
-			CASE WHEN (GETDATE() > Right_END_date) THEN ''Y'' ELSE ''N'' END AS Expired,
-			CASE Is_Exclusive WHEN ''Y'' THEN ''Yes'' ELSE ''No'' END AS Exclusive,
-			CASE
-				WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback SDRH WHERE SDRH.Syn_Deal_Rights_Code = SDR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' 
-			END AS Is_Holdback ,	
-			CASE Right_Type
-			   WHEN ''Y'' THEN [dbo].[UFN_Get_Rights_Term](SDR.Actual_Right_Start_Date, SDR.Actual_Right_END_Date, Term) 
-			   WHEN ''M'' THEN [dbo].[UFN_Get_Rights_Milestone](Milestone_Type_Code, Milestone_No_Of_Unit, Milestone_Unit_Type)
-			   WHEN ''U'' THEN ''Perpetuity''
-			END AS Deal_Term,
-			CASE SDR.Is_ROFR WHEN ''Y'' THEN CONVERT(VARCHAR,SDR.ROFR_Date,103) ELSE ''No'' END AS ROFR
-			FROM Syn_Deal_Rights SDR Where 1=1 {SQLSUB}{SQLDUB}{SQLCOUN} 
-			AND ISNULL(SDR.Right_Status, '''') = ''C''
-		) AS A
-		'
-		--Print 'sql1'
-	If(@Subtitling_Codes <> '')
-	Begin
-		--Select * From @InNotIn
-		Select @InNotIn = number From DBO.fn_Split_withdelemiter(@Subtitling_Codes, '~') Where Id=1
-		Select @Subtitling_Codes = number From DBO.fn_Split_withdelemiter(@Subtitling_Codes, '~') Where Id=2
-		Declare @SubTit Varchar(5000) = ' And Syn_Deal_Rights_Code In (Select Syn_Deal_Rights_Code From Syn_Deal_Rights_Subtitling Where Syn_Deal_Rights_Code Is Not Null And Language_Code ' + @InNotIn + ' (
-				Select number From DBO.fn_Split_withdelemiter(''' + @Subtitling_Codes + ''', '','') Where number <> ''''
-			))'
-		Set @RightsSql = Replace(@RightsSql, '{SQLSUB}', @SubTit)
-	End
+		INSERT INTO @tblCriteria (Id, ColCriteria)
+		SELECT id, number  FROM DBO.fn_Split_withdelemiter(@Operation,'~')
 	
-	if(@Dubbing_Codes <> '')
-	Begin
-		Select @InNotIn = number From DBO.fn_Split_withdelemiter(@Dubbing_Codes, '~') Where Id=1
-		Select @Dubbing_Codes = number From DBO.fn_Split_withdelemiter(@Dubbing_Codes, '~') Where Id=2
-		Declare @Dubb Varchar(5000) = ' And Syn_Deal_Rights_Code In (Select Syn_Deal_Rights_Code From Syn_Deal_Rights_Dubbing Where Syn_Deal_Rights_Code Is Not Null And Language_Code ' + @InNotIn + ' (
-				Select number From DBO.fn_Split_withdelemiter(''' + @Dubbing_Codes + ''', '','') Where number <> '',''
-			))'
-		Set @RightsSql = Replace(@RightsSql, '{SQLDUB}', @Dubb)
-	End
+		SELECT  @LeftColDbname = ColCriteria  FROM @tblCriteria  where id = 1
+		SELECT  @logicalConnect = ColCriteria  FROM @tblCriteria where id = 2
+		SELECT  @theOp = ColCriteria  FROM @tblCriteria where id = 3
+		SELECT  @Value = ColCriteria  FROM @tblCriteria where id = 4
 	
-	if(@Country_Codes <> '')
-	Begin
-		Select @InNotIn = number From DBO.fn_Split_withdelemiter(@Country_Codes, '~') Where Id=1
-		Select @Country_Codes = number From DBO.fn_Split_withdelemiter(@Country_Codes, '~') Where Id=2
-		IF(LTRIM(RTRIM(UPPER(@InNotIn))) ='NOT IN')
-		BEGIN			
-			SET @Country_Not_In_Where=' AND SDM.Title_Code NOT IN
-										(											
-											SELECT SADRT.Title_Code FROM Syn_Deal_Rights_Title SADRT WHERE SADRT.Syn_Deal_Rights_Code IN
-											(
-												SELECT ISDRT.Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Territory ISDRT 
-												WHERE ISDRT.Country_Code IN (SELECT number FROM DBO.fn_Split_withdelemiter(''' + @Country_Codes + ''', '','') 
-												WHERE number <> '','') AND ISDRT.Territory_Type=''I''
-												OR
-												(
-													Territory_Code in 
-													(
-														SELECT  Territory_Code FROM Territory_Details WHERE 
-														Country_Code IN (SELECT number FROM DBO.fn_Split_withdelemiter(''' + @Country_Codes + ''', '','') 
-														WHERE number <> '','') AND Territory_Type=''G''
-													)
-												)
-											)
-										)'
-		END
-		ELSE
+		PRINT '	'+ @Operation
+
+		IF(@LeftColDbname = 'BUSINESS_UNIT_CODE')
 		BEGIN
-		Declare @Count NVARCHAR(MAX) = ' And Syn_Deal_Rights_Code In (Select Syn_Deal_Rights_Code From Syn_Deal_Rights_Territory Where Syn_Deal_Rights_Code Is Not Null 
-		And (( 
-				Country_Code ' + @InNotIn + ' (Select number From DBO.fn_Split_withdelemiter(''' + @Country_Codes + ''', '','') Where number <> '','')
-				AND Territory_Type=''I''
-				)
-		OR 
-			(
-				Territory_Code in (SELECT  Territory_Code FROM Territory_Details WHERE 
-				Country_Code ' + @InNotIn + ' (SELECT number FROM DBO.fn_Split_withdelemiter(''' + @Country_Codes + ''', '','') WHERE number <> '',''))  
-				AND Territory_Type=''G''
-			))
-		)'
-		Set @RightsSql = Replace(@RightsSql, '{SQLCOUN}', @Count)
+
+			INSERT INTO #BUWiseSyn_Deal_Code(Syn_Deal_code)
+			EXEC('SELECT Syn_Deal_code FROM Syn_Deal WHERE Deal_Workflow_Status NOT IN (''AR'', ''WA'') AND Business_Unit_Code '+@theOp+' ('+@Value+')' )
+
+			INSERT INTO #tempTitle(Title_Code, Original_Title, Original_Dubbed, Year_of_Release,CBFC_Rating)
+			SELECT Title_Code, Original_Title, ISNULL(OD.Columns_Value,'NA'), Year_Of_Production,mec.Columns_Value_Code FROM Title t 
+			LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+			LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+
+			
+			INSERT INTO #tempRights(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+			SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+				CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+				CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,adr.MileStone_Type_Code,
+				dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+				as Promoter_Group_Name,
+				dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+				as Promoter_Remark_Desc,
+				CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+				CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+				FROM Syn_Deal ad
+				INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+				INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code --AND adr.PA_Right_Type = 'PR'
+				INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+				INNER JOIN #tempTitle tt ON tt.Title_Code = adrt.Title_Code
+				WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+			DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code from #tempRights)
+	
+			INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+			SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,Ad.Deal_Segment_Code,AD.Revenue_Vertical_Code
+			FROM Syn_Deal ad
+			INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+			LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+			LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+			LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+
 		END
-	End
-
-	IF(@Category_Codes <> '')
-	BEGIN
-		SELECT @InNotIn = number FROM DBO.fn_Split_withdelemiter(@Category_Codes, '~') WHERE Id=1
-		SELECT @Category_Codes = number FROM DBO.fn_Split_withdelemiter(@Category_Codes, '~') WHERE Id=2
-		
-		SET @Category_Not_In_Where=' AND SD.Cat_Code ' + @InNotIn + ' (SELECT number FROM DBO.fn_Split_withdelemiter
-			(''' + @Category_Codes + ''', '','') WHERE number <> '','') '
-		
-	END
-
-	Set @RightsSql = Replace(@RightsSql, '{SQLSUB}', '')
-	Set @RightsSql = Replace(@RightsSql, '{SQLDUB}', '')
-	Set @RightsSql = Replace(@RightsSql, '{SQLCOUN}', '')
-
-		--Print 'sql2'
-	--DECLARE @Sql_Query NVARCHAR(MAX) = ''
-
-	DECLARE @Sql_Query NVARCHAR(MAX) = @RightsSql
-	DECLARE @Sql_Query_1 NVARCHAR(MAX) = ''
-	DECLARE @Sql_Query_2 NVARCHAR(MAX) = ''
-	DECLARE @Sql_Query_3 NVARCHAR(MAX) = ''
-	DECLARE @Sql_Query_4 NVARCHAR(MAX) = ''
-
-	DECLARE @CBFCRating_InNotIn NVARCHAR(MAX) = ' IN ',  @LogicalConnect NVARCHAR(MAX) = ' AND '
-
-	IF(@CBFCRating_Codes = '')
-	BEGIN
-			SELECT @CBFCRating_Codes = '0,' + STUFF((SELECT DISTINCT ',' +  CAST(Columns_Value_Code AS NVARCHAR) 
-			FROM Extended_Columns_Value where Columns_Code in (SELECT Columns_Code FROM  Extended_Columns WHERE Columns_Name = 'CBFC Rating')
-			FOR XML PATH('')),1,1,'')
-
-			SET @CBFCRating_Not_In_Where=  'IN  ('+ @CBFCRating_Codes +') '
-	END
-	ELSE IF (@CBFCRating_Codes <> '')
-	BEGIN
-			SELECT @LogicalConnect = number FROM DBO.fn_Split_withdelemiter(@CBFCRating_Codes, '~') WHERE Id=1
-			SELECT @CBFCRating_InNotIn = number FROM DBO.fn_Split_withdelemiter(@CBFCRating_Codes, '~') WHERE Id=2
-			SELECT @CBFCRating_Codes = number FROM DBO.fn_Split_withdelemiter(@CBFCRating_Codes, '~') WHERE Id=3
-		
-			SET @CBFCRating_Not_In_Where= ' IN ('+ @CBFCRating_Codes +') '
-	END
-
-	--print 'sql 3'
-	SET @Sql_Query_1 = '	
-
-	SELECT DISTINCT T.Title_Code
-	INTO #Filtered_Title 
-	FROM Title T 
-		LEFT JOIN Map_Extended_Columns MEC ON MEC.Record_Code = T.Title_Code and MEC.Columns_Code in (select Columns_Code from  Extended_Columns where Columns_Name = ''CBFC Rating'')
-		LEFT JOIN Map_Extended_Columns_Details MECD ON MECD.Map_Extended_Columns_Code = MEC.Map_Extended_Columns_Code 
-		LEFT JOIN Extended_Columns_Value ECV ON ECV.Columns_Value_Code = MECD.Columns_Value_Code
-	WHERE IsNull(T.Reference_Flag, '''') <> ''T''
-	AND ISNULL(MECD.Columns_Value_Code,0) '+ @CBFCRating_Not_In_Where + ' 
-
 	
-	SELECT T.Title_Code, T.Original_Title, T.Title_Name, T.Year_Of_Production, DBO.UFN_Get_Title_Metadata_By_Role_Code(T.Title_Code, 1) AS Director_Names_Comma_Seperate, 
-		DBO.UFN_Get_Title_Metadata_By_Role_Code(T.Title_Code, 2) AS Star_Cast_Names_Comma_Seperate
-		, DBO.UFN_Get_Title_Genre(T.Title_Code) AS Genre_Names_Comma_Seperate
-		--,0 AS Genres_Code
-		, 0 AS Director_Code
-		, 0 AS Start_Cast_Code, dbo.UFN_Get_Title_Original_Or_Dubbed(T.Title_Code) AS Original_Dubbed
-		, STUFF((SELECT DISTINCT '','' + CAST(ECV.Columns_Value AS NVARCHAR) 
-			FROM title Tit  
-			LEFT JOIN Map_Extended_Columns MEC ON MEC.Record_Code = Tit.Title_Code and MEC.Columns_Code in (select Columns_Code from  Extended_Columns where Columns_Name = ''CBFC Rating'')
-			LEFT JOIN Map_Extended_Columns_Details MECD ON MECD.Map_Extended_Columns_Code = MEC.Map_Extended_Columns_Code 
-			LEFT JOIN Extended_Columns_Value ECV ON ECV.Columns_Value_Code = MECD.Columns_Value_Code
-			WHERE Tit.Title_Code =  T.Title_Code
-		FOR XML PATH('''')),1,1,'''') AS ''CBFC_Rating''
-		INTO #TmpTitle 
-	FROM Title T 
-	WHERE IsNull(T.Reference_Flag, '''') <> ''T'' 
-	'+@LogicalConnect+' T.Title_Code '+ @CBFCRating_InNotIn +' ( SELECT Title_Code FROM #Filtered_Title)
+		IF(@logicalConnect = 'AND')
+		BEGIN
+			IF(@theOp = 'IN')
+				SET @theOp = 'NOT IN '
+			ELSE IF(@theOp = 'NOT IN')
+				SET @theOp = 'IN'
+		END
+		PRINT'TITLE CRITERIA START'
+		BEGIN
+			IF(@LeftColDbname = 'TIT.TITLE_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+			
+				--Select distinct title_code from #tempTitle
+				
+					EXEC ('DELETE FROM #tempTitle WHERE Title_Code '+@theOp+' ('+@Value+')')
+					
+					DELETE FROM #tempRights WHERE Title_Code NOT IN (Select Title_Code from #tempTitle)
+				
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+				--select distinct title_code from #tempRights
 
-	SELECT SD.Syn_Deal_Code, SD.Vendor_Code, V.Vendor_Name, SD.Currency_Code, CUR.Currency_Name, SD.Entity_Code, E.Entity_Name,SD.Deal_Type_Code,
-	SD.Agreement_No, SD.Agreement_Date, SD.Deal_Description, SD.Deal_Tag_Code, DT.Deal_Tag_Description, SD.Business_Unit_Code, 
-	BU.Business_Unit_Name, RO.Role_Code,RO.Role_Name, dbo.UFN_GetDealTypeCondition(SD.Deal_Type_Code) As DEAL_TYPE_NAMES,
-	SDT.Deal_Type_Name,SD.Deal_Workflow_Status,SD.Sales_Agent_Code,
-
-	TA.Title_Name AS Alternate_Title_Name,
-	TA.Original_Title AS Alternate_Original_Title,
-	LG.Language_Name AS Alternate_Language,
-	GN.Genres_Name AS Alternate_Genres_Name,
-	TALENT_Dir.Talent_Name AS Title_Director,
-	TALENT_SC.Talent_Name AS Title_Star_Cast,
-	Spa_TA.Title_Name AS Spanish_Title_Name,
-	Spa_TA.Original_Title AS Spanish_Original_Title,
-	Spa_LG.Language_Name AS Spanish_Language,
-	Spa_GN.Genres_Name AS Spanish_Genres_Name,
-	Spa_TALENT_Dir.Talent_Name AS Spanish_Director,
-	Spa_TALENT_SC.Talent_Name AS Spanish_Star_Cast,
-	T.Title_Code,
-	SD.Category_Code AS Cat_Code,
-	C.Category_Name AS Cat_Name
-
-	INTO #TmpDeal
-	FROM Syn_Deal SD
-	INNER JOIN Vendor V ON V.Vendor_Code = SD.Vendor_Code
-	INNER JOIN Deal_Type SDT ON SDT.Deal_Type_Code = SD.Deal_Type_Code
-	INNER JOIN Currency CUR ON CUR.Currency_Code = SD.Currency_Code
-	INNER JOIN Entity E ON E.Entity_Code = SD.Entity_Code
-	INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = SD.Business_Unit_Code
-	INNER JOIN Deal_Tag DT ON DT.Deal_Tag_Code = SD.Deal_Tag_Code
-	INNER JOIN Role RO on SD.Customer_Type = RO.Role_Code
-
-	INNER JOIN Syn_Deal_Movie SDM ON SDM.Syn_Deal_Code = SD.Syn_Deal_Code
-	INNER JOIN Title T ON T.Title_Code = SDM.Title_Code
-	INNER JOIN Category C ON C.Category_Code = SD.Category_Code
-	LEFT JOIN Title_Alternate TA ON TA.Title_Code = T.Title_Code AND TA.Alternate_Config_Code = 1
-	LEFT JOIN LANGUAGE LG ON LG.Language_Code = TA.Title_Language_Code 
-	LEFT JOIN Title_Alternate_Genres TAG ON TAG.Title_Alternate_Code= TA.Title_Alternate_Code 
-	LEFT JOIN Genres GN ON GN.Genres_Code = TAG.Genres_Code 
-	LEFT JOIN Title_Alternate_Talent TAT_Dir ON TAT_Dir.Title_Alternate_Code = TA.Title_Alternate_Code AND TAT_Dir.Role_Code = 1
-	LEFT JOIN Talent TALENT_Dir ON TALENT_Dir.Talent_Code = TAT_Dir.Talent_Code
-	LEFT JOIN Title_Alternate_Talent TAT_SC ON TAT_SC.Title_Alternate_Code = TA.Title_Alternate_Code AND TAT_SC.Role_Code = 2
-	LEFT JOIN Talent TALENT_SC ON TALENT_SC.Talent_Code = TAT_SC.Talent_Code
-	LEFT JOIN Title_Alternate Spa_TA ON Spa_TA.Title_Code = T.Title_Code AND Spa_TA.Alternate_Config_Code = 2
-	LEFT JOIN LANGUAGE Spa_LG ON Spa_LG.Language_Code = Spa_TA.Title_Language_Code 
-	LEFT JOIN Title_Alternate_Genres Spa_TAG ON Spa_TAG.Title_Alternate_Code= Spa_TA.Title_Alternate_Code 
-	LEFT JOIN Genres Spa_GN ON Spa_GN.Genres_Code = Spa_TAG.Genres_Code 
-	LEFT JOIN Title_Alternate_Talent Spa_TAT_Dir ON Spa_TAT_Dir.Title_Alternate_Code = Spa_TA.Title_Alternate_Code AND Spa_TAT_Dir.Role_Code = 1
-	LEFT JOIN Talent Spa_TALENT_Dir ON Spa_TALENT_Dir.Talent_Code = Spa_TAT_Dir.Talent_Code
-	LEFT JOIN Title_Alternate_Talent Spa_TAT_SC ON Spa_TAT_SC.Title_Alternate_Code = Spa_TA.Title_Alternate_Code AND Spa_TAT_SC.Role_Code = 2
-	LEFT JOIN Talent Spa_TALENT_SC ON Spa_TALENT_SC.Talent_Code = Spa_TAT_SC.Talent_Code;'
-	
-	SET @Sql_Query_2 = ' 
-
-	SELECT DISTINCT tit.Title_Code, tit.Original_Title, 	
-	DBO.UFN_GetTitleNameInFormat(DEAL_TYPE_NAMES, tit.Title_Name, SDRT.Episode_From, SDRT.Episode_To) AS Title_Name,
-	tit.Year_Of_Production, SDM.No_Of_Episode, 
-	P.Platform_Code, SDR.Syn_Deal_Rights_Code,
-	SD.Vendor_Code, SD.Vendor_Name, SD.Role_Name,
-	tit.Director_Code, tit.Director_Names_Comma_Seperate, 
-	tit.Start_Cast_Code, tit.Star_Cast_Names_Comma_Seperate,tit.Genre_Names_Comma_Seperate,
-	--tit.Genres_Code,
-	tit.Original_Dubbed,
-	CASE tit.Original_Dubbed WHEN ''Original'' THEN ''O'' ELSE ''D'' END AS Orig_Dub,
-	SDR.Actual_Right_Start_Date AS Actual_Right_Start_Date, SDR.Actual_Right_End_Date AS Actual_Right_End_Date, 
-	SDR.Exclusive AS Is_Exclusive,SDR.Restriction_Remarks,SDR.Expired,
-	0 Country_Code, SDR.Country_Name, SDR.Territory_Name,
-	CASE Is_Holdback WHEN ''Y'' THEN ''Yes'' ELSE ''No'' END AS Is_Holdback,
-	SD.Currency_Code, SD.Currency_Name, SD.Entity_Code, SD.Entity_Name, 
-	SDC.Deal_Cost, 
-	CASE
-		WHEN SDC.Variable_Cost_Type = ''P'' THEN ''Profit-Sharing''
-		WHEN SDC.Variable_Cost_Type = ''R'' THEN ''Revenue-Sharing''
-		ELSE ''NA''
-	END AS Variable_Cost_Type,
-	--ISNULL(SDC.Variable_Cost_Type, ''No'') AS Variable_Cost_Type,
-	SD.Agreement_No, SD.Agreement_Date, SD.Deal_Description, SD.Deal_Tag_Code, SD.Deal_Tag_Description, SD.Business_Unit_Code, SD.Business_Unit_Name,
-	Subtitling_Languages,
-	Dubbing_Languages,
-	SDR.Is_Sub_License,
-	CASE 
-		WHEN SDR.Is_Sub_License =''Y'' THEN SL.Sub_License_Name
-		ELSE ''No Sub Licensing''
-	END AS Sub_Licensing,
-	SDM.Syn_Deal_Movie_Code, NULL AS Holdback_Detail,ROFR,SDR.Deal_Term AS Term,SD.Deal_Type_Name,SD.Deal_Type_Code,DWS.Deal_Workflow_Status_Name,
-	ISNULL(VS.Vendor_Name,''NA'') AS Sales_Agent,
-
-	SD.Alternate_Title_Name,
-	SD.Alternate_Original_Title,
-	SD.Alternate_Language,
-	SD.Alternate_Genres_Name,
-	SD.Title_Director,
-	SD.Title_Star_Cast,
-	SD.Spanish_Title_Name,
-	SD.Spanish_Original_Title,
-	SD.Spanish_Language,
-	SD.Spanish_Genres_Name,
-	SD.Spanish_Director,
-	SD.Spanish_Star_Cast,
-	SD.Cat_Name,
-	tit.CBFC_Rating
-
-	INTO #Actual_Data_WOP
-	FROM #Syn_Deal_Rights SDR
-	INNER JOIN Syn_Deal_Rights_Title SDRT ON SDRT.Syn_Deal_Rights_Code = SDR.Syn_Deal_Rights_Code
-	INNER JOIN Syn_Deal_Rights_Platform P ON P.Syn_Deal_Rights_Code = SDR.Syn_Deal_Rights_Code
-	INNER JOIN #TmpDeal SD On SDR.Syn_Deal_Code = SD.Syn_Deal_Code AND  SDRT.Title_Code = SD.Title_Code	
-	INNER JOIN Syn_Deal_Movie SDM ON SDM.Syn_Deal_Code = SD.Syn_Deal_Code AND SDRT.Title_Code = SDM.Title_Code
-	INNER JOIN #TmpTitle tit On tit.Title_Code = SDRT.Title_Code
-	LEFT JOIN Syn_Deal_Revenue SDC ON SDC.Syn_Deal_Code = SD.Syn_Deal_Code
-	LEFT JOIN Sub_License SL ON SL.Sub_License_Code = SDR.Sub_License_Code
-	LEFT JOIN Vendor VS ON VS.Vendor_Code=SD.Sales_Agent_Code
-	INNER JOIN Deal_Workflow_Status DWS ON SD.Deal_Workflow_Status=DWS.Deal_WorkflowFlag AND DWS.Deal_Type=''S''
-	WHERE 1 = 1' + @Sql_WHERE + @Country_Not_In_Where  + @Category_Not_In_Where + ';'
-	
-	SET @Sql_Query_3 = ' 
-	SELECT *,
-	TP.Platform_Hiearachy AS Platform_Name INTO #Actual_Data
-	From (
-	Select 
-	STUFF((SELECT Distinct '','' + CAST(tp2.Platform_Code AS VARCHAR) FROM #Actual_Data_WOP tp2
-    WHERE  tp1.Syn_Deal_Rights_Code = tp2.Syn_Deal_Rights_Code
-    FOR XML PATH('''')),1,1,'''') AS Platform_Codes,
-	Title_Code, Original_Title, Title_Name,
-	Year_Of_Production, No_Of_Episode, 
-	Syn_Deal_Rights_Code,
-	Vendor_Code, Vendor_Name, Role_Name,
-	Director_Code, Director_Names_Comma_Seperate, 
-	Start_Cast_Code, Star_Cast_Names_Comma_Seperate,Genre_Names_Comma_Seperate,
-	--Genres_Code, 
-	Original_Dubbed,
-	Orig_Dub, Actual_Right_Start_Date, Actual_Right_End_Date, Is_Exclusive,
-	Restriction_Remarks,Expired,Country_Code, Country_Name, 
-	Territory_Name, Is_Holdback, Currency_Code, Currency_Name, 
-	Entity_Code, Entity_Name, Deal_Cost, Variable_Cost_Type,
-	Agreement_No, Agreement_Date, Deal_Description, Deal_Tag_Code, 
-	Deal_Tag_Description, Business_Unit_Code, Business_Unit_Name,
-	Subtitling_Languages,Dubbing_Languages, Is_Sub_License, Sub_Licensing,
-	Syn_Deal_Movie_Code, Holdback_Detail, ROFR,Term,Deal_Type_Name,
-	CASE
-		  WHEN Deal_Workflow_Status_Name = ''Waiting'' THEN ''Waiting For Authorization''
-		  WHEN Deal_Workflow_Status_Name = ''Amended'' OR Deal_Workflow_Status_Name = ''Opened'' OR   Deal_Workflow_Status_Name = ''Re-Open'' THEN ''Open''
-		  WHEN Deal_Workflow_Status_Name = ''Approved'' THEN  Deal_Workflow_Status_Name
-		  WHEN Deal_Workflow_Status_Name = ''Rejected'' THEN  Deal_Workflow_Status_Name
-		  ELSE ''All''
-	END Deal_Workflow_Status_Name,
-	Sales_Agent,
-	Alternate_Title_Name,
-	Alternate_Original_Title,
-	Alternate_Language,
-	
-	STUFF((SELECT Distinct '','' + CAST(Alternate_Genres_Name AS NVARCHAR) FROM #Actual_Data_WOP tp5
-	WHERE  tp1.Syn_Deal_Rights_Code = tp5.Syn_Deal_Rights_Code
-	FOR XML PATH('''')),1,1,'''') AS Alternate_Genres_Name,
-
-	STUFF((SELECT Distinct '','' + CAST(Title_Director AS NVARCHAR) FROM #Actual_Data_WOP tp4
-	WHERE  tp1.Syn_Deal_Rights_Code = tp4.Syn_Deal_Rights_Code
-	FOR XML PATH('''')),1,1,'''') AS Title_Director,
-
-	STUFF((SELECT Distinct '','' + CAST(Title_Star_Cast AS NVARCHAR) FROM #Actual_Data_WOP tp3
-	WHERE  tp1.Syn_Deal_Rights_Code = tp3.Syn_Deal_Rights_Code
-	FOR XML PATH(''''),root(''MyString''),type).value(''/MyString[1]'',''varchar(max)''),1,1,'''') AS Title_Star_Cast,
-	dBO.UFN_Get_Rights_Promoter_Group_Remarks(Syn_Deal_Rights_Code,''P'',''S'') as Promoter_Group_Name,
-	dBO.UFN_Get_Rights_Promoter_Group_Remarks(Syn_Deal_Rights_Code,''R'',''S'') as Promoter_Remark_Desc,
-
-	Spanish_Title_Name,
-	Spanish_Original_Title,
-	Spanish_Language,
-
-	STUFF((SELECT Distinct '','' + CAST(Spanish_Genres_Name AS NVARCHAR) FROM #Actual_Data_WOP tp6
-	WHERE  tp1.Syn_Deal_Rights_Code = tp6.Syn_Deal_Rights_Code
-	FOR XML PATH('''')),1,1,'''') AS Spanish_Genres_Name,
-
-	STUFF((SELECT Distinct '','' + CAST(Spanish_Director AS NVARCHAR) FROM #Actual_Data_WOP tp7
-	WHERE  tp1.Syn_Deal_Rights_Code = tp7.Syn_Deal_Rights_Code
-	FOR XML PATH('''')),1,1,'''') AS Spanish_Director,
-
- 	STUFF((SELECT Distinct '','' + CAST(Spanish_Star_Cast AS NVARCHAR) FROM #Actual_Data_WOP tp8
-	WHERE  tp1.Syn_Deal_Rights_Code = tp8.Syn_Deal_Rights_Code
-	FOR XML PATH(''''),root(''MyString''),type).value(''/MyString[1]'',''varchar(max)''),1,1,'''') AS Spanish_Star_Cast,
-
-	Cat_Name,
-	CBFC_Rating
-
-	From #Actual_Data_WOP tp1
-	Group By Title_Code, Original_Title, Title_Name,tp1.Deal_Workflow_Status_Name,tp1.Sales_Agent,
-	Year_Of_Production, No_Of_Episode, 
-	Syn_Deal_Rights_Code,
-	Vendor_Code, Vendor_Name, Role_Name,
-	Director_Code, Director_Names_Comma_Seperate, 
-	Start_Cast_Code, Star_Cast_Names_Comma_Seperate,Genre_Names_Comma_Seperate,
-	--Genres_Code,
-	Original_Dubbed,
-	Orig_Dub, Actual_Right_Start_Date, Actual_Right_End_Date, Is_Exclusive,
-	Restriction_Remarks,Expired,Country_Code, Country_Name, 
-	Territory_Name, Is_Holdback, Currency_Code, Currency_Name, 
-	Entity_Code, Entity_Name, Deal_Cost, Variable_Cost_Type,
-	Agreement_No, Agreement_Date, Deal_Description, Deal_Tag_Code, 
-	Deal_Tag_Description, Business_Unit_Code, Business_Unit_Name,
-	Subtitling_Languages,Dubbing_Languages, Is_Sub_License, Sub_Licensing,
-	Syn_Deal_Movie_Code, Holdback_Detail, ROFR,Term,Deal_Type_Name,
-	Alternate_Title_Name,
-	Alternate_Original_Title,
-	Alternate_Language,
-	Alternate_Genres_Name,
-	Title_Director,
-	Title_Star_Cast,
-	Spanish_Title_Name,Spanish_Original_Title,Spanish_Language,Spanish_Genres_Name,Spanish_Director,Spanish_Star_Cast,
-	Cat_Name, CBFC_Rating
-	) mainouput
-	cross apply dbo.UFN_Get_Platform_With_Parent(mainouput.Platform_Codes) tp
-	'
-
-		--Print 'sql3'
-		--select @Report_Query_Code
-	IF(@Report_Query_Code>0)
-	BEGIN
-		SELECT @Sql_SELECT = STUFF(
-		(
-			Select  ',' + A.Name_In_DB
-			FROM (
-				SELECT
-				CASE WHEN CHARINDEX('Date',Name_In_DB) > 0 
-				THEN
-					'CONVERT(VARCHAR,' + RIGHT(Name_In_DB,LEN(Name_In_DB)-CHARINDEX('.',Name_In_DB)) + ',103)'
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
 				ELSE
-					RIGHT(Name_In_DB,LEN(Name_In_DB)-CHARINDEX('.',Name_In_DB))
-				END AS Name_In_DB,
-				Sort_Ord
-				FROM Report_Column RC
-				INNER JOIN Report_Column_Setup RCS ON RC.Column_Code=RCS.Column_Code
-				where RC.Query_Code=@Report_Query_Code and Is_Select='Y'
-		) A order by Sort_Ord
+				BEGIN
+					DELETE FROM @tblTitle
+						
+					INSERT INTO @tblTitle(Title_Code,Original_Title,Original_Dubbed,Year_of_Release,CbFc_rating)
+					EXEC ('Select Distinct t.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,''NA''),t.Year_Of_Production,mec.Columns_Value_Code
+						   FROM Title t 
+						   LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+						   LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+						   WHERE t.Title_Code '+@theOp+' ('+@Value+')
+						   AND Reference_Flag IS NULL')
+				
+					Delete from @tblTitle WHERE Title_Code IN (Select Title_Code from #tempTitle)
+	
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,tblT.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblTitle tblT on tblT.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
 
-		FOR XML PATH('')), 1, 1, '')
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,AD.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE ad.Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRights)
+					AND ad.Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempDeal)
+	
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_rating)
+					SELECT Title_Code,Original_Title,ISNULL(OD.Columns_Value,'NA'),Year_of_Release,CBFC_rating FROM @tblTitle T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+	
+					DELETE FROM @tblTitle
+				END			
+			END
+
+			IF(@LeftColDbname = 'Columns_Value')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC (' DELETE FROM #tempTitle WHERE CBFC_Rating '+@theOp +' ('+  @Value +') OR CBFC_Rating IS NULL' )
+	
+					DELETE FROM #tempRights WHERE Title_Code NOT IN (Select Title_Code from #tempTitle)
+				
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblTitle
+						
+					INSERT INTO @tblTitle(Title_Code,Original_Title,Original_Dubbed,Year_of_Release,CBFC_Rating)
+					EXEC ('Select Distinct t.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,''NA''),t.Year_Of_Production,mec.Columns_Value_Code
+						   FROM Title t 
+						   LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+						   LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+						   WHERE mec.Columns_Value_Code '+@theOp+' ('+@Value+')')
+				
+					Delete from @tblTitle WHERE Title_Code IN (Select Title_Code from #tempTitle)
+	
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,tblT.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					LEFT JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblTitle tblT on tblT.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE ad.Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRights)
+					AND ad.Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempDeal)
+	
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Title_Code,Original_Title,ISNULL(OD.Columns_Value,'NA'),Year_of_Release,CBFC_Rating FROM @tblTitle T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+	
+					DELETE FROM @tblTitle
+				END			
+			END--CBFC_Rating end
+
+			IF(@LeftColDbname = 'ORIGINAL_DUBBED')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC ('DELETE FROM #tempTitle WHERE Original_Dubbed '+@theOp+' ('''+@Value+''')')
+	
+					DELETE FROM #tempRights WHERE Title_Code NOT IN (Select Title_Code from #tempTitle)
+				
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+	
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblTitle
+						
+					INSERT INTO @tblTitle(Title_Code,Original_Title,Original_Dubbed,Year_of_Release,Cbfc_rating)
+					EXEC ('Select Distinct t.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,''NA''),t.Year_Of_Production,MEc.Columns_Value_Code
+						   FROM Title t 
+						   LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+						   LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+						   WHERE ISNULL(OD.Columns_Value,''NA'') '+@theOp+' ('''+@Value+''')
+						   AND T.Reference_Flag IS NULL')
+				
+					Delete from @tblTitle WHERE Title_Code IN (Select Title_Code from #tempTitle)
+	
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,tblT.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblTitle tblT on tblT.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE ad.Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRights)
+					AND ad.Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempDeal)
+	
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Title_Code,Original_Title,ISNULL(OD.Columns_Value,'NA'),Year_of_Release,CBFC_Rating FROM @tblTitle T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+									
+					DELETE FROM @tblTitle
+				END			
+			END
+	
+			IF(@LeftColDbname = 'DIRECTOR_CODE')
+			BEGIN
+	
+				IF(@logicalConnect = 'AND')
+				BEGIN
+
+					EXEC ('DELETE FROM #tempTitle WHERE Title_Code '+@theOp+' ( Select Title_Code FROM Title_Talent WHERE Talent_Code IN ('+@Value+') AND Role_Code = 1)')
+					 
+					DELETE FROM  #tempTitle WHERE DBO.UFN_Get_Title_Metadata_By_Role_Code(Title_Code, 1) = ''
+
+					DELETE FROM #tempRights WHERE Title_Code NOT IN (Select Title_Code from #tempTitle)
+				
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblTitle
+				
+					INSERT INTO @tblTitle(Title_Code,Original_Title,Original_Dubbed,Year_of_Release,CBFC_Rating)
+					EXEC ('Select Distinct tg.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,''NA''),t.Year_Of_Production,mec.Columns_Value_Code FROM Title_Talent tg 
+						   INNER JOIN Title t ON t.Title_Code = tg.Title_Code AND Role_Code = 1
+						   LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+						   LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+						   WHERE tg.Talent_Code '+@theOp+' ('+@Value+')
+						   AND Reference_Flag IS NULL')
+				
+				
+					Delete from @tblTitle WHERE Title_Code IN (Select Title_Code from #tempTitle)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,tblT.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblTitle tblT on tblT.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE ad.Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRights)
+					AND ad.Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempDeal)
+	
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Title_Code,Original_Title,ISNULL(OD.Columns_Value,'NA'),Year_of_Release,CBFC_Rating
+					FROM @tblTitle T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+				
+					DELETE FROM @tblTitle
+				END
+			END
+	
+			IF(@LeftColDbname = 'STARCAST_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC ('DELETE FROM #tempTitle WHERE Title_Code '+@theOp+' ( Select Title_Code FROM Title_Talent WHERE Talent_Code IN ('+@Value+') AND Role_Code = 2)')
+					
+					--DELETE FROM #tempTitle WHERE DBO.UFN_Get_Title_Metadata_By_Role_Code(Title_Code, 2) = ''
+					DELETE FROM #tempTitle WHERE DBO.UFN_Get_Title_Metadata_By_Role_Code(Title_Code, 2) = ''
+
+					DELETE FROM #tempRights WHERE Title_Code NOT IN (Select Title_Code from #tempTitle)
+				
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+			
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblTitle
+				
+					INSERT INTO @tblTitle(Title_Code,Original_Title,Original_Dubbed,Year_of_Release,CBFC_Rating)
+					EXEC ('Select Distinct tg.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,''NA''),t.Year_Of_Production,mec.Columns_Value_Code FROM Title_Talent tg 
+						   INNER JOIN Title t ON t.Title_Code = tg.Title_Code AND tg.Role_Code = 2
+						   LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+						   LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+						   WHERE tg.Talent_Code '+@theOp+'  ('+@Value+')
+						   AND Reference_Flag IS NULL')
+				
+				
+					Delete from @tblTitle WHERE Title_Code IN (Select Title_Code from #tempTitle)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,tblT.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblTitle tblT on tblT.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE ad.Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRights)
+					AND ad.Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempDeal)
+			
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Title_Code,Original_Title,ISNULL(OD.Columns_Value,'NA'),Year_of_Release,CBFC_Rating FROM @tblTitle T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+			
+					DELETE FROM @tblTitle
+				END
+			END
+	
+			IF(@LeftColDbname = 'GENRES_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC ('DELETE FROM #tempTitle WHERE Title_Code '+@theOp+' (SELECT Title_Code FROM Title_Geners WHERE Genres_Code IN ('+@Value+'))')
+					
+					DELETE FROM #tempTitle WHERE DBO.UFN_Get_Title_Genre(Title_Code)=''
+
+					DELETE FROM #tempRights WHERE Title_Code NOT IN (Select Title_Code from #tempTitle)
+	
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE IF(@logicalConnect = 'OR')
+				BEGIN
+					DELETE FROM @tblTitle
+				
+					INSERT INTO @tblTitle(Title_Code,Original_Title,Original_Dubbed,Year_of_Release,CBFC_rating)
+					EXEC ('Select Distinct tg.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,''NA''),t.Year_Of_Production,mec.Columns_Value_Code FROM Title_Geners tg 
+						   INNER JOIN Title t ON t.Title_Code = tg.Title_Code
+						   LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+						   LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+						   WHERE tg.Genres_Code '+@theOp+' ('+@Value+')
+						   AND Reference_Flag IS NULL')
+				
+					Delete from @tblTitle WHERE Title_Code IN (Select Title_Code from #tempTitle)
+
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,tblT.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblTitle tblT on tblT.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE ad.Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRights)
+					AND ad.Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempDeal)
+	
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Title_Code,Original_Title,ISNULL(OD.Columns_Value,'NA'),Year_of_Release,CBFC_Rating FROM @tblTitle T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+
+					DELETE FROM @tblTitle
+				END
+			END
+	
+			IF(@LeftColDbname = 'TIT.ORIGINAL_TITLE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				
+				BEGIN
+					EXEC ('DELETE FROM #tempTitle WHERE title_code NOT IN ( SELECT title_code FROM #tempTitle WHERE Original_Title '+@theOp +' '''+  @Value +''')')
+
+					DELETE FROM #tempRights WHERE Title_Code NOT IN (Select Title_Code from #tempTitle)
+
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblTitle
+				
+					INSERT INTO @tblTitle (Title_Code, Original_Title,Original_Dubbed, Year_of_Release,cbfc_rating)
+					EXEC ('SELECT DISTINCT t.Title_Code, t.Original_Title,ISNULL(OD.Columns_Value,''NA''), t.Year_Of_Production,mec.Columns_Value_Code FROM Title T
+							LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+							LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+							WHERE t.Original_Title '+@theOp +' '''+  @Value +''' AND Reference_Flag IS NULL')
+				
+					Delete from @tblTitle WHERE Title_Code IN (Select Title_Code from #tempTitle)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,tblT.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblTitle tblT on tblT.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code		
+					WHERE ad.Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRights)
+					AND ad.Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempDeal)
+			
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Title_Code,Original_Title,ISNULL(OD.Columns_Value,'NA'),Year_of_Release,CBFC_Rating FROM @tblTitle T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+									
+					DELETE FROM @tblTitle
+			
+				END
+			END
+	
+			IF(@LeftColDbname = 'TIT.YEAR_OF_PRODUCTION')
+			BEGIN
+				IF @theOp = 'BETWEEN'
+				BEGIN
+					SELECT @Start_Date  = SUBSTRING(@Value,1,10) 
+					SELECT @End_Date	= SUBSTRING(@Value,lEN(@Value) -9,11) 	
+					SELECT @Value =  CAST(YEAR(CONVERT(DATE,@Start_Date,103)) AS VARCHAR)  + ' AND ' + CAST( YEAR(CONVERT(DATE,@End_Date,103)) AS VARCHAR)
+				END
+				ELSE
+					SELECT @Value =  CAST(YEAR(CONVERT(DATE,@Value,103)) AS VARCHAR)
+	
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC (' DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempTitle WHERE Year_Of_Release '+@theOp +' '+  @Value +')')
+	
+					DELETE FROM #tempRights WHERE Title_Code NOT IN (Select Title_Code from #tempTitle)
+				
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+			
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblTitle
+				
+					INSERT INTO @tblTitle (Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					EXEC ('SELECT DISTINCT t.Title_Code, t.Original_Title,ISNULL(OD.Columns_Value,''NA''), t.Year_Of_Production,mec.Columns_Value_Code FROM Title T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE t.Year_Of_Production '+@theOp +' '+  @Value )
+				
+					Delete from @tblTitle WHERE Title_Code IN (Select Title_Code from #tempTitle)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,tblT.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblTitle tblT on tblT.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = AD.Syn_Deal_code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE ad.Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRights)
+					AND ad.Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempDeal)
+			
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Title_Code,Original_Title,ISNULL(OD.Columns_Value,'NA'),Year_of_Release,CBFC_Rating FROM @tblTitle T
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+									
+					DELETE FROM @tblTitle
+			
+				END
+			END
+		END
+		PRINT'Syn DEAL CRITERIA START'
+		BEGIN
+			IF(@LeftColDbname = 'SD.AGREEMENT_NO')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					IF(@theOp = '=')
+						EXEC ('DELETE FROM #tempDeal WHERE Agreement_No <> '''+@Value+''' ')
+					ELSE
+						EXEC ('DELETE FROM #tempDeal WHERE Agreement_No NOT '+@theOp+' '''+@Value+''' ')
+					
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (SELECT Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblDeal
+					
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,ad.Deal_Segment_Code,ad.Revenue_Vertical_Code
+						   FROM Syn_Deal ad
+						   INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+						   LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+						   LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+						   LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+						   WHERE Agreement_No '+@theOp+' '''+@Value+''' ')
+					
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+	
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,ad.Variable_Cost_Type,ad.Restriction_Remarks,ad.Deal_Category,aD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+
+					DELETE FROM @tblDeal
+				END
+			END
+	
+			IF(@LeftColDbname = 'SD.DEAL_DESCRIPTION')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					IF(@theOp = '=')
+						EXEC ('DELETE FROM #tempDeal WHERE Deal_Description <> '''+@Value+''' ')
+					ELSE
+						EXEC ('DELETE FROM #tempDeal WHERE Deal_Description NOT '+@theOp+' '''+@Value+''' ')
+	
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (SELECT Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,ad.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE Deal_Description '+@theOp+' '''+@Value+''' ')
+					
+					
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+					
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				
+				END
+			END
+	
+			IF(@LeftColDbname = 'SD.VENDOR_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+			
+					EXEC ('DELETE FROM #tempDeal WHERE Vendor_Code '+@theOp+' ('+@Value+')')
+				
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+				
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,ad.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code						   
+					WHERE Vendor_Code '+@theOp+' ('+@Value+') ')
+				
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,AD.Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				
+				
+				END
+			END
+
+			IF(@LeftColDbname = 'Deal_Segment')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+			
+					EXEC ('DELETE FROM #tempDeal WHERE Deal_Segement_Code '+@theOp+' ('+@Value+')')
+				
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+				
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,Ad.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code					   
+					WHERE Deal_Segment_Code '+@theOp+' ('+@Value+') ')
+				
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,AD.Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				
+				
+				END
+			END
+
+			IF(@LeftColDbname = 'Revenue_Vertical')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+			
+					EXEC ('DELETE FROM #tempDeal WHERE Revenue_Vertical_Code '+@theOp+' ('+@Value+')')
+				
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+				
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,Ad.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code					   
+					WHERE Revenue_Vertical_Code '+@theOp+' ('+@Value+') ')
+				
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,AD.Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				
+				
+				END
+			END
+
+			IF(@LeftColDbname = 'Cat_Name')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+				print 'Enter Category'
+					EXEC ('DELETE FROM #tempDeal WHERE Deal_Category_Code '+@theOp+' ('+@Value+')')
+					print 'DELETE FROM #tempDeal WHERE Deal_Category_Code '+@theOp+' ('+@Value+')'
+				
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+				
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code						   
+					WHERE ad.Category_Code '+@theOp+' ('+@Value+') ')
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				
+				
+				END
+			END
+
+			IF(@LeftColDbname = 'SD.SALES_AGENT_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC ('DELETE FROM #tempDeal WHERE SALES_AGENT_CODE '+@theOp+' ('+@Value+')')
+				
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+				
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,Ad.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+						   
+					WHERE ad.SALES_AGENT_CODE '+@theOp+' ('+@Value+') ')
+				
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_category,AD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				END
+			END
+	
+			IF(@LeftColDbname = 'SD.CURRENCY_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					IF (@theOp = '<>')
+						SET @theOp = '='
+					ELSE IF (@theOp = '=')
+						SET @theOp = '<>'
+	
+					EXEC ('DELETE FROM #tempDeal WHERE Currency_Code '+@theOp+' ('+@Value+') ')
+				
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code						   
+					WHERE CURRENCY_CODE '+@theOp+' '''+@Value+''' ')
+				
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_category,AD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				END
+			END
+	
+			IF(@LeftColDbname = 'SD.ENTITY_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					IF (@theOp = '<>')
+						SET @theOp = '='
+					ELSE IF (@theOp = '=')
+						SET @theOp = '<>'
+	
+					EXEC ('DELETE FROM #tempDeal WHERE Entity_Code '+@theOp+' '''+@Value+'''')
+				
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+					
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,ad.Deal_Segement_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+						   
+					WHERE ENTITY_CODE '+@theOp+' '''+@Value+''' ')
+				
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback,
+					CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				
+				END
+			END
+	
+			IF(@LeftColDbname = 'SD.AGREEMENT_DATE')
+			BEGIN
+				IF @theOp = 'BETWEEN'
+				BEGIN
+					SELECT @Start_Date  = SUBSTRING(@Value,1,10) 
+					SELECT @End_Date	= SUBSTRING(@Value,lEN(@Value) -9,11) 	
+					SELECT @Value =  ' CONVERT(DATE,'''+@Start_Date+''',103) AND CONVERT(DATE,'''+@End_Date+''',103)'
+				END
+				ELSE
+					SELECT @Value =  ' CONVERT(DATE,'''+@Value+''',103)'
+	
+				IF(@logicalConnect = 'AND')
+				BEGIN				
+					EXEC (' DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal WHERE AGREEMENT_DATE '+@theOp +' '+  @Value +')')
+	
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+					
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+	
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblDeal
+	
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,ad.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+						   
+					WHERE  ad.AGREEMENT_DATE '+@theOp+' '+@Value)
+					
+	
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+	
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback
+					,CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+	
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,AD.Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+	
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+	
+					DELETE FROM @tblDeal
+				END
+			END
+
+			IF(@LeftColDbname = 'SD.ROLE_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					IF (@theOp = '<>')
+						SET @theOp = '='
+					ELSE IF (@theOp = '=')
+						SET @theOp = '<>'
+	
+					EXEC ('DELETE FROM #tempDeal WHERE Customer_Type '+@theOp+' '''+@Value+''' ')
+
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+					
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE Customer_Type '+@theOp+' '''+@Value+''' ')
+				
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback
+					,CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					INNER JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+
+					--DELETE FROM #tempTitle WHERE DBO.UFN_Get_Title_Metadata_By_Role_Code(Title_Code, 1) = ''
+					--DELETE FROM #tempTitle WHERE DBO.UFN_Get_Title_Metadata_By_Role_Code(Title_Code, 2) =''
+					DELETE FROM @tblDeal
+				END
+			END
+			
+			IF(@LeftColDbname = 'SD.DEAL_TAG_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					IF (@theOp = '<>')
+						SET @theOp = '='
+					ELSE IF (@theOp = '=')
+						SET @theOp = '<>'
+	
+					EXEC ('DELETE FROM #tempDeal WHERE DEAL_TAG_CODE '+@theOp+' '''+@Value+''' ')
+				
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblDeal
+				
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE DEAL_TAG_CODE '+@theOp+' '''+@Value+''' ')
+				
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback
+					,CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_Category,AD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblDeal
+				END
+			END
+	
+			IF(@LeftColDbname = 'SD.DEAL_TYPE_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC ('DELETE FROM #tempDeal WHERE DEAL_TYPE_CODE '+@theOp+' ('+@Value+') ')
+			
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+			
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+			
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblDeal
+			
+					INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					WHERE DEAL_TYPE_CODE '+@theOp+' ('+@Value+') ')
+			
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+			
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback
+					,CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+			
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_category,AD.ROFR,Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+			
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+			
+					DELETE FROM @tblDeal
+				END
+			END
+		END
+		PRINT'Syn DEAL RIGHTS CRITERIA START'
+		BEGIN
+			IF(@LeftColDbname = 'SDR.ACTUAL_RIGHT_START_DATE')
+			BEGIN
+				IF @theOp = 'BETWEEN'
+				BEGIN
+					SELECT @Start_Date  = SUBSTRING(@Value,1,10) 
+					SELECT @End_Date	= SUBSTRING(@Value,lEN(@Value) -9,11) 	
+					SELECT @Value =  'CONVERT(DATE,''' + @Start_Date + ''',103) AND CONVERT(DATE,''' + @End_Date + ''',103)'
+				END
+				ELSE
+					SELECT @Value =  'CONVERT(DATE,'''+ @Value +''',103)'
+	
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC ('DELETE FROM #tempRights WHERE Syn_Deal_Rights_Code NOT IN (Select Syn_Deal_Rights_Code FROM #tempRights WHERE ISNULL(Right_Start_Date, ''9999-12-31'')  '+@theOp +' '+  @Value +')')
+	
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (SELECT Title_Code FROM #tempRights)
+					
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				END
+				ELSE
+				BEGIN
+					
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,adr.Milestone_Type_code,
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Promoter_Group_Name,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Promoter_Remark_Desc,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback,
+						CASE WHEN adr.Actual_Right_End_Date > GETDATE() THEN ''Active'' ELSE ''Expired'' END AS Expired_Deal
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE  (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+					   AND adr.Is_Theatrical_Right = '''+@IsTheatrical+''' 
+					   AND ISNULL(adr.Actual_Right_Start_Date, ''9999-12-31'')  '+@theOp +' '+  @Value 
+					)
+					
+					DELETE trn
+					FROM @tblRights_New trn 
+					WHERE trn.Syn_Deal_Rights_Code IN ( 
+						SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+						WHERE tr.Title_Code = trn.Title_Code
+					)
+					
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_deal
+					FROM @tblRights_New
+	
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+
+	
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+	
+					DELETE FROM @tblRights_New
+				END
+			END
+	
+			IF(@LeftColDbname = 'SDR.ACTUAL_RIGHT_END_DATE')
+			BEGIN
+				IF @theOp = 'BETWEEN'
+				BEGIN
+					SELECT @Start_Date  = SUBSTRING(@Value,1,10) 
+					SELECT @End_Date	= SUBSTRING(@Value,lEN(@Value) -9,11) 	
+					SELECT @Value =  'CONVERT(DATE,''' + @Start_Date + ''',103) AND CONVERT(DATE,''' + @End_Date + ''',103)'
+				END
+				ELSE
+					SELECT @Value =  'CONVERT(DATE,'''+ @Value +''',103)'
+	
+					IF(@logicalConnect = 'AND')
+					BEGIN
+						EXEC('DELETE FROM #tempRights WHERE Syn_Deal_Rights_Code NOT IN (Select Syn_Deal_Rights_Code FROM #tempRights WHERE ISNULL(Right_End_Date, ''9999-12-31'')  '+@theOp +' '+  @Value +')')
+						
+						DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+						DELETE FROM #tempTitle WHERE Title_Code NOT IN (SELECT Title_Code FROM #tempRights)
+	
+						DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+					END
+					ELSE
+					BEGIN
+						DELETE FROM @tblRights_New
+	
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code,
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Promoter_Group_Name,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Promoter_Remark_Desc,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback,
+						CASE WHEN adr.Actual_Right_End_Date > GETDATE() THEN ''Active'' ELSE ''Expired'' END AS Expired_Deals
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+					   AND adr.Is_Theatrical_Right = '''+@IsTheatrical+'''
+					   AND ISNULL(adr.Actual_Right_Start_Date, ''9999-12-31'')  '+@theOp +' '+  @Value 
+					)
+						
+						DELETE trn
+						FROM @tblRights_New trn 
+						WHERE trn.Syn_Deal_Rights_Code IN ( 
+							SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+							WHERE tr.Title_Code = trn.Title_Code
+						)
+						
+						INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+						SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+						FROM @tblRights_New
+	
+						INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+						SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+						FROM Syn_Deal ad
+						INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+						INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+						LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+						LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+						LEFT JOIN Category C On C.Category_Code=ad.Category_Code						
+						AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+	
+						INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+						SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+						INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+						LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+						LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+						WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+					END
+	
+					DELETE FROM @tblRights_New
+			END
+	
+			IF(@LeftColDbname = 'SDR.IS_SUB_LICENSE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+	
+					SELECT @Value = CASE WHEN @Value = 'Y' THEN 'Yes' ELSE 'No' END
+				
+					EXEC ('DELETE FROM #tempRights WHERE [Sub-Licensing] '+@theOp+' ('''+@Value+''') ')
+					
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights) 
+	
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+	
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblRights_New
+	
+						INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Promoter_Group_Name,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Promoter_Remark_Desc,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback,
+						,CASE WHEN adr.Actual_Right_End_Date > getdate() then ''Active'' Else ''Expired'' END AS Expired_Deals
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+					   AND adr.Is_Theatrical_Right = '''+@IsTheatrical+'''
+					   AND ISNULL(adr.Actual_Right_Start_Date, ''9999-12-31'')  '+@theOp +' '+  @Value 
+					)
+	
+					DELETE trn
+					FROM @tblRights_New trn 
+					WHERE trn.Syn_Deal_Rights_Code IN ( 
+						SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+						WHERE tr.Title_Code = trn.Title_Code
+					)
+					
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+					FROM @tblRights_New
+	
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code					
+					AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+	
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+		
+					DELETE FROM @tblRights_New
+	
+				END
+			END
+	
+			IF(@LeftColDbname = 'COU.COUNTRY_CODE')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+				
+					EXEC ('DELETE FROM #tempRights WHERE
+					Syn_Deal_Rights_Code
+							' + @theOp + ' (SELECT Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Territory WHERE Syn_Deal_Rights_Code Is Not Null 
+					AND (( 
+							Country_Code IN ('+@Value+')
+							AND Territory_Type=''I''
+						) 
+					OR 
+						(
+							Territory_Code IN (SELECT DISTINCT Territory_Code FROM Territory_Details WHERE 
+							Country_Code  IN ('+@Value+') )  
+							AND Territory_Type=''G''
+						))
+					)')
+					
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights)
+					
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+					
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblRights_New
+				INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code,
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Promoter_Group_Name,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Promoter_Remark_Desc,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback,
+						CASE WHEN adr.Actual_Right_End_Date > getdate() then ''Active'' Else ''Expired'' END AS Expired_Deals
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+					  AND adr.Is_Theatrical_Right = '''+@IsTheatrical+'''
+					   AND adr.Syn_Deal_Rights_Code 
+						'+@theOp+' (SELECT Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Territory WHERE Syn_Deal_Rights_Code Is Not Null 
+							AND (( 
+									Country_Code IN ('+@Value+')
+									AND Territory_Type=''I''
+								) OR (
+									Territory_Code IN (SELECT DISTINCT Territory_Code FROM Territory_Details WHERE 
+									Country_Code  IN ('+@Value+') )  
+									AND Territory_Type=''G''
+								))
+						)')
+
+				
+					DELETE trn
+					FROM @tblRights_New trn 
+					WHERE trn.Syn_Deal_Rights_Code IN ( 
+						SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+						WHERE tr.Title_Code = trn.Title_Code
+					)
+					
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+					FROM @tblRights_New
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code					
+					AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblRights_New
+				END
+			END
+	
+			IF(@LeftColDbname = 'S_LANG')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC ('DELETE FROM #tempRights WHERE Syn_Deal_Rights_Code
+							' + @theOp + ' (SELECT Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Subtitling WHERE Syn_Deal_Rights_Code Is Not Null 
+						AND (( 
+								Language_Code IN ('+@Value+')
+								AND Language_Type = ''L''
+							) 
+						OR 
+							(
+								Language_Group_Code IN (SELECT DISTINCT Language_Group_Code FROM Language_Group_Details WHERE 
+								Language_Code  IN ('+ @Value +') )  
+								AND Language_Type = ''G''
+							))
+						)')
+				
+
+					DELETE FROM #tempRights where DBO.UFN_Get_Rights_Subtitling(Syn_Deal_Rights_Code, 'S') = ''
+
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblRights_New
+				
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code,
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Promoter_Group_Name,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Promoter_Remark_Desc,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback,
+						CASE WHEN adr.Actual_Right_End_Date > getdate() then ''Active'' Else ''Expired'' END AS Expired_Deals
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+					  AND adr.Is_Theatrical_Right = '''+@IsTheatrical+'''
+					   AND adr.Syn_Deal_Rights_Code 
+					   ' + @theOp + ' (SELECT Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Subtitling WHERE Syn_Deal_Rights_Code Is Not Null 
+							AND (( 
+									Language_Code IN ('+@Value+')
+									AND Language_Type = ''L''
+								) 
+							OR 
+								(
+									Language_Group_Code IN (SELECT DISTINCT Language_Group_Code FROM Language_Group_Details WHERE 
+									Language_Code  IN ('+ @Value +') )  
+									AND Language_Type = ''G''
+								))
+						)')
+				
+					DELETE trn
+					FROM @tblRights_New trn 
+					WHERE trn.Syn_Deal_Rights_Code IN ( 
+						SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+						WHERE tr.Title_Code = trn.Title_Code
+					)
+					
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+					FROM @tblRights_New
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code					
+					AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblRights_New
+				END
+			END
+	
+			IF(@LeftColDbname = 'D_LANG')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+				
+					EXEC ('DELETE FROM #tempRights WHERE 
+					Syn_Deal_Rights_Code 
+							 '+@theOp+' (SELECT Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Dubbing WHERE Syn_Deal_Rights_Code Is Not Null 
+						AND (( 
+								Language_Code IN ('+@Value+')
+								AND Language_Type = ''L''
+							) 
+						OR 
+							(
+								Language_Group_Code IN (SELECT DISTINCT Language_Group_Code FROM Language_Group_Details WHERE 
+								Language_Code IN ('+ @Value +') )  
+								AND Language_Type = ''G''
+							))
+						)')
+					DELETE FROM #tempRights WHERE DBO.UFN_Get_Rights_Dubbing(Syn_Deal_Rights_Code, 'S') = ''
+
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights)
+					
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights)
+					
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+				
+				END
+				ELSE
+				BEGIN
+					
+					DELETE FROM @tblRights_New
+				
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code,
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Promoter_Group_Name,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Promoter_Remark_Desc,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback,
+						CASE WHEN adr.Actual_Right_End_Date > getdate() then ''Active'' Else ''Expired'' END AS Expired_Deals
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+					  AND adr.Is_Theatrical_Right = '''+@IsTheatrical+'''
+					   AND adr.Syn_Deal_Rights_Code
+					   '+@theOp+' (SELECT Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Dubbing WHERE Syn_Deal_Rights_Code Is Not Null 
+							AND (( 
+									Language_Code IN ('+@Value+')
+									AND Language_Type = ''L''
+								) 
+							OR 
+								(
+									Language_Group_Code IN (SELECT DISTINCT  Language_Group_Code FROM Language_Group_Details WHERE 
+									Language_Code IN ('+ @Value +') )  
+									AND Language_Type = ''G''
+								))
+							)')
+				
+					DELETE trn
+					FROM @tblRights_New trn 
+					WHERE trn.Syn_Deal_Rights_Code IN ( 
+						SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+						WHERE tr.Title_Code = trn.Title_Code
+					)
+					
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+					FROM @tblRights_New
+				
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code					
+					AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+				
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+				
+					DELETE FROM @tblRights_New
+				END
+			END
+	
+			IF(@LeftColDbname = 'P.PLATFORM_CODE')
+			BEGIN
+	
+				INSERT INTO #tbl_Platform_RightCodes(Syn_Deal_Code, Syn_Deal_Rights_Code)
+				EXEC ('SELECT DISTINCT ADR.Syn_Deal_Code, P.Syn_Deal_Rights_Code 
+				FROM Syn_Deal ad
+				INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+				INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+				INNER JOIN Syn_Deal_Rights_Platform P ON P.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code
+				WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+				AND adr.Is_Theatrical_Right = '''+@IsTheatrical+'''
+				AND PLATFORM_CODE IN ('+@Value+')')
+				
+				SET @PlatformCriteria = CASE WHEN @theOp = 'IN' THEN 'NOT IN' ELSE 'IN' END + ' (' +@Value+ ')'
+			
+				IF(@logicalConnect = 'AND')
+				BEGIN
+			
+					EXEC('DELETE FROM #tempRights WHERE Syn_Deal_Rights_Code '+@theOp+' ( SELECT Syn_Deal_Rights_Code FROM #tbl_Platform_RightCodes )')
+
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+				
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code from #tempRights)
+				
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+			
+				END
+				ELSE 
+				BEGIN
+					DELETE FROM @tblRights_New
+			
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code,
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Self_Utilization_Group,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Self_utilization_remark,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback
+						,CASE WHEN adr.Actual_Right_End_Date > getdate() then ''Active'' Else ''Expired'' END AS Expired_Deals
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+					   AND adr.Is_Theatrical_Right = '''+@IsTheatrical+'''
+					   AND adr.Syn_Deal_Rights_Code  '+@theOp+' ( SELECT Syn_Deal_Rights_Code FROM #tbl_Platform_RightCodes )
+					')
+
+					--SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					--   CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					--   CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code,
+					--   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','A')  
+					--	as Promoter_Group_Name,
+					--	dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','A')  
+					--	as Promoter_Remark_Desc,
+					--	CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Yes' ELSE 'No' END AS Is_Holdback
+					--	,CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					--   FROM Syn_Deal ad
+					--   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					--   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					--   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					--   WHERE (adr.Actual_Right_End_Date > GETDATE() OR 'N' = 'Y')
+					--   AND adr.Is_Theatrical_Right = 'N'
+					--   AND adr.Syn_Deal_Rights_Code  IN ( SELECT Syn_Deal_Rights_Code FROM #tbl_Platform_RightCodes )
+			
+					DELETE trn
+					FROM @tblRights_New trn 
+					WHERE trn.Syn_Deal_Rights_Code IN ( 
+						SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+						WHERE tr.Title_Code = trn.Title_Code
+					)
+				
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+					FROM @tblRights_New
+			
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code					
+					AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+			
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+			
+					DELETE FROM @tblRights_New
+				END
+			END
+			IF(@LeftColDbname = 'SDR.Milestone_Type_Code')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					
+					EXEC ('DELETE FROM #tempRights WHERE Milestone_Type_Code '+@theOp+' ('+@Value+') OR Milestone_Type_Code IS NULL ')
+								
+
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights) 
+	
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+	
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblRights_New
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code,
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Self_Utilization_Group,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Self_utilization_remark,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback,
+						CASE WHEN adr.Actual_Right_End_Date > getdate() then ''Active'' Else ''Expired'' END AS Expired_Deals
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+					  AND adr.Is_Theatrical_Right = '''+@IsTheatrical+'''
+					   AND adr.Is_Sub_License '+@theOp+' ('''+@Value+''')'
+					)
+	
+					DELETE trn
+					FROM @tblRights_New trn 
+					WHERE trn.Syn_Deal_Rights_Code IN ( 
+						SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+						WHERE tr.Title_Code = trn.Title_Code
+					)
+					
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+					FROM @tblRights_New
+
+
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,
+					CASE WHEN ISNULL(SDR.Variable_Cost_Type, 'N') = 'Y' THEN 'Yes' ELSE 'No' END,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code					
+					where tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+	
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+	
+					DELETE FROM @tblRights_New
+	
+				END
+			END
+
+			--IF(@LeftColDbname = 'SDR.Expired')
+			--BEGIN
+			--	IF(@logicalConnect = 'AND')
+			--	BEGIN
+	
+			--		SELECT @Value = CASE WHEN @Value = 'Y' THEN 'Expired' ELSE 'Active' END
+				
+			--		EXEC ('DELETE FROM #tempRights WHERE Expired_Deal '+@theOp+' ('''+@Value+''') ')
+					
+			--		DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+			--		DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights) 
+	
+			--		DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+	
+			--	END
+			--	ELSE
+			--	BEGIN
+			--		DELETE FROM @tblRights_New
+			--		INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_deal)
+			--		EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+			--		   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+			--		   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,M.MileStone_Type_Code
+			--		   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''A'')  
+			--			as Promoter_Group_Name,
+			--			dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''A'')  
+			--			as Promoter_Remark_Desc,
+			--			CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Yes'' ELSE ''No'' END AS Is_Holdback,
+			--			,CASE WHEN adr.Actual_Right_End_Date > getdate() then ''Active'' Else ''Expired'' END AS Expired_Deals
+			--		   FROM Syn_Deal ad
+			--		   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+			--		   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+			--		   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+			--		   INNER JOIN Milestone_Type M On M.Milestone_type_code=Milestone_Type_code
+			--		   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'')
+			--		   AND [Sub-Licensing] '+@theOp+' ('''+@Value+''')'
+			--		)
+	
+			--		DELETE trn
+			--		FROM @tblRights_New trn 
+			--		WHERE trn.Syn_Deal_Rights_Code IN ( 
+			--			SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+			--			WHERE tr.Title_Code = trn.Title_Code
+			--		)
+					
+			--		INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+			--		SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+			--		FROM @tblRights_New
+			--		--INNER JOIN Syn_Deal_rights SDR ON SDR.Syn_Deal_Code=TRN.Syn_deal_code
+			--		--INNER JOIN Milestone_Type M On SDR.Milestone_type_code=SDR.Milestone_type_code
+
+
+			--		INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR)
+			--		SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR
+			--		FROM Syn_Deal ad
+			--		INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+			--		INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+			--		LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+			--		LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+			--		LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					
+			--		AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+	
+			--		INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_rating)
+			--		SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production ,CBFC_rating
+			--		FROM #tempRights tr
+			--		INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+			--		LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+			--		WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+	
+			--		INSERT INTO #tempRunDef(Syn_Deal_Code, Title_Code)
+			--		Select DISTINCT Syn_Deal_Code, Title_Code 
+			--		FROM #tempRights tr
+			--		WHERE Syn_Deal_Code NOT IN (Select trd.Syn_Deal_Code from #tempRunDef trd WHERE trd.Title_Code = tr.Title_Code) --AND TItle_Code NOT IN (Select Title_Code FROM #tempRunDef)
+	
+			--		DELETE FROM @tblRights_New
+	
+			--	END
+			--END
+
+			IF(@LeftColDbname = 'SDR.IS_HOLDBACK')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+				PRINT 'ENTER IS_HOLDBACK'
+					EXEC ('DELETE FROM #tempRights WHERE Is_Holdback '+@theOp+' ('''+@Value+''') OR Is_Holdback IS NULL')
+
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights) 
+	
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+	
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblRights_New
+					DELETE FROM #tblRights_NewHoldback
+
+					INSERT INTO #tblRights_NewHoldback(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					EXEC ('SELECT distinct ad.Syn_Deal_Code, adr.Syn_Deal_Rights_Code, adrt.Title_Code, adr.Actual_Right_Start_Date, adr.Actual_Right_End_Date,
+					   CASE WHEN adr.Is_Sub_License = ''Y'' THEN ''Yes'' ELSE ''No'' END, 
+					   CASE WHEN adr.Is_Exclusive = ''Y'' THEN ''Exclusive'' WHEN adr.Is_Exclusive = ''N'' THEN ''Non-Exclusive'' ELSE ''Co-Exclusive'' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To ,Milestone_Type_code,
+					   dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''P'',''S'')  
+						as Promoter_Group_Name,
+						dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,''R'',''S'')  
+						as Promoter_Remark_Desc,
+						CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback,
+						CASE WHEN adr.Actual_Right_End_Date > getdate() then ''Active'' Else ''Expired'' END AS Expired_Deals
+					   FROM Syn_Deal ad
+					   INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					   INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Code = ad.Syn_Deal_Code 
+					   INNER JOIN Syn_Deal_Rights_Title adrt ON adrt.Syn_Deal_Rights_Code = adr.Syn_Deal_Rights_Code
+					   WHERE (adr.Actual_Right_End_Date > GETDATE() OR '''+@IncludeExpired+''' = ''Y'') AND adr.Is_Theatrical_Right = '''+@IsTheatrical+''''
+					)
+					
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,Milestone_Type_Code,Self_Utilization_Group,Self_Utilization_Remark,Is_Holdback)
+					EXEC ('SELECT Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,Milestone_Type_Code,Self_Utilization_Group,Self_Utilization_Remark, Is_Holdback FROM #tblRights_NewHoldback
+						   WHERE Is_Holdback '+@theOp+' ('''+@Value+''')'
+					)
+					DELETE trn
+					FROM @tblRights_New trn 
+					WHERE trn.Syn_Deal_Rights_Code IN ( 
+						SELECT tr.Syn_Deal_Rights_Code FROM #tempRights tr
+						WHERE tr.Title_Code = trn.Title_Code
+					)
+					
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal
+					FROM @tblRights_New
+	
+					
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,
+					CASE WHEN ISNULL(SDR.Variable_Cost_Type, 'N') = 'Y' THEN 'Yes' ELSE 'No' END,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					INNER JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+					LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+					LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+					AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+	
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release, CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production, mec.Columns_Value_Code as CBFC_Rating
+					FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec on mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+	
+					DELETE FROM @tblRights_New
+					DELETE FROM #tblRights_NewHoldback
+				END
+			END--HOLDBACK END
+
+			IF(@LeftColDbname = 'SD.Deal_Workflow_Status')
+			BEGIN
+				IF(@logicalConnect = 'AND')
+				BEGIN
+				
+					EXEC ('DELETE FROM #tempDeal WHERE Deal_Workflow_status '+@theOp+' ('''+@Value+''') ')
+					
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRights)
+	
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code FROM #tempRights) 
+	
+					DELETE FROM #tempRunDef WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights) AND Title_Code NOT IN (Select Title_Code from #tempRights)
+	
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblDeal
+	
+						INSERT INTO @tblDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+						EXEC ('SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,SDR.Variable_Cost_Type,SD.Restriction_Remarks,C.Category_Name,SD.Is_ROFR,AD.Deal_Segment_Code,ad.Revenue_Vertical_Code
+						   FROM Syn_Deal ad
+						   INNER JOIN #BUWiseSyn_Deal_Code tbu ON tbu.Syn_deal_Code = ad.Syn_deal_Code
+						   LEFT JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=ad.Syn_deal_Code
+						   LEFT JOIN Syn_Deal_Rights SD ON SD.Syn_deal_Code=ad.Syn_deal_code
+						   LEFT JOIN Category C On C.Category_Code=ad.Category_Code
+						   WHERE ad.Deal_Workflow_Status '+@theOp+' ('''+@Value+''') ')
+
+					Delete from @tblDeal WHERE Syn_Deal_Code IN (Select Syn_Deal_Code from #tempDeal)
+			
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term ,adrt.Episode_From ,adrt.Episode_To,Milestone_Type_code,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'P','S')  
+					as Promoter_Group_Name,
+					dBO.UFN_Get_Rights_Promoter_Group_Remarks(adr.Syn_Deal_Rights_Code,'R','S')  
+					as Promoter_Remark_Desc,
+					CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN 'Y' ELSE 'N' END AS Is_Holdback
+					,CASE WHEN adr.Actual_Right_End_Date > getdate() then 'Active' Else 'Expired' END AS Expired_Deals
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code -- AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblDeal tblT on tblT.Syn_deal_Code = adr.Syn_Deal_code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = adr.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y') AND adr.Is_theatrical_Right = @IsTheatrical
+			
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type,Variable_Cost_Type,Restriction_Remarks,Deal_Category,ROFR,Deal_Segement_Code,Revenue_Vertical_Code)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type,AD.Variable_Cost_Type,AD.Restriction_Remarks,AD.Deal_category,AD.ROFR,AD.Deal_Segement_Code,Revenue_Vertical_Code
+					FROM @tblDeal AD
+					
+			
+					INSERT INTO #tempTitle(Title_Code, Original_Title,Original_Dubbed, Year_of_Release,CBFC_Rating)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production,mec.Columns_Value_Code FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					LEFT JOIN Map_Extended_Columns mec ON mec.Record_Code = t.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+			
+					DELETE FROM @tblDeal
+	
+				END
+			END
+
+		END
+
+
+		/*PRINT'RUN DEFINATION CRITERIA START'
+		BEGIN
+			IF(@LeftColDbname = 'CHANNELNAMES')
+			BEGIN
+				CREATE TABLE #RunDef(Syn_Deal_Code INT, Title_Code INT)
+	
+				EXEC ('INSERT INTO #RunDef(Syn_Deal_Code, Title_Code)
+				SELECT DISTINCT trd.Syn_Deal_Code,trd.Title_Code FROM Syn_Deal_Run_Channel adrc
+				INNER JOIN Syn_Deal_Run_Title adrt ON adrt.Syn_Deal_Run_Code = adrc.Syn_Deal_Run_Code
+				INNER JOIN #tempRunDef trd ON trd.Title_Code = adrt.Title_Code
+				INNER JOIN Syn_Deal_Run adr ON adr.Syn_Deal_Code = trd.Syn_Deal_Code
+				WHERE adrc.Channel_Code IN ('+@Value+')')
+	
+				IF(@logicalConnect = 'AND')
+				BEGIN
+					EXEC ('DELETE FROM #tempRunDef WHERE Syn_Deal_Code '+@theOp+' (Select Syn_Deal_Code FROM #RunDef) AND Title_Code '+@theOp+' (Select Title_Code FROM #RunDef)')
+					
+					DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempRunDef) AND Title_Code NOT IN (Select Title_Code FROM #tempRunDef)
+					
+					DELETE FROM #tempTitle WHERE Title_Code NOT IN (Select Title_Code from #tempRights)
+					
+					DELETE FROM #tempDeal WHERE Syn_Deal_Code NOT IN (Select Syn_Deal_Code from #tempRights)
+	
+				END
+				ELSE
+				BEGIN
+					DELETE FROM @tblRunDef
+	
+					INSERT INTO @tblRunDef(Syn_Deal_Code, Title_Code)
+					Select Distinct Syn_Deal_Code,Title_Code from #RunDef
+	
+					DELETE FROM @tblRunDef WHERE Syn_Deal_Code IN (Select Syn_Deal_Code FROM #tempRunDef) AND Title_Code IN (Select Title_Code FROM #tempRunDef)
+	
+					INSERT INTO #tempRunDef(Syn_Deal_Code,Title_Code)
+					Select Syn_Deal_Code,Title_Code FROM @tblRunDef
+	
+					INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To)
+					Select Distinct adrt.Syn_Deal_Rights_Code,adr.Syn_Deal_Code,adrt.Title_Code,adr.Right_Start_Date,adr.Right_End_Date,
+					CASE WHEN adr.Is_Sub_License = 'Y' THEN 'Yes' ELSE 'No' END, 
+					CASE WHEN adr.Is_Exclusive = 'Y' THEN 'Exclusive' WHEN adr.Is_Exclusive = 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END, adr.Term  ,adrt.Episode_From ,adrt.Episode_To
+					FROM Syn_Deal_Rights_Title adrt
+					INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = adrt.Syn_Deal_Rights_Code --AND adr.PA_Right_Type = 'PR'
+					INNER Join @tblRunDef tblD ON tblD.Syn_Deal_Code = adr.Syn_Deal_Code AND tbld.Title_Code = adrt.Title_Code
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					WHERE (adr.Actual_Right_End_Date > GETDATE() OR @IncludeExpired = 'Y')
+	
+					INSERT INTO #tempDeal(Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, Currency_Code, Deal_Category_Code, Entity_Code, Vendor_Code,Sales_Agent_Code,Deal_Tag_Code, Deal_Type_Code, Customer_Type)
+					SELECT AD.Syn_Deal_Code, Agreement_Date, Agreement_No, Deal_Description, Deal_Workflow_Status, ad.Currency_Code, ad.Deal_Category_Code, ad.Entity_Code, ad.Vendor_Code,ad.Sales_Agent_Code,ad.Deal_Tag_Code, ad.Deal_Type_Code, ad.Customer_Type
+					FROM Syn_Deal ad
+					INNER JOIN #BUWiseSyn_Deal_Code BUAD ON BUAD.Syn_Deal_code = ad.Syn_Deal_code
+					INNER JOIN #tempRights tr ON tr.Syn_Deal_Code = ad.Syn_Deal_Code
+					
+					AND tr.Syn_Deal_Code NOT IN (Select Syn_Deal_Code FROM #tempDeal)
+			
+	
+					INSERT INTO #tempTitle(Title_Code, Original_Title, Original_Dubbed,Year_of_Release)
+					SELECT Distinct tr.Title_Code,t.Original_Title,ISNULL(OD.Columns_Value,'NA'),t.Year_Of_Production 
+					FROM #tempRights tr
+					INNER JOIN Title t ON t.Title_Code = tr.Title_Code
+					LEFT JOIN #OriDub_Title_Code OD ON OD.Record_Code = T.Title_Code
+					WHERE tr.Title_Code NOT IN (Select Distinct Title_Code from #tempTitle)
+	
+					DELETE FROM @tblRunDef
+				END
+			END
+		END
+		*/
+	
+		SET @Counter  = @Counter  + 1
+	END
+	
+	SELECT id as SrNo, LTRIM(RTRIM(number)) as ColNames INTO #Temp_ColNames FROM DBO.fn_Split_withdelemiter(@ColNames,',') WHERE LTRIM(RTRIM(number)) <> ''
+	
+	DECLARE @TableColumns NVARCHAR(MAX) = '' , @OutputCols NVARCHAR(MAX) = '',@OutputColsNames NVARCHAR(MAX) = '', @UnionColumns NVARCHAR(MAX) = ''
+	SELECT @Counter=1, @Cnt_TempCond = COUNT(*) FROM #Temp_ColNames
+	WHILE ( @Counter <= @Cnt_TempCond)
+	BEGIN
+		IF(@OutputCols <> '')
+				SET @OutputCols = @OutputCols + ', '
+		SET @OutputCols = @OutputCols + 'COL' + CAST(@Counter AS VARCHAR)
+	
+		SELECT @OutputColsNames = ColNames from #Temp_ColNames where SrNo = @Counter
+	
+		IF(@UnionColumns <> '')
+			SET @UnionColumns = @UnionColumns + ', '
+		SET @UnionColumns = @UnionColumns + ''''+ CAST(@OutputColsNames AS VARCHAR)+ ''''
+	
+		--PRINT 'ENTER '+ @OutputCols
+		BEGIN
+			IF (UPPER(@OutputColsNames) =  'RIGHT START DATE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'CONVERT(VARCHAR,tr.Right_Start_Date,103) [Right Start Date]'
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'RIGHT END DATE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'CONVERT(VARCHAR,tr.Right_End_Date,103) [Right End Date]'
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'EXCLUSIVE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Exclusive [Exclusive]'
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'SUB-LICENSING')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.[Sub-Licensing] [Sub-Licensing]'
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'TERM')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Term [Term]'
+	
+				UPDATE #tempRights SET TERM = [dbo].[UFN_Get_Rights_Term](Right_Start_Date, Right_End_Date, Term) 
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'SUBTITLING')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Subtitling [Subtitling]'
+	
+				UPDATE #tempRights SET Subtitling = DBO.UFN_Get_Rights_Subtitling(Syn_Deal_Rights_Code, 'A')
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'DUBBING')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Dubbing [Dubbing]'
+	
+				UPDATE #tempRights SET Dubbing = DBO.UFN_Get_Rights_Dubbing(Syn_Deal_Rights_Code, 'A')
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'COUNTRY')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Country [Country]'
+	
+				UPDATE #tempRights SET Country = DBO.UFN_Get_Rights_Country_Query(Syn_Deal_Rights_Code, 'S')
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'TERRITORY')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Territory [Territory]'
+	
+				UPDATE #tempRights SET Territory = DBO.UFN_Get_Rights_Territory(Syn_Deal_Rights_Code, 'A')
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Milestone')
+			BEGIN 
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Milestone_Type_Name [Milestone]'
+
+				Update tr SET tr.Milestone_Type_Name =M.Milestone_Type_Name
+				From #temprights Tr
+				INNER JOIN Milestone_Type M ON M.Milestone_type_code=tr.Milestone_type_code
+				WHERE Tr.Milestone_type_Code IS NOT NULL AND Tr.Milestone_type_Code=M.Milestone_type_Code
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'PLATFORM')
+			BEGIN 
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Platform [Platform]'
+
+				DELETE FROM @tblRights_New
+	
+				--INSERT INTO #tblRightsPlatforms(Syn_Deal_Rights_Code, PlatformName)
+				--SELECT DISTINCT TR.Syn_Deal_Rights_Code, P.Platform_Hiearachy
+				--FROM #tempRights TR
+				--INNER JOIN Syn_Deal_Rights_Platform ADRP ON ADRP.Syn_Deal_Rights_Code = TR.Syn_Deal_Rights_Code
+				--LEFT JOIN Platform P ON P.Platform_Code = ADRP.Platform_Code
+
+				IF(@PlatformCriteria = '')
+				BEGIN
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,Milestone_Type_Code,Self_Utilization_Group,Self_Utilization_Remark,Is_Holdback,[Platform])
+					SELECT Syn_Deal_Code, TR.Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,Milestone_Type_Code,Self_Utilization_Group,Self_Utilization_Remark, Is_Holdback,P.Platform_Hiearachy
+					FROM #tempRights TR
+					INNER JOIN Syn_Deal_Rights_Platform ADRP ON ADRP.Syn_Deal_Rights_Code = TR.Syn_Deal_Rights_Code AND ADRP.Platform_Code IS NOT NULL 
+					LEFT JOIN Platform P ON P.Platform_Code = ADRP.Platform_Code 
+				END
+				ELSE
+				BEGIN
+					INSERT INTO @tblRights_New(Syn_Deal_Code, Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,Milestone_Type_Code,Self_Utilization_Group,Self_Utilization_Remark,Is_Holdback,[Platform])
+					EXEC ('SELECT Syn_Deal_Code, TR.Syn_Deal_Rights_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From, Episode_To,Milestone_Type_Code,Self_Utilization_Group,Self_Utilization_Remark, Is_Holdback,P.Platform_Hiearachy	as [Platform]
+					FROM #tempRights TR
+					INNER JOIN Syn_Deal_Rights_Platform ADRP ON ADRP.Syn_Deal_Rights_Code = TR.Syn_Deal_Rights_Code AND ADRP.Platform_Code IS NOT NULL 
+					LEFT JOIN Platform P ON P.Platform_Code = ADRP.Platform_Code 
+					WHERE ADRP.Platform_Code ' +@PlatformCriteria+'
+					')	
+				END
+
+				DELETE FROM #tempRights
+
+				INSERT INTO #tempRights(Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term, Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal,[Platform])
+				SELECT Syn_Deal_Rights_Code, Syn_Deal_Code, Title_Code, Right_Start_Date, Right_End_Date, [Sub-Licensing], Exclusive, Term ,Episode_From ,Episode_To,MileStone_Type_Code,Self_Utilization_Group,Self_utilization_remark,Is_Holdback,Expired_Deal,[Platform]
+				FROM @tblRights_New
+
+			END
+			END
+	
+			BEGIN
+			IF (UPPER(@OutputColsNames) =  'YEAR OF RELEASE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tt.Year_of_Release [Year of Release]'
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'DIRECTOR')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tt.Director [Director]'
+		
+				UPDATE #tempTitle SET Director = DBO.UFN_Get_Title_Metadata_By_Role_Code(Title_Code, 1)
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'STAR CAST')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tt.Star_Cast [Star Cast]'
+		
+				UPDATE #tempTitle SET Star_Cast = DBO.UFN_Get_Title_Metadata_By_Role_Code(Title_Code, 2)
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'GENRE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tt.Genre [Genre]'
+		
+				UPDATE #tempTitle SET Genre = DBO.UFN_Get_Title_Genre(Title_Code)
+			END
+
+			IF (UPPER(@OutputColsNames) =  'CBFC Rating')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tt.Column_Value [CBFC Rating]'
+				
+				UPDATE tt SET tt.Column_Value = ECV.Columns_Value
+				FROM #tempTitle tt
+				INNER JOIN EXTENDED_COLUMNS_VALUE ECV ON ECV.COLUMNS_VALUE_CODE = tt.CBfC_RATING
+			END
+
+			IF (UPPER(@OutputColsNames) =  'TITLE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tt.Title [Title]'
+
+				UPDATE tt SET tt.Title = t.Title_Name
+				FROM #tempTitle tt
+				INNER JOIN Title t ON t.Title_COde = tt.Title_Code
+
+				UPDATE TR SET TR.Title_Name = T.Title_Name
+				FROM  #tempRights TR
+				INNER JOIN Syn_Deal AD on AD.Syn_Deal_Code = TR.Syn_Deal_code
+				inner join Title T on T.title_code = tr.title_Code
+
+				UPDATE TR SET TR.Title_Name =  T.Title_Name + ' ( '+ CAST(TR.Episode_From AS VARCHAR)+' - '+ CAST(TR.Episode_To AS VARCHAR) +' )'
+				FROM  #tempRights TR
+				INNER JOIN Syn_Deal AD on AD.Syn_Deal_Code = TR.Syn_Deal_code
+				INNER join Title T on T.title_code = tr.title_Code
+				WHERE ad.Deal_Type_Code IN (11,32,22)
+				--WHERE ad.Deal_Type_Code NOT IN (1,27)
+
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Original/Dubbed')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tt.Original_Dubbed [Original/Dubbed]'
+		
+			END
+
+			IF (UPPER(@OutputColsNames) =  'ORIGINAL TITLE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tt.Original_Title [Original Title]'
+		
+				UPDATE tt SET tt.Original_Title = t.Original_Title
+				FROM #tempTitle tt
+				INNER JOIN Title t ON t.Title_COde = tt.Title_Code
+			END
+		END
+	
+		BEGIN
+			IF (UPPER(@OutputColsNames) =  'AGREEMENT NO')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Agreement_No [Agreement No]'
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'DEAL DESCRIPTION')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Deal_Description [Deal Description]'
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'AGREEMENT DATE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'CONVERT(VARCHAR(11),td.Agreement_Date,103) [Agreement Date]'
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'BUSINESS UNIT')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Business_Unit [Business Unit]'
+		
+				UPDATE td SET td.Business_Unit = bu.Business_Unit_Name
+				from #tempDeal td
+				INNER JOIN Syn_Deal ad ON ad.Syn_Deal_Code = td.Syn_Deal_Code
+				INNER JOIN Business_Unit bu ON bu.Business_Unit_Code = ad.Business_Unit_Code
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'CURRENCY')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Currency [Currency]'
+		
+				UPDATE td SET td.Currency = c.Currency_Name
+				from #tempDeal td
+				INNER JOIN Currency c ON c.Currency_Code = td.Currency_Code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Variable Cost')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Variable_Cost_Type [Variable Cost]'
+		
+				UPDATE td SET td.Variable_Cost_Type= SDR.Variable_Cost_Type
+				from #tempDeal td
+				INNER JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=td.Syn_deal_Code
+
+				UPDATE  td 
+				SET td.Variable_Cost_Type = CASE td.Variable_Cost_Type 
+				WHEN 'N' THEN 'No'  
+				WHEN 'Y' THEN 'Yes'  
+				ELSE NULL  
+				END  
+				from #tempDeal td
+				INNER JOIN Syn_Deal_Revenue SDR ON SDR.Syn_deal_Code=td.Syn_deal_Code
+				--INNER JOIN Currency c ON c.Currency_Code = td.Currency_Code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'ROFR')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.ROFR [ROFR]'
+		
+				UPDATE td SET td.ROFR= SDR.IS_ROFR
+				from #tempDeal td
+				INNER JOIN Syn_Deal_Rights SDR ON SDR.Syn_deal_Code=td.Syn_deal_Code
+
+				UPDATE  td 
+				SET td.ROFR = CASE td.ROFR 
+				WHEN 'N' THEN 'No'  
+				WHEN 'Y' THEN 'Yes'  
+				ELSE NULL  
+				END  
+				from #tempDeal td
+				INNER JOIN Syn_Deal_Rights SDR ON SDR.Syn_deal_Code=td.Syn_deal_Code
+				--INNER JOIN Currency c ON c.Currency_Code = td.Currency_Code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Restriction Remarks')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Restriction_Remarks [Restriction Remarks]'
+		
+				UPDATE td SET td.Restriction_Remarks= SDR.Restriction_Remarks
+				from #tempDeal td
+				INNER JOIN Syn_Deal_Rights SDR ON SDR.Syn_deal_Code=td.Syn_deal_Code
+				--INNER JOIN Currency c ON c.Currency_Code = td.Currency_Code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Deal Category')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Deal_Category [Deal Category]'
+			
+				UPDATE td SET td.Deal_Category= C.Category_Name
+				from #tempDeal td
+				INNER JOIN Syn_Deal SD ON SD.Syn_deal_Code=td.Syn_deal_Code
+				INNER JOIN Category C ON C.Category_Code=SD.Category_Code
+				--inner join #temptitle tt on tt.title_code = tr.Title_code
+				
+								--
+				--INNER JOIN Currency c ON c.Currency_Code = td.Currency_Code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Self Utilization Group')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Self_Utilization_Group [Self Utilization Group]'
+
+				UPDATE TR SET TR.Self_Utilization_Group = SDRED.Promoter_Group_Name
+				FROM  #tempRights TR
+				LEFT JOIN Syn_Deal_Rights_Error_Details SDRED on SDRED.Syn_Deal_Rights_Code = TR.Syn_Deal_Rights_code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Self Utilization Remarks')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Self_Utilization_Remark [Self Utilization Remarks]'
+
+				UPDATE TR SET TR.Self_Utilization_Remark= SDRED.Promoter_Remark_Desc
+				FROM  #tempRights TR
+				INNER JOIN Syn_Deal_Rights_Error_Details SDRED on SDRED.Syn_Deal_Rights_Code = TR.Syn_Deal_Rights_code
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'Holdback')
+			BEGIN
+		
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'tr.Is_Holdback [Holdback]'
+				
+				UPDATE tr SET tr.Is_Holdback = 
+				CASE 
+					WHEN tr.Is_Holdback = 'Y' THEN 'Yes'
+					WHEN tr.Is_Holdback IS NULL THEN ''
+					ELSE 'No'
+				END 
+				FROM #tempRights tr
+				--UPDATE tr SET tr.Is_Holdback = 'Yes'
+				--FROM #tempRights tr
+				--INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = Tr.Syn_Deal_Rights_Code
+				--WHERE (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 OR tr.Is_Holdback IS NULL
+
+				--UPDATE tr SET tr.Is_Holdback = 'No'
+				--FROM #tempRights tr
+				--INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = Tr.Syn_Deal_Rights_Code
+				--WHERE (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) < 0 OR tr.Is_Holdback IS NULL
+
+				
+				--INNER JOIN Syn_Deal_Rights_Error_Details SDRED on SDRED.Syn_Deal_Rights_Code = TR.Syn_Deal_Rights_code
+				
+				--UPDATE TR SET TR.Is_Holdback= SDRH.Holdback_Type
+				--FROM  #tempRights TR
+				-- CASE WHEN (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 THEN ''Y'' ELSE ''N'' END AS Is_Holdback 
+				----INNER JOIN Syn_Deal_Rights_Holdback  SDRH ON SDRH.Syn_Deal_Rights_Code=TR.Syn_Deal_Rights_Code
+				--INNER JOIN Syn_Deal_Rights_Error_Details SDRED on SDRED.Syn_Deal_Rights_Code = TR.Syn_Deal_Rights_code
+			END
+
+
+		
+			IF (UPPER(@OutputColsNames) =  'CUSTOMER TYPE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Customer_Type [Customer Type,]'
+		
+				UPDATE td SET td.Customer_Type = DC.Role_Name
+				from #tempDeal td
+				INNER JOIN Syn_Deal AD ON AD.Syn_Deal_Code = td.Syn_Deal_Code
+				INNER JOIN Role DC on AD.Customer_Type = DC.Role_Code
+
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'STATUS')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Status [Status]'
+		
+				UPDATE td SET td.Status = dt.Deal_Tag_Description
+				from #tempDeal td
+				INNER JOIN Deal_Tag dt ON dt.Deal_Tag_Code = td.Deal_Tag_Code
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'DEAL WORKFLOW STATUS')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Deal_Workflow_Status [Deal Workflow Status]'
+		
+				UPDATE td SET td.Deal_Workflow_Status = dws.Deal_Workflow_Status_Name
+				from #tempDeal td
+				INNER JOIN Deal_Workflow_Status dws ON dws.Deal_WorkflowFlag COLLATE DATABASE_DEFAULT = td.Deal_Workflow_Status COLLATE DATABASE_DEFAULT AND dws.Deal_Type = 'A' 
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'DEAL TYPE')
+			BEGIN
+		
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Deal_Type [Deal Type]'
+		
+				UPDATE td SET td.Deal_Type = dt.Deal_Type_Name
+				from #tempDeal td
+				INNER JOIN Deal_Type dt ON dt.Deal_Type_Code = td.Deal_Type_Code	
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'ENTITY')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Entity [Entity]'
+		
+				UPDATE td SET td.Entity = e.Entity_Name
+				FROM #tempDeal td
+				INNER JOIN Entity e ON e.Entity_Code = td.Entity_Code
+			END
+		
+			IF (UPPER(@OutputColsNames) =  'LICENSEE')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Licensor [Licensor]'
+		
+				UPDATE td SET td.Licensor = v.Vendor_Name
+				FROM #tempDeal td
+				INNER JOIN Vendor v ON v.Vendor_Code = td.Vendor_Code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'SALES AGENT')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Sales_Agent [Sales Agent]'
+		
+				UPDATE td SET td.Sales_Agent = v.Vendor_Name
+				FROM #tempDeal td
+				INNER JOIN Vendor v ON v.Vendor_Code = td.Vendor_Code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Deal Segment')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Deal_Segment_Name [Deal Segment]'
+		
+				UPDATE td SET td.Deal_Segment_Name = DS.Deal_Segment_Name
+				FROM #tempDeal td
+				INNER JOIN Deal_Segment DS ON DS.Deal_Segment_Code = td.Deal_Segement_Code
+			END
+
+			IF (UPPER(@OutputColsNames) =  'Revenue Vertical')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'td.Revenue_Vertical_Name [Revenue Vertical]'
+		
+				UPDATE td SET td.Revenue_Vertical_Name = RV.Revenue_Vertical_Name
+				FROM #tempDeal td
+				INNER JOIN Revenue_Vertical RV ON RV.Revenue_Vertical_Code = td.Revenue_Vertical_Code
+			END
+
+			
+		END
+		/*BEGIN
+			IF (UPPER(@OutputColsNames) =  'CHANNEL')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'trd.Channel [Channel]'
+	
+				UPDATE trd SET trd.Channel =  STUFF(
+					(  SELECT Distinct ', '+ c.Channel_Name
+							FROM Syn_Deal_Run_Channel adrc
+							INNER JOIN Syn_Deal_Run adr ON adr.Syn_Deal_Run_Code = Adrc.Syn_Deal_Run_Code
+							INNER JOIN Syn_Deal_Run_Title adrt ON adrt.Syn_Deal_Run_Code = adr.Syn_Deal_Run_Code
+							INNER JOIN Channel c ON c.Channel_Code = adrc.Channel_Code
+							WHERE adr.Syn_Deal_Code = trd.Syn_Deal_Code AND adrt.Title_Code = trd.Title_Code
+					FOR XML PATH('')), 1, 1, '')
+				from #tempRunDef trd
+			END
+	
+			IF (UPPER(@OutputColsNames) =  'RUN LIMITATION')
+			BEGIN
+				IF(@TableColumns <> '')
+					SET @TableColumns = @TableColumns + ', '
+				SET @TableColumns = @TableColumns + 'trd.Run_Limitation [Run Limitation]'
+	
+				UPDATE trd SET trd.Run_Limitation = CASE WHEN adr.Run_Type = 'U' THEN 'Unlimited' ELSE 'Limited' END
+				from #tempRunDef trd
+				INNER JOIN Syn_Deal_Run adr ON adr.Syn_Deal_Code = trd.Syn_Deal_Code
+				INNER JOIN Syn_Deal_Run_Title adrt ON adrt.Syn_Deal_Run_Code = adr.Syn_Deal_Run_Code AND adrt.Title_Code = trd.Title_Code
+			END
+		END
+		*/
+	
+	    SET @Counter  = @Counter  + 1
 	END
 
 
+	--EXEC ('	INSERT INTO #tempOutput( '+@OutputCols+')
+	--		SELECT '+@UnionColumns+'
+	--		UNION ALL
+	--		Select Distinct '+@TableColumns+' FROM #tempTitle tt
+	--		INNER JOIN #tempRights tr ON tr.Title_Code = tt.Title_Code
+	--		INNER JOIN #tempDeal td ON td.Syn_Deal_Code = tr.Syn_Deal_Code
+	--		INNER JOIN #tempRunDef trd ON trd.Syn_Deal_Code = td.Syn_Deal_Code AND trd.Title_Code = tr.Title_Code
+	--	')
 
+	--	IF((SELECT COUNT(*) from #Temp_ColNames WHERE ColNames = 'PLATFORM') > 0)
+	--BEGIN
+
+	--		EXEC ('	INSERT INTO #tempOutput( '+@OutputCols+')
+	--			SELECT '+@UnionColumns+'
+	--			UNION ALL
+	--			Select Distinct '+@TableColumns+' FROM #tempTitle tt
+	--			INNER JOIN #tempRights tr ON tr.Title_Code = tt.Title_Code
+	--			INNER JOIN #tblRightsPlatforms trp ON tr.Syn_Deal_Rights_Code = trp.Syn_Deal_Rights_Code
+	--			INNER JOIN #tempDeal td ON td.Syn_Deal_Code = tr.Syn_Deal_Code
+	--			INNER JOIN #tempRunDef trd ON trd.Syn_Deal_Code = td.Syn_Deal_Code AND trd.Title_Code = tr.Title_Code
+	--			 ')
+
+	--END
 	--ELSE
-	--	SET @Sql_Query += ' SELECT DISTINCT '+ @Sql_SELECT + ' FROM #Actual_Data '
+	--BEGIN
 
-	SET @Sql_Query_4 = ' SELECT DISTINCT '+ @Sql_SELECT + ' FROM #Actual_Data;
-	DROP TABLE #Actual_Data 
-	DROP TABLE #Syn_Deal_Rights 
-	DROP TABLE #TmpDeal 
-	DROP TABLE #Actual_Data_WOP
-	DROP TABLE #TmpTitle
-	DROP TABLE #Filtered_Title'
+				EXEC ('	INSERT INTO #tempOutput( '+@OutputCols+')
+					SELECT '+@UnionColumns+'
+					UNION ALL
+					Select Distinct '+@TableColumns+' FROM #tempTitle tt
+					INNER JOIN #tempRights tr ON tr.Title_Code = tt.Title_Code
+					INNER JOIN #tempDeal td ON td.Syn_Deal_Code = tr.Syn_Deal_Code
+				')
+				--INSERT INTO #tempOutput( COL1, COL2)
+				--	SELECT 'Title', 'Platform'
+				--	UNION ALL
+				--	Select Distinct tt.Title [Title], tr.Platform [Platform] FROM #tempTitle tt
+				--	INNER JOIN #tempRights tr ON tr.Title_Code = tt.Title_Code
+				--	INNER JOIN #tempDeal td ON td.Syn_Deal_Code = tr.Syn_Deal_Code
 
-	/* Insert actual query result in Temp table */
-	PRINT @Sql_Query
-	INSERT INTO #TEMPVIEW  
-	EXEC (@Sql_Query + @Sql_Query_1 +@Sql_Query_2 +@Sql_Query_3 +@Sql_Query_4)     
-   
-	/* Get Actual Result*/
-	SELECT * FROM #TEMPVIEW
-	DROP TABLE #TEMPVIEW
+
+				--	SELECT 'Title', 'Platform'
+				--	UNION ALL
+				--	Select Distinct tt.Title [Title], tr.Platform [Platform] FROM #tempTitle tt
+				--	INNER JOIN #tempRights tr ON tr.Title_Code = tt.Title_Code
+				--	INNER JOIN #tempDeal td ON td.Syn_Deal_Code = tr.Syn_Deal_Code
+				
+	--END
+
+				--UPDATE tr SET tr.Is_Holdback = 'Yes'
+				--FROM #tempRights tr
+				--INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = Tr.Syn_Deal_Rights_Code
+				--WHERE (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) > 0 OR tr.Is_Holdback IS NULL
+
+				--UPDATE tr SET tr.Is_Holdback = 'No'
+				--FROM #tempRights tr
+				--INNER JOIN Syn_Deal_Rights adr ON adr.Syn_Deal_Rights_Code = Tr.Syn_Deal_Rights_Code
+				--WHERE (SELECT COUNT(Syn_Deal_Rights_Holdback_Code) FROM Syn_Deal_Rights_Holdback ADRH WHERE ADRH.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code) < 0 OR tr.Is_Holdback IS NULL
+
+
+	--EXEC ('SELECT '+@OutputCols+' FROM #tempOutput')
+
+	DECLARE @ColumnOne VARCHAR(MAX) = ''
+
+	SELECT  @ColumnOne = number FROM DBO.FN_SPLIT_WITHDELEMITER(@ColNames,',')  WHERE id = 1
+
+	EXEC('	SELECT TOP 1 '+@OutputCols+'  FROM #tempOutput   WHERE COL1 = '''+@ColumnOne+'''
+			UNION ALL
+			SELECT '+@OutputCols+' FROM #tempOutput WHERE COL1 <> '''+@ColumnOne+'''')
+
+	IF(OBJECT_ID('tempdb..#buwiseSyn_deal_code') IS NOT NULL) DROP TABLE #buwiseSyn_deal_code
+	IF(OBJECT_ID('tempdb..#Temp_Condition') IS NOT NULL) DROP TABLE #Temp_Condition
+	IF(OBJECT_ID('tempdb..#TempOutput') IS NOT NULL) DROP TABLE #TempOutput
+	IF(OBJECT_ID('tempdb..#tempTitle') IS NOT NULL) DROP TABLE #tempTitle
+	IF(OBJECT_ID('tempdb..#tempDeal') IS NOT NULL) DROP TABLE #tempDeal
+	IF(OBJECT_ID('tempdb..#tempRights') IS NOT NULL) DROP TABLE #tempRights
+	IF(OBJECT_ID('tempdb..#dummyRights') IS NOT NULL) DROP TABLE #dummyRights
+	IF(OBJECT_ID('tempdb..#dummyCriteria') IS NOT NULL) DROP TABLE #dummyCriteria
+	IF(OBJECT_ID('tempdb..#tmpDisplay') IS NOT NULL) DROP TABLE #tmpDisplay
+	IF(OBJECT_ID('tempdb..#Platform_Search') IS NOT NULL) DROP TABLE #Platform_Search
+	IF(OBJECT_ID('tempdb..#TempLang') IS NOT NULL) DROP TABLE #TempLang
+	IF(OBJECT_ID('tempdb..#tempRunDef') IS NOT NULL) DROP TABLE #tempRunDef
+	IF(OBJECT_ID('tempdb..#RunDef') IS NOT NULL) DROP TABLE #RunDef
+	IF(OBJECT_ID('tempdb..#TempTerritory') IS NOT NULL) DROP TABLE #TempTerritory
+	IF(OBJECT_ID('tempdb..#tempBusinessUnit') IS NOT NULL) DROP TABLE #tempBusinessUnit
+	IF(OBJECT_ID('tempdb..#tbl_Platform_RightCodes') IS NOT NULL) DROP TABLE #tbl_Platform_RightCodes
+	IF(OBJECT_ID('tempdb..#Temp_ColNames') IS NOT NULL) DROP TABLE #Temp_ColNames
+	IF(OBJECT_ID('tempdb..#OriDub_Title_Code') IS NOT NULL) DROP TABLE #OriDub_Title_Code
+	IF(OBJECT_ID('tempdb..#tblRights_Newholdback') IS NOT NULL) DROP TABLE #tblRights_Newholdback
+	IF(OBJECT_ID('tempdb..#tblRightsPlatforms') IS NOT NULL) DROP TABLE #tblRightsPlatforms
 END
-
-----------------------------------------------------------------------------------------------------------------
-/*
-EXEC USP_Syn_Query_Report 'Title_Name [Title], CONVERT(VARCHAR,Year_Of_Production,103) [Year of Release], Agreement_No [Agreement No], Deal_Description [Deal Description], Deal_Tag_Description [Status], Original_Title [Original Title], Platform_Name [Platform], Vendor_Name [Acquire Licensor], CONVERT(VARCHAR,Right_Start_Date,103) [Right Start Date], CONVERT(VARCHAR,Right_End_Date,103) [Right End Date], Country_Name [Country], Director_Names_Comma_Seperate [Director], Star_Cast_Names_Comma_Seperate [Star Cast], Is_Holdback [Is Holdback], Currency_Name [Currency], Entity_Name [Entity], Subtitling_Languages [Subtitling], Dubbing_Languages [Dubbing], Variable_Cost_Type [Variable Cost], CONVERT(VARCHAR,ROFR,103) [ROFR], Restriction_Remarks [Restriction Remarks], Business_Unit_Name [Business Unit], CONVERT(VARCHAR,Agreement_Date,103) [Agreement Date], Is_Exclusive [Exclusive], Territory_Name [Territory], Term [Term], Role_Name [Customer Type], Sub_Licensing [Sub-Licensing], Original_Dubbed [Original/Dubbed]'
-
-, ' and (  Convert(datetime,SDR.Right_Start_Date,103)  >  ''01-Jan-2015'' AND Expired=''N'' ) AND SD.Business_Unit_Code = 1 AND SD.Entity_Code = 1'
-, 29
-, 'Title,Year of Release,Agreement No,Deal Description,Status,Original Title,Platform,Acquire Licensor,Right Start Date,Right End Date,Country,Director,Star Cast,Is Holdback,Currency,Entity,Subtitling,Dubbing,Variable Cost,ROFR,Restriction Remarks,Business Unit,Agreement Date,Exclusive,Territory,Term,Customer Type,Sub-Licensing,Original/Dubbed,'
-,0,'','','','Y'
-*/
-----------------------------------------------------------------------------------------------------------------
-/*
-EXEC USP_Syn_Query_Report 'Title_Name [Title], Agreement_No [Agreement No], Deal_Description [Deal Description], CONVERT(VARCHAR,Year_Of_Production,103) [Year of Release]',
-' and (  Convert(datetime,SDR.Right_Start_Date,103)  >  ''01-Jan-2015'' AND Expired=''N'' ) AND SD.Business_Unit_Code = 2 AND SD.Entity_Code = 1',
-4,
-'Title,Agreement No,Deal Description,Year of Release,',
-0,'','','','Y'
-*/
-
---select * from Report_Column_Setup
---(SELECT Vendor_Name from Vendor where Vendor_Code=Sales_Agent_Code) AS [Sales_Agent]
-
---UPDATE Report_Column_Setup SET Name_In_DB='Sales_Agent' where Column_Code=1239
---select Vendor_Name,Vendor_Code from Vendor where 
-----Vendor.Is_Active = 'Y' 
-----AND
--- Vendor.Vendor_Code IN(select Vendor_Code from Vendor_Role where Role_Code=8)
-
---SP_HELPTEXT USP_Syn_Query_Report

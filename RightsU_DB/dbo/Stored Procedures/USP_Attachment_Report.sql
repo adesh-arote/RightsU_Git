@@ -1,4 +1,5 @@
-﻿ALTER PROCEDURE [dbo].[USP_Attachment_Report]          
+﻿
+CREATE PROCEDURE [dbo].[USP_Attachment_Report]          
 (          
   @Agreement_No varchar(50)='',          
   @Title_Codes Varchar(MAX)='',           
@@ -163,6 +164,9 @@ BEGIN
     SELECT * FROM #SynAttachmentHeader  
     END  
    END  
+
+	IF OBJECT_ID('tempdb..#AcqAttachmentHeader') IS NOT NULL DROP TABLE #AcqAttachmentHeader
+	IF OBJECT_ID('tempdb..#SynAttachmentHeader') IS NOT NULL DROP TABLE #SynAttachmentHeader
 END    
   
 --SELECT * FROM Syn_Deal WHERE Syn_Deal_Code = 1306  

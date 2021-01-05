@@ -132,9 +132,11 @@ BEGIN
 	DROP TABLE #TempHoldbackCodes
 	DROP TABLE #TempHoldback
 	DROP TABLE #TempHoldback_TL
+
+	IF OBJECT_ID('tempdb..#Lang_Dub') IS NOT NULL DROP TABLE #Lang_Dub
+	IF OBJECT_ID('tempdb..#Lang_Sub') IS NOT NULL DROP TABLE #Lang_Sub
+	IF OBJECT_ID('tempdb..#TempHoldback') IS NOT NULL DROP TABLE #TempHoldback
+	IF OBJECT_ID('tempdb..#TempHoldback_TL') IS NOT NULL DROP TABLE #TempHoldback_TL
+	IF OBJECT_ID('tempdb..#TempHoldbackCodes') IS NOT NULL DROP TABLE #TempHoldbackCodes
+	IF OBJECT_ID('tempdb..#TempTitle') IS NOT NULL DROP TABLE #TempTitle
 END
-
-
-
-
-

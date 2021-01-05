@@ -41,20 +41,20 @@ BEGIN
 	--@Agreement_No VARCHAR(50) = '',
 	--@StartDate DATETIME = NULL,
 	--@EndDate DATETIME = NULL,
-	--@Deal_Type_Code NVARCHAR(MAX) = '1',
-	--@Status_Code NVARCHAR(MAX) = '1,4,3',
-	--@Business_Unit_Code INT = Null,
+	--@Deal_Type_Code NVARCHAR(MAX) = '',
+	--@Status_Code NVARCHAR(MAX) = '',
+	--@Business_Unit_Code INT = 10,
 	--@Deal_Tag_Code INT = 0,
 	--@Workflow_Status VARCHAR(5) = '0',
 	--@Vendor_Codes VARCHAR(MAX) = '',
 	--@Music_Label_Codes VARCHAR(MAX) = '',
 	--@IsAdvance_Search CHAR(1) = 'Y',
-	--@User_Code INT = 143,
+	--@User_Code INT = 247,
 	--@PageNo INT = 1 ,
 	--@PageSize INT = Null,
 	--@RecordCount INT,
-	--@Show_Type_Code NVARCHAR(100) = 'AS',
-	--@Title_Code NVARCHAR(MAX) = ''
+	--@Show_Type_Code NVARCHAR(100) ='',
+	--@Title_Code NVARCHAR(MAX) = '6179, 11843, '
 
 	IF(OBJECT_ID('TEMPDB..#TempMusicDeal') IS NOT NULL)
 		DROP TABLE #TempMusicDeal
@@ -68,17 +68,33 @@ BEGIN
 	IF(OBJECT_ID('TEMPDB..#Title_Channel') IS NOT NULL)
 		DROP TABLE #Title_Channel
 
+	IF(OBJECT_ID('TEMPDB..#MusicDeal_Channel') IS NOT NULL)
+		DROP TABLE #MusicDeal_Channel
+
+	IF(OBJECT_ID('TEMPDB..#Filtered_Music_Deal') IS NOT NULL)
+		DROP TABLE #Filtered_Music_Deal
+
+	IF(OBJECT_ID('TEMPDB..#_Title_Channel') IS NOT NULL)
+		DROP TABLE #_Title_Channel
+
+	IF(OBJECT_ID('TEMPDB..#_MusicDeal_Channel') IS NOT NULL)
+		DROP TABLE #_MusicDeal_Channel
+
+	IF(OBJECT_ID('TEMPDB..#_Filtered_Music_Deal') IS NOT NULL)
+		DROP TABLE #_Filtered_Music_Deal
+
+	IF(OBJECT_ID('TEMPDB..#SP_MusicDealCode') IS NOT NULL)
+		DROP TABLE #SP_MusicDealCode
+
+	IF(OBJECT_ID('TEMPDB..#_SP_MusicDealCode') IS NOT NULL)
+		DROP TABLE #_SP_MusicDealCode
+
+		
 	CREATE TABLE #TempMusicDeal
 	(
 		Row_NO INT IDENTITY(1,1),
 		Music_Deal_Code INT
 	)
-
-	--CREATE TABLE #DealType_Title
-	--(
-	--	Row_No INT IDENTITY(1,1),
-	--	Title_Code INT
-	--)
 	
 	CREATE TABLE #Temp
 	(
@@ -86,6 +102,13 @@ BEGIN
 		Channel_Name NVARCHAR(MAX),
 		Title_Code INT
 	)
+
+	--DECLARE @Show_Name NVARCHAR(MAX) = '', 	@Show_Type_Code NVARCHAR(100) = '', @Title_Code NVARCHAR(MAX) = '20584,'
+	----IF (ISNULL(@Title_Code,'') <> '' AND ISNULL(@Show_Type_Code,'') = '')
+	--IF (CHARINDEX('SP',@Show_Type_Code) > 0 AND ISNULL(@Title_Code,'') <> '')
+	--	SELECT 'A'
+	--ELSE
+	--	SELECT 'B'
 
 	--DECLARE @Show_Name NVARCHAR(MAX) = '', 	@Show_Type_Code NVARCHAR(100) = 'SP'
 	--IF(@Show_Type_Code <> '')
@@ -119,6 +142,9 @@ BEGIN
 	--		SELECT * FROM #DealType_Title
 	--END
 
+	IF(@Title_Code = '0')
+		SET @Title_Code = NULL
+
 	IF(ISNULL(@IsAdvance_Search, 'N') = 'Y')
 	BEGIN
 		PRINT 'Advance Serach'
@@ -145,8 +171,86 @@ BEGIN
 		) AS A
 		ORDER BY A.Last_Updated_Time DESC
 
-		IF (ISNULL(@Title_Code,'') <> '')
+
+		--INCLUDES SP AND TITILE CODE IS NOT BLANK DEN SEARCH IN MUSIC DEAL LINK SHOQ TITLE CODE
+		IF (CHARINDEX('SP',@Show_Type_Code) > 0 AND ISNULL(@Title_Code,'') <> '')
 		BEGIN
+			PRINT 'A'
+			SELECT DISTINCT MD.Music_Deal_Code INTO #SP_MusicDealCode FROM Music_Deal MD
+			INNER JOIN Music_Deal_LinkShow MDLS ON MDLS.Music_Deal_Code = MD.Music_Deal_Code
+			WHERE 
+			MD.Music_Deal_Code IN (SELECT Music_Deal_Code FROM #TempMusicDeal) AND 
+			MDLS.Title_Code IN (SELECT number FROM DBO.fn_Split_withdelemiter(@Title_Code, ',') WHERE number <> '')
+
+			DELETE FROM #TempMusicDeal WHERE Music_Deal_Code NOT IN (SELECT Music_Deal_Code FROM #SP_MusicDealCode)
+		END
+		-- IF SHOW TYPE IS BLANK AND TITLE CODE IS NOT BLANK 
+		ELSE IF (ISNULL(@Title_Code,'') <> '' AND ISNULL(@Show_Type_Code,'') = '')
+		BEGIN
+			PRINT 'B'
+
+			SELECT DISTINCT MD.Music_Deal_Code INTO #_SP_MusicDealCode FROM Music_Deal MD
+			INNER JOIN Music_Deal_LinkShow MDLS ON MDLS.Music_Deal_Code = MD.Music_Deal_Code
+			WHERE 
+			MD.Music_Deal_Code IN (SELECT Music_Deal_Code FROM #TempMusicDeal) AND 
+			MDLS.Title_Code IN (SELECT number FROM DBO.fn_Split_withdelemiter(@Title_Code, ',') WHERE number <> '')
+
+			--DELETE FROM #TempMusicDeal WHERE Music_Deal_Code NOT IN (SELECT Music_Deal_Code FROM #_SP_MusicDealCode)
+			--select * from #_SP_MusicDealCode
+
+			DECLARE @DealTypeCodes NVARCHAR(100) = '';
+
+			SELECT @DealTypeCodes = STUFF((
+				SELECT DISTINCT ',' + CAST(Deal_Type_Code AS VARCHAR(MAX))
+				FROM Title WHERE Title_Code IN (SELECT number FROM DBO.fn_Split_withdelemiter(@Title_Code, ',') WHERE number <> '')
+            FOR XML PATH('')
+            ), 1, 1, '')
+
+			--select @DealTypeCodes
+
+			--SPECIFIC CHANNEL FOR PARTICULAR MUSIC DEAL
+			SELECT DISTINCT MD.Music_Deal_Code, MDC.Channel_Code, C.Channel_Name Into #_MusicDeal_Channel FROM Music_Deal MD
+			INNER JOIN Music_Deal_Channel MDC on  MDC.Music_Deal_Code = MD.Music_Deal_Code
+			INNER JOIN Channel C ON C.Channel_Code = MDC.Channel_Code
+			WHERE MD.Music_Deal_Code in (SELECT Music_Deal_Code FROM #TempMusicDeal)
+
+			--select * from #_MusicDeal_Channel
+
+			--SELECT CHANNEL RELATED TO TITLE CODE 
+			INSERT INTO #Temp(Title_Name, Channel_Name, Title_Code)
+			SELECT DISTINCT T.Title_Name, C.Channel_Name, T.Title_Code FROM Acq_Deal_Run_Channel ADRC
+			INNER JOIN Channel C ON C.Channel_Code = ADRC.Channel_Code
+			INNER JOIN Acq_Deal_Run_Title ADRT ON ADRT.Acq_Deal_Run_Code = ADRC.Acq_Deal_Run_Code
+			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code 
+			WHERE T.Deal_Type_Code IN (SELECT number FROM DBO.fn_Split_withdelemiter(@DealTypeCodes, ',') WHERE number <> '')
+
+			SELECT DISTINCT A.Title_Code , C.Channel_Code INTO #_Title_Channel
+			FROM (SELECT DISTINCT Title_Name, Title_Code FROM #Temp T) AS A 
+				INNER JOIN Acq_Deal_Run_Title ADRT ON ADRT.Title_Code = A.Title_Code
+				INNER JOIN Acq_Deal_Run_Channel ADRC ON ADRC.Acq_Deal_Run_Code = ADRT.Acq_Deal_Run_Code
+				INNER JOIN Channel C ON C.Channel_Code = ADRC.Channel_Code
+				WHERE A.Title_Code IN (SELECT number FROM DBO.fn_Split_withdelemiter(@Title_Code, ',') WHERE number <> '')
+
+			--select * from #_Title_Channel
+
+			--GETTING ACTUAL MUSIC DEAL CODE BY FILTERING DATA
+			SELECT DISTINCT Music_Deal_Code INTO #_Filtered_Music_Deal FROM #_MusicDeal_Channel WHERE Channel_Code IN (SELECT Channel_Code FROM #_Title_Channel)
+
+			--select * from #_Filtered_Music_Deal
+
+			DELETE FROM #TempMusicDeal WHERE Music_Deal_Code NOT IN 
+			(	SELECT Music_Deal_Code FROM #_Filtered_Music_Deal 
+				UNION ALL
+				SELECT Music_Deal_Code FROM #_SP_MusicDealCode
+			) 
+			
+
+			DROP TABLE #_Title_Channel
+			DROP TABLE #_Filtered_Music_Deal
+		END
+		ELSE IF (ISNULL(@Title_Code,'') <> '')
+		BEGIN
+			PRINT 'C'
 			--SPECIFIC CHANNEL FOR PARTICULAR MUSIC DEAL
 			SELECT DISTINCT MD.Music_Deal_Code, MDC.Channel_Code, C.Channel_Name Into #MusicDeal_Channel FROM Music_Deal MD
 			INNER JOIN Music_Deal_Channel MDC on  MDC.Music_Deal_Code = MD.Music_Deal_Code
@@ -155,24 +259,28 @@ BEGIN
 
 			--SELECT CHANNEL RELATED TO TITLE CODE 
 			INSERT INTO #Temp(Title_Name, Channel_Name, Title_Code)
-			SELECT DISTINCT T.Title_Name, C.Channel_Name, T.Title_Code
-			FROM Acq_Deal_Run_Channel ADRC
+			SELECT DISTINCT T.Title_Name, C.Channel_Name, T.Title_Code FROM Acq_Deal_Run_Channel ADRC
 			INNER JOIN Channel C ON C.Channel_Code = ADRC.Channel_Code
 			INNER JOIN Acq_Deal_Run_Title ADRT ON ADRT.Acq_Deal_Run_Code = ADRC.Acq_Deal_Run_Code
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code 
-
-			SELECT A.Title_Code , C.Channel_Code INTO #Title_Channel
+			
+			SELECT DISTINCT A.Title_Code , C.Channel_Code INTO #Title_Channel
 			FROM (SELECT DISTINCT Title_Name, Title_Code FROM #Temp T) AS A 
 				INNER JOIN Acq_Deal_Run_Title ADRT ON ADRT.Title_Code = A.Title_Code
 				INNER JOIN Acq_Deal_Run_Channel ADRC ON ADRC.Acq_Deal_Run_Code = ADRT.Acq_Deal_Run_Code
 				INNER JOIN Channel C ON C.Channel_Code = ADRC.Channel_Code
 				WHERE A.Title_Code IN (SELECT number FROM DBO.fn_Split_withdelemiter(@Title_Code, ',') WHERE number <> '')
 
+			--SELECT * FROM #TempMusicDeal
+			--SELECT * FROM #Temp
+			--SELECT * FROM #Title_Channel
+			--SELECT * FROM #MusicDeal_Channel
 			--GETTING ACTUAL MUSIC DEAL CODE BY FILTERING DATA
 			SELECT DISTINCT Music_Deal_Code INTO #Filtered_Music_Deal FROM #MusicDeal_Channel WHERE Channel_Code IN (SELECT Channel_Code FROM #Title_Channel)
 
 			DELETE FROM #TempMusicDeal WHERE Music_Deal_Code NOT IN (SELECT Music_Deal_Code FROM #Filtered_Music_Deal)
 		END
+
 	END
 	ELSE IF(@SearchText <> '')
 	BEGIN
@@ -244,10 +352,22 @@ BEGIN
 	FROM #TempResultData TRD
 
 	SELECT * FROM #TempResultData
+
+	IF OBJECT_ID('tempdb..#_Filtered_Music_Deal') IS NOT NULL DROP TABLE #_Filtered_Music_Deal
+	IF OBJECT_ID('tempdb..#_MusicDeal_Channel') IS NOT NULL DROP TABLE #_MusicDeal_Channel
+	IF OBJECT_ID('tempdb..#_SP_MusicDealCode') IS NOT NULL DROP TABLE #_SP_MusicDealCode
+	IF OBJECT_ID('tempdb..#_Title_Channel') IS NOT NULL DROP TABLE #_Title_Channel
+	IF OBJECT_ID('tempdb..#DealType_Title') IS NOT NULL DROP TABLE #DealType_Title
+	IF OBJECT_ID('tempdb..#Filtered_Music_Deal') IS NOT NULL DROP TABLE #Filtered_Music_Deal
+	IF OBJECT_ID('tempdb..#MusicDeal_Channel') IS NOT NULL DROP TABLE #MusicDeal_Channel
+	IF OBJECT_ID('tempdb..#SP_MusicDealCode') IS NOT NULL DROP TABLE #SP_MusicDealCode
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#TempMusicDeal') IS NOT NULL DROP TABLE #TempMusicDeal
+	IF OBJECT_ID('tempdb..#TempResultData') IS NOT NULL DROP TABLE #TempResultData
+	IF OBJECT_ID('tempdb..#Title_Channel') IS NOT NULL DROP TABLE #Title_Channel
 END
 
 
 
 
 --Select * from Music_Deal_DealType
-

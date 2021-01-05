@@ -64,4 +64,6 @@ BEGIN
 	SELECT Country_Code, Country_Name, Theatrical_Territory, ISNULL(Language_Names, '') AS Language_Names, ISNULL(Base_Country, 'No') AS Base_Country, [Status],
 	Is_Theatrical_Territory, Is_Active, Disable_Message,Last_Updated_Time
 	FROM #TempCountry ORDER BY Last_Updated_Time desc
+
+	IF OBJECT_ID('tempdb..#TempCountry') IS NOT NULL DROP TABLE #TempCountry
 END

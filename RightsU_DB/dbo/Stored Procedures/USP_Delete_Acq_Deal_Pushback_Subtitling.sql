@@ -9,3 +9,4 @@ Begin
 	Else
 		Delete From Acq_Deal_Pushback_Subtitling Where Acq_Deal_Pushback_Code = @Acq_Deal_Pushback_Code And IsNull(Language_Code, 0) = IsNull(@Language_Code, 0)
 End
+

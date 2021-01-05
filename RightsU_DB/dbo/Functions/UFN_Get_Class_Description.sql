@@ -1,4 +1,4 @@
-﻿Create FUNCTION [dbo].[UFN_Get_Class_Description]
+﻿CREATE FUNCTION [dbo].[UFN_Get_Class_Description]
 (
 	@IPR_Rep_Code INT
 )

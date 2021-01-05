@@ -365,4 +365,6 @@ BEGIN
 	DELETE SRC FROM Syn_Rights_Code SRC WHERE Syn_Deal_Code = @Syn_Deal_Code
 
 	SELECT 'S' AS Result
+
+	IF OBJECT_ID('tempdb..#Temp_Acq_Rights_Title') IS NOT NULL DROP TABLE #Temp_Acq_Rights_Title
 END

@@ -205,4 +205,9 @@ BEGIN
 		SET @Title_Names = ''
 
 	SELECT @Title_Names as Error_Msg
+
+	IF OBJECT_ID('tempdb..#Deal_Rights_Platform_New') IS NOT NULL DROP TABLE #Deal_Rights_Platform_New
+	IF OBJECT_ID('tempdb..#Deal_Rights_Title_New') IS NOT NULL DROP TABLE #Deal_Rights_Title_New
+	IF OBJECT_ID('tempdb..#RunRecord') IS NOT NULL DROP TABLE #RunRecord
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

@@ -1,4 +1,6 @@
-﻿CREATE FUNCTION [dbo].[UFN_Get_Acq_Rights_Period]      
+﻿
+
+CREATE FUNCTION [dbo].[UFN_Get_Acq_Rights_Period]      
 (      
  @Acq_Deal_Code AS int      
 )       
@@ -19,7 +21,7 @@ BEGIN
   SET @RighstPeriod = ''      
         
   select  @cnt=COUNT(*) 
-  FROM Acq_Deal_Rights ADR  
+  FROM Acq_Deal_Rights ADR WITH(NOLOCK)
   WHERE ADR.Acq_Deal_Code=@Acq_Deal_Code      
       
         
@@ -60,3 +62,5 @@ END
       
 --select * FROM Acq_Deal WHERE agreement_no='A-2014-00176'      
 --select dbo.[UFN_Get_Acq_Rights_Period](6235) 
+
+

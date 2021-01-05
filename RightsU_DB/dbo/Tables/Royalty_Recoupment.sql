@@ -10,5 +10,3 @@
     CONSTRAINT [PK_Royalty_Recoupment] PRIMARY KEY CLUSTERED ([Royalty_Recoupment_Code] ASC)
 );
 
-
-

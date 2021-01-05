@@ -26,21 +26,7 @@ BEGIN
  --SELECT 0 AS RowNum, 0 AS Avail_Report_Schedule_Code, Title_Code, Platform_Code, Country_Code, Is_Original_Language,       
  -- Dubbing_Subtitling, GroupBy, Node, Language_Code, Date_Type, StartDate, EndDate, User_Code,       
  -- Inserted_On, Report_Status, Report_File_Name, ShowRemark, Email_Status      
- --INTO #Temp  From  rightsu_Reports..Avail_Report_Schedule WHERE 1=2    
- 
- --     INSERT INTO @Avail_Report_Schedule_Data(
-	--	[Title_Code],[Country_Code], [Platform_Code] ,  [Is_Original_Language],[Dubbing_Subtitling] , [Language_Code] ,[Date_Type] ,[StartDate] , [EndDate] ,[UserCode] ,
- --   [Inserted_On] , [Report_Status], [Visibility] ,[ReportName] , [RestrictionRemark] ,[OtherRemark] ,  [Platform_ExactMatch] ,
- --   [MustHave_Platform], [Exclusivity] ,  [SubLicenseCode] ,[Region_ExactMatch], [Region_MustHave], [Region_Exclusion],[Subtit_Language_Code] ,
- --   [Dubbing_Language_Code] , [BU_Code],[Report_Type], [Digital] ,[IncludeMetadata] ,[Is_IFTA_Cluster] ,[Platform_Group_Code] ,  [Subtitling_Group_Code] ,
- --   [Subtitling_ExactMatch],[Subtitling_MustHave], [Subtitling_Exclusion] ,[Dubbing_Group_Code] ,  [Dubbing_ExactMatch], [Dubbing_MustHave] , [Dubbing_Exclusion] ,
- --   [Territory_Code] ,   [IndiaCast], [Region_On] , [Include_Ancillary] , [Promoter_Code] ,[MustHave_Promoter] , [Promoter_ExactMatch] ,[Module_Code]  ,
-	--[Episode_From] ,	[Episode_To] 
-
-	--)
-	--VALUES
-	--	(null,null,null,null,null,null,null,null,null,0,null,null,'PR',null,null,null,null,null,null,null,null,null,null,null,null,0,null,'false',null,null,null,null,
-	--	null,null,null,null,null,null,null,null,null,null,null,null,null,null,134,0,0)
+ --INTO #Temp  From  rightsu_Reports..Avail_Report_Schedule WHERE 1=2      
        
       
       --drop table #Temp
@@ -173,7 +159,7 @@ BEGIN
        SELECT Distinct STUFF(      
           (SELECT '', '' + CAST(Title_Name AS NVARCHAR(250)) [text()]      
         FROM Title       
-        WHERE Title_Code IN (select number from fn_Split_withdelemiter(tbl.Title_Code, '',''))      
+        WHERE Title_Code IN (select number from fn_Split_withdelemiter(ISNULL(tbl.Title_Code,''''), '',''))      
         ORDER BY Title_Name       
         FOR XML PATH(''''), TYPE).value(''.'',''NVARCHAR(MAX)''),1,2,'' '') List_Output      
        FROM Title T      
@@ -197,7 +183,7 @@ BEGIN
       , Region_MustHave ,Region_Exclusion ,Subtit_Language_Code ,Dubbing_Language_Code ,Cast(BU_Code AS VARCHAR(10)) AS BU_Code ,Report_Type,      
       First_NAme+ '' '' + Last_Name  UserName,
 	  Episode_From,Episode_To,
-	  CAST('''' AS VARCHAR(5)) Digital ,IncludeMetadata, Is_IFTA_Cluster, Platform_Group_Code, Subtitling_Group_Code  
+	 CASE Digital WHEN ''1'' THEN ''true'' ELSE ''false''  END Digital ,IncludeMetadata, Is_IFTA_Cluster, Platform_Group_Code, Subtitling_Group_Code  
 	 , Subtitling_ExactMatch, Subtitling_MustHave, Subtitling_Exclusion, Dubbing_Group_Code, Dubbing_ExactMatch, Dubbing_MustHave, Dubbing_Exclusion,Territory_Code, Include_Ancillary ,Indiacast   ,Region_On  
 	 ,Promoter_Code, Promoter_ExactMatch, MustHave_Promoter, Module_Code, '+CAST(@RecCount as varchar(10))+' As Recordcount, Episode_From, Episode_To
     
@@ -261,5 +247,7 @@ BEGIN
 			, Subtitling_ExactMatch, Subtitling_MustHave, Subtitling_Exclusion, Dubbing_Group_Code, Dubbing_ExactMatch, Dubbing_MustHave, Dubbing_Exclusion, Territory_Code, Include_Ancillary, Promoter_Code,  Promoter_ExactMatch, MustHave_Promoter, Indiacast , Region_On, Recordcount
 		, Episode_From, Episode_To FROM #Temp where 1=2    
 	END    
-END   
-     
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#tempVariable') IS NOT NULL DROP TABLE #tempVariable
+END

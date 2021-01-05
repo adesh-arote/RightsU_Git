@@ -11,7 +11,7 @@ AS
 -- =============================================
 BEGIN
 	SET FMTONLY OFF
-	DECLARE @recordStatus VARCHAR(1) = ''
+	DECLARE @recordStatus VARCHAR(1) = 'E'
 	DECLARE @recCount INT  = 0
 	IF(@rightCode > 0)
 	BEGIN

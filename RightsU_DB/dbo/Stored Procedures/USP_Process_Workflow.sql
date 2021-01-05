@@ -1,4 +1,7 @@
-﻿CREATE PROC [dbo].[USP_Process_Workflow]
+﻿
+
+
+CREATE PROC [dbo].[USP_Process_Workflow]
 (
 	@Module_Code Int,
 	@Record_Code Int,
@@ -13,7 +16,27 @@ BEGIN
 
 		DECLARE 
 		@Next_Level_Group Int = 0, @Module_Workflow_Detail_Code Int = 0, @Role_Level Int = 0, @Is_Email_Required Varchar(5) = '', 
-		@Is_Error Varchar(10) = 'N'
+		@Is_Error Varchar(10) = 'N',@Version_No INT = 1
+
+			IF(@Module_Code = 30)
+			BEGIN
+				SELECT 
+				@Version_No=CAST  ([Version] as INT)
+				FROM Acq_Deal WHERE Acq_Deal_Code = @Record_Code
+			END
+			ELSE IF(@Module_Code = 35)
+			BEGIN
+				SELECT 
+				@Version_No=CAST  ([Version] as INT)
+				FROM Syn_Deal WHERE Syn_Deal_Code = @Record_Code
+			END
+			ELSE IF(@Module_Code = 163)
+			BEGIN
+				SELECT 
+				@Version_No=CAST  ([Version] as INT)
+				FROM Music_Deal WHERE Music_Deal_Code = @Record_Code
+			END
+
 
 		SELECT @Is_Email_Required = ISNULL(Is_Email_Required, 'N') FROM System_Param
 
@@ -26,8 +49,11 @@ BEGIN
 			Update Module_Workflow_Detail Set Is_Done = 'Y' Where Module_Workflow_Detail_Code = @Module_Workflow_Detail_Code
 		END
 
-		INSERT INTO Module_Status_History(Module_Code, Record_Code, [Status], Status_Changed_By, Status_Changed_On, Remarks)
-		SELECT @Module_Code, @Record_Code, @User_Action, @Login_User, GetDate(), @Remarks
+		IF (@User_Action != 'AR')
+		BEGIN
+			INSERT INTO Module_Status_History(Module_Code, Record_Code, [Status], Status_Changed_By, Status_Changed_On, Remarks, Version_No)
+			SELECT @Module_Code, @Record_Code, @User_Action, @Login_User, GetDate(), @Remarks,@Version_No
+		END
 
 		IF(@User_Action = 'R')
 		BEGIN
@@ -64,7 +90,9 @@ BEGIN
 			BEGIN
 				UPDATE Syn_Deal SET Deal_Workflow_Status = 'A' WHERE Syn_Deal_Code = @Record_Code
 
-				EXEC DBO.USP_AT_Syn_Deal @Record_Code, @Is_Error OUT
+				--EXEC DBO.USP_AT_Syn_Deal @Record_Code, @Is_Error OUT
+				INSERT INTO Deal_Process(Deal_Code, Module_Code, EditWithoutApproval, [Action], Inserted_On, Process_Start, Porcess_End, User_Code) 
+					VALUES (@Record_Code,35, 'N', 'A',GETDATE(),NULL,NULL,@Login_User)
 
 				Update Syn_Deal SET Deal_Workflow_Status = @User_Action, Last_Updated_Time = GETDATE(), 
 				[Version] =  REPLICATE('0', 6 - LEN(CONVERT(VARCHAR(50),(CONVERT(FLOAT,[Version]) + 0.1)))) + 
@@ -83,6 +111,58 @@ BEGIN
 				WHERE Music_Deal_Code = @Record_Code
 			END
 		END
+		ELSE IF(@User_Action = 'AR')
+		BEGIN
+			IF(@Next_Level_Group = 0)
+				SET @User_Action = 'AR'
+			ELSE
+				SET @User_Action = 'WA'
+	
+			INSERT INTO Module_Status_History(Module_Code, Record_Code, [Status], Status_Changed_By, Status_Changed_On, Remarks,Version_No)
+			SELECT @Module_Code, @Record_Code, @User_Action, @Login_User, GetDate(), @Remarks, @Version_No
+
+			IF(@Module_Code = 30)
+			BEGIN
+				DECLARE @AgreementNo NVARCHAR(MAX)
+				UPDATE Acq_Deal SET Deal_Workflow_Status = @User_Action, Last_Updated_Time = GETDATE() WHERE Acq_Deal_Code = @Record_Code
+
+				SELECT @AgreementNo = Agreement_No FROM Acq_Deal  WHERE Acq_Deal_Code = @Record_Code
+
+				UPDATE AD SET AD.Deal_Workflow_Status = @User_Action, Last_Updated_Time = GETDATE() 
+				FROM Acq_Deal AD 
+				WHERE AD.Agreement_No LIKE '%'+@AgreementNo+'%' AND AD.Is_Master_Deal = 'N'
+
+				IF @User_Action = 'AR'
+				BEGIN
+				
+					INSERT INTO Approved_Deal(Record_Code, Deal_Type, Deal_Status, Inserted_On, Is_Amend, Deal_Rights_Code)
+					SELECT @Record_Code, 'A', 'P', GETDATE(), 'N', NULL
+
+				END
+
+			END
+			IF(@Module_Code = 35)
+			BEGIN
+				UPDATE Syn_Deal Set Deal_Workflow_Status = @User_Action, Last_Updated_Time = GETDATE() Where Syn_Deal_Code = @Record_Code
+
+				IF @User_Action = 'AR'
+				BEGIN
+					
+					DELETE FROM Syn_Acq_Mapping WHERE Syn_Deal_Code = @Record_Code
+
+					INSERT INTO Approved_Deal(Record_Code, Deal_Type, Deal_Status, Inserted_On, Is_Amend, Deal_Rights_Code)
+					SELECT DISTINCT Syn_Deal_Code, 'S', 'P', GETDATE(), 'D', Syn_Deal_Rights_Code FROM Syn_Deal_Rights WHERE Syn_Deal_Code = @Record_Code
+
+				END
+			END
+			
+			IF(@Is_Email_Required = 'Y')
+			BEGIN
+				EXEC USP_SendMail_To_NextApprover_New @Record_Code, @Module_Code, 'Y', 'Y', @Is_Error Out
+				EXEC USP_SendMail_Intimation_New @Record_Code, @Module_Workflow_Detail_Code, @Module_Code, 'Y', @Login_User, @Is_Error Out
+			END
+
+		END 
 		ELSE
 		BEGIN
 			IF(@Next_Level_Group = 0)
@@ -122,7 +202,10 @@ BEGIN
 				END
 				ELSE IF(@Module_Code = 35)
 				BEGIN
-					EXEC DBO.USP_AT_Syn_Deal @Record_Code, @Is_Error OUT
+					--EXEC DBO.USP_AT_Syn_Deal @Record_Code, @Is_Error OUT
+					INSERT INTO Deal_Process(Deal_Code, Module_Code, EditWithoutApproval, [Action], Inserted_On, Process_Start, Porcess_End, User_Code) 
+					VALUES (@Record_Code,35, 'N', 'A',GETDATE(),NULL,NULL,@Login_User)
+
 
 					DECLARE @StatusFlag VARCHAR(1), @ErrMessage VARCHAR(1)
 					--EXEC DBO.USP_AutoPushAcqDeal @Record_Code, @Login_User, @StatusFlag OUT, @ErrMessage OUT
@@ -135,7 +218,7 @@ BEGIN
 			IF(@Is_Email_Required = 'Y')
 			BEGIN
 				EXEC USP_SendMail_To_NextApprover_New @Record_Code, @Module_Code, 'Y', 'Y', @Is_Error Out
-				EXEC USP_SendMail_Intimation_New  @Record_Code, @Module_Workflow_Detail_Code, @Module_Code, 'Y', @Login_User, @Is_Error Out
+				EXEC USP_SendMail_Intimation_New @Record_Code, @Module_Workflow_Detail_Code, @Module_Code, 'Y', @Login_User, @Is_Error Out
 			END
 		END
 		SELECT @Is_Error Is_Error

@@ -1,9 +1,10 @@
-﻿-- =============================================
+﻿
+-- =============================================
 -- Author:		RESHMA KUNJAL
 -- Create date: 15 SEP 2015
 -- Description:	RUN EXPIRY REPORT
 -- =============================================
-ALTER PROCEDURE [dbo].[USP_Acq_Run_Expiry_Report]
+CREATE PROCEDURE [dbo].[USP_Acq_Run_Expiry_Report]
 @BU_Code VARCHAR(100),
 @Channel_Codes VARCHAR(MAX)
 AS
@@ -121,7 +122,8 @@ BEGIN
 	select * from Deal_Expiry_Email
 	*/
 
-	DROP TABLE #Tmp_Rights_Run
+	IF OBJECT_ID('tempdb..#Alert_Range') IS NOT NULL DROP TABLE #Alert_Range
+	IF OBJECT_ID('tempdb..#Tmp_Rights_Run') IS NOT NULL DROP TABLE #Tmp_Rights_Run
 
 END
 --Select * from System_Parameter_New

@@ -33,6 +33,7 @@
     [Lock_Time]             DATETIME        NULL,
     [Remarks]               NVARCHAR (MAX)  NULL,
     [Agreement_Cost]        DECIMAL (38, 3) NULL,
+    [Right_Rule_Type]       CHAR (1)        NULL,
     CONSTRAINT [PK_Music_Deal] PRIMARY KEY CLUSTERED ([Music_Deal_Code] ASC),
     CONSTRAINT [FK_Music_Deal_Business_Unit] FOREIGN KEY ([Business_Unit_Code]) REFERENCES [dbo].[Business_Unit] ([Business_Unit_Code]),
     CONSTRAINT [FK_Music_Deal_Channel_Category] FOREIGN KEY ([Channel_Category_Code]) REFERENCES [dbo].[Channel_Category] ([Channel_Category_Code]),
@@ -43,8 +44,6 @@
     CONSTRAINT [FK_Music_Deal_Right_Rule] FOREIGN KEY ([Right_Rule_Code]) REFERENCES [dbo].[Right_Rule] ([Right_Rule_Code]),
     CONSTRAINT [FK_Music_Deal_Vendor] FOREIGN KEY ([Primary_Vendor_Code]) REFERENCES [dbo].[Vendor] ([Vendor_Code])
 );
-
-
 
 
 GO

@@ -1,4 +1,5 @@
-﻿CREATE FUNCTION [dbo].[UFN_Get_Syn_Deal_Workflow_Status](@Syn_Deal_Code Int, @Deal_Workflow_Status varchar(50), @User_Code INT)
+﻿
+CREATE FUNCTION [dbo].[UFN_Get_Syn_Deal_Workflow_Status](@Syn_Deal_Code Int, @Deal_Workflow_Status varchar(50), @User_Code INT)
 RETURNS NVARCHAR(MAX)
 AS
 --|==============================================================================
@@ -165,6 +166,29 @@ BEGIN
 	ELSE IF (@Deal_Workflow_Status='RO' )
 	BEGIN
 		SET @Final_Status ='Re-Open'
+	END
+	IF (@Deal_Workflow_Status='WA' )
+	BEGIN
+		SET @Final_Status ='Waiting (Archive)'
+
+		SELECT @Security_Group_Name = sg.Security_Group_Name 
+			FROM (
+				SELECT TOP 1 primary_user_code = CASE WHEN role_level=0 THEN 0 ELSE group_code END 
+				FROM Module_Workflow_Detail WITH(NOLOCK)
+				WHERE module_code=35 AND record_code = @Syn_Deal_Code AND is_done='N' 
+				ORDER BY role_level
+			) tbl 
+			INNER JOIN Security_Group sg WITH(NOLOCK) ON sg.Security_Group_Code = tbl.primary_user_code
+		
+			if(isnull(@Security_Group_Name,'')!='')
+			set @ConcatName= ' from ' +@Security_Group_Name
+
+			SET @Final_Status = @Final_Status + @ConcatName
+
+	END
+	IF (@Deal_Workflow_Status='AR' )
+	BEGIN
+		SET @Final_Status ='Archive'
 	END
 	Return @Final_Status
 END

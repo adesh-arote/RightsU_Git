@@ -7,5 +7,3 @@
     CONSTRAINT [FK_Users_Password_Detail_Users] FOREIGN KEY ([Users_Code]) REFERENCES [dbo].[Users] ([Users_Code])
 );
 
-
-

@@ -3,7 +3,7 @@
 -- Create date: 5-Oct-2015
 -- Description:	Syndication Right Titles With Acquisition
 -- =============================================
-alter PROCEDURE USP_Validate_Syn_Right_Title_With_Acq_On_Edit
+CREATE PROCEDURE USP_Validate_Syn_Right_Title_With_Acq_On_Edit
 	(
 	@RCode int, 
 	@TCode int, 

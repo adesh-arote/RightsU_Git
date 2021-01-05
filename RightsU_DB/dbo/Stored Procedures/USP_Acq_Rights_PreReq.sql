@@ -1,4 +1,5 @@
-﻿CREATE PROC [USP_Acq_Rights_PreReq]
+﻿
+CREATE PROC [USP_Acq_Rights_PreReq]
 (
 	@Acq_Deal_Code INT,
 	@Data_For VARCHAR(100),
@@ -145,4 +146,6 @@ BEGIN
 
 	SELECT Display_Value, Display_Text, Data_For FROM #PreReqData
 	ORDER BY RowID
+
+	IF OBJECT_ID('tempdb..#PreReqData') IS NOT NULL DROP TABLE #PreReqData
 END

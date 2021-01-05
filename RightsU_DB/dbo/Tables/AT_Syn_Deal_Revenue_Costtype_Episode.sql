@@ -12,5 +12,3 @@
     CONSTRAINT [FK_AT_Syn_Deal_Revenue_Costtype_Episode_AT_Syn_Deal_Revenue_Costtype] FOREIGN KEY ([AT_Syn_Deal_Revenue_Costtype_Code]) REFERENCES [dbo].[AT_Syn_Deal_Revenue_Costtype] ([AT_Syn_Deal_Revenue_Costtype_Code])
 );
 
-
-

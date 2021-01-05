@@ -3,7 +3,11 @@
 @Date_From varchar(50),    
 @Date_To varchar(50)    
 AS     
-BEGIN    
+BEGIN   
+--DECLARE 
+--@User_Id varchar(100) = '143',    
+--@Date_From varchar(50) = '',    
+--@Date_To varchar(50)= ''  
    SELECT       
    convert(datetime,REPLACE(CONVERT(VARCHAR(11),CAST(CML.Inserted_On as date),106), ' ', '-'),120) AS CONTENT_DATE,       
    FORMAT(CONVERT(DATE,CML.Inserted_On,103), 'dddd') AS CONTENT_DAY,      
@@ -19,5 +23,3 @@ BEGIN
   GROUP BY  convert(datetime,REPLACE(CONVERT(VARCHAR(11),CAST(CML.Inserted_On as date),106), ' ', '-'),120) ,  
   U.Login_Name, FORMAT(CONVERT(DATE,CML.Inserted_On,103), 'dddd')
 END
-GO
-

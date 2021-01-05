@@ -1,4 +1,4 @@
-﻿ALTER Function [dbo].[UFN_Get_Run_Type](@ACQ_Deal_Code INT, @Acq_Deal_Rights_code INT, @Title_Code varchar(100))
+﻿CREATE Function [dbo].[UFN_Get_Run_Type](@ACQ_Deal_Code INT, @Acq_Deal_Rights_code INT, @Title_Code varchar(100))
 Returns Varchar(100)
 As
 Begin

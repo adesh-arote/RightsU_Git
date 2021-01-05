@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Title_Report_Details]      
+﻿CREATE PROCEDURE [dbo].[USP_Title_Report_Details]      
 	@DealTypeCode  INT ,      
 	@TitleName NVARCHAR(2000),  
 	@OriginalTitleName NVARCHAR(MAX) ,        
@@ -409,7 +409,9 @@ BEGIN
 			--'' as VMPLShareIPR,
 			--'' as ProgramCategory
 			
-    Drop Table #Temp      
+    --Drop Table #Temp      
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END
 
 --[dbo].[UFN_Get_Title_Genre](T.Title_Code) as Genre,   

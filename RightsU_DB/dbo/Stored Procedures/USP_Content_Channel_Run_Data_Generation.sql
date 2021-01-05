@@ -1,5 +1,5 @@
 ﻿
-ALTER PROCEDURE [dbo].[USP_Content_Channel_Run_Data_Generation]
+CREATE PROCEDURE [dbo].[USP_Content_Channel_Run_Data_Generation]
 --DECLARE
 @Acq_Deal_Code INT
 AS
@@ -326,4 +326,14 @@ BEGIN
 		RAISERROR (@Error_Desc,@ErSeverity,@ErState)
 		PRINT @Error_Desc
 	END CATCH
+
+	IF OBJECT_ID('tempdb..#Dummy_TempData_New') IS NOT NULL DROP TABLE #Dummy_TempData_New
+	IF OBJECT_ID('tempdb..#SharedRound') IS NOT NULL DROP TABLE #SharedRound
+	IF OBJECT_ID('tempdb..#Temp_BMS_Deal_Content') IS NOT NULL DROP TABLE #Temp_BMS_Deal_Content
+	IF OBJECT_ID('tempdb..#Temp_BMS_Deal_Content_Rights') IS NOT NULL DROP TABLE #Temp_BMS_Deal_Content_Rights
+	IF OBJECT_ID('tempdb..#Temp_Content_Channel_Run') IS NOT NULL DROP TABLE #Temp_Content_Channel_Run
+	IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData
+	IF OBJECT_ID('tempdb..#TempData_Final') IS NOT NULL DROP TABLE #TempData_Final
+	IF OBJECT_ID('tempdb..#TempData_New') IS NOT NULL DROP TABLE #TempData_New
+	IF OBJECT_ID('tempdb..#TempDummy') IS NOT NULL DROP TABLE #TempDummy
 END

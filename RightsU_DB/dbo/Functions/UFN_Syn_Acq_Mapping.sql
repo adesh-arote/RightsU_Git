@@ -1,4 +1,6 @@
-﻿CREATE FUNCTION UFN_Syn_Acq_Mapping
+﻿
+
+CREATE FUNCTION [dbo].[UFN_Syn_Acq_Mapping]
 (
 	 @View_Type Char(1),
 	 @Right_Code INT,	 
@@ -15,7 +17,7 @@ AS
 BEGIN
 	DECLARE @Is_Syn_Acq_Mapping CHAR(1) = 'N',@Syn_Deal_Rights_Code VARCHAR(1000) = ''	
 	SELECT @Syn_Deal_Rights_Code = STUFF((SELECT DISTINCT  ',' + CAST(Syn_Deal_Rights_Code AS VARCHAR)
-FROM Syn_Acq_Mapping SAM 	
+FROM Syn_Acq_Mapping SAM WITH(NOLOCK)
 WHERE Deal_Rights_Code = @Right_Code
 FOR XML PATH('')) , 1, 1, '')               
 IF(@Syn_Deal_Rights_Code<>'')
@@ -24,13 +26,13 @@ BEGIN
 	IF(@View_Type='D')
 	BEGIN
 		IF EXISTS(SELECT TOP 1 SDRP.Syn_Deal_Rights_Code 
-		FROM Syn_Deal_Rights_Platform SDRP
+		FROM Syn_Deal_Rights_Platform SDRP WITH(NOLOCK)
 		WHERE SDRP.Syn_Deal_Rights_Code IN
 		(
 			SELECT A.Syn_Rights_Code FROM 
 			(
 				SELECT  SDRT.Syn_Deal_Rights_Code  AS Syn_Rights_Code
-				FROM Syn_Deal_Rights_Title SDRT 
+				FROM Syn_Deal_Rights_Title SDRT WITH(NOLOCK)
 				WHERE SDRT.Syn_Deal_Rights_Code IN
 				(
 					SELECT number FROM fn_Split_withdelemiter(@Syn_Deal_Rights_Code,',')
@@ -50,7 +52,7 @@ BEGIN
 	ELSE IF(@View_Type='S')
 	BEGIN	
 		IF EXISTS(SELECT  SDRT.Syn_Deal_Rights_Code  AS Syn_Rights_Code
-		FROM Syn_Deal_Rights_Title SDRT 
+		FROM Syn_Deal_Rights_Title SDRT WITH(NOLOCK)
 		WHERE SDRT.Syn_Deal_Rights_Code IN
 		(
 			SELECT number FROM fn_Split_withdelemiter(@Syn_Deal_Rights_Code,',')
@@ -67,3 +69,4 @@ END
 	-- Return the result of the function
 	RETURN @IS_Syn_Acq_Mapping
 END
+

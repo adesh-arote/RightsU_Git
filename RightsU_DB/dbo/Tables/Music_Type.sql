@@ -6,5 +6,3 @@
     CONSTRAINT [PK_Music_Type] PRIMARY KEY CLUSTERED ([Music_Type_Code] ASC)
 );
 
-
-

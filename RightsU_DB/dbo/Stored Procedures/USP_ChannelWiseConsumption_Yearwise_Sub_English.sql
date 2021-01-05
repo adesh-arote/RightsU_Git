@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_ChannelWiseConsumption_Yearwise_Sub_English]
+﻿CREATE PROCEDURE [dbo].[USP_ChannelWiseConsumption_Yearwise_Sub_English]
 (
 	@Title_Content_Code INT,
 	@Deal_Code INT,
@@ -241,6 +241,9 @@ BEGIN
 			) A
 		 ORDER BY A.Description DESC
 	END
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#TEMPHD') IS NOT NULL DROP TABLE #TEMPHD
 END
 
 

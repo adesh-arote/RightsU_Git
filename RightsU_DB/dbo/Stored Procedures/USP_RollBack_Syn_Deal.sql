@@ -22,7 +22,7 @@ BEGIN
 			DECLARE @AT_Syn_Deal_Code INT
 			SET @AT_Syn_Deal_Code = 0
 			SELECT TOP 1 @AT_Syn_Deal_Code = ISNULL(AT_Syn_Deal_Code, 0) FROM AT_Syn_Deal WHERE Syn_Deal_Code = @Syn_Deal_Code
-			ORDER BY Version DESC			
+			ORDER BY Cast(Version AS INT) DESC			
 			
 			/********************************  Update Syn_Deal *********************************************************/
 			UPDATE Syn_Deal
@@ -40,7 +40,9 @@ BEGIN
 				Syn_Deal.Ref_BMS_Code = AtSD.Ref_BMS_Code, Syn_Deal.Remarks = AtSD.Remarks, Syn_Deal.Rights_Remarks = AtSD.Rights_Remarks, 
 				Syn_Deal.Payment_Remarks = AtSD.Payment_Remarks, Syn_Deal.Is_Active = AtSD.Is_Active, Syn_Deal.Inserted_On = AtSD.Inserted_On, 
 				Syn_Deal.Inserted_By = AtSD.Inserted_By, Syn_Deal.Lock_Time = NULL, Syn_Deal.Business_Unit_Code = AtSD.Business_Unit_Code,
-				Syn_Deal.Last_Updated_Time = GETDATE(), Syn_Deal.Last_Action_By = @User_Code
+				Syn_Deal.Last_Updated_Time = GETDATE(), Syn_Deal.Last_Action_By = @User_Code,
+				Syn_Deal.Deal_Segment_Code = AtSD.Deal_Segment_Code,
+				Syn_Deal.Revenue_Vertical_Code = AtSD.Revenue_Vertical_Code
 			FROM AT_Syn_Deal AtSD 
 			WHERE AT_Syn_Deal_Code = @AT_Syn_Deal_Code AND Syn_Deal.Syn_Deal_Code = @Syn_Deal_Code
 			
@@ -851,5 +853,15 @@ BEGIN
 		ROLLBACK
 		SELECT 'E' Flag, ERROR_MESSAGE() as Msg
 		UPDATE Deal_Process Set Record_Status  = 'E', Porcess_End = GETDATE(), Error_Messages = ERROR_MESSAGE() WHERE Deal_Code = @Syn_Deal_Code And Record_Status  = 'W' AND Module_Code = 35
+		INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+		SELECT GETDATE(),null,null,'USP_RollBack_Syn_Deal','Syn_Deal_Code : '+CAST(@Syn_Deal_Code AS VARCHAR)+' '+'in error state','NA',ERROR_MESSAGE(),'DB' 
+		FROM Deal_Process Where Deal_Code = @Syn_Deal_Code And Record_Status  = 'W'  AND Module_Code = 35
+		
+		DECLARE  @sql NVARCHAR(MAX), @DB_Name VARCHAR(1000);
+		SELECT @sql = CAST(@Syn_Deal_Code AS VARCHAR) +' '+'Records are in pending state for SynDeal' +' '+ ERROR_MESSAGE()
+		SELECT @DB_Name = DB_NAME()
+		EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_RollBack_Syn_Deal','AN','VN',@sql ,'DB','IP','FR','TI'
 	END CATCH
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

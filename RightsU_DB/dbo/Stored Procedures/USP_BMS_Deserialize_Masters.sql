@@ -15,6 +15,7 @@ AS
 
 BEGIN
 	SET NOCOUNT ON;	
+	DECLARE @sql NVARCHAR(MAX),@DB_Name VARCHAR(1000);
 	--	DECLARE @strXml VARCHAR(MAX), @Type VARCHAR(10) = 'BMS_D'
 	--DECLARE @XML_Data XML
 	--SET @XML_Data = @strXml
@@ -50,6 +51,14 @@ BEGIN
 			FROM Vendor bvV
 			INNER JOIN #Temp_Updated_Keys tmp ON bvV.Vendor_Code = tmp.Code
 			WHERE bvV.Vendor_Code = tmp.Code
+
+			INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+			SELECT GETDATE(),null,null,'USP_BMS_Deserialize_Masters','Error records updated in Vendor Master','NA',@Error_Details,'DB'
+
+			SELECT @sql = 'Error records updated in Vendor Master: '+ @Error_Details
+			SELECT @DB_Name = DB_Name()
+			EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Deal_Process','AN','VN',@sql,'DB','IP','FR','TI'
+
 		END
 
         IF(@Is_Error = 'N')
@@ -78,6 +87,13 @@ BEGIN
 			FROM Category bvV
 			INNER JOIN #Temp_Updated_Keys tmp ON bvV.Category_Code = tmp.Code
 			WHERE bvV.Category_Code = tmp.Code
+
+			INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+			SELECT GETDATE(),null,null,'USP_BMS_Deserialize_Masters','Error records updated in Category Master','NA',@Error_Details,'DB'
+			
+			SELECT @sql = 'Error records updated in Category Master: '+ @Error_Details
+			SELECT @DB_Name = DB_Name()
+			EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Deal_Process','AN','VN',@sql,'DB','IP','FR','TI'
 		END
         IF(@Is_Error = 'N')
         BEGIN
@@ -105,6 +121,13 @@ BEGIN
 			FROM Right_Rule bvV
 			INNER JOIN #Temp_Updated_Keys tmp ON bvV.Right_Rule_Code = tmp.Code
 			WHERE bvV.Right_Rule_Code = tmp.Code
+
+			INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+			SELECT GETDATE(),null,null,'USP_BMS_Deserialize_Masters','Error records updated in Right_Rule Master','NA',@Error_Details,'DB'
+			
+			SELECT @sql = 'Error records updated in Right_Rule Master: '+ @Error_Details
+			SELECT @DB_Name = DB_Name()
+			EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Deal_Process','AN','VN',@sql,'DB','IP','FR','TI'
 		END
 
         IF(@Is_Error = 'N')
@@ -150,6 +173,13 @@ BEGIN
 			UPDATE bvW SET bvW.Error_Description = @Error_Details, bvW.Is_Process = 'E',bvW.Response_Time = GETDATE() 
 			FROM BMS_WBS bvW
 			INNER JOIN #Temp_Updated_Keys tmp ON bvW.BMS_WBS_Code = tmp.Code
+
+			INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+			SELECT GETDATE(),null,null,'USP_BMS_Deserialize_Masters','Error records updated in BMS_WBS Master','NA',@Error_Details,'DB'
+			
+			SELECT @sql = 'Error records updated in BMS_WBS Master: '+ @Error_Details
+			SELECT @DB_Name = DB_Name()
+			EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Deal_Process','AN','VN',@sql,'DB','IP','FR','TI'
 		END
         IF(@Is_Error = 'N')
         BEGIN
@@ -191,5 +221,5 @@ BEGIN
     Error_Description = @Error_Details
     WHERE  BMS_Log_Code = @BMS_Log_Code
 
+	IF OBJECT_ID('tempdb..#Temp_Updated_Keys') IS NOT NULL DROP TABLE #Temp_Updated_Keys
 END
-

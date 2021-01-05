@@ -1,4 +1,4 @@
-﻿alter PROCEDURE USP_Get_Content_Cost  
+﻿CREATE PROCEDURE USP_Get_Content_Cost  
 (   
  @Title_Code int,  
  @Episode_No int,  
@@ -17,4 +17,3 @@ BEGIN
 		(ADCCT.Cost_Type_Code IN(SELECT NUMBER FROM DBO.fn_Split_withdelemiter(@Cost_Type_Code, ',') WHERE NUMBER <> '') OR @Cost_Type_Code = '')  
 	GROUP BY ADCCT.Cost_Type_Code, AD.Agreement_No, CT.Cost_Type_Name  
 END  
-go

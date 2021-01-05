@@ -64,6 +64,8 @@ BEGIN
 
 	SELECT Parameter_Value, Data_For FROM #PreReqData
 
+	IF OBJECT_ID('tempdb..#PreReqData') IS NOT NULL DROP TABLE #PreReqData
+
 END
 
 --select * from (select * from system_module sm where  module_code in(

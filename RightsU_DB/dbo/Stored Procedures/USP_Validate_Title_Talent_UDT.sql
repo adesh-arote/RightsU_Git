@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Validate_Title_Talent_UDT]
+﻿CREATE PROCEDURE [dbo].[USP_Validate_Title_Talent_UDT]
 (		
 	@Title_Talent_Role Title_Talent_Role READONLY,
 	@CallFrom  CHAR(1) 
@@ -86,5 +86,9 @@ BEGIN
 
 	SELECT Talent_Code,Role_Code
 	FROM #Temp
-	DROP TABLE #Temp
+	--DROP TABLE #Temp
+
+	IF OBJECT_ID('tempdb..#Sub_Deal_Talent_Code') IS NOT NULL DROP TABLE #Sub_Deal_Talent_Code
+	IF OBJECT_ID('tempdb..#Sub_Deal_Title_Code') IS NOT NULL DROP TABLE #Sub_Deal_Title_Code
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

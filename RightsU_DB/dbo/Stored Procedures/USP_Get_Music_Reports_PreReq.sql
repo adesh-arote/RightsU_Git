@@ -1,4 +1,4 @@
-﻿Create PROC USP_Get_Music_Reports_PreReq
+﻿CREATE PROC USP_Get_Music_Reports_PreReq
 AS
 BEGIN	
 	SET NOCOUNT ON;
@@ -28,4 +28,6 @@ BEGIN
 	INNER JOIN Channel C ON C.Channel_Code = MST.Channel_Code
 
 	SELECT RowID, Display_Value, Display_Text, Data_For FROM #PreReqData
+
+	IF OBJECT_ID('tempdb..#PreReqData') IS NOT NULL DROP TABLE #PreReqData
 END

@@ -23,19 +23,7 @@
     [DM_Master_Import_Code] INT             NULL,
     [Excel_Line_No]         VARCHAR (50)    NULL,
     [Is_Ignore]             VARCHAR (1)     NULL,
+    [Public_Domain]         VARCHAR (10)    NULL,
     CONSTRAINT [PK__DM_Music__C067FC3019BD0DBD] PRIMARY KEY CLUSTERED ([IntCode] ASC)
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
 

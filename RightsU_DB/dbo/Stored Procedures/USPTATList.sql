@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USPTATList]
+﻿CREATE PROCEDURE [dbo].[USPTATList]
 	@PageNo INT = 1,
 	@PageSize INT = 100,
 	@RecordCount INT OUT
@@ -27,7 +27,7 @@ BEGIN
 		DraftName, 
 		Case When [Type] = 'A' THEN 'Acq' ELSE CASE WHEN [Type] = 'S' THEN 'Syn' END END [Type],
 		BU.Business_Unit_Name,
-		U.First_Name +' '+ U.Last_Name [User],
+		U.First_Name,
 		T.IsAmend,
 		DT.Deal_Type_Name,
 		TSA.TATSLAName,
@@ -46,6 +46,8 @@ BEGIN
 	WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
 	
 	select TATCode, DraftName, [Type], BusinessUnitName, [User], IsAmend, DealType, TATSLAName, TATSLAStatusName from #TempTAT
+
+	IF OBJECT_ID('tempdb..#TempTAT') IS NOT NULL DROP TABLE #TempTAT
 END
 
 

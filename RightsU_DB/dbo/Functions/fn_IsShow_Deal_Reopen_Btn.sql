@@ -20,7 +20,7 @@ BEGIN
  SELECT @Temp = AD.Acq_Deal_Code  
  FROM Acq_Deal AD     with(nolock) 
  INNER JOIN Acq_Deal_Rights ADR with(nolock) ON ADR.Acq_Deal_Rights_Code=ADR.Acq_Deal_Rights_Code
- WHERE AD.Acq_Deal_Code = @Acq_Deal_Code    
+ WHERE AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND AD.Acq_Deal_Code = @Acq_Deal_Code    
  GROUP BY AD.Acq_Deal_Code    
  HAVING     
  DATEDIFF(d,MAX(ADR.Right_End_Date),GETDATE())>0

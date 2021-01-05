@@ -471,7 +471,13 @@ print @territoryCodes
  --DROP TABLE #Temp_Territory            
  --DROP TABLE #Temp_MustHave            
             
-            
+	IF OBJECT_ID('tempdb..#Temp_Country') IS NOT NULL DROP TABLE #Temp_Country
+	IF OBJECT_ID('tempdb..#Temp_Language') IS NOT NULL DROP TABLE #Temp_Language
+	IF OBJECT_ID('tempdb..#Temp_LanguageGroup') IS NOT NULL DROP TABLE #Temp_LanguageGroup
+	IF OBJECT_ID('tempdb..#Temp_MustHave') IS NOT NULL DROP TABLE #Temp_MustHave
+	IF OBJECT_ID('tempdb..#Temp_Platform') IS NOT NULL DROP TABLE #Temp_Platform
+	IF OBJECT_ID('tempdb..#Temp_Territory') IS NOT NULL DROP TABLE #Temp_Territory
+	IF OBJECT_ID('tempdb..#Temp_Title') IS NOT NULL DROP TABLE #Temp_Title          
 END            
             
 /*            

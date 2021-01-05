@@ -10,5 +10,3 @@
     CONSTRAINT [PK_Payment_Terms] PRIMARY KEY CLUSTERED ([Payment_Terms_Code] ASC)
 );
 
-
-

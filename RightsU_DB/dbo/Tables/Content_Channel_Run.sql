@@ -45,11 +45,3 @@
     CONSTRAINT [FK_Content_Channel_Run_Title_Content] FOREIGN KEY ([Title_Content_Code]) REFERENCES [dbo].[Title_Content] ([Title_Content_Code])
 );
 
-
-
-
-
-
-
-
-GO

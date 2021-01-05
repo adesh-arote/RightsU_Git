@@ -207,9 +207,9 @@ BEGIN
 			PRINT ' STEP ' + CAST(@stepNo AS VARCHAR) + ' : Insert data into Music_Schedule_Transaction'
 			SET @stepNo += 1
 			INSERT INTO Music_Schedule_Transaction(BV_Schedule_Transaction_Code, Content_Music_Link_Code, Music_Label_Code, Channel_Code, 
-				Is_Processed, Is_Ignore, Inserted_On)
+				Is_Processed, Is_Ignore)
 			SELECT BV_Schedule_Transaction_Code, Content_Music_Link_Code, Music_Label_Code, Channel_Code, Is_Processed, 
-				NULL AS IsIgnore, GETDATE()
+				NULL AS IsIgnore
 			FROM #TempMusicScheduleTransaction
 			ORDER BY CAST(Schedule_Date + ' ' + Schedule_Item_Log_Time AS DATETIME)
 		END
@@ -561,7 +561,7 @@ BEGIN
 					PRINT '  Process End For Run Validation'
 				END
 
-				IF(@AutoResolvedErrCodes <> '')
+				IF(@CallFrom = 'AR')
 				BEGIN
 					PRINT '  MESSAGE : Set Status = ''AR'' for Upload_Error_Code ' + @AutoResolvedErrCodes
 					UPDATE MSE SET MSE.[Status] = 'AR' FROM Music_Schedule_Exception MSE
@@ -808,8 +808,10 @@ BEGIN
 		PRINT 'Music Schedule Exception Mail Process Ended'
 		PRINT '==============================================================================================================================================='	
 	END
+	IF OBJECT_ID('tempdb..#AllMusicLabelDealData') IS NOT NULL DROP TABLE #AllMusicLabelDealData
+	IF OBJECT_ID('tempdb..#CurrentMusicLabelDealData') IS NOT NULL DROP TABLE #CurrentMusicLabelDealData
+	IF OBJECT_ID('tempdb..#ExistingException') IS NOT NULL DROP TABLE #ExistingException
+	IF OBJECT_ID('tempdb..#TempMailData') IS NOT NULL DROP TABLE #TempMailData
+	IF OBJECT_ID('tempdb..#TempMusicScheduleTransaction') IS NOT NULL DROP TABLE #TempMusicScheduleTransaction
+	IF OBJECT_ID('tempdb..#TempScheduleData') IS NOT NULL DROP TABLE #TempScheduleData
 END
-
-
-
-

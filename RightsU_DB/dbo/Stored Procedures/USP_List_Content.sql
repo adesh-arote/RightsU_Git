@@ -7,9 +7,9 @@
 AS  
 BEGIN  
  --DECLARE  
- --@searchText NVARCHAR(MAX) = 'Bake Yaar',   
+ --@searchText NVARCHAR(MAX) = 'Maanmarziyan~',   
  --@episodeFrom INT = 0,   
- --@episodeTo INT = 40
+ --@episodeTo INT = 0
   
 	IF(OBJECT_ID('TEMPDB..#Temp') IS NOT NULL)
 		DROP TABLE #Temp
@@ -24,7 +24,10 @@ BEGIN
 		   SELECT  top 10  
 		   TC.Title_Content_Code,  
 		   COALESCE(TC.Episode_Title, T.Title_Name) AS Title_Name,   
-		   'Episode ' + CAST(TC.Episode_No AS VARCHAR) AS Episode,  
+		   CASE
+			WHEN T.Deal_Type_Code = 1 THEN ''
+			ELSE 'Episode ' + CAST(TC.Episode_No AS VARCHAR)
+		   END AS Episode,  
 		   ISNULL(TC.Duration, 0) AS Duration_In_Min ,  
 		   (SELECT COUNT(*) FROM Content_Music_Link CML WHERE CML.Title_Content_Code=TC.Title_Content_Code) AS NumberOfSongs ,  
 		   TC.Last_Updated_Time,  
@@ -47,10 +50,13 @@ BEGIN
     BEGIN  
 		PRINT 'B'
 		PRINT 'Search Text = ' + @searchText + ' Episode From = ' + CAST(@episodeFrom AS VARCHAR(MAX)) + ' Episode To = ' + CAST(@episodeTo AS VARCHAR(MAX))
-		   SELECT  
+		   SELECT  DISTINCT
 				TC.Title_Content_Code,  
-				COALESCE(TC.Episode_Title, T.Title_Name) AS Title_Name,   
-				'Episode ' + CAST(TC.Episode_No AS VARCHAR) AS Episode,  
+				COALESCE(TC.Episode_Title, T.Title_Name) AS Title_Name,
+				  CASE
+					WHEN T.Deal_Type_Code = 1 THEN ''
+					ELSE 'Episode ' + CAST(TC.Episode_No AS VARCHAR)
+				  END AS Episode,  
 				ISNULL(TC.Duration, 0) AS Duration_In_Min ,  
 				(SELECT COUNT(*) FROM Content_Music_Link CML WHERE CML.Title_Content_Code=TC.Title_Content_Code) AS NumberOfSongs ,  
 				TC.Last_Updated_Time,  
@@ -74,19 +80,20 @@ BEGIN
 			T.Title_Name IN (SELECT NUMBER FROM fn_Split_withdelemiter(@searchText, '~'))   
 			OR TC.Episode_Title IN (SELECT NUMBER FROM fn_Split_withdelemiter(@searchText, '~'))  
 			)  
-		   ORDER BY T.Title_Name, TC.Episode_No   
+		   
 		   
 			IF(@episodeFrom = 0 AND @episodeTo = 0)
-		  		select Title_Content_Code,Title_Name, Episode,	Duration_In_Min, NumberOfSongs,	Last_Updated_Time, Channel_Name from #temp
+		  		select Title_Content_Code,Title_Name, Episode,	Duration_In_Min, NumberOfSongs,	Last_Updated_Time, Channel_Name from #temp ORDER BY Title_Name, Episode_No    
 			ELSE IF (@episodeFrom <> 0 AND @episodeTo = 0)
 				select Title_Content_Code,Title_Name, Episode,	Duration_In_Min, NumberOfSongs,	Last_Updated_Time, Channel_Name  from #temp 
-				WHERE  Episode_No >= @episodeFrom 
+				WHERE  Episode_No >= @episodeFrom ORDER BY Title_Name, Episode_No     
 			ELSE IF (@episodeFrom = 0 AND @episodeTo <> 0)
 				select Title_Content_Code,Title_Name, Episode,	Duration_In_Min, NumberOfSongs,	Last_Updated_Time, Channel_Name  from #temp 
-				WHERE Episode_No <= @episodeTo
+				WHERE Episode_No <= @episodeTo ORDER BY Title_Name, Episode_No    
 			ELSE
 				select Title_Content_Code,Title_Name, Episode,	Duration_In_Min, NumberOfSongs,	Last_Updated_Time, Channel_Name  from #temp 
-				WHERE Episode_No BETWEEN @episodeFrom AND @episodeTo  
+				WHERE Episode_No BETWEEN @episodeFrom AND @episodeTo  ORDER BY Title_Name, Episode_No    
     END
-END  
 
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+END

@@ -6,7 +6,7 @@
 RETURNS NVARCHAR(MAX)
 AS
 BEGIN
-	DECLARE @metaData NVARCHAR(MAX)
+	DECLARE @metaData nVARCHAR(MAX)
 	SET @metaData = ''
 
 	SELECT @metaData = @metaData + ISNULL(T.Talent_Name, '') + ', ' FROM Music_Title_Talent MTT 

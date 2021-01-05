@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Deal_Approval_Email]
+﻿CREATE PROCEDURE [dbo].[USP_Deal_Approval_Email]
 @mailFor VARCHAR(2) = 'AP'
 AS
 BEGIN
@@ -568,10 +568,10 @@ BEGIN
 					GOTO Branch_DetailsRejected_Stage_One;
 				END
 	END
+
+	IF OBJECT_ID('tempdb..#DealDetailRejected') IS NOT NULL DROP TABLE #DealDetailRejected
+	IF OBJECT_ID('tempdb..#DealDetails') IS NOT NULL DROP TABLE #DealDetails
+	IF OBJECT_ID('tempdb..#DealDetailsAdded') IS NOT NULL DROP TABLE #DealDetailsAdded
 END
 
 --EXEC USP_Deal_Approval_Email
-GO
-
-
-

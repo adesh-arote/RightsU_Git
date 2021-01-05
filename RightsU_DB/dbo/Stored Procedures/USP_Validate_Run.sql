@@ -101,5 +101,7 @@ BEGIN
 	FROM #TempData TD
 	INNER JOIN Title T ON T.Title_Code = TD.Title_Code
 
-	DROP TABLE #TempData
+	--DROP TABLE #TempData
+
+	IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData
 END

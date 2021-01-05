@@ -304,4 +304,6 @@ BEGIN
 		SELECT @Status = 'E',@Error_Message = ERROR_MESSAGE()
 		SELECT @Status AS Status ,@Error_Message AS [Error_Message]
 	END CATCH 
+
+	IF OBJECT_ID('tempdb..#Temp_Deal_Movie') IS NOT NULL DROP TABLE #Temp_Deal_Movie
 END

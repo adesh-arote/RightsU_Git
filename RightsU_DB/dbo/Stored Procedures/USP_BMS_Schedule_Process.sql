@@ -8,7 +8,6 @@ AS
 -- Author:         <Sagar Mahajan>
 -- Create date:	   <09 Aug 2016>
 -- Description:    <RU BV Schedule Integration>
--- Edited By:      <Anchal Sikarwar>
 -- =============================================
   
 
@@ -34,11 +33,7 @@ BEGIN TRY
 		IF OBJECT_ID('tempdb..#Temp_BMS_Schedule_Runs') IS NOT NULL
 		BEGIN
 			DROP TABLE #Temp_BMS_Schedule_Runs
-		END	
-		--IF OBJECT_ID('tempdb..#Temp_Acq_Run_YearWise_Data') IS NOT NULL
-		--BEGIN
-		--	DROP TABLE #Temp_Acq_Run_YearWise_Data
-		--END		
+		END			
 		IF OBJECT_ID('tempdb..#Acq_Dup_Rights') IS NOT NULL
 		BEGIN
 			DROP TABLE #Acq_Dup_Rights
@@ -54,8 +49,11 @@ BEGIN TRY
 		IF OBJECT_ID('tempdb..#Temp_RR') IS NOT NULL
 		BEGIN
 			DROP TABLE #Temp_RR
-		END	
-
+		END
+		IF OBJECT_ID('tempdb..#ErrorList') IS NOT NULL
+		BEGIN
+			DROP TABLE #ErrorList
+		END
 	END
 
 	/************************CREATE TEMP TABLES *********************/
@@ -110,7 +108,7 @@ BEGIN TRY
 		/*********************************Declare global variables ******************/		
 		DECLARE @Channel_Code INT = 0,@BMS_Schedule_Log_Code INT  = 0
 		DECLARE @BMS_Asset_Ref_Key_CV INT = 0,@Timeline_ID_CV INT = 0, @Schedule_Log_Date DateTime
-		SELECT TOP 1 @Channel_Code = BSUDT.Channel_Code--,@BMS_Schedule_Log_Code = BSUDT.BMS_Schedule_Log_Code 
+		SELECT TOP 1 @Channel_Code = BSUDT.Channel_Code 
 		FROM @BMS_Process_UDT BSUDT 
 		DECLARE CR_RR_Validation CURSOR FOR SELECT BMS_Asset_Ref_Key, Timeline_ID, Schedule_Log_Date, BMS_Schedule_Log_Code FROM(
 			SELECT DISTINCT BSUDT.BMS_Asset_Ref_Key, BSUDT.Timeline_ID, BSUDT.Schedule_Log_Date, BSUDT.Schedule_Log_Time, BSUDT.BMS_Schedule_Log_Code
@@ -120,7 +118,6 @@ BEGIN TRY
 		FETCH NEXT FROM CR_RR_Validation INTO @BMS_Asset_Ref_Key_CV, @Timeline_ID_CV, @Schedule_Log_Date, @BMS_Schedule_Log_Code
 		WHILE @@FETCH_STATUS<>-1
 		BEGIN
-		select 'CR_RR_Validation',@BMS_Asset_Ref_Key_CV, @Timeline_ID_CV, @Schedule_Log_Date
 			IF(@@FETCH_STATUS<>-2)
 			BEGIN
 				PRINT '-------In Cursor CR_RR_Validation and TimeLine ID is : - '	+ CAST (@Timeline_ID_CV AS VARCHAR(10))
@@ -131,6 +128,10 @@ BEGIN TRY
 				TRUNCATE TABLE #Temp_BV_Schedule_Transaction
 				TRUNCATE TABLE #Acq_Deal_Right_Data
 				TRUNCATE TABLE #Temp_Right_Rule
+				IF OBJECT_ID('tempdb..#ErrorList') IS NOT NULL
+				BEGIN
+					TRUNCATE TABLE #ErrorList
+				END
 
 				/************************************************* Start FIFO logic***********/
 				PRINT 'Start FIFO logic'
@@ -140,9 +141,9 @@ BEGIN TRY
 				AND BSPRU.Timeline_ID = @Timeline_ID_CV AND BSPRU.BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code
 				
 				-------- -Adesh Check and Changes
-				INSERT INTO #Acq_Deal_Right_Data(Acq_Deal_Code, Right_Start_Date, Right_End_Date,--Acq_Deal_Rights_Code, --Acq_Deal_Run_Code, 
+				INSERT INTO #Acq_Deal_Right_Data(Acq_Deal_Code, Right_Start_Date, Right_End_Date, 
 				BMS_Asset_Ref_Key, Content_Channel_Run_Code)
-				SELECT DISTINCT BSPDT.Acq_Deal_Code, BSPDT.Right_Start_Date, BSPDT.Right_End_Date, --BSPDT.Acq_Deal_Rights_Code, --BSPDT.Acq_Deal_Run_Code, 
+				SELECT DISTINCT BSPDT.Acq_Deal_Code, BSPDT.Right_Start_Date, BSPDT.Right_End_Date,  
 				BSPDT.BMS_Asset_Ref_Key, BSPDT.Content_Channel_Run_Code
 				FROM @BMS_Process_UDT BSPDT				 
 				WHERE BSPDT.Timeline_ID = @Timeline_ID_CV AND BSPDT.BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code 
@@ -174,8 +175,7 @@ BEGIN TRY
 				BEGIN
 					DECLARE @Multiple_Rights_Found INT = 0
 											
-					SELECT @Multiple_Rights_Found = COUNT(*) 
-					FROM #Acq_Deal_Right_Data ADR 
+					SELECT @Multiple_Rights_Found = COUNT(*) FROM #Acq_Deal_Right_Data ADR 
 
 					IF(ISNULL(@Multiple_Rights_Found,0) > 1)
 					BEGIN
@@ -193,8 +193,8 @@ BEGIN TRY
 					AND BSPDT.BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code AND BSPDT.BMS_Asset_Ref_Key = temp.BMS_Asset_Ref_Key
 
 					PRINT 'Updated Acq Deal_Code ,Run Code in BMS_Schedule_Process_Data_Temp'
-
-			     END									 
+			     END
+				 								 
 				PRINT 'End FIFO logic'
 				DECLARE @Email_Notification_Msg_Code VARCHAR(100) = '0'
 				
@@ -202,20 +202,14 @@ BEGIN TRY
 				DECLARE @Is_Error CHAR(1) = 'N'		
 				IF NOT EXISTS(SELECT TOP  1 * FROM #Acq_Deal_Right_Data ADR WHERE ISNULL(ADR.BMS_Asset_Ref_Key,0) > 0)-- no record in #Acq_Deal_Right_Data
 				BEGIN
-					SELECT TOP 1 T.Timeline_ID,@Timeline_ID_CV,T.Is_In_Right_Perod FROM @BMS_Process_UDT T WHERE  T.Timeline_ID = @Timeline_ID_CV
-					
-					IF EXISTS(SELECT TOP 1 T.Timeline_ID FROM @BMS_Process_UDT T 
-								WHERE ISNULL(T.Is_In_Right_Perod,'N') = 'N' 
-								AND T.Timeline_ID = @Timeline_ID_CV 								
-							)
+					IF EXISTS(SELECT TOP 1 T.Timeline_ID FROM @BMS_Process_UDT T  WHERE ISNULL(T.Is_In_Right_Perod,'N') = 'N'  AND T.Timeline_ID = @Timeline_ID_CV)
 					BEGIN
 						PRINT ' ----------Threw OutSide Right Period Exception------------' 							 
 						SELECT TOP 1 @Email_Notification_Msg_Code = Email_Notification_Msg_Code ,@Is_Error = 'Y'
 						FROM Email_Notification_Msg WHERE  UPPER(Email_Msg_For) = 'Right_Period' AND [Type] = 'S'
 					END					
 
-					UPDATE BSPDT SET --BSPDT.Acq_Deal_Code = temp.Acq_Deal_Code,BSPDT.Acq_Deal_Run_Code =temp.Acq_Deal_Run_Code,
-					BSPDT.Content_Channel_Run_Code = temp.Content_Channel_Run_Code, BSPDT.Is_Error = 'Y',BSPDT.Is_Deal_Approved = 'Y'							
+					UPDATE BSPDT SET BSPDT.Content_Channel_Run_Code = temp.Content_Channel_Run_Code, BSPDT.Is_Error = 'Y',BSPDT.Is_Deal_Approved = 'Y'							
 					FROM BMS_Schedule_Process_Data_Temp BSPDT
 					INNER JOIN @BMS_Process_UDT temp ON BSPDT.Timeline_ID = @Timeline_ID_CV 
 					AND BSPDT.BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code AND BSPDT.BMS_Asset_Ref_Key = temp.BMS_Asset_Ref_Key 
@@ -235,7 +229,7 @@ BEGIN TRY
 				)
 				SELECT DISTINCT CCR.Acq_Deal_Code, CCR.Acq_Deal_Run_Code, BSPDT.BMS_Asset_Ref_Key, BMS_Schedule_Log_Code,								
 					CAST(CAST(Date_Time AS DATETIME2) AS DATETIME), DealContent_RightId, Delete_Flag, GETDATE(), Is_Error, 'D' AS Is_Processed,
-					CAST(Log_Date AS DATE), Play_Day, Play_Run, BSPDT.Program_VersionId, 'S' AS Record_Type, SYSLookupId_PlayCountError, BSPDT.Title_Code,								
+					CAST(Log_Date AS DATE), null, null, BSPDT.Program_VersionId, 'S' AS Record_Type, SYSLookupId_PlayCountError, BSPDT.Title_Code,								
 					Timeline_ID, BA.Episode_Number, BSPDT.Channel_Code, CCR.Content_Channel_Run_Code, (SELECT TOP 1 Acq_Deal_Rights_Code 
 					from #Acq_Deal_Right_Data ADR WHERE CCR.Content_Channel_Run_Code = ADR.Content_Channel_Run_Code) AS Rights_Code
 				FROM BMS_Schedule_Process_Data_Temp BSPDT 
@@ -272,24 +266,27 @@ BEGIN TRY
 
 				IF EXISTS(	
 							select TOP 1 UDT.Timeline_ID from @BMS_Process_UDT UDT 
-							INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Code = UDT.Acq_Deal_Code
+							INNER JOIN Content_Channel_Run CCR ON CCR.Content_Channel_Run_Code = UDT.Content_Channel_Run_Code
+							INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Code = CCR.Acq_Deal_Code AND (CCR.Rights_Start_Date BETWEEN ADR.Right_Start_Date 
+							AND ADR.Right_End_Date) AND (CCR.Rights_End_Date BETWEEN ADR.Right_Start_Date AND ADR.Right_End_Date)
 							INNER JOIN Acq_Deal_Rights_Title ADRT ON ADR.Acq_Deal_Rights_Code = ADRT.Acq_Deal_Rights_Code AND ADRT.Title_Code = UDT.Title_Code
 							INNER JOIN Acq_Deal_Rights_Blackout ADRB ON ADRB.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code
-							AND UDT.Schedule_Log_Date BETWEEN ADRB.Start_Date AND ADRB.End_Date
+							AND @Schedule_Log_Date BETWEEN ADRB.Start_Date AND ADRB.End_Date AND UDT.Timeline_ID = @Timeline_ID_CV 
+							AND UDT.BMS_Asset_Ref_Key = @BMS_Asset_Ref_Key_CV
 						 )
 				BEGIN
 					PRINT ' ----------Threw Black Right Period Exception------------' 						
 					SELECT TOP 1 @Email_Notification_Msg_Code = Email_Notification_Msg_Code ,@Is_Error = 'Y'
 					FROM Email_Notification_Msg WHERE  UPPER(Email_Msg_For) = 'BLACKOUT_RIGHT_PERIOD' AND [Type] = 'S'													
 				END
-							
+
 				IF(ISNULL(@Email_Notification_Msg_Code,0) > 0 AND ISNULL(@Is_Error,'N') = 'Y')
 				BEGIN	
 					PRINT ' ----------Update In BMS_Schedule_Exception ------------'
 					UPDATE BSE SET BSE.IsMailSent='N', BSE.Email_Notification_Msg_Code = ISNULL(@Email_Notification_Msg_Code,0) FROM BMS_Schedule_Exception BSE 
 					INNER JOIN BV_Schedule_Transaction BST ON BST.BV_Schedule_Transaction_Code = BSE.BV_Schedule_Transaction_Code
 					AND BSE.Email_Notification_Msg_Code != ISNULL(@Email_Notification_Msg_Code,0) AND @Is_Reprocess = 'Y'
-					WHERE BST.Timeline_ID = @Timeline_ID_CV  AND BST.File_Code = @BMS_Schedule_Log_Code
+					WHERE BST.Timeline_ID = @Timeline_ID_CV  AND BST.Channel_Code = @Channel_Code
 
 					INSERT INTO #ErrorList(BV_Schedule_Transaction_Code, Email_Notification_Msg_Code, IsMailSent)
 					SELECT DISTINCT BST.BV_Schedule_Transaction_Code AS BV_Schedule_Transaction_Code,
@@ -313,9 +310,14 @@ BEGIN TRY
 						INSERT INTO BMS_Schedule_Exception(BMS_Schedule_Process_Data_Temp_Code,BV_Schedule_Transaction_Code, Email_Notification_Msg_Code, IsMailSent)
 						select BMS_Schedule_Process_Data_Temp_Code,BV_Schedule_Transaction_Code, Email_Notification_Msg_Code, IsMailSent FROM #ErrorList
 					END
+
+					Update BST SET BST.Play_Day=0, BST.Play_Run=0,BST.IsIgnore='', BST.IsException='Y' from BV_Schedule_Transaction BST 
+					INNER JOIN BMS_Schedule_Exception E ON BST.BV_Schedule_Transaction_Code = E.BV_Schedule_Transaction_Code
+					INNER JOIN Email_Notification_Msg M ON M.Email_Notification_Msg_Code = E.Email_Notification_Msg_Code
+					Where ISNULL(M.Error_Warning, '') = 'E' AND BST.Timeline_ID=@Timeline_ID_CV
+
 					GOTO RunCode_Zero
 				END
-				/*****************/
 
 				DECLARE @Content_Channel_Run_Code_CV INT = 0
 				SELECT TOP 1 @Content_Channel_Run_Code_CV  = ISNULL(ADR.Content_Channel_Run_Code,0) 
@@ -328,12 +330,11 @@ BEGIN TRY
 
 				/***************************************Insert Acq Deal Run data into Temp_Acq_Run_Data**********/
 				INSERT INTO  #Temp_Acq_Run_Data
-					(
-						Content_Channel_Run_Code, Is_Rule_Right,
-						No_Of_Run, Off_Prime_Start_Time, Off_Prime_End_Time, Off_Prime_Run, Prime_Start_Time, Prime_End_Time ,
-						Prime_Run, Right_Rule_Code, Time_Lag_Simulcast						
-					)
-				
+				(
+					Content_Channel_Run_Code, Is_Rule_Right,
+					No_Of_Run, Off_Prime_Start_Time, Off_Prime_End_Time, Off_Prime_Run, Prime_Start_Time, Prime_End_Time ,
+					Prime_Run, Right_Rule_Code, Time_Lag_Simulcast						
+				)
 				SELECT DISTINCT	
 				    CCR.Content_Channel_Run_Code, CASE WHEN ISNULL(CCR.Right_Rule_Code,0) != 0 THEN 'Y' ELSE 'N' END AS Is_Rule_Right,
 					CCR.Defined_Runs, CCR.OffPrime_Start_Time, CCR.OffPrime_End_Time, CCR.OffPrime_Runs, CCR.Prime_Start_Time, CCR.Prime_End_Time,
@@ -361,7 +362,7 @@ BEGIN TRY
 				INNER JOIN #Temp_Acq_Run_Data TARD ON BST.Content_Channel_Run_Code = TARD.Content_Channel_Run_Code
 				WHERE BST.Timeline_ID = @Timeline_ID_CV AND BST.File_Code = @BMS_Schedule_Log_Code
 
-				Select '#Temp_BMS_Acq_Run_Process_Data',* FROM #Temp_BMS_Acq_Run_Process_Data
+				--Select '#Temp_BMS_Acq_Run_Process_Data',* FROM #Temp_BMS_Acq_Run_Process_Data
 				/************* Write Prime / off Prime Time Logic *****/
 				DECLARE @Is_Prime_Time CHAR(1) = 'N'
 
@@ -397,7 +398,7 @@ BEGIN TRY
 					WHERE CONVERT(VARCHAR(8),TARD.Prime_Start_Time,108) <  CONVERT(VARCHAR(8),TARD.Prime_End_Time,108)
 				END
 				--Case 2 IF define only off Time
-			ELSE IF EXISTS (
+				ELSE IF EXISTS (
 					SELECT TOP 1 TARD.Content_Channel_Run_Code FROM #Temp_Acq_Run_Data TARD 
 					WHERE ISNULL(TARD.Content_Channel_Run_Code,0) > 0 AND (ISNULL(TARD.Off_Prime_Start_Time,'') <> '' OR ISNULL(TARD.Off_Prime_End_Time,'') <> '')
 					AND (ISNULL(TARD.Prime_Start_Time,'') = '' AND ISNULL(TARD.Prime_End_Time,'') = ''))
@@ -482,11 +483,10 @@ BEGIN TRY
 				/**********************************Start TimeLag****************/
 				DECLARE @Is_Ignore CHAR(1) = 'N'
 				PRINT 'Start SimulCast'
-				BEGIN -- Start SimulCast					
+				BEGIN -- Start SimulCast
 					IF EXISTS(SELECT Channel_Code FROM Channel WHERE Channel_Code = @Channel_Code AND ISNULL(Is_Parent_Child,'') = 'C')
 					BEGIN
 						PRINT '-------SimulCast Logic Define---------'
-
 						DECLARE @TimeLag_StartTime DATETIME,@TimeLag_EndTime DATETIME,@Time_Lag_Simulcast DATETIME,@Parent_Channel_Code INT = 0
 
 						SELECT TOP 1 @TimeLag_StartTime = ((TD.Date_Time) - CAST(TARD.Time_Lag_Simulcast as DATETIME))
@@ -499,9 +499,6 @@ BEGIN TRY
 
 						Print ' @TimeLag_StartTime = '+CAST(@TimeLag_StartTime AS VARCHAR) + ', @TimeLag_EndTime = '+CAST(@TimeLag_EndTime AS VARCHAR)+ ', @Parent_Channel_Code= '+ CAST(@Parent_Channel_Code AS VARCHAR)
 						+ ', @Content_Channel_Run_Code_CV= ' + CAST(@Content_Channel_Run_Code_CV AS VARCHAR)+', @Channel_Code= ' + CAST(@Channel_Code AS VARCHAR)
-							
-						--SELECT * FROM BV_Schedule_Transaction BST WHERE BST.Channel_Code = @Parent_Channel_Code  AND Program_Episode_ID=@BMS_Asset_Ref_Key_CV
-						--AND BST.Schedule_Item_Log_Time BETWEEN @TimeLag_StartTime AND @TimeLag_EndTime
 
 						IF EXISTS (SELECT TOP 1 * FROM BV_Schedule_Transaction BST WHERE BST.Channel_Code = @Parent_Channel_Code AND 
 									BST.Schedule_Item_Log_Time BETWEEN @TimeLag_StartTime AND @TimeLag_EndTime)
@@ -515,28 +512,24 @@ BEGIN TRY
 					
 				IF EXISTS(SELECT TOP 1 * FROM  BV_Schedule_Transaction BST WHERE ISNULL(BST.Timeline_ID,0) = ISNULL(@Timeline_ID_CV,0))
 				BEGIN
-					UPDATE BST SET BST.IsPrime = ISNULL(TBARP.Is_Prime_Time,'N')--,BSR.Is_Ignore = ISNULL(@Is_Ignore,'N')
+					UPDATE BST SET BST.IsPrime = ISNULL(TBARP.Is_Prime_Time,'N')
 					FROM BV_Schedule_Transaction BST
 					INNER JOIN #Temp_BMS_Acq_Run_Process_Data TBARP ON BST.Timeline_ID = TBARP.Timeline_ID 
 					AND BST.Content_Channel_Run_Code = TBARP.Content_Channel_Run_Code AND BST.Program_Episode_ID = TBARP.BMS_Asset_Ref_Key 
 				END
 				/**********************************Insert BMS_Schedule_Runs ****************/
-					
 				UPDATE BST SET BST.IsIgnore = ISNULL(@Is_Ignore,'N'), Delete_Flag = 0
 				FROM #Temp_BMS_Acq_Run_Process_Data BSPD
 				INNER JOIN BV_Schedule_Transaction BST ON BST.Timeline_ID=BSPD.Timeline_ID
-
-					/*********************EXECUTE USP_BMS_Schedule_Right_Rule_Run_Process****************/		
-				select @Is_Ignore
+				/*********************EXECUTE USP_BMS_Schedule_Right_Rule_Run_Process****************/		
 				IF(@Is_Ignore = 'N')
 				BEGIN
 					IF EXISTS (SELECT TOP 1 T.Right_Rule_Code FROM #Temp_Acq_Run_Data T WHERE ISNULL(T.Is_Rule_Right,'N') = 'Y')					
 					BEGIN
 						PRINT 'SELECT from BMS_Schedule_Runs'
-						select 'P',@Channel_Code,@Timeline_ID_CV,@Content_Channel_Run_Code_CV
+						
 						INSERT INTO #Temp_Right_Rule
-						EXEC USP_BMS_Schedule_Right_Rule_Run_Process
-						'P',@Channel_Code,@Timeline_ID_CV,@Content_Channel_Run_Code_CV
+						EXEC USP_BMS_Schedule_Right_Rule_Run_Process 'P',@Channel_Code,@Timeline_ID_CV,@Content_Channel_Run_Code_CV
 					END
 					ELSE
 					BEGIN
@@ -558,7 +551,6 @@ BEGIN TRY
 						)	
 
 						INSERT INTO #Temp_RR(RowNum,BV_Schedule_Transaction_Code,Is_Ignore,Schedule_DateTime,TimeLine_ID,Ref_TimeLine_ID,PlayDay,PlayRun)
-						
 						SELECT ROW_NUMBER() OVER(ORDER BY BST.Schedule_Item_Log_Date) RowNumber,BST.BV_Schedule_Transaction_Code, 
 						CASE WHEN ISNULL(BST.IsIgnore,'N') = 'N' THEN 'N' ELSE 'Y' END, 
 						BST.Schedule_Item_Log_Date,BST.Timeline_ID,NULL,NULL,NULL 
@@ -591,15 +583,15 @@ BEGIN TRY
 					AND( ISNULL(BST.Play_Day,0) != ISNULL(TRR.PlayDay,0)
 					OR  ISNULL(BST.Play_Run,0) !=  ISNULL(TRR.PlayRun,0)
 					OR ISNULL(BST.IsIgnore,'') != TRR.Is_Ignore)
+
 					/***********************************Exception Right Rule Exceeeds**************/
-					if EXISTS(SELECT * FROM #Temp_Right_Rule WHERE TimeLine_ID = @Timeline_ID_CV AND ISNULL(Is_Right_Rule_Exceeds,'') = 'Y')
+					if EXISTS(SELECT * FROM #Temp_Right_Rule WHERE TimeLine_ID = @Timeline_ID_CV AND ISNULL(Is_Right_Rule_Exceeds,'') = 'Y' AND ISNULL(Is_Ignore,'') = 'N')
 					BEGIN
 						PRINT 'In BMS_Schedule_Process Is_Right_Rule_Exceeds = Y'
+
 						SELECT TOP 1 @Email_Notification_Msg_Code = ISNULL(@Email_Notification_Msg_Code,'') +  ',' +
 						CAST(ISNULL(Email_Notification_Msg_Code,'') AS VARCHAR),@Is_Error = 'Y' 
 						FROM Email_Notification_Msg WHERE UPPER(Email_Msg_For) = 'Right_Rule_Exceeeds' AND [Type] = 'S'
-
-						select @Email_Notification_Msg_Code
 					END
 					/***********************************Exception Right Rule Exceeeds**************/
 				END
@@ -613,8 +605,6 @@ BEGIN TRY
 				END
 															
 				PRINT 'Inserted Records into BMS_Schedule_Runs'	
-
-				
 
 				INSERT INTO #Temp_BV_Schedule_Transaction
 				(
@@ -656,11 +646,6 @@ BEGIN TRY
 						@Is_Define_OffPrimeRun = CASE WHEN (ISNULL(TARD.Off_Prime_Start_Time,'') <> '' OR ISNULL(TARD.Off_Prime_End_Time,'') <> '')  THEN 'Y' ELSE 'N' END					 					
 				FROM #Temp_Acq_Run_Data TARD 	
 									
-				SELECT CASE WHEN (ISNULL(TARD.Prime_Start_Time,'') <> '' OR ISNULL(TARD.Prime_End_Time,'') <> '')  THEN 'Y' ELSE 'N' END,
-					CASE WHEN (ISNULL(TARD.Off_Prime_Start_Time,'') <> '' OR ISNULL(TARD.Off_Prime_End_Time,'') <> '')  THEN 'Y' ELSE 'N' END,
-					TARD.Prime_Start_Time,TARD.Off_Prime_Start_Time			 					
-				FROM #Temp_Acq_Run_Data TARD 
-
 				PRINT ' Is_Define_PrimeRun : - ' + @Is_Define_PrimeRun 
 				PRINT ' Is_Define_OffPrimeRun : - ' + @Is_Define_OffPrimeRun 
 				/*********************************Start PrimeTime_Over_Run********************************/
@@ -713,11 +698,7 @@ BEGIN TRY
 				--then Allocated/Define off Prime Runs then threw OFFPRIMETIME_OVER_RUN Exception
 				IF(ISNULL(@Is_Define_OffPrimeRun,'') = 'Y')
 				BEGIN						
-					IF(	
-						--SELECT ISNULL(COUNT(DISTINCT TBSR.TimeLine_Id),0) 
-						--FROM #Temp_BMS_Schedule_Runs TBSR 
-						SELECT ISNULL(COUNT(DISTINCT TBST.TimeLine_Id),0) 
-						FROM #Temp_BV_Schedule_Transaction TBST
+					IF(SELECT ISNULL(COUNT(DISTINCT TBST.TimeLine_Id),0) FROM #Temp_BV_Schedule_Transaction TBST
 						WHERE 
 						(
 							(
@@ -757,11 +738,8 @@ BEGIN TRY
 
 					/***************Insert Exception Table *******************/
 					--PRINT 'End Exception Over Runs Logic'	
-					--select @Email_Notification_Msg_Code
 					INSERT INTO #Temp_Email_Notification_Msg(Email_Notification_Msg_Code)
 					SELECT number FROM fn_Split_withdelemiter(ISNULL(@Email_Notification_Msg_Code,'0'),',') WHERE number !=0
-
-					select '#Temp_Email_Notification_Msg',* from #Temp_Email_Notification_Msg
 
 					IF EXISTS(SELECT TOP 1 * FROM #Temp_Email_Notification_Msg E WHERE ISNULL(E.Email_Notification_Msg_Code,0) > 0)
 					BEGIN
@@ -787,15 +765,14 @@ BEGIN TRY
 					UPDATE BV_Schedule_Transaction SET IsProcessed = 'D',Last_Updated_Time=GETDATE() WHERE BV_Schedule_Transaction_Code = @BMS_Schedule_Process_Data_Code
 
 					/******************************Update Is Error in BMS_Schedule_Process_Data*******/
-
 					IF(ISNULL(@Is_Error,'N') = 'Y')
 					BEGIN
 						UPDATE BV_Schedule_Transaction SET IsException = 'Y' ,IsProcessed = 'D'
 						WHERE  BV_Schedule_Transaction_Code = @BMS_Schedule_Process_Data_Code
 					END
+
 					/******************Call BMS_Schedule_Reprocess_Runs******/
-					EXEC USP_BMS_Schedule_Reprocess_Runs --@Acq_Deal_Run_Code_CV,
-					@Channel_Code,'',@Content_Channel_Run_Code_CV
+					EXEC USP_BMS_Schedule_Reprocess_Runs @Channel_Code,'',@Content_Channel_Run_Code_CV
 					PRINT 'Completed Reprocess of Runs USP_BMS_Schedule_Reprocess_Runs(call from USP_BMS_Schedule_Process)'
 
 				RunCode_Zero:
@@ -819,6 +796,17 @@ BEGIN TRY
 		SELECT @ErMessage = 'Error in USP_BMS_Schedule_Process : - ' +  ERROR_MESSAGE(),@ErSeverity = ERROR_SEVERITY(),@ErState = ERROR_STATE() 
 		RAISERROR (@ErMessage,@ErSeverity,@ErState)  
 	END CATCH		
+
+	IF OBJECT_ID('tempdb..#Acq_Deal_Right_Data') IS NOT NULL DROP TABLE #Acq_Deal_Right_Data
+	IF OBJECT_ID('tempdb..#Acq_Dup_Rights') IS NOT NULL DROP TABLE #Acq_Dup_Rights
+	IF OBJECT_ID('tempdb..#ErrorList') IS NOT NULL DROP TABLE #ErrorList
+	IF OBJECT_ID('tempdb..#Temp_Acq_Run_Data') IS NOT NULL DROP TABLE #Temp_Acq_Run_Data
+	IF OBJECT_ID('tempdb..#Temp_BMS_Acq_Run_Process_Data') IS NOT NULL DROP TABLE #Temp_BMS_Acq_Run_Process_Data
+	IF OBJECT_ID('tempdb..#Temp_BMS_Schedule_Runs') IS NOT NULL DROP TABLE #Temp_BMS_Schedule_Runs
+	IF OBJECT_ID('tempdb..#Temp_BV_Schedule_Transaction') IS NOT NULL DROP TABLE #Temp_BV_Schedule_Transaction
+	IF OBJECT_ID('tempdb..#Temp_Email_Notification_Msg') IS NOT NULL DROP TABLE #Temp_Email_Notification_Msg
+	IF OBJECT_ID('tempdb..#Temp_Right_Rule') IS NOT NULL DROP TABLE #Temp_Right_Rule
+	IF OBJECT_ID('tempdb..#Temp_RR') IS NOT NULL DROP TABLE #Temp_RR
 END	
 /*
 UPDATE BMS_Schedule_Process_Data_Temp SET Record_Status = 'P'

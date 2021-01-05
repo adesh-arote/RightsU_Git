@@ -1,4 +1,4 @@
-﻿ alter procedure [dbo].[USP_Cost_Report]      
+﻿ CREATE procedure [dbo].[USP_Cost_Report]      
 (      
  @Agreement_No varchar(50)='',      
  @Title_Codes Varchar(100)='',       

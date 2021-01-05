@@ -38,9 +38,3 @@
     CONSTRAINT [FK_Channel_Genres] FOREIGN KEY ([Genres_Code]) REFERENCES [dbo].[Genres] ([Genres_Code])
 );
 
-
-
-
-
-
-

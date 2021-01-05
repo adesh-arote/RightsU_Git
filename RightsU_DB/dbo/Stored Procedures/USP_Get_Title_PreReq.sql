@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Get_Title_PreReq]  
+﻿CREATE PROCEDURE [dbo].[USP_Get_Title_PreReq]  
 --DECLARE  
  @Data_For VARCHAR(MAX) ,  
  @Deal_Type_Code INT,  
@@ -174,4 +174,6 @@ BEGIN
  END  
   
  SELECT Display_Value, Display_Text, Data_For FROM #PreReqData ORDER BY Data_For, Display_Value, Display_Text  
+
+ IF OBJECT_ID('tempdb..#PreReqData') IS NOT NULL DROP TABLE #PreReqData
 END

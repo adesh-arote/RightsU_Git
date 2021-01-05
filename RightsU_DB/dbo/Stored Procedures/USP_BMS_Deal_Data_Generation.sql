@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_BMS_Deal_Data_Generation] 
+﻿CREATE PROCEDURE [dbo].[USP_BMS_Deal_Data_Generation] 
 AS
 BEGIN
 -- ==================================[BMS_Asset_Ref_Key]===========
@@ -774,6 +774,13 @@ BEGIN
 	CLOSE CUS_Deal_Process
 	DEALLOCATE CUS_Deal_Process
 	END --if End 
+	IF OBJECT_ID('tempdb..#Dummy_TempData_New') IS NOT NULL DROP TABLE #Dummy_TempData_New
+	IF OBJECT_ID('tempdb..#SharedRound') IS NOT NULL DROP TABLE #SharedRound
+	IF OBJECT_ID('tempdb..#Temp_BMS_Deal_Content') IS NOT NULL DROP TABLE #Temp_BMS_Deal_Content
+	IF OBJECT_ID('tempdb..#Temp_BMS_Deal_Content_Rights') IS NOT NULL DROP TABLE #Temp_BMS_Deal_Content_Rights
+	IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData
+	IF OBJECT_ID('tempdb..#TempData_New') IS NOT NULL DROP TABLE #TempData_New
+	IF OBJECT_ID('tempdb..#TempDummy') IS NOT NULL DROP TABLE #TempDummy
 END
 /*
 

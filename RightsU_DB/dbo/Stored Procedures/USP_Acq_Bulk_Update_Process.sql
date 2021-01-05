@@ -1,8 +1,9 @@
-﻿alter PROCEDURE [dbo].[USP_Acq_Bulk_Update_Process]
+﻿CREATE PROCEDURE [dbo].[USP_Acq_Bulk_Update_Process]
 (
 	@Deal_Code INT,
 	@User_Code INT,
 	@Deal_Process_RBU_Code INT,
+	@DRPL_Code INT = 0,
 	@IsValid CHAR(1) OUTPUT
 )
 AS
@@ -12,6 +13,13 @@ AS
 -- Description:	Acquisition Deal Rights Bulk Update Optimization
 -- =============================================
 BEGIN
+	--DECLARE
+	--@Deal_Code INT = 15465,
+	--@User_Code INT = 247,
+	--@Deal_Process_RBU_Code INT = 7,
+	--@DRPL_Code INT = 0,
+	--@IsValid CHAR(1)  = 'N'
+
 	SET NOCOUNT ON
 
 	IF OBJECT_ID('tempdb..#Temp_Bulk_Update_Validation') IS NOT NULL
@@ -29,7 +37,7 @@ BEGIN
 	BEGIN TRY
 	BEGIN TRANSACTION 
 		DECLARE @Page_View CHAR(1), @RightCodes NVARCHAR(MAX), @TitleNames NVARCHAR(MAX), @TitleCodes NVARCHAR(MAX),@ErrorMSG NVARCHAR(MAX),
-				@ChangeFor NVARCHAR(MAX), @IsTitleLanguage NVARCHAR(MAX)
+				@ChangeFor NVARCHAR(MAX), @IsTitleLanguage NVARCHAR(MAX),@sql NVARCHAR(MAX),@DB_Name VARCHAR(1000);
 		DECLARE @Right_Code INT, @Title_Code INT, @Is_Error CHAR(1)
 		DECLARE @Rights_Bulk_Update_Code INT --, @Deal_Code INT
 		DECLARE @Rights_Bulk_Update Rights_Bulk_Update_UDT
@@ -56,25 +64,25 @@ BEGIN
 		Is_Updated VARCHAR(2)
 	)	
 		CREATE TABLE #Right_Title_Code(Right_Code INT, New_Right_Code INT, Title_Code INT)
-		CREATE TABLE #Temp_Rights_Bulk_Update( Rights_Bulk_Update_Code INT, Deal_Code INT )
+		--CREATE TABLE #Temp_Rights_Bulk_Update( Rights_Bulk_Update_Code INT, Deal_Code INT )
 
-		INSERT INTO #Temp_Rights_Bulk_Update (Rights_Bulk_Update_Code, Deal_Code)
-		SELECT Rights_Bulk_Update_Code, Deal_Code FROM Rights_Bulk_Update WHERE Is_Processed = 'N' AND Deal_Code = @Deal_Code AND Rights_Bulk_Update_Code = @Deal_Process_RBU_Code
+		--INSERT INTO #Temp_Rights_Bulk_Update (Rights_Bulk_Update_Code, Deal_Code)
+		SELECT @Rights_Bulk_Update_Code = Rights_Bulk_Update_Code FROM Rights_Bulk_Update WHERE Is_Processed = 'N' AND Deal_Code = @Deal_Code AND Rights_Bulk_Update_Code = @Deal_Process_RBU_Code
 
-		PRINT 'Started 1st For Loop'
-		DECLARE db_RBU_cursor CURSOR FOR 
-		SELECT Rights_Bulk_Update_Code FROM #Temp_Rights_Bulk_Update
+		--PRINT 'Started 1st For Loop'
+		--DECLARE db_RBU_cursor CURSOR FOR 
+		--SELECT Rights_Bulk_Update_Code FROM #Temp_Rights_Bulk_Update
 
-		OPEN db_RBU_cursor  
-		FETCH NEXT FROM db_RBU_cursor INTO @Rights_Bulk_Update_Code
+		--OPEN db_RBU_cursor  
+		--FETCH NEXT FROM db_RBU_cursor INTO @Rights_Bulk_Update_Code
 
-		WHILE @@FETCH_STATUS = 0  
+		--WHILE @@FETCH_STATUS = 0  
 		BEGIN 
 			 PRINT 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 			 PRINT 'Rights_Bulk_Update_Code = '+ CAST(@Rights_Bulk_Update_Code AS VARCHAR(MAX)) + ' Deal_Code = '+ CAST(@Deal_Code AS VARCHAR(MAX))
-			 TRUNCATE TABLE #Temp_Bulk_Update_Validation
-			 TRUNCATE TABLE #Merge_Rights_Title_Map
-			 TRUNCATE TABLE #Right_Title_Code
+			 --TRUNCATE TABLE #Temp_Bulk_Update_Validation
+			 --TRUNCATE TABLE #Merge_Rights_Title_Map
+			 --TRUNCATE TABLE #Right_Title_Code
 			 DELETE FROM @Rights_Bulk_Update
 
 			 --SELECT * FROM Rights_Bulk_Update  WHERE Rights_Bulk_Update_Code = @Rights_Bulk_Update_Code AND Deal_Code = @Deal_Code
@@ -94,13 +102,27 @@ BEGIN
 			 INNER JOIN	(SELECT  id, number FROM dbo.[fn_Split_withdelemiter](@TitleCodes,',') WHERE number!='') AS B ON B.id = A.id
 			 INNER JOIN	(SELECT  id, number FROM dbo.[fn_Split_withdelemiter](@TitleNames,',') WHERE number!='') AS C ON A.id = C.id
 
+			 --Added by Akshay
+			 --DELETE FROM  #Merge_Rights_Title_Map  WHERE Right_Code IN  (SELECT MR.Right_Code FROM #Merge_Rights_Title_Map MR INNER JOIN  Acq_Deal_Rights ADR  ON ADR.Acq_Deal_Rights_Code = MR.Right_Code 
+			 --WHERE ADR.Right_Status <> 'P' AND ADR.Acq_Deal_Code = @Deal_Code) 
+
+			 --select * FROM  #Merge_Rights_Title_Map 
+
+
 			 UPDATE Deal_Rights_Process SET Record_Status = 'W', Process_Start = GETDATE()
-			 WHERE Deal_Rights_Code IN (SELECT Right_Code FROM #Merge_Rights_Title_Map) AND Deal_Code = @Deal_Code AND Rights_Bulk_Update_Code = @Deal_Process_RBU_Code
+			 --SELECT * FROM Deal_Rights_Process 
+			 WHERE Deal_Rights_Code IN (SELECT Right_Code FROM #Merge_Rights_Title_Map) AND Deal_Code = @Deal_Code AND Rights_Bulk_Update_Code = @Rights_Bulk_Update_Code
+			 AND Record_Status = 'P'
+			
+			 INSERT INTO Deal_Rights_Process_Log (Deal_Code, Right_Codes, Rights_Bulk_Update_Code , Record_Status, Description, Created_Date, DRPL_Code)
+			 SELECT @Deal_Code, @RightCodes, @Rights_Bulk_Update_Code,'W','Updated Record status ''W'' IN Deal_Rights_Process Table where Deal_Rights_Code in' + @RightCodes + ' AND Deal code = '+CAST(@Deal_Code AS NVARCHAR(MAX))+ ' and  @Rights_Bulk_Update_Code =  '+CAST(@Rights_Bulk_Update_Code AS NVARCHAR(MAX)), GETDATE(), @DRPL_Code
 
 			 UPDATE Acq_Deal_Rights SET Right_Status = 'W'
 			 WHERE Acq_Deal_Rights_Code IN (SELECT Right_Code FROM #Merge_Rights_Title_Map) AND Acq_Deal_Code = @Deal_Code AND Right_Status = 'P'
 
-			 
+			 INSERT INTO Deal_Rights_Process_Log (Deal_Code, Right_Codes , Record_Status, Description, Created_Date, DRPL_Code)
+			 SELECT @Deal_Code, @RightCodes,'W','Updated Record status ''W'' IN Acq_Deal_Rights Table where Acq_Deal_Rights_Code in Right_Codes column',GETDATE(),@DRPL_Code
+			
 			 PRINT 'Page View Working for Both G and S ie Group and Summary'
 				
 			 --DELETE FROM @Rights_Bulk_Update
@@ -115,7 +137,7 @@ BEGIN
 			 PRINT 'Executing USP_Acq_Bulk_Update procedure (Anchal)'
 			 EXEC USP_Acq_Bulk_Update_Final @Rights_Bulk_Update, @User_Code
 
-			 PRINT 'Inserting Error Record into #Temp_Bulk_Update_Validation'
+			 PRINT 'Inserting Error Record into #Temp_Bulk_Update_Validation and @Page_View = ' + @Page_View
 			 IF @Page_View = 'S'
 			 BEGIN
 				INSERT INTO #Temp_Bulk_Update_Validation 
@@ -143,11 +165,18 @@ BEGIN
 						ISNULL(ErrorMSG,'') <> '' 
 			 END
 
+			 --SELECT * FROM #Temp_Bulk_Update_Validation
+
 			 IF OBJECT_ID('tempdb..##Error_Record') IS NOT NULL
 					DROP TABLE ##Error_Record
 
 			 PRINT 'Updating Is_Processed = Y'
-			 UPDATE A SET A.Is_Processed = 'Y' FROM Rights_Bulk_Update A WHERE A.Rights_Bulk_Update_Code = @Rights_Bulk_Update_Code AND A.Deal_Code = @Deal_Code
+			 UPDATE A SET A.Is_Processed = 'Y' FROM Rights_Bulk_Update A WHERE
+			  A.Rights_Bulk_Update_Code = @Rights_Bulk_Update_Code AND A.Deal_Code = @Deal_Code  AND Is_Processed = 'N' 
+
+			 INSERT INTO Deal_Rights_Process_Log (Deal_Code, Rights_Bulk_Update_Code , Record_Status, Description, Created_Date, DRPL_Code)
+			 SELECT @Deal_Code, @Rights_Bulk_Update_Code,'Y','Updated Is_Processed  = ''Y'' IN Rights_Bulk_Update Table where Is_Processed = ''N''', GETDATE(),@DRPL_Code
+
 
 			 PRINT 'Looping through Final error cursor'
 			 DECLARE @TBUV_Code INT, @Message NVARCHAR(MAX) = ''
@@ -242,14 +271,40 @@ BEGIN
 
 			 --Updating Record Status to E, D, Y
 			 UPDATE Deal_Rights_Process SET Record_Status = 'E', Porcess_End = GETDATE()
-			 WHERE Deal_Rights_Code IN (SELECT DISTINCT Rights_Code FROM #Temp_Bulk_Update_Validation) AND Deal_Code = @Deal_Code AND Rights_Bulk_Update_Code = @Deal_Process_RBU_Code
+			 WHERE Deal_Rights_Code IN (SELECT DISTINCT Rights_Code FROM #Temp_Bulk_Update_Validation) AND Deal_Code = @Deal_Code AND Rights_Bulk_Update_Code = @Rights_Bulk_Update_Code
 
 			 UPDATE Acq_Deal_Rights SET Right_Status = 'E' 
 			 WHERE Acq_Deal_Rights_Code IN (SELECT DISTINCT Rights_Code FROM #Temp_Bulk_Update_Validation) AND Acq_Deal_Code = @Deal_Code
 
-			 UPDATE Deal_Rights_Process SET Record_Status = 'D', Porcess_End = GETDATE() WHERE Record_Status = 'W' AND Deal_Code = @Deal_Code AND Rights_Bulk_Update_Code = @Deal_Process_RBU_Code
+			 ------ START Insertion of error in exception log tables-----------------------------------------
+			 IF EXISTS(SELECT * FROM Deal_Process WHERE Deal_Code = @Deal_Code AND Record_Status = 'E')
+			 BEGIN
+				DECLARE @AgreementNo VARCHAR(100),@Count INT
+				SELECT @Count = COUNT(DISTINCT Deal_Rights_Code) FROM Deal_Rights_Process WHERE Deal_Code = @Deal_Code  AND Record_Status = 'E'
+				SELECT @AgreementNo =   AD.Agreement_No FROM Deal_Rights_Process DRP
+				INNER JOIN Acq_Deal AD ON DRP.Deal_Code = AD.Acq_Deal_Code
+				WHERE Deal_Code = @Deal_Code   AND Record_Status = 'E'
+
+				INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+				SELECT GETDATE(),NULL,NULL,'USP_Acq_Bulk_Update_Process',CAST(@Count AS VARCHAR) + ' '+ 'Rights are in Error State for Agreement No :'+' '+ @AgreementNo,'NA','NA','DB'
+
+				SELECT @sql = CAST(@Count AS VARCHAR) + ' '+ 'Right''s are in Error State for Agreement No :'+' '+ @AgreementNo
+				SELECT @DB_Name = DB_Name()
+				EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Deal_Process','AN','VN',@sql,'DB','IP','FR','TI'
+			 END
+			 ------ END Insertion of error in exception log tables-----------------------------------------
+
+			 UPDATE Deal_Rights_Process SET Record_Status = 'D', Porcess_End = GETDATE() 
+			 WHERE Record_Status = 'W' AND Deal_Code = @Deal_Code AND Rights_Bulk_Update_Code = @Rights_Bulk_Update_Code 
+			 AND Deal_Rights_Code IN (SELECT Right_Code FROM #Merge_Rights_Title_Map)
+
+			 INSERT INTO Deal_Rights_Process_Log (Deal_Code, Rights_Bulk_Update_Code , Record_Status, Description, Created_Date, DRPL_Code)
+			 SELECT @Deal_Code, @Rights_Bulk_Update_Code,'D','Updated Record_Status  = ''D'' IN Rights_Bulk_Update Table where Record_Status = ''W''', GETDATE(),@DRPL_Code
 
 			 UPDATE Acq_Deal_Rights SET Right_Status = 'C' WHERE Right_Status = 'W' AND Acq_Deal_Code = @Deal_Code
+
+			 INSERT INTO Deal_Rights_Process_Log (Deal_Code , Record_Status, Description, Created_Date, DRPL_Code)
+			 SELECT @Deal_Code,'C','Updated Right_Status  = ''C'' IN Acq_Deal_Rights Table where Record_Status = ''W''', GETDATE(),@DRPL_Code
 
 			 /*UPDATE Deal_Rights_Process SET Record_Status = 'D', Process_End = GETDATE()
 			 WHERE  Deal_Code = @Deal_Code AND Deal_Rights_Code IN (
@@ -259,23 +314,36 @@ BEGIN
 			 ) */
 
 			 PRINT 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-			 FETCH NEXT FROM db_RBU_cursor INTO @Rights_Bulk_Update_Code
+			 --FETCH NEXT FROM db_RBU_cursor INTO @Rights_Bulk_Update_Code
 		END 
 
-		CLOSE db_RBU_cursor  
-		DEALLOCATE db_RBU_cursor 
-		PRINT 'Ended 1st For Loop'
+		--CLOSE db_RBU_cursor  
+		--DEALLOCATE db_RBU_cursor 
+		--PRINT 'Ended 1st For Loop'
 		
 		SET @IsValid = 'Y'
 	COMMIT
 	END TRY
 	BEGIN CATCH
-		SET @IsValid = 'N'
+
 		IF @@TRANCOUNT > 0
 			ROLLBACK
 
-		 UPDATE Deal_Rights_Process SET Error_Messages = ERROR_MESSAGE(), Record_Status = 'E' WHERE Rights_Bulk_Update_Code =  @Deal_Process_RBU_Code
-		 UPDATE Rights_Bulk_Update SET Is_Processed = 'Y' WHERE Rights_Bulk_Update_Code =  @Deal_Process_RBU_Code
+		SET @IsValid = 'N'
+
+		INSERT INTO Deal_Rights_Process_Log (Deal_Code , Rights_Bulk_Update_Code, Record_Status, Description, Created_Date, DRPL_Code)
+		SELECT @Deal_Code,@Rights_Bulk_Update_Code,'C','Updated Record_Status  = ''E'' AND Is_Processed = ''E'' IN Deal_Rights_Process Table', GETDATE(), @DRPL_Code
+
+		 UPDATE Deal_Rights_Process SET Error_Messages = ERROR_MESSAGE(), Record_Status = 'E' WHERE Rights_Bulk_Update_Code =  @Rights_Bulk_Update_Code
+		 UPDATE Rights_Bulk_Update SET Is_Processed = 'E' WHERE Rights_Bulk_Update_Code =  @Rights_Bulk_Update_Code
+
+		 DECLARE @Err_Msg VARCHAR(MAX) = ERROR_MESSAGE()
+		 INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+		 SELECT GETDATE(),NULL,NULL,'USP_Acq_Bulk_Update_Process','Error found in RightsU Bulk Update','NA',@Err_Msg,'DB'
+		 
+		 SELECT @sql = 'Error found in RightsU Bulk Update: ' +' '+ @Err_Msg
+		 SELECT @DB_Name = DB_Name()
+		 EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Deal_Process','AN','VN',@sql,'DB','IP','FR','TI'
 
 	END CATCH
 	IF OBJECT_ID('tempdb..#Temp_Bulk_Update_Validation') IS NOT NULL

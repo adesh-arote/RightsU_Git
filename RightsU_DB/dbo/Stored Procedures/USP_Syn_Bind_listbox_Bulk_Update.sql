@@ -1,4 +1,4 @@
-﻿Create PROCEDURE [dbo].[USP_Syn_Bind_listbox_Bulk_Update]
+﻿CREATE PROCEDURE [dbo].[USP_Syn_Bind_listbox_Bulk_Update]
 (
 	@Right_Codes VARCHAR(MAX),
 	@Type CHAR(2),
@@ -216,4 +216,11 @@ BEGIN
 		END
 	END
 	SELECT Display_Text AS DisplayText,Display_Value AS DisplayValue,PlatformCodes AS PlatformCodes FROM #temp1
+
+	IF OBJECT_ID('tempdb..#FinalListData') IS NOT NULL DROP TABLE #FinalListData
+	IF OBJECT_ID('tempdb..#PlatformCodes') IS NOT NULL DROP TABLE #PlatformCodes
+	IF OBJECT_ID('tempdb..#RightCodes') IS NOT NULL DROP TABLE #RightCodes
+	IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
+	IF OBJECT_ID('tempdb..#temp1') IS NOT NULL DROP TABLE #temp1
+	IF OBJECT_ID('tempdb..#TitleCodes') IS NOT NULL DROP TABLE #TitleCodes
 END

@@ -22,27 +22,6 @@ CREATE NONCLUSTERED INDEX [IX_Acq_Deal_Rights_Title_1]
 
 GO
 
-
-CREATE TRIGGER TRG_Acq_Deal_Rights_Title_EPS_Delete
-   ON Acq_Deal_Rights_Title
-   After Delete
-AS 
--- =============================================
--- Author:		Adesh Arote
--- Create date: 28 Feb 2015
--- Description:	Create trigger for generate episodes
--- =============================================
-BEGIN
-	
-	DECLARE @Right_Title_Code Int = 0
-	Select @Right_Title_Code = Acq_Deal_Rights_Title_Code From Deleted
-
-	Delete From Acq_Deal_Rights_Title_EPS Where Acq_Deal_Rights_Title_Code = @Right_Title_Code
-
-END
-
-GO
-
 CREATE TRIGGER TRG_Acq_Deal_Rights_Title_EPS_Insert
    ON Acq_Deal_Rights_Title
    AFTER Insert, Update
@@ -76,5 +55,26 @@ BEGIN
 	Select @Right_Title_Code, EpsNum From #TmpNums 
 
 	Drop Table #TmpNums
+
+END
+
+GO
+
+
+CREATE TRIGGER TRG_Acq_Deal_Rights_Title_EPS_Delete
+   ON Acq_Deal_Rights_Title
+   After Delete
+AS 
+-- =============================================
+-- Author:		Adesh Arote
+-- Create date: 28 Feb 2015
+-- Description:	Create trigger for generate episodes
+-- =============================================
+BEGIN
+	
+	DECLARE @Right_Title_Code Int = 0
+	Select @Right_Title_Code = Acq_Deal_Rights_Title_Code From Deleted
+
+	Delete From Acq_Deal_Rights_Title_EPS Where Acq_Deal_Rights_Title_Code = @Right_Title_Code
 
 END

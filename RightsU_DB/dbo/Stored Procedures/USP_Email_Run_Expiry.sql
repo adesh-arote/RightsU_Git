@@ -271,4 +271,9 @@ BEGIN
 	End -- End of Fetch outer
 	Close curOuter
 	Deallocate curOuter		
+
+	IF OBJECT_ID('tempdb..#Html_Table') IS NOT NULL DROP TABLE #Html_Table
+	IF OBJECT_ID('tempdb..#Result') IS NOT NULL DROP TABLE #Result
+	IF OBJECT_ID('tempdb..#Result1') IS NOT NULL DROP TABLE #Result1
+	IF OBJECT_ID('tempdb..#Temp_Channel') IS NOT NULL DROP TABLE #Temp_Channel
 END

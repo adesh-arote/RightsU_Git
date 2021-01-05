@@ -136,4 +136,3 @@ AS
 --	,TC.Episode_No
 --	,DMR.Right_Rule_Code
 --	,AD.Deal_Workflow_Status
-

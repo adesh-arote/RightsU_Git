@@ -552,6 +552,21 @@ BEGIN
     BEGIN CATCH
             SELECT ERROR_MESSAGE() AS Promoter_Group_Code
     END CATCH
+
+	IF OBJECT_ID('tempdb..#CountryHoldback') IS NOT NULL DROP TABLE #CountryHoldback
+	IF OBJECT_ID('tempdb..#Language_GroupHoldback') IS NOT NULL DROP TABLE #Language_GroupHoldback
+	IF OBJECT_ID('tempdb..#LanguageHoldback') IS NOT NULL DROP TABLE #LanguageHoldback
+	IF OBJECT_ID('tempdb..#Sub_Dub_Holdback') IS NOT NULL DROP TABLE #Sub_Dub_Holdback
+	IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
+	IF OBJECT_ID('tempdb..#Temp_ADRC') IS NOT NULL DROP TABLE #Temp_ADRC
+	IF OBJECT_ID('tempdb..#Temp_Promoter_Group') IS NOT NULL DROP TABLE #Temp_Promoter_Group
+	IF OBJECT_ID('tempdb..#Temp_Syn_Deal_Movie') IS NOT NULL DROP TABLE #Temp_Syn_Deal_Movie
+	IF OBJECT_ID('tempdb..#TempHoldback') IS NOT NULL DROP TABLE #TempHoldback
+	IF OBJECT_ID('tempdb..#TempHoldback_TL') IS NOT NULL DROP TABLE #TempHoldback_TL
+	IF OBJECT_ID('tempdb..#TempHoldbackCodes') IS NOT NULL DROP TABLE #TempHoldbackCodes
+	IF OBJECT_ID('tempdb..#TempTitle') IS NOT NULL DROP TABLE #TempTitle
+	IF OBJECT_ID('tempdb..#TempTitle_temp') IS NOT NULL DROP TABLE #TempTitle_temp
+	IF OBJECT_ID('tempdb..#TerritoryHoldback') IS NOT NULL DROP TABLE #TerritoryHoldback
         
 END      
 
@@ -572,6 +587,3 @@ END
 --select * from language where language_name  like '%All Indian%'
 
 --select * from promoter_group where promoter_Group_Code in (3,4,5,6,9)
-
-
-

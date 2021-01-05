@@ -66,8 +66,10 @@ BEGIN
  AND ((CONVERT(DATE, BST.Schedule_Item_Log_Date,103) >= CONVERT(DATE, @Date_From,103)))      
  AND ((CONVERT(DATE,BST.Schedule_Item_Log_Date,103) <= CONVERT(DATE,@Date_To,103)))   
       
- IF(OBJECT_ID('TEMPDB..#TempTC') IS NOT NULL)  
- DROP TABLE #TempTC  
+	 --IF(OBJECT_ID('TEMPDB..#TempTC') IS NOT NULL)  
+	 --DROP TABLE #TempTC  
+
+	IF OBJECT_ID('tempdb..#TempTC') IS NOT NULL DROP TABLE #TempTC
 END 
 
 --select * from Title Where Title_Name Like '%Super dan%'

@@ -171,7 +171,7 @@ BEGIN
 		CASE WHEN Email_Status LIKE ''Y'' THEN ''Yes'' ELSE ''No'' END Email_Status ,ISNULL(Visibility, '''') AS [Visibility], ISNULL(ReportName, '''') AS [ReportName]    
 		, RestrictionRemarks, OthersRemark, Platform_ExactMatch, MustHave_Platform, Exclusivity, SubLicense_Code, Region_ExactMatch    
 		, Region_MustHave ,Region_Exclusion ,Subtit_Language_Code ,Dubbing_Language_Code ,BU_Code ,Report_Type,    
-		First_NAme+ '' '' + Last_Name  UserName, digital  ,IncludeMetadata ,  Is_IFTA_Cluster, Platform_Group_Code, Subtitling_Group_Code  
+		First_NAme+ '' '' + Last_Name  UserName, CASE Digital WHEN ''1'' THEN ''true'' ELSE ''false''  END Digital  ,IncludeMetadata ,  Is_IFTA_Cluster, Platform_Group_Code, Subtitling_Group_Code  
 		, Subtitling_ExactMatch, Subtitling_MustHave, Subtitling_Exclusion, Dubbing_Group_Code, Dubbing_ExactMatch, Dubbing_MustHave, Dubbing_Exclusion,Territory_Code, Include_Ancillary, Indiacast, Region_On,
 		Promoter_Code, Promoter_ExactMatch, MustHave_Promoter, Module_Code, '+CAST(@RecCount as varchar(10))+' As Recordcount 
           
@@ -237,5 +237,6 @@ BEGIN
 		FROM #Temp where 1=2    
 	END    
     
-	
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#tempVariable') IS NOT NULL DROP TABLE #tempVariable
 END

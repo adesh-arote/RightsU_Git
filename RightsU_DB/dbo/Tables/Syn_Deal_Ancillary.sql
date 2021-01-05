@@ -11,5 +11,3 @@
     CONSTRAINT [FK_Syn_Deal_Ancillary_Syn_Deal] FOREIGN KEY ([Syn_Deal_Code]) REFERENCES [dbo].[Syn_Deal] ([Syn_Deal_Code])
 );
 
-
-

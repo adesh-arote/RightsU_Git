@@ -1,4 +1,6 @@
-﻿ALTER FUNCTION [dbo].[UFN_Check_Workflow]
+﻿
+
+CREATE FUNCTION [dbo].[UFN_Check_Workflow]
 (
 	@Module_Code INT, 
 	@Record_Code INT
@@ -38,7 +40,7 @@ Begin
 
 	IF(@Workflow_Code > 0)
 	BEGIN
-		IF((SELECT COUNT(*) FROM Workflow_Role WHERE Workflow_Code = @Workflow_Code) = 0)
+		IF((SELECT COUNT(*) FROM Workflow_Role WITH(NOLOCK) WHERE Workflow_Code = @Workflow_Code) = 0)
 			SET @RetValue = 'Y'
 		ELSE
 			SET @RetValue = 'N'
@@ -48,3 +50,4 @@ Begin
 
 	Return @RetValue 
 End
+

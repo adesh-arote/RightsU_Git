@@ -5,5 +5,3 @@
     CONSTRAINT [PK_IPR_APP_STATUS] PRIMARY KEY CLUSTERED ([IPR_App_Status_Code] ASC)
 );
 
-
-

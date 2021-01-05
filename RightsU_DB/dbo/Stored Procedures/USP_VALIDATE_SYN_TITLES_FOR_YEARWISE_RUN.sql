@@ -82,6 +82,6 @@ BEGIN
 	--return  @Title_Code
 	--Select 1 Title_Code
 	select * from #Temp
-	Drop Table #Temp
-
+	--Drop Table #Temp
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

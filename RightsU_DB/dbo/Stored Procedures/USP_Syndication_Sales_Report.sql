@@ -149,11 +149,17 @@ BEGIN
 	
 	SELECT * FROM #Temp_Platforms
 
-	DROP TABLE #Temp_Platforms
-	DROP TABLE #Temp_Selected_Platforms
-	DROP TABLE #Temp_Selected_Titles
-	DROP TABLE #Temp_Countrys
-	DROP TABLE #Temp_Territorys
+	--DROP TABLE #Temp_Platforms
+	--DROP TABLE #Temp_Selected_Platforms
+	--DROP TABLE #Temp_Selected_Titles
+	--DROP TABLE #Temp_Countrys
+	--DROP TABLE #Temp_Territorys
+
+	IF OBJECT_ID('tempdb..#Temp_Countrys') IS NOT NULL DROP TABLE #Temp_Countrys
+	IF OBJECT_ID('tempdb..#Temp_Platforms') IS NOT NULL DROP TABLE #Temp_Platforms
+	IF OBJECT_ID('tempdb..#Temp_Selected_Platforms') IS NOT NULL DROP TABLE #Temp_Selected_Platforms
+	IF OBJECT_ID('tempdb..#Temp_Selected_Titles') IS NOT NULL DROP TABLE #Temp_Selected_Titles
+	IF OBJECT_ID('tempdb..#Temp_Territorys') IS NOT NULL DROP TABLE #Temp_Territorys
 END
 
 /*

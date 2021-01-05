@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[USP_List_Amort_Rule]
 (
-	@StrSearch NVARCHAR(Max),	
+	@StrSearch NVarchar(Max),	
 	@PageNo Int,
 	@OrderByCndition Varchar(100),
 	@IsPaging Varchar(2),
@@ -51,6 +51,6 @@ BEGIN
 
 	PRINT @Sql
 	EXEC(@Sql)
-	Drop Table #temp;
-
+	--Drop Table #temp;
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

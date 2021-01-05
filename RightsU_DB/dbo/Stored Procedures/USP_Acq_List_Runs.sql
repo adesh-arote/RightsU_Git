@@ -1,4 +1,5 @@
-﻿alter Proc [dbo].[USP_Acq_List_Runs]
+﻿
+CREATE Proc [dbo].[USP_Acq_List_Runs]
 (
 	--DECLARE
 	@Deal_Code Int=23940,
@@ -19,7 +20,7 @@ Begin
 
 	--DECLARE
 	--@Deal_Code Int=15375,
-	--@Title_Codes VARCHAR(MAX)='24584',
+	--@Title_Codes VARCHAR(MAX)='24585',
 	--@Channel_Codes VARCHAR(MAX)='',
 	--@Acq_Deal_Run_Codes NVARCHAR(MAX)=''
 
@@ -80,4 +81,6 @@ Begin
      		 OR
 		  Acq_Deal_Run_Code  IN ((select number from dbo.fn_Split_withdelemiter(@Acq_Deal_Run_Codes,','))) 		
 	END
+
+	IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
 END

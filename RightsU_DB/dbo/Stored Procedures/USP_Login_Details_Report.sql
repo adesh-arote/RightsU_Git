@@ -50,5 +50,7 @@ BEGIN
 	END		
 	SELECT first_name,middle_Name,last_name,login_name,LoginTime,LogoutTime,security_group_name,duration 
 	FROM #Temp
-	DROP Table #Temp
+	--DROP Table #Temp
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

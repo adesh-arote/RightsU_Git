@@ -4,5 +4,3 @@
     CONSTRAINT [PK_IPR_TYPE] PRIMARY KEY CLUSTERED ([IPR_Type_Code] ASC)
 );
 
-
-

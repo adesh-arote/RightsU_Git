@@ -19,14 +19,11 @@
     [Last_Action_By]       INT             NULL,
     [Episode_End_To]       INT             NULL,
     [Duration_Restriction] DECIMAL (18, 2) NULL,
+    [Due_Diligence]        CHAR (1)        NULL,
     CONSTRAINT [PK_Acq_Deal_Movie] PRIMARY KEY NONCLUSTERED ([Acq_Deal_Movie_Code] ASC),
     CONSTRAINT [FK_Acq_Deal_Movie_Acq_Deal] FOREIGN KEY ([Acq_Deal_Code]) REFERENCES [dbo].[Acq_Deal] ([Acq_Deal_Code]),
     CONSTRAINT [FK_Acq_Deal_Movie_Title] FOREIGN KEY ([Title_Code]) REFERENCES [dbo].[Title] ([Title_Code])
 );
-
-
-
-
 
 
 GO

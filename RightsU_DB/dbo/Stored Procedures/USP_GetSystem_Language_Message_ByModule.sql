@@ -125,6 +125,11 @@ BEGIN
  SELECT System_Message_Code, System_Language_Message_Code, ISNULL(System_Module_Message_Code,0) AS System_Module_Message_Code, Message_Key, Form_Id,ISNULL(Default_Message_Desc,'') AS Default_Message_Desc,ISNULL(Message_Desc,'') AS Message_Desc          
  FROM #ResultData           
  ORDER BY Message_Desc            
+
+	IF OBJECT_ID('tempdb..#EmptyMessageDesc') IS NOT NULL DROP TABLE #EmptyMessageDesc
+	IF OBJECT_ID('tempdb..#IntelligenceData') IS NOT NULL DROP TABLE #IntelligenceData
+	IF OBJECT_ID('tempdb..#ResultData') IS NOT NULL DROP TABLE #ResultData
+	IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData
 END
 
 --exec USP_GetSystem_Language_Message_ByModule 0,'',2

@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Bind_Title_Platform_Tree_Report]
+﻿CREATE PROCEDURE [dbo].[USP_Bind_Title_Platform_Tree_Report]
 	@Business_Unit_Code INT,
 	@Search_Platform_Hiearachy VARCHAR(100)
 AS

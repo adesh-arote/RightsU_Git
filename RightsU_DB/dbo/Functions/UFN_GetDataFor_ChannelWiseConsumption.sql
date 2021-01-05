@@ -111,8 +111,7 @@ BEGIN
 				AND ADM.Acq_Deal_movie_code = @DMCode
 				ORDER BY DMRR.run_definition_group_code
 				
-				SELECT @Result = c.Color_RGB_Value 
-				FROM @RunDefinitionGrpCode_Tbl r 
+				SELECT @Result = c.Color_RGB_Value FROM @RunDefinitionGrpCode_Tbl r 
 				INNER JOIN @ColorCodes c on c.ID = r.ID
 				WHERE 1=1
 				AND r.RDGrpCode = @RunDefinitionGrpCode

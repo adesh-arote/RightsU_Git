@@ -25,26 +25,3 @@
     CONSTRAINT [FK_BMS_Schedule_Process_Data_Temp_Channel] FOREIGN KEY ([Channel_Code]) REFERENCES [dbo].[Channel] ([Channel_Code])
 );
 
-
-
-
-
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-Go
-
-GO

@@ -8,5 +8,3 @@
     CONSTRAINT [PK_IPR_CLASS] PRIMARY KEY CLUSTERED ([IPR_Class_Code] ASC)
 );
 
-
-

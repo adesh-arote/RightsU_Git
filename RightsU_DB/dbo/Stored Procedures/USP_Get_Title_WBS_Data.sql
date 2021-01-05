@@ -96,20 +96,8 @@ BEGIN
 	UNION
 	SELECT WBS_Code, WBS_Start_Date, WBS_End_Date, '' AS Acknowledgement_Status, '' AS Error_Details FROM #Temp_Previous_Data
 
-	IF OBJECT_ID('tempdb..#Temp_Data_Cur') IS NOT NULL
-	BEGIN
-		DROP TABLE #Temp_Data_Cur
-	END
-	IF OBJECT_ID('tempdb..#Temp_Data_Prev') IS NOT NULL
-	BEGIN
-		DROP TABLE #Temp_Data_Prev
-	END
-	IF OBJECT_ID('tempdb..#Temp_Current_Data') IS NOT NULL
-	BEGIN
-		DROP TABLE #Temp_Current_Data
-	END
-	IF OBJECT_ID('tempdb..#Temp_Previous_Data') IS NOT NULL
-	BEGIN
-		DROP TABLE #Temp_Previous_Data
-	END
+	IF OBJECT_ID('tempdb..#Temp_Current_Data') IS NOT NULL DROP TABLE #Temp_Current_Data
+	IF OBJECT_ID('tempdb..#Temp_Data_Cur') IS NOT NULL DROP TABLE #Temp_Data_Cur
+	IF OBJECT_ID('tempdb..#Temp_Data_Prev') IS NOT NULL DROP TABLE #Temp_Data_Prev
+	IF OBJECT_ID('tempdb..#Temp_Previous_Data') IS NOT NULL DROP TABLE #Temp_Previous_Data
 END

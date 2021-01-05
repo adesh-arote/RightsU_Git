@@ -11,5 +11,3 @@
     CONSTRAINT [PK_Additional_Expense] PRIMARY KEY CLUSTERED ([Additional_Expense_Code] ASC)
 );
 
-
-

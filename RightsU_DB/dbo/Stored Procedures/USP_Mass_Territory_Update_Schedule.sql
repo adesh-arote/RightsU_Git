@@ -3,7 +3,7 @@
 -- Create date: <22/1/2015>
 -- Description:	<Mass Territory Update Schedule Runs >
 -- =============================================
-alter PROCEDURE [dbo].[USP_Mass_Territory_Update_Schedule]
+CREATE PROCEDURE [dbo].[USP_Mass_Territory_Update_Schedule]
 	
 	--@UserCode int,
 	--@result int
@@ -279,6 +279,7 @@ BEGIN
 	DEALLOCATE CUR_SYN_MASS_UPDATE
 	
 	drop table #tmpSynDealMassUpdate
-
+	IF OBJECT_ID('tempdb..#tmpAcqDealMassUpdate') IS NOT NULL DROP TABLE #tmpAcqDealMassUpdate
+	IF OBJECT_ID('tempdb..#tmpSynDealMassUpdate') IS NOT NULL DROP TABLE #tmpSynDealMassUpdate
 	
 END

@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[Integration_Acq_Run_Yearwise] (
     [Integration_Acq_Run_Yearwise_Code] INT      IDENTITY (1, 1) NOT NULL,
     [Integration_Acq_Run_Code]          INT      NULL,
+    [Foreign_System_Code]               INT      NULL,
     [Start_Date]                        DATETIME NULL,
     [End_Date]                          DATETIME NULL,
     [No_Of_Runs]                        INT      NULL,
@@ -11,6 +12,4 @@
     CONSTRAINT [PK_Integration_Acq_Run_Yearwise] PRIMARY KEY CLUSTERED ([Integration_Acq_Run_Yearwise_Code] ASC),
     CONSTRAINT [FK_Integration_Acq_Run_Yearwise_Integration_Acq_Run] FOREIGN KEY ([Integration_Acq_Run_Code]) REFERENCES [dbo].[Integration_Acq_Run] ([Integration_Acq_Run_Code])
 );
-
-
 

@@ -13,5 +13,3 @@
     CONSTRAINT [PK_Territory] PRIMARY KEY CLUSTERED ([Territory_Code] ASC)
 );
 
-
-

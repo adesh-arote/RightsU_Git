@@ -31,8 +31,6 @@
 );
 
 
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = 'It contains ''D'' for ''Domestic'', ''I'' for ''International''', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IPR_REP', @level2type = N'COLUMN', @level2name = N'IPR_For';
 

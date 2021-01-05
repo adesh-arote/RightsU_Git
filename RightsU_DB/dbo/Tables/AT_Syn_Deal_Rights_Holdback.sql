@@ -13,5 +13,3 @@
     CONSTRAINT [FK_AT_Syn_Deal_Rights_Holdback_AT_Syn_Deal_Rights] FOREIGN KEY ([AT_Syn_Deal_Rights_Code]) REFERENCES [dbo].[AT_Syn_Deal_Rights] ([AT_Syn_Deal_Rights_Code])
 );
 
-
-

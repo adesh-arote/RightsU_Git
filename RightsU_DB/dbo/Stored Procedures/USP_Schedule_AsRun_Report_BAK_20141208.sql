@@ -5,7 +5,7 @@
 --    counters of Rights (number of runs), scheduled and actual  
 -- ============================================= 
  
-alter PROCEDURE [dbo].[USP_Schedule_AsRun_Report_BAK_20141208]
+CREATE PROCEDURE [dbo].[USP_Schedule_AsRun_Report_BAK_20141208]
 (
 	 @Title varchar(250),
 	 @IsShowAll varchar(10)

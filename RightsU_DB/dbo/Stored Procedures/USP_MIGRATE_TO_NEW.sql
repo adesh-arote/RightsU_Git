@@ -1987,6 +1987,11 @@ USP_MIGRATE_TO_NEW
 RETURN
 
 */
+
+	IF OBJECT_ID('tempdb..#Exclusive_Group') IS NOT NULL DROP TABLE #Exclusive_Group
+	IF OBJECT_ID('tempdb..#TempTableSimulcast') IS NOT NULL DROP TABLE #TempTableSimulcast
+	IF OBJECT_ID('tempdb..#TempTableStandalone') IS NOT NULL DROP TABLE #TempTableStandalone
+	IF OBJECT_ID('tempdb..#TempTableStandalone_New') IS NOT NULL DROP TABLE #TempTableStandalone_New
 END
 
 SET ANSI_NULLS ON

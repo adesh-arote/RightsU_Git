@@ -1,4 +1,4 @@
-﻿ALTER Procedure [dbo].[USP_Get_PlatformCodes_For_Ancillary]
+﻿CREATE Procedure [dbo].[USP_Get_PlatformCodes_For_Ancillary]
 	@Title_Codes Varchar(1000),
 	@Platform_Codes Varchar(MAX),
 	@Platform_Type Varchar(10),   ----- PL / TPL / ''
@@ -183,6 +183,10 @@ Begin
 
 		SELECT ISNULL( STUFF((SELECT DISTINCT ',' + CAST(PlatformCodes as varchar(max)) FROM #RequiredCodes FOR XML PATH('')), 1, 1, '') ,'') AS RequiredCodes
 	END
+
+	IF OBJECT_ID('tempdb..#AcquiredTitles') IS NOT NULL DROP TABLE #AcquiredTitles
+	IF OBJECT_ID('tempdb..#Deal_Rights_Lang') IS NOT NULL DROP TABLE #Deal_Rights_Lang
+	IF OBJECT_ID('tempdb..#RequiredCodes') IS NOT NULL DROP TABLE #RequiredCodes
 End
 
 /*

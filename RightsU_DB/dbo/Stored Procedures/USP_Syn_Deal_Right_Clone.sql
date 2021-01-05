@@ -729,4 +729,6 @@ BEGIN
 			END 
 			SELECT CAST(@New_Syn_Deal_Rights_Code AS NVARCHAR(MAX))  AS Syn_Deal_Rights_Code
 			PRINT'--=================================RIGHTS_CURSOR END========================================'
+
+			IF OBJECT_ID('tempdb..#temptitle') IS NOT NULL DROP TABLE #temptitle
 END

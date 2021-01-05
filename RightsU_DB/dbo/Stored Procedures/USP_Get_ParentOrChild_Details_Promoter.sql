@@ -108,6 +108,11 @@ BEGIN
 	SELECT  STUFF((SELECT ', ' + CAST(Promoter_Group_Code AS VARCHAR) FROM #Promoter_Group_Child FOR XML PATH('')),1,1,'') AS Promoter_Group_Codes
 
 	END
+
+	IF OBJECT_ID('tempdb..#Parent_Group') IS NOT NULL DROP TABLE #Parent_Group
+	IF OBJECT_ID('tempdb..#Promoter_Group') IS NOT NULL DROP TABLE #Promoter_Group
+	IF OBJECT_ID('tempdb..#Promoter_Group_Child') IS NOT NULL DROP TABLE #Promoter_Group_Child
+	IF OBJECT_ID('tempdb..#Promoter_Group_Parent') IS NOT NULL DROP TABLE #Promoter_Group_Parent
 END
 
 

@@ -11,5 +11,3 @@
     CONSTRAINT [FK_Workflow_Business_Unit] FOREIGN KEY ([Business_Unit_Code]) REFERENCES [dbo].[Business_Unit] ([Business_Unit_Code])
 );
 
-
-

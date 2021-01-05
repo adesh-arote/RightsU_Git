@@ -54,4 +54,9 @@ BEGIN
 	) AS A
 	GROUP BY Channel_Name, Music_Label_Name, Title_Name, Month_Year
 	SELECT Channel_Name, Music_Label_Name, Title_Name, Month_Year, Music_Track_Count FROM #TempData
+
+	IF OBJECT_ID('tempdb..#Channel_Temp') IS NOT NULL DROP TABLE #Channel_Temp
+	IF OBJECT_ID('tempdb..#MusicLabel_Temp') IS NOT NULL DROP TABLE #MusicLabel_Temp
+	IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData
+	IF OBJECT_ID('tempdb..#Title_Temp') IS NOT NULL DROP TABLE #Title_Temp
 END

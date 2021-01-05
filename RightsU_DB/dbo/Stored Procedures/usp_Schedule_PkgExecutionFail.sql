@@ -26,10 +26,10 @@ SET NOCOUNT ON;
 		------------ 3.0 START SEND EMAIL ON Package Fail ------------
 		BEGIN TRY
 			DECLARE @EmailMsg_New NVARCHAR(MAX)
-			SELECT @EmailMsg_New = Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'PkgFail' AND [Type] = 'S'
+			SELECT @EmailMsg_New = Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'PkgFail' and [Type] = 'S'
 
 			DECLARE @ChannelCode INT
-			SELECT @ChannelCode= ChannelCode FROM Upload_Files WHERE File_code = @FileCode 
+			select @ChannelCode= ChannelCode from Upload_Files Where File_code = @FileCode 
 			
 			INSERT INTO Email_Notification_Schedule ( File_Code, Channel_Code, Inserted_On, Email_Notification_Msg, IsMailSent )
 			VALUES( @FileCode, @ChannelCode, GETDATE(), @EmailMsg_New ,'N' )
@@ -50,6 +50,7 @@ SET NOCOUNT ON;
 			ERROR_MESSAGE() AS ERRORMESSAGE;
 		END CATCH
 		------------ 3.0 End SEND EMAIL ON Package Fail ------------
+    
     
 END
 

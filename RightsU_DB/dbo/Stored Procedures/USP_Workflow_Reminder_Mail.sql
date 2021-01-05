@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Workflow_Reminder_Mail] 
+﻿CREATE PROCEDURE [dbo].[USP_Workflow_Reminder_Mail] 
 -- =============================================
 -- Author:		Anchal Sikarwar
 -- Create date:	23-03-2017
@@ -435,6 +435,12 @@ BEGIN
 	CLOSE CurMail1;
 	DEALLOCATE CurMail1;
 	END
+	
+	IF OBJECT_ID('tempdb..#Email_Config_Alert') IS NOT NULL DROP TABLE #Email_Config_Alert
+	IF OBJECT_ID('tempdb..#Temp_UnApproved_Deals') IS NOT NULL DROP TABLE #Temp_UnApproved_Deals
+	IF OBJECT_ID('tempdb..#Temp_UnApproved_Syn_Deals') IS NOT NULL DROP TABLE #Temp_UnApproved_Syn_Deals
+	IF OBJECT_ID('tempdb..#TempAcq') IS NOT NULL DROP TABLE #TempAcq
+	IF OBJECT_ID('tempdb..#TempSyn') IS NOT NULL DROP TABLE #TempSyn
 END
 --select * from Acq_Deal where Deal_Workflow_Status='W'
 --select * from Syn_Deal where Deal_Workflow_Status='W'

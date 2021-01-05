@@ -37,13 +37,13 @@ BEGIN
 				Customer_Type, Vendor_Code, Vendor_Contact_Code, Sales_Agent_Code, Sales_Agent_Contact_Code, Entity_Code, Currency_Code, Exchange_Rate, 
 				Ref_No, Attach_Workflow, Deal_Workflow_Status, Work_Flow_Code, Is_Completed, Category_Code, Parent_AT_Syn_Deal_Code, Is_Migrated, 
 				Payment_Terms_Conditions, Deal_Tag_Code, Ref_BMS_Code, Remarks, Rights_Remarks, Payment_Remarks, 
-				Is_Active, Inserted_On, Inserted_By, Lock_Time, Last_Updated_Time, Last_Action_By, Business_Unit_Code, Deal_Complete_Flag)
+				Is_Active, Inserted_On, Inserted_By, Lock_Time, Last_Updated_Time, Last_Action_By, Business_Unit_Code, Deal_Complete_Flag, Deal_Segment_Code, Revenue_Vertical_Code )
 			SELECT 
 				Syn_Deal_Code, Deal_Type_Code, Other_Deal, Agreement_No, Version, Agreement_Date, Deal_Description, Status, Total_Sale, Year_Type, 
 				Customer_Type, Vendor_Code, Vendor_Contact_Code, Sales_Agent_Code, Sales_Agent_Contact_Code, Entity_Code, Currency_Code, Exchange_Rate, 
 				Ref_No, Attach_Workflow, Deal_Workflow_Status, Work_Flow_Code, Is_Completed, Category_Code, Parent_Syn_Deal_Code, Is_Migrated, 
 				Payment_Terms_Conditions, Deal_Tag_Code, Ref_BMS_Code, Remarks, Rights_Remarks, Payment_Remarks, 
-				Is_Active, Inserted_On, Inserted_By, Lock_Time, Last_Updated_Time, Last_Action_By, Business_Unit_Code, Deal_Complete_Flag
+				Is_Active, Inserted_On, Inserted_By, Lock_Time, Last_Updated_Time, Last_Action_By, Business_Unit_Code, Deal_Complete_Flag, Deal_Segment_Code, Revenue_Vertical_Code
 			FROM Syn_Deal WHERE Syn_Deal_Code = @Syn_Deal_Code
 			
 			/********************************  Holding identity of AT_Syn_Deal **************************************/

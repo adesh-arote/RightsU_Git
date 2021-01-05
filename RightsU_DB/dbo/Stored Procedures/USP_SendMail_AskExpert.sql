@@ -122,4 +122,5 @@ BEGIN
 		@body_format = 'HTML';    
 	END CATCH   
 	SELECT  @Result AS Result  
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

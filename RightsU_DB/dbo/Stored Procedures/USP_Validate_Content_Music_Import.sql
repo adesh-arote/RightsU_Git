@@ -156,7 +156,7 @@ BEGIN
 	BEGIN
 		UPDATE DM_Master_Import SET Status = 'N' where DM_Master_Import_Code = @DM_Master_Import_Code
 	END
-	drop table #Temp_Validate
+	--drop table #Temp_Validate
+
+	IF OBJECT_ID('tempdb..#Temp_Validate') IS NOT NULL DROP TABLE #Temp_Validate
 END
-
-

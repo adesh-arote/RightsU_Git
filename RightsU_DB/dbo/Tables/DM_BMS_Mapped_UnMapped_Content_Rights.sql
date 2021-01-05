@@ -53,5 +53,3 @@
     [Acq_Deal_Run_YearWise_Run_Code]             INT             NULL
 );
 
-
-

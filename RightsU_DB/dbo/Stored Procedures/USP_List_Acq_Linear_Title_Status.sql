@@ -1,5 +1,5 @@
 ﻿
-ALTER PROCEDURE [dbo].[USP_List_Acq_Linear_Title_Status]
+CREATE PROCEDURE [dbo].[USP_List_Acq_Linear_Title_Status]
 (
 	@Acq_Deal_Code INT
 )

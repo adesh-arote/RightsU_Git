@@ -948,6 +948,13 @@ BEGIN
 	END
 	SELECT * FROM #Error_Record
 	--New Change
+
+	IF OBJECT_ID('tempdb..#Error_Record') IS NOT NULL DROP TABLE #Error_Record
+	IF OBJECT_ID('tempdb..#FinalErrorResult') IS NOT NULL DROP TABLE #FinalErrorResult
+	IF OBJECT_ID('tempdb..#RCodeForHB') IS NOT NULL DROP TABLE #RCodeForHB
+	IF OBJECT_ID('tempdb..#RCodeForRunDef') IS NOT NULL DROP TABLE #RCodeForRunDef
+	IF OBJECT_ID('tempdb..#RCodeForRunPlatform') IS NOT NULL DROP TABLE #RCodeForRunPlatform
+	IF OBJECT_ID('tempdb..#RightCode') IS NOT NULL DROP TABLE #RightCode
+	IF OBJECT_ID('tempdb..#temp1') IS NOT NULL DROP TABLE #temp1
+	IF OBJECT_ID('tempdb..#temp2') IS NOT NULL DROP TABLE #temp2
 END
-
-

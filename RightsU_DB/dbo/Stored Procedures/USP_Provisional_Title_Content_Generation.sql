@@ -180,6 +180,10 @@ BEGIN
 		SET @ErrMessage = ERROR_MESSAGE()
 	END CATCH
 	SELECT @ErrMessage AS ErrorMessage
+
+	IF OBJECT_ID('tempdb..#TempCodes') IS NOT NULL DROP TABLE #TempCodes
+	IF OBJECT_ID('tempdb..#TempProDealTitle') IS NOT NULL DROP TABLE #TempProDealTitle
+	IF OBJECT_ID('tempdb..#TempTitleCodes') IS NOT NULL DROP TABLE #TempTitleCodes
 END
 
 --EXEC [USP_Gen_Pro_Title_Content] 2088

@@ -198,4 +198,7 @@ BEGIN
 		CASE WHEN ISNULL(Delete_Episode_Range, '') = '' THEN 'NA' ELSE Delete_Episode_Range END AS Delete_Episode_Range
 	FROM #TempResultData
 	PRINT '*********************** PROCESS END ***********************'
+
+	IF OBJECT_ID('tempdb..#TempAcqDealMovie') IS NOT NULL DROP TABLE #TempAcqDealMovie
+	IF OBJECT_ID('tempdb..#TempResultData') IS NOT NULL DROP TABLE #TempResultData
 END

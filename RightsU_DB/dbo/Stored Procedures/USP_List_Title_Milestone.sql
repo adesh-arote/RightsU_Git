@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE USP_List_Title_Milestone
+﻿ CREATE PROCEDURE USP_List_Title_Milestone
  (
  	@PageNo Int=0,            
  	@RecordCount Int out,            
@@ -64,9 +64,7 @@
 		END
 	SELECT Title_Milestone_Code,Title_Name,Talent_Name,Milestone_Nature_Name,Expiry_Date,Milestone,Action_Item,Is_Abandoned,Remarks FROM #TempTitleMilestoneList
 
---	DECLARE @E_Date DATETIME
---SELECT 0 AS Title_Milestone_Code ,'' AS Title_Name, '' AS Talent_Name, '' AS Milestone_Nature_Name,@E_Date AS Expiry_Date,'' AS Milestone,'' AS Action_Item,'' AS Is_Abandoned, '' AS Remarks 
-
+	IF OBJECT_ID('tempdb..#TempTitleMilestoneList') IS NOT NULL DROP TABLE #TempTitleMilestoneList
  END	
 
 

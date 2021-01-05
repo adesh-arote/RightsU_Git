@@ -11,5 +11,3 @@
     CONSTRAINT [PK_Channel_Category] PRIMARY KEY CLUSTERED ([Channel_Category_Code] ASC)
 );
 
-
-

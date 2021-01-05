@@ -47,7 +47,7 @@ BEGIN
 	INNER JOIN Syn_Deal_Rights_Title SDRT ON SDR.Syn_Deal_Rights_Code = SDRT.Syn_Deal_Rights_Code
 	INNER JOIN #SelectedTitles ST ON SDRT.Title_Code = ST.Title_Code AND SDRT.Episode_From = ST.Episode_From AND SDRT.Episode_To = ST.Episode_To
 	INNER JOIN Syn_Deal_Rights_Platform SDRP ON SDR.Syn_Deal_Rights_Code = SDRT.Syn_Deal_Rights_Code AND SDRT.Syn_Deal_Rights_Code = SDRP.Syn_Deal_Rights_Code
-	INNER JOIN Platform P ON SDRP.Platform_Code = P.Platform_Code AND  P.Is_No_Of_Run = 'Y'
+	INNER JOIN Platform P ON SDRP.Platform_Code = P.Platform_Code AND  P.Is_Applicable_Syn_Run = 'Y'
 	WHERE SD.Syn_Deal_Code = @Syn_Deal_Code
 	) AS Tbl
 	GROUP BY Platform_Code
@@ -59,5 +59,6 @@ BEGIN
 	END
 	ELSE
 		SELECT '' As Platform_Codes
-	
+
+	IF OBJECT_ID('tempdb..#SelectedTitles') IS NOT NULL DROP TABLE #SelectedTitles
 END

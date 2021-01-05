@@ -9,5 +9,3 @@
     CONSTRAINT [FK_IPR_Opp_Attachment_IPR_Opp] FOREIGN KEY ([IPR_Opp_Code]) REFERENCES [dbo].[IPR_Opp] ([IPR_Opp_Code])
 );
 
-
-

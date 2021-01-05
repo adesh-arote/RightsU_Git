@@ -108,13 +108,12 @@ BEGIN
 		AND CCR.Channel_Code = @Channel_Code
 		FOR XML PATH('')), 1, 1, '')
 		
-		--Delete Schedule From Temp Table which are already ignored because of simulcast.
 		SELECT @Parent_ChannelCode = ISNULL(C.Parent_Channel_Code,0) FROM Channel C WHERE C.Channel_Code = @Channel_Code
 		IF (ISNULL(@Parent_ChannelCode,0) > 0)
 		BEGIN
 			DELETE #Temp_Acq_Run_Right_Rule_Code FROM #Temp_Acq_Run_Right_Rule_Code T
 			INNER JOIN BV_Schedule_Transaction BV ON BV.Timeline_ID=T.TimeLine_ID
-			WHERE T.Is_Ignore='Y' AND T.Channel_Code=@Channel_Code AND BV.Play_Day=0 AND BV.Play_Run=0
+			WHERE T.Is_Ignore='Y' AND T.Channel_Code=25 AND BV.Play_Day=0 AND BV.Play_Run=0
 		END
 
 		INSERT INTO #Revert(Content_Channel_Run_Code,TimeLine_ID)
@@ -261,4 +260,11 @@ BEGIN
 		SELECT @ErMessage = 'Error in USP_BMS_Schedule_Revert : - ' +  ERROR_MESSAGE(),@ErSeverity = ERROR_SEVERITY(),@ErState = ERROR_STATE()
 		RAISERROR (@ErMessage,@ErSeverity,@ErState)
 	END CATCH
+
+	IF OBJECT_ID('tempdb..#Revert') IS NOT NULL DROP TABLE #Revert
+	IF OBJECT_ID('tempdb..#Temp_Acq_Run_No_Right_Rule_Code') IS NOT NULL DROP TABLE #Temp_Acq_Run_No_Right_Rule_Code
+	IF OBJECT_ID('tempdb..#Temp_Acq_Run_Right_Rule_Code') IS NOT NULL DROP TABLE #Temp_Acq_Run_Right_Rule_Code
+	IF OBJECT_ID('tempdb..#Temp_No_Right_Rule') IS NOT NULL DROP TABLE #Temp_No_Right_Rule
+	IF OBJECT_ID('tempdb..#Temp_R') IS NOT NULL DROP TABLE #Temp_R
+	IF OBJECT_ID('tempdb..#Temp_TimeLine_ID') IS NOT NULL DROP TABLE #Temp_TimeLine_ID
 END

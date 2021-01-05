@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[USPMHCueSheetValidation]    
+﻿CREATE PROCEDURE [dbo].[USPMHCueSheetValidation]   
 AS  
 -- =============================================
 -- Author:  Akshay Rane
@@ -86,10 +86,11 @@ BEGIN
 
 		DECLARE @RowNo_MH INT = 0, @frameLimit INT = 0, @RowCounter_MH INT = 0, @RowNo_Song INT = 0, @MHCueSheetCode INT = 0
 
-		DECLARE @MHCueSheetSongCode INT = 0, @TitleCode INT = 0, @RowCounter_Song INT = 0, @dealTypeCode INT = 0, @Title_Content_Code INT = 0, @Music_Title_Code INT = 0
+		DECLARE @MHCueSheetSongCode INT = 0, @TitleCode INT = 0, @RowCounter_Song INT = 0, @dealTypeCode VARCHAR(MAX)='', @Title_Content_Code INT = 0, @Music_Title_Code INT = 0
 
 		SELECT @frameLimit = CAST(Parameter_Value AS INT) FROM System_Parameter_New WHERE Parameter_Name = 'FrameLimit'
-		SELECT @dealTypeCode = Deal_Type_Code FROM Deal_Type WHERE Deal_Type_Name = 'Program'
+		--SELECT @dealTypeCode = Deal_Type_Code FROM Deal_Type WHERE Deal_Type_Name = 'Program'
+		SELECT @dealTypeCode = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'DealTypeCodeFor_AllowAssignMusic'
 		SELECT TOP 1 @RowNo_MH = RowNo_MH FROM #temp_MHCueSheet WHERE IsProcessed_MH = 'N'
 
 		DECLARE @status VARCHAR(2) = '', @from TIME = '00:00:00.0000', @to TIME = '00:00:00.0000', @duration VARCHAR(MAX) = '00:00:00.0000',
@@ -137,8 +138,8 @@ BEGIN
 			
 				--*********************************** WARNING STARTS ***********************************
 				PRINT 'Step 10 : WARNING Validation Starts.'
-
-				SELECT @TitleCode = Title_Code FROM Title WHERE  Deal_Type_Code = @dealTypeCode AND Title_Name COLLATE DATABASE_DEFAULT = 
+				
+				SELECT @TitleCode = Title_Code FROM Title WHERE  Deal_Type_Code IN (SELECT number FROM fn_Split_withdelemiter(@dealTypeCode, ',')) AND Title_Name COLLATE DATABASE_DEFAULT = 
 				(SELECT TitleName FROM #Temp_MHCueSheetSong WHERE MHCueSheetSongCode = @MHCueSheetSongCode) COLLATE DATABASE_DEFAULT
 
 				SELECT @Music_Title_Code = MT.Music_Title_Code FROM Music_Title MT WHERE MT.Is_Active = 'Y' AND MT.Music_Title_Name COLLATE DATABASE_DEFAULT = 
@@ -173,9 +174,17 @@ BEGIN
 						FROM MHCueSheetSong TV 
 						WHERE  TV.MHCueSheetSongCode = @MHCueSheetSongCode AND ISNULL(TV.TitleName, '') = ''
 					ELSE
-						UPDATE TV SET  TV.RecordStatus = 'W', TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '~') + 'MHSNNF~' -- Music Hub Show Name Not Found
-						FROM  MHCueSheetSong TV --#Temp_MHCueSheetSong TV 
-						WHERE  TV.MHCueSheetSongCode = @MHCueSheetSongCode
+						BEGIN
+							IF NOT EXISTS (Select * FROM Title_Content Where Episode_Title COLLATE DATABASE_DEFAULT IN (Select TitleName from MHCueSheetSong where MHCueSheetSongCode = @MHCueSheetSongCode))
+							BEGIN
+								UPDATE TV SET  TV.RecordStatus = 'W', TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '~') + 'MHSNNF~' -- Music Hub Episode No Is Invalid
+								FROM MHCueSheetSong TV --#Temp_MHCueSheetSong TV
+								WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
+							END
+						END
+						--UPDATE TV SET  TV.RecordStatus = 'W', TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '~') + 'MHSNNF~' -- Music Hub Show Name Not Found
+						--FROM  MHCueSheetSong TV --#Temp_MHCueSheetSong TV 
+						--WHERE  TV.MHCueSheetSongCode = @MHCueSheetSongCode
 
 					PRINT 'Step 12 B : Updating error which is Music Hub Show Name Not Found' 
 				END
@@ -193,9 +202,15 @@ BEGIN
 						FROM MHCueSheetSong TV 
 						WHERE  TV.MHCueSheetSongCode = @MHCueSheetSongCode AND ISNULL(TV.EpisodeNo , '') = ''
 					ELSE
-						UPDATE TV SET  TV.RecordStatus = 'W', TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '~') + 'MHENIV~' -- Music Hub Episode No Is Invalid
-						FROM MHCueSheetSong TV --#Temp_MHCueSheetSong TV
-						WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
+					--Added by rahul
+						BEGIN
+							IF NOT EXISTS (Select * FROM Title_Content Where Episode_Title COLLATE DATABASE_DEFAULT IN (Select TitleName from MHCueSheetSong where MHCueSheetSongCode = @MHCueSheetSongCode) AND Episode_No = (Select Episode_No from MHCueSheetSong where MHCueSheetSongCode = @MHCueSheetSongCode))
+							BEGIN
+								UPDATE TV SET  TV.RecordStatus = 'W', TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '~') + 'MHENIV~' -- Music Hub Episode No Is Invalid
+								FROM MHCueSheetSong TV --#Temp_MHCueSheetSong TV
+								WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
+							END
+						END
 
 					PRINT 'Step 12 C : Updating error which is Music Hub Episode No Is Invalid' 
 				END
@@ -218,6 +233,62 @@ BEGIN
 						WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
 
 					PRINT 'Step 12 D : Updating error which is Music Hub Music Title Not Found'
+				END
+
+				BEGIN
+				IF EXISTS (SELECT * FROM MHCueSheetSong TV WHERE  TV.MHCueSheetSongCode = @MHCueSheetSongCode AND ISNULL(TV.SongType, '') = '')
+					BEGIN
+						UPDATE TV SET  TV.RecordStatus = 'E',TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '') + 'MHSTB~' --Music Hub Song Type is Blank
+						FROM MHCueSheetSong TV 
+						WHERE  TV.MHCueSheetSongCode = @MHCueSheetSongCode 
+					END
+				ELSE IF Not Exists(select * from MHMusicSongType where SongType = (Select top 1 SongType from MHCueSheetSong where MHCueSheetSongCode = @MHCueSheetSongCode AND SongType IS NOT NULL))
+				BEGIN
+					DECLARE @SongType NVARCHAR(50)
+					SET @SongType = (Select top 1 SongType from MHCueSheetSong where MHCueSheetSongCode = @MHCueSheetSongCode)
+					INSERT INTO MHMusicSongType (SongType,IsActive) values (ISNULL(@SongType,''),'Y')
+				END
+				
+				BEGIN
+					DECLARE 
+					@MusicTrackName NVARCHAR(MAX),
+					@MovieAlbum NVARCHAR(MAX),
+					@MovieAlbumCode INT
+
+					SET @MusicTrackName = (Select TOP 1 MusicTrackName FROM MHCueSheetSong WHERE MHCueSheetSongCode = @MHCueSheetSongCode)
+					SET @MovieAlbum = (Select TOP 1 MovieAlbum FROM MHCueSheetSong WHERE MHCueSheetSongCode = @MHCueSheetSongCode)
+					SET @MovieAlbumCode = (Select Music_Album_Code from Music_Album where Music_Album_Name = (Select MovieAlbum from MHCueSheetSong Where MHCueSheetSongCode = @MHCueSheetSongCode))
+										
+					IF EXISTS (SELECT * FROM MHCueSheetSong TV WHERE  TV.MHCueSheetSongCode = @MHCueSheetSongCode AND ISNULL(TV.MovieAlbum, '') = '')
+						BEGIN
+							UPDATE TV SET  TV.RecordStatus = 'E',TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '') + 'MHMAB~' --Music Hub Music/Album is Blank
+							FROM MHCueSheetSong TV 
+							WHERE  TV.MHCueSheetSongCode = @MHCueSheetSongCode
+						END
+					ELSE IF NOT EXISTS(Select * FROM Music_Album where Music_Album_Name = @MovieAlbum) 
+						BEGIN
+							UPDATE TV SET  TV.RecordStatus = 'W', TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '~') + 'MHMANF~' -- Music Hub Movie/Album Not Found
+							FROM MHCueSheetSong TV --#Temp_MHCueSheetSong TV
+							WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
+						END
+					ELSE IF NOT EXISTS (SELECT * FROM Music_Title WHERE Music_Title_Name = @MusicTrackName AND Music_Album_Code = @MovieAlbumCode)
+						BEGIN
+							UPDATE TV SET  TV.RecordStatus = 'W', TV.ErrorMessage =  ISNULL(TV.ErrorMessage, '~') + 'MHMAMM~' -- Music Hub Movie/Album Does not match with track 
+							FROM MHCueSheetSong TV --#Temp_MHCueSheetSong TV
+							WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
+						END
+					ELSE
+						BEGIN
+							UPDATE TV SET  TV.MovieAlbumCode = @MovieAlbumCode
+							FROM MHCueSheetSong TV --#Temp_MHCueSheetSong TV
+							WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
+						END
+
+					PRINT 'Step 12 D : Updating error which is Movie/Album Not Found'
+
+				END
+
+
 				END
 				--select * from MHCueSheetSong WHERE MHCueSheetSongCode = @MHCueSheetSongCode
 
@@ -330,7 +401,7 @@ BEGIN
 						FROM  MHCueSheetSong TV --#Temp_MHCueSheetSong TV
 						WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
 
-						SET @status = 'E'
+						SET @status = 'E' 
 					END
 					UPDATE TV SET TV.TotalSec_D = ((@hh * 3600) + (@mm * 60) + @ss)
 					FROM  #Temp_MHCueSheetSong TV WHERE TV.MHCueSheetSongCode = @MHCueSheetSongCode
@@ -558,7 +629,26 @@ BEGIN
 				FROM MHCueSheetSong MS 
 				INNER JOIN @Music_Title MT on MT.MusicTitleCode = MS.MusicTitleCode
 				WHERE MS.MHCueSheetCode =  @MHCueSheetCode
-			
+
+				-------------------For Music Deal Not Approved------------------------------
+				--Ankit Akash Requirement changes
+				/*
+				INSERT INTO @Music_Title(MusicTitleCode)
+				(
+				SELECT Distinct MusicTitleCode FROM MHCueSheetSong WHERE MHCueSheetCode = @MHCueSheetCode
+				EXCEPT
+				SELECT DISTINCT MTL.Music_Title_Code FROM MHCueSheet MR
+				   INNER JOIN MHCueSheetSong MRD ON MR.MHCueSheetCode = MRD.MHCueSheetCode 
+				   INNER JOIN Music_Title_Label MTL ON MTL.Music_Title_Code = MRD.MusicTitleCode
+				   INNER JOIN Music_Deal MD ON MD.Music_Label_Code = MTL.Music_Label_Code  AND MD.Deal_Workflow_Status = 'A'
+				WHERE MR.MHCueSheetCode =  @MHCueSheetCode
+				)
+
+				UPDATE MS SET MS.RecordStatus = 'E', MS.ErrorMessage =  ISNULL(MS.ErrorMessage, '~') +  'MHMDNA~'  -- Music Hub Music Deal Not Approved
+				FROM MHCueSheetSong MS 
+				INNER JOIN @Music_Title MT on MT.MusicTitleCode = MS.MusicTitleCode
+				WHERE MS.MHCueSheetCode =  @MHCueSheetCode
+				*/
 				PRINT 'Step 6 : Insertion into @Title.'
 
 				INSERT INTO @Title(TitleCode)
@@ -608,6 +698,11 @@ BEGIN
 		,ERROR_LINE() AS ErrorLine  
 		,ERROR_MESSAGE() AS ErrorMessage;  
 	END CATCH
+
+	IF OBJECT_ID('tempdb..#temp_MHCueSheet') IS NOT NULL DROP TABLE #temp_MHCueSheet
+	IF OBJECT_ID('tempdb..#Temp_MHCueSheetSong') IS NOT NULL DROP TABLE #Temp_MHCueSheetSong
+	IF OBJECT_ID('tempdb..#Temp_Title_Content_Version') IS NOT NULL DROP TABLE #Temp_Title_Content_Version
+	IF OBJECT_ID('tempdb..#TempTitleContent') IS NOT NULL DROP TABLE #TempTitleContent
 END
 
 --EXEC USPMHCueSheetValidation

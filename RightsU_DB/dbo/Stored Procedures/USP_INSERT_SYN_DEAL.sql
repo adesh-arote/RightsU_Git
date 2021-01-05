@@ -1,4 +1,6 @@
-﻿CREATE PROCEDURE [dbo].[USP_INSERT_SYN_DEAL]
+﻿
+
+CREATE PROCEDURE [dbo].[USP_INSERT_SYN_DEAL]
 (	
 	@Deal_Type_Code INT ,
 	@Business_Unit_Code INT ,
@@ -37,7 +39,9 @@
 	@Inserted_By INT ,
 	@Lock_Time DATETIME ,
 	@Last_Updated_Time DATETIME ,
-	@Last_Action_By INT 
+	@Last_Action_By INT ,
+	@Deal_Segment_Code INT,
+	@Revenue_Vertical_Code INT
 )
 AS
 -- =============================================
@@ -85,7 +89,9 @@ INSERT INTO [Syn_Deal]
            ,[Inserted_By]
            ,[Lock_Time]
            ,[Last_Updated_Time]
-           ,[Last_Action_By])
+           ,[Last_Action_By]
+		   ,[Deal_Segment_Code]
+		   ,[Revenue_Vertical_Code])
      SELECT [dbo].[UFN_Auto_Genrate_Agreement_No]('S', @Agreement_Date, 0) [Agreement_No]
            ,@Deal_Type_Code
            ,@Business_Unit_Code
@@ -125,6 +131,8 @@ INSERT INTO [Syn_Deal]
            ,@Lock_Time
            ,GETDATE()
            ,@Last_Action_By
+		   ,@Deal_Segment_Code
+		   ,@Revenue_Vertical_Code
            
            SELECT Syn_Deal_Code,Agreement_No
 		   FROM Syn_Deal WHERE Syn_Deal_Code=SCOPE_IDENTITY()

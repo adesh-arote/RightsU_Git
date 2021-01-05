@@ -203,5 +203,5 @@ BEGIN
 	--DEALLOCATE curAvail	
 		
 	----COMMIT 
-	
+	IF OBJECT_ID('tempdb..#tmpCache') IS NOT NULL DROP TABLE #tmpCache
 END

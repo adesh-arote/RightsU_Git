@@ -11,10 +11,6 @@
 );
 
 
-
-
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'A- Album, M- Movie', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Music_Album', @level2type = N'COLUMN', @level2name = N'Album_Type';
 

@@ -91,6 +91,6 @@ Begin
  Insert InTo Music_Title_Search(Music_Title_Code, Masters_Value)      
  Select Music_Title_Code, Masters_Value From #Temp      
       
- Drop Table #Temp      
-      
+	--Drop Table #Temp      
+   IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp   
 End

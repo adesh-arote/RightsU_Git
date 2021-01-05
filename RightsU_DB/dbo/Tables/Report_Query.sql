@@ -13,7 +13,3 @@
     CONSTRAINT [PK_Report_Query] PRIMARY KEY CLUSTERED ([Query_Code] ASC)
 );
 
-
-
-
-

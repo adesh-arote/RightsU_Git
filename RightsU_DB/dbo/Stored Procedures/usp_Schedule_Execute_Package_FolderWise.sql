@@ -1,6 +1,6 @@
-﻿ALTER PROCEDURE [dbo].[usp_Schedule_Execute_Package_FolderWise]
+﻿CREATE PROCEDURE [dbo].[usp_Schedule_Execute_Package_FolderWise]
 (
-	@UserCode VARCHAR(10) = Null
+	@UserCode VARCHAR(10)
 )
 AS      
 BEGIN      
@@ -63,7 +63,7 @@ Steps:-
 				SET @SuccessFilePath = @FilePath_Cr + '\Success'
 				SET @NotSuccessFilePath = @FilePath_Cr + '\NotSuccess'			
 				
-				SELECT @PackagePath = parameter_value FROM system_parameter_new WHERE parameter_name = 'BV_Schedule_Pkg_FolderWise'
+				SELECT @PackagePath =     parameter_value FROM system_parameter_new WHERE parameter_name = 'BV_Schedule_Pkg_FolderWise'
 				--cd "C:\Program Files\Microsoft SQL Server\100\DTS\Binn\" DTEXEC.exe /F "E:\UTOAMS_Schedule_AsRun\UTOAMS_SSIS_Packages\BV_Schedule_Pkg_FolderWise_neo.dtsx" /De prathesh
 
 				PRINT  @PackagePath

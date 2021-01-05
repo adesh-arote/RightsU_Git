@@ -15,5 +15,3 @@
     CONSTRAINT [FK_AT_Syn_Deal_Attachment_Document_Type] FOREIGN KEY ([Document_Type_Code]) REFERENCES [dbo].[Document_Type] ([Document_Type_Code])
 );
 
-
-

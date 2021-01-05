@@ -12,20 +12,20 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE	@DM_Master_Import_Code INT  
+	DECLARE	@DM_Master_Import_Code INT ,@Sql NVARCHAR(1000),@DB_Name VARCHAR(1000); 
 	Select Top 1 @DM_Master_Import_Code = DM_Master_Import_Code From @Content_Music_Link_UDT    
 
 	INSERT INTO DM_Content_Music([DM_Master_Import_Code],[From],[To],[Duration],[From_Frame],[To_Frame],[Duration_Frame],[Is_Ignore],[Record_Status],[Music_Track],
-	[Title_Content_Code],[Version_Name],[Excel_Line_No],[Error_Tags])
-	SELECT  [DM_Master_Import_Code], [From], [To], [Duration],[From_Frame],  [To_Frame], [Duration_Frame], 'N','N', [Music_Track], [Title_Content_Code],
-	[Version_Name], [Excel_Line_No], '' As Error_Tags
-	FROM @Content_Music_Link_UDT  
+			[Title_Content_Code],[Version_Name],[Excel_Line_No],[Error_Tags])
+		SELECT  [DM_Master_Import_Code], [From], [To], [Duration],[From_Frame],  [To_Frame], [Duration_Frame], 'N','N', [Music_Track], [Title_Content_Code],
+		  [Version_Name], [Excel_Line_No], '' As Error_Tags
+	    FROM @Content_Music_Link_UDT  
 
 	/* Update Version Code */
 	UPDATE T SET T.Version_Code = V.Version_Code, T.Version_Name = V.Version_Name FROM DM_Content_Music T
 	INNER JOIN [Version] V ON UPPER(RTRIM(LTRIM(T.Version_Name)))
 	COLLATE SQL_Latin1_General_CP1_CI_AS = UPPER(RTRIM(LTRIM(V.Version_Name))) COLLATE SQL_Latin1_General_CP1_CI_AS 
-	AND LTRIM(RTRIM(T.Version_Name)) != '' 
+		AND LTRIM(RTRIM(T.Version_Name)) != '' 
 
 	/* Update Content Name */
 	UPDATE TMP SET TMP.Content_Name = CASE WHEN ISNULL(TC.Episode_Title, '') = '' THEN T.Title_Name ELSE TC.Episode_Title END,
@@ -71,11 +71,20 @@ BEGIN
 	--END
 	--ELSE
 	--BEGIN
-	IF EXISTS(SELECT Record_Status FROM DM_Content_Music WHERE ISNULL(RTRIM(LTRIM(Record_Status)),'') = 'E' AND DM_Master_Import_Code = @DM_Master_Import_Code)  
-	BEGIN
-		SELECT [Excel_Line_No], [Content_Name], [Episode_No], [Music_Track], [From], [To], [From_Frame], [To_Frame], [Duration], [Duration_Frame], Version_Name, [Error_Message]
-		FROM DM_Content_Music Where [Record_Status] = 'E'
-		UPDATE DM_Master_Import Set [Status] = 'E' where DM_Master_Import_Code  = @DM_Master_Import_Code
-	END
+		IF EXISTS(SELECT Record_Status FROM DM_Content_Music WHERE ISNULL(RTRIM(LTRIM(Record_Status)),'') = 'E' AND DM_Master_Import_Code = @DM_Master_Import_Code)  
+		BEGIN
+			SELECT [Excel_Line_No], [Content_Name], [Episode_No], [Music_Track], [From], [To], [From_Frame], [To_Frame], [Duration], [Duration_Frame], Version_Name, [Error_Message]
+			FROM DM_Content_Music Where [Record_Status] = 'E'
+			UPDATE DM_Master_Import Set [Status] = 'E' where DM_Master_Import_Code  = @DM_Master_Import_Code
+
+			DECLARE @File_Name VARCHAR(MAX)
+			SELECT @File_Name = File_Name FROM DM_Master_Import WHere DM_Master_Import_Code = @DM_Master_Import_Code AND [Status] = 'E'
+			INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+			SELECT GETDATE(),NULL,NULL,'USP_Content_Music_PI','Error in file: '+ @File_Name,'NA','NA','DB'
+
+			SELECT @sql = 'Error in file: '+ @File_Name
+			SELECT @DB_Name = DB_Name()
+			EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Content_Music_PI','AN','VN',@sql,'DB','IP','FR','TI'
+		END
 	--END
 END

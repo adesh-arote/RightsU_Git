@@ -1,5 +1,5 @@
 ﻿
-ALTER PROCEDURE [dbo].[USP_MODULE_RIGHTS]
+CREATE PROCEDURE [dbo].[USP_MODULE_RIGHTS]
 	@Module_Code INT =35,
 	@Security_Group_Code INT =1,
 	@Users_Code INT

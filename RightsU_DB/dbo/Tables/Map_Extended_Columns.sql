@@ -11,5 +11,3 @@
     CONSTRAINT [FK_Map_Extended_Columns_Extended_Columns_Value] FOREIGN KEY ([Columns_Value_Code]) REFERENCES [dbo].[Extended_Columns_Value] ([Columns_Value_Code])
 );
 
-
-

@@ -270,4 +270,11 @@ BEGIN
 	END
 
 	SELECT Display_Text AS DisplayText, Display_Value AS DisplayValue,PlatformCodes AS PlatformCodes FROM #temp1
+
+	IF OBJECT_ID('tempdb..#PlatformCodes') IS NOT NULL DROP TABLE #PlatformCodes
+	IF OBJECT_ID('tempdb..#RightCodes') IS NOT NULL DROP TABLE #RightCodes
+	IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
+	IF OBJECT_ID('tempdb..#temp1') IS NOT NULL DROP TABLE #temp1
+	IF OBJECT_ID('tempdb..#TitleCodes') IS NOT NULL DROP TABLE #TitleCodes
+	IF OBJECT_ID('tempdb..#TitleMovieCodes') IS NOT NULL DROP TABLE #TitleMovieCodes
 END

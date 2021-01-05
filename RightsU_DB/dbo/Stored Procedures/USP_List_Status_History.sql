@@ -1,7 +1,8 @@
-﻿--create PROCEDURE [dbo].[USP_List_Status_History]	
---	@Record_Code INT, 
---	@Module_Code INT
---AS
+﻿
+CREATE PROCEDURE [dbo].[USP_List_Status_History]	
+	@Record_Code INT, 
+	@Module_Code INT
+AS
 -- =============================================
 -- Author:		Sagar Mahajan
 -- Create date: 11-NOV-2014
@@ -9,11 +10,10 @@
 -- Last Updated by: Aditya A. Bandivadekar
 -- Last Change :  Added Version column in output. 
 -- =============================================
-
+--DECLARE 
+--@Record_Code INT = 1824,
+--@Module_Code INT = 35
 BEGIN	
-	DECLARE 
-	@Record_Code INT = 15432,
-	@Module_Code INT = 30
 	SET FMTONLY OFF
 	SET NOCOUNT ON;
 
@@ -27,7 +27,7 @@ BEGIN
 		SELECT 
 		ROW_NUMBER() OVER( ORDER BY MSH.Module_Status_Code ) AS 'MSH_Code',
 		MSH.Module_Status_Code as ID,
-		CAST( '' AS NVARCHAR(MAX)) AS [Version],
+		CAST(ISNULL(MSH.Version_No, ' ') as varchar(MAX)) AS [Version],
 		--MSH.Status,
 		CASE  
 				WHEN UPPER(RTRIM(LTRIM(ISNULL(MSH.[status],'')))) = 'C' THEN 'Created'
@@ -48,32 +48,32 @@ BEGIN
 		FROM Module_Status_History  MSH
 		INNER JOIN Users U ON MSH.status_changed_by = U.users_code
 		INNER JOIN Security_Group SG ON U.Security_Group_Code=SG.Security_Group_Code
-		INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code =MSH.Record_Code
+		--INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code =MSH.Record_Code
 		WHERE record_code = @Record_Code AND module_code = @Module_Code
 		--ORDER BY [Date] DESC
 
-		DECLARE @MSH_Code INT,  @Status VARCHAR(MAX), 	@Version_No INT = 1
+		--DECLARE @MSH_Code INT,  @Status VARCHAR(MAX), 	@Version_No INT = 1
 
-		DECLARE db_cursor CURSOR FOR 
-		SELECT MSH_Code , [Status]
-		FROM #Temp_Module_Status_History
+		--DECLARE db_cursor CURSOR FOR 
+		--SELECT MSH_Code , [Status]
+		--FROM #Temp_Module_Status_History
 	
-		OPEN db_cursor  
-		FETCH NEXT FROM db_cursor INTO @MSH_Code  ,@Status
+		--OPEN db_cursor  
+		--FETCH NEXT FROM db_cursor INTO @MSH_Code  ,@Status
 
-		WHILE @@FETCH_STATUS = 0  
-		BEGIN 
-			 IF (@Status = 'Amended')
-			 BEGIN
-			 	SET @Version_No = @Version_No + 1
-			 END
+		--WHILE @@FETCH_STATUS = 0  
+		--BEGIN 
+		--	 IF (@Status = 'Amended')
+		--	 BEGIN
+		--	 	SET @Version_No = @Version_No + 1
+		--	 END
 
-			 UPDATE TMSH SET [Version] =CAST( @Version_No AS NVARCHAR(MAX)) FROM #Temp_Module_Status_History TMSH WHERE MSH_Code = @MSH_Code
-			 FETCH NEXT FROM db_cursor INTO @MSH_Code , @Status
-		END 
+		--	 UPDATE TMSH SET [Version] =CAST( @Version_No AS NVARCHAR(MAX)) FROM #Temp_Module_Status_History TMSH WHERE MSH_Code = @MSH_Code
+		--	 FETCH NEXT FROM db_cursor INTO @MSH_Code , @Status
+		--END 
 
-		CLOSE db_cursor  
-		DEALLOCATE db_cursor 
+		--CLOSE db_cursor  
+		--DEALLOCATE db_cursor 
 
 		SELECT ID, [Version], [Status], [Date], [By], [Remarks] from #Temp_Module_Status_History ORDER BY [Date] DESC
 
@@ -107,7 +107,7 @@ BEGIN
 		ELSE IF(@Module_Code = 154)  
 		BEGIN
 			PRINT 'Music Exception Handling Module'
-			SET @dynamicQuery += 'SELECT U.users_code as ID,''Open'' AS [Status],
+			SET @dynamicQuery += 'SELECT U.users_code as ID,'''' as [Version],''Open'' AS [Status],
 						MSH.Status_Changed_On as [Date],U.login_name + '' (''+Security_Group_Name+ '')'' AS [By]  ,
 						MSH.Remarks AS [Remarks]
 						FROM Module_Status_History  MSH
@@ -129,6 +129,8 @@ BEGIN
 		EXEC (@dynamicQuery)
 		--SELECT 0 AS ID,'' AS [Version],'' AS [Status],GETDATE() AS [Date],'' AS [By], '' AS [Remarks] 
 	END
+
+	IF OBJECT_ID('tempdb..#Temp_Module_Status_History') IS NOT NULL DROP TABLE #Temp_Module_Status_History
 END
 
 

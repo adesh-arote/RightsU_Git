@@ -1,5 +1,5 @@
 ﻿
-Create Proc [dbo].[USP_Select_Acq_Deal_Sport_Language](@Acq_Deal_Sport_Code Int)
+CREATE Proc [dbo].[USP_Select_Acq_Deal_Sport_Language](@Acq_Deal_Sport_Code Int)
 As
 Begin
 
@@ -30,5 +30,7 @@ Begin
 	End
 
 	Select * From #temp 
-	Drop Table #temp
+	--Drop Table #temp
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 End

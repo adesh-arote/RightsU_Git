@@ -173,7 +173,7 @@ BEGIN
                     )      
            ),1,2,'''')) as Director      
            , [dbo].[UFN_Get_Title_Genre](T.Title_Code) as Genre, ISNULL(T.Title_Image,'' '') As Title_Image, T.Last_UpDated_Time, T.Inserted_On      
-           ,Case When T.Is_Active=''Y'' then ''Active'' Else ''Deactive'' END AS Is_Active, T.Deal_Type_Code, DT.Deal_Type_Name Tmp.Row_Num        
+           ,Case When T.Is_Active=''Y'' then ''Active'' Else ''Deactive'' END AS Is_Active, T.Deal_Type_Code, DT.Deal_Type_Name, Tmp.Row_Num        
     from Title T      
     INNER join Deal_Type DT on DT.Deal_Type_Code = T.Deal_Type_Code     
     LEFT join [Language] L on T.Title_Language_Code  = L.Language_Code   
@@ -189,7 +189,7 @@ BEGIN
  --order by ISNULL(tbl.Last_UpDated_Time,tbl.Inserted_On) DESC      
     PRINT @Sql      
     Exec(@Sql)      
-    Drop Table #Temp      
+    --Drop Table #Temp      
   
     --SELECT Title_Name ,      
     --          Original_Title      
@@ -202,11 +202,13 @@ BEGIN
     --   ,'asfgasgfhfgjfgjkghkgkgk' as Director      
     --            ,Title_Image      
     --            ,Is_Active      
-    --            ,Deal_Type_Code   
-	--			  ,'asdfdasdf' as Deal_Type_Name  
+    --            ,Deal_Type_Code      
     --          ,Synopsis      
     --            ,'asadsd' as Genre      
     --            from Titlea      
-         
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp         
+
 END
 
+--declare @RC INT 
+--EXEC USP_Title_List 0,'','',0,1,@RC,'Y',100,'',''

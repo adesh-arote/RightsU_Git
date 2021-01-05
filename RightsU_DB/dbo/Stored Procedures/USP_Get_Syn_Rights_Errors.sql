@@ -27,5 +27,6 @@ BEGIN
 	FROM	Syn_Deal_Rights_Error_Details 
 	WHERE Syn_Deal_Rights_Code In (SELECT Syn_Deal_Rights_Code FROM #Temp_Rigths)
 
-	DROP TABLE #Temp_Rigths
+	--DROP TABLE #Temp_Rigths
+	IF OBJECT_ID('tempdb..#Temp_Rigths') IS NOT NULL DROP TABLE #Temp_Rigths
 END

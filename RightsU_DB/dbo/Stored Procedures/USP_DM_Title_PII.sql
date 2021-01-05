@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_DM_Title_PII]
+﻿CREATE PROCEDURE [dbo].[USP_DM_Title_PII]
 	@DM_Import_UDT DM_Import_UDT READONLY,
 	@DM_Master_Import_Code Int,
 	@Users_Code Int
@@ -473,5 +473,10 @@ BEGIN
 	BEGIN
 		UPDATE DM_Master_Import SET [Status] = 'I' WHERE DM_Master_Import_Code = @DM_Master_Import_Code  
 	END
-END
 
+	IF OBJECT_ID('tempdb..#Temp_DM') IS NOT NULL DROP TABLE #Temp_DM
+	IF OBJECT_ID('tempdb..#Temp_DM_Title') IS NOT NULL DROP TABLE #Temp_DM_Title
+	IF OBJECT_ID('tempdb..#Temp_DM_Title_Ignore') IS NOT NULL DROP TABLE #Temp_DM_Title_Ignore
+	IF OBJECT_ID('tempdb..#Temp_Talent_Role') IS NOT NULL DROP TABLE #Temp_Talent_Role
+	IF OBJECT_ID('tempdb..#TempMasterLog') IS NOT NULL DROP TABLE #TempMasterLog
+END

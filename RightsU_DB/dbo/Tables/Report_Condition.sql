@@ -8,5 +8,3 @@
     CONSTRAINT [PK_Report_Condition] PRIMARY KEY CLUSTERED ([Report_Condition_Code] ASC)
 );
 
-
-

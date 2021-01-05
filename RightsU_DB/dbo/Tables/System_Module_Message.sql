@@ -12,7 +12,3 @@
     CONSTRAINT [FK_System_Module_Message_System_Module] FOREIGN KEY ([Module_Code]) REFERENCES [dbo].[System_Module] ([Module_Code])
 );
 
-
-
-
-

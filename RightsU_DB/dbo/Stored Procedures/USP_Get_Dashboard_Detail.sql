@@ -1,5 +1,5 @@
 ﻿
-ALTER PROCEDURE [dbo].[USP_Get_Dashboard_Detail]
+CREATE PROCEDURE [dbo].[USP_Get_Dashboard_Detail]
 (
 	--DECLARE 
 	@DashboardType varchar(10)='AE',
@@ -17,9 +17,9 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	--DECLARE 
-	--@DashboardType varchar(10)='SA',
+	--@DashboardType varchar(10)='AA',
 	--@SearchFor NVARCHAR(1000) ='',
-	--@User_Code INT = 143,
+	--@User_Code INT = 211,
 	--@DashboardDays INT=30
 	/**************************************Show Hide Deal View button on the basis of Rights******************************************/
 	DECLARE @UserSecCode  INT = 0,@Module_Code INT = 30,@Is_Deal_Rights CHAR(1)= 'N'

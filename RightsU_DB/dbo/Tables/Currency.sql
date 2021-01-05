@@ -13,5 +13,3 @@
     CONSTRAINT [PK_Currency] PRIMARY KEY CLUSTERED ([Currency_Code] ASC)
 );
 
-
-

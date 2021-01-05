@@ -72,4 +72,8 @@ BEGIN
 		VALUES (@Deal_Code ,35, 'N', 'R',GETDATE() ,NULL,NULL,@User_Code)
 	END
 	SELECT @ErrorMessage AS ErrorMessage
+
+	IF OBJECT_ID('tempdb..#CurrentVersionData') IS NOT NULL DROP TABLE #CurrentVersionData
+	IF OBJECT_ID('tempdb..#LinkedContent') IS NOT NULL DROP TABLE #LinkedContent
+	IF OBJECT_ID('tempdb..#PreviousVersionData') IS NOT NULL DROP TABLE #PreviousVersionData
 END

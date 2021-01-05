@@ -1,5 +1,5 @@
 ﻿
-alter PROCEDURE USP_Insert_Language_Deal_Log
+CREATE PROCEDURE USP_Insert_Language_Deal_Log
 (
 	@LanguageGroupCode INT,
 	@New_added_Language_Codes VARCHAR(MAX),

@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Syn_Deal_Clone_UDT] 
+﻿CREATE PROCEDURE [dbo].[USP_Syn_Deal_Clone_UDT] 
 (
 	@New_Syn_Deal_Code      INT, 
 	@Previous_Syn_Deal_Code INT, 
@@ -1107,4 +1107,6 @@ AS
 		SELECT Error_message() 
 	SELECT 'ERROR' AS Result 
 	END CATCH 
+
+	IF OBJECT_ID('tempdb..#tempTitle') IS NOT NULL DROP TABLE #tempTitle
 END

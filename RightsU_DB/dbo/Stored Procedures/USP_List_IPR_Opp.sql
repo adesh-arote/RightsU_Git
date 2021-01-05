@@ -100,11 +100,7 @@ BEGIN
 	PRINT @Sql
 	EXEC(@Sql)
 
-	IF ('TEMPDB..#Temp' IS NOT NULL)
-	BEGIN
-		DROP TABLE #Temp
-	END
-	
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 	--SELECT DISTINCT
 	--IOP.IPR_Opp_Code,
 	--IOP.[Version],

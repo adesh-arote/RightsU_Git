@@ -26,5 +26,3 @@
     CONSTRAINT [FK_AT_Acq_Deal_Cost_Royalty_Recoupment] FOREIGN KEY ([Royalty_Recoupment_Code]) REFERENCES [dbo].[Royalty_Recoupment] ([Royalty_Recoupment_Code])
 );
 
-
-

@@ -161,5 +161,7 @@ BEGIN
 		SET @ErrMessage = ERROR_MESSAGE()
 	END CATCH
 	SELECT @ErrMessage AS ErrorMessage
-END
 
+	IF OBJECT_ID('tempdb..#TempAcqDealMovie') IS NOT NULL DROP TABLE #TempAcqDealMovie
+	IF OBJECT_ID('tempdb..#TempTitleCodes') IS NOT NULL DROP TABLE #TempTitleCodes
+END

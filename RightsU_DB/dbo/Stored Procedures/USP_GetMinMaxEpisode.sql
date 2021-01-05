@@ -65,4 +65,6 @@ BEGIN
 
 	END
 	SELECT DealMovieCode, TitleCode, EpisodeFrom, EpisodeTo, MaxEpisodeFrom, MinEpisodeTo FROM #TempDealMovie
+
+	IF OBJECT_ID('tempdb..#TempDealMovie') IS NOT NULL DROP TABLE #TempDealMovie
 END

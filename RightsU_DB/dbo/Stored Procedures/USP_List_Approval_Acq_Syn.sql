@@ -1,4 +1,6 @@
-﻿CREATE PROCEDURE [dbo].[USP_List_Approval_Acq_Syn]
+﻿
+
+CREATE PROCEDURE [dbo].[USP_List_Approval_Acq_Syn]
 (
 	@StrSearch NVARCHAR(MAX),
 	@PageNo Int,
@@ -34,7 +36,7 @@ BEGIN
 		SET @PageNo = 1
 
 	DECLARE @currentUserGroupCode INT = 0
-	SELECT @currentUserGroupCode = Security_Group_Code FROM Users U WHERE U.Users_Code = @User_Code
+	SELECT @currentUserGroupCode = Security_Group_Code FROM Users U WITH(NOLOCK) WHERE U.Users_Code = @User_Code
 	
 	IF(OBJECT_ID('TEMPDB..#ApprovalList') IS NOT NULL)
 		DROP TABLE #ApprovalList
@@ -54,11 +56,11 @@ BEGIN
 	BEGIN
 		PRINT 'In Search'
 		INSERT INTO #ApprovalList(Deal_Code, Agreement_No, Vendor_Name, Last_Updated_Time, [Type])
-		SELECT DISTINCT AD.Acq_Deal_Code, AD.Agreement_No, V.Vendor_Name, AD.Last_Updated_Time, 'A' AS [Type] FROM Acq_Deal AD
-		INNER JOIN Acq_Deal_Movie ADM ON ADM.Acq_Deal_Code = AD.Acq_Deal_Code
-		INNER JOIN Vendor V ON V.Vendor_Code = AD.Vendor_Code
-		INNER JOIN Title T ON T.Title_Code = ADM.Title_Code
-		INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code = AD.Business_Unit_Code AND UBU.Users_Code = @User_Code
+		SELECT DISTINCT AD.Acq_Deal_Code, AD.Agreement_No, V.Vendor_Name, AD.Last_Updated_Time, 'A' AS [Type] FROM Acq_Deal AD WITH(NOLOCK)
+		INNER JOIN Acq_Deal_Movie ADM WITH(NOLOCK) ON ADM.Acq_Deal_Code = AD.Acq_Deal_Code
+		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = AD.Vendor_Code
+		INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = ADM.Title_Code
+		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = AD.Business_Unit_Code AND UBU.Users_Code = @User_Code
 		WHERE AD.Is_Active = 'Y' AND AD.Deal_Workflow_Status = 'W'
 		AND (
 			AD.Agreement_No LIKE '%' + @StrSearch + '%' OR
@@ -71,9 +73,9 @@ BEGIN
 	BEGIN
 		PRINT 'Not in Search'
 		INSERT INTO #ApprovalList(Deal_Code, Agreement_No, Vendor_Name, Last_Updated_Time, [Type])
-		SELECT DISTINCT AD.Acq_Deal_Code, AD.Agreement_No, V.Vendor_Name, AD.Last_Updated_Time, 'A' AS [Type] FROM Acq_Deal AD
-		INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code = AD.Business_Unit_Code AND UBU.Users_Code = @User_Code
-		INNER JOIN Vendor V ON V.Vendor_Code = AD.Vendor_Code
+		SELECT DISTINCT AD.Acq_Deal_Code, AD.Agreement_No, V.Vendor_Name, AD.Last_Updated_Time, 'A' AS [Type] FROM Acq_Deal AD WITH(NOLOCK)
+		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = AD.Business_Unit_Code AND UBU.Users_Code = @User_Code
+		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = AD.Vendor_Code
 		WHERE AD.Is_Active = 'Y' AND AD.Deal_Workflow_Status = 'W' 
 		ORDER BY AD.Last_Updated_Time DESC
 	END
@@ -88,7 +90,7 @@ BEGIN
 	)
 	
 	UPDATE AL SET AL.RowNo = UR.RowNo FROM #ApprovalList AL
-	INNER JOIN UpdatedRowNo UR ON UR.Deal_Code = AL.Deal_Code AND AL.[Type] = 'A'
+	INNER JOIN UpdatedRowNo UR WITH(NOLOCK) ON UR.Deal_Code = AL.Deal_Code AND AL.[Type] = 'A'
 
 	SELECT @RecordCount = Count(*) From #ApprovalList WHERE  [Type] = 'A'
 	If(@IsPaging = 'Y')
@@ -105,11 +107,11 @@ BEGIN
 	BEGIN
 		PRINT 'In Search'
 		INSERT INTO #ApprovalList(Deal_Code, Agreement_No, Vendor_Name, Last_Updated_Time, [Type])
-		SELECT DISTINCT SD.Syn_Deal_Code, SD.Agreement_No, V.Vendor_Name, SD.Last_Updated_Time, 'S' AS [Type] FROM Syn_Deal SD
-		INNER JOIN Syn_Deal_Movie SDM ON SDM.Syn_Deal_Code = SD.Syn_Deal_Code
-		INNER JOIN Vendor V ON V.Vendor_Code = SD.Vendor_Code
-		INNER JOIN Title T ON T.Title_Code = SDM.Title_Code
-		INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code = SD.Business_Unit_Code AND UBU.Users_Code = @User_Code
+		SELECT DISTINCT SD.Syn_Deal_Code, SD.Agreement_No, V.Vendor_Name, SD.Last_Updated_Time, 'S' AS [Type] FROM Syn_Deal SD WITH(NOLOCK)
+		INNER JOIN Syn_Deal_Movie SDM WITH(NOLOCK) ON SDM.Syn_Deal_Code = SD.Syn_Deal_Code
+		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = SD.Vendor_Code
+		INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = SDM.Title_Code
+		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = SD.Business_Unit_Code AND UBU.Users_Code = @User_Code
 		WHERE SD.Is_Active = 'Y' AND SD.Deal_Workflow_Status = 'W'
 		AND (
 			SD.Agreement_No LIKE '%' + @StrSearch + '%' OR
@@ -122,9 +124,9 @@ BEGIN
 	BEGIN
 		PRINT 'Not in Search'
 		INSERT INTO #ApprovalList(Deal_Code, Agreement_No, Vendor_Name, Last_Updated_Time, [Type])
-		SELECT DISTINCT SD.Syn_Deal_Code, SD.Agreement_No, V.Vendor_Name, SD.Last_Updated_Time, 'S' AS [Type] FROM Syn_Deal SD
-		INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code = SD.Business_Unit_Code AND UBU.Users_Code = @User_Code
-		INNER JOIN Vendor V ON V.Vendor_Code = SD.Vendor_Code
+		SELECT DISTINCT SD.Syn_Deal_Code, SD.Agreement_No, V.Vendor_Name, SD.Last_Updated_Time, 'S' AS [Type] FROM Syn_Deal SD WITH(NOLOCK)
+		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = SD.Business_Unit_Code AND UBU.Users_Code = @User_Code
+		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = SD.Vendor_Code
 		WHERE SD.Is_Active = 'Y' AND SD.Deal_Workflow_Status = 'W' 
 		ORDER BY SD.Last_Updated_Time DESC
 	END
@@ -139,7 +141,7 @@ BEGIN
 	)
 	
 	UPDATE AL SET AL.RowNo = UR.RowNo FROM #ApprovalList AL
-	INNER JOIN UpdatedRowNo UR ON UR.Deal_Code = AL.Deal_Code AND AL.[Type] = 'S'
+	INNER JOIN UpdatedRowNo UR WITH(NOLOCK) ON UR.Deal_Code = AL.Deal_Code AND AL.[Type] = 'S'
 
 	SELECT @RecordCount = Count(*) From #ApprovalList WHERE  [Type] = 'S'
 	If(@IsPaging = 'Y')
@@ -156,10 +158,10 @@ BEGIN
 	BEGIN
 		PRINT 'In Search'
 		INSERT INTO #ApprovalList(Deal_Code, Agreement_No, Vendor_Name, Title_Name, Last_Updated_Time, [Type])
-		SELECT DISTINCT MD.Music_Deal_Code, MD.Agreement_No, V.Vendor_Name, ML.Music_Label_Name, MD.Last_Updated_Time, 'M' AS [Type] FROM Music_Deal MD
-		INNER JOIN Vendor V ON V.Vendor_Code = MD.Primary_Vendor_Code
-		INNER JOIN Music_Label ML ON ML.Music_Label_Code = MD.Music_Label_Code
-		INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code = MD.Business_Unit_Code AND UBU.Users_Code = @User_Code
+		SELECT DISTINCT MD.Music_Deal_Code, MD.Agreement_No, V.Vendor_Name, ML.Music_Label_Name, MD.Last_Updated_Time, 'M' AS [Type] FROM Music_Deal MD WITH(NOLOCK)
+		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = MD.Primary_Vendor_Code
+		INNER JOIN Music_Label ML WITH(NOLOCK) ON ML.Music_Label_Code = MD.Music_Label_Code
+		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = MD.Business_Unit_Code AND UBU.Users_Code = @User_Code
 		WHERE MD.Deal_Workflow_Status = 'W'
 		AND (
 			MD.Agreement_No LIKE '%' + @StrSearch + '%' OR
@@ -172,10 +174,10 @@ BEGIN
 	BEGIN
 		PRINT 'Not in Search'
 		INSERT INTO #ApprovalList(Deal_Code, Agreement_No, Vendor_Name, Title_Name, Last_Updated_Time, [Type])
-		SELECT DISTINCT MD.Music_Deal_Code, MD.Agreement_No, V.Vendor_Name, ML.Music_Label_Name, MD.Last_Updated_Time, 'M' AS [Type] FROM Music_Deal MD
-		INNER JOIN Vendor V ON V.Vendor_Code = MD.Primary_Vendor_Code
-		INNER JOIN Music_Label ML ON ML.Music_Label_Code = MD.Music_Label_Code
-		INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code = MD.Business_Unit_Code AND UBU.Users_Code = @User_Code
+		SELECT DISTINCT MD.Music_Deal_Code, MD.Agreement_No, V.Vendor_Name, ML.Music_Label_Name, MD.Last_Updated_Time, 'M' AS [Type] FROM Music_Deal MD WITH(NOLOCK)
+		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = MD.Primary_Vendor_Code
+		INNER JOIN Music_Label ML WITH(NOLOCK) ON ML.Music_Label_Code = MD.Music_Label_Code
+		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = MD.Business_Unit_Code AND UBU.Users_Code = @User_Code
 		WHERE MD.Deal_Workflow_Status = 'W'
 		ORDER BY MD.Last_Updated_Time DESC
 	END
@@ -190,7 +192,7 @@ BEGIN
 	)
 	
 	UPDATE AL SET AL.RowNo = UR.RowNo FROM #ApprovalList AL
-	INNER JOIN UpdatedRowNo UR ON UR.Deal_Code = AL.Deal_Code AND AL.[Type] = 'M'
+	INNER JOIN UpdatedRowNo UR WITH(NOLOCK) ON UR.Deal_Code = AL.Deal_Code AND AL.[Type] = 'M'
 
 	SELECT @RecordCount = Count(*) From #ApprovalList WHERE  [Type] = 'M'
 	If(@IsPaging = 'Y')
@@ -201,4 +203,8 @@ BEGIN
 
 	SELECT Deal_Code, Vendor_Name, Title_Name, Agreement_No, CONVERT(VARCHAR(11), Last_Updated_Time,106) AS Last_Updated_Time, [Type] 
 	FROM #ApprovalList ORDER BY Last_Updated_Time DESC
+	
+	IF OBJECT_ID('tempdb..#ApprovalList') IS NOT NULL DROP TABLE #ApprovalList
 END
+
+

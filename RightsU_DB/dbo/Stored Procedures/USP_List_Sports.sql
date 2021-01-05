@@ -215,12 +215,19 @@ BEGIN
 	--Select * From  #Temp_ST
 	--Select * From  #Temp_SM
 
-	Drop Table #Temp_Sport_Rights
-	Drop Table #TempTIT
-	Drop Table #Temp_MB
-	Drop Table #Temp_OB
-	Drop Table #Temp_ST
-	Drop Table #Temp_SM
+	--Drop Table #Temp_Sport_Rights
+	--Drop Table #TempTIT
+	--Drop Table #Temp_MB
+	--Drop Table #Temp_OB
+	--Drop Table #Temp_ST
+	--Drop Table #Temp_SM
+
+	IF OBJECT_ID('tempdb..#Temp_MB') IS NOT NULL DROP TABLE #Temp_MB
+	IF OBJECT_ID('tempdb..#Temp_OB') IS NOT NULL DROP TABLE #Temp_OB
+	IF OBJECT_ID('tempdb..#Temp_SM') IS NOT NULL DROP TABLE #Temp_SM
+	IF OBJECT_ID('tempdb..#Temp_Sport_Rights') IS NOT NULL DROP TABLE #Temp_Sport_Rights
+	IF OBJECT_ID('tempdb..#Temp_ST') IS NOT NULL DROP TABLE #Temp_ST
+	IF OBJECT_ID('tempdb..#TempTIT') IS NOT NULL DROP TABLE #TempTIT
 END
 
 /*

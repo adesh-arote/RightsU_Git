@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[BMS_Asset] (
     [BMS_Asset_Code]          DECIMAL (38)   IDENTITY (1, 1) NOT NULL,
     [BMS_Deal_Code]           INT            NULL,
-    [BMS_Asset_Ref_Key]       INT            NULL,
+    [BMS_Asset_Ref_Key]       DECIMAL (38)   NULL,
     [Duration]                TIME (7)       NULL,
     [RU_Title_Code]           INT            NULL,
     [Episode_No]              INT            NULL,
@@ -23,6 +23,4 @@
     [IS_Consider]             CHAR (1)       DEFAULT ('Y') NULL,
     CONSTRAINT [PK_BV_Asset] PRIMARY KEY CLUSTERED ([BMS_Asset_Code] ASC)
 );
-
-
 

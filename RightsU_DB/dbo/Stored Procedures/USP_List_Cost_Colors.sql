@@ -31,5 +31,6 @@ BEGIN
 			,1,7,'') Titles
 	FROM #Temp p;
 	
-	DROP TABLE #Temp
+	--DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END

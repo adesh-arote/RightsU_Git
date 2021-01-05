@@ -1,5 +1,5 @@
 ﻿
-CREATE PROCEDURE USP_Generate_Avail_Data
+CREATE PROCEDURE [dbo].[USP_Generate_Avail_Data]
 AS
 -- =============================================
 -- Author:		Abhaysingh N. Rajpurohit

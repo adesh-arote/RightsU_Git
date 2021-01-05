@@ -37,8 +37,6 @@
 );
 
 
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IPR_Opp', @level2type = N'COLUMN', @level2name = N'IPR_Opp_Code';
 

@@ -42,12 +42,6 @@
 );
 
 
-
-
-
-
-
-
 GO
 CREATE NONCLUSTERED INDEX [IX_Acq_Deal_Run_1]
     ON [dbo].[Acq_Deal_Run]([Acq_Deal_Code] ASC);

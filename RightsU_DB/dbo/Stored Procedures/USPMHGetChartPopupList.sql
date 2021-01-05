@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE  USPMHGetChartPopupList
+﻿CREATE PROCEDURE  USPMHGetChartPopupList
 	@MHRequestCode  VARCHAR(MAX) = '',
 	@ProdHouseCode VARCHAR(MAX) = '',
 	@DealTypeCode VARCHAR(MAX) = '',
@@ -87,8 +87,10 @@ BEGIN
 	WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)  
 
 	SELECT ShowName, EpisodeNo , MusicTrackName, MovieAlbumName, Remarks, MovieLanguage, YearOfRelease  from #TempRightsPagingData  
+	
+	IF OBJECT_ID('tempdb..#TempMHRequestCode') IS NOT NULL DROP TABLE #TempMHRequestCode
+	IF OBJECT_ID('tempdb..#TempRightsPagingData') IS NOT NULL DROP TABLE #TempRightsPagingData
 END 
-
 
 --CREATE PROCEDURE  USPMHGetChartPopupList
 --	@MHRequestCode  VARCHAR(MAX) = '',
@@ -106,6 +108,3 @@ END
 
 --	SELECT '' as ShowName,'' as EpisodeNo ,'' as MusicTrackName,'' as MovieAlbumName,'' as Remarks,'' as MovieLanguage,'' as YearOfRelease  
 --END 
-
---DECLARE @RC INT  
---EXEC USPMHGetChartPopupList '','','','','','',1,10, @RC

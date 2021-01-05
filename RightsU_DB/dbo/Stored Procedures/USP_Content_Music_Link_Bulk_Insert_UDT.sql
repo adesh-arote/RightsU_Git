@@ -421,4 +421,9 @@ BEGIN
 	
 	SELECT [Row_No], [Content_Name], [Episode_No], [Music_Track], [TC_IN], [TC_OUT],[From_Frame], [To_Frame], [Duration], [Duration_Frame], Version_Name, [Error_Message]
 	FROM #TempErrorDetails
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#TempContentStatusHistory') IS NOT NULL DROP TABLE #TempContentStatusHistory
+	IF OBJECT_ID('tempdb..#TempErrorDetails') IS NOT NULL DROP TABLE #TempErrorDetails
+	IF OBJECT_ID('tempdb..#TempWithoutDistinct') IS NOT NULL DROP TABLE #TempWithoutDistinct
 END

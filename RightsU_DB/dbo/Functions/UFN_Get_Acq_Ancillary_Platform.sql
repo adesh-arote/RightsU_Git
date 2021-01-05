@@ -1,4 +1,4 @@
-﻿CREATE FUNCTION [dbo].[UFN_Get_Acq_Ancillary_Platform]
+﻿CREATE Function [dbo].[UFN_Get_Acq_Ancillary_Platform]
 (
 	@Acq_Deal_Ancillary_Code INT
 )
@@ -15,4 +15,5 @@ BEGIN
 	, 1, 1, '')                    
 
 	RETURN @PlatformName                       
-END      
+
+END

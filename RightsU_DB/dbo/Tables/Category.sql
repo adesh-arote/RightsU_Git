@@ -16,7 +16,3 @@
     CONSTRAINT [PK_Category] PRIMARY KEY CLUSTERED ([Category_Code] ASC)
 );
 
-
-
-
-

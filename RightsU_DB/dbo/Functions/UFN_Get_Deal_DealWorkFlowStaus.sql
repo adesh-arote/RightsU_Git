@@ -1,4 +1,4 @@
-﻿ALTER FUNCTION [dbo].[UFN_Get_Deal_DealWorkFlowStaus](@Acq_Deal_Code INT, @Deal_Workflow_Status VARCHAR(50), @User_Code INT)
+﻿CREATE FUNCTION [dbo].[UFN_Get_Deal_DealWorkFlowStaus](@Acq_Deal_Code INT, @Deal_Workflow_Status VARCHAR(50), @User_Code INT)
 RETURNS NVARCHAR(MAX)
 AS
 -- =============================================
@@ -196,6 +196,20 @@ BEGIN
 	IF (@Deal_Workflow_Status='WA' )
 	BEGIN
 		SET @Final_Status ='Waiting (Archive)'
+
+		SELECT @Security_Group_Name = sg.Security_Group_Name FROM
+			(SELECT  TOP 1 primary_user_code= CASE 
+			WHEN role_level=0  THEN 0 ELSE group_code--primary_user_code --changed by anita for allowing security grup to approve deal
+			END FROM Module_Workflow_Detail with(nolock)
+			WHERE module_code=30 AND record_code = @Acq_Deal_Code AND is_done='N' 
+			ORDER BY role_level)tbl 
+			--INNER JOIN Users u ON u.Users_Code = tbl.primary_user_code
+			INNER JOIN Security_Group sg with(nolock) ON sg.Security_Group_Code = tbl.primary_user_code
+
+			if(isnull(@Security_Group_Name,'')!='')
+				set @ConcatName= ' from ' +@Security_Group_Name
+
+			SET @Final_Status = @Final_Status + @ConcatName
 	END
 	IF (@Deal_Workflow_Status='AR' )
 	BEGIN

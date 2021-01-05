@@ -83,7 +83,8 @@
 	         
 		 --TC.Title_Content_Code = @Title_Content_Code OR @Title_Content_Code = 0   
 		  SELECT * FROM #tempA ORDER BY RU_PROGRAM_FOREIGN_ID DESC
-	
+
+	IF OBJECT_ID('tempdb..#tempA') IS NOT NULL DROP TABLE #tempA
  --Select   
  -- '' AS BMS_Content_Code,  
  -- 0 AS [RU_PROGRAM_FOREIGN_ID],  
@@ -109,8 +110,4 @@
  -- '' AS RU_PROGRAM_UPDATE_USER,  
  -- '' AS RU_PROGRAM_CREATE_USER,  
  -- '' AS RU_PROGRAM_IS_ARCHVIED  
-END  
-
-
-
-
+END

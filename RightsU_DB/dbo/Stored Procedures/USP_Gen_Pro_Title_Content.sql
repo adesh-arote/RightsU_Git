@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Gen_Pro_Title_Content]
+﻿CREATE PROCEDURE [dbo].[USP_Gen_Pro_Title_Content]
 (
 --DECLARE
 	@Pro_Deal_Code INT,
@@ -55,7 +55,7 @@ BEGIN
 				PRINT 'Provisional_Deal_Title_Code : ' + CAST(@ProDealTitleCode AS VARCHAR)
 				PRINT 'Title_Code : ' + CAST(@TitleCode AS VARCHAR)
 				PRINT 'Episode Range : ' + CAST(@EpisodeFrom AS VARCHAR) + ' To ' + CAST(@EpisodeTo AS VARCHAR)
-				/* START : Logic For Insert/Update/Delete in Title_Content and in Title_Content_Mapping */
+				/* START : Logic For Insert/Update/Delete in Title_Content and in Acq_Deal_Movie_Content_Mapping */
 
 				SELECT @MaxScheduledEpisodeNo = NULL, @Episode_No = 0
 				SELECT @MaxScheduledEpisodeNo = MAX(MaxEpisode_Id) FROM 
@@ -122,16 +122,14 @@ BEGIN
 					BEGIN
 						INSERT INTO Title_Content_Mapping(Provisional_Deal_Title_Code, Title_Content_Code)
 						VALUES(@ProDealTitleCode, @Title_Content_Code)
-						PRINT '  Data added successfully in Title_Content_Mapping table'
+						PRINT '  Data added successfully in Acq_Deal_Movie_Content table'
 					END
-					--ELSE
-					--	PRINT '  Data already exists in Title_Content_Mapping table'
+					ELSE
+						PRINT '  Data already exists in Acq_Deal_Movie_Content table'
 
 					SET @Episode_No = @Episode_No + 1
 					PRINT '  -------------------------------------'
 				END
-
-				PRINT 'SAYALI 1'
 
 				DELETE CSH FROM Title_Content TC
 				INNER JOIN Content_Status_History CSH ON CSH.Title_Content_Code = TC.Title_Content_Code
@@ -139,38 +137,26 @@ BEGIN
 					SELECT DISTINCT Title_Content_Code FROM Title_Content_Mapping
 				) 
 				--AND Title_Code IN (SELECT TitleCode FROM #TempTitleCodes)
-				PRINT 'SAYALI 2'
 
-				Create Table #TempCodes
-				(
-					Title_Content_Code Int
-				)
+				DELETE TCV FROM Title_Content TC
+				INNER JOIN Title_Content_Version TCV ON TCV.Title_Content_Code = TC.Title_Content_Code
+				WHERE ISNULL(TC.Ref_BMS_Content_Code, '') = '' AND TC.Title_Content_Code NOT IN (
+					SELECT DISTINCT Title_Content_Code FROM Title_Content_Mapping
+				) 
+				--AND Title_Code IN (SELECT TitleCode FROM #TempTitleCodes)
 
-				Insert InTo #TempCodes
-				Select Distinct Title_Content_Code From Title_Content Where ISNULL(Ref_BMS_Content_Code, '') = '' AND Title_Content_Code NOT IN (
+				DELETE FROM Title_Content WHERE ISNULL(Ref_BMS_Content_Code, '') = '' AND Title_Content_Code NOT IN (
 					SELECT DISTINCT Title_Content_Code FROM Title_Content_Mapping 
-				) AND Title_Content_Code NOT IN (
-					SELECT DISTINCT Title_Content_Code FROM Content_Music_Link
-				) And Title_Code = @TitleCode
+				) 
+				--AND Title_Code IN (SELECT TitleCode FROM #TempTitleCodes)
 
-				DELETE FROM Title_Content_Version
-				WHERE Title_Content_Code IN (SELECT Title_Content_Code FROM #TempCodes) 
+				/* END : Logic For Insert/Update/Delete in Title_Content and in Acq_Deal_Movie_Content_Mapping */
 
-				PRINT 'SAYALI 3'
-				DELETE FROM Title_Content 
-				WHERE Title_Content_Code IN (SELECT DISTINCT Title_Content_Code FROM #TempCodes ) 
-
-				Drop Table #TempCodes
-
-				/* END : Logic For Insert/Update/Delete in Title_Content and in Title_Content_Mapping */
-				PRINT 'SAYALI 4'
 				/*Fetch Next Row*/
 				UPDATE #TempProDealTitle SET Is_Processed = 'Y' WHERE Provisional_Deal_Title_Code = @ProDealTitleCode
 				SELECT  @ProDealTitleCode = 0, @EpisodeFrom = 0, @EpisodeTo = 0, @TitleCode = 0
 				SELECT TOP 1 @ProDealTitleCode = Provisional_Deal_Title_Code, @TitleCode = Title_Code, @EpisodeFrom = Episode_From, @EpisodeTo = Episode_To
 				FROM #TempProDealTitle WHERE Is_Processed = 'N'
-				PRINT 'SAYALI 5'
-
 				PRINT '==========================================================='
 			END
 		END
@@ -180,6 +166,9 @@ BEGIN
 		SET @ErrMessage = ERROR_MESSAGE()
 	END CATCH
 	SELECT @ErrMessage AS ErrorMessage
+
+	IF OBJECT_ID('tempdb..#TempProDealTitle') IS NOT NULL DROP TABLE #TempProDealTitle
+	IF OBJECT_ID('tempdb..#TempTitleCodes') IS NOT NULL DROP TABLE #TempTitleCodes
 END
 
 --EXEC [USP_Gen_Pro_Title_Content] 2088

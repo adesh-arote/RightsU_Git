@@ -31,10 +31,10 @@ SET NOCOUNT ON;
     
     ------------ 2.0 START SEND EMAIL ON FILE REJECTION ------------
     DECLARE @Channel_Code INT
-    Select @Channel_Code = ISNULL(ChannelCode,0) FROM Upload_Files WHERE File_code = @FileCode
+    Select @Channel_Code = ISNULL(ChannelCode,0) from Upload_Files WHERE File_code = @FileCode
 	
 	DECLARE @EmailMsg NVARCHAR(MAX)
-    SELECT @EmailMsg = Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'ImproperFile' AND [Type] = 'S'
+    SELECT @EmailMsg = Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'ImproperFile' and [Type] = 'S'
     
     INSERT INTO Email_Notification_Schedule
 	(

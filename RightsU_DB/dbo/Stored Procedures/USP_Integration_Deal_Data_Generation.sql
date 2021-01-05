@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Integration_Deal_Data_Generation]      
+﻿CREATE PROCEDURE [dbo].[USP_Integration_Deal_Data_Generation]      
 AS      
 /*==============================================      
 Author:   Anchal Sikarwar      
@@ -357,97 +357,11 @@ BEGIN
   SET @Error_Desc =  @Error_Desc + ';ErrorLine : '+ CAST(ERROR_LINE() AS VARCHAR) + ' ;'               
   PRINT CAST (@Error_Desc AS VARCHAR)      
  END CATCH       
+
+	IF OBJECT_ID('tempdb..#Temp_Acq_Deal_Run') IS NOT NULL DROP TABLE #Temp_Acq_Deal_Run
+	IF OBJECT_ID('tempdb..#Temp_Acq_Deal_Run_Channel') IS NOT NULL DROP TABLE #Temp_Acq_Deal_Run_Channel
+	IF OBJECT_ID('tempdb..#Temp_Acq_Deal_Run_Yearwise') IS NOT NULL DROP TABLE #Temp_Acq_Deal_Run_Yearwise
+	IF OBJECT_ID('tempdb..#Temp_Deal_Data') IS NOT NULL DROP TABLE #Temp_Deal_Data
+	IF OBJECT_ID('tempdb..#Temp_Integration_Title') IS NOT NULL DROP TABLE #Temp_Integration_Title
+	IF OBJECT_ID('tempdb..#Temp_Min_Max_Rights_Date') IS NOT NULL DROP TABLE #Temp_Min_Max_Rights_Date
 END
-GO
-
---DROP TABLE Integration_Acq_Run_Yearwise
---DROP TABLE Integration_Acq_Run_Channel
---DROP Table Integration_Acq_Run
---DROP TABLE Integration_Title
-
-
---CREATE Table Integration_Title(
---Integration_Title_Code INT		IDENTITY (1, 1) NOT NULL,
---Title_Code INT				NULL,
---Foreign_System_Code INT			NULL,
---Title_Name NVARCHAR(1000)		NULL,
---Duration Decimal				NULL,
---Year_Of_Production INT			NULL,
---Deal_Type_Code INT       		NULL,
---Original_Dub CHAR(1)			NULL,
---Title_Language_Code	INT 		NULL,
---Process_Date DateTime			NULL,
---Inserted_On	DateTime			NULL,
---Record_Status CHAR(1)			NULL,
---CONSTRAINT [PK_Integration_Title] PRIMARY KEY CLUSTERED ([Integration_Title_Code] ASC)
---)
---GO
---CREATE TABLE Integration_Acq_Run(
---Integration_Acq_Run_Code INT IDENTITY (1, 1) NOT	NULL,
---Acq_Deal_Run_Code INT								NULL,
---Foreign_System_Code INT							NULL,
---Integration_Title_Code INT						NULL,
---Run_Type CHAR(1)									NULL,
---No_Of_Runs INT									NULL,
---Is_Yearwise_Definition CHAR(1)					NULL,
---Is_Rule_Right CHAR(1)								NULL,
---Right_Rule_Code INT								NULL,
---Repeat_Within_Days_Hrs CHAR(1)					NULL,
---No_Of_Days_Hrs INT								NULL,
---Is_Channel_Definition_Rights CHAR(1)				NULL,
---Primary_Channel_Code INT							NULL,
---Run_Definition_Type CHAR(1)						NULL,
---Prime_Start_Time TIME (7)							NULL,
---Prime_End_Time TIME (7)							NULL,
---Off_Prime_Start_Time TIME (7)						NULL,
---Off_Prime_End_Time TIME (7)						NULL,
---Time_Lag_Simulcast TIME (7)						NULL,
---Prime_Run INT										NULL,
---Off_Prime_Run INT									NULL,
---Repeat_On_Day VARCHAR(100)						NULL,
---Rights_Start_Date DATETIME						NULL,
---Rights_End_Date DATETIME							NULL,
---Acq_Deal_Code INT									NULL,
---Deal_Description VARCHAR(1000)					NULL,
---Licensor_Code INT									NULL,
---Title_Type CHAR(1)								NULL,
---Process_Date DATETIME								NULL,
---Inserted_On DATETIME								NULL,
---Record_Status CHAR(1)								NULL,
---Is_Archive CHAR(1)								NULL,
---CONSTRAINT [PK_Integration_Acq_Run] PRIMARY KEY CLUSTERED ([Integration_Acq_Run_Code] ASC),
---CONSTRAINT [FK_Integration_Acq_Run_Integration_Title] FOREIGN KEY ([Integration_Title_Code]) REFERENCES [dbo].[Integration_Title] ([Integration_Title_Code])
---)
---GO
---CREATE TABLE Integration_Acq_Run_Channel(
---Integration_Acq_Run_Channel_Code INT IDENTITY (1, 1) NOT	NULL,
---Integration_Acq_Run_Code INT,
-----Foreign_System_Code INT									NULL,
---Channel_Code INT											NULL,
---Min_Runs INT												NULL,
---Max_Runs INT												NULL,
---Process_Date DATETIME										NULL,
---Inserted_On DATETIME										NULL,
---Record_Status CHAR(1)										NULL,
---Is_Archive CHAR(1)										NULL,
---CONSTRAINT [PK_Integration_Acq_Run_Channel] PRIMARY KEY CLUSTERED ([Integration_Acq_Run_Channel_Code] ASC),
---CONSTRAINT [FK_Integration_Acq_Run_Channel_Integration_Acq_Run] FOREIGN KEY ([Integration_Acq_Run_Code]) REFERENCES [dbo].[Integration_Acq_Run] ([Integration_Acq_Run_Code])
---)
---GO
---CREATE TABLE Integration_Acq_Run_Yearwise(
---Integration_Acq_Run_Yearwise_Code INT IDENTITY (1, 1) NOT NULL,
---Integration_Acq_Run_Code INT,
-----Foreign_System_Code INT									NULL,
---Start_Date DATETIME										NULL,
---End_Date DATETIME											NULL,
---No_Of_Runs INT											NULL,
---Process_Date DATETIME										NULL,
---Inserted_On DATETIME										NULL,
---Record_Status CHAR(1)										NULL,
---Is_Archive CHAR(1)										NULL,
---CONSTRAINT [PK_Integration_Acq_Run_Yearwise] PRIMARY KEY CLUSTERED ([Integration_Acq_Run_Yearwise_Code] ASC),
---CONSTRAINT [FK_Integration_Acq_Run_Yearwise_Integration_Acq_Run] FOREIGN KEY ([Integration_Acq_Run_Code]) REFERENCES [dbo].[Integration_Acq_Run] ([Integration_Acq_Run_Code])
---)     
-
---ALTER Table BMS_Process_Deals
---ADD Int_Record_Status CHAR(1)

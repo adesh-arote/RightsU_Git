@@ -1,4 +1,4 @@
-﻿ALTER Function [dbo].[UFN_Get_Deal_IsComplete](@Acq_Deal_Code Int)
+﻿CREATE Function [dbo].[UFN_Get_Deal_IsComplete](@Acq_Deal_Code Int)
 Returns Varchar(20)
 As
 -- =============================================

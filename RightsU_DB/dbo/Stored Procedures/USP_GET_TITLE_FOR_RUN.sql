@@ -1,5 +1,5 @@
 ﻿--[USP_GET_TITLE_FOR_RUN] 4152
-alter PROCEDURE [dbo].[USP_GET_TITLE_FOR_RUN]
+CREATE PROCEDURE [dbo].[USP_GET_TITLE_FOR_RUN]
 	@ACQ_DEAL_CODE int
 AS
 -- =============================================

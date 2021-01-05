@@ -57,10 +57,10 @@ BEGIN
 		BEGIN
 			DROP TABLE #TempSchedule_Item_Log_Time
 		END
-		--IF OBJECT_ID('tempdb..#TEMP_BV_Schedule') IS NOT NULL
-		--BEGIN
-		--	DROP TABLE #TEMP_BV_Schedule
-		--END
+		IF OBJECT_ID('tempdb..#TEMP_BV_Schedule') IS NOT NULL
+		BEGIN
+			DROP TABLE #TEMP_BV_Schedule
+		END
 	END
 	 /************************CREATE TEMP TABLES *********************/
 	BEGIN
@@ -122,15 +122,13 @@ BEGIN
 	DECLARE @Is_Error CHAR(1) = 'N' ,@Error_Desc VARCHAR(MAX) = '',@Email_Notification_Msg_Code INT = 0, @BMS_Schedule_Log_Code_CV INT = 0, @Channel_Code_CV INT,
 	@Order_For_schedule_CV INT = 0, @BMS_Process_UDT BMS_Process_UDT, @Date_Time DATETIME 	
 	
-	--Channelwise Process
 	DECLARE CR_BMS_Schedule_Process_Data_Temp CURSOR FOR 
-		SELECT DISTINCT --BSPDT.BMS_Schedule_Log_Code, 
-		BSPDT.Channel_Code, C.Order_For_schedule FROM BMS_Schedule_Process_Data_Temp BSPDT
+		SELECT DISTINCT BSPDT.Channel_Code, C.Order_For_schedule FROM BMS_Schedule_Process_Data_Temp BSPDT
 		INNER JOIN Channel C ON C.Channel_Code = BSPDT.Channel_Code
 		WHERE ISNULL(Record_Status,'P') = 'P' ORDER BY C.Order_For_schedule 
 	OPEN CR_BMS_Schedule_Process_Data_Temp
-	FETCH NEXT FROM CR_BMS_Schedule_Process_Data_Temp INTO --@BMS_Schedule_Log_Code_CV,
-	@Channel_Code_CV,@Order_For_schedule_CV --, @Date_Time
+	FETCH NEXT FROM CR_BMS_Schedule_Process_Data_Temp INTO 
+	@Channel_Code_CV, @Order_For_schedule_CV
 	WHILE @@FETCH_STATUS<>-1
 	BEGIN
 		IF(@@FETCH_STATUS<>-2)
@@ -150,17 +148,15 @@ BEGIN
 				--So We Update LogDate
 
 				UPDATE BMS_Schedule_Process_Data_Temp SET Record_Status = 'W',Log_Date = CASE WHEN  ISNULL(Date_Time,'') <> '' THEN  CAST(Date_Time AS DATE)  ELSE  Log_Date END
-				WHERE Channel_Code  = @Channel_Code_CV AND ISNULL(Record_Status,'P') = 'P' --AND BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code_CV
+				WHERE Channel_Code  = @Channel_Code_CV AND ISNULL(Record_Status,'P') = 'P'
 
 				/************************Update into BMS_Schedule_Process_Data_Temp  *************************/
-				--Update TitleCode in BMS_Schedule_Process_Data_Temp where asset is found
+
 				UPDATE BSPDT SET BSPDT.Title_Code = BA.RU_Title_Code
 				FROM BMS_Schedule_Process_Data_Temp BSPDT
 				INNER JOIN BMS_Asset BA ON BSPDT.BMS_Asset_Ref_Key = ISNULL(BA.BMS_Asset_Ref_Key,0)
 				WHERE BSPDT.Channel_Code = @Channel_Code_CV AND BSPDT.Record_Status = 'W' AND ISNULL(BSPDT.BMS_Asset_Ref_Key,0) > 0
-				--AND BSPDT.BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code_CV
 
-				--Update Content_Channel_Run_Code in BMS_Schedule_Process_Data_Temp for updating schedule count in Content_Channel_Run and Process Schedule
 				UPDATE BSPDT SET BSPDT.Content_Channel_Run_Code = CCR.Content_Channel_Run_Code
 				FROM BMS_Schedule_Process_Data_Temp BSPDT
 				INNER JOIN BMS_Asset BA ON BSPDT.BMS_Asset_Ref_Key = ISNULL(BA.BMS_Asset_Ref_Key,0)
@@ -168,6 +164,8 @@ BEGIN
 				INNER JOIN Content_Channel_Run CCR ON CCR.Title_Content_Code = TC.Title_Content_Code AND ISNULL(CCR.Is_Archive, 'N') = 'N'
 				AND CCR.Channel_Code = @Channel_Code_CV AND (CAST(CAST(BSPDT.Date_Time AS DATETIME2) AS DATETIME) BETWEEN CCR.Rights_Start_Date AND CCR.Rights_End_Date)
 				WHERE BSPDT.Channel_Code = @Channel_Code_CV AND BSPDT.Record_Status = 'W' AND ISNULL(BSPDT.BMS_Asset_Ref_Key,0) > 0
+
+				
 				
 
 				--UPDATE BSPDT3 SET BSPDT3.Date_Time=
@@ -190,8 +188,6 @@ BEGIN
 
 				
 				-- TEST and Implement - Adesh
-
-				--Update Last Schedule Datetime Of current Timeline_ID in BMS_Schedule_Process_Data_Temp in all last schedules
 				UPDATE t1 SET t1.Date_Time=
 				(
 					Select Top 1 Date_Time From BMS_Schedule_Process_Data_Temp t2 Where t2.Timeline_ID = t1.Timeline_ID And t2.Record_Status <> 'W' 
@@ -222,14 +218,21 @@ BEGIN
 				)
 				------ Check and implement - Adesh
 
-				/************************* Insert into #UnMapped_Titles***************************/
-				--When Assets are not Found
+				UPDATE BSPDT SET BSPDT.Content_Channel_Run_Code = 
+				( SELECT TOP 1 CCR.Content_Channel_Run_Code FROM Content_Channel_Run CCR WHERE CCR.Title_Content_Code = TC.Title_Content_Code 
+				AND ISNULL(CCR.Is_Archive, 'N') = 'N' AND CCR.Channel_Code = @Channel_Code_CV )
+				FROM BMS_Schedule_Process_Data_Temp BSPDT
+				INNER JOIN BMS_Asset BA ON BSPDT.BMS_Asset_Ref_Key = ISNULL(BA.BMS_Asset_Ref_Key,0)
+				INNER JOIN Title_Content TC ON TC.Ref_BMS_Content_Code = BSPDT.BMS_Asset_Ref_Key
+				WHERE BSPDT.Channel_Code = @Channel_Code_CV AND BSPDT.Record_Status = 'W' AND ISNULL(BSPDT.BMS_Asset_Ref_Key,0) > 0
+				AND BSPDT.Content_Channel_Run_Code IS NULL
+
+				/************************* Insert into #UnMapped_Titles***************************/				
 				INSERT INTO  #UnMapped_Titles(BMS_Asset_Ref_Key, BMS_Schedule_Process_Data_Temp_Code, Timeline_ID)
 				SELECT DISTINCT TBSPD.BMS_Asset_Ref_Key, TBSPD.BMS_Schedule_Process_Data_Temp_Code, TBSPD.Timeline_ID FROM BMS_Schedule_Process_Data_Temp TBSPD 
 				WHERE ISNULL(TBSPD.Title_Code,0) = 0  AND Record_Status = 'W' AND ISNULL(BMS_Asset_Ref_Key,0) > 0
 				AND TBSPD.Channel_Code = @Channel_Code_CV
 				
-				--Delete Duplicates Timeline Id's
 				Delete From #UnMapped_Titles where Timeline_ID NOT IN 
 				(
 					select Timeline_ID from 
@@ -241,7 +244,6 @@ BEGIN
 
 				-- check and confirm - Adesh
 
-				--insert data in BV_HouseId_Data to show in BV_Mapping Screen
 				INSERT INTO BV_HouseId_Data(
 					BMS_Schedule_Process_Data_Temp_Code, InsertedOn,Is_Mapped, IsProcessed,Program_Episode_ID,
 					[Type]
@@ -300,71 +302,42 @@ BEGIN
 				END				
 				/*********************************Step 2 Check BMS Asset id exist or not (BMS_Asset Table)*/
 				
-				--IF OBJECT_ID('tempdb..#TEMP_BV_Schedule') IS NOT NULL
-				--BEGIN
-				--	DROP TABLE #TEMP_BV_Schedule
-				--END
+				IF OBJECT_ID('tempdb..#TEMP_BV_Schedule') IS NOT NULL
+				BEGIN
+					DROP TABLE #TEMP_BV_Schedule
+				END
+				SELECT DISTINCT Timeline_ID INTO #TEMP_BV_Schedule FROM BMS_Schedule_Process_Data_Temp 
+				WHERE Channel_Code  = @Channel_Code_CV AND ISNULL(Record_Status,'P') = 'P'
 
-				--SELECT DISTINCT Timeline_ID INTO #TEMP_BV_Schedule FROM BMS_Schedule_Process_Data_Temp 
-				--WHERE Channel_Code  = @Channel_Code_CV AND ISNULL(Record_Status,'P') = 'P'
+				UPDATE BMS_Schedule_Process_Data_Temp SET Record_Status = 'W'
+				WHERE Channel_Code  = @Channel_Code_CV AND ISNULL(Record_Status,'P') = 'P'
 
-				---???
-				--UPDATE BMS_Schedule_Process_Data_Temp SET Record_Status = 'W'
-				--WHERE Channel_Code  = @Channel_Code_CV AND ISNULL(Record_Status,'P') = 'P'
-				
-
-				--SELECT BSPDT.Timeline_ID,MAX(BSPDT.BMS_Schedule_Process_Data_Temp_Code) BMS_Schedule_Process_Data_Temp_Code from BMS_Schedule_Process_Data_Temp BSPDT 
-				--INNER JOIN 		
-				--(select DISTINCT T.BMS_Asset_Ref_Key, ISNULL( (select MAX(CAST(A.Schedule_Item_Log_Time AS DATETIME)) From BV_Schedule_Transaction A 
-				--where A.Program_Episode_ID = T.BMS_Asset_Ref_Key AND A.Channel_Code = @Channel_Code_CV AND (A.IsIgnore = 'N'  OR (A.Play_Day = 0 ANd A.Play_Run = 0))
-				--AND CAST(A.Schedule_Item_Log_Time AS DATETIME) < X.Date_Time 
-				--AND A.Timeline_ID NOT IN (select Timeline_ID from BMS_Schedule_Process_Data_Temp WHERE Record_Status='W')
-				--),X.Date_Time ) AS  Schedule_Item_Log_Time from BMS_Schedule_Process_Data_Temp T INNER JOIN
-
-				--(select BMS_Asset_Ref_Key, Min(CAST(CAST(Date_Time AS DATETIME2) AS DATETIME)) AS Date_Time from BMS_Schedule_Process_Data_Temp 
-				--where ISNULL(Record_Status,'')='W' AND Channel_Code  = @Channel_Code_CV
-				--Group By BMS_Asset_Ref_Key) AS X
-				--	ON T.BMS_Asset_Ref_Key = X.BMS_Asset_Ref_Key AND X.Date_Time = CAST(CAST(T.Date_Time AS DATETIME2) AS DATETIME)
-				 
-				--	) AS Y
-				--ON BSPDT.BMS_Asset_Ref_Key = Y.BMS_Asset_Ref_Key AND BSPDT.Channel_Code = @Channel_Code_CV 
-				--AND CAST(CAST(BSPDT.Date_Time AS DATETIME2) AS DATETIME) >= Y.Schedule_Item_Log_Time
-				--INNER JOIN BV_Schedule_Transaction BV 
-				--ON BV.Program_Episode_ID = Y.BMS_Asset_Ref_Key AND BV.Timeline_ID = BSPDT.Timeline_ID
-				--AND BSPDT.Timeline_ID NOT IN(select Timeline_ID from BMS_Schedule_Process_Data_Temp WHERE Record_Status='W')
-				--AND BV.Channel_Code = @Channel_Code_CV 
-				--GROUP by BSPDT.Timeline_ID
-
-				--Set Record_Status 'P' of all records to reprocess old records related to asset
 				Update FinalUpdate SET FinalUpdate.Record_Status='W'  FROM BMS_Schedule_Process_Data_Temp AS FinalUpdate INNER JOIN 
 				(
-					SELECT BSPDT.Timeline_ID,MAX(BSPDT.BMS_Schedule_Process_Data_Temp_Code) BMS_Schedule_Process_Data_Temp_Code from BMS_Schedule_Process_Data_Temp BSPDT 
-					INNER JOIN 		
-					(
-						select DISTINCT T.BMS_Asset_Ref_Key, ISNULL((select MAX(CAST(A.Schedule_Item_Log_Time AS DATETIME)) From BV_Schedule_Transaction A 
-						where A.Program_Episode_ID = T.BMS_Asset_Ref_Key AND A.Channel_Code = @Channel_Code_CV AND (A.IsIgnore = 'N'  OR (A.Play_Day = 0 ANd A.Play_Run = 0))
-						AND CAST(A.Schedule_Item_Log_Time AS DATETIME) < X.Date_Time 
-						AND A.Timeline_ID NOT IN (select Timeline_ID from BMS_Schedule_Process_Data_Temp WHERE Record_Status='W')
-						),X.Date_Time ) AS  Schedule_Item_Log_Time from BMS_Schedule_Process_Data_Temp T INNER JOIN
+				SELECT BSPDT.Timeline_ID,MAX(BSPDT.BMS_Schedule_Process_Data_Temp_Code) BMS_Schedule_Process_Data_Temp_Code from BMS_Schedule_Process_Data_Temp BSPDT 
+				INNER JOIN 		
+				(select DISTINCT T.BMS_Asset_Ref_Key, ISNULL( (select MAX(CAST(A.Schedule_Item_Log_Time AS DATETIME)) From BV_Schedule_Transaction A 
+				where A.Program_Episode_ID = T.BMS_Asset_Ref_Key AND A.Channel_Code = @Channel_Code_CV AND (ISNULL(A.IsIgnore,'') = 'N'  OR (A.Play_Day = 0 ANd A.Play_Run = 0))
+				AND CAST(A.Schedule_Item_Log_Time AS DATETIME) < X.Date_Time 
+				AND A.Timeline_ID NOT IN (select Timeline_ID from BMS_Schedule_Process_Data_Temp WHERE Record_Status='W')
+				),X.Date_Time ) AS  Schedule_Item_Log_Time from BMS_Schedule_Process_Data_Temp T INNER JOIN
 
-						(select BMS_Asset_Ref_Key, Min(CAST(CAST(Date_Time AS DATETIME2) AS DATETIME)) AS Date_Time from BMS_Schedule_Process_Data_Temp 
-						where ISNULL(Record_Status,'')='W' AND Channel_Code  = @Channel_Code_CV
-						Group By BMS_Asset_Ref_Key) AS X ON T.BMS_Asset_Ref_Key = X.BMS_Asset_Ref_Key AND X.Date_Time = CAST(CAST(T.Date_Time AS DATETIME2) AS DATETIME)
-				 
+				(select BMS_Asset_Ref_Key, Min(CAST(CAST(Date_Time AS DATETIME2) AS DATETIME)) AS Date_Time from BMS_Schedule_Process_Data_Temp 
+				where ISNULL(Record_Status,'')='W' AND Channel_Code  = @Channel_Code_CV
+				Group By BMS_Asset_Ref_Key) AS X
+					ON T.BMS_Asset_Ref_Key = X.BMS_Asset_Ref_Key AND X.Date_Time = CAST(CAST(T.Date_Time AS DATETIME2) AS DATETIME)
 					) AS Y
-					ON BSPDT.BMS_Asset_Ref_Key = Y.BMS_Asset_Ref_Key AND BSPDT.Channel_Code = @Channel_Code_CV 
-					AND CAST(CAST(BSPDT.Date_Time AS DATETIME2) AS DATETIME) >= Y.Schedule_Item_Log_Time
-					INNER JOIN BV_Schedule_Transaction BV 
-					ON BV.Program_Episode_ID = Y.BMS_Asset_Ref_Key AND BV.Timeline_ID = BSPDT.Timeline_ID
-					AND BSPDT.Timeline_ID NOT IN(select Timeline_ID from BMS_Schedule_Process_Data_Temp WHERE Record_Status='W')
-					AND BV.Channel_Code = @Channel_Code_CV 
-					GROUP by BSPDT.Timeline_ID
-				) 
-				AS Final
+				ON BSPDT.BMS_Asset_Ref_Key = Y.BMS_Asset_Ref_Key AND BSPDT.Channel_Code = @Channel_Code_CV 
+				AND CAST(CAST(BSPDT.Date_Time AS DATETIME2) AS DATETIME) >= Y.Schedule_Item_Log_Time
+				INNER JOIN BV_Schedule_Transaction BV 
+				ON BV.Program_Episode_ID = Y.BMS_Asset_Ref_Key AND BV.Timeline_ID = BSPDT.Timeline_ID AND 
+				CAST(BV.Schedule_Item_Log_Time AS DATETIME) = CAST(CAST(BSPDT.Date_Time AS DATETIME2) AS DATETIME)
+				AND BSPDT.Timeline_ID NOT IN(select Timeline_ID from BMS_Schedule_Process_Data_Temp WHERE Record_Status='W')
+				AND BV.Channel_Code = @Channel_Code_CV 
+				GROUP by BSPDT.Timeline_ID) AS Final
 				ON Final.BMS_Schedule_Process_Data_Temp_Code = FinalUpdate.BMS_Schedule_Process_Data_Temp_Code
 
-
-				/*(2) Insert All Pending Records Into #BMS_Schedule_Process_Data_Temp for processing schedule */
+				/*(2) Insert All Pending Records Into #BMS_Schedule_Process_Data_Temp */
 				INSERT INTO #BMS_Schedule_Process_Data_Temp
 				(
 					BMS_Schedule_Process_Data_Temp_Code,
@@ -387,18 +360,21 @@ BEGIN
 					CAST(CAST(TBSPD.Date_Time AS DATETIME2) AS DATETIME) AS Schedule_Log_Time, TBSPD.Timeline_ID, VWB.Title_Code, 
 					VWB.Content_Channel_Run_Code
 				FROM Content_Channel_Run VWB
-				INNER JOIN BMS_Schedule_Process_Data_Temp TBSPD ON VWB.Title_Code = TBSPD.Title_Code AND ISNULL(TBSPD.Title_Code,0) > 0
-				AND VWB.Channel_Code = @Channel_Code_CV AND TBSPD.Record_Status = 'W' 
+				INNER JOIN BMS_Schedule_Process_Data_Temp TBSPD ON 
+				VWB.Content_Channel_Run_Code = TBSPD.Content_Channel_Run_Code -- Change
+				--VWB.Title_Code = TBSPD.Title_Code AND ISNULL(TBSPD.Title_Code,0) > 0
+				--AND VWB.Channel_Code = @Channel_Code_CV 
+				AND TBSPD.Record_Status = 'W' 
 				INNER JOIN BMS_Asset BA ON
 				TBSPD.BMS_Asset_Ref_Key = BA.BMS_Asset_Ref_Key
 				INNER JOIN Title_Content TC
 				ON VWB.Title_Content_Code= TC.Title_Content_Code AND TC.Ref_BMS_Content_Code=TBSPD.BMS_Asset_Ref_Key
-				AND ((CAST(CAST(
-				TBSPD.Date_Time 
-				AS DATETIME2) AS DATETIME) 
-				BETWEEN VWB.Rights_Start_Date AND VWB.Rights_End_Date)
-				AND VWB.Channel_Code = @Channel_Code_CV
-				)
+				--AND ((CAST(CAST(
+				--TBSPD.Date_Time 
+				--AS DATETIME2) AS DATETIME) 
+				--BETWEEN VWB.Rights_Start_Date AND VWB.Rights_End_Date)
+				--AND VWB.Channel_Code = @Channel_Code_CV
+				--)
 				WHERE TBSPD.Channel_Code = @Channel_Code_CV
 
 				DELETE FROM #Revert_Titles
@@ -452,8 +428,7 @@ BEGIN
 					FROM BMS_Schedule_Process_Data_Temp T
 					LEFT JOIN BMS_Schedule_Exception BSE ON T.BMS_Schedule_Process_Data_Temp_Code = BSE.BMS_Schedule_Process_Data_Temp_Code
 					WHERE Channel_Code = @Channel_Code_CV 
-					--AND BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code_CV -- New Change 
-					AND Record_Status = 'W' -- New Change
+					AND Record_Status = 'W'
 					AND ISNULL(Title_Code,0) > 0 AND ISNULL(BMS_Asset_Ref_Key,0) > 0
 					AND ISNULL(Delete_Flag,'false') = 'false' AND BSE.BMS_Schedule_Process_Data_Temp_Code IS NULL
 				END
@@ -465,6 +440,13 @@ BEGIN
 						SELECT BMS_Schedule_Process_Data_Temp_Code FROM BMS_Schedule_Exception BSE WHERE ISNULL(BSE.BMS_Schedule_Process_Data_Temp_Code,0) > 0
 					)
 					PRINT 'Updated Is Exception Flag Yes in BMS_Schedule_Process_Data_Temp'
+					-------------------Insert Error------------------------------------------------------------------------
+					DECLARE @Count INT
+					Select @Count = COUNT(*) from BMS_Schedule_Process_Data_Temp Where Record_Status = 'E'
+					INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+					Select DISTINCT GETDATE(),null,null,'USP_BMS_Schedule', CAST(@Count AS VARCHAR)+' '+'Record''s are in error state for Channel'+' '+ C.Channel_Name,'NA','NA','DB' from BMS_Schedule_Process_Data_Temp BSPDT 
+					INNER JOIN Channel C ON BSPDT.Channel_Code = C.Channel_Code 
+					PRINT 'INSERT Record In UTO_Exception '
 				END	
 				/*******************************Step 3 : - We need to validate timeline id or Deleted Flag *****************************/
 				/************(3.1)- if timeline id exist in BMS_Process_Schedule_Data(table) or Deleted Flag is true in BMS_Process_Schedule_Data_Temp(table) then Call USP_Revert_Count*/
@@ -486,85 +468,27 @@ BEGIN
 					
 				IF EXISTS(SELECT TOP 1 RT.Timeline_ID FROM #Revert_Titles RT)
 				BEGIN
-					EXEC USP_BMS_Schedule_Revert --@BMS_Schedule_Log_Code_CV, --CHANGE
-					@Channel_Code_CV,@TimeLine_ID_Revert	 -- For Revert Schedule Run #Revert_Titles 	
+					EXEC USP_BMS_Schedule_Revert @Channel_Code_CV,@TimeLine_ID_Revert 	
 				END
 									
-				/***********(3.2)if timeline id not exist or Deleted Flag is false then Call USP_Schedule_Process  *******/	
+				/***********(3.2)if timeline id not exist or Deleted Flag is false then Call USP_Schedule_Process  *******/
+				
+				/************************* Insert into #Process_Titles & BMS_Process_UDT***************************/				
 				INSERT INTO #Process_Titles(BMS_Asset_Ref_Key, Timeline_ID, Title_Code)
 				SELECT DISTINCT TBSPD.BMS_Asset_Ref_Key, TBSPD.Timeline_ID, TBSPD.Title_Code
 				FROM #BMS_Schedule_Process_Data_Temp TBSPD
 				WHERE ISNULL(TBSPD.Delete_Flag,'false') = 'false'
 
-				--select @Channel_Code_CV '@Channel_Code_CV',Timeline_ID from #Revert_Titles
-
-				--select 'BMS_Schedule_Process_Data_Temp_RSW',* from BMS_Schedule_Process_Data_Temp BSPDT INNER JOIN 
-				--(select T.Timeline_ID, MAX(T.BMS_Schedule_Process_Data_Temp_Code) AS BMS_Schedule_Process_Data_Temp_Code from BMS_Schedule_Process_Data_Temp T INNER JOIN  
-				--(select DISTINCT Program_Episode_ID, Channel_Code from BV_Schedule_Transaction WHERE Timeline_ID IN(SELECT Timeline_ID FROM #Revert_Titles) 
-				--AND Channel_Code = @Channel_Code_CV) AS A ON A.Program_Episode_ID = T.BMS_Asset_Ref_Key AND T.Channel_Code = A.Channel_Code
-				--AND ISNULL(T.Delete_Flag,'false') !='true' AND T.Timeline_ID NOT IN(SELECT Timeline_ID FROM #Revert_Titles)
-				--AND T.Channel_Code = @Channel_Code_CV
-				--AND T.Timeline_ID IN(SELECT DISTINCT Timeline_ID FROM BV_Schedule_Transaction)
-				--GROUP BY T.Timeline_ID
-				--) AS X ON X.BMS_Schedule_Process_Data_Temp_Code = BSPDT.BMS_Schedule_Process_Data_Temp_Code
-
-				--UPDATE BSPDT SET BSPDT.Record_Status='W' from BMS_Schedule_Process_Data_Temp BSPDT INNER JOIN 
-				--(select T.Timeline_ID, MAX(T.BMS_Schedule_Process_Data_Temp_Code) AS BMS_Schedule_Process_Data_Temp_Code from BMS_Schedule_Process_Data_Temp T INNER JOIN  
-				--(select DISTINCT Program_Episode_ID, Channel_Code from BV_Schedule_Transaction WHERE Timeline_ID IN(SELECT Timeline_ID FROM #Revert_Titles) 
-				--AND Channel_Code = @Channel_Code_CV) AS A ON A.Program_Episode_ID = T.BMS_Asset_Ref_Key AND T.Channel_Code = A.Channel_Code
-				--AND ISNULL(T.Delete_Flag,'false') !='true' AND T.Timeline_ID NOT IN(SELECT Timeline_ID FROM #Revert_Titles)
-				--AND T.Channel_Code = @Channel_Code_CV
-				--AND T.Timeline_ID IN(SELECT DISTINCT Timeline_ID FROM BV_Schedule_Transaction)
-				--GROUP BY T.Timeline_ID
-				--) AS X ON X.BMS_Schedule_Process_Data_Temp_Code = BSPDT.BMS_Schedule_Process_Data_Temp_Code
-
-				
-				
-				--DELETE FROM #BMS_Schedule_Process_Data_Temp
-
-				--INSERT INTO #BMS_Schedule_Process_Data_Temp
-				--(
-				--	BMS_Schedule_Process_Data_Temp_Code,
-				--	BMS_Asset_Ref_Key, BMS_Schedule_Log_Code, 
-				--	Channel_Code, 
-				--	Delete_Flag,
-				--	Is_In_Right_Perod, 
-				--	No_Of_Runs, No_Of_Runs_Sched, Right_Start_Date, Right_End_Date, 
-				--	Run_Type, Schedule_Log_Date, 
-				--	Schedule_Log_Time, Timeline_ID, Title_Code, 
-				--	Content_Channel_Run_Code
-				--)
-				--SELECT DISTINCT TBSPD.BMS_Schedule_Process_Data_Temp_Code,  TBSPD.BMS_Asset_Ref_Key, TBSPD.BMS_Schedule_Log_Code, 
-				--	VWB.Channel_Code,
-				--	ISNULL(TBSPD.Delete_Flag,'false') AS Delete_Flag,
-				--	CASE WHEN
-				--	(
-				--		CONVERT(DATETIME,TBSPD.Log_Date,101) BETWEEN CONVERT(DATETIME,VWB.Rights_Start_Date,101)  
-				--		AND CONVERT(DATETIME,ISNULL(VWB.Rights_End_Date,'31DEC9999'),101)
-				--	)
-				--	THEN 'Y' ELSE 'N' END Is_In_Right_Perod,
-				--	VWB.Defined_Runs, VWB.Schedule_Runs, VWB.Rights_Start_Date, VWB.Rights_End_Date,
-				--	ISNULL(VWB.Run_Type,'C'), CAST(TBSPD.Log_Date AS DATE) AS Schedule_Log_Date, 
-				--	CAST(CAST(TBSPD.Date_Time AS DATETIME2) AS DATETIME) AS Schedule_Log_Time, TBSPD.Timeline_ID, VWB.Title_Code, 
-				--	VWB.Content_Channel_Run_Code
-				--FROM Content_Channel_Run VWB
-				--INNER JOIN BMS_Schedule_Process_Data_Temp TBSPD ON VWB.Title_Code = TBSPD.Title_Code AND ISNULL(TBSPD.Title_Code,0) > 0
-				--AND VWB.Channel_Code = @Channel_Code_CV AND TBSPD.Record_Status = 'W' --AND TBSPD.BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code_CV
-				--INNER JOIN BMS_Asset BA ON
-				--TBSPD.BMS_Asset_Ref_Key = BA.BMS_Asset_Ref_Key
-				--INNER JOIN Title_Content TC
-				--ON VWB.Title_Content_Code= TC.Title_Content_Code AND TC.Ref_BMS_Content_Code=TBSPD.BMS_Asset_Ref_Key
-				--AND ((CAST(CAST(
-				--TBSPD.Date_Time 
-				--AS DATETIME2) AS DATETIME) 
-				--BETWEEN VWB.Rights_Start_Date AND VWB.Rights_End_Date)
-				--AND VWB.Channel_Code = @Channel_Code_CV
-				--)
+				INSERT INTO #Process_Titles(BMS_Asset_Ref_Key, Timeline_ID, Title_Code)
+				SELECT DISTINCT TBSPD.BMS_Asset_Ref_Key, TBSPD.Timeline_ID, TBSPD.Title_Code
+				FROM #BMS_Schedule_Process_Data_Temp TBSPD
+				WHERE ISNULL(TBSPD.Delete_Flag,'false') = 'false'
 
 				PRINT 'Data Inserted into #Process_Titles' 			 	
 				DELETE FROM @BMS_Process_UDT						 
 						
-				/******************Insert into @BMS_Process_UDT this UDT we will pass to USP_BMS_Schedule_Process */
+				/******************Insert into @BMS_Process_UDT*/
+						 
 				INSERT INTO @BMS_Process_UDT
 				(
 					Acq_Deal_Code, Acq_Deal_Rights_Code, Acq_Deal_Run_Code, Agreement_Date, BMS_Asset_Ref_Key, 
@@ -580,24 +504,17 @@ BEGIN
 				WHERE TBSPD.Timeline_ID IN(
 					SELECT PT.Timeline_ID FROM #Process_Titles PT
 				)
-				select 'After Revert',* from BV_Schedule_Transaction where Program_Episode_ID=1368100784 
-				PRINT  'Inserted into @BMS_Process_UDT'
-					select '@BMS_Process_UDT',* FROM @BMS_Process_UDT
-				/*******************Call USP_BMS_Schedule_Process*/						 						
-				--SELECT 'sagar',* FROM @BMS_Process_UDT
-				IF EXISTS(SELECT TOP 1 BSPRU.Timeline_ID FROM @BMS_Process_UDT BSPRU)
-					EXEC USP_BMS_Schedule_Process  @BMS_Process_UDT,@Is_Reprocess-- For Process Schedule Run	
 
-				select 'After Process',* from BV_Schedule_Transaction where Program_Episode_ID=1368100784 
-				-- select * from BMS_Schedule_Exception where BV_Schedule_Transaction_Code 
-				-- IN(select BV_Schedule_Transaction_Code from BV_Schedule_Transaction where Program_Episode_ID=1368095298 AND Channel_Code='24')
-				 --DECLARE @A INT
-				 --SEt @A = 'A'
+				PRINT  'Inserted into @BMS_Process_UDT'
+				/*******************Call USP_BMS_Schedule_Process*/						 						
+				IF EXISTS(SELECT TOP 1 BSPRU.Timeline_ID FROM @BMS_Process_UDT BSPRU)
+					EXEC USP_BMS_Schedule_Process  @BMS_Process_UDT,@Is_Reprocess	
+
 				/*******************Update Record Status in  BMS_Schedule_Process_Data_Temp **********************/									
 				PRINT 'Update Record Status BMS_Schedule_Process_Data_Temp'
 				
 					UPDATE BMS_Schedule_Process_Data_Temp SET Record_Status = 'D'
-					WHERE Channel_Code  = @Channel_Code_CV AND Record_Status = 'W' --AND BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code_CV
+					WHERE Channel_Code  = @Channel_Code_CV AND Record_Status = 'W'
 				/**************/
 				COMMIT
 			END TRY			
@@ -632,11 +549,22 @@ BEGIN
 		                                        
 	CLOSE CR_BMS_Schedule_Process_Data_Temp
 	DEALLOCATE CR_BMS_Schedule_Process_Data_Temp
+
+	IF OBJECT_ID('tempdb..#BMS_Schedule_Process_Data_Temp') IS NOT NULL DROP TABLE #BMS_Schedule_Process_Data_Temp
+	IF OBJECT_ID('tempdb..#BMS_Schedule_Runs') IS NOT NULL DROP TABLE #BMS_Schedule_Runs
+	IF OBJECT_ID('tempdb..#Delete_Titles') IS NOT NULL DROP TABLE #Delete_Titles
+	IF OBJECT_ID('tempdb..#Process_Titles') IS NOT NULL DROP TABLE #Process_Titles
+	IF OBJECT_ID('tempdb..#Revert_Titles') IS NOT NULL DROP TABLE #Revert_Titles
+	IF OBJECT_ID('tempdb..#TEMP_BV_Schedule') IS NOT NULL DROP TABLE #TEMP_BV_Schedule
+	IF OBJECT_ID('tempdb..#TempMinDate') IS NOT NULL DROP TABLE #TempMinDate
+	IF OBJECT_ID('tempdb..#TempSchedule_Item_Log_Time') IS NOT NULL DROP TABLE #TempSchedule_Item_Log_Time
+	IF OBJECT_ID('tempdb..#UnMapped_Titles') IS NOT NULL DROP TABLE #UnMapped_Titles
+		
 END
 /*                                        
 CLOSE CR_BMS_Schedule_Process_Data_Temp
 DEALLOCATE CR_BMS_Schedule_Process_Data_Temp
-EXEC  USP_BMS_Schedule 'Y'
+EXEC USP_BMS_Schedule
 CLOSE CR_RR_Validation
 DEALLOCATE CR_RR_Validation
 exec USP_BMS_Schedule_Channel_For_PUSH

@@ -46,6 +46,8 @@ BEGIN
 
 	DELETE FROM BMS_Masters_Import WHERE UPPER(COL1) = 'BMS_Title_Name'
 
+	IF OBJECT_ID('tempdb..#BMS_XML') IS NOT NULL DROP TABLE #BMS_XML
+
 END
 
 /*
@@ -60,6 +62,3 @@ EXEC USP_BMS_Schedule_Get_BV_Title_Name
 
 --SELECT * FROM BV_HouseId_Data WHERE BMS_Schedule_Process_Data_Temp_Code > 0 AND BV_Title is not null ORDER BY 1 DESC
 --SELECT * FROM BV_HouseId_Data WHERE BMS_Schedule_Process_Data_Temp_Code > 0 ORDER BY 1 DESC
-
-
-

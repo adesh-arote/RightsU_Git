@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[BMS_Deal] (
     [BMS_Deal_Code]     INT             IDENTITY (1, 1) NOT NULL,
     [Acq_Deal_Code]     INT             NULL,
-    [BMS_Deal_Ref_Key]  INT             NULL,
+    [BMS_Deal_Ref_Key]  DECIMAL (38)    NULL,
     [Is_Archived]       VARCHAR (5)     NULL,
     [RU_Licensor_Code]  INT             NULL,
     [RU_Payee_Code]     INT             NULL,

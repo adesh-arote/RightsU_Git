@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE USP_Validate_And_Save_Assigned_Music_UDT
+﻿CREATE PROCEDURE USP_Validate_And_Save_Assigned_Music_UDT
 (
 	@Deal_Type_Code INT,
 	@Login_User_Code INT,
@@ -668,4 +668,18 @@ BEGIN
 	CASE WHEN CHARINDEX('terminated', ISNULL(Err_Message, '')) > 0 THEN 'NA' ELSE ISNULL(Title_Name, 'NA') END AS Title_Name, ISNULL(Deal_Type, 'NA') AS Deal_Type, 
 	ISNULL(Episodes, 'NA') AS Episodes, ISNULL(Is_Warning, 'NA') AS Is_Warning, ISNULL(Err_Message, 'NA') AS Err_Message	FROM #Temp_ErrorDetails
 	ORDER BY Is_Warning 
+
+
+	IF OBJECT_ID('tempdb..#Temp_Combination') IS NOT NULL DROP TABLE #Temp_Combination
+	IF OBJECT_ID('tempdb..#Temp_Deal_Movie') IS NOT NULL DROP TABLE #Temp_Deal_Movie
+	IF OBJECT_ID('tempdb..#Temp_Error') IS NOT NULL DROP TABLE #Temp_Error
+	IF OBJECT_ID('tempdb..#Temp_ErrorDetails') IS NOT NULL DROP TABLE #Temp_ErrorDetails
+	IF OBJECT_ID('tempdb..#Temp_Link_Run_Channel') IS NOT NULL DROP TABLE #Temp_Link_Run_Channel
+	IF OBJECT_ID('tempdb..#Temp_Link_Used') IS NOT NULL DROP TABLE #Temp_Link_Used
+	IF OBJECT_ID('tempdb..#Temp_LinkedShow_Channel') IS NOT NULL DROP TABLE #Temp_LinkedShow_Channel
+	IF OBJECT_ID('tempdb..#Temp_Music') IS NOT NULL DROP TABLE #Temp_Music
+	IF OBJECT_ID('tempdb..#Temp_Play_ChannelWise') IS NOT NULL DROP TABLE #Temp_Play_ChannelWise
+	IF OBJECT_ID('tempdb..#Temp_Run_Channel_All') IS NOT NULL DROP TABLE #Temp_Run_Channel_All
+	IF OBJECT_ID('tempdb..#Temp_Run_Channel_Remaining') IS NOT NULL DROP TABLE #Temp_Run_Channel_Remaining
+	IF OBJECT_ID('tempdb..#Temp_Run_Music') IS NOT NULL DROP TABLE #Temp_Run_Music
 END

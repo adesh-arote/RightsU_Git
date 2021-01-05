@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Integration_Generate_XML]              
+﻿CREATE PROCEDURE [dbo].[USP_Integration_Generate_XML]              
 (            
  @Module_Name VARCHAR(100),               
  @Deal_Type_Code INT,              
@@ -960,6 +960,13 @@ END CATCH
               
 /********************************Result****************/              
 SELECT @xmlData AS XML_Data, @Error_Desc AS Error_Desc,@Is_Error AS IS_Error,@CurrIdent_Integration_Log AS Integration_Log_Code,@Integration_Config_Code AS Integration_Config_Code              
+
+	IF OBJECT_ID('tempdb..#Temp_Deal_Data') IS NOT NULL DROP TABLE #Temp_Deal_Data
+	IF OBJECT_ID('tempdb..#Temp_Deal_Rights_data') IS NOT NULL DROP TABLE #Temp_Deal_Rights_data
+	IF OBJECT_ID('tempdb..#Temp_Min_Max_Rights_Date') IS NOT NULL DROP TABLE #Temp_Min_Max_Rights_Date
+	IF OBJECT_ID('tempdb..#Temp_Title') IS NOT NULL DROP TABLE #Temp_Title
+	IF OBJECT_ID('tempdb..#Temp_Title_Code') IS NOT NULL DROP TABLE #Temp_Title_Code
+	IF OBJECT_ID('tempdb..#TempTalent') IS NOT NULL DROP TABLE #TempTalent
 END          
 
 /*        

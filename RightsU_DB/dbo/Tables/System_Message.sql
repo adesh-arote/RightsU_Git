@@ -8,5 +8,3 @@
     CONSTRAINT [PK_System_Message_Type] PRIMARY KEY CLUSTERED ([System_Message_Code] ASC)
 );
 
-
-

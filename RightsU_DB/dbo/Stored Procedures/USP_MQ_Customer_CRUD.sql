@@ -41,7 +41,7 @@ BEGIN
 	 PRINT 'Begin entry in MQ_Log'  
 	 INSERT INTO MQ_Log (MQ_Config_Code , Message_Key, Request_Text , Request_Time , Module_Code , Record_Status)  
 	 SELECT @MQ_Config_Code, number, @Read, GETDATE(), 211 , 'BEGIN' FROM #Temp WHERE id = 1   
-  
+ 
 	 SET @MQ_Log_Code = IDENT_CURRENT('MQ_Log')  
   
 	 PRINT 'Insert read string into #Temp'  
@@ -91,7 +91,7 @@ BEGIN
 			   END
 			   ELSE
 			   BEGIN
-				   IF NOT EXISTS (SELECT * FROM Vendor WHERE Vendor_Code = @RightsU_Customer_ID )--AND Is_Active = 'Y')  
+				   IF NOT EXISTS (SELECT * FROM Vendor WHERE Vendor_Code = @RightsU_Customer_ID AND Party_Type = 'C')--AND Is_Active = 'Y')  
 				   BEGIN  
 						PRINT 'Customer Code not exists'  
 						SELECT @Is_Error = 'Y', @errorMessage = ISNULL(@errorMessage,'') + '101;Customer Code does not exists;'  
@@ -99,7 +99,7 @@ BEGIN
 			   
 				   PRINT 'Customer Name not exists'  
 				   SELECT TOP 1 @Is_Error = 'Y', @errorMessage = ISNULL(@errorMessage,'') + '108;Duplicate Customer Name;'  FROM Vendor V 
-				   WHERE V.Vendor_Name = @Customer_Name  AND V.Vendor_Code <> @RightsU_Customer_ID AND V.Is_Active = 'Y'
+				   WHERE V.Vendor_Name = @Customer_Name  AND V.Vendor_Code <> @RightsU_Customer_ID AND V.Is_Active = 'Y' AND Party_Type = 'C'
 			   END   
 		  END  
 		  ELSE
@@ -173,7 +173,7 @@ BEGIN
 			  --Select TOP 1 * from Vendor
 			  --------------------------------------------------------------------------------------------------------------  
 			  INSERT INTO Vendor (Vendor_Name, [Address], Phone_No, Fax_No, ST_No, VAT_No, PAN_No, Inserted_On, Inserted_By, Is_Active, CST_No, GST_No, MQ_Ref_Code, MDM_Code, Is_BV_Push,Record_Status,Party_Type)  
-			  SELECT @Customer_Name, @Address, @Phone_No, @Fax_No, @ST_No, @VAT_No, @PAN_No, GETDATE(), 143, @Customer_Block_Status, @CST_No, @GST_No, @MQ_Config_Code, @MDM_Code , 'N','P','C'
+			  SELECT @Customer_Name, @Address, @Phone_No, @Fax_No, @ST_No, @VAT_No, @PAN_No, GETDATE(), 143, @Customer_Block_Status, @CST_No, @GST_No, @MQ_Config_Code, @MDM_Code , 'N','D','C'
 			  SET @RightsU_Customer_ID = IDENT_CURRENT('Vendor')  
 			  --------------------------------------------------------------------------------------------------------------  
 			  INSERT INTO Vendor_Country (Vendor_Code, Country_Code, Is_Theatrical)  
@@ -254,6 +254,10 @@ BEGIN
 	 SELECT  ISNULL(@Message#,'')+'^'+ISNULL(@MDM_Code,'')+ '^'+ @RUBMSV_Vendor_ID +'^' +@SF+'^'+ ISNULL(@errorMessage,'')+'^'+CONVERT(VARCHAR(10), GETDATE(), 103)+'^'+ CAST(CONVERT (TIME, GETDATE())AS VARCHAR(8))
 	 
 	 --Select '' AS Result
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#temp_Country') IS NOT NULL DROP TABLE #temp_Country
+	IF OBJECT_ID('tempdb..#temp_Role_Code') IS NOT NULL DROP TABLE #temp_Role_Code
 END  
 
 

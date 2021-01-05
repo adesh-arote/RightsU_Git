@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_ChannelWiseConsumption]
+﻿CREATE PROCEDURE [dbo].[USP_ChannelWiseConsumption]
 (
 	@TitleCodes VARCHAR(MAX),
 	@ChannelCodes VARCHAR(MAX),
@@ -140,6 +140,9 @@ BEGIN
 	END
 
 	PRINT 'Process Ended' 
+	IF OBJECT_ID('tempdb..#ChannelWiseConsumption') IS NOT NULL DROP TABLE #ChannelWiseConsumption
+	IF OBJECT_ID('tempdb..#TempChannels') IS NOT NULL DROP TABLE #TempChannels
+	IF OBJECT_ID('tempdb..#TempTitles') IS NOT NULL DROP TABLE #TempTitles
 END
 
 --select * from Content_Channel_Run

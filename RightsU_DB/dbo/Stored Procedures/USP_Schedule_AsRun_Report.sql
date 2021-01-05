@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Schedule_AsRun_Report]
+﻿CREATE PROCEDURE [dbo].[USP_Schedule_AsRun_Report]
 (
 	 @Title varchar(250),
 	 @EpisodeFrom INT = 0,

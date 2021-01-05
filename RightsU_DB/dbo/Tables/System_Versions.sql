@@ -7,5 +7,3 @@
     CONSTRAINT [PK_System_Versions] PRIMARY KEY CLUSTERED ([Version_Code] ASC)
 );
 
-
-

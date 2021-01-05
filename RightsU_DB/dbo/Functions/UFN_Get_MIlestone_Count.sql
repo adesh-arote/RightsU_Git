@@ -1,4 +1,4 @@
-﻿ALTER FUNCTION [dbo].[UFN_Get_MIlestone_Count] 
+﻿CREATE FUNCTION [dbo].[UFN_Get_MIlestone_Count] 
 (
 	@ACQ_DEAL_CODE INT
 )

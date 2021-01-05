@@ -276,6 +276,8 @@ BEGIN CATCH
 	END
    SELECT 'ERROR' AS Result_Message
 END CATCH;
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 END
 /*
 EXEC [dbo].[USP_DELETE_Syn_DEAL] 1, D

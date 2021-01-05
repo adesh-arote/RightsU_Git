@@ -12,5 +12,3 @@
     PRIMARY KEY CLUSTERED ([BMS_Log_Code] ASC)
 );
 
-
-

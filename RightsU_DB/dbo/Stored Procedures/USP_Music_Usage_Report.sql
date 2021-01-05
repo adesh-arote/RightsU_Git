@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Music_Usage_Report]  
+﻿CREATE PROCEDURE [dbo].[USP_Music_Usage_Report]  
 (  
 	 @Title_Code VARCHAR(500)='', @Channel VARCHAR(500)='', @StartDate VARCHAR(12), @EndDate VARCHAR(12), @TitleType VARCHAR(500)='', @Genre VARCHAR(500)='',  
 	 @MusicLabel VARCHAR(500)='', @StarCast VARCHAR(500)='', @Theme VARCHAR(500)='', @BuCode VARCHAR(100)='', @EpisodeFrom INT,
@@ -140,7 +140,9 @@ BEGIN
 		(SELECT number FROM dbo.fn_Split_withdelemiter('' + @StarCast +'',','))) OR @StarCast = '' OR @StarCast='0' ) 
 
 	SELECT * FROM #TEMP ORDER BY Title_Name, Episode_No
-	
+
+	IF OBJECT_ID('tempdb..#Talent') IS NOT NULL DROP TABLE #Talent
+	IF OBJECT_ID('tempdb..#TEMP') IS NOT NULL DROP TABLE #TEMP
 END  
 
 --select * from Title Where Title_Name IN('SAAT PHERON KI HERA PHERIE','SUPER DANCER -  CHAPTER 2')

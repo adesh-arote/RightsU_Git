@@ -1,4 +1,4 @@
-﻿ALTER function UFN_GetAGreement_No 
+﻿CREATE function UFN_GetAGreement_No 
 (    
  @Deal_Code  INT,
  @Type Char(1)   

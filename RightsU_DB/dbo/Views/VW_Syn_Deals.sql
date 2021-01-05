@@ -38,3 +38,4 @@ AS
 	LEFT JOIN Country COU ON COU.Country_Code = SDRTer.Country_Code
 	LEFT JOIN Territory_Details TD ON TD.Territory_Code = SDRTer.Territory_Code
 	LEFT JOIN Syn_Deal_Revenue SDC ON SDC.Syn_Deal_Code = SD.Syn_Deal_Code
+

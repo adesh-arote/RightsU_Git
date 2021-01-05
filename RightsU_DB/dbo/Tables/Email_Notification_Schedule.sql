@@ -32,7 +32,3 @@
     CONSTRAINT [PK_Email_Notification_Schedule] PRIMARY KEY CLUSTERED ([Email_Notification_Schedule_Code] ASC)
 );
 
-
-
-
-

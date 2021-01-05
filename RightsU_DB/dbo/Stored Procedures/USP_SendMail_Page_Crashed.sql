@@ -45,12 +45,15 @@ BEGIN
 	 SET @body  = REPLACE(@body ,'{ipAddress}',@IP_Address)
 	 SET @body  = REPLACE(@body ,'{Getdate}',GETDATE())
 
+	 PRINT @Body
+	/*
 	EXEC msdb.dbo.sp_send_dbmail 
 	@profile_name = @DatabaseEmail_Profile,
 	@recipients =  @ToMailId,
 	@subject = @MailSubjectCr,
 	@body = @body, 
 	@body_format = 'HTML';  
+	*/
     ------Send E-Mail END         
 END
 
@@ -126,7 +129,3 @@ SELECT 'ToMailID_Page_Crash','sagarm@uto.in','Y',GETDATE()
 
 */
 */
-
-
-
-

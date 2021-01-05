@@ -39,7 +39,9 @@ CREATE PROCEDURE [dbo].[USP_UPDATE_SYN_DEAL]
 	@Inserted_By INT ,
 	@Lock_Time DATETIME ,
 	@Last_Updated_Time DATETIME ,
-	@Last_Action_By INT 
+	@Last_Action_By INT ,
+	@Deal_Segment_Code INT,
+	@Revenue_Vertical_Code INT
 )
 AS
 -- =============================================
@@ -87,5 +89,7 @@ UPDATE [Syn_Deal]
       ,[Lock_Time] = @Lock_Time
       ,[Last_Updated_Time] = @Last_Updated_Time
       ,[Last_Action_By] = @Last_Action_By
+	  ,[Deal_Segment_Code] = @Deal_Segment_Code
+	  ,[Revenue_Vertical_Code] = @Revenue_Vertical_Code
   WHERE Syn_Deal_Code = @Syn_Deal_Code
 END

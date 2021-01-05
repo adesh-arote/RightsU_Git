@@ -11,5 +11,3 @@
     [DM_Master_Import_Code] VARCHAR (50)   NULL,
     [Excel_Line_No]         NVARCHAR (50)  NULL);
 
-
-GO

@@ -1,4 +1,4 @@
-﻿ALTER PROC USP_Email_Notification
+﻿CREATE PROC USP_Email_Notification
 -- =============================================
 -- Author:		Anchal Sikarwar
 -- Create date: 13 June 2017
@@ -65,7 +65,7 @@ BEGIN
 			ELSE 
 			IF(@Key = 'NDA')
 			BEGIN
-				EXEC USP_Deal_Approval_Email
+				EXEC USP_Deal_Approval_Email 'AP'
 				PRINT 'EXEC USP_Deal_Approval_Email'
 			END
 			ELSE 

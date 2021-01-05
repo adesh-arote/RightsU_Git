@@ -52,6 +52,6 @@ BEGIN
 
 	SELECT * FROM #Temp
 
-	DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 
 END

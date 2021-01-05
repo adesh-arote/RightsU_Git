@@ -1,4 +1,4 @@
-﻿ALTER proc [dbo].[usp_Episodic_Cost_Report] 
+﻿CREATE proc [dbo].[usp_Episodic_Cost_Report] 
 	@DealCode INT,
 	@TitleCode VARCHAR(MAX),
 	@Eps_From INT,
@@ -197,5 +197,11 @@ BEGIN
 
 	END
 	SELECT distinct Deal_Type_Desc, Agreement_No, Cost_Type, Eps_No,Eps_Cost FROM #TempResult WHERE Eps_No between @Eps_From and @Eps_To  order by Eps_No
+
+	IF OBJECT_ID('tempdb..#EpsSeq') IS NOT NULL DROP TABLE #EpsSeq
+	IF OBJECT_ID('tempdb..#TempCost') IS NOT NULL DROP TABLE #TempCost
+	IF OBJECT_ID('tempdb..#TempResult') IS NOT NULL DROP TABLE #TempResult
+	IF OBJECT_ID('tempdb..#TempTitle') IS NOT NULL DROP TABLE #TempTitle
+	IF OBJECT_ID('tempdb..#TempTitleCost') IS NOT NULL DROP TABLE #TempTitleCost
 END
 --exec [usp_Episodic_Cost_Report] 0,'18499 , 21597',1,5,5

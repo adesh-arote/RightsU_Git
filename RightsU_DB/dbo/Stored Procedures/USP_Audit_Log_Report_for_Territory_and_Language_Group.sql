@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[USP_Audit_Log_Report_for_Territory_and_Language_Group]
+﻿
+CREATE PROCEDURE [dbo].[USP_Audit_Log_Report_for_Territory_and_Language_Group]
  @Search_Key NVARCHAR(MAX),
  @Log CHAR
 AS
@@ -141,7 +142,9 @@ BEGIN
 		FROM #Temp3 T
 	END
 	
-	DROP TABLE #Temp3
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp2') IS NOT NULL DROP TABLE #Temp2
+	IF OBJECT_ID('tempdb..#Temp3') IS NOT NULL DROP TABLE #Temp3
 END
 
 /*

@@ -14,5 +14,3 @@
     CONSTRAINT [FK_Acq_Deal_Attachment_Title] FOREIGN KEY ([Title_Code]) REFERENCES [dbo].[Title] ([Title_Code])
 );
 
-
-

@@ -1,4 +1,4 @@
-﻿Create PROC [dbo].[USP_IS_SAME_RIGHTS_CONTAIN_BOTH_TERRIOTORY] 
+﻿CREATE PROC [dbo].[USP_IS_SAME_RIGHTS_CONTAIN_BOTH_TERRIOTORY] 
 (
 @territoryCode VARCHAR(MAX),
 @countryCodes VARCHAR(MAX)
@@ -55,7 +55,9 @@ BEGIN
 	----- END Both territory in same right
 	
 	SELECT * FROM #tblTerritory_Count where Territory_Count > 1   order by Deal_Code ASC
-	DROP TABLE #tblTerritory_Count
+	--DROP TABLE #tblTerritory_Count
+
+	IF OBJECT_ID('tempdb..#tblTerritory_Count') IS NOT NULL DROP TABLE #tblTerritory_Count
 END
 
 --EXEC USP_IS_SAME_RIGHTS_CONTAIN_BOTH_TERRIOTORY 5, 17

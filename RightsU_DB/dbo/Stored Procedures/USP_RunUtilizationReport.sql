@@ -1,4 +1,4 @@
-﻿alter PROC USP_RunUtilizationReport
+﻿CREATE PROC USP_RunUtilizationReport
 (
 	@TitleCodes			VARCHAR(MAX), 
 	@ChannelCodes		VARCHAR(MAX),
@@ -74,4 +74,7 @@ BEGIN
 	AND (@AllYears = 'Y' OR (GETDATE() BETWEEN CCR.Rights_Start_Date AND CCR.Rights_End_Date))
 	AND ((ISNULL(CCR.Run_Type,'') <> '' AND CCR.Run_Type = UPPER(@Run_Type)) OR (ISNULL(@Run_Type,'') = ''))
 	ORDER BY TT.Title_Name, TTC.Channel_Name     
+
+	IF OBJECT_ID('tempdb..#TempChannels') IS NOT NULL DROP TABLE #TempChannels
+	IF OBJECT_ID('tempdb..#TempTitles') IS NOT NULL DROP TABLE #TempTitles
 END

@@ -418,7 +418,12 @@ BEGIN
 		SELECT ERROR_MESSAGE(), ERROR_Line()
 		ROLLBACK
 	END CATCH
-	DROP TABLE #TempData_New
+	--DROP TABLE #TempData_New
+
+	IF OBJECT_ID('tempdb..#SharedRound') IS NOT NULL DROP TABLE #SharedRound
+	IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData
+	IF OBJECT_ID('tempdb..#TempData_New') IS NOT NULL DROP TABLE #TempData_New
+	IF OBJECT_ID('tempdb..#TempDummy') IS NOT NULL DROP TABLE #TempDummy
 END
 /*
 

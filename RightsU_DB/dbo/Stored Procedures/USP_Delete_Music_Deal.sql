@@ -34,4 +34,3 @@ END
 EXEC [dbo].[USP_DELETE_Deal] 32, D
 
 */
-

@@ -1,5 +1,4 @@
-﻿
-CREATE FUNCTION [dbo].[UFN_Get_Column_Value_Data] 
+﻿CREATE FUNCTION [dbo].[UFN_Get_Column_Value_Data] 
 (
 	@Map_Extended_Columns_Code INT
 )

@@ -82,8 +82,11 @@ BEGIN
 		tp.TableCnt,
 	 p.Platform_Hiearachy From #TempPF tp Inner Join [Platform] p On tp.Platform_Code = p.platform_code Where Is_Display = 'Y' Order by p.Platform_Hiearachy
 
-	Drop Table #TempPF
-	Drop Table #TempPFParent
+	--Drop Table #TempPF
+	--Drop Table #TempPFParent
+
+	IF OBJECT_ID('tempdb..#TempPF') IS NOT NULL DROP TABLE #TempPF
+	IF OBJECT_ID('tempdb..#TempPFParent') IS NOT NULL DROP TABLE #TempPFParent
 END
 /*
 EXEC [USP_Get_Platform_With_Parent] '3,4,9,10,91'

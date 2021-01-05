@@ -13,7 +13,3 @@
     CONSTRAINT [FK_AT_Acq_Deal_Cost_Costtype_Episode_AT_Acq_Deal_Cost_Costtype] FOREIGN KEY ([AT_Acq_Deal_Cost_Costtype_Code]) REFERENCES [dbo].[AT_Acq_Deal_Cost_Costtype] ([AT_Acq_Deal_Cost_Costtype_Code])
 );
 
-
-
-
-

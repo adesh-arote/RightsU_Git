@@ -1,9 +1,9 @@
-﻿ALTER Procedure USP_Deal_Rights_Process
+﻿CREATE Procedure [dbo].[USP_Deal_Rights_Process]
 AS
 BEGIN
 	SET NOCOUNT ON
 	DECLARE @Deal_Code INT, @User_Code INT, @Rights_Bulk_Update_Code INT
-	DECLARE @IsValid CHAR(1)
+	DECLARE @IsValid CHAR(1), @DRPL_Code INT = 0
 
 	BEGIN TRY
 		DECLARE db_DRPcursor CURSOR FOR 
@@ -14,11 +14,17 @@ BEGIN
 
 		WHILE @@FETCH_STATUS = 0  
 		BEGIN  
-			  SET @IsValid = 'N'
-			  EXEC USP_Acq_Bulk_Update_Process @Deal_Code, @User_Code, @Rights_Bulk_Update_Code, @IsValid OUTPUT
-			  --UPDATE ERROR MESSAGE TO DEAL_RIGHTS_PROCESS WHERE STATE IS WORKING
+			
+			INSERT INTO Deal_Rights_Process_Log (Deal_Code, Rights_Bulk_Update_Code , Record_Status, Description, Created_Date)
+			SELECT @Deal_Code,@Rights_Bulk_Update_Code,'P','Before Calling USP_Acq_Bulk_Update_Process Store Procedure.', GETDATE()
 
-			  FETCH NEXT FROM db_DRPcursor INTO @Deal_Code, @User_Code, @Rights_Bulk_Update_Code
+			SELECT @DRPL_Code =  CAST(SCOPE_IDENTITY() AS INT)
+
+			SET @IsValid = 'N'
+			EXEC USP_Acq_Bulk_Update_Process @Deal_Code, @User_Code, @Rights_Bulk_Update_Code,@DRPL_Code, @IsValid OUTPUT
+			--UPDATE ERROR MESSAGE TO DEAL_RIGHTS_PROCESS WHERE STATE IS WORKING
+
+			FETCH NEXT FROM db_DRPcursor INTO @Deal_Code, @User_Code, @Rights_Bulk_Update_Code
 		END 
 
 		CLOSE db_DRPcursor  
@@ -30,3 +36,5 @@ BEGIN
 		SELECT ERROR_MESSAGE()
 	END CATCH
 END
+
+

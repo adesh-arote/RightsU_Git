@@ -14,8 +14,6 @@
 );
 
 
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'P-Premier L-Library', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Syn_Deal_Movie', @level2type = N'COLUMN', @level2name = N'Syn_Title_Type';
 

@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[DM_Content_Music] (
+    [IntCode]                    INT             IDENTITY (1, 1) NOT NULL,
+    [DM_Master_Import_Code]      INT             NULL,
+    [Title_Content_Code]         INT             NULL,
+    [Version_Name]               NVARCHAR (MAX)  NULL,
+    [Music_Track]                NVARCHAR (MAX)  NULL,
+    [From]                       VARCHAR (MAX)   NULL,
+    [From_Frame]                 VARCHAR (MAX)   NULL,
+    [To]                         VARCHAR (MAX)   NULL,
+    [To_Frame]                   VARCHAR (MAX)   NULL,
+    [Duration]                   VARCHAR (MAX)   NULL,
+    [Duration_Frame]             VARCHAR (MAX)   NULL,
+    [Excel_Line_No]              NVARCHAR (50)   NULL,
+    [Record_Status]              VARCHAR (3)     NULL,
+    [Is_Ignore]                  VARCHAR (1)     CONSTRAINT [DF_DM_Content_Music_Is_Ignore] DEFAULT ('N') NULL,
+    [Error_Tags]                 NVARCHAR (MAX)  NULL,
+    [Title_Content_Version_Code] INT             NULL,
+    [Error_Message]              NVARCHAR (MAX)  NULL,
+    [Version_Code]               INT             NULL,
+    [Content_Name]               NVARCHAR (4000) NULL,
+    [Episode_No]                 INT             NULL,
+    [Movie_Album]                NVARCHAR (MAX)  NULL,
+    [Music_Title_Code]           INT             NULL,
+    [Movie_Album_Code]           INT             NULL,
+    CONSTRAINT [PK_DM_Content_Music] PRIMARY KEY CLUSTERED ([IntCode] ASC)
+);
+

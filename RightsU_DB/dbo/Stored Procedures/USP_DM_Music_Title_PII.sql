@@ -586,5 +586,9 @@ BEGIN
 		UPDATE DM_Master_Import SET [Status] = 'I' WHERE DM_Master_Import_Code = @DM_Master_Import_Code  
 	END
 
-  
-END   
+	IF OBJECT_ID('tempdb..#Temp_DM') IS NOT NULL DROP TABLE #Temp_DM
+	IF OBJECT_ID('tempdb..#Temp_DM_Music_Title') IS NOT NULL DROP TABLE #Temp_DM_Music_Title
+	IF OBJECT_ID('tempdb..#Temp_DM_Music_Title_Ignore') IS NOT NULL DROP TABLE #Temp_DM_Music_Title_Ignore
+	IF OBJECT_ID('tempdb..#Temp_Talent_Role') IS NOT NULL DROP TABLE #Temp_Talent_Role
+	IF OBJECT_ID('tempdb..#TempMasterLog') IS NOT NULL DROP TABLE #TempMasterLog
+END

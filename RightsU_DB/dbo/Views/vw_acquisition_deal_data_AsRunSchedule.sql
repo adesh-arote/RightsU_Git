@@ -1,111 +1,107 @@
 ﻿CREATE VIEW [dbo].[vw_acquisition_deal_data_AsRunSchedule]      
 AS 
 
-SELECT  DISTINCT 
-	pd.Acq_Deal_Code
-	,pdt.Acq_Deal_Movie_Code
-	,adr.Acq_Deal_Rights_Code
-	,ccr.Acq_Deal_Run_Code
-	,ccr.Channel_Code
-	,ccr.Run_Type
-	,ccr.Run_Def_Type AS run_definition_type
-	,pdrun.Is_Yearwise_Definition
-	,pdrun.No_Of_Runs 
-	,pdrun.No_Of_Runs_Sched
-	,pdrun.No_Of_AsRuns
-	,ccr.Defined_Runs as ChannelWise_NoOfRuns
-	,ccr.Schedule_Runs  [ChannelWise_NoOfRuns_Schedule]
-	,ccr.AsRun_Runs as ChannelWise_no_of_AsRuns
-	,adrrt.Title_Code
-	,pd.Agreement_Date
-	,CONVERT(DATETIME, MAX(adr.Actual_Right_End_Date), 101) AS  deal_right_end_date
-	,CONVERT(DATETIME, MIN(adr.Actual_Right_Start_Date), 101) AS deal_right_start_date
-	,adr.Right_Type
-	,CONVERT(DATETIME, MIN(adrb.Start_Date), 101) AS deal_right_blackout_start_date
-	,CONVERT(DATETIME, MAX(adrb.End_Date), 101) AS  deal_right_blackout_end_date
-	,tc.Title_Content_Code
-	,ISNULL(tcm.Deal_For, 'A') Deal_For
-FROM 
-	Acq_Deal pd
-	INNER JOIN Acq_Deal_Rights adr ON pd.Acq_Deal_Code = adr.Acq_Deal_Code
-	INNER JOIN Acq_Deal_Movie pdt ON pd.Acq_Deal_Code = pdt.Acq_Deal_Code
-	INNER JOIN Acq_Deal_Rights_Title adrrt ON adrrt.Acq_Deal_Rights_Code = adr.Acq_Deal_Rights_Code AND adrrt.Title_Code = pdt.Title_Code
-	LEFT OUTER  JOIN Acq_Deal_Rights_Blackout adrb ON adr.Acq_Deal_Rights_Code = adrb.Acq_Deal_Rights_Code
-	INNER JOIN Title_Content_Mapping tcm ON pdt.Acq_Deal_Movie_Code = tcm.Acq_Deal_Movie_Code AND ISNULL(tcm.Deal_For, 'A') = 'A'
-	INNER  JOIN Title_Content tc ON tc.Title_Content_Code = tcm.Title_Content_Code
-	LEFT JOIN Content_Channel_Run ccr ON ccr.Title_Content_Code = tc.Title_Content_Code AND ccr.Acq_Deal_Code = pd.Acq_Deal_Code AND ccr.Title_Code = adrrt.Title_Code AND ISNULL(ccr.Deal_Type, 'A') = 'A'
-	LEFT OUTER JOIN Acq_Deal_Run pdrun ON pd.Acq_Deal_Code = pdrun.Acq_Deal_Code 
-WHERE 
-	1=1 AND (pd.is_active = 'Y')
-GROUP BY pd.Acq_Deal_Code
-		,pdt.Acq_Deal_Movie_Code
-		,adr.Acq_Deal_Rights_Code
-		,ccr.Acq_Deal_Run_Code
-		,ccr.Channel_Code
-		,ccr.Run_Type
-		,ccr.Run_Def_Type 
-		,pdrun.Is_Yearwise_Definition
-		,pdrun.No_Of_Runs 
-		,pdrun.No_Of_Runs_Sched
-		,pdrun.No_Of_AsRuns
-		,ccr.Defined_Runs
-		,ccr.Schedule_Runs
-		,ccr.AsRun_Runs
-		,adrrt.Title_Code
-		,pd.Agreement_Date
-		,adr.Actual_Right_End_Date
-		,adr.Actual_Right_Start_Date
-		,adr.Right_Type
-		,adrb.Start_Date
-		,adrb.End_Date
-		,tc.Title_Content_Code
-		,ISNULL(tcm.Deal_For, 'A')
-UNION
-SELECT  DISTINCT 
-	pd.Provisional_Deal_Code
-	,pdt.Provisional_Deal_Title_Code
-	,0 AS Acq_Deal_Rights_Code
-	,ccr.Provisional_Deal_Run_Code
-	,ccr.Channel_Code
-	,pdrun.Run_Type
-	,ccr.Run_Def_Type
-	,'Y' AS Is_Yearwise_Definition
-	,pdrun.No_Of_Runs 
-	,SUM(ccr.Schedule_Runs) No_Of_Runs_Sched 
-	,SUM(ccr.AsRun_Runs) No_Of_AsRuns 
-	,ccr.Defined_Runs as ChannelWise_NoOfRuns
-	,ccr.Schedule_Runs  [ChannelWise_NoOfRuns_Schedule]
-	,ccr.AsRun_Runs as ChannelWise_no_of_AsRuns
-	,pdt.Title_Code
-	,pd.Agreement_Date
-	,CONVERT(DATETIME, MAX(pd.Right_End_Date), 101) AS  deal_right_end_date
-	,CONVERT(DATETIME, MIN(pd.Right_Start_Date), 101) AS deal_right_start_date
-	,'Y' AS Right_Type
-	,NULL AS deal_right_blackout_start_date
-	,NULL AS  deal_right_blackout_end_date
-	,tc.Title_Content_Code
-	,tcm.Deal_For
-FROM 
-	Provisional_Deal pd
-	INNER JOIN Provisional_Deal_Title pdt ON pd.Provisional_Deal_Code = pdt.Provisional_Deal_Code
-	INNER JOIN Title_Content_Mapping tcm ON pdt.Provisional_Deal_Title_Code = tcm.Provisional_Deal_Title_Code AND ISNULL(tcm.Deal_For, 'A') = 'P'
-	INNER  JOIN Title_Content tc ON tc.Title_Content_Code = tcm.Title_Content_Code
-	LEFT JOIN Content_Channel_Run ccr ON ccr.Title_Content_Code = tc.Title_Content_Code AND ccr.Provisional_Deal_Code = pd.Provisional_Deal_Code AND ccr.Title_Code = pdt.Title_Code AND ISNULL(ccr.Deal_Type, 'A') = 'P'
-	LEFT OUTER JOIN Provisional_Deal_Run pdrun ON pdt.Provisional_Deal_Title_Code = pdrun.Provisional_Deal_Title_Code 
-GROUP BY pd.Provisional_Deal_Code
-	,pdt.Provisional_Deal_Title_Code
-	,ccr.Provisional_Deal_Run_Code
-	,ccr.Channel_Code
-	,pdrun.Run_Type
-	,ccr.Run_Def_Type
-	,pdrun.No_Of_Runs 
-	,ccr.Defined_Runs
-	,ccr.Schedule_Runs
-	,ccr.AsRun_Runs
-	,pdt.Title_Code
-	,pd.Agreement_Date
-	,pd.Right_End_Date
-	,pd.Right_Start_Date
-	,tc.Title_Content_Code
-	,tcm.Deal_For
+select  
+		distinct Ad.Agreement_No
+		,T.Title_Name AS Title_Name
+		,ADR.Right_Type
+		,CONVERT(varchar(100), MIN(ADR.right_start_date), 103)       AS Display_deal_right_start_date
+		,convert(datetime, MIN(ADR.Actual_Right_Start_Date),101) AS deal_right_start_date
+		,CONVERT(varchar(100), MAX(ADR.right_end_date), 103)       AS Display_deal_right_end_date
+		,convert(datetime, MAX(ADR.Actual_Right_End_Date),101) AS  deal_right_end_date
+		,convert(datetime, MIN(adrb.Start_Date),101) AS deal_right_blackout_start_date
+		,convert(datetime, MAX(adrb.End_Date),101) AS  deal_right_blackout_end_date
+		--,p.platform_name
+		,'' as platform_name
+		--,l.language_name       
+		,'' as language_name       
+		,T.title_code
+		--,p.platform_code
+		,0 as platform_code
+		--,L.Language_Code
+		,0 as Language_Code
+		,ADR.Is_Sub_License
+		,AD.Agreement_Date
+		--,Ter.Territory_Code
+		,0 as Territory_Code
+		,ADR.Is_Exclusive
+		,T.Deal_Type_Code
+		,AD.Entity_Code
+		,AD.Status
+		,ADR.Acq_Deal_Rights_Code
+		,AD.Acq_Deal_Code
+		,TC.Title_Content_Code
+		,ADM.Acq_Deal_Movie_Code
+		,DMR.Acq_Deal_Run_Code
+		,DMR.Is_Yearwise_Definition
+		,DMR.Run_Type
+		,DMR.Run_Definition_Type
+		,DMR.No_Of_Runs 
+		,DMR.No_Of_Runs_Sched
+		,DMR.No_Of_AsRuns
+		,DMRRC.Channel_Code
+		,DMRRC.Min_Runs as ChannelWise_NoOfRuns
+		,DMRRC.no_of_runs_sched  [ChannelWise_NoOfRuns_Schedule]
+		,DMRRC.No_Of_AsRuns as ChannelWise_no_of_AsRuns
+		,DMRRC.Do_Not_Consume_Rights  as DoNotConsume
+		,TC.Episode_No 
+		,0 as no_of_runs_sched_Content
+		,0 as no_of_AsRuns_Content
+		,ADR.right_type as [RightPeriodFor]
+		,AD.Deal_Workflow_Status as [Deal_Workflow_Status]
+		--select distinct AD.Acq_Deal_Code
+from Acq_Deal AD
+inner join Acq_Deal_Rights ADR on AD.Acq_Deal_Code = ADR.Acq_Deal_Code
+inner join Acq_Deal_Movie ADM on AD.Acq_Deal_Code = ADM.Acq_Deal_Code
+inner join Acq_Deal_Rights_Title ADRT1 on ADRT1.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code And ADRT1.Title_Code = ADM.Title_Code
+INNER JOIN Title_Content_Mapping TCM on ADM.Acq_Deal_Movie_Code = TCM.Acq_Deal_Movie_Code
+Inner JOIN Title_Content TC on TC.Title_Content_Code = TCM.Title_Content_Code
+INNER JOIN dbo.Title AS T ON T.title_code = ADM.Title_Code 
 
+LEFT JOIN Acq_Deal_Rights_Blackout ADRB on ADR.Acq_Deal_Rights_Code = ADRB.Acq_Deal_Rights_Code
+
+LEFT JOIN Acq_Deal_Run DMR on AD.Acq_Deal_Code = DMR.Acq_Deal_Code 
+INNER join Acq_Deal_Run_Title ADRT on ADRT.Acq_Deal_Run_Code = DMR.Acq_Deal_Run_Code And ADRT.Title_Code = ADM.Title_Code And ADRT.Title_Code = ADRT1.Title_Code AND ADRT.Title_Code = T.Title_Code
+INNER JOIN Acq_Deal_Run_Channel DMRRC on DMR.Acq_Deal_Run_Code = DMRRC.Acq_Deal_Run_Code 
+ where 1=1 AND (Ad.is_active = 'Y')
+ 
+
+
+GROUP BY Ad.Agreement_No
+		,T.Title_Name
+		,ADR.Right_Type
+		,ADR.Actual_Right_Start_Date
+		,ADR.Actual_Right_End_Date
+		--,ADRB.Start_Date
+		--,ADRB.End_Date
+		--,p.platform_name
+		--,l.language_name       
+		,T.title_code
+		--,p.platform_code
+		--,L.Language_Code
+		,ADR.Is_Sub_License
+		,AD.Agreement_Date
+		--,Ter.Territory_Code
+		,ADR.Is_Exclusive
+		,T.Deal_Type_Code
+		,AD.Entity_Code
+		,AD.Status
+		,ADR.Acq_Deal_Rights_Code
+		,AD.Acq_Deal_Code
+		,TC.Title_Content_Code
+		,AD.Acq_Deal_Code
+		,ADM.Acq_Deal_Movie_Code
+		,DMR.Acq_Deal_Run_Code
+		,DMR.Is_Yearwise_Definition
+		,DMR.Run_Type
+		,DMR.Run_Definition_Type
+		,DMR.No_Of_Runs
+		,DMR.No_Of_Runs_Sched
+		,DMR.No_Of_AsRuns
+		,DMRRC.Channel_Code
+		,DMRRC.Min_Runs
+		,DMRRC.no_of_runs_sched
+		,DMRRC.No_Of_AsRuns
+		,DMRRC.Do_Not_Consume_Rights 
+		,TC.Episode_No
+		,AD.Deal_Workflow_Status

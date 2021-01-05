@@ -173,6 +173,8 @@ BEGIN
 	--	1 currencyCode, GETDATE() insertedOn, 1 insertedBy, 1 categoryCode, 1 customerCode, 1 EntityCode, '' YearType, '' refNo, 
 	--	'' exchangeRate, '' PaymentTermsNConditions, '' Status, 1 DealFor, '' Remarks, 1 Business_Unit_Code, '' Deal_Complete_Flag, 
 	--	'' Final_Deal_Workflow_Status, '' Show_Hide_Buttons
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 End
 
 

@@ -27,12 +27,11 @@ BEGIN TRY	--{-- 'BEGIN TRY'
 	--===============3.0 REVERT_SCHEDULE_COUNT --===============
 	IF(@IsReprocess <> 'Y')
 	BEGIN
-		
 		EXEC USP_Schedule_Revert_Count  @File_Code, @Channel_Code
 	END
 	PRINT '2'
 	--===============3.1 Inital Validation OF Temp_BV_Schedule--===============		
-	EXEC usp_Schedule_Validate_TempBVSche_S1 @File_Code, @Channel_Code, @IsReprocess, @BV_Episode_ID, @CanProcessRun OUT
+	EXEC usp_Schedule_Validate_TempBVSche_S1 @File_Code,	@Channel_Code, @IsReprocess, @BV_Episode_ID, @CanProcessRun OUT
 	PRINT '3'
 	IF(@IsReprocess <> 'Y' AND ISNULL(@BV_Episode_ID,'N') = 'N' )
 	BEGIN	
@@ -100,7 +99,7 @@ BEGIN TRY	--{-- 'BEGIN TRY'
 
 		PRINT '--===============8.0 Inserting all invalid houseds records into Upload_Err_Detail table --==============='		
 		
-		DELETE FROM Upload_Err_Detail WHERE File_Code = @File_Code AND Upload_Title_Type = 'M'
+		--DELETE FROM Upload_Err_Detail WHERE File_Code = @File_Code AND Upload_Title_Type = 'M'
 
 		INSERT INTO Upload_Err_Detail 
 		(
@@ -119,11 +118,12 @@ BEGIN TRY	--{-- 'BEGIN TRY'
 		(
 			BV_Schedule_Transaction_Code, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category,
 			Schedule_Item_Log_Date, Schedule_Item_Log_Time, Schedule_Item_Duration, Scheduled_Version_House_Number_List,
-			File_Code, Channel_Code, Inserted_On, Email_Notification_Msg, IsMailSent, IsRunCountCalculate
+			File_Code, Channel_Code, Inserted_On, Deal_Movie_Code, Deal_Movie_Rights_Code, 
+			Email_Notification_Msg, IsMailSent, IsRunCountCalculate, Title_Code
 		)
 		SELECT tbs.Temp_BV_Schedule_Code, tbs.Program_Episode_Title, tbs.Program_Episode_Number, tbs.Program_Title, tbs.Program_Category,
 		tbs.Schedule_Item_Log_Date, tbs.Schedule_Item_Log_Time, tbs.Schedule_Item_Duration, '1'  AS Scheduled_Version_House_Number_List,
-		tbs.File_Code, tbs.Channel_Code, GETDATE(), @EmailMsg_InvalidHID, 'N', 'N'
+		tbs.File_Code, tbs.Channel_Code, GETDATE(), NULL, NULL, @EmailMsg_InvalidHID, 'N', 'N', NULL
 		FROM Temp_BV_Schedule tbs
 		CROSS APPLY fn_Split_withdelemiter(tbs.Scheduled_Version_House_Number_List, ',' ) AS tempCross
 		WHERE 
@@ -192,5 +192,3 @@ END
 /*  
 EXEC [usp_Schedule_Validate_Temp_BV_Sche] 15892,13,'N'
 */
-GO
-

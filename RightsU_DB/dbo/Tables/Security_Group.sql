@@ -10,5 +10,3 @@
     CONSTRAINT [PK_Security_Group_Ad] PRIMARY KEY CLUSTERED ([Security_Group_Code] ASC)
 );
 
-
-

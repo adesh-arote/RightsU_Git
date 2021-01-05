@@ -13,5 +13,3 @@
     CONSTRAINT [PK_DM_Master_Log] PRIMARY KEY CLUSTERED ([DM_Master_Log_Code] ASC)
 );
 
-
-

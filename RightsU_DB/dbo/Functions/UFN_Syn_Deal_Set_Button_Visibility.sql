@@ -1,4 +1,5 @@
-﻿CREATE FUNCTION [dbo].[UFN_Syn_Deal_Set_Button_Visibility]
+﻿
+CREATE FUNCTION [dbo].[UFN_Syn_Deal_Set_Button_Visibility]
 (
 	@Syn_Deal_Code INT,
 	@Version FLOAT = 001,
@@ -13,7 +14,19 @@ AS
 --| Description:  Defines Button Visibility based on Rights for Syn Deals
 --|========================================================================
 BEGIN
-	
+	--SELECT * FROM Users WHERE Login_Name = 'admin'
+	--select * from Syn_Deal where Agreement_No = 'S-2018-00147'
+	--declare
+	--@Syn_Deal_Code INT = 1422,
+	--@Version FLOAT = 0001,
+	--@User_Code INT = 203,
+	--@WorkFlowStatus VARCHAR(50) = 'WA'
+
+	--select @Syn_Deal_Code = Syn_Deal_Code, @WorkFlowStatus = Deal_Workflow_Status, @Version = [Version] 
+	--from Syn_Deal where Agreement_No = 'S-2018-00147'
+
+
+
 	DECLARE @Is_Right_Available VARCHAR(MAX), @IsZeroWorkFlow VARCHAR(2), @IsShowAmendment INT, @ParentDealCode INT, 
 			@DealtagDescription NVARCHAR(MAX), @TotalMilestoneCount INT, @CountMovieClosed INT, @IsCompleted VARCHAR(2),
 			@Is_Terminated VARCHAR(2)
@@ -21,6 +34,8 @@ BEGIN
 	/*		2 - Edit, 6 - Delete, 7 - View, 10 - Clone, 8 - SEND FOR APPROVAL, 11 - APPROVE, 
 			12 - Reject, 18 - Amendment, 88 - CLOSE DEAL, 89 - RE-OPEN DEAL, 116 - Rollback	,
 			127 - Terminate	
+			164 Deal Archive
+			166 Send for deal archive
 	*/
 
 	DECLARE @UserSecCode INT = 0, @strReturnString VARCHAR(500)
@@ -41,12 +56,14 @@ BEGIN
 	FROM System_Module_Right smr WITH(NOLOCK)
 	INNER JOIN System_Right sr WITH(NOLOCK) ON sr.Right_Code = smr.Right_Code
 	LEFT JOIN Security_Group_Rel sgr WITH(NOLOCK) ON smr.Module_Right_Code = sgr.System_Module_Rights_Code AND sgr.Security_Group_Code=@UserSecCode
-	WHERE SR.Right_Code IN (1, 2, 6, 7, 8, 10, 11, 12, 18, 88, 89, 116, 127) AND smr.Module_Code=35  
+	WHERE SR.Right_Code IN (1, 2, 6, 7, 8, 10, 11, 12, 18, 88, 89, 116, 127, 164, 166) AND smr.Module_Code=35  
 	ORDER BY SR.Right_Code
+
 
 	DECLARE @Edit INT =2, @Delete INT = 6 , @View INT = 7, @Clone INT = 10, @SEND_FOR_APPROVAL INT =8, @APPROVE INT = 11, 
 			@Reject INT = 12, @Amendment INT = 18, @CLOSE_DEAL INT = 88, @RE_OPEN_DEAL INT = 89,
-			@Rollback INT =116 ,@Terminate int =127 , @MileStone VARCHAR(1) = 'Y', @ShowError CHAR(1) = 'N'
+			@Rollback INT =116 ,@Terminate int =127 , @MileStone VARCHAR(1) = 'Y', @ShowError CHAR(1) = 'N',
+			@SEND_FOR_ARCHIVE INT = 166, @ARCHIVE INT = 164
 
 	Select @Is_Terminated = CASE WHEN ISNULL(UPPER([Status]), '') = 'T' THEN 'Y' ELSE 'N' END  FROM Syn_Deal WHERE Syn_Deal_Code = @Syn_Deal_Code
 
@@ -70,38 +87,49 @@ BEGIN
 	SELECT @CountMovieClosed = COUNT(*) FROM Syn_Deal_Movie WITH(NOLOCK) WHERE Syn_Deal_Code IN (@Syn_Deal_Code) AND ISNULL(is_closed,'N') = 'Y' 
 
 	IF(@IsZeroWorkFlow = 'Y')
-		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code  = @SEND_FOR_APPROVAL
-	--ELSE IF(@IsZeroWorkFlow = 'N')
-	--	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  = @APPROVE
+		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code in( @SEND_FOR_APPROVAL, @SEND_FOR_ARCHIVE)
 	ELSE IF(@IsZeroWorkFlow != 'N')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL,@APPROVE)
-	END
-
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL,@APPROVE, @SEND_FOR_ARCHIVE,@ARCHIVE)
 
 	--IF Approved, Waiting for Authorization , Rejected
 	IF(@WorkFlowStatus = 'A' OR @WorkFlowStatus = 'W' OR @WorkFlowStatus = 'R')
 		SET @IsCompleted ='Y'
-
+	
 	--Not Completed
 	IF(@IsCompleted!='Y')
 	BEGIN
 		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @Clone, @Amendment, @APPROVE, @CLOSE_DEAL, @Terminate)
 		SET @MileStone ='N'
 	END
-
 	--New Version
 	IF(@Version < 1)
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  = @Rollback 
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  IN( @Rollback)
 	END
-	--ELSE
-	--	SEND THE VERSION NO> BUTTON NAME
+	 
+	IF(@Version = 1 AND @WorkFlowStatus <> 'R')
+	BEGIN
+		IF @WorkFlowStatus <> 'A'
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  IN( @SEND_FOR_ARCHIVE)
+
+		IF @WorkFlowStatus = 'N'
+			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  IN( @ARCHIVE)
+	END
+
+
 
 	--Waiting for Authorization
 	IF(@WorkFlowStatus = 'W')
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @Amendment, @Rollback, @Terminate)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL,@SEND_FOR_ARCHIVE,@ARCHIVE, @Amendment, @Rollback, @Terminate)
+			
+		SET @MileStone ='N'
+	END
+
+	--Waiting for ARCHIVE
+	IF(@WorkFlowStatus = 'WA')
+	BEGIN
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL,@RE_OPEN_DEAL,@Reject, @APPROVE ,@SEND_FOR_ARCHIVE, @Amendment, @Rollback, @Terminate)
 
 		SET @MileStone ='N'
 	END
@@ -116,7 +144,7 @@ BEGIN
 	--Approved
 	IF(@WorkFlowStatus = 'A')
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @APPROVE, @Rollback)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @APPROVE,@ARCHIVE, @Rollback)
 	END
 
 	IF(@WorkFlowStatus = 'R')
@@ -149,8 +177,14 @@ BEGIN
 
 	IF(@WorkFlowStatus = 'RS')
 	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @Close_Deal, @Clone, @Amendment, @Terminate)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL,  @Close_Deal, @Clone, @Amendment, @Terminate)
 		SET @MileStone = 'N'
+	END
+
+	IF(@WorkFlowStatus = 'AR')
+	BEGIN
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View)
+		SET @MileStone ='N'
 	END
 
 	IF(@ParentDealCode > 0)
@@ -186,7 +220,7 @@ BEGIN
 	ELSE
 	BEGIN
 		DECLARE @cntP INT
-		SELECT @cntP = COUNT(Syn_Deal_Code) from Syn_Deal_Rights where Syn_Deal_Code = @Syn_Deal_Code and ISNULL(Right_Status,'P') in ('P')
+		SELECT @cntP = COUNT(Syn_Deal_Code) from Syn_Deal_Rights where Syn_Deal_Code = @Syn_Deal_Code and ISNULL(Right_Status,'P') in ('P','W')
 		
 		IF (@cntP > 0)
 			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @APPROVE)
@@ -202,24 +236,19 @@ BEGIN
 	--IF( @UGCode = @GCode)
 	--UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code  = @Approve
 	IF( @UGCode != @GCode)
-	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN(@Approve,@Reject,@RE_OPEN_DEAL)
+		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN(@Approve,@ARCHIVE,@Reject,@RE_OPEN_DEAL)
 
-	--For Edit When Deal is Reopen
-	--Declare @GCoder INT=0,@UGCoder INT=0,@DBUCoder INT=0
-	--select @DBUCoder=Business_Unit_Code from Syn_Deal where Syn_Deal_Code=@Syn_Deal_Code and Deal_Workflow_Status='RO'
-	--select  @UGCoder=Security_Group_Code from Users u
-	--INNER JOIN Users_Business_Unit bu ON bu.Users_Code=u.Users_Code
-	-- where u.Users_Code=@User_Code and @DBUCoder=bu.Business_Unit_Code
-	--select @GCoder=ISNULL(dbo.UFN_Get_Current_Approver_Code(35,@Syn_Deal_Code),0)
-	--IF( @UGCoder = @GCoder)
-	--UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code  = @Edit
 
+
+	
 	-- Re-Open
 	IF(@WorkFlowStatus = 'RO')
 	BEGIN
 		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code IN (@EDIT,@View)
 		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Delete,@Clone,@SEND_FOR_APPROVAL,@APPROVE,@Reject, @Amendment,@CLOSE_DEAL,@RE_OPEN_DEAL,@Rollback,@Terminate)
 	END
+
+
 	-- SHOW ERROR END
 	SELECT  @Is_Right_Available = (SELECT STUFF((SELECT ',' + Cast(Right_Code as VARCHAR(MAX)) 
 	FROM @Module_Rights 
@@ -238,12 +267,10 @@ BEGIN
 		
 
 --	RETURN  ','+@Is_Right_Available +','
-	--RETURN  ',' + @Is_Right_Available +','
-	RETURN @strReturnString
+	RETURN  ',' + @strReturnString +','
+	--SELECT @strReturnString
 END
 
 /*
 SELECT Dbo.[UFN_SYN_DEAL_SET_BUTTON_VISIBILITY](54,0001,143,'Y')
 */
-GO
-

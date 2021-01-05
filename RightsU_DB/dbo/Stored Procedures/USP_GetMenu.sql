@@ -1,5 +1,5 @@
 ﻿
-ALTER PROCEDURE [dbo].[USP_GetMenu]
+CREATE PROCEDURE [dbo].[USP_GetMenu]
 @SecurityGroupCode varchar(10),
 @IsSuperAdmin char(1),
 @Users_Code INT
@@ -56,8 +56,10 @@ SET FMTONLY OFF
 	  exec(@Sql)
 
       select * from #temp 		
-	  Drop table #temp
+	  --Drop table #temp
+
+	  IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
   
   END
   
-  -- Exec [dbo].[USP_GetMenu] 1,'',1
+  -- Exec [dbo].[USP_GetMenu] 1,''

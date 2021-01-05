@@ -8,5 +8,3 @@
     CONSTRAINT [PK_IPR_Opp_Status_History] PRIMARY KEY CLUSTERED ([IPR_Opp_Status_History_Code] ASC)
 );
 
-
-

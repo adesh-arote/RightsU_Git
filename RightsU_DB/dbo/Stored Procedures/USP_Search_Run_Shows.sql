@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Search_Run_Shows]
+﻿CREATE PROCEDURE [dbo].[USP_Search_Run_Shows]
 	@searchCriteria VARCHAR(MAX),
 	@Data_For_flag VARCHAR(2) ,
 	@selectedDealMovieCodes VARCHAR(MAX) ,
@@ -405,6 +405,14 @@ BEGIN
 				Channel_Name,Acq_Deal_Code,Agreement_No, Ext_Column_Name,Ext_Column_Value,Is_Select,ISNULL(Data_For, @Data_For_flag) AS Data_For				
 		FROM #Temp2 ORder BY Is_Select DESC--,Title_Name,Agreement_No,Channel_Name 
 	END
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp.Acq_Deal_Run_Shows_Code') IS NOT NULL DROP TABLE #Temp.Acq_Deal_Run_Shows_Code
+	IF OBJECT_ID('tempdb..#Temp.Title_Code') IS NOT NULL DROP TABLE #Temp.Title_Code
+	IF OBJECT_ID('tempdb..#Temp_Channel_Codes') IS NOT NULL DROP TABLE #Temp_Channel_Codes
+	IF OBJECT_ID('tempdb..#Temp_Prog_Eps') IS NOT NULL DROP TABLE #Temp_Prog_Eps
+	IF OBJECT_ID('tempdb..#Temp_Run_Shows') IS NOT NULL DROP TABLE #Temp_Run_Shows
+	IF OBJECT_ID('tempdb..#Temp2') IS NOT NULL DROP TABLE #Temp2
 END
 /*
 USP_Search_Run_Shows 'set','P','','Mtv','','',12911
@@ -426,7 +434,3 @@ USP_Search_Run_Shows 'sagar','P','0',' MTV, SET Jupiter','18534,18534,20576,2055
 
 USP_Search_Run_Shows 'set','P','',' MTV','','',12779
 */
-
-
-GO
-

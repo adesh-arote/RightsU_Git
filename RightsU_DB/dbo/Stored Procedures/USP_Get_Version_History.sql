@@ -1,22 +1,43 @@
-﻿alter PROCEDURE [dbo].[USP_Get_Version_History]
+﻿
+CREATE PROCEDURE [dbo].[USP_Get_Version_History]
 	@Acq_Deal_Code int
 	,@Business_Unit_Code int
 	,@TabName Varchar(100)
 AS
--- =============================================
--- Author:		Rajesh Godse
--- Create date: 9-Sept-2015
--- Description:	Get version difference based on deal code
--- =============================================
-/*
-SELECT * FROM Acq_Deal WHERE Agreement_No like 'A-2016-00075'
-EXEC [dbo].[USP_Get_Version_History]  13461,1,'DEALPUSHBACK'
-select * from acq_deal where agreement_no = 'A-2016-00099'
-*/
+---- =============================================
+---- Author:		Rajesh Godse
+---- Create date: 9-Sept-2015
+---- Description:	Get version difference based on deal code
+---- =============================================
+--/*
+--SELECT * FROM Acq_Deal WHERE Agreement_No like 'A-2016-00075'
+--EXEC [dbo].[USP_Get_Version_History]  13461,1,'DEALPUSHBACK'
+--select * from AT_acq_deal where agreement_no = 'A-2016-00099'
+--*/
 BEGIN
+		--DECLARE
+		--@Acq_Deal_Code int = 21617
+		--,@Business_Unit_Code int = 5
+		--,@TabName Varchar(100) = 'GENERAL'
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	IF OBJECT_ID('tempdb..#TempAncillaryHistory') IS NOT NULL DROP TABLE #TempAncillaryHistory
+	IF OBJECT_ID('tempdb..#TempAttachmentHistory') IS NOT NULL DROP TABLE #TempAttachmentHistory
+	IF OBJECT_ID('tempdb..#TempBudgetHistory') IS NOT NULL DROP TABLE #TempBudgetHistory
+	IF OBJECT_ID('tempdb..#TempDealHistory') IS NOT NULL DROP TABLE #TempDealHistory
+	IF OBJECT_ID('tempdb..#TempMaterialHistory') IS NOT NULL DROP TABLE #TempMaterialHistory
+	IF OBJECT_ID('tempdb..#TempMovieHistory') IS NOT NULL DROP TABLE #TempMovieHistory
+	IF OBJECT_ID('tempdb..#TempPlatformHistory') IS NOT NULL DROP TABLE #TempPlatformHistory
+	IF OBJECT_ID('tempdb..#TempPushbackHistory') IS NOT NULL DROP TABLE #TempPushbackHistory
+	IF OBJECT_ID('tempdb..#TempRightsHistory') IS NOT NULL DROP TABLE #TempRightsHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncFTCHistory') IS NOT NULL DROP TABLE #TempSportsAncFTCHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncMoneHistory') IS NOT NULL DROP TABLE #TempSportsAncMoneHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncMrktHistory') IS NOT NULL DROP TABLE #TempSportsAncMrktHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncProHistory') IS NOT NULL DROP TABLE #TempSportsAncProHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncSalesHistory') IS NOT NULL DROP TABLE #TempSportsAncSalesHistory
+	IF OBJECT_ID('tempdb..#TempSportsHistory') IS NOT NULL DROP TABLE #TempSportsHistory
 
 	DECLARE @Selected_Deal_Type_Code INT ,@Deal_Type_Condition VARCHAR(MAX) = ''
 	Select @Selected_Deal_Type_Code = Deal_Type_Code From Acq_Deal Where Acq_Deal_Code = @Acq_Deal_Code
@@ -46,11 +67,13 @@ BEGIN
 			Channel_Cluster_Name NVARCHAR(200),
 			[Index] int,
 			ChangedColumnIndex varchar(MAX),
-			[Inserted_By] VARCHAR(50)
+			[Inserted_By] VARCHAR(50),
+			Deal_Segment NVARCHAR(MAX),
+			Revenue_Vertical NVARCHAR(MAX)
 		)
 
-		INSERT INTO #TempDealHistory(AT_Acq_Deal_Code,Acq_Deal_Code,Agreement_No,Version,VersionOld,Deal_Desc,Deal_Type_Name,[Entity_Name],Exchange_Rate,Category_Name,Vendor_Name, Contact_Name,Currency_Name, Role_Name, Channel_Cluster_Name,[Index],ChangedColumnIndex,[Inserted_By])
-		SELECT AT_Acq_Deal_Code,Acq_Deal_Code,Agreement_No,Version,RIGHT('000' + cast( (cast(Version as decimal) +1) as varchar(50)),4),Deal_Desc,DT.Deal_Type_Name,E.[Entity_Name],Exchange_Rate,C.Category_Name,V.Vendor_Name, VC.Contact_Name,CR.Currency_Name, R.Role_Name, CC.Channel_Cluster_Name ,cast(AAD.Version as decimal),'',USR.Login_Name
+		INSERT INTO #TempDealHistory(AT_Acq_Deal_Code,Acq_Deal_Code,Agreement_No,Version,VersionOld,Deal_Desc,Deal_Type_Name,[Entity_Name],Exchange_Rate,Category_Name,Vendor_Name, Contact_Name,Currency_Name, Role_Name, Channel_Cluster_Name,[Index],ChangedColumnIndex,[Inserted_By],Deal_Segment, Revenue_Vertical)
+		SELECT AAD.AT_Acq_Deal_Code,AAD.Acq_Deal_Code,AAD.Agreement_No,AAD.Version,RIGHT('000' + cast( (cast(AAD.Version as decimal) +1) as varchar(50)),4),AAD.Deal_Desc,DT.Deal_Type_Name,E.[Entity_Name],AAD.Exchange_Rate,C.Category_Name,V.Vendor_Name, VC.Contact_Name,CR.Currency_Name, R.Role_Name, CC.Channel_Cluster_Name ,cast(AAD.Version as decimal),'',USR.Login_Name, DS.Deal_Segment_Name, RV.Revenue_Vertical_Name
 		FROM AT_Acq_Deal AAD
 		INNER JOIN Deal_Type DT ON AAD.Deal_Type_Code = DT.Deal_Type_Code
 		INNER JOIN Entity E ON AAD.Entity_Code = E.Entity_Code
@@ -59,16 +82,19 @@ BEGIN
 		LEFT OUTER JOIN Vendor_Contacts VC ON AAD.Vendor_Contacts_Code = VC.Vendor_Contacts_Code
 		INNER JOIN Currency CR ON AAD.Currency_Code = CR.Currency_Code
 		INNER JOIN Role R ON R.Role_Code = AAD.Role_Code
+		INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = AAD.Acq_Deal_Code
+		LEFT JOIN Deal_Segment DS ON AAD.Deal_Segment_Code = DS.Deal_Segment_Code
+		LEFT JOIN Revenue_Vertical RV ON AAD.Revenue_Vertical_Code = RV.Revenue_Vertical_Code
 		LEFT OUTER JOIN Channel_Cluster CC ON AAD.Channel_Cluster_Code = CC.Channel_Cluster_Code
-		INNER JOIN Users USR ON USR.Users_Code = CASE WHEN version = '0001' THEN 
+		INNER JOIN Users USR ON USR.Users_Code = CASE WHEN AAD.version = '0001' THEN 
 				AAD.Inserted_By
 			  ELSE
 				AAD.Last_Action_By
 		END
-		WHERE Acq_Deal_Code = @Acq_Deal_Code 
+		WHERE AAD.Acq_Deal_Code = @Acq_Deal_Code 
 
-		INSERT INTO #TempDealHistory(AT_Acq_Deal_Code,Acq_Deal_Code,Agreement_No,Version, VersionOld,Deal_Desc,Deal_Type_Name,[Entity_Name],Exchange_Rate,Category_Name,Vendor_Name, Contact_Name,Currency_Name, Role_Name, Channel_Cluster_Name,[Index],ChangedColumnIndex,[Inserted_By])
-		SELECT 0,Acq_Deal_Code,Agreement_No,Version,RIGHT('000' + cast( (cast(Version as decimal) +1) as varchar(50)),4),Deal_Desc,DT.Deal_Type_Name,E.[Entity_Name],Exchange_Rate,C.Category_Name,V.Vendor_Name, VC.Contact_Name,CR.Currency_Name, R.Role_Name, CC.Channel_Cluster_Name,cast(AAD.Version as decimal),'',USR.Login_Name
+		INSERT INTO #TempDealHistory(AT_Acq_Deal_Code,Acq_Deal_Code,Agreement_No,Version, VersionOld,Deal_Desc,Deal_Type_Name,[Entity_Name],Exchange_Rate,Category_Name,Vendor_Name, Contact_Name,Currency_Name, Role_Name, Channel_Cluster_Name,[Index],ChangedColumnIndex,[Inserted_By], Deal_Segment, Revenue_Vertical)
+		SELECT 0,Acq_Deal_Code,Agreement_No,Version,RIGHT('000' + cast( (cast(Version as decimal) +1) as varchar(50)),4),Deal_Desc,DT.Deal_Type_Name,E.[Entity_Name],Exchange_Rate,C.Category_Name,V.Vendor_Name, VC.Contact_Name,CR.Currency_Name, R.Role_Name, CC.Channel_Cluster_Name,cast(AAD.Version as decimal),'',USR.Login_Name, DS.Deal_Segment_Name, RV.Revenue_Vertical_Name
 		FROM Acq_Deal AAD
 		INNER JOIN Deal_Type DT ON AAD.Deal_Type_Code = DT.Deal_Type_Code
 		INNER JOIN Entity E ON AAD.Entity_Code = E.Entity_Code
@@ -77,6 +103,8 @@ BEGIN
 		LEFT OUTER JOIN Vendor_Contacts VC ON AAD.Vendor_Contacts_Code = VC.Vendor_Contacts_Code
 		INNER JOIN Currency CR ON AAD.Currency_Code = CR.Currency_Code
 		INNER JOIN Role R ON R.Role_Code = AAD.Role_Code
+		LEFT JOIN Deal_Segment DS ON AAD.Deal_Segment_Code = DS.Deal_Segment_Code
+		LEFT JOIN Revenue_Vertical RV ON AAD.Revenue_Vertical_Code = RV.Revenue_Vertical_Code
 		LEFT OUTER JOIN Channel_Cluster CC ON AAD.Channel_Cluster_Code = CC.Channel_Cluster_Code
 		INNER JOIN Users USR ON USR.Users_Code = CASE WHEN version = '0001' THEN 
 				AAD.Inserted_By
@@ -84,9 +112,6 @@ BEGIN
 				AAD.Last_Action_By
 		END
 		WHERE  AAD.Deal_Workflow_Status NOT IN ('AR', 'WA') and Acq_Deal_Code = @Acq_Deal_Code AND cast(AAD.Version as decimal) > (SELECT MAX(cast(Version as decimal)) from #TempDealHistory)
-
-
-		
 
 		DECLARE @ISChange varchar(2)
 		DECLARE @Version varchar(100) 
@@ -209,6 +234,28 @@ BEGIN
 			if(@ISChange = 'Y')
 			BEGIN
 			  update #TempDealHistory set ChangedColumnIndex = isnull(ChangedColumnIndex, '')  + '15,' where [Index] = @temp and version = @version
+			  set @ISChange = '' 
+			END
+
+			select @ISChange =  case when ISNULL(a.Deal_Segment,'')  != isnull(B.Deal_Segment,'') then 'Y'  end
+			from #TempDealHistory a 
+			left join #TempDealHistory b on a.Version = b.VersionOld
+			where a.[Index] = @temp and  a.Version = @Version
+		
+			if(@ISChange = 'Y')
+			BEGIN
+			  update #TempDealHistory set ChangedColumnIndex = isnull(ChangedColumnIndex, '')  + '16,' where [Index] = @temp and version = @version
+			  set @ISChange = '' 
+			END
+
+			select @ISChange =  case when ISNULL(a.Revenue_Vertical,'')  != isnull(B.Revenue_Vertical,'') then 'Y'  end
+			from #TempDealHistory a 
+			left join #TempDealHistory b on a.Version = b.VersionOld
+			where a.[Index] = @temp and  a.Version = @Version
+		
+			if(@ISChange = 'Y')
+			BEGIN
+			  update #TempDealHistory set ChangedColumnIndex = isnull(ChangedColumnIndex, '')  + '17,' where [Index] = @temp and version = @version
 			  set @ISChange = '' 
 			END
 
@@ -4759,10 +4806,26 @@ BEGIN
 		Deallocate CUR_Budget
 		Select * from #TempBudgetHistory
 
+	IF OBJECT_ID('tempdb..#TempAncillaryHistory') IS NOT NULL DROP TABLE #TempAncillaryHistory
+	IF OBJECT_ID('tempdb..#TempAttachmentHistory') IS NOT NULL DROP TABLE #TempAttachmentHistory
+	IF OBJECT_ID('tempdb..#TempBudgetHistory') IS NOT NULL DROP TABLE #TempBudgetHistory
+	IF OBJECT_ID('tempdb..#TempDealHistory') IS NOT NULL DROP TABLE #TempDealHistory
+	IF OBJECT_ID('tempdb..#TempMaterialHistory') IS NOT NULL DROP TABLE #TempMaterialHistory
+	IF OBJECT_ID('tempdb..#TempMovieHistory') IS NOT NULL DROP TABLE #TempMovieHistory
+	IF OBJECT_ID('tempdb..#TempPlatformHistory') IS NOT NULL DROP TABLE #TempPlatformHistory
+	IF OBJECT_ID('tempdb..#TempPushbackHistory') IS NOT NULL DROP TABLE #TempPushbackHistory
+	IF OBJECT_ID('tempdb..#TempRightsHistory') IS NOT NULL DROP TABLE #TempRightsHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncFTCHistory') IS NOT NULL DROP TABLE #TempSportsAncFTCHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncMoneHistory') IS NOT NULL DROP TABLE #TempSportsAncMoneHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncMrktHistory') IS NOT NULL DROP TABLE #TempSportsAncMrktHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncProHistory') IS NOT NULL DROP TABLE #TempSportsAncProHistory
+	IF OBJECT_ID('tempdb..#TempSportsAncSalesHistory') IS NOT NULL DROP TABLE #TempSportsAncSalesHistory
+	IF OBJECT_ID('tempdb..#TempSportsHistory') IS NOT NULL DROP TABLE #TempSportsHistory
+
 END
 -- Code End for Deal Budget
 END
 /*
 --SELECT * FROM Acq_Deal WHERE Agreement_No like 'A-2016-00134'
---EXEC [dbo].[USP_Get_Version_History] 3012,4,'GENERAL'
+--EXEC [dbo].[USP_Get_Version_History] 20610,1,'GENERAL'
 */

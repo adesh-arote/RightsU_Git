@@ -35,9 +35,3 @@
     CONSTRAINT [FK_AT_Acq_Deal_Rights_Sub_License] FOREIGN KEY ([Sub_License_Code]) REFERENCES [dbo].[Sub_License] ([Sub_License_Code])
 );
 
-
-
-
-
-
-

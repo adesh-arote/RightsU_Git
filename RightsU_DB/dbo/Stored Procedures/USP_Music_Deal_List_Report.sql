@@ -10,8 +10,8 @@
 AS        
 BEGIN                
 	--DECLARE 
-	-- @Agreement_No varchar(100) = 'M-2018-00001',   
-	-- @MusicLabelCode varchar(500) = '', 
+	-- @Agreement_No varchar(100) = '',   
+	-- @MusicLabelCode varchar(500) = '1', 
 	-- @start_Date varchar(50) = '',      
 	-- @End_Date varchar(50) = '',        
 	-- @Expired_Deal char(1) = 'N',    
@@ -41,7 +41,8 @@ BEGIN
 		@Col_Head18 NVARCHAR(MAX) = '',
 		@Col_Head19 NVARCHAR(MAX) = '',  
 		@Col_Head20 NVARCHAR(MAX) = '',  
-		@Col_Head21 NVARCHAR(MAX) = ''	
+		@Col_Head21 NVARCHAR(MAX) = '',
+		@Col_Head22 NVARCHAR(MAX) = ''	
 		
 
 	SELECT 
@@ -93,12 +94,14 @@ BEGIN
 		BU.Business_Unit_Name AS [Bussiness Unit]  ,  
 		MD.Reference_No As [Reference No],  
 		MD.Remarks As Remarks,
+		DT.Deal_Tag_Description AS [Status],
 		[dbo].[UFN_Get_Platform_Name](MD.Music_Deal_Code, 'MD') Platform_Name 
 	INTO #TempMusicDealData
 	FROM Music_Deal MD        
 	INNER JOIN Music_Label ML ON ML.Music_Label_Code = MD.Music_Label_Code        
 	INNER JOIN Entity E ON E.Entity_Code = MD.Entity_Code         
 	INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = MD.Business_Unit_Code   
+	LEFT JOIN Deal_Tag DT ON DT.Deal_Tag_Code = MD.Deal_Tag_Code
 	LEFT JOIN Right_Rule R ON R.Right_Rule_Code = MD.Right_Rule_Code       
 	LEFT JOIN Channel_Category CC ON CC.Channel_Category_Code = MD.Channel_Category_Code      
 	WHERE (@Agreement_No = '' or MD.Agreement_No = @Agreement_No  )        
@@ -138,29 +141,30 @@ BEGIN
 		@Col_Head18 = CASE WHEN  SM.Message_Key = 'LinkedShow' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head18 END,
 		@Col_Head19 = CASE WHEN  SM.Message_Key = 'BusinessUnit' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head19 END,
 		@Col_Head20 = CASE WHEN  SM.Message_Key = 'RestrictionRemarks' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head20 END,
-		@Col_Head21 = CASE WHEN  SM.Message_Key = 'ReferenceNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head21 END
+		@Col_Head21 = CASE WHEN  SM.Message_Key = 'ReferenceNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head21 END,
+		@Col_Head22 = CASE WHEN  SM.Message_Key = 'Status' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head22 END
 	FROM System_Message SM  
 	INNER JOIN System_Module_Message SMM ON SMM.System_Message_Code = SM.System_Message_Code  
 	AND SM.Message_Key IN ('AgreementNo','AgreementDate','MusicLabel','Description','Licensee','Licensor','StartDate','EndDate','Platform','TrackLanguage',
-	'DurationRestrictionHHMM','Noofsongs','ChannelCategory','Channel','ChannelType','AgreementCost','RightRule','LinkedShow','BusinessUnit','RestrictionRemarks','ReferenceNo')  
+	'DurationRestrictionHHMM','Noofsongs','ChannelCategory','Channel','ChannelType','AgreementCost','RightRule','LinkedShow','BusinessUnit','RestrictionRemarks','ReferenceNo', 'Status')  
 	INNER JOIN System_Language_Message SLM ON SLM.System_Module_Message_Code = SMM.System_Module_Message_Code AND SLM.System_Language_Code = @SysLanguageCode  
 
 	IF EXISTS(SELECT TOP 1 * FROM #TempMusicDealData)
 	BEGIN
 		SELECT [Agreement No], [Agreement Date], [Music Label], [Description], [Licensee], [Licensor], [Start Date], [End Date], [Platform],
 			[Track Language], [Duration Restriction], [No of Songs], [Channel Category], [Channel], [Channel Type], [Agreement Cost], [Right Rule], [Linked Show],
-			[Bussiness Unit], [Restriction Remarks], [Reference No]
+			[Bussiness Unit], [Restriction Remarks], [Reference No],[Status]
 			FROM (
 				SELECT
 				sorter = 1,
 				CAST([Deal No] AS NVARCHAR(MAX)) AS [Agreement No], 
-				CAST([Agreement Date] AS VARCHAR(100)) AS [Agreement Date], 
+				CONVERT(DATE,[Agreement Date],103) AS [Agreement Date], 
 				CAST([Music Label] AS VARCHAR(100)) AS [Music Label],
 				CAST([Description] AS NVARCHAR(MAX)) AS [Description], 
 				CAST([Licensee] AS VARCHAR(100)) AS [Licensee], 
 				CAST([Licensor] AS VARCHAR(100)) AS [Licensor],
-				CAST([Start Date] AS VARCHAR(100)) AS [Start Date], 
-				CAST([End Date] AS VARCHAR(100)) AS [End Date],
+				CONVERT(DATE,[Start Date], 103) AS [Start Date], 
+				CONVERT(DATE,[End Date], 103) AS [End Date],
 				CAST([Platform_Name] AS NVARCHAR(MAX)) AS [Platform],
 				CAST([Track Language] AS VARCHAR(100)) AS [Track Language],
 				CAST([Duration Restriction (MM:SS)] AS VARCHAR(100)) AS [Duration Restriction],
@@ -173,11 +177,12 @@ BEGIN
 				CAST([Linked Show] AS VARCHAR(100)) AS [Linked Show],
 				CAST([Bussiness Unit] AS VARCHAR(100)) AS [Bussiness Unit], 
 				CAST([Remarks] AS NVARCHAR(MAX)) AS [Restriction Remarks],
-				CAST([Reference No] AS VARCHAR(100)) AS [Reference No] 
+				CAST([Reference No] AS VARCHAR(100)) AS [Reference No],
+				CASt([Status] AS VARCHAR(100)) AS [Status]
 				From #TempMusicDealData
 				UNION ALL
-					SELECT 0, @Col_Head01, @Col_Head02, @Col_Head03, @Col_Head04, @Col_Head05, @Col_Head06, @Col_Head07, @Col_Head08, @Col_Head09, 
-					@Col_Head10, @Col_Head11, @Col_Head12, @Col_Head13, @Col_Head14, @Col_Head15, @Col_Head16, @Col_Head17, @Col_Head18, @Col_Head19, @Col_Head20, @Col_Head21
+					SELECT 0, @Col_Head01, GETDATE(), @Col_Head03, @Col_Head04, @Col_Head05, @Col_Head06, GETDATE(), GETDATE(), @Col_Head09, 
+					@Col_Head10, @Col_Head11, @Col_Head12, @Col_Head13, @Col_Head14, @Col_Head15, @Col_Head16, @Col_Head17, @Col_Head18, @Col_Head19, @Col_Head20, @Col_Head21,@Col_Head22
 				) X   
 		ORDER BY Sorter
 	END
@@ -186,5 +191,5 @@ BEGIN
 		SELECT * FROM #TempMusicDealData
 	END
 
-
+	IF OBJECT_ID('tempdb..#TempMusicDealData') IS NOT NULL DROP TABLE #TempMusicDealData
 END

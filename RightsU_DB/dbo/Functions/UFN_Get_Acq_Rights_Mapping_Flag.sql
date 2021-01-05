@@ -25,7 +25,3 @@ BEGIN
 	RETURN 'N'
 
 END
-
-
-
-

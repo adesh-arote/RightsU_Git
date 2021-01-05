@@ -1,4 +1,5 @@
 ﻿
+
 CREATE PROC [dbo].[usp_Schedule_ReProcess]  
 (
 	@File_Code INT,
@@ -22,7 +23,6 @@ SET NOCOUNT ON;
 	DECLARE @Result_IsSuccess CHAR(1);	SET @Result_IsSuccess = 'N'
 	------------------------------------------- END GLOBAL VARIBALES -------------------------------------------
 	DECLARE @IsReprocess VARCHAR(10);	SET @IsReprocess = 'Y'
-
 	EXEC [usp_Schedule_Validate_Temp_BV_Sche] @File_Code, @Channel_Code, @IsReprocess
    
 	----------------------------------- RETRUN RESULT -----------------------------------
@@ -45,4 +45,7 @@ END
   
 /*  
 EXEC [usp_Schedule_ReProcess] 2,3
-*/
+*/  
+
+
+

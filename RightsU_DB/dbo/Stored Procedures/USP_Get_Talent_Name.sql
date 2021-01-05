@@ -14,4 +14,3 @@ BEGIN
 END
 
 --EXEC [dbo].[USP_Get_Talent_Name] 4
-

@@ -53,7 +53,8 @@ Begin
 	Order By Module_Position
 	
 	--Select Platform_Code, Platform_Name, IsNull(Parent_Platform_Code, 0) Parent_Platform_Code, Is_Last_Level, Module_Position From [Platform] Where Is_Active = 'Y' Order By Module_Position
-	Drop Table #TempPF
+	--Drop Table #TempPF
+	IF OBJECT_ID('tempdb..#TempPF') IS NOT NULL DROP TABLE #TempPF
 End
 
 /*

@@ -12,5 +12,3 @@
     CONSTRAINT [FK_Amort_Rule_Details_Amort_Rule] FOREIGN KEY ([Amort_Rule_Code]) REFERENCES [dbo].[Amort_Rule] ([Amort_Rule_Code])
 );
 
-
-

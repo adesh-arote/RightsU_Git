@@ -81,5 +81,7 @@ Begin
     WHERE tbl.Acq_Deal_Movie_Content_Code in (Select RowId From #Temp) '+ @OrderBy + '' 
 	PRINT @Sql
 	Exec(@Sql)
-	Drop Table #Temp
+	--Drop Table #Temp
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 End

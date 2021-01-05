@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Validate_RIGHT_FOR_SYN_RUN]
+﻿CREATE PROCEDURE [dbo].[USP_Validate_RIGHT_FOR_SYN_RUN]
 	@SYN_DEAL_CODE int
 AS
 -- =============================================

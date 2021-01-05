@@ -70,12 +70,12 @@ BEGIN
 									WHERE
 									( 
 										TSRTP.Episode_From BETWEEN ADRT.Episode_From AND ADRT.Episode_To
-										AND TSRTP.Episode_To BETWEEN ADRT.Episode_From AND ADRT.Episode_To
+										OR TSRTP.Episode_To BETWEEN ADRT.Episode_From AND ADRT.Episode_To
 									)
 									OR
 									(
 										ADRT.Episode_From BETWEEN TSRTP.Episode_From AND TSRTP.Episode_To
-										AND ADRT.Episode_To BETWEEN TSRTP.Episode_From AND TSRTP.Episode_To
+										OR ADRT.Episode_To BETWEEN TSRTP.Episode_From AND TSRTP.Episode_To
 									)
 							   ) 
 							   AND ADRP.Platform_Code IN
@@ -115,4 +115,8 @@ BEGIN
 	DROP TABLE #Temp_Rights_Code
 
 	SELECT 'Success' AS RESULT
+
+	IF OBJECT_ID('tempdb..#Temp_Rights_Code') IS NOT NULL DROP TABLE #Temp_Rights_Code
+	IF OBJECT_ID('tempdb..#Temp_Syn_Rights') IS NOT NULL DROP TABLE #Temp_Syn_Rights
+	IF OBJECT_ID('tempdb..#Temp_Syn_Rights_Title_Plt') IS NOT NULL DROP TABLE #Temp_Syn_Rights_Title_Plt
 END

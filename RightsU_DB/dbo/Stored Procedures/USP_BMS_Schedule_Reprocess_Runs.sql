@@ -158,7 +158,7 @@ BEGIN
 	
 		Update a
 		Set a.Scheduled_Run = (
-			SELECT COUNT(DISTINCT BSR.TimeLine_ID) FROM #Temp_BMS_Schedule_Run BSR WHERE ISNULL(BSR.Is_Ignore ,'N') = 'N' 
+			SELECT COUNT(DISTINCT BSR.TimeLine_ID) FROM #Temp_BMS_Schedule_Run BSR WHERE ISNULL(BSR.Is_Ignore ,'') = 'N' 
 			AND BSR.Acq_Deal_Run_Code = a.Acq_Deal_Run_Code
 			AND BSR.TimeLine_ID NOT IN(select TimeLine_ID from #TimeLine_ID)
 		),
@@ -187,7 +187,7 @@ BEGIN
 			WHERE
 			((ISNULL(BSR.Is_Prime,'N') = 'N' AND ADSRI.Is_Define_Prime_Time = 'Y' AND ADSRI.Is_Define_Off_Prime_Time = 'Y') 
 			OR (ADSRI.Is_Define_Off_Prime_Time = 'Y' AND ADSRI.Is_Define_Prime_Time = 'N' )) 
-			AND ISNULL(BSR.Is_Ignore ,'N') = 'N' AND BSR.Content_Channel_Run_Code = a.Content_Channel_Run_Code
+			AND ISNULL(BSR.Is_Ignore ,'') = 'N' AND BSR.Content_Channel_Run_Code = a.Content_Channel_Run_Code
 			AND BSR.TimeLine_ID NOT IN(select TimeLine_ID from #TimeLine_ID)
 		),
 		a.Off_Prime_Schedule_Utilized_Run = (
@@ -241,7 +241,7 @@ BEGIN
 	
 		Update a
 		Set a.Scheduled_Run = (
-			SELECT COUNT(DISTINCT BSR.TimeLine_ID) FROM #Temp_BMS_Schedule_Run BSR WHERE ISNULL(BSR.Is_Ignore ,'N') = 'N' AND BSR.Content_Channel_Run_Code = a.Content_Channel_Run_Code
+			SELECT COUNT(DISTINCT BSR.TimeLine_ID) FROM #Temp_BMS_Schedule_Run BSR WHERE ISNULL(BSR.Is_Ignore ,'') = 'N' AND BSR.Content_Channel_Run_Code = a.Content_Channel_Run_Code
 			AND BSR.TimeLine_ID NOT IN(select TimeLine_ID from #TimeLine_ID)
 		),
 		a.Scheduled_Utilized_Run = (
@@ -267,7 +267,7 @@ BEGIN
 			INNER JOIN #Acq_Deal_Content_Schedule_Run ADSRI ON ADSRI.Content_Channel_Run_Code = BSR.Content_Channel_Run_Code           
 			WHERE
 			((ISNULL(BSR.Is_Prime,'N') = 'N' AND ADSRI.Is_Define_Prime_Time = 'Y' AND ADSRI.Is_Define_Off_Prime_Time = 'Y') OR (ADSRI.Is_Define_Off_Prime_Time = 'Y' AND ADSRI.Is_Define_Prime_Time = 'N' )) 
-			AND ISNULL(BSR.Is_Ignore ,'N') = 'N' AND BSR.Content_Channel_Run_Code = a.Content_Channel_Run_Code
+			AND ISNULL(BSR.Is_Ignore ,'') = 'N' AND BSR.Content_Channel_Run_Code = a.Content_Channel_Run_Code
 			AND BSR.TimeLine_ID NOT IN(select TimeLine_ID from #TimeLine_ID)
 		),
 		a.Off_Prime_Schedule_Utilized_Run = (
@@ -299,4 +299,10 @@ BEGIN
 		SELECT @ErMessage = 'Error in USP_BMS_Schedule_Reprocess_Runs : - ' +  ERROR_MESSAGE(),@ErSeverity = ERROR_SEVERITY(),@ErState = ERROR_STATE()
 		RAISERROR (@ErMessage,@ErSeverity,@ErState) 
 	END CATCH 
+
+	IF OBJECT_ID('tempdb..#Acq_Deal_Content_Schedule_Run') IS NOT NULL DROP TABLE #Acq_Deal_Content_Schedule_Run
+	IF OBJECT_ID('tempdb..#Acq_Deal_Run_Codes') IS NOT NULL DROP TABLE #Acq_Deal_Run_Codes
+	IF OBJECT_ID('tempdb..#Content_Channel_Run_Codes') IS NOT NULL DROP TABLE #Content_Channel_Run_Codes
+	IF OBJECT_ID('tempdb..#Temp_BMS_Schedule_Run') IS NOT NULL DROP TABLE #Temp_BMS_Schedule_Run
+	IF OBJECT_ID('tempdb..#TimeLine_ID') IS NOT NULL DROP TABLE #TimeLine_ID
 END

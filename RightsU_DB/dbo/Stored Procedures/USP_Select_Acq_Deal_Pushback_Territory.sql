@@ -33,4 +33,6 @@ Begin
 
 	--Select * From #temp 
 	--Drop Table #temp
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 End

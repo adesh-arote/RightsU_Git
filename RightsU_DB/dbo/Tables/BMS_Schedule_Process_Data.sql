@@ -22,14 +22,3 @@
     CONSTRAINT [FK_BMS_Schedule_Process_Data_BMS_Schedule_Log] FOREIGN KEY ([BMS_Schedule_Log_Code]) REFERENCES [dbo].[BMS_Schedule_Log] ([BMS_Schedule_Log_Code])
 );
 
-
-
-GO
-
-
-GO
-
-
-GO
-
-

@@ -1,4 +1,4 @@
-﻿ALTER Procedure USP_Ancillary_Validate
+﻿CREATE Procedure USP_Ancillary_Validate
 	@Acq_Deal_Code INT,@Acq_Deal_Ancillary_Code INT,@Ancillary_Type_code INT,@Title_Code Varchar(5000),
 	@Ancillary_Platform_Code Varchar(5000),@Ancillary_Platform_Medium_Code varchar(5000)
 AS

@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[USP_Schedule_Process]      
+﻿CREATE PROCEDURE [dbo].[USP_Schedule_Process]      
 (    
 --DECLARE  
 	@File_Code INT ,  
@@ -970,6 +970,12 @@ BEGIN
 	INNER JOIN BV_Schedule_Transaction bv ON bv.BV_Schedule_Transaction_Code = Email.BV_Schedule_Transaction_Code
 	INNER JOIN Content_Channel_Run CCR  ON CCR.Content_Channel_Run_Code = bv.Content_Channel_Run_Code
 	WHERE bv.File_Code = @File_Code
+
+	IF OBJECT_ID('tempdb..#BVScheduleTransaction') IS NOT NULL DROP TABLE #BVScheduleTransaction
+	IF OBJECT_ID('tempdb..#DealRightsData') IS NOT NULL DROP TABLE #DealRightsData
+	IF OBJECT_ID('tempdb..#DealRightsData_Final') IS NOT NULL DROP TABLE #DealRightsData_Final
+	IF OBJECT_ID('tempdb..#DealRunData') IS NOT NULL DROP TABLE #DealRunData
+	IF OBJECT_ID('tempdb..#tempTitleStartEndDate') IS NOT NULL DROP TABLE #tempTitleStartEndDate
 END     
 /*     
       
@@ -977,4 +983,4 @@ EXEC  [dbo].[USP_Schedule_Process] 15876,13
     There is already an object named '#DealRightsData' in the database.  
   SELECT * FROM Channel WHERE ISNULL(isUseForAsRun,'N') = 'Y'      
   select * from Email_Notification_Schedule
-*/ 
+*/

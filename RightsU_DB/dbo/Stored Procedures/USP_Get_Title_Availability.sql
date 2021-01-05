@@ -1,5 +1,5 @@
 ﻿
-alter PROCEDURE [dbo].[USP_Get_Title_Availability] 
+CREATE PROCEDURE [dbo].[USP_Get_Title_Availability] 
 	-- Add the parameters for the stored procedure here
 	@Platform_Code Varchar(Max),
 	@strTitleCode Varchar(MAX),                      
@@ -102,4 +102,9 @@ from #tempAvail AS tem
 	'
 	Print @strQuery
 	EXECUTE(@strQuery)
+
+	IF OBJECT_ID('tempdb..#tem') IS NOT NULL DROP TABLE #tem
+	IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
+	IF OBJECT_ID('tempdb..#tempAvail') IS NOT NULL DROP TABLE #tempAvail
+	IF OBJECT_ID('tempdb..#tempRight') IS NOT NULL DROP TABLE #tempRight
 END

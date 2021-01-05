@@ -86,5 +86,7 @@ BEGIN
 	END
 
 	SELECT @Status AS [Status]
-	
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	IF OBJECT_ID('tempdb..#Temp.Title_Content_Code') IS NOT NULL DROP TABLE #Temp.Title_Content_Code
+	IF OBJECT_ID('tempdb..#Title_Episode') IS NOT NULL DROP TABLE #Title_Episode
 END

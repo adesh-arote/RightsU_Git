@@ -28,7 +28,6 @@ BEGIN
 		ChannelCode INT,
 		VendorName  VARCHAR(MAX)
 	)
-	select * from BMS_Asset
 	IF(@Tabselect='Asset')
 	BEGIN
 		IF(@DropdownOption='E')
@@ -64,7 +63,7 @@ BEGIN
 		END
 		ELSE IF(@DropdownOption='P')
 		BEGIN
-		INSERT INTO #TempRUBVMappingData(LicenseRefNo, BVID, RUID,RequestTime, ErrorDescription, RecordStatus)
+		INSERT INTO #TempRUBVMappingData(LicenseRefNo, RUID, BVID,RequestTime, ErrorDescription, RecordStatus)
 			SELECT Lic_Ref_No,  BMS_Deal_Code, BMS_Deal_Ref_Key,Request_Time, Error_Description, 
 			 CASE WHEN Record_Status='W' THEN 'Waiting' WHEN Record_Status='P' THEN 'Pending'  END AS Record_Status 
 			FROM BMS_Deal WHERE  Record_Status IN ('P','W') order by BMS_Deal_Code desc;
@@ -98,7 +97,7 @@ BEGIN
 	 IF(@DropdownOption='E')
 		BEGIN
 			INSERT INTO #TempRUBVMappingData(LicenseRefNo, RUID, BVID, RequestTime,Title,EpisodeNo,StartDate,EndDate, ChannelCode, ErrorDescription, RecordStatus)
-			SELECT D.Lic_Ref_No, D.BMS_Deal_Code, R.BMS_Deal_Content_Ref_Key,R.Request_Time, R.Title, A.Episode_Number,  R.Start_Date, R.End_Date , R.Error_Description,R.RU_Channel_Code ,
+			SELECT D.Lic_Ref_No, D.BMS_Deal_Code, R.BMS_Deal_Content_Ref_Key,R.Request_Time, R.Title, A.Episode_Number,  R.Start_Date, R.End_Date ,R.RU_Channel_Code , R.Error_Description,
 			CASE WHEN R.Record_Status='E' THEN 'Error'  END AS Record_Status  FROM BMS_Deal_Content_Rights R 
 			INNER JOIN BMS_Deal_Content C ON R.BMS_Deal_Content_Code=C.BMS_Deal_Content_Code
 			INNER JOIN BMS_Deal D ON C.BMS_Deal_Code=D.BMS_Deal_Code
@@ -109,7 +108,7 @@ BEGIN
 		ELSE IF(@DropdownOption='P')
 		BEGIN
 		INSERT INTO #TempRUBVMappingData(LicenseRefNo, RUID, BVID,RequestTime, Title,EpisodeNo,StartDate,EndDate, ChannelCode, ErrorDescription, RecordStatus)
-			SELECT D.Lic_Ref_No, D.BMS_Deal_Code, R.BMS_Deal_Content_Ref_Key,R.Request_Time, R.Title, A.Episode_Number,   R.Start_Date, R.End_Date , R.Error_Description,R.RU_Channel_Code ,
+			SELECT D.Lic_Ref_No, D.BMS_Deal_Code, R.BMS_Deal_Content_Ref_Key,R.Request_Time, R.Title, A.Episode_Number,   R.Start_Date, R.End_Date , R.RU_Channel_Code, R.Error_Description,
 			 CASE WHEN R.Record_Status='W' THEN 'Waiting' WHEN R.Record_Status='P' THEN 'Pending'  END AS Record_Status  FROM BMS_Deal_Content_Rights R 
 			INNER JOIN BMS_Deal_Content C ON R.BMS_Deal_Content_Code=C.BMS_Deal_Content_Code
 			INNER JOIN BMS_Deal D ON C.BMS_Deal_Code=D.BMS_Deal_Code
@@ -143,6 +142,8 @@ BEGIN
 	END
 	select @RecordCount = Count(*) from #TempRUBVMappingData
 	delete from #TempRUBVMappingData where Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
-	select Title,EpisodeNo ,RUID,BVID,ErrorDescription ,RecordStatus ,LicenseRefNo,StartDate,EndDate,ChannelCode,VendorName from #TempRUBVMappingData
-		          
+	select Title,EpisodeNo ,RUID,BVID, RequestTime,ErrorDescription ,RecordStatus ,LicenseRefNo,StartDate,EndDate,ChannelCode,VendorName from #TempRUBVMappingData
+	
+	IF OBJECT_ID('tempdb..#Label') IS NOT NULL DROP TABLE #Label
+	IF OBJECT_ID('tempdb..#TempRUBVMappingData') IS NOT NULL DROP TABLE #TempRUBVMappingData
 END

@@ -1,6 +1,6 @@
 ﻿
 
-ALTER PROCEDURE [dbo].[USP_ChannelWiseConsumption_Yearwise_Sub]
+CREATE PROCEDURE [dbo].[USP_ChannelWiseConsumption_Yearwise_Sub]
 (          
  @DealMovieCode INT,
  @ChannelCode VARCHAR(MAX),
@@ -125,6 +125,8 @@ END
 		inner join Acq_Deal_Run_Yearwise_Run ADYR on ADYR.Acq_Deal_Run_Code = ADRC.Acq_Deal_Run_Code
 		WHERE AD.Deal_Workflow_Status NOT IN ('AR', 'WA')
 END
+
+	IF OBJECT_ID('tempdb..#ScheduleAsRun_YearWiseDetails_Report') IS NOT NULL DROP TABLE #ScheduleAsRun_YearWiseDetails_Report
 END          
           
 /*          

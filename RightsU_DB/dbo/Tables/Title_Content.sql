@@ -15,5 +15,3 @@
     CONSTRAINT [FK_Title_Content_Title] FOREIGN KEY ([Title_Code]) REFERENCES [dbo].[Title] ([Title_Code])
 );
 
-
-

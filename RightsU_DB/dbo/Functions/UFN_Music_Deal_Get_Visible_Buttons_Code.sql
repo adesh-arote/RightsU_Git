@@ -155,4 +155,3 @@ BEGIN
 	RETURN  ',' + @Visible_Buttons_Code + ','
 	--select *  FROM @Module_Rights WHERE Visible='Y' 
 END
-GO

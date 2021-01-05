@@ -92,4 +92,6 @@ BEGIN
 			Select * From [dbo].[UFN_Get_Platform_With_Parent](MainOutput.Platform_Code)
 		) as abcd
 
+		IF OBJECT_ID('tempdb..#tempTitleAvail') IS NOT NULL DROP TABLE #tempTitleAvail
+
 END

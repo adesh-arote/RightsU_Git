@@ -49,6 +49,9 @@ Begin
 	Set @Mapped_Countries = SUBSTRING(@Mapped_Countries, 0, Len(@Mapped_Countries))
 	Select @Mapped_Countries As Mapped_Countries
 
-	Drop Table #Temp_Acq_Country
-	Drop Table #Temp_Syn_Country
+	--Drop Table #Temp_Acq_Country
+	--Drop Table #Temp_Syn_Country
+
+	IF OBJECT_ID('tempdb..#Temp_Acq_Country') IS NOT NULL DROP TABLE #Temp_Acq_Country
+	IF OBJECT_ID('tempdb..#Temp_Syn_Country') IS NOT NULL DROP TABLE #Temp_Syn_Country
 End

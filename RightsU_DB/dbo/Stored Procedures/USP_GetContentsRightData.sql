@@ -1,4 +1,4 @@
-﻿alter PROC USP_GetContentsRightData
+﻿CREATE PROC USP_GetContentsRightData
 (
 	@Title_Content_Code BIGINT
 )
@@ -116,5 +116,7 @@ BEGIN
 	INNER JOIN Provisional_Deal_Run_Channel PDRC ON PDRC.Provisional_Deal_Run_Code = PDR.Provisional_Deal_Run_Code
 	INNER JOIN Vendor V ON V.Vendor_Code = PDL.Vendor_Code
 	WHERE TC.Title_Content_Code = @Title_Content_Code AND RUN.Deal_Type = 'P' 
+
+	IF OBJECT_ID('tempdb..#PlatformForRun') IS NOT NULL DROP TABLE #PlatformForRun
+	IF OBJECT_ID('tempdb..#TempRun') IS NOT NULL DROP TABLE #TempRun
 END
-GO

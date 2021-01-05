@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[USP_Get_Version_History_Syn]  
+﻿
+CREATE PROCEDURE [dbo].[USP_Get_Version_History_Syn]  
  @Syn_Deal_Code int  
  ,@Business_Unit_Code int  
  ,@TabName Varchar(100)  
@@ -16,6 +17,11 @@ BEGIN
  -- SET NOCOUNT ON added to prevent extra result sets from  
  -- interfering with SELECT statements.  
  SET NOCOUNT ON;  
+
+ --DECLARE
+	--	@Syn_Deal_Code int = 3710
+	--	,@Business_Unit_Code int = 1
+	--	,@TabName Varchar(100) = 'GENERAL'
   
  DECLARE @Selected_Deal_Type_Code INT ,@Deal_Type_Condition VARCHAR(MAX) = ''  
  Select @Selected_Deal_Type_Code = Deal_Type_Code From Acq_Deal Where Acq_Deal_Code = @Syn_Deal_Code  
@@ -49,12 +55,14 @@ select * from syn_deal where Agreement_No='S-2015-00109'
    --Channel_Cluster_Name NVARCHAR(200),  
    [Index] int,  
    ChangedColumnIndex varchar(MAX),  
-   [Inserted_By] VARCHAR(50)  
+   [Inserted_By] VARCHAR(50),
+   Deal_Segment NVARCHAR(max)  ,
+   Revenue_Vertical NVARCHAR(max)  
   )  
   
-  INSERT INTO #TempDealHistory(AT_Syn_Deal_Code,Syn_Deal_Code,Agreement_No,Version,VersionOld,Deal_Description,Deal_Type_Name,[Entity_Name],Exchange_Rate,Category_Name,Vendor_Name, Contact_Name,Currency_Name,[Index],ChangedColumnIndex,Inserted_By )  
-  SELECT AT_Syn_Deal_Code,Syn_Deal_Code,Agreement_No,Version,RIGHT('000' + cast( (cast(Version as decimal) +1) as varchar(50)),4),Deal_Description,DT.Deal_Type_Name,E.[Entity_Name],Exchange_Rate,C.Category_Name,V.Vendor_Name, VC.Contact_Name,CR.Currency_Name,
- cast(AAD.Version as decimal),'',USR.Login_Name  
+  INSERT INTO #TempDealHistory(AT_Syn_Deal_Code,Syn_Deal_Code,Agreement_No,Version,VersionOld,Deal_Description,Deal_Type_Name,[Entity_Name],Exchange_Rate,Category_Name,Vendor_Name, Contact_Name,Currency_Name,[Index],ChangedColumnIndex,Inserted_By,Deal_Segment, Revenue_Vertical )  
+  SELECT AAD.AT_Syn_Deal_Code,AAD.Syn_Deal_Code,AAD.Agreement_No,AAD.Version,RIGHT('000' + cast( (cast(AAD.Version as decimal) +1) as varchar(50)),4),AAD.Deal_Description,DT.Deal_Type_Name,E.[Entity_Name],AAD.Exchange_Rate,C.Category_Name,V.Vendor_Name, VC.Contact_Name,CR.Currency_Name,
+ cast(AAD.Version as decimal),'',USR.Login_Name, DS.Deal_Segment_Name, RV.Revenue_Vertical_Name
   FROM AT_Syn_Deal AAD  
   INNER JOIN Deal_Type DT ON AAD.Deal_Type_Code = DT.Deal_Type_Code  
   INNER JOIN Entity E ON AAD.Entity_Code = E.Entity_Code  
@@ -62,25 +70,30 @@ select * from syn_deal where Agreement_No='S-2015-00109'
   INNER JOIN Vendor V ON AAD.Vendor_Code = V.Vendor_Code  
   LEFT OUTER JOIN Vendor_Contacts VC ON AAD.Vendor_Contact_Code = VC.Vendor_Contacts_Code  
   INNER JOIN Currency CR ON AAD.Currency_Code = CR.Currency_Code  
-  INNER JOIN Users USR ON USR.Users_Code = CASE WHEN version = '0001' THEN   
+  INNER JOIN Syn_Deal AD ON AD.Syn_Deal_Code = AAD.Syn_Deal_Code
+  LEFT JOIN Deal_Segment DS ON AAD.Deal_Segment_Code = DS.Deal_Segment_Code
+  LEFT JOIN Revenue_Vertical RV ON AAD.Revenue_Vertical_Code = RV.Revenue_Vertical_Code
+  INNER JOIN Users USR ON USR.Users_Code = CASE WHEN AAD.version = '0001' THEN   
     AAD.Inserted_By  
      ELSE  
     AAD.Last_Action_By  
    END   
-    
   --INNER JOIN Role R ON R.Role_Code = AAD.Role_Code  
   --LEFT OUTER JOIN Channel_Cluster CC ON AAD.Channel_Cluster_Code = CC.Channel_Cluster_Code  
-  WHERE Syn_Deal_Code = @Syn_Deal_Code   
+  WHERE AAD.Syn_Deal_Code = @Syn_Deal_Code  
   
-  INSERT INTO #TempDealHistory(AT_Syn_Deal_Code,Syn_Deal_Code,Agreement_No,Version, VersionOld,Deal_Description,Deal_Type_Name,[Entity_Name],Exchange_Rate,Category_Name,Vendor_Name, Contact_Name,Currency_Name, [Index],ChangedColumnIndex,Inserted_By )  
-  SELECT 0,Syn_Deal_Code,Agreement_No,Version,RIGHT('000' + cast( (cast(Version as decimal) +1) as varchar(50)),4),Deal_Description,DT.Deal_Type_Name,E.[Entity_Name],Exchange_Rate,C.Category_Name,V.Vendor_Name, VC.Contact_Name,CR.Currency_Name, cast(AAD.Version as decimal),'',USR.Login_Name  
+
+  INSERT INTO #TempDealHistory(AT_Syn_Deal_Code,Syn_Deal_Code,Agreement_No,Version, VersionOld,Deal_Description,Deal_Type_Name,[Entity_Name],Exchange_Rate,Category_Name,Vendor_Name, Contact_Name,Currency_Name, [Index],ChangedColumnIndex,Inserted_By,Deal_Segment, Revenue_Vertical )  
+  SELECT 0,Syn_Deal_Code,Agreement_No,Version,RIGHT('000' + cast( (cast(Version as decimal) +1) as varchar(50)),4),Deal_Description,DT.Deal_Type_Name,E.[Entity_Name],Exchange_Rate,C.Category_Name,V.Vendor_Name, VC.Contact_Name,CR.Currency_Name, cast(AAD.Version as decimal),'',USR.Login_Name, DS.Deal_Segment_Name, RV.Revenue_Vertical_Name
   FROM Syn_Deal AAD  
   INNER JOIN Deal_Type DT ON AAD.Deal_Type_Code = DT.Deal_Type_Code  
   INNER JOIN Entity E ON AAD.Entity_Code = E.Entity_Code  
   INNER JOIN Category C ON AAD.Category_Code = C.Category_Code  
   INNER JOIN Vendor V ON AAD.Vendor_Code = V.Vendor_Code  
   LEFT OUTER JOIN Vendor_Contacts VC ON AAD.Vendor_Contact_Code = VC.Vendor_Contacts_Code  
-  INNER JOIN Currency CR ON AAD.Currency_Code = CR.Currency_Code  
+  INNER JOIN Currency CR ON AAD.Currency_Code = CR.Currency_Code 
+  LEFT JOIN Deal_Segment DS ON AAD.Deal_Segment_Code = DS.Deal_Segment_Code 
+  LEFT JOIN Revenue_Vertical RV ON AAD.Revenue_Vertical_Code = RV.Revenue_Vertical_Code
   INNER JOIN Users USR ON USR.Users_Code = CASE WHEN version = '0001' THEN   
     AAD.Inserted_By  
      ELSE  
@@ -88,11 +101,10 @@ select * from syn_deal where Agreement_No='S-2015-00109'
    END  
   --INNER JOIN Role R ON R.Role_Code = AAD.Role_Code  
   --LEFT OUTER JOIN Channel_Cluster CC ON AAD.Channel_Cluster_Code = CC.Channel_Cluster_Code  
-  WHERE Syn_Deal_Code = @Syn_Deal_Code AND cast(AAD.Version as decimal) > (SELECT MAX(cast(Version as decimal)) from #TempDealHistory)  
-  
-  
-    
-  
+  WHERE Syn_Deal_Code = @Syn_Deal_Code AND cast(AAD.Version as decimal) > (SELECT MAX(cast(Version as decimal)) from #TempDealHistory)
+
+
+
   DECLARE @ISChange varchar(2)  
   DECLARE @Version varchar(100)   
   DECLARE @temp varchar(100)   
@@ -217,6 +229,28 @@ select * from syn_deal where Agreement_No='S-2015-00109'
      set @ISChange = ''   
    END  
   
+   select @ISChange =  case when ISNULL(a.Deal_Segment ,'')  != isnull(B.Deal_Segment,'') then 'Y'  end  
+   from #TempDealHistory a   
+   left join #TempDealHistory b on a.Version = b.VersionOld  
+   where a.[Index] = @temp and  a.Version = @Version  
+    
+   if(@ISChange = 'Y')  
+   BEGIN  
+     update #TempDealHistory set ChangedColumnIndex = isnull(ChangedColumnIndex, '')  + '16,' where [Index] = @temp and version = @version  
+     set @ISChange = ''   
+   END  
+
+   select @ISChange =  case when ISNULL(a.Revenue_Vertical ,'')  != isnull(B.Revenue_Vertical,'') then 'Y'  end  
+   from #TempDealHistory a   
+   left join #TempDealHistory b on a.Version = b.VersionOld  
+   where a.[Index] = @temp and  a.Version = @Version  
+    
+   if(@ISChange = 'Y')  
+   BEGIN  
+     update #TempDealHistory set ChangedColumnIndex = isnull(ChangedColumnIndex, '')  + '17,' where [Index] = @temp and version = @version  
+     set @ISChange = ''   
+   END  
+
   END  
   FETCH next from cur_DealHistory1  into @Version,@temp  
   END  
@@ -1141,6 +1175,7 @@ BEGIN
     AAD.Last_Action_By  
  END  
  WHere AAD.Syn_Deal_Code = @Syn_Deal_Code AND cast(AAD.Version as decimal) > (SELECT MAX(cast(Version as decimal)) from #TempPushbackHistory)  
+ AND Is_Pushback = 'Y' 
  ORDER BY AADR.Syn_Deal_Rights_Code ASC, AAD.Version ASC  
   
   
@@ -2488,10 +2523,24 @@ select * from syn_deal where Agreement_No='S-2015-00088'
  END  
   
 -- Code end for Deal Ancillary History  
-   
+	IF OBJECT_ID('tempdb..#TempAncillaryHistory') IS NOT NULL DROP TABLE #TempAncillaryHistory
+	IF OBJECT_ID('tempdb..#TempAttachmentHistory') IS NOT NULL DROP TABLE #TempAttachmentHistory
+	IF OBJECT_ID('tempdb..#TempDealHistory') IS NOT NULL DROP TABLE #TempDealHistory
+	IF OBJECT_ID('tempdb..#TempMaterialHistory') IS NOT NULL DROP TABLE #TempMaterialHistory
+	IF OBJECT_ID('tempdb..#TempMovieHistory') IS NOT NULL DROP TABLE #TempMovieHistory
+	IF OBJECT_ID('tempdb..#TempPlatformHistory') IS NOT NULL DROP TABLE #TempPlatformHistory
+	IF OBJECT_ID('tempdb..#TempPushbackHistory') IS NOT NULL DROP TABLE #TempPushbackHistory
+	IF OBJECT_ID('tempdb..#TempRightsHistory') IS NOT NULL DROP TABLE #TempRightsHistory 
 END  
   
 /*  
 --SELECT * FROM Acq_Deal WHERE Agreement_No like 'A-2016-00134'  
 --EXEC [dbo].[USP_Get_Version_History] 1288,1,'GENERAL'  
 */
+
+--SELECT * FRom syn_Deal where Deal_Segment_Code is not null
+--select parameter_name from system_parameter_new where parameter_name = 'Is_AcqSyn_Gen_Deal_Segment'
+
+--SELECT * FROM Syn_deal where Agreement_No = 'S-2020-00034'
+
+--exec USP_Validate_Rights_Duplication_UDT_Syn

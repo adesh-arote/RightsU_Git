@@ -15,8 +15,8 @@ BEGIN
 	BEGIN /*Process Mapped Title data */
 		DECLARE CR_Mapped_titles_OUTER_1 CURSOR
 		FOR
-				select distinct BV_HouseId_Data_Code,BHD.BV_Title,Program_Episode_ID from BV_HouseId_Data BHD
-				where isnull(IsProcessed,'N') = 'N' and Is_Mapped = 'Y' AND ISNULL([TYPE],'S') = 'S'
+				SELECT DISTINCT BV_HouseId_Data_Code,BHD.BV_Title,Program_Episode_ID FROM BV_HouseId_Data BHD
+				WHERE ISNULL(IsProcessed,'N') = 'N' and Is_Mapped = 'Y' AND ISNULL([TYPE],'S') = 'S'
 		OPEN CR_Mapped_titles_OUTER_1
 		FETCH NEXT FROM CR_Mapped_titles_OUTER_1 INTO  @BV_HouseId_Data_Code,@BV_Title,@Program_Episode_ID
 		WHILE @@FETCH_STATUS<>-1
@@ -58,10 +58,20 @@ BEGIN
 	SET @Program_Episode_ID = ''
 	DECLARE CR_Mapped_titles_OUTER_2 CURSOR
 	FOR  
-		SELECT DISTINCT TBS.Temp_BV_Schedule_Code,TBS.Program_Episode_ID  FROM Temp_BV_Schedule TBS
+		--SELECT DISTINCT TBS.Temp_BV_Schedule_Code,TBS.Program_Episode_ID  FROM Temp_BV_Schedule TBS
+		--INNER JOIN Title_Content TC ON TC.Ref_BMS_Content_Code = TBS.Program_Episode_ID
+		--INNER JOIN Content_Channel_Run CCR ON CCR.Title_Content_Code = TC.Title_Content_Code
+		--WHERE 1=1 AND TBS.IsDealApproved = 'N'
+
+		select distinct TBS.Temp_BV_Schedule_Code,TBS.Program_Episode_ID  FROM Temp_BV_Schedule TBS  
 		INNER JOIN Title_Content TC ON TC.Ref_BMS_Content_Code = TBS.Program_Episode_ID
-		INNER JOIN Content_Channel_Run CCR ON CCR.Title_Content_Code = TC.Title_Content_Code
-		WHERE 1=1 AND TBS.IsDealApproved = 'N'
+		INNER JOIN Content_Channel_Run ccr ON ccr.Title_Content_Code = TC.Title_Content_Code  
+		LEFT JOIN Acq_Deal ad ON ad.Acq_Deal_Code = ccr.Acq_Deal_Code AND ISNULL(ccr.Deal_Type, 'A') = 'A'  
+		LEFT JOIN Provisional_Deal pd ON pd.Provisional_Deal_Code = ccr.Provisional_Deal_Code AND ISNULL(ccr.Deal_Type, 'A') = 'P'  
+		WHERE 1=1   
+		--AND d.is_active = 'Y'   
+		AND ((ad.Deal_Workflow_Status = 'A'  AND ISNULL(ccr.Deal_Type, 'A') = 'A') OR (pd.Deal_Workflow_Status = 'A'  AND ISNULL(ccr.Deal_Type, 'A') = 'P'))  
+		AND TBS.IsDealApproved = 'N' 
 			
 	OPEN CR_Mapped_titles_OUTER_2
 	FETCH NEXT FROM CR_Mapped_titles_OUTER_2 INTO  @Temp_BV_Schedule_Code,@Program_Episode_ID

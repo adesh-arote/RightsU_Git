@@ -1,7 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[USP_DM_Music_Title_PIII]    
     @DM_Master_Import_Code Int    
 AS    
-BEGIN    
+BEGIN
+--DECLARE 
+--@DM_Master_Import_Code Int = 6452
 	CREATE TABLE #Temp_Talents    
 	(    
 		IntCode INT,
@@ -96,20 +98,22 @@ BEGIN
 		DECLARE @Music_TitleName NVARCHAR(1000) = '', @Movie_Album NVARCHAR(1000) = '', @Title_Type NVARCHAR(1000) = '',    
 		@Title_Language NVARCHAR(1000) = '',@Year_of_Release INT, @Duration VARCHAR(10) = '', @Star_Cast NVARCHAR(1000) = '', @Music_Version NVARCHAR(1000) = '',    
 		@Singers NVARCHAR(1000) = '', @Lyricist NVARCHAR(1000) = '',@Music_Director NVARCHAR(1000) = '',@Music_Label NVARCHAR(1000) = '',@Genres NVARCHAR(1000) = '',    
-		@Effective_Start_Date NVARCHAR(100),@Theme NVARCHAR(1000),@Music_Tag NVARCHAR(200),@Movie_Star_Cast NVARCHAR(1000) = '', @Music_Album_Type NVARCHAR(50) = ''    
+		@Effective_Start_Date NVARCHAR(100),@Theme NVARCHAR(1000),@Music_Tag NVARCHAR(200),@Movie_Star_Cast NVARCHAR(1000) = '', @Music_Album_Type NVARCHAR(50) = '',
+		@Public_Domain VARCHAR(10) = ''
 		
+
 		DECLARE CUR_Title CURSOR For    
 		SELECT LTRIM(RTRIM([Music_Title_Name])),LTRIM(RTRIM([Movie_Album])), LTRIM(RTRIM(Title_Type)),    
 				LTRIM(RTRIM([Title_Language])), LTRIM(RTRIM([Year_of_Release])), LTRIM(RTRIM([Duration])),    
 				LTRIM(RTRIM(ISNULL([Singers], ''))), LTRIM(RTRIM(ISNULL([Lyricist], ''))), LTRIM(RTRIM(ISNULL([Music_Director], ''))),    
 				LTRIM(RTRIM(ISNULL([Music_Label], ''))),LTRIM(RTRIM(ISNULL([Genres], ''))),LTRIM(RTRIM(ISNULL([Star_Cast], ''))),LTRIM(RTRIM(ISNULL([Music_Version], ''))),    
 				LTRIM(RTRIM(ISNULL([Effective_Start_Date], ''))),LTRIM(RTRIM(ISNULL([Theme], ''))),LTRIM(RTRIM(ISNULL([Music_Tag], ''))),    
-				LTRIM(RTRIM(ISNULL([Movie_Star_Cast], ''))),LTRIM(RTRIM(ISNULL([Music_Album_Type], '')))    
+				LTRIM(RTRIM(ISNULL([Movie_Star_Cast], ''))),LTRIM(RTRIM(ISNULL([Music_Album_Type], ''))),LTRIM(RTRIM(ISNULL([Public_Domain], '')))    
 		FROM DM_Music_Title WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Is_Ignore = 'N'   
 		OPEN CUR_Title    
     
 		FETCH NEXT FROM CUR_Title InTo @Music_TitleName, @Movie_Album, @Title_Type, @Title_Language, @Year_of_Release, @Duration,  @Singers, @Lyricist,@Music_Director    
-		,@Music_Label ,@Genres ,@Star_Cast,@Music_Version,@Effective_Start_Date,@Theme,@Music_Tag, @Movie_Star_Cast, @Music_Album_Type    
+		,@Music_Label ,@Genres ,@Star_Cast,@Music_Version,@Effective_Start_Date,@Theme,@Music_Tag, @Movie_Star_Cast, @Music_Album_Type, @Public_Domain    
   
 		WHILE @@FETCH_STATUS<>-1    
 		BEGIN    
@@ -141,15 +145,18 @@ BEGIN
 				END    
 				DECLARE @titleCount INt    
 				SELECT @titleCount = COUNT(*) FROM Music_Title WHERE Music_Title_Name = LTRIM(RTRIM(@Music_TitleName)) AND Movie_Album =  LTRIM(RTRIM(@Music_Album_Name))
+				SET @Public_Domain = CASE WHEN  @Public_Domain = 'Yes'  THEN 'Y' ELSE 'N' END
 				IF(@titleCount = 0)    
 				BEGIN    
+				print'P11'
+				print @public_domain
 					INSERT INTO Music_Title    
 					(    
 					Music_Type_Code, Music_Title_Name, Movie_Album, Release_Year, Duration_In_Min, is_active,Inserted_By,Inserted_On,Last_UpDated_Time,Genres_Code,Music_Version_Code,Music_Tag,Music_Album_Code, Public_Domain    
 					)    
 					VALUES    
 					(    
-					@Music_type_Code, LTRIM(RTRIM(@Music_TitleName)), LTRIM(RTRIM(@Music_Album_Name)), @Year_of_Release, @Duration, 'Y',@User_Code,GETDATE(),GETDATE(),@Genres_Code,@Version_Code,@Music_Tag,@Music_Album_Code,'N'    
+					@Music_type_Code, LTRIM(RTRIM(@Music_TitleName)), LTRIM(RTRIM(@Music_Album_Name)), @Year_of_Release, @Duration, 'Y',@User_Code,GETDATE(),GETDATE(),@Genres_Code,@Version_Code,@Music_Tag,@Music_Album_Code,ISNULL(@Public_Domain, 'N')
 					)    
        
 					SELECT @Music_Title_Code = IDENT_CURRENT('Music_Title')    
@@ -199,17 +206,20 @@ BEGIN
 				PRINT  'UPDATE DM_Music_Title '       
              
 				FETCH NEXT FROM CUR_Title INTO @Music_TitleName, @Movie_Album, @Title_Type, @Title_Language, @Year_of_Release, @Duration,  @Singers, @Lyricist,    
-				@Music_Director,@Music_Label,@Genres,@Star_Cast,@Music_Version,@Effective_Start_Date,@Theme,@Music_Tag,@Movie_Star_Cast,@Music_Album_Type    
+				@Music_Director,@Music_Label,@Genres,@Star_Cast,@Music_Version,@Effective_Start_Date,@Theme,@Music_Tag,@Movie_Star_Cast,@Music_Album_Type, @Public_Domain    
     
 			END    
 		END    
 		CLOSE CUR_Title    
 		DEALLOCATE CUR_Title    
-		DROP TABLE #Temp_Talents    
-		DROP TABLE #Temp_Music_Album_Talent    
-		DROP TABLE #Temp_Music_Label    
-		DROP TABLE #Temp_Music_Language    
-		DROP TABLE #Temp_Music_Theme    
+		--DROP TABLE #Temp_Talents    
+		--DROP TABLE #Temp_Music_Album_Talent    
+		--DROP TABLE #Temp_Music_Label    
+		--DROP TABLE #Temp_Music_Language    
+		--DROP TABLE #Temp_Music_Theme   
+		--DROP TABLE #Temp_Music_Album
+		--DROP TABLE #Temp_Genre
+		
      
     
 		--IF EXISTS(SELECT Record_Status='C' FROM DM_Music_Title WHERE DM_Master_Import_Code = @DM_Master_Import_Code)    
@@ -222,5 +232,12 @@ BEGIN
 	ROLLBACK
 		UPDATE DM_Master_Import SET Status = 'T' WHERE DM_Master_Import_Code = @DM_Master_Import_Code    
 	END CATCH
-    
-END    
+
+	IF OBJECT_ID('tempdb..#Temp_Genre') IS NOT NULL DROP TABLE #Temp_Genre
+	IF OBJECT_ID('tempdb..#Temp_Music_Album') IS NOT NULL DROP TABLE #Temp_Music_Album
+	IF OBJECT_ID('tempdb..#Temp_Music_Album_Talent') IS NOT NULL DROP TABLE #Temp_Music_Album_Talent
+	IF OBJECT_ID('tempdb..#Temp_Music_Label') IS NOT NULL DROP TABLE #Temp_Music_Label
+	IF OBJECT_ID('tempdb..#Temp_Music_Language') IS NOT NULL DROP TABLE #Temp_Music_Language
+	IF OBJECT_ID('tempdb..#Temp_Music_Theme') IS NOT NULL DROP TABLE #Temp_Music_Theme
+	IF OBJECT_ID('tempdb..#Temp_Talents') IS NOT NULL DROP TABLE #Temp_Talents 
+END

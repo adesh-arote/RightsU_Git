@@ -90,6 +90,7 @@ Begin
 		--	--,AD.Deal_Complete_Flag
 		--PRINT @Sql
 		Exec(@Sql)
-		Drop Table #Temp
+	
+		IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 	
 End

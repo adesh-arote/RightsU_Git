@@ -42,4 +42,3 @@ BEGIN
  ) AS X  
  ON X.Version_Code = V.Version_Code  
 END
-

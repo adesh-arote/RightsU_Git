@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_BMS_DM_Mapped_Unmapped_Deals]
+﻿CREATE PROCEDURE [dbo].[USP_BMS_DM_Mapped_Unmapped_Deals]
 	@Acq_Deal_Code INT,
 	@BMS_Asset_Ref_Key INT,
 	@Title_Name VARCHAR(1000)  
@@ -655,6 +655,17 @@ AND Error_Description like '%RU and BV Rights Period Mismatch%'
 --AND TITLE like '%Amaanat%' --AND  
 --ORDER BY Title
 
+	IF OBJECT_ID('tempdb..#Temp_BMS_Deal') IS NOT NULL DROP TABLE #Temp_BMS_Deal
+	IF OBJECT_ID('tempdb..#Temp_BMS_Deal_Content') IS NOT NULL DROP TABLE #Temp_BMS_Deal_Content
+	IF OBJECT_ID('tempdb..#Temp_BMS_Deal_Content_Rights') IS NOT NULL DROP TABLE #Temp_BMS_Deal_Content_Rights
+	IF OBJECT_ID('tempdb..#Temp_DM_BMS_Deal') IS NOT NULL DROP TABLE #Temp_DM_BMS_Deal
+	IF OBJECT_ID('tempdb..#Temp_DM_BMS_Deal_Content') IS NOT NULL DROP TABLE #Temp_DM_BMS_Deal_Content
+	IF OBJECT_ID('tempdb..#Temp_DM_BMS_Mapped_Rights') IS NOT NULL DROP TABLE #Temp_DM_BMS_Mapped_Rights
+	IF OBJECT_ID('tempdb..#Temp_DM_BMS_Mapped_UnMapped_Deal_Content') IS NOT NULL DROP TABLE #Temp_DM_BMS_Mapped_UnMapped_Deal_Content
+	IF OBJECT_ID('tempdb..#Temp_DM_Deal_Content_Rights') IS NOT NULL DROP TABLE #Temp_DM_Deal_Content_Rights
+	IF OBJECT_ID('tempdb..#Temp_Mapped_Deal_Code') IS NOT NULL DROP TABLE #Temp_Mapped_Deal_Code
+	IF OBJECT_ID('tempdb..#Temp_Rights_Channel_NOT_IN_BV') IS NOT NULL DROP TABLE #Temp_Rights_Channel_NOT_IN_BV
+	IF OBJECT_ID('tempdb..#Temp_Rights_RP_Mismatch') IS NOT NULL DROP TABLE #Temp_Rights_RP_Mismatch
 END	
 
 

@@ -32,5 +32,3 @@
     [Error_Description]     VARCHAR (MAX) NULL
 );
 
-
-

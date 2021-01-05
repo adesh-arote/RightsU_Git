@@ -1,6 +1,4 @@
-﻿
-
-CREATE PROC [dbo].[usp_Schedule_cleanup]    
+﻿CREATE PROC [dbo].[usp_Schedule_cleanup]    
 (
 	@File_Code INT,
 	@Channel_Code INT
@@ -14,7 +12,10 @@ Steps:-
 	2.0 Remove spaces from Temp_BV_Schedule columns
 */
 -- =============================================
-	
+	--Select * InTo Temp_BV_Schedule_New From Temp_BV_Schedule
+
+
+
 	----- Start 1.0 -----
 	UPDATE Temp_BV_Schedule set Program_Episode_Title = REPLACE(Program_Episode_Title,'"', ''),
 	Program_Episode_Number = REPLACE(Program_Episode_Number, '"', ''),

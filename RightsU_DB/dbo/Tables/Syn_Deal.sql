@@ -39,23 +39,22 @@
     [Lock_Time]                DATETIME        NULL,
     [Last_Updated_Time]        DATETIME        NULL,
     [Last_Action_By]           INT             NULL,
+    [Role_Code]                INT             NULL,
+    [Deal_Segment_Code]        INT             NULL,
+    [Revenue_Vertical_Code]    INT             NULL,
     CONSTRAINT [PK_Syn_Deal] PRIMARY KEY CLUSTERED ([Syn_Deal_Code] ASC),
     CONSTRAINT [FK_Syn_Deal_Business_Unit] FOREIGN KEY ([Business_Unit_Code]) REFERENCES [dbo].[Business_Unit] ([Business_Unit_Code]),
     CONSTRAINT [FK_Syn_Deal_Category] FOREIGN KEY ([Category_Code]) REFERENCES [dbo].[Category] ([Category_Code]),
     CONSTRAINT [FK_Syn_Deal_Currency] FOREIGN KEY ([Currency_Code]) REFERENCES [dbo].[Currency] ([Currency_Code]),
+    CONSTRAINT [FK_Syn_Deal_Deal_Segment] FOREIGN KEY ([Deal_Segment_Code]) REFERENCES [dbo].[Deal_Segment] ([Deal_Segment_Code]),
     CONSTRAINT [FK_Syn_Deal_Deal_Tag] FOREIGN KEY ([Deal_Tag_Code]) REFERENCES [dbo].[Deal_Tag] ([Deal_Tag_Code]),
     CONSTRAINT [FK_Syn_Deal_Deal_Type] FOREIGN KEY ([Deal_Type_Code]) REFERENCES [dbo].[Deal_Type] ([Deal_Type_Code]),
     CONSTRAINT [FK_Syn_Deal_Entity] FOREIGN KEY ([Entity_Code]) REFERENCES [dbo].[Entity] ([Entity_Code]),
+    CONSTRAINT [FK_Syn_Deal_Revenue_Vertical] FOREIGN KEY ([Revenue_Vertical_Code]) REFERENCES [dbo].[Revenue_Vertical] ([Revenue_Vertical_Code]),
     CONSTRAINT [FK_Syn_Deal_Vendor] FOREIGN KEY ([Vendor_Code]) REFERENCES [dbo].[Vendor] ([Vendor_Code]),
     CONSTRAINT [FK_Syn_Deal_Vendor_Contacts] FOREIGN KEY ([Vendor_Contact_Code]) REFERENCES [dbo].[Vendor_Contacts] ([Vendor_Contacts_Code]),
     CONSTRAINT [FK_Syn_Deal_Workflow] FOREIGN KEY ([Work_Flow_Code]) REFERENCES [dbo].[Workflow] ([Workflow_Code])
 );
-
-
-GO
-ALTER TABLE [dbo].[Syn_Deal] NOCHECK CONSTRAINT [FK_Syn_Deal_Deal_Type];
-
-
 
 
 GO

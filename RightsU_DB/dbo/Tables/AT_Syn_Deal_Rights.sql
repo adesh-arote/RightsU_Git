@@ -36,9 +36,3 @@
     CONSTRAINT [FK_AT_Syn_Deal_Rights_Sub_License] FOREIGN KEY ([Sub_License_Code]) REFERENCES [dbo].[Sub_License] ([Sub_License_Code])
 );
 
-
-
-
-
-
-

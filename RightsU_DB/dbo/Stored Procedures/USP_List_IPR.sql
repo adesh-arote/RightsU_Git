@@ -86,7 +86,9 @@ SET FMTONLY OFF
 
 	PRINT @Sql
 	EXEC(@Sql)
-	DROP TABLE #Temp
+	--DROP TABLE #Temp
+
+	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 	
 	--uncomment for Create complex type in entity framework
 	--SELECT IR.IPR_Rep_Code,IR.Trademark_No,IT.Type,Application_No,Application_Date,IPR_Country_Name as Country,	

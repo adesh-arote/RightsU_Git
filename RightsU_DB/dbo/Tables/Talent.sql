@@ -12,12 +12,6 @@
 );
 
 
-
-
-
-
-
-
 GO
 CREATE TRIGGER [dbo].[Trg_Talent_UPD]    
 ON [dbo].[Talent]      

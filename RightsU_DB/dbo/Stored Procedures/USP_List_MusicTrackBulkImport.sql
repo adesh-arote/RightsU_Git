@@ -1,5 +1,5 @@
 ﻿
-ALTER PROCEDURE USP_List_MusicTrackBulkImport
+CREATE PROCEDURE USP_List_MusicTrackBulkImport
 (
 	@DM_Master_Import_Code INT = 0,
 	@SearchCriteria VARCHAR(MAX) = '',
@@ -109,6 +109,7 @@ BEGIN
 	WHERE LTRIM(RTRIM(ISNULL(DMT.Title_Language, ''))) <> '' 
 	AND DMT.DM_Master_Import_Code = @DM_Master_Import_Code
 
+
 	IF(@PageNo = 0)
 		Set @PageNo = 1 
 
@@ -161,6 +162,12 @@ BEGIN
 	DELETE from  #TempDM_Music_Title WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
 
 	SELECT  DMMusicTitleCode, ExcelLineNo, MusicTrackName, MovieAlbumName, MusicLable, TitleLanguage, MovieStarCast, MusicAlbumType, Singers, Genres, Status, ErrorMessage FROM #TempDM_Music_Title
+
+	IF OBJECT_ID('tempdb..#TempDM_Music_Title') IS NOT NULL DROP TABLE #TempDM_Music_Title
+	IF OBJECT_ID('tempdb..#TempErrorMsg') IS NOT NULL DROP TABLE #TempErrorMsg
+	IF OBJECT_ID('tempdb..#TempLanguage') IS NOT NULL DROP TABLE #TempLanguage
+	IF OBJECT_ID('tempdb..#TempSinger') IS NOT NULL DROP TABLE #TempSinger
+	IF OBJECT_ID('tempdb..#TempStarCast') IS NOT NULL DROP TABLE #TempStarCast
 END
 --go
 --ALTER PROCEDURE USP_List_MusicTrackBulkImport
@@ -196,7 +203,7 @@ END
 --		,@Singers NVARCHAR(MAX)
 --		,@ErrorMessage VARCHAR(MAX)
 
---SELECT  @DMMusicTitleCode DMMusicTitleCode, @ExcelLineNo ExcelLineNo, @MusicTrackName MusicTrackName, @MovieAlbumName MovieAlbumName, @MusicLable MusicLable, @TitleLanguage TitleLanguage, 
+--SELECT @ExcelLineNo ExcelLineNo, @MusicTrackName MusicTrackName, @MovieAlbumName MovieAlbumName, @MusicLable MusicLable, @TitleLanguage TitleLanguage, 
 --@MovieStarCast MovieStarCast,
 --@MusicAlbumType MusicAlbumType, @Singers Singers, @Genres Genres, @Status Status, @ErrorMessage ErrorMessage
 --END

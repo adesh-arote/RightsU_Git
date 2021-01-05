@@ -1,4 +1,4 @@
-﻿ALTER Proc [dbo].[USP_Generate_Mass_Territory_Update](@TerritoryCodes Varchar(4000),@UserId int)
+﻿CREATE Proc [dbo].[USP_Generate_Mass_Territory_Update](@TerritoryCodes Varchar(4000),@UserId int)
 As
 Begin
 
