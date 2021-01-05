@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[Title_Alternate] (
+    [Title_Alternate_Code]   INT             IDENTITY (1, 1) NOT NULL,
+    [Alternate_Config_Code]  INT             NULL,
+    [Title_Code]             INT             NULL,
+    [Year_Of_Production]     INT             NULL,
+    [Deal_Type_Code]         INT             NULL,
+    [Title_Name]             NVARCHAR (500)  NULL,
+    [Original_Title]         NVARCHAR (500)  NULL,
+    [Title_Language_Code]    INT             NULL,
+    [Original_Language_Code] INT             NULL,
+    [Synopsis]               NVARCHAR (4000) NULL,
+    [Title_Image]            VARCHAR (2000)  NULL,
+    [Is_Active]              CHAR (1)        NULL,
+    [Inserted_By]            INT             NULL,
+    [Inserted_On]            DATETIME        NULL,
+    [Last_UpDated_Time]      DATETIME        NULL,
+    [Last_Action_By]         INT             NULL,
+    [Lock_Time]              DATETIME        NULL,
+    CONSTRAINT [PK_Title_Alternate] PRIMARY KEY CLUSTERED ([Title_Alternate_Code] ASC),
+    CONSTRAINT [FK_Title_Alternate_Alternate_Config] FOREIGN KEY ([Alternate_Config_Code]) REFERENCES [dbo].[Alternate_Config] ([Alternate_Config_Code]),
+    CONSTRAINT [FK_Title_Alternate_Deal_Type] FOREIGN KEY ([Deal_Type_Code]) REFERENCES [dbo].[Deal_Type] ([Deal_Type_Code]),
+    CONSTRAINT [FK_Title_Alternate_Language] FOREIGN KEY ([Title_Language_Code]) REFERENCES [dbo].[Language] ([Language_Code]),
+    CONSTRAINT [FK_Title_Alternate_Language1] FOREIGN KEY ([Original_Language_Code]) REFERENCES [dbo].[Language] ([Language_Code]),
+    CONSTRAINT [FK_Title_Alternate_Title] FOREIGN KEY ([Title_Code]) REFERENCES [dbo].[Title] ([Title_Code])
+);
+

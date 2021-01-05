@@ -1,0 +1,10 @@
+<p-dialog [(visible)]="displayMessage" [blockScroll]="true"  [modal]="true"  [positionTop]="60" [width]="500" [responsive]="false" [draggable]="false">
+  <p-header>
+      {{alertHeader}}
+  </p-header>
+  {{alertMessage}}
+  <p-footer>
+    <button type="button" pButton (click)="alertClose()" label="Close"></button>
+    
+  </p-footer>
+</p-dialog>

@@ -1,0 +1,257 @@
+<div class="content-wrapper">
+  <section class="content-header" style="top:25px;">
+    <div class="pull-left" style="margin-top:-20px;">
+        <h3>Selection as per recent shows
+            <div class="btn-group">
+              <button type="button" title="ShowWise" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-filter"></i>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li>
+                  <a (click)="limitedshowlist(9)">9</a>
+                </li>
+                <li>
+                  <a (click)="limitedshowlist(18)">18</a>
+                </li>
+                <li>
+                  <a (click)="limitedshowlist(27)">27</a>
+                </li>
+                <li>
+                  <span style="padding-left:10%;">
+                    <input type="text" value="" placeholder="Show Name" class="RequestTextBox" [(ngModel)]="TalentName"(ngModelChange)="searchList()">
+                    <!--  -->
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </h3>
+    </div>
+    <div class="pull-right">
+      <a class="btn btn--with-icon btn-social btn-danger" (click)="onNewRequestClick()" routerLinkActive="active">
+        <i class="fa fa-plus-square-o"></i> New Request</a>
+    </div>
+  </section>
+  <section class="content" style="margin-top:60px;">
+    <div class="row topShowCss" id="topshow">
+      <!-- <div *ngIf="defaultShow"> -->
+          <div  *ngFor="let n of slicelist; let j=index">
+        
+              <div class="col-md-4" *ngIf="n.to != 0">
+                <div class="callout">
+                  <div *ngFor="let list of showList | slice:n.from:n.to ;let i = index">
+                    <p style="margin-bottom:10px">
+                      <i class="fa fa-video-camera"></i>&nbsp;
+                      <a (click)="quickSelection(list)">{{list.Title_Name}} </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              </div>
+    </div>
+
+    <div class="row" style="padding-top: 2%;">
+      <div class="col-md-6">
+        <div class="box box-success">
+          <div class="box-header with-border">
+            <h3 class="box-title">Music Label Consumed -
+              <small>({{pieChartDataOnText}})</small>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+              </button>
+              <div class="btn-group">
+                <button type="button" title="Yearwise" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-list"></i>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li>
+                    <a (click)="getPieChartDataMethod(12,'Yearly')">Yearly - Year to Date</a>
+                  </li>
+                  <li>
+                    <a (click)="getPieChartDataMethod(6,'Half Yearly')">Half Yearly - Last 6 months</a>
+                  </li>
+                  <li>
+                    <a (click)="getPieChartDataMethod(3,'Quarterly')">Quarterly - current quarter</a>
+                  </li>
+                  <li>
+                    <a (click)="getPieChartDataMethod(1,'Monthly')">Monthly - current month</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="box-body">
+            <app-pie-chart [dataRequest]="dataRequest"></app-pie-chart>           
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="box box-success">
+          <div class="box-header with-border">
+            <h3 class="box-title">Music Tracks Consumed -
+              <small>({{BarChartDataOnText}})</small>
+            </h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+              </button>
+              <div class="btn-group">
+                <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-list"></i>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li>
+                    <a (click)="getBarChartDataMethod(12,'Yearly')">Yearly - Year to Date</a>
+                  </li>
+                  <li>
+                    <a (click)="getBarChartDataMethod(6,'Half Yearly')">Half Yearly - Last 6 months</a>
+                  </li>
+                  <li>
+                    <a (click)="getBarChartDataMethod(3,'Quarterly')">Quarterly - current quarter</a>
+                  </li>
+                  <li>
+                    <a (click)="getBarChartDataMethod(1,'Monthly')">Monthly - current month</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="box-body">
+            <app-column-chart [barDataRequest]="barDataRequest"></app-column-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Last 5 Requests</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-box-tool" data-widget="remove">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div>
+
+              <div class="Row requestgrid">
+              </div>
+              <div class="row" style=" padding-left: 14px; padding-right: 14px;">
+
+                <p-dataTable #dt [value]="requestList" exportFilename="ConsumptionRequestList" [rows]="5" [responsive]="true" [alwaysShowPaginator]="true">
+                  <p-column field="RequestID" header="Request ID" width="10" styleClass="text-center">
+                    <ng-template pTemplate="body" let-row="rowData">
+                      <a (click)="requestCountDetails(row,'N')">
+                        <span style="color:blue">{{row.RequestID}}</span>
+                      </a>
+                    </ng-template>
+                  </p-column>
+                  <p-column field="ChannelName" header="Channel" styleClass="text-center"></p-column>
+                  <!-- [style]="{'width': '250px','text-align': 'center'}" -->
+                  <p-column field="Title_Name" header="Show" [style]="{'width': '250px'}"></p-column>
+                  <p-column field="EpisodeFrom" header="Episode" [style]="{'width': '80px'}" styleClass="text-center">
+                    <ng-template pTemplate="body" let-row="rowData">
+                      <div *ngIf="row.EpisodeFrom==row.EpisodeTo">
+                        {{row.EpisodeFrom }}
+                      </div>
+                      <div *ngIf="row.EpisodeFrom !=row.EpisodeTo">
+                        {{row.EpisodeFrom}} - {{row.EpisodeTo}}
+                      </div>
+
+                    </ng-template>
+
+                  </p-column>
+                  <p-column field="CountRequest" header="No. of Songs" [style]="{'width': '120px'}" styleClass="text-center">
+                    <ng-template pTemplate="body" let-row="rowData">
+                      <a (click)="requestCountDetails(row,'N')">
+                        <span style="color:blue">{{row.CountRequest}}</span>
+                      </a>
+                    </ng-template>
+                  </p-column>
+
+                  <p-column field="TelecastFrom " header="Telecast" styleClass="text-center">
+                    <ng-template pTemplate="body" let-row="rowData">
+                      <div *ngIf="row.TelecastFrom==row.TelecastTo">
+                        {{row.TelecastFrom | date:'dd-MMM-yyyy'}}
+                      </div>
+                      <div *ngIf="row.TelecastFrom!=row.TelecastTo">
+                        {{row.TelecastFrom | date:'dd-MMM-yyyy'}} To {{row.TelecastTo | date:'dd-MMM-yyyy'}}
+
+                      </div>
+                    </ng-template>
+                    <!-- <ng-template  pTemplate="body" let-row="rowData">
+                                              {{track.TelecastFrom | date:'dd-MMM-yyyy'}} - {{track.TelecastTo | date:'dd-MMM-yyyy'}}
+                                            </ng-template> -->
+                  </p-column>
+                  <p-column field="Status" header="Status" styleClass="text-center"></p-column>
+
+
+                  <p-column field="Login_Name" header="Requested By" styleClass="text-center"></p-column>
+                  <p-column field="RequestDate" header="Requested Date" styleClass="text-center">
+                    <ng-template pTemplate="body" let-row="rowData">
+                      {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}
+
+                    </ng-template>
+                  </p-column>
+
+
+                </p-dataTable>
+              </div>
+            </div>
+          </div>
+          <div class="box-footer clearfix" style="padding: 0% !important;">
+            <a class="btn btn-sm btn-primary btn-flat btn-social pull-left" (click)="onViewAllRequestClick()">
+              <i class="fa fa-eye"></i> View All Requests</a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<p-dialog [(visible)]="showRequestCountDetails" [modal]="true" [responsive]="false" [width]="1200" [positionTop]="60" [contentStyle]="{'overflow':'visible'}" [blockScroll]="true" [draggable]="false">
+  <p-header>
+    Details:
+    <span style="font-family: serif;
+        font-size: medium;">
+      {{requestCountHeader}}
+    </span>
+  </p-header>
+  <div class="Row">
+    <div>
+      <label>Search</label>&nbsp;
+      <input id="input" class="SearchTextBox" [(ngModel)]="reqCountSearch" (keyup)="filter(reqCountSearch,'reqCount')" placeholder="Music Title, Movie/ Album" type="text" size="30"  pInputText>
+
+    </div>
+
+  </div>
+  <br>
+
+  <p-dataTable [value]="requestCountList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch" [paginator]="true"
+    [scrollable]="true" scrollHeight="300px" rows="5" [responsive]="true" [alwaysShowPaginator]="true">
+    <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}"></p-column>
+    <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10"></p-column>
+    <p-column field="LabelName" header="Music Label" [sortable]="true" width="10" styleClass="text-center"></p-column>
+    <p-column field="IsApprove" header="Status" [sortable]="true" width="10" styleClass="text-center"></p-column>
+    <!-- <p-column field="IsValid" header="Valid" [sortable]="true" width="10" styleClass="text-center"></p-column> -->
+    <p-column field="Remarks" header="Remarks" [sortable]="true" [style]="{'width':'300px'}"></p-column>
+    <p-footer>
+      Total Records: {{totalCountOfNoOfSongsDetails}}
+    </p-footer>
+  </p-dataTable>
+
+  <p-footer>
+    <button type="button" pButton (click)="close()" label="Close"></button>
+    <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
+  </p-footer>
+</p-dialog>
+<p-confirmDialog ></p-confirmDialog>
+<div *ngIf="load" id="loadingDiv"></div>

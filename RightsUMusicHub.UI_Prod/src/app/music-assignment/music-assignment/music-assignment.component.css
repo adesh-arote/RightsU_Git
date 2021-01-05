@@ -1,0 +1,67 @@
+.tooltip-inner {
+    max-width: 200px;
+    white-space: nowrap;
+    word-break: break-all;
+}
+
+.avoid-clicks {
+    pointer-events: none;
+  }
+  .pcolumncursor{
+    cursor: pointer;
+  }
+  /* .ui-datatable-footer,.musiccuesheet{
+    position: relative;
+       
+        border-right: 0px !important;
+    bottom: 485px !important;
+    width: 150px !important;
+   
+  } */
+  input.SearchTextBox {
+    width:30% !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+  label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: initial;
+}
+
+.dropdwnbody li{
+  padding-left: 2%;
+}
+.dropdown-menu{
+  border: 1px solid #bbb !important;
+  width: 400px; 
+  z-index: 1003 !important;
+  top: 30px !important;
+  opacity: 1 !important;
+}
+.staticdropdown ul:after {
+  position: absolute;
+  left: 37%;
+  top: -10px;
+  width: 0;
+  height: 0;
+  content: '';
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid lightgray;
+}
+#tercondtndiv{
+  background-color: white;
+  border: 1px solid gray;
+}
+
+
+
+  

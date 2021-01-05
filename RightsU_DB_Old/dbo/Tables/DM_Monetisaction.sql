@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[DM_Monetisaction] (
+    [IntCode]                                   INT            NULL,
+    [Deal_No]                                   INT            NULL,
+    [Title]                                     VARCHAR (1000) NULL,
+    [Rights_to_Appoint_Broadcast_Sponsor]       VARCHAR (1000) NULL,
+    [Rights_to_Appoint_Title_Broadcast_Sponsor] VARCHAR (1000) NULL,
+    [Rotation_Bugs_animated]                    VARCHAR (1000) NULL,
+    [Rotation_bugs_non_animated]                VARCHAR (1000) NULL,
+    [Channel_IDs]                               VARCHAR (1000) NULL,
+    [Pop_Ups_still]                             VARCHAR (1000) NULL,
+    [Pop_Ups_animated]                          VARCHAR (1000) NULL,
+    [Pop_Ups_audio_visual]                      VARCHAR (1000) NULL,
+    [Astons]                                    VARCHAR (1000) NULL,
+    [Tickers_Crawlers]                          VARCHAR (1000) NULL,
+    [Static_Watermarks]                         VARCHAR (1000) NULL,
+    [Highlights_Menus]                          VARCHAR (1000) NULL,
+    [Squeezers]                                 VARCHAR (1000) NULL,
+    [L_Shapes]                                  VARCHAR (1000) NULL,
+    [Push_Ups_Push_Backs]                       VARCHAR (1000) NULL,
+    [Countdown_clock_bugs]                      VARCHAR (1000) NULL,
+    [Now_Next_MLTs_Movie_Lower_Third]           VARCHAR (1000) NULL,
+    [Highlights_Menus_Nw]                       VARCHAR (1000) NULL,
+    [Action_Replay_Bug]                         VARCHAR (1000) NULL,
+    [Any_other_element]                         VARCHAR (1000) NULL,
+    [Remarks]                                   VARCHAR (1000) NULL
+);
+
