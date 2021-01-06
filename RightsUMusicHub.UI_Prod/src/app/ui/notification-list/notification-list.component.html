@@ -74,7 +74,7 @@
         </section>
         <p-dialog [(visible)]="displayMessage" [blockScroll]="true"  [modal]="true"  [positionTop]="60" [width]="900"   [responsive]="true" [draggable]="false">
           <p-header>
-              {{alertHeader}}
+            <span style="cursor: pointer;" (click)="showRequsetDetails()">{{alertHeader}}</span>
           </p-header>
           <div id="NotifyMessage1" style="height:300px;">
               test
@@ -86,3 +86,93 @@
         </p-dialog>
         <div *ngIf="load" id="loadingDiv"></div>
       </div>
+
+
+      <p-dialog [(visible)]="showRequestCountDetails" [blockScroll]="true" [modal]="true" [responsive]="false" [width]="1200" [positionTop]="60" [contentStyle]="{'overflow':'visible'}" [draggable]="false">
+        <p-header>
+        <span style="font-family: serif;
+          font-size: medium;">
+            {{HeaderContent}}
+          </span>
+        </p-header>
+        <div class="Row">
+          <div>
+            <label>Search</label>&nbsp;
+            <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30" placeholder="Music Title, Movie/ Album" [(ngModel)]="requestCountSearch" 
+                   pInputText>
+          </div>
+        </div>
+        <br>
+    
+        <p-dataTable [value]="requestCountFilteredList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch" [paginator]="true"
+                     rows="5" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true" scrollHeight="300px">
+          <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}"></p-column>
+          <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10" styleClass="text-center"></p-column>
+          <p-column field="LabelName" header="Music Label" [sortable]="true" width="10" styleClass="text-center"></p-column>
+          <p-column field="IsApprove" header="Status" [sortable]="true" width="10" styleClass="text-center"></p-column>
+          <p-column field="Remarks" header="Remarks" [sortable]="true" [style]="{'width':'300px'}"></p-column>
+          <p-footer>
+            Total Records: {{totalCountOfNoOfSongsDetails}}
+          </p-footer>
+        </p-dataTable>
+        <p-footer>
+          <button type="button" pButton (click)="closeConsumption()" label="Close"></button>
+        </p-footer>
+      </p-dialog>
+    
+      <p-dialog header="{{HeaderContent}}" [blockScroll]="true" [(visible)]="dialogRequestDetail" [positionTop]="60" [modal]="true" [responsive]="false" [width]="1200"[contentStyle]="{'overflow':'visible'}" [draggable]="false">
+        <!-- <span> -->
+  
+          <div   *ngIf="isMusicDetail">
+              <div class="Row">
+                  <div >
+                    
+                    <label>Search :</label>&nbsp;
+                    <input type="text" class="SearchTextBox" [(ngModel)]="searchMusicDetail"  placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filterList(searchMusicDetail,'musicDetail')" pInputText size="50" >
+                    </div>
+                    
+                    </div>
+                    <br>
+            <p-dataTable [value]="musicDetailFilterList"  [rowsPerPageOptions]="[10,25,50,100]" [globalFilter]="gb3"   [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="300px"
+            [responsive]="true" [alwaysShowPaginator]="true" >
+            <p-column field="RequestedMusicTitleName" header="Req. Music"  [style]=" {'width':'150px' }"></p-column>
+            <p-column field="ApprovedMusicTitleName" header="App. Music"    [style]=" {'width':'150px' }"></p-column>
+            <p-column field="MusicLabelName" header="Music Label"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>
+            <p-column field="MusicMovieAlbumName" header="Music Album"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
+            <p-column field="Singers" header="Singers"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
+            <p-column field="StarCasts" header="Star Casts"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
+            <p-column  field="CreateMap" header="Create-Map"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
+            <p-column  field="IsApprove" header="Status"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
+            <p-column  field="Remarks" header="Remarks"   styleClass="text-center" [style]=" {'width':'100px' }"></p-column>
+            <p-footer>
+              Total Records: {{totalMusicDetailCount}}
+            </p-footer>
+          </p-dataTable>
+          </div>
+          <div class="row "  *ngIf="isAlbumDetail">
+              <div class="Row">
+                  <div >
+                    
+                    <label>Search :</label>&nbsp;
+                    <input  type="text" class="SearchTextBox" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filterList(searchAlbumDetail,'albumDetail')" pInputText size="50" >
+                    </div>
+                    </div>
+                    <br>
+            <p-dataTable [value]="albumDetailFilterList" [rowsPerPageOptions]="[10,25,50,100]" [globalFilter]="gb4" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="300px"
+            [responsive]="true" [alwaysShowPaginator]="true">
+            <p-column field="RequestedMovieAlbumName" header="Req. Movie / Album"  [style]=" {'width':'150px' }"></p-column>
+            <p-column field="ApprovedMovieAlbumName" header="App. Movie / Album"    [style]=" {'width':'150px' }"></p-column>
+            <p-column field="MovieAlbum" header="Movie / Album"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>
+            <p-column  field="CreateMap" header="Create-Map"   styleClass="text-center" [style]=" {'width':'100px' }"></p-column>
+            <p-column  field="IsApprove" header="Status"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
+            <p-column  field="Remarks" header="Remarks"   styleClass="text-center" [style]=" {'width':'150px' }"></p-column>
+            <p-footer>
+              Total Records: {{totalAlbumDetailCount}}
+            </p-footer>
+          </p-dataTable>
+          </div>
+        <p-footer>
+          <button type="button" pButton (click)="closeMusicDetails()" label="Close"></button>
+        </p-footer>
+  
+      </p-dialog>

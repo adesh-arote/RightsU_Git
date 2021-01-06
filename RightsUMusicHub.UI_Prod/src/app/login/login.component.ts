@@ -19,7 +19,7 @@ const EXPIRE_TIME = "EXPIRE_TIME";
 const SESSION_EXPIRE_TIME = "SESSION_EXPIRE_TIME";
 const ARCHIVE_STATUS = "ARCHIVE_STATUS";
 const CHANGEPSW_STATUS = "CHANGEPSW_STATUS";
-
+const USERS_IMAGE = "USERS_IMAGE";
 
 //Added by Sachin ----End----
 
@@ -125,6 +125,7 @@ export class LoginComponent implements OnInit {
               var loginUserName = response.User.Login_Name
               localStorage.setItem('ProductionName', prodName);
               localStorage.setItem('loginName', loginUserName);
+              localStorage.setItem(USERS_IMAGE, response.User.UserImage);
               if (Return.IsSystemPassword == 'Y') {
                 this.router.navigate(['/app/changepswd']);
               }

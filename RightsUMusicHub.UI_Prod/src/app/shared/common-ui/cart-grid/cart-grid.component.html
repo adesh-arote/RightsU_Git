@@ -91,10 +91,10 @@
                             name=labelname optionLabel="MusicLabelName" [resetFilterOnHide]="true" filter="true"></p-dropdown>
               </span>&nbsp;
               <span style="width:10%">
-                <input type="text" style="width:150px !important" name="musicTrack" value="" placeholder="Music Track" class="RequestTextBox" name="musicTrack" [(ngModel)]="newSearchRequest.MusicTrack">
+                <input type="text" style="width:130px !important" name="musicTrack" value="" placeholder="Music Track" class="RequestTextBox" name="musicTrack" [(ngModel)]="newSearchRequest.MusicTrack">
               </span>&nbsp;
               <span>
-                <input style="width:150px !important" type="text" name="musicRequest" value="" placeholder="Movie" class="RequestTextBox" name="movieName" [(ngModel)]="newSearchRequest.MovieName">
+                <input style="width:130px !important" type="text" name="musicRequest" value="" placeholder="Movie" class="RequestTextBox" name="movieName" [(ngModel)]="newSearchRequest.MovieName">
               </span>&nbsp;
               <span style="width:10%">
                 <!-- <select name="ddlGenre" style="width:15%" id="ddlGenre" name="genreCode" class="chosen-select ddlwidth2" [(ngModel)]="newSearchRequest.GenreCode">
@@ -107,10 +107,14 @@
                             name=genrename optionLabel="Genres_Name" [resetFilterOnHide]="true" filter="true"></p-dropdown>
               </span>&nbsp;
               <span>
-                <input style="width:150px !important" type="text" value="" name="talentName" placeholder="Talent" class="RequestTextBox" name="talentName" [(ngModel)]="newSearchRequest.TalentName">
+                <input style="width:130px !important" type="text" value="" name="talentName" placeholder="Talent" class="RequestTextBox" name="talentName" [(ngModel)]="newSearchRequest.TalentName">
               </span>&nbsp;
               <span>
-                <input style="width:150px !important" type="text" value="" name="tag" placeholder="Tag" class="RequestTextBox" [(ngModel)]="newSearchRequest.Tag">
+                <input style="width:130px !important" type="text" value="" name="tag" placeholder="Tag" class="RequestTextBox" [(ngModel)]="newSearchRequest.Tag">
+              </span>&nbsp;
+              <span style="width:5%">
+                <p-dropdown [options]="languageList" [style]="{'width':'150px'}" [autoWidth]="false" [(ngModel)]="newSearchRequest.MusicLanguageCode"
+                name=languagename  optionLabel="Language_Name" [resetFilterOnHide]="true" filter="true"></p-dropdown>
               </span>&nbsp;
               <span style="width:10%" (click)="searchTrack()">
                 <a id="Search_muiscLable" class="btn btn-social btn-sm btn-primary btn-flat" style="height: 30px;">
@@ -167,7 +171,7 @@
                 <span pTooltip="{{row.Singers}}" tooltipPosition="top">{{row.Singers}}</span> 
                </ng-template>
             </p-column>
-            <p-column field="MusicComposer" header="Music Composer" [sortable]="true" width="10"  >
+            <p-column field="MusicComposer" header="Music Composer" [sortable]="true"[style]=" {'width':'145px'}"  >
               <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
                 <span pTooltip="{{row.MusicComposer}}" tooltipPosition="top">{{row.MusicComposer}}</span> 
                </ng-template>
@@ -180,6 +184,11 @@
             <p-column field="MusicLabel" header="Music Label" [sortable]="true" width="10" styleClass="text-center" >
               <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
                 <span pTooltip="{{row.MusicLabel}}" tooltipPosition="top">{{row.MusicLabel}}</span> 
+               </ng-template>
+            </p-column>
+            <p-column field="MusicLanguage" header="Language" [sortable]="true" [style]=" {'width':'100px'}" styleClass="text-center" >
+              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
+                <span pTooltip="{{row.MusicLanguage}}" tooltipPosition="top">{{row.MusicLanguage}}</span> 
                </ng-template>
             </p-column>
             <p-column field="Action" header="Add to Playlist"   [editable]="true" [style]=" {'width':'80px'}" styleClass="text-center columnstyle" >

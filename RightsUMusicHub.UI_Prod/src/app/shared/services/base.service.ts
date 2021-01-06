@@ -26,7 +26,7 @@ const PAGINATION_COUNT = "PAGINATION_COUNT";
 export abstract class BaseService {
 
   private _http: Http;
-  private LoginEndpointURL = 'http://localhost:50422/Api/Login/GetUserLogin'//'http://192.168.0.114/musichubapi/Api/Login/GetUserLogin'
+  private LoginEndpointURL = 'http://192.168.0.114/musichubapi/Api/Login/GetUserLogin'//'http://192.168.0.114/musichubapi/Api/Login/GetUserLogin'
 
 
   //Added By Sachin ----------- Start ------
@@ -34,8 +34,8 @@ export abstract class BaseService {
 
   // private OauthLoginEndPointUrl = 'http://163.182.171.194:8091/connect/token';
   // private OauthLoginRevokeUrl = 'http://163.182.171.194:8091/connect/';
-  private OauthLoginEndPointUrl = 'http://localhost:8654/connect/token';
-  private OauthLoginRevokeUrl =   'http://localhost:8654/connect/';
+  private OauthLoginEndPointUrl = 'http://192.168.0.114/musichuboauth/connect/token';
+  private OauthLoginRevokeUrl =   'http://192.168.0.114/musichuboauth/connect/';
 
   //private OauthLoginEndPointUrl = 'https://spnadsvaluuat.setindia.com:88/connect/token';
   //private OauthLoginRevokeUrl = 'https://spnadsvaluuat.setindia.com:88/connect/revocation';

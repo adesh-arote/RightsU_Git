@@ -35,4 +35,8 @@ export class CommonUiService extends BaseService {
     let obj=JSON.stringify(body);
     return super.post('RequisitionModule/MusicConsumptionRequest',obj);
   }
+  public getMusicLanguage(musicLanguage): Observable<any> {
+    let obj=JSON.stringify(musicLanguage);
+    return super.post('RequisitionModule/GetMusicLanguage', obj);
+  }
 }

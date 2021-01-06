@@ -53,4 +53,9 @@ return super.releaseAccount(obj);
     let obj=JSON.stringify(forgotBody);
     return super.forgotPassword(obj);
   }
+
+  public uploadImage(fileData: FormData): Observable<any> {
+    return super.postUpload('Login/UploadImage', fileData);
+  }
+
 }

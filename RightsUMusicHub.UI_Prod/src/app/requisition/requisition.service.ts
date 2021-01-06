@@ -125,4 +125,9 @@ export class RequisitionService extends BaseService {
     return super.post('CueSheet/CueSheetSaveManually',body);
   }
   
+  public GetNotificationHeader(obj):Observable<any>{
+    let body=JSON.stringify(obj);
+    return super.post('RequisitionModule/GetNotificationHeader',obj);
+  }
+
 }

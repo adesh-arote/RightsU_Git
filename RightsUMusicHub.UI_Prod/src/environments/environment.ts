@@ -2,7 +2,7 @@
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-const LOCAL_MACHINE_URL = 'http://localhost:50422/'; // for local machine
+const LOCAL_MACHINE_URL = 'http://192.168.0.114/musichubapi'; // for local machine
 const STAGE_ENV_URL = 'http://13.228.24.89:81/'; // Stage 81
 const UTO_ENV_URL = 'http://192.168.0.114/musichubapi'; // UTO Envoirmrnt
 //const UTO_ENV_URL = 'http://localhost:50422/'; // UTO Envoirmrnt
