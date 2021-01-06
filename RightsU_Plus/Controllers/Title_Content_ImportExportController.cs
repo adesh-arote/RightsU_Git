@@ -819,7 +819,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult PopulateAutoCompleteData(string keyword)
         {
             dynamic result = "";
-            result = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+            result = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name.ToUpper().Contains(keyword.ToUpper())).Where(y => y.Is_Active == "Y").Distinct()
                             .Select(R => new { Mapping_Name = R.Music_Title_Name, Mapping_Code = R.Music_Title_Code }).ToList();
 
             return Json(result);
