@@ -153,7 +153,7 @@
         $("#Pagination").pagination(recordCount, opt);
     }
     function PageIndexChanged(page_index, jq) {
-        if (checkCurrentAction()) {
+       // if (checkCurrentAction()) {
             if (!ValidatePageSize('txtPageSize'))
                 return false;
 
@@ -165,7 +165,7 @@
             }
             else
                 IsCall = 'Y';
-        }
+        //}
     }
     function txtPageSize_OnChange() {
         $("[required='required']").removeAttr("required");

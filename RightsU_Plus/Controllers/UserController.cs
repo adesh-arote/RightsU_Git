@@ -541,7 +541,7 @@ namespace RightsU_Plus.Controllers
             User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.User objUser = objService.GetById(UserCode);
             string pwd = "", Message = "";
-            pwd = generatePwd(objUser.Login_Name);
+            pwd = generatePwd(objUser.First_Name, objUser.Last_Name);
             objUser.Password = getDatabaseEncryptedpassword(pwd);
             objUser.EntityState = State.Modified;
             objUser.Is_System_Password = "Y";
@@ -580,7 +580,8 @@ namespace RightsU_Plus.Controllers
             else
             {
                 string password = "";
-                password = generatePwd(objUser_MVC.Login_Name);
+                //password = generatePwd(objUser_MVC.Login_Name);
+                password = generatePwd(objUser_MVC.First_Name, objUser_MVC.Last_Name);
                 objU.Password = getDatabaseEncryptedpassword(password);
                 objU.EntityState = State.Added;
                 objU.Is_Active = "Y";
@@ -739,7 +740,16 @@ namespace RightsU_Plus.Controllers
                     message = objMessageKey.RecordAddedSuccessfully;
                     string IsLDAPAuthReq = ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().Trim().ToUpper();
                     if (IsLDAPAuthReq == "N")
+                    {
                         Mail(objU);
+                    }
+                    else
+                    {
+                        if (objU.IsProductionHouseUser == "Y")
+                        {
+                            Mail(objU);
+                        }
+                    }
                 }
                 FetchData();
             }
@@ -773,13 +783,38 @@ namespace RightsU_Plus.Controllers
 
             return AddResult.ToList<T>();
         }
-        public string generatePwd(string LoginName)
+        //public string generatePwd(string LoginName)
+        //{
+        //    string pwd = getEncrptedPass(LoginName).Trim();
+        //    return pwd;
+        //}
+        public string generatePwd(string FirstName, string LastName)
         {
-            string pwd = getEncrptedPass(LoginName).Trim();
+            string pwd = getEncrptedPass(FirstName, LastName).Trim();
             return pwd;
         }
-        public static string getEncrptedPass(string LoginName)
+        public static string getEncrptedPass(string FirstName, string LastName)
         {
+            //long currentTime = Convert.ToInt64(GetDateComparisionNumber(DateTime.Now.ToString("s")));
+            //string date = currentTime.ToString().Substring(8, 4);
+
+            //if (Convert.ToInt32(date) % 2 == 0)
+            //{
+            //    date = ((date[0]) + date);
+            //    date += date[2];
+            //}
+            //else
+            //{
+            //    date = ((date[1]) + date);
+            //    date += date[3];
+            //}
+
+            //if (LoginName.Length < 2)
+            //    LoginName = LoginName + '#';
+
+            //string str = LoginName.Substring(0, 2).Trim() + date;
+
+            //return str;
             long currentTime = Convert.ToInt64(GetDateComparisionNumber(DateTime.Now.ToString("s")));
             string date = currentTime.ToString().Substring(8, 4);
 
@@ -794,10 +829,11 @@ namespace RightsU_Plus.Controllers
                 date += date[3];
             }
 
-            if (LoginName.Length < 2)
-                LoginName = LoginName + '#';
-
-            string str = LoginName.Substring(0, 2).Trim() + date;
+            if (FirstName.Length < 2)
+                FirstName = FirstName + '#';
+            if (LastName.Length < 2)
+                LastName = LastName + '#';
+            string str = FirstName.Substring(0, 2).Trim() + date + LastName.Substring(0, 2).Trim();
 
             return str;
         }
@@ -848,21 +884,22 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                objUser.Password = generatePwd(objUser.Login_Name);
-                SendMail objModelMail = new SendMail();
-                objModelMail.ToEmailId = objUser.Email_Id;
-                objModelMail.FromEmailId = objLoginUser.Email_Id;
-                objModelMail.setMailAdd(objLoginUser.Email_Id, objUser.Email_Id);
-                objModelMail.MailSubject = "New User Created";
+                objUser.Password = generatePwd(objUser.First_Name, objUser.Last_Name);
+                int IsMailSend = new USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, objUser.Password, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().ToUpper(), ConfigurationManager.AppSettings["SiteAddress"].ToString(), ConfigurationManager.AppSettings["SystemName"].ToString(), "NP", objUser.Email_Id.Trim());
+                //SendMail objModelMail = new SendMail();
+                //objModelMail.ToEmailId = objUser.Email_Id;
+                //objModelMail.FromEmailId = objLoginUser.Email_Id;
+                //objModelMail.setMailAdd(objLoginUser.Email_Id, objUser.Email_Id);
+                //objModelMail.MailSubject = "New User Created";
 
-                objModelMail.MailText = "Dear " + objUser.First_Name + " your User Name is " + objUser.Login_Name + " your password is " + objUser.Password;
-                objModelMail.FromEmailId = objLoginUser.Email_Id;
-                SmtpClient smtp = new SmtpClient();
-                smtp.Host = "smtp.gmail.com";
-                smtp.EnableSsl = true;
-                NetworkCredential networkCredential = new NetworkCredential(System.Configuration.ConfigurationManager.AppSettings["MailUid"], System.Configuration.ConfigurationManager.AppSettings["MailPwd"]);
-                smtp.Host = "localhost";
-                objModelMail.send();
+                //objModelMail.MailText = "Dear " + objUser.First_Name + " your User Name is " + objUser.Login_Name + " your password is " + objUser.Password;
+                //objModelMail.FromEmailId = objLoginUser.Email_Id;
+                //SmtpClient smtp = new SmtpClient();
+                //smtp.Host = "smtp.gmail.com";
+                //smtp.EnableSsl = true;
+                //NetworkCredential networkCredential = new NetworkCredential(System.Configuration.ConfigurationManager.AppSettings["MailUid"], System.Configuration.ConfigurationManager.AppSettings["MailPwd"]);
+                //smtp.Host = "localhost";
+                //objModelMail.send();
             }
             catch (Exception e)
             {

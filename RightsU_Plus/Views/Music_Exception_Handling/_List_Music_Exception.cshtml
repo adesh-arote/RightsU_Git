@@ -41,8 +41,8 @@
             $("#txtStart,#txtEnd,#txtStart1,#txtEnd1").val('')
             $('#txtStart,#txtStart1').datepicker("setDate", '@ViewBag.NStart_Date');
             $('#txtEnd,#txtEnd1').datepicker("setDate", '@ViewBag.NEnd_Date');
-            $("#txtStart,#txtStart1").datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", '@ViewBag.NStart_Date'));
-            $("#txtEnd,#txtEnd1").datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", '@ViewBag.NStart_Date'));
+            @*$("#txtStart,#txtStart1").datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", '@ViewBag.NStart_Date'));
+            $("#txtEnd,#txtEnd1").datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", '@ViewBag.NStart_Date'));*@
 
         }
         else if('@ViewBag.IsAired'=='Y'){
@@ -169,12 +169,11 @@
                             }
                         </td>
                         <td>
-                            @*@if ((@item.Workflow_Status == null || @item.Status == "Open" || @item.Workflow_Status.TrimEnd().TrimStart() == "R" || @item.Workflow_Status.TrimEnd().TrimStart() == "O") && item.Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForApproval + ","))
+                            @if ((@item.Workflow_Status == null || @item.Status == "Open" || @item.Workflow_Status.TrimEnd().TrimStart() == "R" || @item.Workflow_Status.TrimEnd().TrimStart() == "O") && item.Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForApproval + ","))
                             {
-                            <a alt="" title="" href="#" class="glyphicon glyphicon-send" data-original-title="@objMessageKey.SendForApproval" data-target="#popAuthorize" data-toggle="modal" onclick="SendForApprovalpopup('@item.Music_Schedule_Transaction_Code','@item.IsZeroWorkflow ');"></a>
+                            <a alt="" title="" href="#" class="glyphicon glyphicon-send" data-original-title="@objMessageKey.SendForApproval" data-target="#popWaitingAuthorization" data-toggle="modal" onclick="SendForApprovalpopup('@item.Music_Schedule_Transaction_Code','@item.IsZeroWorkflow ');"></a>
                             }
-                            else*@
-                            @if ((item.Workflow_Status != "A" && item.Workflow_Status != "R") && item.Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForApprove + ","))
+                            else if ((item.Workflow_Status != "A" && item.Workflow_Status != "R") && item.Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForApprove + ","))
                             {
                             <a title="" href="#" class="glyphicon glyphicon-check" data-original-title="@objMessageKey.Approve" data-target="#popWaitingAuthorization" data-toggle="modal" onclick="SendForApprovalpopup('@item.Music_Schedule_Transaction_Code','@item.IsZeroWorkflow ');"></a>
                             }

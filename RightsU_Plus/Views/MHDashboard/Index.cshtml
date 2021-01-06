@@ -325,7 +325,12 @@
 
     var SortType = '';
     function FetchPieChartData(SortType, DealTypeCode, BU, CallFor, DDLFor) {
-      
+        if ($('#ddlPieChartShowType').val() == "") {
+            DealTypeCode = "";
+        }
+        if ($('#ddlPieChartBU').val() == "") {
+            BU = "";
+        }
         $.ajax({
             type: "POST",
             url: URL_FetchPieChartData,
@@ -352,7 +357,12 @@
         });
     }
     function FetchBarChartData(SortType, DealTypeCode, BU, CallFor, DDLFor) {     
-     
+        if ($('#ddlBarChartShowType').val() == "") {
+            DealTypeCode = "";
+        }
+        if ($('#ddlBarChartBU').val() == "") {
+            BU = "";
+        }
         $.ajax({
             type: "POST",
             url: URL_FetchBarChartData,

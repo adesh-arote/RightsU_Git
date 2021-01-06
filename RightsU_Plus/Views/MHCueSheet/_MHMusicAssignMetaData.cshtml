@@ -712,7 +712,17 @@
                                 <td class="td_label">Uploaded Date:</td>
                                 <td>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.CreatedOn)</td>
                                 <td class="td_label">Assigned By:</td>
-                                <td>@((ViewBag.ApprovedBy))</td>
+                                <td>
+                                    @{ string Label = "System"; }
+                                    @if (ViewBag.ApprovedBy == "NA")
+                                    {
+                                        @Label
+                                    }
+                                    else
+                                    {
+                                        @((ViewBag.ApprovedBy))
+                                    }
+                                </td>
                                 <td class="td_label">Assigned Date:</td>
                                 <td>@((ViewBag.ApprovedOn == "NA" ? "" : string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Convert.ToDateTime(ViewBag.ApprovedOn))))</td>
 

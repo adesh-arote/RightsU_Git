@@ -287,13 +287,15 @@ namespace RightsU_Plus.Controllers
                     objMSE.Initial_Response = "O";
                 }
                 else
-                objMSE.Initial_Response = "I";
+                  objMSE.Initial_Response = "I";
+
+                objMSE.Is_Ignore = IgnoreOrOverride == "O" ? "N" : "Y";
                 objMSE.EntityState = State.Modified;
                 objMSTS.Save(objMSE);
 
-                //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
-                //string uspResult = Convert.ToString(objUSP.USP_Process_Workflow(Music_Schedule_Transaction_Code, 154, objLoginUser.Users_Code, user_Action.TrimEnd()
-                //    .TrimStart(), Remark).ElementAt(0));
+                USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+                string uspResult = Convert.ToString(objUSP.USP_Process_Workflow(Music_Schedule_Transaction_Code, 154, objLoginUser.Users_Code, user_Action.TrimEnd()
+                    .TrimStart(), Remark).ElementAt(0));
                 Dictionary<string, object> obj = new Dictionary<string, object>();
 
                 //Music_Schedule_Transaction objMSE = new Music_Schedule_Transaction();

@@ -644,6 +644,10 @@
                                     {
                                         string name = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Users_Code == Model.ApprovedBy)
                                                                     .Select(x => x.First_Name).FirstOrDefault();
+                                        if (name == "Deal")
+                                        {
+                                            name = "System";
+                                        }
                                         @name
                                     }
                                 </td>

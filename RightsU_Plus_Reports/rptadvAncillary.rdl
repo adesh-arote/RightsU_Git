@@ -28,6 +28,9 @@
           <QueryParameter Name="@Ancillary_Type_Code">
             <Value>=Parameters!Ancillary_Type_Code.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@IncludeExpired">
+            <Value>=Parameters!IncludeExpired.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USP_Acq_Deal_Ancillary_Adv_Report</CommandText>
@@ -56,11 +59,11 @@
         </Field>
         <Field Name="Duration">
           <DataField>Duration</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Day">
           <DataField>Day</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Remarks">
           <DataField>Remarks</DataField>
@@ -3613,7 +3616,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
       <Prompt>Platform Codes</Prompt>
     </ReportParameter>
     <ReportParameter Name="Ancillary_Type_Code">
-      <DataType>Integer</DataType>
+      <DataType>String</DataType>
       <Prompt>Ancillary Type Code</Prompt>
     </ReportParameter>
     <ReportParameter Name="SysLanguageCode">
@@ -3629,6 +3632,10 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
       <Nullable>true</Nullable>
       <Prompt>Call From</Prompt>
       <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="IncludeExpired">
+      <DataType>String</DataType>
+      <Prompt>Include Expired</Prompt>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
@@ -3745,6 +3752,11 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>7</RowIndex>
           <ParameterName>CallFrom</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>7</RowIndex>
+          <ParameterName>IncludeExpired</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>
