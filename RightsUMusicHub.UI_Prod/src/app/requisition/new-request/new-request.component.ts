@@ -82,8 +82,6 @@ export class NewRequestComponent implements OnInit {
   public quickSelChannelCode: any;
   defaultDate: Date = new Date('Thu Aug 30 2018 00:00:00 GMT+0530 (India Standard Time)');
   todaydate: Date = new Date();
-  public showFromDateMsg: any;
-  public showToDateMsg: any;
   public termsTextFirst: string;
   public termsTextSecond: string;
   public productionHouseName;
@@ -1938,24 +1936,6 @@ export class NewRequestComponent implements OnInit {
     // }
     this.textCueSheetRemarkCount = this.remarksCueSheet.trim().length;
 
-  }
-
-  setDateValidation() {
-    debugger;
-    this.showFromDateMsg = "";
-    this.showToDateMsg = "";
-    if (this.searchFromDate != null && this.searchToDate == null) {
-      this.showFromDateMsg = "";
-      this.showToDateMsg = "";
-    }
-    else if (this.searchFromDate > this.searchToDate) {
-      this.showFromDateMsg = "From date should be less than To date";
-      this.showToDateMsg = "";
-    }
-    else if (this.searchToDate < this.searchFromDate) {
-      this.showToDateMsg = "To date should be greater than From date";
-      this.showFromDateMsg = "";
-    }
   }
 
   episodeValidation(){
