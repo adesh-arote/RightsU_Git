@@ -72,6 +72,7 @@
         });
     }
     function SetPaging() {
+        debugger
         IsCall = 'N';
         var pageNo = 1, recordCount = 0, pagePerBatch = 0, recordPerPage = 0;
         pageNo = parseInt($('#hdnPageNo').val());
@@ -104,6 +105,7 @@
         $("#Pagination").pagination(recordCount, opt);
     }
     function pageselectCallback(page_index, jq) {
+        debugger
         $('.required').removeClass('required');
 
         if (!ValidatePageSize('txtPageSize'))
@@ -120,6 +122,7 @@
             IsCall = 'Y';
     }
     function txtPageSize_OnChange(txtID) {
+        debugger
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
         if (!ValidatePageSize(txtID))
@@ -129,6 +132,7 @@
         SetPaging();
     }
     function ValidatePageSize(txtID) {
+        debugger
         var recordPerPage = $('#' + txtID).val()
         if ($.trim(recordPerPage) != '') {
             var pageSize = parseInt(recordPerPage);
@@ -140,11 +144,13 @@
         return false
     }
     function pageBinding() {
+        debugger
         var MappedData = $('input[name=MappedData]:checked').val();
         BindGrid(false, false, '', MappedData);
         SetPaging();
     }
     function TabChange(tabName, DM_Master_Import_Code) {
+        debugger
         var isValidate = true;
         isValidate = SaveMappedData();
         if (isValidate) {
@@ -158,6 +164,7 @@
         }
     }
     function BindGrid(fetchData, isTabChanged, previousTabName, MappedData) {
+        debugger
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -622,20 +629,17 @@
             <input type="hidden" id="hdnMasterImportCode" value="@Model.DM_Master_Import_Code" />
             <div class="tabbable">
                 <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
-                    @if (ViewBag.IsResolveConflictTalent == "Y")
+                    @if (ViewBag.FileType == "M")
                     {
                         <li class="active">
                             <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
                         </li>
-                    }
-                    <li class="">
-                        <a data-toggle="tab" role="tab" data-tabname="LB">Music Label</a>
-                    </li>
-                    @if (ViewBag.FileType == "M")
-                    {
 
                         <li class="">
-                            <a data-toggle="tab" data-tabname="GE" role="tab">Genres</a>Y
+                            <a data-toggle="tab" role="tab" data-tabname="LB">Music Label</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" data-tabname="GE" role="tab">Genres</a>
                         </li>
                         <li class="">
                             <a data-toggle="tab" data-tabname="MA" role="tab">Movie/Album</a>
@@ -649,35 +653,41 @@
                     }
                     @if (ViewBag.FileType == "T")
                     {
-                        if (ViewBag.IsResolveConflictTitleType == "Y")
+                        if (ViewBag.ShortName.Contains("TA"))
+                        {
+                            <li class="active">
+                                <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
+                            </li>
+                        }
+                        if (ViewBag.ShortName.Contains("LB"))
+                        {
+                            <li class="">
+                                <a data-toggle="tab" role="tab" data-tabname="LB">Music Label</a>
+                            </li>
+                        }
+                        if (ViewBag.ShortName.Contains("TT"))
                         {
                             <li class="">
                                 <a data-toggle="tab" data-tabname="TT" role="tab">Title Type</a>
                             </li>
                         }
-                        if (ViewBag.IsResolveConflictTitleLanguage == "Y")
+                        if (ViewBag.ShortName.Contains("TL"))
                         {
                             <li class="">
                                 <a data-toggle="tab" data-tabname="TL" role="tab">Title Language</a>
                             </li>
                         }
-                        if (ViewBag.IsResolveConflictOriginalLanguage == "Y")
+                        if (ViewBag.ShortName.Contains("OL"))
                         {
                             <li class="">
                                 <a data-toggle="tab" data-tabname="OL" role="tab">Original Language</a>
                             </li>
                         }
-                        <li class="">
-                            <a data-toggle="tab" data-tabname="GE" role="tab">Genres</a>
-                        </li>
-                        if (ViewBag.Is_Allow_Program_Category == "Y")
+                        if (ViewBag.ShortName.Contains("GE"))
                         {
-                            if (ViewBag.IsResolveConflict == "Y")
-                            {
-                                <li class="">
-                                    <a data-toggle="tab" data-tabname="PC" role="tab">Program Category</a>
-                                </li>
-                            }
+                            <li class="">
+                                <a data-toggle="tab" data-tabname="GE" role="tab">Genres</a>
+                            </li>
                         }
                     }
                 </ul>
@@ -698,7 +708,7 @@
                         </div>
                         <span class="pull-right">
                             Page Size:
-                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="@((ViewBag.PageSize ?? 25))" 
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="@((ViewBag.PageSize ?? 25))"
                                    onchange="txtPageSize_OnChange('txtPageSize')" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
@@ -738,6 +748,7 @@
         max-width: 600px;
         overflow-y: auto;
     }
+
     .loader {
         background: url('../../Images/ajax-loader.gif');
         background-repeat: no-repeat;
