@@ -117,8 +117,10 @@
               <label for="float-input">From</label>
           </span> -->
           <div style="margin-top: -5%; ">
-            <p-calendar [(ngModel)]="searchFromDate" [showIcon]="true" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+            <p-calendar [(ngModel)]="searchFromDate" [showIcon]="true" [maxDate]="searchToDate"  (onSelect)="setDateValidation()" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+           
           </div>
+          <span class="error-message">{{showFromDateMsg}}</span>
         </div>
       </div>
       <div class="row" style="padding-top:5%;">
@@ -130,8 +132,9 @@
                 <label for="float-input">To</label>
           </span> -->
           <div style="margin-top: -5%;">
-            <p-calendar [(ngModel)]="searchToDate" [showIcon]="true" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
-          </div>
+            <p-calendar [(ngModel)]="searchToDate" [showIcon]="true" [minDate]="searchFromDate"  (onSelect)="setDateValidation()" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+            </div>
+            <span class="error-message">{{showToDateMsg}}</span>
         </div>
       </div>
 
@@ -205,12 +208,12 @@
                       <span id="txtFromEpide">
                         From:
                         <!-- (ngModelChange)="newMusicConsumptionRequest.EpisodeTo=newMusicConsumptionRequest.EpisodeFrom+1;episodeChange()" -->
-                        <input type="number" min="{{MinEpisode}}" value="" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value < Number(this.min)) ? this.min : this.value" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="" max="{{MaxEpisode}}" name="episodeNoFrom" [(ngModel)]="newMusicConsumptionRequest.EpisodeFrom" class="RequestNumber">
+                        <input type="number" min="{{MinEpisode}}" (blur)="episodeValidation()" value="" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value < Number(this.min)) ? this.min : this.value" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="" max="{{MaxEpisode}}" name="episodeNoFrom" [(ngModel)]="newMusicConsumptionRequest.EpisodeFrom" class="RequestNumber">
                         <!-- <input type="text" pInputText min="1" max=9999  /> -->
                       </span>
                       <span id="txtToEpide">
                         To:
-                        <input type="number" max="{{MaxEpisode}}" min="{{MinEpisode}}" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.valuethis.value=(this.value < Number(this.min)) ? this.min : this.value" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                        <input type="number" max="{{MaxEpisode}}" (blur)="episodeValidation()" min="{{MinEpisode}}" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.valuethis.value=(this.value < Number(this.min)) ? this.min : this.value" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                placeholder="" name="episodeNoTo" [(ngModel)]="newMusicConsumptionRequest.EpisodeTo" class="RequestNumber">
                       </span>
                     </div>
@@ -235,7 +238,7 @@
                       <span class="block" id="txtFromDate">
                         From:
                         <!-- [maxDate]="newMusicConsumptionRequest.TelecastTo" (ngModelChange)="telcastFromDateChnge()" -->
-                        <p-calendar id="Telecastfrom" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiFromDate" [showIcon]="true" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+                        <p-calendar id="Telecastfrom" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiFromDate" [showIcon]="true" [maxDate]="newMusicConsumptionRequest.TelecastTo" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
 
                         <!-- <input type="date" value="" placeholder="dd/mm/yyyy" class="TextBox5" name="epiFromDate" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom"> -->
                       </span>
@@ -243,7 +246,7 @@
                       <span class="block" id="txtToDate" style="padding-top: 1%">
                         To: &nbsp;&nbsp;&nbsp;&nbsp;
                         <!-- [minDate]="newMusicConsumptionRequest.TelecastFrom" [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null" -->
-                        <p-calendar id="Telecastto" [(ngModel)]="newMusicConsumptionRequest.TelecastTo" [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null" name="epiToDate" readonlyInput="true" [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+                        <p-calendar id="Telecastto" [(ngModel)]="newMusicConsumptionRequest.TelecastTo" [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null" [minDate]="newMusicConsumptionRequest.TelecastFrom" name="epiToDate" readonlyInput="true" [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
 
                         <!-- <input type="date" value="" placeholder="dd/mm/yyyy" class="TextBox5" name="epiToDate" [(ngModel)]="newMusicConsumptionRequest.TelecastTo"> -->
                       </span>
@@ -300,7 +303,7 @@
               </p-column>
               <p-column field="RequestID" header="Request ID" [sortable]="true" width="10" styleClass="text-center"></p-column>
               <p-column field="ChannelName" header="Channel" [sortable]="true" styleClass="text-center"></p-column>
-              <p-column field="Title_Name" header="Show" [sortable]="true" styleClass="text-center"></p-column>
+              <p-column field="Title_Name" header="Show" [sortable]="true" styleClass="text-center" [style]="{'width': '150px'}"></p-column>
               <p-column field="CountRequest" header="No. of Songs" [sortable]="true" styleClass="text-center">
                 <ng-template pTemplate="body" let-row="rowData">
                   <a (click)="requestCountDetails(row,'N')"><span style="color:blue">{{row.CountRequest}}</span></a>
@@ -330,8 +333,12 @@
               </p-column>
               <p-column field="Status" header="Status" [sortable]="true" styleClass="text-center"></p-column>
 
-              <p-column field="Login_Name" header="Requested By" [sortable]="true" styleClass="text-center"></p-column>
-              <p-column field="RequestDate" header="Requested Date" [sortable]="true" styleClass="text-center">
+              <p-column field="Login_Name" header="Requested By" [sortable]="true" styleClass="text-center">
+                <ng-template pTemplate="body" let-row="rowData">
+                  <span pTooltip="{{row.Login_Name}}" tooltipPosition="top">{{row.Login_Name}}</span>
+                  </ng-template>
+              </p-column>
+              <p-column field="RequestDate" header="Requested Date" [sortable]="true" styleClass="text-center" [style]="{'width': '150px'}">
                 <ng-template pTemplate="body" let-row="rowData">
                   {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}
                 </ng-template>
@@ -443,11 +450,11 @@
 
 
 
-          <p-column field="songType" header="Song Type" [style]=" {'width':'120px' }">
+          <p-column field="songType" header="Usage Type" [style]=" {'width':'120px' }">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
               <p-autoComplete [(ngModel)]="row[col.field]" [disabled]="row.Selected" appendTo="body" (keydown.space)="$event.preventDefault();" id="songType{{index+1}}" class="autoText" name="songType'{{index+1}}'"
                               #songType{{index+1}}="ngModel" [suggestions]="filteredSong" (completeMethod)="filteredSongType($event)" field="SongType"
-                              placeholder="Song Type" [minLength]="1"></p-autoComplete>
+                              placeholder="Usage Type" [minLength]="1"></p-autoComplete>
               <!-- <input type="text" [(ngModel)]="row[col.field]" (ngModelChange)="songTypeChange()" autocomplete="off" required  class="requestSongType" id="songType{{index+1}}" name="songType'{{index+1}}'"
               #songType{{index+1}}="ngModel"> -->
             </ng-template>
@@ -520,7 +527,7 @@
           <ul class="dropdown-menu dropdown-menu-left">
             <div class="dropdwnbody">
               <li>
-                These Standard Terms And Conditions contained herein on this webpage, shall govern your use of this website, including all pages within this website. These Terms apply in full force and effect to your use of this Website and by using this Website, you expressly accept all terms and conditions contained herein in full. You must not use this Website, if you have any objection to any of these Website Standard Terms And Conditions. You are granted a limited license only, subject to the restrictions provided in these Terms, for purposes of viewing the material contained on this Website.
+               {{termsTextFirst}} <b>{{productionHouseName}}</b> {{termsTextSecond}}
 
               </li>
 

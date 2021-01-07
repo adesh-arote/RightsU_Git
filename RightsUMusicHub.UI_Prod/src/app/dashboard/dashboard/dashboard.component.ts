@@ -204,19 +204,20 @@ return this.getshowlist.filter( it => {
       }
       else if(Response.Return.IsSuccess==false){
         localStorage.setItem('quickChannelCode',Response.ChannelCode);
-        this._confirmation.confirm({
-          message:'Play list not created for this Show, Would you like to add Usage Request or Play list for this Show ?',
-          header: 'Confirmation',
-          icon: 'pi pi-exclamation-triangle',
-          accept: () => {
-            debugger;
-            localStorage.setItem('quickSelreq', 'Y');
-                    this.router.navigate(['/app/requisition/new-request']);
-          },
-          reject: () => {
-            // this.msgs = [{ severity: 'info', summary: 'Rejected', detail: 'You have rejected' }];
-          }
-        });
+        localStorage.setItem('quickSelreq', 'Y');
+        this.router.navigate(['/app/requisition/new-request']);
+        // this._confirmation.confirm({
+        //   message:'Play list not created for this Show, Would you like to add Usage Request or Play list for this Show ?',
+        //   header: 'Confirmation',
+        //   icon: 'pi pi-exclamation-triangle',
+        //   accept: () => {
+        //     debugger;
+           
+        //   },
+        //   reject: () => {
+        //     // this.msgs = [{ severity: 'info', summary: 'Rejected', detail: 'You have rejected' }];
+        //   }
+        // });
       }
     },
     error=>{ this.handleResponseError(error) }

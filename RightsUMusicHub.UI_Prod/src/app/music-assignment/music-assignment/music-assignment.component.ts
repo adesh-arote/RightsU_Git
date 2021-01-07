@@ -42,6 +42,10 @@ export class MusicAssignmentComponent implements OnInit {
   public exportPageSize = 10;
   public exportPageNo = 1;
   public timer;
+  public termsTextFirst: string;
+  public termsTextSecond: string;
+  public productionHouseName;
+
   constructor(private _musicAssignmentService: MusicAssignmentService, private router: Router) {
     this.Status = [
       { label: 'Pending', value: 'P' },
@@ -71,6 +75,9 @@ export class MusicAssignmentComponent implements OnInit {
     this.fileUploadDialog = true;
     this.replaceCode = id;
     this.textRemarkCount = 0;
+    this.productionHouseName = localStorage.getItem('ProductionName');
+    this.termsTextFirst = "I hereby understand, accept and abide by the terms & conditions granted by Viacom18 Media Pvt Ltd for the consumption of music songs embedded within the said episode of the given program. The declaration is on behalf of the";
+    this.termsTextSecond = "& its associated affiliates."
     if (!this.replaceCode) {
       this.alertHeader = "Upload file";
     } else if (this.replaceCode) {

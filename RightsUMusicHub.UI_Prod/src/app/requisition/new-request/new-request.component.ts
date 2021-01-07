@@ -82,6 +82,12 @@ export class NewRequestComponent implements OnInit {
   public quickSelChannelCode: any;
   defaultDate: Date = new Date('Thu Aug 30 2018 00:00:00 GMT+0530 (India Standard Time)');
   todaydate: Date = new Date();
+  public showFromDateMsg: any;
+  public showToDateMsg: any;
+  public termsTextFirst: string;
+  public termsTextSecond: string;
+  public productionHouseName;
+
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.mindatevalue = new Date();
 
@@ -345,26 +351,26 @@ export class NewRequestComponent implements OnInit {
 
         // this.alertErrorMessage="Episode To should greater than Episode From";
       }
-      else
-        if (fromdate >= todate) {
-          this.displayalertMessage = true;
-          this.messageData = {
-            'header': "Error",
-            'body': "From Date should be Less Than To Date"
-          }
-          // this.alertErrorMessage="From Date should Less Than To Date";
+      // else
+      //   if (fromdate >= todate) {
+      //     this.displayalertMessage = true;
+      //     this.messageData = {
+      //       'header': "Error",
+      //       'body': "From Date should be Less Than To Date"
+      //     }
+      //     // this.alertErrorMessage="From Date should Less Than To Date";
+      //   }
+      else {
+        // this.showName = this.newMusicConsumptionRequest.TitleCode.Title_Name;
+        this.componentData = {
+          'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
+          'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
         }
-        else {
-          // this.showName = this.newMusicConsumptionRequest.TitleCode.Title_Name;
-          this.componentData = {
-            'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
-            'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
-          }
-          console.log(JSON.stringify(this.componentData));
-          console.log(JSON.stringify(this.newMusicConsumptionRequest));
-          this.showdetail = true;
+        console.log(JSON.stringify(this.componentData));
+        console.log(JSON.stringify(this.newMusicConsumptionRequest));
+        this.showdetail = true;
 
-        }
+      }
     }
     else {
       // this.showName = this.newMusicConsumptionRequest.TitleCode.Title_Name;
@@ -556,9 +562,9 @@ export class NewRequestComponent implements OnInit {
 
   getPlayList() {
     var playlistbody =
-      {
-        "TitleCode": this.newMusicConsumptionRequest.TitleCode.Title_Code
-      }
+    {
+      "TitleCode": this.newMusicConsumptionRequest.TitleCode.Title_Code
+    }
     this.load = true;
     this.addBlockUI();
     this._requisitionService.getPlayList(playlistbody).subscribe(response => {
@@ -790,21 +796,21 @@ export class NewRequestComponent implements OnInit {
     debugger;
     var datePipe = new DatePipe('en-GB');
 
-    if (this.searchFromDate > this.searchToDate) {
-      this.displayalertMessage = true;
-      this.messageData = {
-        'header': "Error",
-        'body': "From date should be less than To date"
-      }
-    }
-    else if (this.searchToDate < this.searchFromDate) {
-      this.displayalertMessage = true;
-      this.messageData = {
-        'header': "Error",
-        'body': "To date should be greater than From date"
-      }
-    }
-    else if ((this.searchRequestId == null || this.searchRequestId == '')) {
+    // if (this.searchFromDate > this.searchToDate) {
+    //   this.displayalertMessage = true;
+    //   this.messageData = {
+    //     'header': "Error",
+    //     'body': "From date should be less than To date"
+    //   }
+    // }
+    // else if (this.searchToDate < this.searchFromDate) {
+    //   this.displayalertMessage = true;
+    //   this.messageData = {
+    //     'header': "Error",
+    //     'body': "To date should be greater than From date"
+    //   }
+    // }
+    if ((this.searchRequestId == null || this.searchRequestId == '')) {
       debugger
       if (this.searchChannel.length == 0) {
         if (this.searchshowName.length == 0) {
@@ -1149,6 +1155,9 @@ export class NewRequestComponent implements OnInit {
           this.textCueSheetRemarkCount = 0;
           this.remarksCueSheet = '';
           this.manualAssignDialog = true;
+          this.productionHouseName = localStorage.getItem('ProductionName');
+          this.termsTextFirst = "I hereby understand, accept and abide by the terms & conditions granted by Viacom18 Media Pvt Ltd for the consumption of music songs embedded within the said episode of the given program. The declaration is on behalf of the";
+          this.termsTextSecond = "& its associated affiliates."
           //  }
 
           //}
@@ -1929,6 +1938,36 @@ export class NewRequestComponent implements OnInit {
     // }
     this.textCueSheetRemarkCount = this.remarksCueSheet.trim().length;
 
+  }
+
+  setDateValidation() {
+    debugger;
+    this.showFromDateMsg = "";
+    this.showToDateMsg = "";
+    if (this.searchFromDate != null && this.searchToDate == null) {
+      this.showFromDateMsg = "";
+      this.showToDateMsg = "";
+    }
+    else if (this.searchFromDate > this.searchToDate) {
+      this.showFromDateMsg = "From date should be less than To date";
+      this.showToDateMsg = "";
+    }
+    else if (this.searchToDate < this.searchFromDate) {
+      this.showToDateMsg = "To date should be greater than From date";
+      this.showFromDateMsg = "";
+    }
+  }
+
+  episodeValidation(){
+    debugger;
+    if (parseInt(this.newMusicConsumptionRequest.EpisodeFrom) >= parseInt(this.newMusicConsumptionRequest.EpisodeTo)) {
+      this.displayalertMessage = true;
+
+      this.messageData = {
+        'header': "Error",
+        'body': "Episode To should greater than Episode From"
+      }
+    }
   }
 
   handleResponseError(errorCode) {

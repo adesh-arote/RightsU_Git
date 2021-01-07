@@ -316,24 +316,33 @@
                 <!-- <div class="oneDiv">
                   <img src="../img/movieImg.png">
                 </div> -->
-                <div class="twoDiv">
-                  <span class="info-box-text">Music Track / Movie Name:
-                    <small style="float:right;">Id:</small>
-                  </span>
-                  <span class="info-box-number">{{cartTrack.MusicTrack}}
-                    <small>({{cartTrack.Movie}} ) </small>
-                    <small class="bold" style="float:right;"> {{cartTrack.Music_Title_Code}}</small>
-                  </span>
-                  <span class="info-box-text">Music Label / Genre:
-                    <small class="bold">{{cartTrack.MusicLabel}} / {{cartTrack.Genre}}</small>
-                  </span>
-                  <span class="info-box-text" >Star Cast / Music Composer / Singer:
-                    <!--  -->
-                    <small class="bold" >
-                      <span data-toggle="tooltip" data-placement="left" title="{{cartTrack.StarCast}} / {{cartTrack.MusicComposer}} / {{cartTrack.Singers}}">{{cartTrack.StarCast}} / {{cartTrack.MusicComposer}} / {{cartTrack.Singers}}</span> </small>
-                  </span>
-                  <span class="info-box-text">Tag:
-                    <small class="bold">{{cartTrack.Tag}}</small>
+                <div class="twoDiv" style="padding: 10px;">
+                  <div class="row">
+                    <div class="col-md-7">
+                      <span class="info-box-text">Music Track :  <span class="boldFont">{{cartTrack.MusicTrack}}</span></span>
+                    </div>
+                    <div class="col-md-5">
+                      <span class="info-box-text">Music Label : <span class="boldFont">{{cartTrack.MusicLabel}}</span></span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-7">
+                      <span class="info-box-text">Movie Name :  <span class="boldFont">{{cartTrack.Movie}}</span></span>
+                    </div>
+                    <div class="col-md-5">
+                      <span class="info-box-text">Music Language : <span class="boldFont">{{cartTrack.MusicLanguage}}</span></span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-7">
+                      <span class="info-box-text">Star Cast :  <span class="boldFont">{{cartTrack.StarCast}}</span></span>
+                    </div>
+                    <div class="col-md-5">
+                      <span class="info-box-text">Genre : <span class="boldFont">{{cartTrack.Genre}}</span></span>
+                    </div>
+                  </div>
+                  <br>
+                  <span class="info-box-text">
                     <small style="float:right;">
                       <a class="btn btn--with-icon btn-social btn-danger" id="CartDelete1" (click)="removeFromCart(cartTrack)">
                         <i class="fa fa-trash"></i> Remove</a>
