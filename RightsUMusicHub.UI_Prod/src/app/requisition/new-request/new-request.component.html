@@ -505,7 +505,7 @@
           </p-footer> -->
         </p-dataTable>
         <br>
-        <label for="comment">Remark </label> (
+        <label for="comment">Remark<span class="asterisk">*</span> </label> (
         <i>{{textCueSheetRemarkCount}} / 4000 </i> )
 
         <textarea style="resize:none" rows="3" id="remark" class="cueSheetRemark" [(ngModel)]="remarksCueSheet" (ngModelChange)="remarkChange()" required name="ApprovalRemarks" maxlength=4000></textarea>

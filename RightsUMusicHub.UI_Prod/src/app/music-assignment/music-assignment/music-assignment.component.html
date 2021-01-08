@@ -178,7 +178,7 @@
       <input type="file" #chooseUpload class="upload" (change)="changeEventData=$event;" class="" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
     </span>
     <div class="remarkDiv" style="margin-top:20px">
-      <label for="comment">Remark </label> (
+      <label for="comment">Remark<span class="asterisk">*</span> </label> (
       <i>{{textRemarkCount}} / 4000 </i> )
       <textarea rows="3" id="remark" [(ngModel)]="remarks" (ngModelChange)="remarkChange()" required name="Remarks" maxlength=4000></textarea>
 
