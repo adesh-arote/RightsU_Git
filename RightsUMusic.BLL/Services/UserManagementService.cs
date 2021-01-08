@@ -17,6 +17,7 @@ namespace RightsUMusic.BLL.Services
         private readonly SystemParameterServices objSystemParameterServices = new SystemParameterServices();
         private readonly Users_Password_DetailRepositories objUsers_Password_DetailRepositories = new Users_Password_DetailRepositories();
         private readonly USPMHForgotPasswordRepositories objUSPMHForgotPasswordRepositories = new USPMHForgotPasswordRepositories();
+        private readonly GetSystemVersionsRepositories objGetSystemVersionsRepositories = new GetSystemVersionsRepositories();
 
         private bool _isSuccess;
         Return _objRet = new Return();
@@ -635,6 +636,11 @@ namespace RightsUMusic.BLL.Services
             string[] arrDt = actualStr.Split('~');
             string tmpTimeInSec = arrDt[0].Trim() + arrDt[1].Trim() + arrDt[2].Trim() + Convert.ToString(Convert.ToInt64(Convert.ToInt64(arrDt[3].Trim()) * 60 * 60) + Convert.ToInt64(Convert.ToInt64(arrDt[4].Trim()) * 60) + Convert.ToInt64(arrDt[5].Trim()));
             return tmpTimeInSec;
+        }
+
+        public USPGetSystemVersions GetSystemVersions()
+        {
+            return objGetSystemVersionsRepositories.GetSystemVersions();
         }
 
     }

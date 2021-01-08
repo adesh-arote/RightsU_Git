@@ -763,6 +763,19 @@ namespace RightsUMusic.DAL.Repository
     }
 
     #endregion
+
+    #region -------- GetSystemVersions -----------
+    public class GetSystemVersionsRepositories : MainRepository<GetSystemVersionsRepositories>
+    {
+        public USPGetSystemVersions GetSystemVersions()
+        {
+            string query = "SELECT TOP 1 Version_No, FORMAT(Version_Published_Date, 'dddd, MMM dd,yyyy hh:mm tt') as Version_Published_Date FROM System_Versions WHERE System_Name = 'MusicHub' ORDER BY 1 DESC";
+            USPGetSystemVersions SystemVersions = base.ExecuteSQLStmt<USPGetSystemVersions>(query).First();
+            return SystemVersions;
+        }
+    }
+    #endregion
+
     #region
 
 
