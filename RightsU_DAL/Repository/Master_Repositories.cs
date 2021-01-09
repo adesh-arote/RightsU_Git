@@ -2831,6 +2831,31 @@ namespace RightsU_DAL
         }
     }
 
+    public class Acq_Adv_Ancillary_Report_Repository : RightsU_Repository<Acq_Adv_Ancillary_Report>
+    {
+        public Acq_Adv_Ancillary_Report_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Acq_Adv_Ancillary_Report objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(Acq_Adv_Ancillary_Report objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
     public class Deal_Description_Repository : RightsU_Repository<Deal_Description>
     {
         public Deal_Description_Repository(string conStr) : base(conStr) { }

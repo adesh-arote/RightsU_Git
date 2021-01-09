@@ -6696,6 +6696,69 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+    public class Acq_Adv_Ancillary_Report_Service : BusinessLogic<Acq_Adv_Ancillary_Report>
+    {
+        private readonly Acq_Adv_Ancillary_Report_Repository objRepository;
+
+        public Acq_Adv_Ancillary_Report_Service(string Connection_Str)
+        {
+            this.objRepository = new Acq_Adv_Ancillary_Report_Repository(Connection_Str);
+        }
+        public IQueryable<Acq_Adv_Ancillary_Report> SearchFor(Expression<Func<Acq_Adv_Ancillary_Report, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Acq_Adv_Ancillary_Report GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Acq_Adv_Ancillary_Report objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Acq_Adv_Ancillary_Report objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Acq_Adv_Ancillary_Report objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Acq_Adv_Ancillary_Report objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Acq_Adv_Ancillary_Report objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        public override bool ValidateDelete(Acq_Adv_Ancillary_Report objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Acq_Adv_Ancillary_Report objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Report_Name == objToValidate.Report_Name && s.Acq_Adv_Ancillary_Report_Code != objToValidate.Acq_Adv_Ancillary_Report_Code).Count() > 0)
+            {
+                resultSet = "Report Name already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
 }
 
 

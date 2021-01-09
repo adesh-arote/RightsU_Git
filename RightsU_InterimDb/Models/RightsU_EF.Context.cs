@@ -425,6 +425,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Users_Detail> Users_Detail { get; set; }
         public DbSet<DM_Title_Import_Utility> DM_Title_Import_Utility { get; set; }
         public DbSet<DM_Title_Import_Utility_Data> DM_Title_Import_Utility_Data { get; set; }
+        public DbSet<Acq_Adv_Ancillary_Report> Acq_Adv_Ancillary_Report { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {

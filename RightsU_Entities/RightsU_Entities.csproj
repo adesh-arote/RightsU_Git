@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Acquisition_Entities\Acq_Deal.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Adv_Ancillary_Report.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Ancillary.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Ancillary_Platform.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Ancillary_Platform_Medium.cs" />
