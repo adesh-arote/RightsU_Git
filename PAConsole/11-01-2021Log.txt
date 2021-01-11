@@ -1,0 +1,159 @@
+12:23:38 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Started
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  12:23:38 : Connecting to database
+12:55:43 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Started
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  12:55:44 : Connecting to database
+  :STEP 1 A : 11-Jan-2021  12:55:56 : Called Update_Acq_Adv_Ancillary_Report
+  :STEP 1 A : 11-Jan-2021  12:55:56 : Save Changes for Update_Acq_Adv_Ancillary_Report
+  :STEP 1 A : 11-Jan-2021  12:55:59 : Updateing W to database = 3
+  :STEP 1 A : 11-Jan-2021  12:57:21 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  12:57:59 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  12:58:01 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  12:58:03 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  12:58:04 :C:\Eram\ConsoleApplicationWS\PAConsole\Export\Sample.xlsxMusic_Usage_Report_Sheet_1.xlsx
+  :STEP 1 A : 11-Jan-2021  12:58:06 : Called Update_Acq_Adv_Ancillary_Report
+  :STEP 1 A : 11-Jan-2021  12:58:07 : Save Changes for Update_Acq_Adv_Ancillary_Report
+13:00:16 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Started
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  13:00:20 : Connecting to database
+13:00:28 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  13:06:07 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  14:30:30 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  14:30:45 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  14:30:46 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  14:30:48 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  14:30:53 :C:\Eram\ConsoleApplicationWS\PAConsole\ExportMusic_Usage_Report_Sheet_1.xlsx
+  :STEP 1 A : 11-Jan-2021  14:31:12 : Data Inserted into sheet
+  :STEP 1 A : 11-Jan-2021  14:31:14 : Sheet Saved
+  :Found Exception : 11-Jan-2021  14:31:17 : Object reference not set to an instance of an object.
+===========================================================================
+14:31:17 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  14:34:09 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  14:34:20 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  14:34:20 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  14:34:21 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  14:34:46 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  14:35:15 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  14:35:26 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  14:35:27 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  14:35:28 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  14:35:34 :C:\Eram\ConsoleApplicationWS\PAConsole\Export\Music_Usage_Report_Sheet_1.xlsx
+  :STEP 1 A : 11-Jan-2021  14:35:42 : Data Inserted into sheet
+  :STEP 1 A : 11-Jan-2021  14:35:44 : Sheet Saved
+  :Found Exception : 11-Jan-2021  14:36:01 : Object reference not set to an instance of an object.
+===========================================================================
+14:36:04 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  14:38:15 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  14:38:25 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  14:38:26 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  14:38:27 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  14:38:29 :C:\Eram\ConsoleApplicationWS\PAConsole\Export\Adv_Ancillary_Report_Sheet_1.xlsx
+  :STEP 1 A : 11-Jan-2021  14:38:35 : Data Inserted into sheet
+  :STEP 1 A : 11-Jan-2021  14:38:37 : Sheet Saved
+  :Found Exception : 11-Jan-2021  14:38:50 : Object reference not set to an instance of an object.
+===========================================================================
+14:38:50 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
+15:23:45 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Started
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  15:23:47 : Connecting to database
+  :STEP 1 A : 11-Jan-2021  15:23:52 : Called Update_Acq_Adv_Ancillary_Report
+  :STEP 1 A : 11-Jan-2021  15:23:52 : Save Changes for Update_Acq_Adv_Ancillary_Report
+  :STEP 1 A : 11-Jan-2021  15:25:19 : Updateing W to database = 3
+17:27:29 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Started
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  17:27:30 : Connecting to database
+  :STEP 1 A : 11-Jan-2021  17:27:35 : Called Update_Acq_Adv_Ancillary_Report
+  :STEP 1 A : 11-Jan-2021  17:27:35 : Save Changes for Update_Acq_Adv_Ancillary_Report
+  :STEP 1 A : 11-Jan-2021  17:27:35 : Updateing W to database = 3
+  :STEP 1 A : 11-Jan-2021  17:28:56 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  17:29:18 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  17:29:19 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  17:35:41 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  17:35:47 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  17:35:47 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  17:41:21 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  17:41:23 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  17:41:23 : Calling Export Function
+  :Found Exception : 11-Jan-2021  17:46:51 : Object reference not set to an instance of an object.
+===========================================================================
+17:46:51 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  17:47:12 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  17:47:19 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  17:47:20 : Calling Export Function
+  :Found Exception : 11-Jan-2021  17:49:22 : Object reference not set to an instance of an object.
+===========================================================================
+17:49:22 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  17:50:03 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  17:50:06 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  17:50:10 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  17:58:36 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  18:54:44 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  18:54:53 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  18:54:54 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  18:54:54 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  18:54:54 :C:\Eram\RightsU_Plus_Git\dev\RightsU_Plus\Download\Adv_Ancillary_Report_Sheet_1.xlsx
+  :STEP 1 A : 11-Jan-2021  18:54:55 : Data Inserted into sheet
+  :STEP 1 A : 11-Jan-2021  18:54:55 : Sheet Saved
+  :Found Exception : 11-Jan-2021  18:55:02 : Object reference not set to an instance of an object.
+===========================================================================
+18:55:02 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  20:40:41 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  20:40:47 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  20:40:48 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  20:40:48 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  20:40:48 :C:\Eram\RightsU_Plus_Git\dev\RightsU_Plus\Download\Adv_Ancillary_Report_Sheet_1.xlsx
+  :STEP 1 A : 11-Jan-2021  20:40:48 : Called Update_Acq_Adv_Ancillary_Report
+  :STEP 1 A : 11-Jan-2021  20:40:49 : Save Changes for Update_Acq_Adv_Ancillary_Report
+  :Found Exception : 11-Jan-2021  20:40:49 : The process cannot access the file 'C:\Eram\RightsU_Plus_Git\dev\RightsU_Plus\Download\Adv_Ancillary_Report_Sheet_1.xlsx' because it is being used by another process.
+===========================================================================
+  :Found Exception : 11-Jan-2021  20:40:51 : Object reference not set to an instance of an object.
+===========================================================================
+20:40:51 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
+  :STEP 1 A : 11-Jan-2021  20:42:03 : FINISHED running procedure
+  :STEP 1 A : 11-Jan-2021  20:42:04 : Inserted into DataTable = 
+  :STEP 1 A : 11-Jan-2021  20:42:05 : Calling Export Function
+  :STEP 1 A : 11-Jan-2021  20:42:05 : Called Export Function
+  :STEP 1 A : 11-Jan-2021  20:42:05 :C:\Eram\RightsU_Plus_Git\dev\RightsU_Plus\Download\Adv_Ancillary_Report_Sheet_1.xlsx
+  :STEP 1 A : 11-Jan-2021  20:42:06 : Data Inserted into sheet
+  :STEP 1 A : 11-Jan-2021  20:42:06 : Sheet Saved
+  :Found Exception : 11-Jan-2021  20:42:10 : Object reference not set to an instance of an object.
+===========================================================================
+20:42:10 11 January 2021
+---------------------------------------------------------------------------
+  :EXE Ended
+===========================================================================
