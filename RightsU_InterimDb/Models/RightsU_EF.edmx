@@ -9,7 +9,7 @@
           <Key>
             <PropertyRef Name="Acq_Adv_Ancillary_Report_Code" />
           </Key>
-          <Property Name="Acq_Adv_Ancillary_Report_Code" Type="int" Nullable="false" />
+          <Property Name="Acq_Adv_Ancillary_Report_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Agreement_No" Type="varchar(max)" />
           <Property Name="Title_Codes" Type="varchar(max)" />
           <Property Name="Platform_Codes" Type="varchar(max)" />
