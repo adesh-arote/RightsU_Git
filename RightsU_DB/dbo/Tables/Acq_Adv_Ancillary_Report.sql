@@ -18,5 +18,6 @@
     [Report_Status] CHAR NULL, 
     [Error_Message] NVARCHAR(MAX) NULL, 
     [Generated_By] INT NULL, 
-    [Generated_On] DATETIME NULL
+    [Generated_On] DATETIME NULL, 
+    [Ancillary_Type_Codes] VARCHAR(MAX) NULL
 )

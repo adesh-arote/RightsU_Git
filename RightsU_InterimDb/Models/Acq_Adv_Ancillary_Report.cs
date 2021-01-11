@@ -33,5 +33,6 @@ namespace RightsU_InterimDb.Models
     	    public string Error_Message { get; set; }
     	    public Nullable<int> Generated_By { get; set; }
     	    public Nullable<System.DateTime> Generated_On { get; set; }
+    	    public string Ancillary_Type_Codes { get; set; }
     }
 }
