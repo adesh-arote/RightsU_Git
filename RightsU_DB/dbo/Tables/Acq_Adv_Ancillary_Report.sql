@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Acq_Adv_Ancillary_Report]
 (
-	[Acq_Adv_Ancillary_Report_Code] INT NOT NULL PRIMARY KEY, 
+	[Acq_Adv_Ancillary_Report_Code] INT NOT NULL PRIMARY KEY IDENTITY (1, 1), 
     [Agreement_No] VARCHAR(MAX) NULL, 
     [Title_Codes] VARCHAR(MAX) NULL, 
     [Platform_Codes] VARCHAR(MAX) NULL, 
