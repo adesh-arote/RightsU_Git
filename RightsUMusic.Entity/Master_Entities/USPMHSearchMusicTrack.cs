@@ -38,5 +38,7 @@ namespace RightsUMusic.Entity
         public int ChannelCode { get; set; }
         public int TitleCode { get; set; }
         public string MusicLanguageCode { get; set; }
+        public string SortBy { get; set; }
+        public string Order { get; set; }
     }
 }

@@ -475,6 +475,8 @@ namespace RightsUMusic.DAL.Repository
             param.Add("@TitleCode", objMusicTrackInput.TitleCode);
             param.Add("@MusicLanguageCode", objMusicTrackInput.MusicLanguageCode);
             param.Add("@RecordCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            param.Add("@SortBy", objMusicTrackInput.SortBy);
+            param.Add("@Order", objMusicTrackInput.Order.ToUpper());
             IEnumerable<USPMHSearchMusicTrack> lstUSPMHSearchMusicTrack = base.ExecuteSQLProcedure<USPMHSearchMusicTrack>("USPMHSearchMusicTrack", param);
             _RecordCount = param.Get<int>("@RecordCount");
             return lstUSPMHSearchMusicTrack;
@@ -499,6 +501,8 @@ namespace RightsUMusic.DAL.Repository
             param.Add("@StatusCode", objConsumptionRequestList.StatusCode);
             param.Add("@FromDate", objConsumptionRequestList.FromDate.ToString());
             param.Add("@ToDate", objConsumptionRequestList.ToDate.ToString());
+            param.Add("@SortBy", objConsumptionRequestList.SortBy);
+            param.Add("@Order", objConsumptionRequestList.Order.ToUpper());
             IEnumerable<USPMHConsumptionRequestList> lstUSPMHConsumptionRequestList = base.ExecuteSQLProcedure<USPMHConsumptionRequestList>("USPMHConsumptionRequestList", param);
             _RecordCount = param.Get<int>("@RecordCount");
             return lstUSPMHConsumptionRequestList;
@@ -575,6 +579,8 @@ namespace RightsUMusic.DAL.Repository
             param.Add("@FromDate", objCueSheetListInput.FromDate);
             param.Add("@ToDate", objCueSheetListInput.ToDate);
             param.Add("@RecordCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            param.Add("@SortBy", objCueSheetListInput.SortBy);
+            param.Add("@Order", objCueSheetListInput.Order.ToUpper());
             IEnumerable <USPMHGetCueSheetList> lstUSPMHGetCueSheetList = base.ExecuteSQLProcedure<USPMHGetCueSheetList>("USPMHGetCueSheetList", param);
             _RecordCount = param.Get<int>("@RecordCount");
             return lstUSPMHGetCueSheetList;
