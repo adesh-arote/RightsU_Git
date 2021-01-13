@@ -461,7 +461,7 @@
             url: URL_ValidateTalnet,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
-
+            dataType: "html",
             async: false,
             data: JSON.stringify({
                 lst: lstDM_MasterLog
@@ -717,7 +717,7 @@
                 <br />
                 <div class="bottom_action">
                     @*<input type="button" id="btnMap" value="Map" class="btn btn-primary" onclick="return ValidateMap();" />*@
-                    <input type="button" id="btnMap" value="Map" class="btn btn-primary" onclick="return MapImportData();" />
+                    <input type="button" id="btnMap" value="Map" class="btn btn-primary" onclick="MapImportData();" />
                     @if (ViewBag.FileType == "M")
                     {
                         <input type="button" value="BACK" class="btn btn-primary" onclick="return btnMusicCancel();" />
