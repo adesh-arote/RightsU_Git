@@ -47,9 +47,9 @@ namespace PAConsole
 
                                     DataTable dt = new DataTable();
                                     SqlDataAdapter adapt = new SqlDataAdapter(command);
-                                    command.Parameters.Add(new SqlParameter("@Agreement_No",""));
+                                    command.Parameters.Add(new SqlParameter("@Agreement_No", ""));
                                     command.Parameters.Add(new SqlParameter("@Title_Codes", "4580"));
-                                    command.Parameters.Add(new SqlParameter("@Platform_Codes","0"));
+                                    command.Parameters.Add(new SqlParameter("@Platform_Codes", "0"));
                                     command.Parameters.Add(new SqlParameter("@Ancillary_Type_Code", "0"));
                                     command.Parameters.Add(new SqlParameter("@Business_Unit_Code", 1));
                                     command.Parameters.Add(new SqlParameter("@IncludeExpired", "N"));
@@ -60,8 +60,9 @@ namespace PAConsole
                                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : FINISHED running procedure");
 
                                     adapt.SelectCommand = command;
+                                    
                                     adapt.Fill(dt);
-
+                                    dt.Columns[0].DataType = typeof(string);
                                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Inserted into DataTable = ");
 
                                     if (dt == null)
@@ -73,6 +74,8 @@ namespace PAConsole
                                 }
                             }
                             catch (Exception ex)
+
+
                             {
                                 Update_Acq_Adv_Ancillary_Report(objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code, "E", "PE", ex.ToString());
                                 StringBuilder sb = new StringBuilder("Found Exception : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : " + ex.Message);
@@ -130,30 +133,32 @@ namespace PAConsole
         }
         public static void ExportAcq_Adv_Ancillary_Report(DataTable dt, Acq_Adv_Ancillary_Report objAcq_Adv_Ancillary_Report)
         {
+            List<DataRow> list = dt.AsEnumerable().ToList();
             foreach (DataRow row in dt.Rows)
             {
-                int i = 0;    
+                int i = 0;
                 foreach (DataColumn col in dt.Columns)
                 {
                     string CellValue = row[col.ColumnName].ToString();
-                    if(col.ColumnName != "Agreement_No" && col.ColumnName != "Title_Name" && col.ColumnName != "Title_Type" && col.ColumnName != "Ancillary_Type_Name" && col.ColumnName != "Duration" && col.ColumnName != "Day" && col.ColumnName != "Remarks")
+                    if (col.ColumnName != "Agreement_No" && col.ColumnName != "Title" && col.ColumnName != "Title_Type" && col.ColumnName != "Ancillary_Type" && col.ColumnName != "Duration(Sec)" && col.ColumnName != "Period(Day)" && col.ColumnName != "Remarks")
                     {
-                        if (CellValue == "1")
+                        if (CellValue == col.ColumnName)
                         {
-                            row.ItemArray[i] = "Yes";
+                            row[col.ColumnName] = "YES";
                         }
-                        else if(CellValue == "0")
+                        else if (CellValue != col.ColumnName)
                         {
-                            row.ItemArray[i] = "No";
+                            row[col.ColumnName] = "NO";
                         }
                         //Console.WriteLine(row[col]);
                     }
-                    i++;
-                }
+                    i++;     
+                }                
             }
+            dt.AcceptChanges();
             Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Called Export Function");
 
-            int Acq_Adv_Ancillary_Report_Code = 1;// objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
+            int Acq_Adv_Ancillary_Report_Code =  objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
             try
             {
                 //string Destination = "D:\\Temp\\Music_Usage_Report_Sheet_" + Music_Usage_Report_Code + ".xlsx";
@@ -178,20 +183,40 @@ namespace PAConsole
 
                     var sheet = excelPackage.Workbook.Worksheets["Sheet1"];
 
-                    for (int i = 1; i <= dt.Columns.Count; i++)
+                    for (int i = 1; i <= dt.Columns.Count - 1; i++)
                     {
                         sheet.Cells[1, i].Style.Font.Bold = true;
                         sheet.Cells[1, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        sheet.Cells[1, i].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Top;
                         sheet.Cells[1, i].Style.Border.BorderAround(ExcelBorderStyle.Thin, System.Drawing.Color.Black);
                         sheet.Cells[1, i].Style.Font.Size = 11;
                         sheet.Cells[1, i].Style.Font.Name = "Calibri";
                         sheet.Cells[1, i].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#C0C0C0"));
-                        sheet.Cells[1, i].AutoFitColumns();
+                        
+                        if (dt.Columns[i-1].ColumnName != "Agreement_No" && dt.Columns[i-1].ColumnName != "Title" && dt.Columns[i-1].ColumnName != "Title_Type" && dt.Columns[i-1].ColumnName != "Ancillary_Type" && dt.Columns[i-1].ColumnName != "Duration(Sec)" && dt.Columns[i-1].ColumnName != "Period(Day)" && dt.Columns[i-1].ColumnName != "Remarks")
+                        {
+                            sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#565656"));
+                            sheet.Cells[1, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                            sheet.Cells[1, i].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Top;
+                            sheet.Cells[1, i].Style.Font.Color.SetColor(Color.White);
+                            //sheet.Cells[1, i].Style.WrapText = true;
+                            
+                        }
+                        else
+                        {
+                            sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#C0C0C0"));
+                        }
+                        
                     }
-                    
+
                     sheet.Cells["A1"].LoadFromDataTable(dt, true);
                     sheet.Cells.AutoFitColumns();
+                    for (int i = 1; i <= dt.Columns.Count - 1; i++)
+                    {
+                        sheet.Column(i).Width = 20;
+                        sheet.Column(i).Style.WrapText = true;
+                        sheet.Column(i).Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Top;
+                    }
 
                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Data Inserted into sheet");
 
