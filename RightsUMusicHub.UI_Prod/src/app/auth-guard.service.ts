@@ -10,6 +10,7 @@ const USER_SESSION = "USER_SESSION";
 export class AuthGuardService implements CanActivate{
   
   userPreferences: any =  [];
+  loginClick: any;
   
   constructor(private authService: AuthenticationService, private router: Router) {
     //Get User preferences
@@ -22,7 +23,8 @@ export class AuthGuardService implements CanActivate{
   }
 
   checkLogin(url: string): boolean {
-    if (sessionStorage.getItem(AUTH_TOKEN) && localStorage.getItem(USER_SESSION)) { //this.authService.isLoggedIn && 
+    this.loginClick = JSON.parse(sessionStorage.getItem('LOGIN_CLICK'));
+    if (sessionStorage.getItem(AUTH_TOKEN) && localStorage.getItem(USER_SESSION) && this.loginClick == true) { //this.authService.isLoggedIn && 
         
       return true; 
     }

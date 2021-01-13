@@ -22,6 +22,7 @@ const CHANGEPSW_STATUS = "CHANGEPSW_STATUS";
 const USERS_IMAGE = "USERS_IMAGE";
 const SYSTEM_VERSION = "SYSTEM_VERSION";
 const LAST_MODIFIED = "LAST_MODIFIED";
+const LOGIN_CLICK = "LOGIN_CLICK";
 
 //Added by Sachin ----End----
 
@@ -44,6 +45,7 @@ export class LoginComponent implements OnInit {
   public currentApplicationVersion: any;
   public lastModified: any;
   public Version: any;
+  public isLoginClicked:any;
 
   //added by sachin   ---start---
 
@@ -69,6 +71,8 @@ export class LoginComponent implements OnInit {
       this._authService.isLoggedIn = true;
       //added by sachin   ---end---
     }
+    this.isLoginClicked = false;
+    sessionStorage.setItem(LOGIN_CLICK, this.isLoginClicked);
     this.getSystemVersion();
   }
 
@@ -93,7 +97,9 @@ export class LoginComponent implements OnInit {
     localStorage.clear();
     let USERNAME = this.userName;
     localStorage.setItem(SYSTEM_VERSION, this.currentApplicationVersion);
-    localStorage.setItem(LAST_MODIFIED, this.lastModified);
+    localStorage.setItem(LAST_MODIFIED, this.lastModified)
+    this.isLoginClicked = true;
+    sessionStorage.setItem(LOGIN_CLICK, this.isLoginClicked);
     this._appservice.applogin(this.userName, this.userPassword).subscribe(
       response => {
         debugger;

@@ -1539,6 +1539,14 @@ body [name="showList"] .ui-multiselect .ui-multiselect-label-container {
 	width: 200px !important;
 }
 
+#notificationList.navbar-nav > .notifications-menu > .dropdown-menu, .navbar-nav > .messages-menu > .dropdown-menu, .navbar-nav > .tasks-menu > .dropdown-menu {
+    width: 480px;
+    padding: 0 0 0 0;
+    margin: 0;
+    top: 100%;
+    border: 1px solid lightgray;
+}
+
 .asterisk {
 	content: "*";
 	font-size: 12px;

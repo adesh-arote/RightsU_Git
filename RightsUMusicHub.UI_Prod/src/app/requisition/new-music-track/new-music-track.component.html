@@ -94,7 +94,7 @@
                     </ng-template>
                   </p-column>
                   <p-column field="RequestedBy" header="Requested By" [sortable]="true"  styleClass="text-center"></p-column>
-                  <p-column field="RequestDate " header="Requested Date" [sortable]="true"  styleClass="text-center">
+                  <p-column field="RequestDate" header="Requested Date" [sortable]="true"  styleClass="text-center">
                     <ng-template pTemplate="body" let-row="rowData">
                       {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a' }}
                     </ng-template>
@@ -213,7 +213,7 @@
                     </ng-template>
                   </p-column>
                   <p-column field="RequestedBy" header="Requested By" [sortable]="true" styleClass="text-center"></p-column>
-                  <p-column field="RequestDate " header="Requested Date" [sortable]="true" styleClass="text-center">
+                  <p-column field="RequestDate" header="Requested Date" [sortable]="true" styleClass="text-center">
                     <ng-template pTemplate="body" let-row="rowData">
                       {{row.RequestDate |date:'dd-MMM-yyyy HH:mm a'}}
                     </ng-template>
@@ -389,8 +389,8 @@
             </table>
           </div> -->
           <div class="form-group row" style="margin-top:1%;padding-left: 1% ">
-            <label for="comment">Remark<span class="asterisk">*</span> </label> (
-            <i>{{textRemarkCount}} / 4000 </i>)
+            <label for="comment">Remark </label> (
+            <i>{{textRemarkCount}} / 4000 </i>)<span class="asterisk">*</span>
             <textarea class="form-control" rows="3" style="padding: 5px !important;resize:none" id="remark" [(ngModel)]="saveMusicBody.Remarks" required name="Remarks" #Remarks="ngModel"
               (ngModelChange)="musicRemarkChange()" maxlength=4000></textarea>
             <!-- <label>{{textRemarkCount}}/4000 character lefts</label> -->
@@ -518,8 +518,8 @@
             </table>
           </div> -->
           <div class="form-group" style="margin-top:1%;padding-left: 1% ">
-            <label for="comment">Remark<span class="asterisk">*</span> </label>
-            <i> ({{movieAlbumRemarkCount}} / 4000)</i>
+            <label for="comment">Remark </label>
+            <i> ({{movieAlbumRemarkCount}} / 4000)<span class="asterisk">*</span></i>
             <textarea class="form-control" style="padding: 5px !important;resize:none" rows="3" id="remark" [(ngModel)]="saveMovieAlbumBody.Remarks" required name="Remarks" #Remarks="ngModel"
               (ngModelChange)="movieAlbumRemarkChange()" maxlength=4000></textarea>
             <!-- <label>{{movieAlbumRemarkCount}}/4000 character lefts</label> -->

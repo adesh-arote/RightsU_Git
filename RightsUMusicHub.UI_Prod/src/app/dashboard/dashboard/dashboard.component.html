@@ -142,17 +142,17 @@
               <div class="row" style=" padding-left: 14px; padding-right: 14px;">
 
                 <p-dataTable #dt [value]="requestList" exportFilename="ConsumptionRequestList" [rows]="5" [responsive]="true" [alwaysShowPaginator]="true">
-                  <p-column field="RequestID" header="Request ID" width="10" styleClass="text-center">
+                  <p-column field="RequestID" header="Request ID" width="10" styleClass="text-center"  [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       <a (click)="requestCountDetails(row,'N')">
                         <span style="color:blue">{{row.RequestID}}</span>
                       </a>
                     </ng-template>
                   </p-column>
-                  <p-column field="ChannelName" header="Channel" styleClass="text-center"></p-column>
+                  <p-column field="ChannelName" header="Channel" styleClass="text-center"  [sortable]="true"></p-column>
                   <!-- [style]="{'width': '250px','text-align': 'center'}" -->
-                  <p-column field="Title_Name" header="Show" [style]="{'width': '150px'}"></p-column>
-                  <p-column field="EpisodeFrom" header="Episode" [style]="{'width': '80px'}" styleClass="text-center">
+                  <p-column field="Title_Name" header="Show" [style]="{'width': '150px'}"  [sortable]="true"></p-column>
+                  <p-column field="EpisodeFrom" header="Episode" [style]="{'width': '80px'}" styleClass="text-center"  [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       <div *ngIf="row.EpisodeFrom==row.EpisodeTo">
                         {{row.EpisodeFrom }}
@@ -164,7 +164,7 @@
                     </ng-template>
 
                   </p-column>
-                  <p-column field="CountRequest" header="No. of Songs" [style]="{'width': '120px'}" styleClass="text-center">
+                  <p-column field="CountRequest" header="No. of Songs" [style]="{'width': '120px'}" styleClass="text-center"  [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       <a (click)="requestCountDetails(row,'N')">
                         <span style="color:blue">{{row.CountRequest}}</span>
@@ -172,7 +172,7 @@
                     </ng-template>
                   </p-column>
 
-                  <p-column field="TelecastFrom " header="Telecast" styleClass="text-center">
+                  <p-column field="TelecastFrom " header="Telecast" styleClass="text-center"  [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       <div *ngIf="row.TelecastFrom==row.TelecastTo">
                         {{row.TelecastFrom | date:'dd-MMM-yyyy'}}
@@ -186,11 +186,11 @@
                                               {{track.TelecastFrom | date:'dd-MMM-yyyy'}} - {{track.TelecastTo | date:'dd-MMM-yyyy'}}
                                             </ng-template> -->
                   </p-column>
-                  <p-column field="Status" header="Status" styleClass="text-center"></p-column>
+                  <p-column field="Status" header="Status" styleClass="text-center"  [sortable]="true"></p-column>
 
 
-                  <p-column field="Login_Name" header="Requested By" styleClass="text-center"></p-column>
-                  <p-column field="RequestDate" header="Requested Date" styleClass="text-center" [style]="{'width': '150px'}">
+                  <p-column field="Login_Name" header="Requested By" styleClass="text-center"  [sortable]="true"></p-column>
+                  <p-column field="RequestDate" header="Requested Date" styleClass="text-center" [style]="{'width': '150px'}"  [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}
 

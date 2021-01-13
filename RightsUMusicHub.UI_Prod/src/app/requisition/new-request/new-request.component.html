@@ -383,6 +383,11 @@
         Total Records: {{totalCountOfNoOfSongsDetails}}
       </p-footer>
     </p-dataTable>
+    <!-- <div>
+      <div class="row"></div>
+      <label>Usage Instructions from Viacom18</label>
+      Special Instructions to Production House:
+    </div> -->
     <p-footer>
       <button type="button" pButton (click)="close()" label="Close"></button>
       <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
@@ -505,8 +510,8 @@
           </p-footer> -->
         </p-dataTable>
         <br>
-        <label for="comment">Remark<span class="asterisk">*</span> </label> (
-        <i>{{textCueSheetRemarkCount}} / 4000 </i> )
+        <label for="comment">Remark </label> (
+        <i>{{textCueSheetRemarkCount}} / 4000 </i> )<span class="asterisk">*</span>
 
         <textarea style="resize:none" rows="3" id="remark" class="cueSheetRemark" [(ngModel)]="remarksCueSheet" (ngModelChange)="remarkChange()" required name="ApprovalRemarks" maxlength=4000></textarea>
       </div>
