@@ -24949,3 +24949,39 @@
 27 October 2020 13:01:56
   :Calling Index method of Acq_DealController
 -------------------------------
+13 January 2021 12:57:27
+  :Index method of Acq_ListController is executing
+-------------------------------
+13 January 2021 12:57:27
+  :Condition 1 executing
+-------------------------------
+13 January 2021 12:57:27
+  :Condition 1 executed
+-------------------------------
+13 January 2021 12:57:27
+  :Condition 2 executing
+-------------------------------
+13 January 2021 12:57:27
+  :Condition 2 executed
+-------------------------------
+13 January 2021 12:57:27
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+13 January 2021 12:57:27
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+13 January 2021 12:57:27
+  :BindBUList() method is executing
+-------------------------------
+13 January 2021 12:57:27
+  :BindBUList() method has been executed
+-------------------------------
+13 January 2021 12:57:27
+  :Condition 4 executing
+-------------------------------
+13 January 2021 12:57:27
+  :Condition 4 executed
+-------------------------------
+13 January 2021 12:57:27
+  :Index method of Acq_ListController has been executed
+-------------------------------

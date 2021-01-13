@@ -191,7 +191,7 @@ BEGIN
 	
 	
 
-	IF NOT EXISTS (SELECT TOP 1 *  FROM DM_Master_Log WHERE  DM_Master_Import_Code = 1 AND Action_By IS NULL  AND Action_On IS NULL)
+	IF NOT EXISTS (SELECT TOP 1 *  FROM DM_Master_Log WHERE  DM_Master_Import_Code = @DM_Master_Import_Code AND Action_By IS NULL  AND Action_On IS NULL)
 	BEGIN
 		UPDATE DM_Master_Import SET [Status] = 'I' WHERE DM_Master_Import_Code = @DM_Master_Import_Code  
 	END
