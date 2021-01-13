@@ -4,18 +4,33 @@ AS
 --declare
 --@dm_master_import_code int = 6281
 BEGIN
-	IF OBJECT_ID('tempdb..#Temp_Music_Track') IS NOT NULL        
-		DROP TABLE #Temp_Music_Track   
-
-	IF OBJECT_ID('tempdb..#TempContentStatusHistory') IS NOT NULL        
-		DROP TABLE #TempContentStatusHistory   
+	IF OBJECT_ID('tempdb..#Temp_Music_Track') IS NOT NULL DROP TABLE #Temp_Music_Track
+	IF OBJECT_ID('tempdb..#TempContentStatusHistory') IS NOT NULL DROP TABLE #TempContentStatusHistory
+	IF OBJECT_ID('tempdb..#TempSchedule') IS NOT NULL DROP TABLE #TempSchedule
+	IF OBJECT_ID('tempdb..#CMLCode') IS NOT NULL DROP TABLE #CMLCode 
 
 	Create Table #Temp_Music_Track    
 	(   
 		IntCode Int, 
 		Music_Title_Code Int,    
 		Music_Title_Name NVARCHAR(2000)      
-	) 
+	)
+	
+	CREATE TABLE #TempSchedule
+	(
+		BV_Schedule_Transaction_Code INT,
+		Content_Music_Link_Code INT,
+		Music_Title_Code INT,
+		Title_Code INT,
+		Program_Episode_Number VARCHAR(100),
+		Channel_Code INT
+	)
+
+	CREATE TABLE #CMLCode
+	(
+		BV_Schedule_Transaction_Code INT,
+		Content_Music_Link_Code INT
+	)
 
 	DECLARE @User_Code INT
     SELECT @User_Code =  Upoaded_By from DM_Master_Import where DM_Master_Import_Code = @DM_Master_Import_Code 
@@ -160,7 +175,54 @@ BEGIN
 	END   
        
     CLOSE CUR_Content_Music    
-    Deallocate CUR_Content_Music    
+    Deallocate CUR_Content_Music   
+	
+	BEGIN -------------- MUSIC SCHEDULE EXECUTE ---------
+
+			INSERT INTO #TempSchedule(BV_Schedule_Transaction_Code, Content_Music_Link_Code, Title_Code, Program_Episode_Number, Channel_Code, Music_Title_Code)
+			SELECT DISTINCT BV_Schedule_Transaction_Code, cml.Content_Music_Link_Code, tc.Title_Code, bst.Program_Episode_Number AS Program_Episode_Number, Channel_Code, Music_Title_Code
+			FROM Title_Content tc
+			INNER JOIN (
+				SELECT DISTINCT LTRIM(RTRIM([Title_Content_Code])) AS [Title_Content_Code] FROM DM_Content_Music WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Is_Ignore = 'N'
+			) AS dm ON tc.Title_Content_Code = dm.Title_Content_Code
+			INNER JOIN Content_Music_Link cml ON cml.Title_Content_Code = tc.Title_Content_Code
+			INNER JOIN BV_Schedule_Transaction bst ON tc.Ref_BMS_Content_Code = bst.Program_Episode_ID
+
+			INSERT INTO #CMLCode(Content_Music_Link_Code, BV_Schedule_Transaction_Code)
+			SELECT DISTINCT mct.Content_Music_Link_Code, mct.BV_Schedule_Transaction_Code FROM Music_Schedule_Transaction mct
+			INNER JOIN (SELECT DISTINCT BV_Schedule_Transaction_Code FROM #TempSchedule) sch ON mct.BV_Schedule_Transaction_Code = sch.BV_Schedule_Transaction_Code
+
+			INSERT INTO Music_Schedule_Transaction(BV_Schedule_Transaction_Code, Content_Music_Link_Code, Music_Deal_Code, Channel_Code, Music_Label_Code, Is_Exception, Is_Processed)
+			SELECT DISTINCT sch.BV_Schedule_Transaction_Code, sch.Content_Music_Link_Code, 0 Music_Deal_Code, sch.Channel_Code, mtl.Music_Label_Code, 'N', 'N'
+			FROM #TempSchedule sch
+			INNER JOIN VW_Music_Track_Label mtl ON mtl.Music_Title_Code = sch.Music_Title_Code AND GETDATE() > mtl.Effective_From
+			WHERE sch.Content_Music_Link_Code NOT IN (
+				SELECT cml.Content_Music_Link_Code FROM #CMLCode cml WHERE cml.BV_Schedule_Transaction_Code = sch.BV_Schedule_Transaction_Code
+			)
+
+			DECLARE @MusicScheduleProcess MusicScheduleProcess
+
+			WHILE ((
+				SELECT COUNT(*) FROM Music_Schedule_Transaction mst 
+				INNER JOIN BV_Schedule_Transaction bv ON mst.BV_Schedule_Transaction_Code = bv.BV_Schedule_Transaction_Code 
+				WHERE Is_Processed = 'N'
+				) > 0
+			)
+			BEGIN
+
+				INSERT INTO @MusicScheduleProcess(BV_Schedule_Transaction_Code)
+				SELECT DISTINCT TOP 1000 bv.BV_Schedule_Transaction_Code
+				FROM Music_Schedule_Transaction mst 
+				INNER JOIN BV_Schedule_Transaction bv ON mst.BV_Schedule_Transaction_Code = bv.BV_Schedule_Transaction_Code
+				WHERE mst.Is_Processed = 'N'
+
+				EXEC [dbo].[USP_Music_Schedule_Process_Neo] @MusicScheduleProcess, 'SP'
+
+				DELETE FROM @MusicScheduleProcess
+
+			END
+
+		END
     --IF EXISTS(SELECT TOP 1 Record_Status='C' FROM DM_Content_Music WHERE DM_Master_Import_Code = @DM_Master_Import_Code)    
     -- BEGIN    
 	 	SELECT Title_Content_Code, COUNT(*) AS RecordCount INTO #TempContentStatusHistory FROM (
@@ -182,4 +244,6 @@ BEGIN
 
 	IF OBJECT_ID('tempdb..#Temp_Music_Track') IS NOT NULL DROP TABLE #Temp_Music_Track
 	IF OBJECT_ID('tempdb..#TempContentStatusHistory') IS NOT NULL DROP TABLE #TempContentStatusHistory
+	IF OBJECT_ID('tempdb..#TempSchedule') IS NOT NULL DROP TABLE #TempSchedule
+	IF OBJECT_ID('tempdb..#CMLCode') IS NOT NULL DROP TABLE #CMLCode
 END
