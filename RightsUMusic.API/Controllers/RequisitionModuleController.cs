@@ -386,9 +386,15 @@ namespace RightsUMusic.API.Controllers
             try
             {
                 lstConsumptionRequestDetails = obj.GetConsumptionRequestDetails(objRequestDetailsInput.MHRequestCode, objRequestDetailsInput.MHRequestTypeCode,Convert.ToChar(objRequestDetailsInput.IsCueSheet));
+                var objRemarkSpecialInstruction = lstConsumptionRequestDetails.Select(x => new
+                {
+                    Remarks = x.Remarks,
+                    SpecialInstructions = x.SpecialInstruction
+                }).Distinct().First();
+
                 _objRet.Message = "";
                 _objRet.IsSuccess = true;
-                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, RequestDetails = lstConsumptionRequestDetails }, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, RequestDetails = lstConsumptionRequestDetails, RemarkSpecialInstruction = objRemarkSpecialInstruction }, Configuration.Formatters.JsonFormatter);
             }
             catch (Exception ex)
             {
