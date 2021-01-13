@@ -654,5 +654,40 @@ namespace RightsUMusic.API.Controllers
             //  return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
         }
 
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage DownloadCuesheet(MHCueSheet objMHCueSheet)
+        {
+            Return _objRet = new Return();
+            string UsersCode = Convert.ToString(this.ActionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
+            UsersCode = UsersCode.Replace("Bearer ", "");
+
+            try
+            {
+                objMHCueSheet = obj.GetByIdCueSheet(objMHCueSheet.MHCueSheetCode ?? 0);
+                string fullPath = HttpContext.Current.Server.MapPath("~/Uploads/" + objMHCueSheet.FileName);
+
+                FileInfo file = new FileInfo(fullPath);
+
+                if (!file.Exists)
+                {
+                    fullPath = "";
+                }
+                else
+                {
+                    fullPath = objMHCueSheet.FileName;
+                }
+                _objRet.Message = "";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, FilePath = fullPath }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
     }
 }
