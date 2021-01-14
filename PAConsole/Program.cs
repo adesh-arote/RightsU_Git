@@ -39,7 +39,6 @@ namespace PAConsole
                             Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Updateing W to database = " + objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code.ToString());
                             try
                             {
-
                                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["CS1"].ConnectionString))
                                 using (SqlCommand command = new SqlCommand("USP_Acq_Deal_Ancillary_Adv_Report", connection))
                                 {
@@ -60,9 +59,9 @@ namespace PAConsole
                                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : FINISHED running procedure");
 
                                     adapt.SelectCommand = command;
-                                    
+
                                     adapt.Fill(dt);
-                                    dt.Columns[0].DataType = typeof(string);
+
                                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Inserted into DataTable = ");
 
                                     if (dt == null)
@@ -133,7 +132,8 @@ namespace PAConsole
         }
         public static void ExportAcq_Adv_Ancillary_Report(DataTable dt, Acq_Adv_Ancillary_Report objAcq_Adv_Ancillary_Report)
         {
-            List<DataRow> list = dt.AsEnumerable().ToList();
+            Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Called Export Function");
+
             foreach (DataRow row in dt.Rows)
             {
                 int i = 0;
@@ -152,17 +152,16 @@ namespace PAConsole
                         }
                         //Console.WriteLine(row[col]);
                     }
-                    i++;     
-                }                
+                    i++;
+                }
             }
             dt.AcceptChanges();
-            Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Called Export Function");
 
-            int Acq_Adv_Ancillary_Report_Code =  objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
+            List<DataRow> list = dt.AsEnumerable().ToList();
+
+            int Acq_Adv_Ancillary_Report_Code = 1;// objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
             try
             {
-                //string Destination = "D:\\Temp\\Music_Usage_Report_Sheet_" + Music_Usage_Report_Code + ".xlsx";
-                //FileInfo OldFile = new FileInfo("D:\\Temp\\Sample1.xlsx");
 
                 string Destination = ConfigurationSettings.AppSettings["Destination"].ToString() + "Adv_Ancillary_Report_Sheet_" + Acq_Adv_Ancillary_Report_Code + ".xlsx";
                 FileInfo OldFile = new FileInfo(ConfigurationSettings.AppSettings["OldFile"]);
@@ -182,8 +181,96 @@ namespace PAConsole
                     ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
 
                     var sheet = excelPackage.Workbook.Worksheets["Sheet1"];
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        int i = 1, j = 0;
+                        foreach (DataColumn col in dt.Columns)
+                        {
+                            string CellValue = row[col.ColumnName].ToString();
+                            if (i == 1)
+                            {
+                                sheet.Cells[1, 1].Value = col.ColumnName;
+                            }
+                            else
+                            {
+                                sheet.Cells[1, i].Value = col.ColumnName;                             
+                            }  
+                            i++;
+                            j++;
+                        }
+                    }
+                    int Erow = 2;
+                    int Agreemntcnt = 1, Titlecnt = 1, TitleTypecnt = 1, rowNo = 2;
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        int Ecolumn = 1;
 
-                    for (int i = 1; i <= dt.Columns.Count - 1; i++)
+                        foreach (DataColumn col in dt.Columns)
+                        {
+                            if (Erow == 2 && Ecolumn == 1)
+                            {
+                                sheet.Cells[2, 1].Value = row.ItemArray[Ecolumn - 1];
+                            }
+                            else
+                            {
+                                sheet.Cells[Erow, Ecolumn].Value = row.ItemArray[Ecolumn - 1];
+                            }
+                            //if (Erow > 2)
+                            //{
+                            //    if (col.ColumnName == "Agreement_No" || col.ColumnName == "Title" || col.ColumnName == "Title_Type")
+                            //    {
+                            //        string firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString();
+                            //        string secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();
+
+                            //        if (firstCellValue == secondCellValue)
+                            //        {
+                            //            if (col.ColumnName == "Agreement_No")
+                            //                Agreemntcnt++;
+                            //            if (col.ColumnName == "Title")
+                            //                Titlecnt++;
+                            //            if (col.ColumnName == "Title_Type")
+                            //                TitleTypecnt++;
+                            //            //sheet.Cells["A1:A2"].Merge = true;
+                            //        }
+                            //        else
+                            //        {
+                            //            if (col.ColumnName == "Agreement_No")
+                            //            {
+                            //                Agreemntcnt = 1;
+                            //                rowNo = Erow;
+                            //            }
+                            //                if (col.ColumnName == "Title")
+                            //            {
+                            //                Titlecnt = 1;
+                            //                rowNo = Erow;
+                            //            }
+                            //            if (col.ColumnName == "Title_Type")
+                            //            {
+                            //                TitleTypecnt = 1;
+                            //                rowNo = Erow;
+                            //            }
+                            //        }
+
+                            //        if (Agreemntcnt > 1 && col.ColumnName == "Agreement_No")
+                            //        {
+                            //            sheet.Cells[rowNo, Ecolumn, (Agreemntcnt + (rowNo)), Ecolumn].Merge = true;
+                            //        }
+                            //        if (Titlecnt > 1 && col.ColumnName == "Title")
+                            //        {
+                            //            sheet.Cells[rowNo + 1, Ecolumn, (Titlecnt + (rowNo)), Ecolumn].Merge = true;
+                            //        }
+                            //        if (TitleTypecnt > 1 && col.ColumnName == "Title_Type")
+                            //        {
+                            //            sheet.Cells[rowNo, Ecolumn, (TitleTypecnt + (rowNo)), Ecolumn].Merge = true;
+                            //        }
+                            //    }
+                            //}
+                            Ecolumn++;
+                        }
+                        Erow++;
+                    }
+
+                    for (int i = 1; i <= dt.Columns.Count; i++)
                     {
                         sheet.Cells[1, i].Style.Font.Bold = true;
                         sheet.Cells[1, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
@@ -192,26 +279,24 @@ namespace PAConsole
                         sheet.Cells[1, i].Style.Font.Size = 11;
                         sheet.Cells[1, i].Style.Font.Name = "Calibri";
                         sheet.Cells[1, i].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        
-                        if (dt.Columns[i-1].ColumnName != "Agreement_No" && dt.Columns[i-1].ColumnName != "Title" && dt.Columns[i-1].ColumnName != "Title_Type" && dt.Columns[i-1].ColumnName != "Ancillary_Type" && dt.Columns[i-1].ColumnName != "Duration(Sec)" && dt.Columns[i-1].ColumnName != "Period(Day)" && dt.Columns[i-1].ColumnName != "Remarks")
+
+                        if (dt.Columns[i - 1].ColumnName != "Agreement_No" && dt.Columns[i - 1].ColumnName != "Title" && dt.Columns[i - 1].ColumnName != "Title_Type" && dt.Columns[i - 1].ColumnName != "Ancillary_Type" && dt.Columns[i - 1].ColumnName != "Duration(Sec)" && dt.Columns[i - 1].ColumnName != "Period(Day)" && dt.Columns[i - 1].ColumnName != "Remarks")
                         {
                             sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#565656"));
                             sheet.Cells[1, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
                             sheet.Cells[1, i].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Top;
                             sheet.Cells[1, i].Style.Font.Color.SetColor(Color.White);
                             //sheet.Cells[1, i].Style.WrapText = true;
-                            
                         }
                         else
                         {
                             sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#C0C0C0"));
                         }
-                        
                     }
 
-                    sheet.Cells["A1"].LoadFromDataTable(dt, true);
+                    //sheet.Cells["A1"].LoadFromDataTable(dt, true);
                     sheet.Cells.AutoFitColumns();
-                    for (int i = 1; i <= dt.Columns.Count - 1; i++)
+                    for (int i = 1; i <= dt.Columns.Count; i++)
                     {
                         sheet.Column(i).Width = 20;
                         sheet.Column(i).Style.WrapText = true;
@@ -223,8 +308,13 @@ namespace PAConsole
                     excelPackage.Save();
 
                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Sheet Saved");
-                }
 
+                    //CHANGE THE RECORD STATUS TO 'C'
+                    Update_Acq_Adv_Ancillary_Report(Acq_Adv_Ancillary_Report_Code, "C", "PE");
+
+                    Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Record Status Changed to 'C'");
+
+                }
             }
             catch (Exception ex)
             {
@@ -236,7 +326,6 @@ namespace PAConsole
                     ex = ex.InnerException;
                     sb.Append(" | Inner Exception : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : " + ex.Message);
                 }
-
                 Error.WriteLog_Conditional(sb.ToString(), addSeperater: true);
             }
         }
