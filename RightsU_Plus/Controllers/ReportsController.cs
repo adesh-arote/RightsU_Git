@@ -1674,7 +1674,7 @@ namespace RightsU_Plus.Controllers
             //ViewBag.Title = Get_Title(objMUR.Title_Codes);
             // var ArrTitleCodes = objMUR.Title_Codes.Trim('﹐');
             var lstPlatformNames = new List<string>();
-            if (objPAR.Platform_Codes != " ")
+            if (objPAR.Platform_Codes != "")
             {
                 var tempPlatformcode = objPAR.Platform_Codes.Split(',').Select(int.Parse).Distinct().ToList();
                 var lstPlatform =new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
@@ -1686,7 +1686,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.PlatForm = "NA";
             }
             var lstTitleNames = new List<string>();
-            if (objPAR.Title_Codes != " ")
+            if (objPAR.Title_Codes != "")
             {
                 var tempTitlecode = objPAR.Title_Codes.Split(',').Select(int.Parse).Distinct().ToList();
                 var lstTitle = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
@@ -1698,7 +1698,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Title = "NA";
             }
             var lstAncillaryNames = new List<string>();
-            if (objPAR.Ancillary_Type_Codes != " " && objPAR.Ancillary_Type_Codes != null)
+            if (objPAR.Ancillary_Type_Codes != null && objPAR.Ancillary_Type_Codes != "")
             {
                 var tempAncillarycode = objPAR.Ancillary_Type_Codes.Split(',').Select(int.Parse).Distinct().ToList();
                 var lstAncillary = new Ancillary_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
@@ -1853,6 +1853,10 @@ namespace RightsU_Plus.Controllers
             objPAR.Report_Status = "P";
             objPAR.Generated_By = objLoginUser.Users_Code;
             objPAR.Generated_On = System.DateTime.Now;
+            if (AncillaryTypeCode != "")
+                objPAR.Ancillary_Type_Codes = AncillaryTypeCode;
+            else
+                objPAR.Ancillary_Type_Codes = "";
 
 
             dynamic resultSet;
