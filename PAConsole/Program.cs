@@ -46,12 +46,12 @@ namespace PAConsole
 
                                     DataTable dt = new DataTable();
                                     SqlDataAdapter adapt = new SqlDataAdapter(command);
-                                    command.Parameters.Add(new SqlParameter("@Agreement_No", ""));
-                                    command.Parameters.Add(new SqlParameter("@Title_Codes", "4580"));
-                                    command.Parameters.Add(new SqlParameter("@Platform_Codes", "0"));
-                                    command.Parameters.Add(new SqlParameter("@Ancillary_Type_Code", "0"));
-                                    command.Parameters.Add(new SqlParameter("@Business_Unit_Code", 1));
-                                    command.Parameters.Add(new SqlParameter("@IncludeExpired", "N"));
+                                    command.Parameters.Add(new SqlParameter("@Agreement_No", objAcq_Adv_Ancillary_Report.Agreement_No));
+                                    command.Parameters.Add(new SqlParameter("@Title_Codes", objAcq_Adv_Ancillary_Report.Title_Codes));
+                                    command.Parameters.Add(new SqlParameter("@Platform_Codes", objAcq_Adv_Ancillary_Report.Platform_Codes));
+                                    command.Parameters.Add(new SqlParameter("@Ancillary_Type_Code", objAcq_Adv_Ancillary_Report.Ancillary_Type_Codes));
+                                    command.Parameters.Add(new SqlParameter("@Business_Unit_Code", objAcq_Adv_Ancillary_Report.Business_Unit_Code));
+                                    command.Parameters.Add(new SqlParameter("@IncludeExpired", objAcq_Adv_Ancillary_Report.IncludeExpired));
 
                                     connection.Open();
                                     command.ExecuteNonQuery();
@@ -64,12 +64,13 @@ namespace PAConsole
 
                                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Inserted into DataTable = ");
 
-                                    if (dt == null)
+                                    if (dt.Rows.Count == 0)
                                         Update_Acq_Adv_Ancillary_Report(objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code, "N", "PE");
                                     else
+                                    {
                                         Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Calling Export Function");
-
-                                    ExportAcq_Adv_Ancillary_Report(dt, objAcq_Adv_Ancillary_Report);
+                                        ExportAcq_Adv_Ancillary_Report(dt, objAcq_Adv_Ancillary_Report);
+                                    }
                                 }
                             }
                             catch (Exception ex)
@@ -159,7 +160,7 @@ namespace PAConsole
 
             List<DataRow> list = dt.AsEnumerable().ToList();
 
-            int Acq_Adv_Ancillary_Report_Code = 1;// objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
+            int Acq_Adv_Ancillary_Report_Code = objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
             try
             {
 
