@@ -445,8 +445,8 @@ public partial class Reports_rptDealQuery : ParentPage
 
         string selectedCol = hdnCol.Value.ToString().Replace("~", ",").Trim(',');
 
-        string strLCol = " select *  from Report_Column_setup where 1=1 and IsPartofSelectOnly !='N' and Alternate_Config_Code is null and view_Name in (" + curVWList + ") ",
-               strRCol = " select *  from Report_Column_setup where 1=1 and IsPartofSelectOnly !='N'  and view_Name in (" + curVWList + ") ";
+        string strLCol = " select *  from Report_Column_setup where 1=1 and Display_type is null AND IsPartofSelectOnly !='N' and Alternate_Config_Code is null and view_Name in (" + curVWList + ") ",
+               strRCol = " select *  from Report_Column_setup where 1=1 and Display_type is null AND IsPartofSelectOnly !='N'  and view_Name in (" + curVWList + ") ";
 
         strLCol += " AND Column_code NOT IN (" + (selectedCol == string.Empty ? "0" : selectedCol) + ")   ";
         strRCol += " AND Column_code IN (" + (selectedCol == string.Empty ? "0" : selectedCol) + ")  ";

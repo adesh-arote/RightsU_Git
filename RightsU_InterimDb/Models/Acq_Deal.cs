@@ -87,6 +87,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Channel_Cluster_Code { get; set; }
     	    public string Is_Auto_Push { get; set; }
     	    public Nullable<int> Deal_Segment_Code { get; set; }
+    	    public Nullable<int> Revenue_Vertical_Code { get; set; }
     
         public virtual Deal_Tag Deal_Tag { get; set; }
         public virtual Deal_Type Deal_Type1 { get; set; }

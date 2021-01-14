@@ -111,7 +111,9 @@ namespace RightsU_Plus.Controllers
             List<USP_Music_Exception_Handling_Result> LstMusicE = new List<USP_Music_Exception_Handling_Result>();
             LstMusicE = objUSP.USP_Music_Exception_Handling(IsAired, PageNo, objRecordCount, "Y", pageSize, objPage_Properties.MusicTrackCode,
                 objPage_Properties.MusicLabelCode, objPage_Properties.ChannelCode, objPage_Properties.Contents, objPage_Properties.EpsFrom, objPage_Properties.EpsTo
-                , objPage_Properties.InitialResponse, objPage_Properties.Status, objLoginUser.Users_Code, objPage_Properties.CommonSearch,objPage_Properties.StartDate,objPage_Properties.EndDate).ToList();
+                , objPage_Properties.InitialResponse, objPage_Properties.Status, objLoginUser.Users_Code, objPage_Properties.CommonSearch
+                ,Convert.ToDateTime(objPage_Properties.StartDate.ToString("dd/MMM/yyyy"))
+                ,Convert.ToDateTime(objPage_Properties.EndDate.ToString("dd/MMM/yyyy"))).ToList();
 
             RecordCount = Convert.ToInt32(objRecordCount.Value);
             ViewBag.RecordCount = RecordCount;
@@ -291,9 +293,9 @@ namespace RightsU_Plus.Controllers
                 objMSE.EntityState = State.Modified;
                 objMSTS.Save(objMSE);
 
-                //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
-                //string uspResult = Convert.ToString(objUSP.USP_Process_Workflow(Music_Schedule_Transaction_Code, 154, objLoginUser.Users_Code, user_Action.TrimEnd()
-                //    .TrimStart(), Remark).ElementAt(0));
+                USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+                string uspResult = Convert.ToString(objUSP.USP_Process_Workflow(Music_Schedule_Transaction_Code, 154, objLoginUser.Users_Code, user_Action.TrimEnd()
+                    .TrimStart(), Remark).ElementAt(0));
                 Dictionary<string, object> obj = new Dictionary<string, object>();
 
                 //Music_Schedule_Transaction objMSE = new Music_Schedule_Transaction();

@@ -60,6 +60,7 @@
           <Property Name="Channel_Cluster_Code" Type="int" />
           <Property Name="Is_Auto_Push" Type="char" MaxLength="1" />
           <Property Name="Deal_Segment_Code" Type="int" />
+          <Property Name="Revenue_Vertical_Code" Type="int" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -4242,6 +4243,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Last_Updated_Time" Type="datetime" />
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Deal_Segment_Code" Type="int" />
+          <Property Name="Revenue_Vertical_Code" Type="int" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary">
           <Key>
@@ -5141,6 +5143,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Title_Content_Code" Type="int" />
           <Property Name="Version_Code" Type="int" />
           <Property Name="Duration" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MusicSystemCode" Type="int" />
         </EntityType>
         <EntityType Name="Title_Content_Version_Details">
           <Key>
@@ -12446,6 +12449,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Channel_Cluster_Code" Type="int" Mode="In" />
           <Parameter Name="Is_Auto_Push" Type="char" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
+          <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Insert_Acq_Deal_Pushback_Dubbing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Pushback_Code" Type="int" Mode="In" />
@@ -12649,6 +12653,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Last_Updated_Time" Type="datetime" Mode="In" />
           <Parameter Name="Last_Action_By" Type="int" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
+          <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_INSERT_UPLOAD_ERR_DETAIL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="File_Code" Type="bigint" Mode="In" />
@@ -13317,6 +13322,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Channel_Cluster_Code" Type="int" Mode="In" />
           <Parameter Name="Is_Auto_Push" Type="char" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
+          <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Update_IPR_Opp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IPR_Opp_Code" Type="int" Mode="In" />
@@ -13477,6 +13483,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Last_Updated_Time" Type="datetime" Mode="In" />
           <Parameter Name="Last_Action_By" Type="int" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
+          <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_UpdateContentHouseID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BV_HouseId_Data_Code" Type="int" Mode="In" />
@@ -20528,6 +20535,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Auto_Push" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Deal_Segment_Code" Type="Int32" />
           <NavigationProperty Name="Deal_Segment" Relationship="RightsU_NeoModel.FK_Acq_Deal_Deal_Segment" FromRole="Acq_Deal" ToRole="Deal_Segment" />
+          <Property Name="Revenue_Vertical_Code" Type="Int32" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -22762,6 +22770,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Syn_Deal_Run" Relationship="RightsU_NeoModel.FK_Syn_Deal_Run_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Run" />
           <Property Name="Deal_Segment_Code" Type="Int32" />
           <NavigationProperty Name="Deal_Segment" Relationship="RightsU_NeoModel.FK_Syn_Deal_Deal_Segment" FromRole="Syn_Deal" ToRole="Deal_Segment" />
+          <Property Name="Revenue_Vertical_Code" Type="Int32" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary">
           <Key>
@@ -31453,6 +31462,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Duration" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Version" Relationship="RightsU_NeoModel.FK_Title_Content_Version_Version" FromRole="Title_Content_Version" ToRole="Version" />
           <NavigationProperty Name="Title_Content_Version_Details" Relationship="RightsU_NeoModel.FK__Title_Con__Title__5146B39C" FromRole="Title_Content_Version" ToRole="Title_Content_Version_Details" />
+          <Property Name="MusicSystemCode" Type="Int32" />
         </EntityType>
         <Association Name="FK_Content_Music_Link_Title_Content_Version">
           <End Type="RightsU_NeoModel.Title_Content_Version" Role="Title_Content_Version" Multiplicity="0..1" />
@@ -34970,6 +34980,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <MappingFragment StoreEntitySet="Acq_Deal">
+                <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
                 <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
                 <ScalarProperty Name="Is_Auto_Push" ColumnName="Is_Auto_Push" />
                 <ScalarProperty Name="Channel_Cluster_Code" ColumnName="Channel_Cluster_Code" />
@@ -37170,6 +37181,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Syn_Deal">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal">
               <MappingFragment StoreEntitySet="Syn_Deal">
+                <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
                 <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
                 <ScalarProperty Name="Deal_Complete_Flag" ColumnName="Deal_Complete_Flag" />
                 <ScalarProperty Name="Business_Unit_Code" ColumnName="Business_Unit_Code" />
@@ -41510,6 +41522,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Title_Content_Version">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Content_Version">
               <MappingFragment StoreEntitySet="Title_Content_Version">
+                <ScalarProperty Name="MusicSystemCode" ColumnName="MusicSystemCode" />
                 <ScalarProperty Name="Duration" ColumnName="Duration" />
                 <ScalarProperty Name="Version_Code" ColumnName="Version_Code" />
                 <ScalarProperty Name="Title_Content_Code" ColumnName="Title_Content_Code" />

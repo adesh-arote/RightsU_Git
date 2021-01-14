@@ -82,7 +82,7 @@
                         <input type="checkbox" id="chkMusicLink_@i" value="@item.Dummy_Guid" data-placement="right" title="@objMessageKey.SelecttoremoveTrack" />
                     </td>
                 }
-                <td>@item.Music_Title.Music_Title_Name</td>
+                    <td>@(item.Music_Title == null ? "" : item.Music_Title.Music_Title_Name)</td>
 
 
                 <td>

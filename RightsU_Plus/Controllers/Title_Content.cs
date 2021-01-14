@@ -154,7 +154,11 @@ namespace RightsU_Plus.Controllers
 
             //    objSearch.SearchText = Convert.ToString(Tmpdata);
             //}
-            objSearch.SearchText = TitleName + ('﹐');
+            if (!(TitleName == "" && objSearch.SearchText != ""))
+            {
+                objSearch.SearchText = TitleName + ('﹐');
+            }
+            
 
             TempData["TitleName"] = callFrom == "T" ? callFrom : "";
             
@@ -713,7 +717,8 @@ namespace RightsU_Plus.Controllers
                 objTC = null;
                 objTC = objTC_Service.GetById(titleContentCode);
                 lstContent_Music_Link = null;
-                lstContent_Music_Link.AddRange(objTC.Content_Music_Link);
+
+                lstContent_Music_Link.AddRange(objTC.Content_Music_Link.Where(x => x.Music_Title_Code != null).ToList());
             }
             else
             {

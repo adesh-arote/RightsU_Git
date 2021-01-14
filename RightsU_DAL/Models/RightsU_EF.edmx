@@ -5141,6 +5141,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Title_Content_Code" Type="int" />
           <Property Name="Version_Code" Type="int" />
           <Property Name="Duration" Type="decimal" Precision="18" Scale="2" />
+		   <Property Name="MusicSystemCode" Type="int" />
         </EntityType>
         <EntityType Name="Title_Content_Version_Details">
           <Key>

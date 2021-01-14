@@ -45,8 +45,8 @@
     });
 </script>
 <style>
-    .numeric_Duration{
-        width:65%;
+    .numeric_Duration {
+        width: 65%;
     }
 </style>
 <div class="scale_table_block">
@@ -65,7 +65,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DropDownList("ddlVersion", ViewBag.VersionList as SelectList, "Please select", new { @id = "ddlVersion_"+0, @class = "form_input chosen-select",@width = "100%" })
+                        @Html.DropDownList("ddlVersion", ViewBag.VersionList as SelectList, "Please select", new { @id = "ddlVersion_" + 0, @class = "form_input chosen-select", @width = "100%" })
                     </td>
                     <td align="center">
                         <input id="txtHouseId_0" type="text" value="" maxlength="100" />
@@ -86,18 +86,20 @@
                     </td>
                 </tr>
             }
+
             @if (Model.Count > 0)
             {
                 foreach (var item in Model)
                 {
+
                     <tr>
                         @if (ViewBag.Command == "EDIT" && ViewBag.titleVersionCode == item.Title_Content_Version_Code)
                         {
-                            string name = new RightsU_BLL.Title_Content_Version_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Content_Version_Code == item.Title_Content_Version_Code).Select(x=>x.Version.Version_Name).FirstOrDefault();
+                            string name = new RightsU_BLL.Title_Content_Version_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Content_Version_Code == item.Title_Content_Version_Code).Select(x => x.Version.Version_Name).FirstOrDefault();
                             <td>
                                 @if (name == "Standard")
                                 {
-                                    <label for="ddlVersion" value="@item.Version_Code"  id="ddlVersion">@item.Version_Name</label>
+                                    <label for="ddlVersion" value="@item.Version_Code" id="ddlVersion">@item.Version_Name</label>
                                     <input type="hidden" id="ddlVersion_@item.Title_Content_Version_Code" value="@item.Version_Code" />
                                 }
                                 else
@@ -108,7 +110,7 @@
                             </td>
                             <td align="center">
                                 @*GM- 000123, GM- 000124*@
-                                <input id="txtHouseId_@item.Title_Content_Version_Code" type="text" value="@item.House_Id" maxlength="100" />
+                                <input id="txtHouseId_@item.Title_Content_Version_Code" type="text" value="" maxlength="100" />
                             </td>
                             <td>
                                 <input id="txtDuration_@item.Title_Content_Version_Code" type="text" value=@item.Duration class="numeric_Duration" />
@@ -130,9 +132,7 @@
                             <td>
                                 @item.Version_Name
                             </td>
-                            <td align="center">
-                               @item.House_Id
-                            </td>
+                            <td align="center"></td>
                             <td>@item.Duration</td>
                             <td>
                                 @if (item.Version_Code == 3)
@@ -147,13 +147,21 @@
                             <td align="center">
                                 <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="AddEditVersion(@item.Title_Content_Version_Code, 'EDIT')"></a>
 
+                                @if (item.House_Id != "")
+                                {
+                                    if (Convert.ToInt32(item.House_Id.Split('~')[1]) > 0)
+                                    {
+                                        <a title="Music System" class="glyphicon glyphicon-play" style="cursor:pointer;" onclick="MusicSystemVC(@item.House_Id.Split('~')[1])"></a>
+                                    }
+                                }
+
                                 @if (item.Version_Code != DefaultVersionCode)
                                 {
                                     int count = new RightsU_BLL.Content_Music_Link_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Content_Version_Code == item.Title_Content_Version_Code).Count();
 
                                     if (count == 0)
                                     {
-                                        <a title="@objMessageKey.Delete" id="Delete" href="#" class="glyphicon glyphicon-trash" onclick="Ask_Confirmation('DELETE',@item.Title_Content_Version_Code)"></a>
+                                        <a title="@objMessageKey.Delete" id="Delete" href="#" class="glyphicon glyphicon-play" onclick="Ask_Confirmation('DELETE',@item.Title_Content_Version_Code)"></a>
                                     }
                                     else
                                     {
@@ -180,7 +188,11 @@
 
 <script>
     var TitleContentCode_G = 0, CommandName_G = "";
-
+    function MusicSystemVC(code) {
+        debugger;
+        var strWindowFeatures = "location=yes,toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=4000,height=4000";
+        window.open('http://163.182.171.194:8086/#/video-details?p1=e&p2=' + code, '_blank', strWindowFeatures);
+    }
     function SaveVersion(titleContentCode) {
         debugger
         var returnVal = true;
@@ -191,15 +203,15 @@
         var duration = $.trim($('#txtDuration_' + titleContentCode).val());
         var houseId = $.trim($('#txtHouseId_' + titleContentCode).val());
         var versioncode = $('#ddlVersion_' + titleContentCode).val();
-       
+
         if (duration == '') {
             $('#txtDuration_' + titleContentCode).val('')
             $('#txtDuration_' + titleContentCode).attr('required', true)
-            returnVal= false;
+            returnVal = false;
         }
         if (versioncode == '') {
-            $('#ddlVersion_' +titleContentCode).addClass("required");
-            returnVal= false;
+            $('#ddlVersion_' + titleContentCode).addClass("required");
+            returnVal = false;
         }
 
         showLoading();

@@ -3365,7 +3365,7 @@ namespace RightsU_DAL
                 new ObjectParameter("CommonSearch", typeof(string));
 
             var startDateParameter = startDate.HasValue ?
-                new ObjectParameter("StartDate", startDate) :
+                new ObjectParameter("StartDate",startDate) :
                 new ObjectParameter("StartDate", typeof(System.DateTime));
 
             var endDateParameter = endDate.HasValue ?
