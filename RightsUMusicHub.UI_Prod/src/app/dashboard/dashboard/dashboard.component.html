@@ -1,30 +1,31 @@
 <div class="content-wrapper">
   <section class="content-header" style="top:25px;">
     <div class="pull-left" style="margin-top:-20px;">
-        <h3>Selection as per recent shows
-            <div class="btn-group">
-              <button type="button" title="ShowWise" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-filter"></i>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li>
-                  <a (click)="limitedshowlist(9)">9</a>
-                </li>
-                <li>
-                  <a (click)="limitedshowlist(18)">18</a>
-                </li>
-                <li>
-                  <a (click)="limitedshowlist(27)">27</a>
-                </li>
-                <li>
-                  <span style="padding-left:10%;">
-                    <input type="text" value="" placeholder="Show Name" class="RequestTextBox" [(ngModel)]="TalentName"(ngModelChange)="searchList()">
-                    <!--  -->
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </h3>
+      <h3>Recent Activities
+        <!-- <div class="btn-group">
+          <button type="button" title="ShowWise" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-filter"></i>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a (click)="limitedshowlist(9)">9</a>
+            </li>
+            <li>
+              <a (click)="limitedshowlist(18)">18</a>
+            </li>
+            <li>
+              <a (click)="limitedshowlist(27)">27</a>
+            </li>
+            <li>
+              <span style="padding-left:10%;">
+                <input type="text" value="" placeholder="Show Name" class="RequestTextBox" [(ngModel)]="TalentName"
+                  (ngModelChange)="searchList()">
+                <!--  -->
+              <!-- </span>
+            </li>
+          </ul>
+        </div> - -->
+      </h3>
     </div>
     <div class="pull-right">
       <a class="btn btn--with-icon btn-social btn-danger" (click)="onNewRequestClick()" routerLinkActive="active">
@@ -33,20 +34,18 @@
   </section>
   <section class="content" style="margin-top:60px;">
     <div class="row topShowCss" id="topshow">
-      <!-- <div *ngIf="defaultShow"> -->
-          <div  *ngFor="let n of slicelist; let j=index">
-        
-              <div class="col-md-4" *ngIf="n.to != 0">
-                <div class="callout">
-                  <div *ngFor="let list of showList | slice:n.from:n.to ;let i = index">
-                    <p style="margin-bottom:10px">
-                      <i class="fa fa-video-camera"></i>&nbsp;
-                      <a (click)="quickSelection(list)">{{list.Title_Name}} </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              </div>
+       <p-dataGrid name="dataGrid" [value]="showList" [paginator]="true" [rows]="6">
+        <ng-template let-data pTemplate="item">
+          <div class="col-md-6">
+            <div class="callout">
+            <p>
+              <i class="fa fa-video-camera"></i>&nbsp;
+              <a (click)="quickSelection(data.Title_Code,data.Title_Name)">{{data.Title_Name}} </a>
+            </p>
+          </div>
+          </div>
+        </ng-template>
+      </p-dataGrid>  
     </div>
 
     <div class="row" style="padding-top: 2%;">
@@ -82,7 +81,7 @@
             </div>
           </div>
           <div class="box-body">
-            <app-pie-chart [dataRequest]="dataRequest"></app-pie-chart>           
+            <app-pie-chart [dataRequest]="dataRequest"></app-pie-chart>
           </div>
         </div>
       </div>
@@ -141,18 +140,20 @@
               </div>
               <div class="row" style=" padding-left: 14px; padding-right: 14px;">
 
-                <p-dataTable #dt [value]="requestList" exportFilename="ConsumptionRequestList" [rows]="5" [responsive]="true" [alwaysShowPaginator]="true">
-                  <p-column field="RequestID" header="Request ID" width="10" styleClass="text-center"  [sortable]="true">
+                <p-dataTable #dt [value]="requestList" exportFilename="ConsumptionRequestList" [rows]="5"
+                  [responsive]="true" [alwaysShowPaginator]="true">
+                  <p-column field="RequestID" header="Request ID" width="10" styleClass="text-center" [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       <a (click)="requestCountDetails(row,'N')">
                         <span style="color:blue">{{row.RequestID}}</span>
                       </a>
                     </ng-template>
                   </p-column>
-                  <p-column field="ChannelName" header="Channel" styleClass="text-center"  [sortable]="true"></p-column>
+                  <p-column field="ChannelName" header="Channel" styleClass="text-center" [sortable]="true"></p-column>
                   <!-- [style]="{'width': '250px','text-align': 'center'}" -->
-                  <p-column field="Title_Name" header="Show" [style]="{'width': '150px'}"  [sortable]="true"></p-column>
-                  <p-column field="EpisodeFrom" header="Episode" [style]="{'width': '80px'}" styleClass="text-center"  [sortable]="true">
+                  <p-column field="Title_Name" header="Show" [style]="{'width': '150px'}" [sortable]="true"></p-column>
+                  <p-column field="EpisodeFrom" header="Episode" [style]="{'width': '80px'}" styleClass="text-center"
+                    [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       <div *ngIf="row.EpisodeFrom==row.EpisodeTo">
                         {{row.EpisodeFrom }}
@@ -164,7 +165,8 @@
                     </ng-template>
 
                   </p-column>
-                  <p-column field="CountRequest" header="No. of Songs" [style]="{'width': '120px'}" styleClass="text-center"  [sortable]="true">
+                  <p-column field="CountRequest" header="No. of Songs" [style]="{'width': '120px'}"
+                    styleClass="text-center" [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       <a (click)="requestCountDetails(row,'N')">
                         <span style="color:blue">{{row.CountRequest}}</span>
@@ -172,7 +174,7 @@
                     </ng-template>
                   </p-column>
 
-                  <p-column field="TelecastFrom " header="Telecast" styleClass="text-center"  [sortable]="true">
+                  <p-column field="TelecastFrom " header="Telecast" styleClass="text-center" [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       <div *ngIf="row.TelecastFrom==row.TelecastTo">
                         {{row.TelecastFrom | date:'dd-MMM-yyyy'}}
@@ -186,11 +188,13 @@
                                               {{track.TelecastFrom | date:'dd-MMM-yyyy'}} - {{track.TelecastTo | date:'dd-MMM-yyyy'}}
                                             </ng-template> -->
                   </p-column>
-                  <p-column field="Status" header="Status" styleClass="text-center"  [sortable]="true"></p-column>
+                  <p-column field="Status" header="Status" styleClass="text-center" [sortable]="true"></p-column>
 
 
-                  <p-column field="Login_Name" header="Requested By" styleClass="text-center"  [sortable]="true"></p-column>
-                  <p-column field="RequestDate" header="Requested Date" styleClass="text-center" [style]="{'width': '150px'}"  [sortable]="true">
+                  <p-column field="Login_Name" header="Requested By" styleClass="text-center" [sortable]="true">
+                  </p-column>
+                  <p-column field="RequestDate" header="Requested Date" styleClass="text-center"
+                    [style]="{'width': '150px'}" [sortable]="true">
                     <ng-template pTemplate="body" let-row="rowData">
                       {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}
 
@@ -214,7 +218,8 @@
 </div>
 
 
-<p-dialog [(visible)]="showRequestCountDetails" [modal]="true" [responsive]="false" [width]="1200" [positionTop]="60" [contentStyle]="{'overflow':'visible'}" [blockScroll]="true" [draggable]="false">
+<p-dialog [(visible)]="showRequestCountDetails" [modal]="true" [responsive]="false" [width]="1200" [positionTop]="60"
+  [contentStyle]="{'overflow':'visible'}" [blockScroll]="true" [draggable]="false">
   <p-header>
     Details:
     <span style="font-family: serif;
@@ -225,15 +230,17 @@
   <div class="Row">
     <div>
       <label>Search</label>&nbsp;
-      <input id="input" class="SearchTextBox" [(ngModel)]="reqCountSearch" (keyup)="filter(reqCountSearch,'reqCount')" placeholder="Music Title, Movie/ Album" type="text" size="30"  pInputText>
+      <input id="input" class="SearchTextBox" [(ngModel)]="reqCountSearch" (keyup)="filter(reqCountSearch,'reqCount')"
+        placeholder="Music Title, Movie/ Album" type="text" size="30" pInputText>
 
     </div>
 
   </div>
   <br>
 
-  <p-dataTable [value]="requestCountList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch" [paginator]="true"
-    [scrollable]="true" scrollHeight="300px" rows="5" [responsive]="true" [alwaysShowPaginator]="true">
+  <p-dataTable [value]="requestCountList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch"
+    [paginator]="true" [scrollable]="true" scrollHeight="300px" rows="5" [responsive]="true"
+    [alwaysShowPaginator]="true">
     <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}"></p-column>
     <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10"></p-column>
     <p-column field="LabelName" header="Music Label" [sortable]="true" width="10" styleClass="text-center"></p-column>
@@ -250,5 +257,5 @@
     <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
   </p-footer>
 </p-dialog>
-<p-confirmDialog ></p-confirmDialog>
+<p-confirmDialog></p-confirmDialog>
 <div *ngIf="load" id="loadingDiv"></div>

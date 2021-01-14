@@ -47,6 +47,7 @@ export class DashboardComponent implements OnInit {
   public sortingDefault: boolean = false;
   public order: any;
   public sortBy: any;
+  
 
   constructor(private router: Router, private _requisitionService: RequisitionService,
     private _dashboardService: DashboardService, private _confirmation: ConfirmationService) {
@@ -55,7 +56,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-
+debugger;
     this.sortingDefault = true;
 
     var channelBody = {
@@ -75,11 +76,11 @@ export class DashboardComponent implements OnInit {
       console.log(this.showList);
       $(function () {
         $('.topShowCss').slimScroll({
-          height: '100px',
+          height: '120px',
 
         });
       });
-      this.limitedshowlist(9)
+     // this.limitedshowlist(9)
     }, error => { this.handleResponseError(error) })
 
     this.load = true;
@@ -205,11 +206,13 @@ export class DashboardComponent implements OnInit {
   divArray(count) {
     return Array(count);
   }
-  quickSelection(listdata) {
+  quickSelection(titleCode,titleName) {
+    debugger;
     // alert(listdata.Title_Code);
+    var listdata={Title_Code:titleCode,Title_Name:titleName};
     localStorage.setItem('showData', JSON.stringify(listdata));
     var ValidShow = {
-      'TitleCode': listdata.Title_Code
+      'TitleCode': titleCode
     }
     // console.log(ValidShow);
     this._dashboardService.checkPlayList(ValidShow).subscribe(Response => {

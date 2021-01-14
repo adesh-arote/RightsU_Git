@@ -34,13 +34,16 @@
           <td style="float: right;">
             <span style="margin:5px; " *ngIf="showSearch">
 
-              <button type="button" id="submitcuesheet" (click)="manualAssignClick('Y')" class="btn btn-primary">Cue Sheet</button>
+              <button type="button" id="submitcuesheet" (click)="manualAssignClick('Y')" class="btn btn-primary">Cue
+                Sheet</button>
             </span>
             <span style="margin:5px; " *ngIf="showSearch">
-              <button type="button" (click)="exportToExcel()" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Export to Excel"><i class="fa fa-file-excel-o fa-lg"></i></button>
+              <button type="button" (click)="exportToExcel()" class="btn btn-success" data-toggle="tooltip"
+                data-placement="top" title="Export to Excel"><i class="fa fa-file-excel-o fa-lg"></i></button>
             </span>
             <span style="margin:5px; " *ngIf="showSearch">
-              <button type="button" (click)="visibleSidebar2 = true" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Search"><i class="fa fa-search fa-lg"></i></button>
+              <button type="button" (click)="visibleSidebar2 = true" class="btn btn-info" data-toggle="tooltip"
+                data-placement="top" title="Search"><i class="fa fa-search fa-lg"></i></button>
             </span>
             <!-- <span style="margin:5px; " *ngIf="showSearch" >
                 <button type="text" pButton   (click)="exportToExcel()" icon="fa fa-file-excel-o" class="ui-button-success" pTooltip="Export to Excel" tooltipPosition="top" ></button>
@@ -78,7 +81,9 @@
         <div class=" col-lg-4" style="margin-top: -1%; ">
           <!-- (ngModelChange)="searchChannelChange()" -->
           <div style="margin-left: -70%;">
-            <p-multiSelect [options]="getChannelList" [panelStyle]="{'width':'146px'}" [resetFilterOnHide]="true" [(ngModel)]="searchChannel" optionLabel="Channel_Name" [maxSelectedLabels]="1" defaultLabel="Channel"></p-multiSelect>
+            <p-multiSelect [options]="getChannelList" [panelStyle]="{'width':'146px'}" [resetFilterOnHide]="true"
+              [(ngModel)]="searchChannel" optionLabel="Channel_Name" [maxSelectedLabels]="1" defaultLabel="Channel">
+            </p-multiSelect>
 
           </div>
         </div>
@@ -90,7 +95,9 @@
         <div class=" col-lg-6" style="margin-top: -1%; ">
 
           <div>
-            <p-multiSelect name="showList" [options]="searchshowNameList" [panelStyle]="{'width':'200px'}" [(ngModel)]="searchshowName" [resetFilterOnHide]="true" [maxSelectedLabels]="1" optionLabel="Title_Name" defaultLabel="Show"></p-multiSelect>
+            <p-multiSelect name="showList" [options]="searchshowNameList" [panelStyle]="{'width':'200px'}"
+              [(ngModel)]="searchshowName" [resetFilterOnHide]="true" [maxSelectedLabels]="1" optionLabel="Title_Name"
+              defaultLabel="Show"></p-multiSelect>
 
           </div>
         </div>
@@ -102,7 +109,8 @@
         <div class=" col-lg-4" style="margin-top: -1%; ">
 
           <div>
-            <p-multiSelect [options]="Status" [panelStyle]="{'width':'146px'}" [(ngModel)]="searchStatus" [resetFilterOnHide]="true" [maxSelectedLabels]="1" defaultLabel="Status"></p-multiSelect>
+            <p-multiSelect [options]="Status" [panelStyle]="{'width':'146px'}" [(ngModel)]="searchStatus"
+              [resetFilterOnHide]="true" [maxSelectedLabels]="1" defaultLabel="Status"></p-multiSelect>
 
           </div>
         </div>
@@ -117,8 +125,9 @@
               <label for="float-input">From</label>
           </span> -->
           <div style="margin-top: -5%; ">
-            <p-calendar [(ngModel)]="searchFromDate" [showIcon]="true" [maxDate]="searchToDate"  readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
-           
+            <p-calendar [(ngModel)]="searchFromDate" [showIcon]="true" [maxDate]="searchToDate" readonlyInput="true"
+              dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+
           </div>
         </div>
       </div>
@@ -131,16 +140,19 @@
                 <label for="float-input">To</label>
           </span> -->
           <div style="margin-top: -5%;">
-            <p-calendar [(ngModel)]="searchToDate" [showIcon]="true" [minDate]="searchFromDate"  readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
-            </div>
+            <p-calendar [(ngModel)]="searchToDate" [showIcon]="true" [minDate]="searchFromDate" readonlyInput="true"
+              dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+          </div>
         </div>
       </div>
 
 
       <div style="padding-top:10%;">
-        <button pButton type="button" (click)="searchClick();visibleSidebar2 = false" label="Search" class="ui-button-success"></button>
+        <button pButton type="button" (click)="searchClick();visibleSidebar2 = false" label="Search"
+          class="ui-button-success"></button>
         &nbsp;&nbsp;
-        <button pButton type="button" (click)="clearAllClick();visibleSidebar2 = false" label="Clear All" class="ui-button-success"></button>
+        <button pButton type="button" (click)="clearAllClick();visibleSidebar2 = false" label="Clear All"
+          class="ui-button-success"></button>
       </div>
 
 
@@ -157,9 +169,10 @@
                     Primary Channel
                   </div>
                   <div class="box-body">
-                    <p-dropdown [options]="getChannelList" [style]="{'width':'100%'}" [autoWidth]="false" [(ngModel)]="newMusicConsumptionRequest.ChannelCode"
-                                (ngModelChange)="channelChange()" [resetFilterOnHide]="true" required name=channelname placeholder="Select Channel Name" optionLabel="Channel_Name"
-                                filter="true" tabindex=1></p-dropdown>
+                    <p-dropdown [options]="getChannelList" [style]="{'width':'100%'}" [autoWidth]="false"
+                      [(ngModel)]="newMusicConsumptionRequest.ChannelCode" (ngModelChange)="channelChange()"
+                      [resetFilterOnHide]="true" required name=channelname placeholder="Select Channel Name"
+                      optionLabel="Channel_Name" filter="true" tabindex=1></p-dropdown>
                   </div>
                 </div>
               </div>
@@ -169,9 +182,10 @@
                     Show Name
                   </div>
                   <div class="box-body">
-                    <p-dropdown [options]="showNameList" [style]="{'width':'100%'}" [autoWidth]="false" [(ngModel)]="newMusicConsumptionRequest.TitleCode"
-                                (ngModelChange)="showChange()" [resetFilterOnHide]="true" required name=showname placeholder="Select Show Name" optionLabel="Title_Name"
-                                filter="true" tabindex=2></p-dropdown>
+                    <p-dropdown [options]="showNameList" [style]="{'width':'100%'}" [autoWidth]="false"
+                      [(ngModel)]="newMusicConsumptionRequest.TitleCode" (ngModelChange)="showChange()"
+                      [resetFilterOnHide]="true" required name=showname placeholder="Select Show Name"
+                      optionLabel="Title_Name" filter="true" tabindex=2></p-dropdown>
                     <!-- <select name="ddlShowName" id="ddlShowName" class="chosen-select ddlwidth" name="showName" [(ngModel)]="newMusicConsumptionRequest.TitleCode"
                       (change)="showName=$event.target.selectedOptions[0].label">
                       <option value=0>Please select a show</option>
@@ -187,32 +201,44 @@
                 <div class="box box-warning">
                   <div class="box-header">
                     <label>
-                      <input type="radio" class="flat-red" name="radgroup1" id="btnRadio1" checked (click)="EpisodeNocheck('tentative')"> Episode No.
+                      <input type="radio" class="flat-red" name="radgroup1" id="btnRadio1" checked
+                        (click)="EpisodeNocheck('tentative')"> Episode No.
                       <!-- <p-radioButton class="flat-red" name="groupname" value="val1" id="btnRadio1" checked (click)="EpisodeNocheck('tentative')" [(ngModel)]="selectedValue">Tentative Episode No.</p-radioButton> -->
                     </label>
                     <label>
-                      <input type="radio" class="flat-red" name="radgroup1" id="btnRadio2" (click)="EpisodeNocheck('range')"> Episode Range
+                      <input type="radio" class="flat-red" name="radgroup1" id="btnRadio2"
+                        (click)="EpisodeNocheck('range')"> Episode Range
                     </label>
                   </div>
                   <div class="box-body">
                     <div *ngIf="showrbtndiv">
                       <span class="block" id="txtEpisodeNo">
                         Episode No. :
-                        <input type="number" min="{{MinEpisode}}" value="" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value   < Number(this.min))  ? this.min : this.value" placeholder="" max="{{MaxEpisode}}" name="episodeNo" [(ngModel)]="episodeNo" (ngModelChange)="newMusicConsumptionRequest.EpisodeFrom=episodeNo;newMusicConsumptionRequest.EpisodeTo=episodeNo;episodeChange()"
-                               class="RequestNumber" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                        <input type="number" min="{{MinEpisode}}" value="" maxlength="4"
+                          oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value   < Number(this.min))  ? this.min : this.value"
+                          placeholder="" max="{{MaxEpisode}}" name="episodeNo" [(ngModel)]="episodeNo"
+                          (ngModelChange)="newMusicConsumptionRequest.EpisodeFrom=episodeNo;newMusicConsumptionRequest.EpisodeTo=episodeNo;episodeChange()"
+                          class="RequestNumber" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                       </span>
                     </div>
                     <div *ngIf="!showrbtndiv">
                       <span id="txtFromEpide">
                         From:
                         <!-- (ngModelChange)="newMusicConsumptionRequest.EpisodeTo=newMusicConsumptionRequest.EpisodeFrom+1;episodeChange()" -->
-                        <input type="number" min="{{MinEpisode}}" (blur)="episodeValidation()" value="" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value < Number(this.min)) ? this.min : this.value" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="" max="{{MaxEpisode}}" name="episodeNoFrom" [(ngModel)]="newMusicConsumptionRequest.EpisodeFrom" class="RequestNumber">
+                        <input type="number" min="{{MinEpisode}}" (blur)="episodeValidation()" value="" maxlength="4"
+                          oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value < Number(this.min)) ? this.min : this.value"
+                          onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder=""
+                          max="{{MaxEpisode}}" name="episodeNoFrom" [(ngModel)]="newMusicConsumptionRequest.EpisodeFrom"
+                          class="RequestNumber">
                         <!-- <input type="text" pInputText min="1" max=9999  /> -->
                       </span>
                       <span id="txtToEpide">
                         To:
-                        <input type="number" max="{{MaxEpisode}}" (blur)="episodeValidation()" min="{{MinEpisode}}" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.valuethis.value=(this.value < Number(this.min)) ? this.min : this.value" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                               placeholder="" name="episodeNoTo" [(ngModel)]="newMusicConsumptionRequest.EpisodeTo" class="RequestNumber">
+                        <input type="number" max="{{MaxEpisode}}" (blur)="episodeValidation()" min="{{MinEpisode}}"
+                          maxlength="4"
+                          oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.valuethis.value=(this.value < Number(this.min)) ? this.min : this.value"
+                          onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder=""
+                          name="episodeNoTo" [(ngModel)]="newMusicConsumptionRequest.EpisodeTo" class="RequestNumber">
                       </span>
                     </div>
                   </div>
@@ -227,7 +253,9 @@
                     <div *ngIf="showrbtndiv">
                       <span class="block" id="txtAiringNo">
                         Date:
-                        <p-calendar [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiTelecastDate" [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" readonlyInput="true"></p-calendar>
+                        <p-calendar [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiTelecastDate"
+                          [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" readonlyInput="true">
+                        </p-calendar>
 
                         <!-- <input type="date" value="" placeholder="" class="TextBox5" name="epiTelecastDate" [(ngModel)]="episodeDate" (ngModelChange)="newMusicConsumptionRequest.TelecastFrom=episodeDate;newMusicConsumptionRequest.TelecastTo=episodeDate"> -->
                       </span>
@@ -236,7 +264,9 @@
                       <span class="block" id="txtFromDate">
                         From:
                         <!-- [maxDate]="newMusicConsumptionRequest.TelecastTo" (ngModelChange)="telcastFromDateChnge()" -->
-                        <p-calendar id="Telecastfrom" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiFromDate" [showIcon]="true" [maxDate]="newMusicConsumptionRequest.TelecastTo" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+                        <p-calendar id="Telecastfrom" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom"
+                          name="epiFromDate" [showIcon]="true" [maxDate]="newMusicConsumptionRequest.TelecastTo"
+                          readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
 
                         <!-- <input type="date" value="" placeholder="dd/mm/yyyy" class="TextBox5" name="epiFromDate" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom"> -->
                       </span>
@@ -244,7 +274,10 @@
                       <span class="block" id="txtToDate" style="padding-top: 1%">
                         To: &nbsp;&nbsp;&nbsp;&nbsp;
                         <!-- [minDate]="newMusicConsumptionRequest.TelecastFrom" [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null" -->
-                        <p-calendar id="Telecastto" [(ngModel)]="newMusicConsumptionRequest.TelecastTo" [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null" [minDate]="newMusicConsumptionRequest.TelecastFrom" name="epiToDate" readonlyInput="true" [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+                        <p-calendar id="Telecastto" [(ngModel)]="newMusicConsumptionRequest.TelecastTo"
+                          [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null"
+                          [minDate]="newMusicConsumptionRequest.TelecastFrom" name="epiToDate" readonlyInput="true"
+                          [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
 
                         <!-- <input type="date" value="" placeholder="dd/mm/yyyy" class="TextBox5" name="epiToDate" [(ngModel)]="newMusicConsumptionRequest.TelecastTo"> -->
                       </span>
@@ -252,15 +285,17 @@
                   </div>
                 </div>
                 <div *ngIf="episodeType=='range'" class="box-body pull-right">
-                  <button id="showDetails" class="btn btn-sm btn-primary btn-flat pull-left" [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 || !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.EpisodeTo || !newMusicConsumptionRequest.TelecastFrom || !newMusicConsumptionRequest.TelecastTo"
-                          (click)="showRecommendations()">
+                  <button id="showDetails" class="btn btn-sm btn-primary btn-flat pull-left"
+                    [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 || !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.EpisodeTo || !newMusicConsumptionRequest.TelecastFrom || !newMusicConsumptionRequest.TelecastTo"
+                    (click)="showRecommendations()">
                     Viacom18 Recommendations
                   </button>
                 </div>
                 <div *ngIf="episodeType=='tentative'" class="box-body pull-right">
                   <!--  -->
-                  <button id="showDetails" class="btn btn-sm btn-primary btn-flat pull-left" [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 ||  !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.TelecastFrom"
-                          (click)="showRecommendations()">
+                  <button id="showDetails" class="btn btn-sm btn-primary btn-flat pull-left"
+                    [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 ||  !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.TelecastFrom"
+                    (click)="showRecommendations()">
                     Viacom18 Recommendations
                   </button>
                 </div>
@@ -270,7 +305,8 @@
         </section>
         <!-- style="display:none;" -->
         <div *ngIf="showdetail">
-          <app-cart-grid [componentData]="componentData" [newMusicConsumptionRequest]="newMusicConsumptionRequest" [componentType]="componentType"></app-cart-grid>
+          <app-cart-grid [componentData]="componentData" [newMusicConsumptionRequest]="newMusicConsumptionRequest"
+            [componentType]="componentType"></app-cart-grid>
         </div>
       </div>
       <div id="ReqList" class="tab-pane fade">
@@ -278,17 +314,21 @@
           <div class="row">
             <br>
 
-            <p-dataTable [value]="requestList" [rowsPerPageOptions]="[10,25,50,100]" [scrollable]="true" [first]="first" scrollHeight="450px" [paginator]="true" [rows]="10" [responsive]="true"
-                         [alwaysShowPaginator]="true" (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true" [totalRecords]="recordCount">
+            <p-dataTable [value]="requestList" [rowsPerPageOptions]="[10,25,50,100]" [scrollable]="true" [first]="first"
+              scrollHeight="450px" [paginator]="true" [rows]="10" [responsive]="true" [alwaysShowPaginator]="true"
+              (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true" [totalRecords]="recordCount">
               <!--  (onRowExpand)="rowexpand($event)" -->
               <p-column field="cueSheet" styleClass="text-center" [style]=" {'width':'50px' }">
                 <ng-template pTemplate="header">
                   <!-- <input type="checkbox" id="cueSheetheader"  name="cueSheetheader" value="cueSheetheader"   [(ngModel)]="cueSheetHeader" (click)="cueSheetHeaderChecked(cueSheetHeader)"> -->
-                  <p-checkbox name="cueSheetheader" value="cueSheetheader" label="" [(ngModel)]="cueSheetHeader" inputId="cueSheetheader" (click)="cueSheetHeaderChecked()" binary="true"></p-checkbox>
+                  <p-checkbox name="cueSheetheader" value="cueSheetheader" label="" [(ngModel)]="cueSheetHeader"
+                    inputId="cueSheetheader" (click)="cueSheetHeaderChecked()" binary="true"></p-checkbox>
                 </ng-template>
                 <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
                   <span *ngIf="row.Status=='Approved' || row.Status == 'Partially Approved'">
-                    <p-checkbox name="cueSheet'{{row.RequestID}}'" value="cueSheet'{{row.RequestID}}'" label="" [(ngModel)]="row[col.field]" inputId="cueSheet'{{row.RequestID}}'" (click)="cueSheetChecked(row)" binary="true"></p-checkbox>
+                    <p-checkbox name="cueSheet'{{row.RequestID}}'" value="cueSheet'{{row.RequestID}}'" label=""
+                      [(ngModel)]="row[col.field]" inputId="cueSheet'{{row.RequestID}}'" (click)="cueSheetChecked(row)"
+                      binary="true"></p-checkbox>
 
                     <!-- <input type="checkbox" id="cueSheet'{{row.RequestID}}'" [disabled]="false" name="cueSheet'{{row.RequestID}}'" value="cueSheet"   [(ngModel)]="row[col.field]" (click)="cueSheetChecked(row)"> -->
                   </span>
@@ -299,9 +339,11 @@
                   class="ReuestTextBoxFull"> -->
                 </ng-template>
               </p-column>
-              <p-column field="RequestID" header="Request ID" [sortable]="true" width="10" styleClass="text-center"></p-column>
+              <p-column field="RequestID" header="Request ID" [sortable]="true" width="10" styleClass="text-center">
+              </p-column>
               <p-column field="ChannelName" header="Channel" [sortable]="true" styleClass="text-center"></p-column>
-              <p-column field="Title_Name" header="Show" [sortable]="true" styleClass="text-center" [style]="{'width': '150px'}"></p-column>
+              <p-column field="Title_Name" header="Show" [sortable]="true" styleClass="text-center"
+                [style]="{'width': '150px'}"></p-column>
               <p-column field="CountRequest" header="No. of Songs" [sortable]="true" styleClass="text-center">
                 <ng-template pTemplate="body" let-row="rowData">
                   <a (click)="requestCountDetails(row,'N')"><span style="color:blue">{{row.CountRequest}}</span></a>
@@ -334,9 +376,10 @@
               <p-column field="Login_Name" header="Requested By" [sortable]="true" styleClass="text-center">
                 <ng-template pTemplate="body" let-row="rowData">
                   <span pTooltip="{{row.Login_Name}}" tooltipPosition="top">{{row.Login_Name}}</span>
-                  </ng-template>
+                </ng-template>
               </p-column>
-              <p-column field="RequestDate" header="Requested Date" [sortable]="true" styleClass="text-center" [style]="{'width': '150px'}">
+              <p-column field="RequestDate" header="Requested Date" [sortable]="true" styleClass="text-center"
+                [style]="{'width': '150px'}">
                 <ng-template pTemplate="body" let-row="rowData">
                   {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}
                 </ng-template>
@@ -355,9 +398,10 @@
   </section>
   <!-- Sidebar Add to contact -->
   <!-- Modal -->
-  <p-dialog [(visible)]="showRequestCountDetails" [blockScroll]="true" [modal]="true" [responsive]="false" [width]="1200" [positionTop]="60" [contentStyle]="{'overflow':'visible'}" [draggable]="false">
+  <p-dialog [(visible)]="showRequestCountDetails" [blockScroll]="true" [modal]="true" [responsive]="false"
+    [width]="1200" [positionTop]="60" [contentStyle]="{'overflow':'visible'}" [draggable]="false">
     <p-header>
-      Details:  <span style="font-family: serif;
+      Details: <span style="font-family: serif;
       font-size: medium;">
         {{requestCountHeader}}
       </span>
@@ -365,16 +409,20 @@
     <div class="Row">
       <div>
         <label>Search</label>&nbsp;
-        <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30" placeholder="Music Title, Movie/ Album" [(ngModel)]="requestCountSearch" (keyup)="filter(requestCountSearch)"
-               pInputText>
+        <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30"
+          placeholder="Music Title, Movie/ Album" [(ngModel)]="requestCountSearch" (keyup)="filter(requestCountSearch)"
+          pInputText>
       </div>
     </div>
     <br>
 
-    <p-dataTable [value]="requestCountFilteredList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch" [paginator]="true"
-                 rows="5" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true" scrollHeight="300px">
-      <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}"></p-column>
-      <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10" styleClass="text-center"></p-column>
+    <p-dataTable [value]="requestCountFilteredList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch"
+      [paginator]="true" rows="5" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true"
+      scrollHeight="300px">
+      <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}">
+      </p-column>
+      <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10" styleClass="text-center">
+      </p-column>
       <p-column field="LabelName" header="Music Label" [sortable]="true" width="10" styleClass="text-center"></p-column>
       <p-column field="IsApprove" header="Status" [sortable]="true" width="10" styleClass="text-center"></p-column>
       <!-- <p-column field="IsValid" header="Valid" [sortable]="true" width="10" styleClass="text-center"></p-column> -->
@@ -382,19 +430,68 @@
       <p-footer>
         Total Records: {{totalCountOfNoOfSongsDetails}}
       </p-footer>
-    </p-dataTable>
-    <!-- <div>
-      <div class="row"></div>
-      <label>Usage Instructions from Viacom18</label>
-      Special Instructions to Production House:
-    </div> -->
+    </p-dataTable><br>
+    <div style="margin-left: 15px;">
+      <table style="margin-left: -14px;">
+        <tbody>
+          <tr>
+            <td>
+              <div class="divRemarks">Production House Remarks: </div>
+            </td>
+            <td class="vl"></td>
+            <td>
+              <div class="divRemarks">Special Instructions to Production House: </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="remarksDetails">
+                <div class="expand_Remark">
+                  <span>{{remarksLabel}}</span>
+                </div>
+              </div>
+            </td>
+            <td class="vl"></td>
+            <td>
+              <div class="remarksDetails">
+                <div class="expand_Remark">
+                  <span>{{specialRemarks}}</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- <div class="row">
+        <div  class="col-md-4  border-Css padding-Css">
+          <label><b>Production House Remarks:</b></label><br>
+        </div>
+        <div class="col-md-2 separator"></div>
+        <div class="col-md-4 border-Css padding-Css" >
+          <label><b>Special Instructions to Production House:</b></label><br>
+        </div>
+        <div class="col-md-2"></div>
+      </div> -->
+      <!-- <div class="row"></div>
+      <div class="row">
+        <div  class="col-md-4 padding-Css">
+          {{remarksLabel}}
+        </div>
+        <div class="col-md-2"></div>
+        <div  class="col-md-4 padding-Css">
+          {{specialRemarks}}
+        </div>
+        <div class="col-md-2"></div>
+      </div>   -->
+    </div>
     <p-footer>
       <button type="button" pButton (click)="close()" label="Close"></button>
       <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
     </p-footer>
   </p-dialog>
 
-  <p-dialog [(visible)]="manualAssignDialog" [contentStyle]="{'overflow':'visible'}" [blockScroll]="true" [width]="1250" [positionTop]="60" [modal]="true" [responsive]="false" [draggable]="false">
+  <p-dialog [(visible)]="manualAssignDialog" [contentStyle]="{'overflow':'visible'}" [blockScroll]="true" [width]="1250"
+    [positionTop]="60" [modal]="true" [responsive]="false" [draggable]="false">
     <p-header>
 
       <!-- {{manualAssignHeader}} -->
@@ -402,27 +499,33 @@
     </p-header>
     <form #cueSheetForm="ngForm">
       <div class="remarkDiv" style="margin-top:20px;height:400px;">
-        <p-dataTable [value]="cueSheetList" [responsive]="true" [immutable]=false [scrollable]="true" scrollHeight="250px">
+        <p-dataTable [value]="cueSheetList" [responsive]="true" [immutable]=false [scrollable]="true"
+          scrollHeight="250px">
           <p-column field="cuesheetListCheck" styleClass="text-center" [style]=" {'width':'50px' }">
             <ng-template pTemplate="header">
 
-              <p-checkbox name="cueSheetheader" value="cueSheetheader" label="" [(ngModel)]="cueSheetListHeader" inputId="cueSheetheader" (click)="cueSheetListHeaderChecked()" binary="true"></p-checkbox>
+              <p-checkbox name="cueSheetheader" value="cueSheetheader" label="" [(ngModel)]="cueSheetListHeader"
+                inputId="cueSheetheader" (click)="cueSheetListHeaderChecked()" binary="true"></p-checkbox>
             </ng-template>
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
               <span>
-                <p-checkbox name="cueSheet'{{row.RequestID}}'" value="cueSheet'{{row.RequestID}}'" label="" [(ngModel)]="row[col.field]" inputId="cueSheet'{{row.RequestID}}'" (click)="cueSheetListChecked(row,index)" binary="true"></p-checkbox>
+                <p-checkbox name="cueSheet'{{row.RequestID}}'" value="cueSheet'{{row.RequestID}}'" label=""
+                  [(ngModel)]="row[col.field]" inputId="cueSheet'{{row.RequestID}}'"
+                  (click)="cueSheetListChecked(row,index)" binary="true"></p-checkbox>
 
 
               </span>
 
             </ng-template>
           </p-column>
-          <p-column field="Title_Name" header="Show Name" width="10" [style]="{'width':'100px'}" styleClass="text-center">
+          <p-column field="Title_Name" header="Show Name" width="10" [style]="{'width':'100px'}"
+            styleClass="text-center">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
               <span pTooltip="{{row.Title_Name}}" tooltipPosition="top">{{row.Title_Name}}</span>
             </ng-template>
           </p-column>
-          <p-column field="episodeRangeListName" header="Episode" width="10" [style]="{'width':'120px'}" styleClass="text-center">
+          <p-column field="episodeRangeListName" header="Episode" width="10" [style]="{'width':'120px'}"
+            styleClass="text-center">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
               <div *ngIf="row.EpisodeFrom==row.EpisodeTo">
                 <span pTooltip="{{row.episodeRangeListName}}" tooltipPosition="top">{{row.episodeRangeListName}}</span>
@@ -431,7 +534,11 @@
               <div *ngIf="row.EpisodeFrom!=row.EpisodeTo">
 
                 <!-- {{row.EpisodeTo}} -->
-                <p-multiSelect [options]="row[col.field]" [disabled]="row.Selected" [resetFilterOnHide]="true" appendTo="body" class="ManualcueSheetMultiSelect" [(ngModel)]="row.episodeRange" [maxSelectedLabels]="1" defaultLabel="Episode" [panelStyle]="{'width':'10px'}" id="episodeRange'{{index+1}}'" name="episodeRange'{{index+1}}'" #episodeRange{{index+1}}="ngModel"></p-multiSelect>
+                <p-multiSelect [options]="row[col.field]" [disabled]="row.Selected" [resetFilterOnHide]="true"
+                  appendTo="body" class="ManualcueSheetMultiSelect" [(ngModel)]="row.episodeRange"
+                  [maxSelectedLabels]="1" defaultLabel="Episode" [panelStyle]="{'width':'10px'}"
+                  id="episodeRange'{{index+1}}'" name="episodeRange'{{index+1}}'" #episodeRange{{index+1}}="ngModel">
+                </p-multiSelect>
               </div>
             </ng-template>
           </p-column>
@@ -440,12 +547,14 @@
               <span pTooltip="{{row.RequestedMusicTitle}}" tooltipPosition="top">{{row.RequestedMusicTitle}}</span>
             </ng-template>
           </p-column>
-          <p-column field="MusicMovieAlbum" header="Movie / Album" width="10" styleClass="text-center" [style]="{'width':'100px'}">
+          <p-column field="MusicMovieAlbum" header="Movie / Album" width="10" styleClass="text-center"
+            [style]="{'width':'100px'}">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
               <span pTooltip="{{row.MusicMovieAlbum}}" tooltipPosition="top">{{row.MusicMovieAlbum}}</span>
             </ng-template>
           </p-column>
-          <p-column field="LabelName" header="Music Label" width="10" [style]="{'width':'100px'}" styleClass="text-center">
+          <p-column field="LabelName" header="Music Label" width="10" [style]="{'width':'100px'}"
+            styleClass="text-center">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
               <span pTooltip="{{row.LabelName}}" tooltipPosition="top">{{row.LabelName}}</span>
             </ng-template>
@@ -455,21 +564,32 @@
 
           <p-column field="songType" header="Usage Type" [style]=" {'width':'120px' }">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-              <p-autoComplete [(ngModel)]="row[col.field]" [disabled]="row.Selected" appendTo="body" (keydown.space)="$event.preventDefault();" id="songType{{index+1}}" class="autoText" name="songType'{{index+1}}'"
-                              #songType{{index+1}}="ngModel" [suggestions]="filteredSong" (completeMethod)="filteredSongType($event)" field="SongType"
-                              placeholder="Usage Type" [minLength]="1"></p-autoComplete>
+              <p-autoComplete [(ngModel)]="row[col.field]" [disabled]="row.Selected" appendTo="body"
+                (keydown.space)="$event.preventDefault();" id="songType{{index+1}}" class="autoText"
+                name="songType'{{index+1}}'" #songType{{index+1}}="ngModel" [suggestions]="filteredSong"
+                (completeMethod)="filteredSongType($event)" field="SongType" placeholder="Usage Type" [minLength]="1">
+              </p-autoComplete>
               <!-- <input type="text" [(ngModel)]="row[col.field]" (ngModelChange)="songTypeChange()" autocomplete="off" required  class="requestSongType" id="songType{{index+1}}" name="songType'{{index+1}}'"
               #songType{{index+1}}="ngModel"> -->
             </ng-template>
           </p-column>
-          <p-column field="timeFrom" header="From Time" styleClass="text-center" [style]=" {'overflow':'visible','width':'120px' }">
+          <p-column field="timeFrom" header="From Time" styleClass="text-center"
+            [style]=" {'overflow':'visible','width':'120px' }">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
               <!-- <input type="text" [(ngModel)]="row[col.field]" value="00:00:00" (ngModelChange)="musicTrackChange(row[col.field])" required  class="ReuestTextBoxFull" id="MusicTrackName{{row.Srno}}" name="MusicTrackName'{{row.Srno}}'"
                                 #MusicTrackName{{row.Srno}}="ngModel"> -->
               <!-- [defaultDate]="defaultDate" -->
-              <p-calendar [(ngModel)]="row[col.field]" [disabled]="row.Selected"  [ngClass]="{'tbl-shadow ':returnVal ,'defaultStyle':!returnVal}" (ngModelChange)="calculateDuration(row,false,false)" [defaultDate]="defaultDate" appendTo="body" required class="timePickerFromCss" [timeOnly]="true" [showSeconds]="true" id="timeFrom'{{index+1}}'" name="timeFrom'{{index+1}}'" #timeFrom{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
-              <input type="number" min=0 max=23 value="" (ngModelChange)="calculateDuration(row,false,false)" [disabled]="row.Selected" required maxlength="2" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value" placeholder="" max="23" id="fromFrame'{{index+1}}'" name="fromFrame'{{index+1}}'" #fromFrame{{index+1}}="ngModel" [(ngModel)]="row.fromFrame"
-                     class="cueSheetFrame" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+              <p-calendar [(ngModel)]="row[col.field]" [disabled]="row.Selected"
+                [ngClass]="{'tbl-shadow ':returnVal ,'defaultStyle':!returnVal}"
+                (ngModelChange)="calculateDuration(row,false,false)" [defaultDate]="defaultDate" appendTo="body"
+                required class="timePickerFromCss" [timeOnly]="true" [showSeconds]="true" id="timeFrom'{{index+1}}'"
+                name="timeFrom'{{index+1}}'" #timeFrom{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
+              <input type="number" min=0 max=23 value="" (ngModelChange)="calculateDuration(row,false,false)"
+                [disabled]="row.Selected" required maxlength="2"
+                oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value"
+                placeholder="" max="23" id="fromFrame'{{index+1}}'" name="fromFrame'{{index+1}}'"
+                #fromFrame{{index+1}}="ngModel" [(ngModel)]="row.fromFrame" class="cueSheetFrame"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57">
             </ng-template>
           </p-column>
           <!-- <p-column field="fromFrame" header="From Frame"  styleClass="text-center"  [style]=" {'overflow':'visible','width':'100px' }">
@@ -479,11 +599,19 @@
                                     class="cueSheetFrame" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </ng-template>
           </p-column> -->
-          <p-column field="timeTo" header="To Time" [editable]="true" styleClass="text-center" [style]=" {'overflow':'visible','width':'120px' }">
+          <p-column field="timeTo" header="To Time" [editable]="true" styleClass="text-center"
+            [style]=" {'overflow':'visible','width':'120px' }">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-              <p-calendar [(ngModel)]="row[col.field]" [disabled]="row.Selected" (ngModelChange)="calculateDuration(row,false,false)" [defaultDate]="defaultDate" appendTo="body" required class="timePickerToCss" [timeOnly]="true" [showSeconds]="true" id="timeTo'{{index+1}}'" name="timeTo'{{index+1}}'" #timeTo{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
-              <input type="number" min=0 max=23 value="" (ngModelChange)="calculateDuration(row,false,false)" required maxlength="2" [disabled]="row.Selected" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value" placeholder="" max="23" id="toFrame'{{index+1}}'" name="toFrame'{{index+1}}'" #toFrame{{index+1}}="ngModel" [(ngModel)]="row.toFrame"
-                     class="cueSheetFrame" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+              <p-calendar [(ngModel)]="row[col.field]" [disabled]="row.Selected"
+                (ngModelChange)="calculateDuration(row,false,false)" [defaultDate]="defaultDate" appendTo="body"
+                required class="timePickerToCss" [timeOnly]="true" [showSeconds]="true" id="timeTo'{{index+1}}'"
+                name="timeTo'{{index+1}}'" #timeTo{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
+              <input type="number" min=0 max=23 value="" (ngModelChange)="calculateDuration(row,false,false)" required
+                maxlength="2" [disabled]="row.Selected"
+                oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value"
+                placeholder="" max="23" id="toFrame'{{index+1}}'" name="toFrame'{{index+1}}'"
+                #toFrame{{index+1}}="ngModel" [(ngModel)]="row.toFrame" class="cueSheetFrame"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57">
             </ng-template>
           </p-column>
           <!-- <p-column field="toFrame" header="To Frame"  styleClass="text-center"  [style]=" {'overflow':'visible','width':'100px' }">
@@ -492,11 +620,18 @@
                   class="cueSheetFrame" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
               </ng-template>
           </p-column> -->
-          <p-column field="durationTime" header="Duration Time" [editable]="true" styleClass="text-center" [style]=" {'overflow':'visible','width':'120px' }">
+          <p-column field="durationTime" header="Duration Time" [editable]="true" styleClass="text-center"
+            [style]=" {'overflow':'visible','width':'120px' }">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-              <p-calendar [(ngModel)]="row[col.field]" [disabled]="row.Selected" (ngModelChange)="durationTimeChange(row)" required [defaultDate]="defaultDate" appendTo="body" class="timePickerDurationCss" [timeOnly]="true" [showSeconds]="true" id="DurationTime'{{index+1}}'" name="DurationTime'{{index+1}}'" #DurationTime{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
-              <input type="number" [disabled]="row.Selected" min=0 value="" required maxlength="2" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value" placeholder="" max="23" id="durationFrame'{{index+1}}'" name="durationFrame'{{index+1}}'" #durationFrame{{index+1}}="ngModel" [(ngModel)]="row.durationFrame"
-                     class="cueSheetFrame" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+              <p-calendar [(ngModel)]="row[col.field]" [disabled]="row.Selected"
+                (ngModelChange)="durationTimeChange(row)" required [defaultDate]="defaultDate" appendTo="body"
+                class="timePickerDurationCss" [timeOnly]="true" [showSeconds]="true" id="DurationTime'{{index+1}}'"
+                name="DurationTime'{{index+1}}'" #DurationTime{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
+              <input type="number" [disabled]="row.Selected" min=0 value="" required maxlength="2"
+                oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value"
+                placeholder="" max="23" id="durationFrame'{{index+1}}'" name="durationFrame'{{index+1}}'"
+                #durationFrame{{index+1}}="ngModel" [(ngModel)]="row.durationFrame" class="cueSheetFrame"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57">
             </ng-template>
           </p-column>
           <!-- <p-column field="durationFrame" header="Duration Frame"   styleClass="text-center" [style]=" {'overflow':'visible','width':'100px' }">
@@ -513,7 +648,8 @@
         <label for="comment">Remark </label> (
         <i>{{textCueSheetRemarkCount}} / 4000 </i> )<span class="asterisk">*</span>
 
-        <textarea style="resize:none" rows="3" id="remark" class="cueSheetRemark" [(ngModel)]="remarksCueSheet" (ngModelChange)="remarkChange()" required name="ApprovalRemarks" maxlength=4000></textarea>
+        <textarea style="resize:none" rows="3" id="remark" class="cueSheetRemark" [(ngModel)]="remarksCueSheet"
+          (ngModelChange)="remarkChange()" required name="ApprovalRemarks" maxlength=4000></textarea>
       </div>
     </form>
     <!-- <span style="float:right"> -->
@@ -522,7 +658,8 @@
         <div class=" dropdown staticdropdown">
 
           <!-- (click)="op1.toggle($event)" -->
-          <input type="checkbox" name="termCondition" value="termCondition" [(ngModel)]="termCondition"> I agree to the <a style="color: blue" class="dropdown-toggle" data-toggle="dropdown">Terms and Conditions</a><br>
+          <input type="checkbox" name="termCondition" value="termCondition" [(ngModel)]="termCondition"> I agree to the
+          <a style="color: blue" class="dropdown-toggle" data-toggle="dropdown">Terms and Conditions</a><br>
 
           <!-- <p-overlayPanel #op1 appendTo="body" [style]="{width: '700px'}">
               These Standard Terms And Conditions contained herein on this webpage, shall govern your use of this website, including all pages within this website. These Terms apply in full force and effect to your use of this Website and by using this Website, you expressly accept all terms and conditions contained herein in full. You must not use this Website, if you have any objection to any of these Website Standard Terms And Conditions. You are granted a limited license only, subject to the restrictions provided in these Terms, for purposes of viewing the material contained on this Website.
@@ -530,7 +667,7 @@
           <ul class="dropdown-menu dropdown-menu-left">
             <div class="dropdwnbody">
               <li>
-               {{termsTextFirst}} <b>{{productionHouseName}}</b> {{termsTextSecond}}
+                {{termsTextFirst}} <b>{{productionHouseName}}</b> {{termsTextSecond}}
 
               </li>
 
@@ -541,7 +678,8 @@
       </div>
 
       <!-- {{cueSheetForm.form.valid}} -->
-      <button class="btn  btn-primary btn-sm" [disabled]="!cueSheetForm.form.valid || remarkCueSheetValid" (click)="submitMusicCueSheet()">
+      <button class="btn  btn-primary btn-sm" [disabled]="!cueSheetForm.form.valid || remarkCueSheetValid"
+        (click)="submitMusicCueSheet()">
         <span>Submit</span>
       </button>
     </p-footer>

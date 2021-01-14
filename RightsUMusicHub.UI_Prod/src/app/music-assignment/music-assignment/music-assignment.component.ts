@@ -472,6 +472,14 @@ export class MusicAssignmentComponent implements OnInit {
     this.load = true;
     this.addBlockUI();
     var exportcuesheetbody;
+    if (this.sortingDefault == true) {
+      this.sortBy = "RequestedDate";
+      this.order = "DESC";
+    }
+    else {
+      this.order = this.order;
+      this.sortBy = this.sortBy;
+    }
     if (this.searchClickevent == 'N') {
       exportcuesheetbody =
       {
@@ -480,7 +488,9 @@ export class MusicAssignmentComponent implements OnInit {
         "PageNo": this.exportPageNo,
         "StatusCode": '',
         "FromDate": "",
-        "ToDate": ""
+        "ToDate": "",
+        "SortBy": this.sortBy,
+        "Order": this.order
 
       }
     }
@@ -492,7 +502,9 @@ export class MusicAssignmentComponent implements OnInit {
         "PageNo": this.exportPageNo,
         "StatusCode": this.searchcueSheetBody.StatusCode,
         "FromDate": this.searchcueSheetBody.FromDate,
-        "ToDate": this.searchcueSheetBody.ToDate
+        "ToDate": this.searchcueSheetBody.ToDate,
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     console.log(exportcuesheetbody);
