@@ -200,7 +200,7 @@ namespace PAConsole
                         }
                     }
                     int Erow = 2;
-                    int Agreemntcnt = 1, Titlecnt = 1, TitleTypecnt = 1, rowNo = 2;
+                    int Alltcnt = 0, Agreemntcnt = 0, Titlecnt = 0, TitleTypecnt = 0, rowNo = 2;
                     foreach (DataRow row in dt.Rows)
                     {
                         int Ecolumn = 1;
@@ -215,56 +215,81 @@ namespace PAConsole
                             {
                                 sheet.Cells[Erow, Ecolumn].Value = row.ItemArray[Ecolumn - 1];
                             }
-                            //if (Erow > 2)
-                            //{
-                            //    if (col.ColumnName == "Agreement_No" || col.ColumnName == "Title" || col.ColumnName == "Title_Type")
-                            //    {
-                            //        string firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString();
-                            //        string secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();
+                            if (Erow > 2)
+                            {
+                                if (col.ColumnName == "Agreement_No" || col.ColumnName == "Title" || col.ColumnName == "Title_Type")
+                                {
+                                    string firstCellValue = "";
+                                    string secondCellValue = "";
+                                    if(col.ColumnName == "Agreement_No")
+                                    {
+                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn + 1].Value.ToString();
+                                        secondCellValue = row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
+                                    }
+                                    else if(col.ColumnName == "Title")
+                                    {
+                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString();
+                                        secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();
+                                    }
+                                    else if(col.ColumnName == "Title_Type")
+                                    {
+                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn - 1].Value.ToString();
+                                        secondCellValue = row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
+                                    }
 
-                            //        if (firstCellValue == secondCellValue)
-                            //        {
-                            //            if (col.ColumnName == "Agreement_No")
-                            //                Agreemntcnt++;
-                            //            if (col.ColumnName == "Title")
-                            //                Titlecnt++;
-                            //            if (col.ColumnName == "Title_Type")
-                            //                TitleTypecnt++;
-                            //            //sheet.Cells["A1:A2"].Merge = true;
-                            //        }
-                            //        else
-                            //        {
-                            //            if (col.ColumnName == "Agreement_No")
-                            //            {
-                            //                Agreemntcnt = 1;
-                            //                rowNo = Erow;
-                            //            }
-                            //                if (col.ColumnName == "Title")
-                            //            {
-                            //                Titlecnt = 1;
-                            //                rowNo = Erow;
-                            //            }
-                            //            if (col.ColumnName == "Title_Type")
-                            //            {
-                            //                TitleTypecnt = 1;
-                            //                rowNo = Erow;
-                            //            }
-                            //        }
+                                    if (firstCellValue == secondCellValue)
+                                    {
+                                        Alltcnt++;
+                                        if (col.ColumnName == "Agreement_No")
+                                            Agreemntcnt++;
 
-                            //        if (Agreemntcnt > 1 && col.ColumnName == "Agreement_No")
-                            //        {
-                            //            sheet.Cells[rowNo, Ecolumn, (Agreemntcnt + (rowNo)), Ecolumn].Merge = true;
-                            //        }
-                            //        if (Titlecnt > 1 && col.ColumnName == "Title")
-                            //        {
-                            //            sheet.Cells[rowNo + 1, Ecolumn, (Titlecnt + (rowNo)), Ecolumn].Merge = true;
-                            //        }
-                            //        if (TitleTypecnt > 1 && col.ColumnName == "Title_Type")
-                            //        {
-                            //            sheet.Cells[rowNo, Ecolumn, (TitleTypecnt + (rowNo)), Ecolumn].Merge = true;
-                            //        }
-                            //    }
-                            //}
+                                        if (col.ColumnName == "Title")
+                                            Titlecnt++;
+
+                                        if (col.ColumnName == "Title_Type")
+                                            TitleTypecnt++;
+
+                                        //sheet.Cells["A1:A2"].Merge = true;
+                                    }
+                                    else
+                                    {
+                                        //Alltcnt = 1;
+                                        //rowNo = Erow;
+                                        if (col.ColumnName == "Agreement_No")
+                                        {
+                                            Agreemntcnt = 0;
+                                            rowNo = Erow;
+                                        }
+                                        if (col.ColumnName == "Title")
+                                        {
+                                            Titlecnt = 0;
+                                            rowNo = Erow;
+                                        }
+                                        if (col.ColumnName == "Title_Type")
+                                        {
+                                            TitleTypecnt = 0;
+                                            rowNo = Erow;
+                                        }
+                                    }
+
+                                    //if(Alltcnt > 1)
+                                    //{
+                                    //    sheet.Cells[rowNo, Ecolumn, (Alltcnt + (rowNo)), Ecolumn].Merge = true;
+                                    //}
+                                    if (Agreemntcnt > 0 && col.ColumnName == "Agreement_No")
+                                    {
+                                        sheet.Cells[rowNo, Ecolumn, (Agreemntcnt + (rowNo)), Ecolumn].Merge = true;
+                                    }
+                                    if (Titlecnt > 0 && col.ColumnName == "Title")
+                                    {
+                                        sheet.Cells[rowNo, Ecolumn, (Titlecnt + (rowNo)), Ecolumn].Merge = true;
+                                    }
+                                    if (TitleTypecnt > 0 && col.ColumnName == "Title_Type")
+                                    {
+                                        sheet.Cells[rowNo, Ecolumn, (TitleTypecnt + (rowNo)), Ecolumn].Merge = true;
+                                    }
+                                }
+                            }
                             Ecolumn++;
                         }
                         Erow++;
