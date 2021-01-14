@@ -5,15 +5,30 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
     public class ReportsController : BaseController
     {
+        #region Properties
+        private List<Acq_Adv_Ancillary_Report> lstMHReport
+        {
+            get
+            {
+                if (Session["lstMHReport"] == null)
+                    Session["lstMHReport"] = new List<Acq_Adv_Ancillary_Report>();
+                return (List<Acq_Adv_Ancillary_Report>)Session["lstMHReport"];
+            }
+            set { Session["lstMHReport"] = value; }
+        }
+
+        #endregion
         #region --- Deal Version History Report ---
         public ActionResult DealVersionHistory()
         {
@@ -1631,7 +1646,159 @@ namespace RightsU_Plus.Controllers
             ViewBag.BusinessUnitList = GetBusinessUnitList();
             return View();
         }
+        public PartialViewResult BindPARList(int BUCode, int pageNo, int recordPerPage)
+        {
+            int RecordCount = 0;
+            List<Acq_Adv_Ancillary_Report> lst = new List<Acq_Adv_Ancillary_Report>();
+            lstMHReport = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit_Code == BUCode).OrderByDescending(o => o.Acq_Adv_Ancillary_Report_Code).ToList();
 
+            RecordCount = lstMHReport.Where(w => w.Accessibility.Trim() == "P" || (w.Accessibility.Trim() == "R" && w.Generated_By == objLoginUser.Users_Code)).Count();
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                lst = lstMHReport.Where(w => w.Accessibility.Trim() == "P" || (w.Accessibility.Trim() == "R" && w.Generated_By == objLoginUser.Users_Code)).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+            ViewBag.RecordCount = RecordCount;
+            return PartialView("~/Views/PA_Rights_Reports/_PARightsDataList.cshtml", lst);
+        }
+
+        public PartialViewResult BindCriteriaDetailsPopup(int AcqAdvAncillaryReportCode)
+        {
+            Acq_Adv_Ancillary_Report objPAR = lstMHReport.Where(x => x.Acq_Adv_Ancillary_Report_Code == AcqAdvAncillaryReportCode).FirstOrDefault();
+            var arrOfTitle = objPAR.Title_Codes.TrimEnd('﹐');
+            string strTitle = string.Join(",", arrOfTitle);
+
+            ViewBag.BusinessUnit = Get_Business_Unit(Convert.ToInt32(objPAR.Business_Unit_Code));
+           // ViewBag.AncillaryType = Get_Ancillary_Type(Convert.ToInt32(objPAR.Ancillary_Type_Codes));
+            //ViewBag.Title = Get_Title(objMUR.Title_Codes);
+            // var ArrTitleCodes = objMUR.Title_Codes.Trim('﹐');
+            var lstPlatformNames = new List<string>();
+            if (objPAR.Platform_Codes != " ")
+            {
+                var tempPlatformcode = objPAR.Platform_Codes.Split(',').Select(int.Parse).Distinct().ToList();
+                var lstPlatform =new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+                lstPlatformNames = lstPlatform.FindAll(x => tempPlatformcode.Any(y => y == x.Platform_Code)).Select(s => s.Platform_Name).ToList();
+                ViewBag.PlatForm = string.Join(",",lstPlatformNames);
+            }
+            else
+            {
+                ViewBag.PlatForm = "NA";
+            }
+            var lstTitleNames = new List<string>();
+            if (objPAR.Title_Codes != " ")
+            {
+                var tempTitlecode = objPAR.Title_Codes.Split(',').Select(int.Parse).Distinct().ToList();
+                var lstTitle = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+                lstTitleNames = lstTitle.FindAll(x => tempTitlecode.Any(y => y == x.Title_Code)).Select(s => s.Title_Name).ToList();
+                ViewBag.Title = string.Join(",", lstTitleNames);
+            }
+            else
+            {
+                ViewBag.Title = "NA";
+            }
+            var lstAncillaryNames = new List<string>();
+            if (objPAR.Ancillary_Type_Codes != " " && objPAR.Ancillary_Type_Codes != null)
+            {
+                var tempAncillarycode = objPAR.Ancillary_Type_Codes.Split(',').Select(int.Parse).Distinct().ToList();
+                var lstAncillary = new Ancillary_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+                lstAncillaryNames = lstAncillary.FindAll(x => tempAncillarycode.Any(y => y == x.Ancillary_Type_Code)).Select(s => s.Ancillary_Type_Name).ToList();
+                ViewBag.AncillaryType = string.Join(",",lstAncillaryNames);
+            }
+            else
+            {
+                ViewBag.AncillaryType = "NA";
+            }
+            if (objPAR.Agreement_No != "")
+            {
+                ViewBag.AgreementNo = objPAR.Agreement_No;
+            }
+            else
+            {
+                ViewBag.AgreementNo = "NA";
+            }
+           
+            if (objPAR.IncludeExpired == "Y")
+            {
+                ViewBag.IncludeExpired = "Yes";
+            }
+            else
+            {
+                ViewBag.IncludeExpired = "No";
+            }
+
+            return PartialView("~/Views/PA_Rights_Reports/_CriteriaDetails.cshtml");
+        }
+        public JsonResult DownloadReport(int MURCode)
+        {
+            //string fileName = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Acq_Adv_Ancillary_Report_Code == MURCode).Select(s => s.Report_Name).FirstOrDefault();
+            string fullPath = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "P&ARightsReport").Select(s => s.Parameter_Value).FirstOrDefault();
+            fullPath = fullPath + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx";
+            //string path = fullPath + fileName;
+
+            //string path = (Server.MapPath("~") + fullPath);// + "\\" + fileName);
+
+            FileInfo file = new FileInfo(fullPath);
+            if (file.Exists)
+            {
+                var obj = new
+                {
+                    path = fullPath,
+                    temppath = fullPath
+                };
+                return Json(obj);
+            }
+            else
+            {
+                var obj = new
+                {
+                    path = "",
+                    temppath = fullPath
+                };
+                return Json(obj);
+            }
+        }
+
+        public void Download(int MURCode)
+        {
+            //string fileName = new Music_Usage_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Usage_Report_Code == MURCode).Select(s => s.File_Name).FirstOrDefault();
+            string fullPath = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "P&ARightsReport").Select(s => s.Parameter_Value).FirstOrDefault();
+            fullPath = fullPath + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx";
+            //string path = fullPath + fileName;
+            //string path = (Server.MapPath("~") + fullPath + "\\" + fileName);
+
+            FileInfo file = new FileInfo(fullPath);
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            if (file.Exists)
+            {
+                byte[] bts = System.IO.File.ReadAllBytes(fullPath);
+                Response.Clear();
+                Response.ClearHeaders();
+                Response.AddHeader("Content-Type", "Application/ms-excel");
+                Response.AddHeader("Content-Length", bts.Length.ToString());
+                Response.AddHeader("Content-Disposition", "attachment;   filename=" + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx");
+                Response.BinaryWrite(bts);
+                Response.Flush();
+                //WebClient client = new WebClient();
+                //Byte[] buffer = client.DownloadData(path);
+                //Response.Clear();
+                //Response.ContentType = "application/ms-excel";
+                //Response.AddHeader("content-disposition", "Attachment;filename=" + fileName);
+                //Response.WriteFile(path);
+                //Response.End();
+            }
+        }
+
+        public string Get_Business_Unit(int BUCode)
+        {
+            string BU_names = "";
+
+            if (BUCode != 0)
+                BU_names = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit_Code == BUCode).Select(s => s.Business_Unit_Name).FirstOrDefault();
+            return BU_names;
+
+        }
+        
         public JsonResult BindPATitleList(int BU_Code, string keyword = "")
         {
             dynamic result = "";
@@ -1648,47 +1815,103 @@ namespace RightsU_Plus.Controllers
             return Json(result);
 
         }
-        public PartialViewResult BindPARightsReport(string agreementNo, string businessUnitcode, string titleCodes, string AncillaryTypeCode = "", string platformCodes = "", string IncludeExpired = "N")
+
+        public JsonResult BindPARightsReport(string txtCriteriaName, string AccessibilityType,string agreementNo, string businessUnitcode, string titleCodes, string AncillaryTypeCode = "", string platformCodes = "", string IncludeExpired = "N") // string txtfrom , string txtto, string dateformat, string datetimeformat, string txtCriteriaName, string AccessibilityType,
         {
+
             string title_names = TitleAutosuggest(titleCodes);
             string isAdvAncillary = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Ancillary_Advanced" && x.IsActive == "Y").Select(x => x.Parameter_Value.ToString()).FirstOrDefault();
-            if (isAdvAncillary == "Y")
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            //string from = "";
+            //string to = "";
+
+
+            string strTitle = string.Join(",", titleCodes);
+            string strAncilaary = string.Join(",", AncillaryTypeCode);
+            string strContent = string.Join(",", titleCodes);
+
+            //if (txtfrom != "")
+            //    from = GlobalUtil.MakedateFormat(txtfrom);
+            //if (txtto != "")
+            //    to = GlobalUtil.MakedateFormat(txtto);
+
+            Acq_Adv_Ancillary_Report_Service objService = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName);
+            Acq_Adv_Ancillary_Report objPAR = new RightsU_Entities.Acq_Adv_Ancillary_Report();
+            objPAR.EntityState = State.Added;
+            
+            objPAR.Title_Codes = title_names;
+            objPAR.Agreement_No = agreementNo;
+            objPAR.Business_Unit_Code = Convert.ToInt32(businessUnitcode);
+            // objPAR.Date_Format = dateformat;
+            // objPAR.DateTime_Format = datetimeformat;
+            objPAR.Platform_Codes = platformCodes;
+            objPAR.Created_By = objLoginUser.First_Name + " " + objLoginUser.Last_Name;
+            objPAR.Report_Name = txtCriteriaName;
+            objPAR.IncludeExpired = IncludeExpired;
+            objPAR.Accessibility = AccessibilityType;
+            objPAR.File_Name = "";
+            objPAR.Report_Status = "P";
+            objPAR.Generated_By = objLoginUser.Users_Code;
+            objPAR.Generated_On = System.DateTime.Now;
+
+
+            dynamic resultSet;
+            bool isValid = objService.Save(objPAR, out resultSet);
+
+            if (!isValid)
             {
-                if (platformCodes != " ")
-                    platformCodes = GetSelectedPlatform(platformCodes, businessUnitcode);
-
-                title_names = title_names == "" ? " " : title_names;
-                agreementNo = agreementNo == "" ? " " : agreementNo;
-                AncillaryTypeCode = AncillaryTypeCode == "" ? "0" : AncillaryTypeCode;
-
-                ReportParameter[] parm = new ReportParameter[9];
-                parm[0] = new ReportParameter("Agreement_No", agreementNo);
-                parm[1] = new ReportParameter("Title_Codes", title_names);//Title Name Means Title Codes
-                parm[2] = new ReportParameter("Business_Unit_Code", businessUnitcode.ToString());
-                parm[3] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-                parm[4] = new ReportParameter("Ancillary_Type_Code", AncillaryTypeCode);
-                parm[5] = new ReportParameter("Platform_Codes", platformCodes);
-                parm[6] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
-                parm[7] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
-                parm[8] = new ReportParameter("IncludeExpired", IncludeExpired);
-                ReportViewer rptViewer = BindReport(parm, "rpt_AdvAncillaryReport");
-                ViewBag.ReportViewer = rptViewer;
+                status = "E";
+                message = resultSet;
             }
-            else
+
+            var obj = new
             {
-                ReportParameter[] parm = new ReportParameter[7];
-                parm[0] = new ReportParameter("Agreement_No", agreementNo);
-                parm[1] = new ReportParameter("Title_Name", title_names);//Title Name Means Title Codes
-                parm[2] = new ReportParameter("Business_Unit_Code", businessUnitcode.ToString());
-                parm[3] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-                parm[4] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
-                parm[5] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
-                ReportViewer rptViewer = BindReport(parm, "rpt_AncillaryRightsReport");
-                ViewBag.ReportViewer = rptViewer;
-            }
-
-            return PartialView("~/Views/Shared/ReportViewer.cshtml");
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
         }
+        //public PartialViewResult BindPARightsReport(string agreementNo, string businessUnitcode, string titleCodes, string AncillaryTypeCode = "", string platformCodes = "", string IncludeExpired = "N")
+        //{
+        //    string title_names = TitleAutosuggest(titleCodes);
+        //    string isAdvAncillary = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Ancillary_Advanced" && x.IsActive == "Y").Select(x => x.Parameter_Value.ToString()).FirstOrDefault();
+        //    if (isAdvAncillary == "Y")
+        //    {
+        //        if (platformCodes != " ")
+        //            platformCodes = GetSelectedPlatform(platformCodes, businessUnitcode);
+
+        //        title_names = title_names == "" ? " " : title_names;
+        //        agreementNo = agreementNo == "" ? " " : agreementNo;
+        //        AncillaryTypeCode = AncillaryTypeCode == "" ? "0" : AncillaryTypeCode;
+
+        //        ReportParameter[] parm = new ReportParameter[9];
+        //        parm[0] = new ReportParameter("Agreement_No", agreementNo);
+        //        parm[1] = new ReportParameter("Title_Codes", title_names);//Title Name Means Title Codes
+        //        parm[2] = new ReportParameter("Business_Unit_Code", businessUnitcode.ToString());
+        //        parm[3] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+        //        parm[4] = new ReportParameter("Ancillary_Type_Code", AncillaryTypeCode);
+        //        parm[5] = new ReportParameter("Platform_Codes", platformCodes);
+        //        parm[6] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
+        //        parm[7] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+        //        parm[8] = new ReportParameter("IncludeExpired", IncludeExpired);
+        //        ReportViewer rptViewer = BindReport(parm, "rpt_AdvAncillaryReport");
+        //        ViewBag.ReportViewer = rptViewer;
+        //    }
+        //    else
+        //    {
+        //        ReportParameter[] parm = new ReportParameter[7];
+        //        parm[0] = new ReportParameter("Agreement_No", agreementNo);
+        //        parm[1] = new ReportParameter("Title_Name", title_names);//Title Name Means Title Codes
+        //        parm[2] = new ReportParameter("Business_Unit_Code", businessUnitcode.ToString());
+        //        parm[3] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+        //        parm[4] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
+        //        parm[5] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+        //        ReportViewer rptViewer = BindReport(parm, "rpt_AncillaryRightsReport");
+        //        ViewBag.ReportViewer = rptViewer;
+        //    }
+
+        //    return PartialView("~/Views/Shared/ReportViewer.cshtml");
+        //}
         #endregion-----------------------------------------------------------------------------------
 
         #region---------------- Cost Report----------------------------------------------------
