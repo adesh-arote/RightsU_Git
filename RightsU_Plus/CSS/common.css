@@ -333,6 +333,7 @@ font-family:'Glyphicons';
 .glyphicon-exclamation-sign:before {content:"\e101";}
 .glyphicon-phone:before {content:"\e145";}
 .glyphicon-off:before{content:"\e017";}
+.glyphicon-collapse-down:before {content: "\e159";}
 
 .glyphicon-question-sign:before {content:"\e085"; color:#ffffff;}
 .glyphicon-question-sign2:before {content:"\e085";}

@@ -25,6 +25,8 @@
     var URL_BindPARightsReport = '@Url.Action("BindPARightsReport", "Reports")';
     var URL_BindPATitleList = '@Url.Action("BindPATitleList", "Reports")';
     var URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNo", "Reports")';
+    var URL_BindPARList = '@Url.Action("BindPARList", "Reports")';
+    var URL_DownloadReport = '@Url.Action("DownloadReport", "Reports")';
 
     var platformCodes_G = " ";
     var platformCodes_GP = " ";
@@ -44,14 +46,14 @@
         $('#ddlAncillaryType').each(function () {
             $(this)[0].sumo.reload();
         });
-
+        BindDealDataList();
         //$('#ddlBusinessUnit_chosen').click(function () {
         //    BindTitleList($('#ddlBusinessUnit').val());
         //});
 
     });
 
-    function btnShow_OnClick() {
+    @*function btnShow_OnClick() {
         debugger;
         var businessUnitcode = $('#ddlBusinessUnit').val();
         var titleList = $('#txtTitle').val();
@@ -115,13 +117,14 @@
                     $('#divResult').empty();
                     $('#divResult').html(result);
                     $("#ddlAncillaryType")[0].sumo.reload();
+                    BindDealDataList();
                 }
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
             }
         });
-    }
+    }*@
 
     function populateAgreementNo(evt) {
         $('.required').removeClass('required');
@@ -174,7 +177,9 @@
                                     return {
                                         label: v.Text,
                                         val: v.Code
+
                                     }
+                                    BindDealDataList();
                                 }))
                             }
                         },
@@ -268,6 +273,7 @@
                                         label: v.Title_Name,
                                         val: v.Title_Code
                                     }
+                                    BindDealDataList();
                                 }))
                             }
                         },
@@ -316,6 +322,7 @@
     }
 
     function ClosePopup() {
+        debugger;
         platformCodes_G = $("#hdnTVCodes").val();
         platformCodes_GP = $("#hdnPGCode").val();
         var selectedPlatform = $('#Rights_PlatformplatformCnt').text();
@@ -324,6 +331,7 @@
         $('#selectedPlatofrms').text('');
         $('#selectedPlatofrms').text("@objMessageKey.SelectedPlatforms: " + selectedPlatform);
 
+        $('#popup1').modal('hide');
         $('#popup').modal('hide');
         $('#pupupHtml').empty();
 
@@ -346,12 +354,14 @@
                 }
                 $('#pupupHtml').empty();
                 $('#pupupHtml').html(result);
-                $('#popup').modal();
+                $('#popup1').modal();
+                //$('#popup').modal();
             },
             error: function (result) { }
         });
     }
     function BindPlatform() {
+        debugger;
         $.ajax({
             type: "POST",
             url: URL_BindPlatformTreeView,
@@ -368,6 +378,7 @@
                 }
                 $('#divTree').empty();
                 $('#divTree').html(result);
+               // BindPlatformGroup();
             },
             error: function (result) { }
         });
@@ -426,7 +437,302 @@
             $('#divTree').empty();
         }
     }
+
+
+
+    @*function ClosePopup() {
+        platformCodes_G = $("#hdnTVCodes").val();
+        platformCodes_GP = $("#hdnPGCode").val();
+        var selectedPlatform = $('#Rights_PlatformplatformCnt').text();
+        if (selectedPlatform.trim() == "")
+            selectedPlatform = '0';
+        $('#selectedPlatofrms').text('');
+        $('#selectedPlatofrms').text("@objMessageKey.SelectedPlatforms: " + selectedPlatform);
+
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+
+    }*@
+
 </script>
+<script>
+    //function ClosePopup() {
+    //    $('#popup1').modal('hide');
+    //    $('#popup').modal('hide');
+    //    $('#pupupHtml').empty();
+    //}
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindDealDataList()
+        //SetPaging();
+    }
+    function SetPaging() {
+        debugger
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindDealDataList();
+        else
+            IsCall = 'Y';
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function btnShow_OnClick() {
+        debugger;
+        if (validateSave('CHK')) {
+            $('#txtCriteriaName').val('');
+            $('input:radio[name=AccessibilityType][id=rdoPub]').prop('checked', true);
+            //$('#popup1').modal();
+            $('#popup').modal();
+        }
+    }
+
+    function validateSave(callFrom) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal = true;
+        var str = "";
+        var agreementNo = $('#txtAgreementNo').val();
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var Content = $('#txtTitle').val();
+        
+
+        // if ($('#txtTitle').val() == 0 && $('#txtfrom').val() == '' && $('#txtto').val() == '' && $('#ddlChannelList').val() == null && $('#ddlTitleTypeList').val() == null && $('#ddlMusicLabelList').val() == null && $('#txtStar').val() == 0 && $('#ddlGenresList').val() == null && $('#ddlMusicThemeList').val() == null) {
+        if ($('#txtAgreementNo').val() == 0 && $('#ddlBusinessUnit').val() == '' && $('#txtTitle').val() == '') {
+            showAlert('E', 'Please Select at least one search criteria');
+            return false;
+        }
+        var IsAncillary = $('#hdnIsAncillary').val();
+        var platformCodes = "";
+        var AncillaryTypeCode = {};
+        if (IsAncillary == "Y") {
+
+            if ($('#hdnTitleCode').val() == '0' && ($('#ddlAncillaryType').val() == "" || $('#ddlAncillaryType').val() == null)) {
+                showAlert('E', '@objMessageKey.PleaseSelectatleastTitleOrAncillaryType');
+                return false;
+            }
+
+            platformCodes = platformCodes_G;
+            if ($('#ddlAncillaryType').val() != "" && $('#ddlAncillaryType').val() != 0 && $('#ddlAncillaryType').val() != null) {
+                AncillaryTypeCode = $('#ddlAncillaryType').val().join(',');//$('#ddlAncillaryType').val();
+            }
+            else
+                AncillaryTypeCode = "";
+
+        }
+        else {
+            if ($('#hdnTitleCode').val() == '0' && ($('#txtAgreementNo').val() == null || agreementNo == "")) {
+                showAlert('E', '@objMessageKey.PleaseSelectatleastonesearchcriteria');
+                return false;
+            }
+        }
+        var IncludeExpired = "";
+        if ($('#IncludeExpired').is(':checked')) {
+            IncludeExpired = "Y";
+        }
+        else
+            var IncludeExpired = "N";
+        
+        if (callFrom == 'FS') {
+
+            var txtCriteriaName = $.trim($('#txtCriteriaName').val());
+            var AccessibilityType = $("input[name='AccessibilityType']:checked").val(); // PR OR PU
+
+            if (txtCriteriaName == "") {
+                $('#txtCriteriaName').val('')
+                $('#txtCriteriaName').attr('required', true)
+                returnVal = false;
+                return false
+            }
+            if (returnVal) {
+                $.ajax({
+                    type: "POST",
+                    url: URL_BindPARightsReport,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        txtCriteriaName: txtCriteriaName,
+                        AccessibilityType: AccessibilityType,
+                        agreementNo: agreementNo,
+                        businessUnitcode: businessUnitcode,
+                        titleCodes: Content,
+                        AncillaryTypeCode: AncillaryTypeCode,
+                        platformCodes: platformCodes,
+                        IncludeExpired : IncludeExpired,
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.Status == 'S') {
+                                showAlert('S', result.Message);
+                                ClosePopup();
+                                BindDealDataList();
+                                ClearAll();
+                            }
+                            else
+                                showAlert('E', result.Message);
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        }
+
+        return returnVal;
+    }
+
+    function BindDealDataList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        var BUCode = $("#ddlBusinessUnit").val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindPARList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                BUCode: BUCode,
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divDealDataList').empty();
+                    $('#divDealDataList').html(result);
+                    SetPaging();
+                   // GetMURStatus();
+                    initializeTooltip();
+                    initializeExpander();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function DownloadReport(MURCode) {
+        debugger;
+            $.ajax({
+                type: "POST",
+                url: URL_DownloadReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    MURCode: MURCode
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result.path == "")
+                        showAlert('E',"File Not Found");
+                    else {
+                        debugger;
+                        window.location.href = '@Url.Action("Download", "Reports")?MURCode=' + MURCode;
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+    }
+    function RefreshReport(MURCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_RefreshReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                MURCode: MURCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Message != "") {
+                        showAlert("S", "Data Refresh Successfully");
+                    }
+                    BindDealDataList();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function DeleteConfirmation(MURCode) {
+        debugger
+        $('#hdnDeleteId').val(MURCode);
+        showAlert("I", "Are you sure, you want to delete this record?", 'OKCANCEL');
+        return false;
+    }
+    </script>
 
 <style>
      #Tree_Filter_Rights_Platform {
@@ -477,7 +783,7 @@
     td {
         padding: 1px;
     }
-        
+
     .chosen-choices {
         max-height: 55px !important;
         overflow-y: auto;
@@ -509,7 +815,7 @@
                         </td>
                         <td style="width:10%;">
                             <label class="bold">
-                               @objMessageKey.BusinessUnit
+                                @objMessageKey.BusinessUnit
                             </label>
                         </td>
                         <td style="width:25%;">
@@ -547,10 +853,10 @@
                                 Include Expired Titles
                             </td>
                             <td style="width:20%;text-align:right">
-                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                                <input type="button" id="btnShow" class="btn btn-primary" value="Save" onclick="btnShow_OnClick()">
                                 <input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
                             </td>
-                            
+
                         </tr>
                     }
                     else
@@ -564,15 +870,82 @@
                     }
                 </table>
             </div>
-            <br />
-            <div id="divResult">
+            <div class="grid_area">
+                <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                <div class="paging_area clearfix">
+                    <span class="pull-left">Total Records: </span>
+                    <span class="pull-left" id="lblRecordCount"></span>
+                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
 
+                    <div id="Pagination" class="pagination">
+                    </div>
+                    <span class="pull-right">
+                        Page Size
+                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()">
+                    </span>
+                </div>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="scale_table_block">
+                        <div id="divDealDataList" class="deal clearfix"> </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 </div>
 
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade small_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="max-width:531px!important" data-backdrop="static">
+    @*<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">*@
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="modal_block modal_header">
+                <a class="close" onclick="ClosePopup()">
+                    <span>X</span>
+                    <span class="sr-only">Close</span>
+                </a>
+                <h2>Criteria</h2>
+            </div>
+            <div class="modal_block">
+                <div style="padding: 10px 20px;">
+                    <table>
+                        <tr>
+                            <td style="width:30%"><b>Report Name</b></td>
+                            <td style="width:70%">
+                                <input type="text" id="txtCriteriaName" name="Criteria_Name" placeholder="Report Name" style="width:80%" maxlength="100" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%"><b>Accessibility</b></td>
+                            <td style="width:70%">
+                                <span>
+                                    <input id="rdoPub" name="AccessibilityType" type="radio" value="P" checked="checked">&nbsp;Public &nbsp; &nbsp;
+                                    <input id="rdoPri" name="AccessibilityType" type="radio" value="R">&nbsp;Private
+                                </span>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+            <div class="modal_block_full" style="margin-bottom: -10px;">
+                <div class="form_links" style="padding-left:10px; padding-top: 0px;">
+                    <ul class="modal_block clearfix" style="padding-top: 10px;">
+                        <li>
+                            <span>
+                                <input type="submit" class="btn btn-primary" value="Save" onclick="return validateSave('FS');" />
+                                <input type="button" class="btn btn-primary" value="Cancel" onclick="ClosePopup()" />
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup1" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
 

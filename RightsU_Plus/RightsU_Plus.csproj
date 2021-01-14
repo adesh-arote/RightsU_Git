@@ -1199,6 +1199,8 @@
     <Content Include="Views\Title_Content_ImportExport\_AddMovieAlbum.cshtml" />
     <Content Include="Views\Title_Content_ImportExport\_AddMusicTitle.cshtml" />
     <Content Include="Views\Reports\DealWorkflowStatusPending.cshtml" />
+    <Content Include="Views\PA_Rights_Reports\_PARightsDatalist.cshtml" />
+    <Content Include="Views\PA_Rights_Reports\_CriteriaDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
