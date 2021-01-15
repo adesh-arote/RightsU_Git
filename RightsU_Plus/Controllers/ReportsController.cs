@@ -1733,10 +1733,11 @@ namespace RightsU_Plus.Controllers
         {
             //string fileName = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Acq_Adv_Ancillary_Report_Code == MURCode).Select(s => s.Report_Name).FirstOrDefault();
             string fullPath = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "P&ARightsReport").Select(s => s.Parameter_Value).FirstOrDefault();
-            fullPath = fullPath + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx";
+
+            //fullPath = fullPath + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx";
+             fullPath = (Server.MapPath("~") + fullPath + "\\"  +"Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx");
             //string path = fullPath + fileName;
 
-            //string path = (Server.MapPath("~") + fullPath);// + "\\" + fileName);
 
             FileInfo file = new FileInfo(fullPath);
             if (file.Exists)
@@ -1763,7 +1764,7 @@ namespace RightsU_Plus.Controllers
         {
             //string fileName = new Music_Usage_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Usage_Report_Code == MURCode).Select(s => s.File_Name).FirstOrDefault();
             string fullPath = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "P&ARightsReport").Select(s => s.Parameter_Value).FirstOrDefault();
-            fullPath = fullPath + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx";
+            fullPath = (Server.MapPath("~") + fullPath + "\\" + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx");
             //string path = fullPath + fileName;
             //string path = (Server.MapPath("~") + fullPath + "\\" + fileName);
 
