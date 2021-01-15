@@ -67,6 +67,7 @@
     <Folder Include="dbo\Functions\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\User Defined Types\" />
+    <Folder Include="dbo\Dev_Query" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Module_Status_History.sql" />
@@ -1443,5 +1444,7 @@
     <Build Include="dbo\User Defined Types\Acq_Deal_Movie_Contents_Import_UDT.sql" />
     <Build Include="dbo\User Defined Types\CuratedPreview_UDT.sql" />
     <Build Include="dbo\User Defined Types\RightsDefination.sql" />
+    <Build Include="dbo\Dev_Query\DevTagQuery.sql" />
+    <Build Include="dbo\Stored Procedures\USPMHConsumptionRequestListDetail.sql" />
   </ItemGroup>
 </Project>
