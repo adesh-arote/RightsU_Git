@@ -1553,6 +1553,17 @@ body [name="showList"] .ui-multiselect .ui-multiselect-label-container {
 	color: red;
 	margin: 4px;
 }
+body [name="dataGrid"] .ui-paginator a {
+    color: #555555;
+    right: 20px;
+}
+
+body [name="dataGrid"] .ui-widget-content {
+    border: 1px solid #D5D5D5;
+    background-color: #ffffff;
+    color: #222222;
+    height: 90px;
+}
 
 @media screen and (max-width: 400px) {
 	.oneDiv {

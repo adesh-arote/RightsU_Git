@@ -87,7 +87,10 @@ export class NewRequestComponent implements OnInit {
   public productionHouseName;
   public order: any;
   public sortBy: any;
-  public isRequestListclick:boolean=false;
+  public isRequestListclick: boolean = false;
+  public RemarkSpecialInstruction: any = [];
+  public remarksLabel: any;
+  public specialRemarks: any;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.mindatevalue = new Date();
@@ -294,7 +297,7 @@ export class NewRequestComponent implements OnInit {
   Requestlistclick() {
     debugger;
     if (this.Reqcount == 0) {
-      this.isRequestListclick=true;
+      this.isRequestListclick = true;
       this.getRequestList(10, 1);
       this.Reqcount++;
     }
@@ -462,13 +465,13 @@ export class NewRequestComponent implements OnInit {
     this.load = true;
     this.addBlockUI();
     var consumtionListBody;
-    if(this.isRequestListclick == true){
+    if (this.isRequestListclick == true) {
       this.sortBy = "RequestDate";
       this.order = "DESC";
     }
-    else{
-      this.sortBy= this.sortBy;
-      this.order=this.order;
+    else {
+      this.sortBy = this.sortBy;
+      this.order = this.order;
     }
     if (this.searchClickevent == 'N') {
       this.first = 0;
@@ -514,10 +517,9 @@ export class NewRequestComponent implements OnInit {
       if (response.Return.IsSuccess == true) {
         this.recordCount = response.RecordCount
         this.requestList = response.RequestList;
-        this.isRequestListclick=false;
+        this.isRequestListclick = false;
         this.cueSheetHeader = false
         this.requestList.forEach(x => x.cueSheet = false);
-
         console.log(this.requestList);
       }
 
@@ -538,6 +540,9 @@ export class NewRequestComponent implements OnInit {
       this.requestCountList = response.RequestDetails;
       this.requestCountFilteredList = response.RequestDetails;
       this.totalCountOfNoOfSongsDetails = response.RequestDetails.length;
+      this.RemarkSpecialInstruction = response.RemarkSpecialInstruction;
+      this.remarksLabel = this.RemarkSpecialInstruction.Remarks;
+      this.specialRemarks = this.RemarkSpecialInstruction.SpecialInstructions;
       this.showRequestCountDetails = true;
       this.requestCountHeader = rowdata.RequestID + ' / ' + rowdata.ChannelName + ' / ' + rowdata.Title_Name + ' ( ' + (rowdata.EpisodeFrom == rowdata.EpisodeTo ? rowdata.EpisodeFrom : rowdata.EpisodeFrom + ' To ' + rowdata.EpisodeTo) + ' )'
       this.newSearchRequest = {
@@ -706,11 +711,11 @@ export class NewRequestComponent implements OnInit {
     var pageSize = event.rows;
     var sortBy = event.sortField;
     this.sortBy = sortBy;
-    if( event.sortField == undefined){
-      this.sortBy="RequestDate";
+    if (event.sortField == undefined) {
+      this.sortBy = "RequestDate";
     }
-    else{
-      this.sortBy=this.sortBy;
+    else {
+      this.sortBy = this.sortBy;
     }
     if (event.sortOrder == 1) {
       this.order = "ASC";
@@ -790,8 +795,7 @@ export class NewRequestComponent implements OnInit {
       console.log(response);
       this.recordCount = response.RecordCount
       this.requestList = response.RequestList;
-      this.isRequestListclick=false;
-
+      this.isRequestListclick = false;
       console.log(this.requestList);
       this.requestListValidation();
 
@@ -957,9 +961,18 @@ export class NewRequestComponent implements OnInit {
 
   }
   exportToExcel() {
+    debugger;
     this.load = true;
     this.addBlockUI();
     var exportConsumptionBody;
+    if (this.isRequestListclick == true) {
+      this.sortBy = "RequestDate";
+      this.order = "DESC";
+    }
+    else {
+      this.sortBy = this.sortBy;
+      this.order = this.order;
+    }
     if (this.searchClickevent == 'N') {
       exportConsumptionBody = {
         "RecordFor": "L",
@@ -972,7 +985,9 @@ export class NewRequestComponent implements OnInit {
         "StatusCode": '',
         "FromDate": "",
         "ToDate": "",
-        "ExportFor": ''
+        "ExportFor": '',
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     else if (this.searchClickevent == 'Y') {
@@ -987,7 +1002,9 @@ export class NewRequestComponent implements OnInit {
         "StatusCode": this.searchconsumtionListBody.StatusCode,
         "FromDate": this.searchconsumtionListBody.FromDate,
         "ToDate": this.searchconsumtionListBody.ToDate,
-        "ExportFor": ''
+        "ExportFor": '',
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     console.log(exportConsumptionBody);

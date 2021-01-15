@@ -447,7 +447,16 @@ export class AuthorizedMusicComponent implements OnInit {
     this.getRequestList(10, 1);
   }
   exportToExcel() {
+    debugger;
     this.load = true;
+    if (this.sortingDefault == true) {
+      this.sortBy = "RequestDate";
+      this.order = "DESC";
+    }
+    else {
+      this.order = this.order;
+      this.sortBy = this.sortBy;
+    }
     this.addBlockUI();
     var exportConsumptionBody;
     if (this.searchClickevent == 'N') {
@@ -462,7 +471,9 @@ export class AuthorizedMusicComponent implements OnInit {
         "StatusCode": '',
         "FromDate": "",
         "ToDate": "",
-        "ExportFor": 'A'
+        "ExportFor": 'A',
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     else if (this.searchClickevent == 'Y') {
@@ -477,7 +488,9 @@ export class AuthorizedMusicComponent implements OnInit {
         "StatusCode": this.searchconsumtionListBody.StatusCode,
         "FromDate": this.searchconsumtionListBody.FromDate,
         "ToDate": this.searchconsumtionListBody.ToDate,
-        "ExportFor": 'A'
+        "ExportFor": 'A',
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     console.log(exportConsumptionBody);
