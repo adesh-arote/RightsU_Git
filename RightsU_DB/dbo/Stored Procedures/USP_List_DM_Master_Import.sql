@@ -1,4 +1,4 @@
-﻿CREATE  PROCEDURE [dbo].[USP_List_DM_Master_Import]  
+﻿ALTER  PROCEDURE [dbo].[USP_List_DM_Master_Import]  
 (  
 	@strSearch  NVARCHAR(2000),  
 	@PageNo INT=1,  
@@ -87,7 +87,7 @@ BEGIN
 		UPDATE T SET T.IgnoreCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Is_Ignore = 'Y')
 		FROM #Temp T
 
-		UPDATE T SET T.ErrorCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'E')
+		UPDATE T SET T.ErrorCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'E' AND Is_Ignore <> 'Y')
 		FROM #Temp T
 
 		UPDATE T SET T.WaitingCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'N' AND Is_Ignore <> 'Y')

@@ -1125,7 +1125,7 @@ namespace RightsU_Plus.Controllers
         public string ValidateTalent(string Columns_Value_Code1, int Columns_Code, string type)
         {
             string Result = "";
-            string ColumnsValueCode = Columns_Value_Code1;
+            string ColumnsValueCode = Columns_Value_Code1 ?? "";
             string[] arrColumnsValueCode = ColumnsValueCode.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             if (arrColumnsValueCode.Count() > 0)
             {

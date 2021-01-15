@@ -323,10 +323,10 @@
                             </li>
                             <li>
                                 @Html.Hidden("hdnddlLanguage")
-                                <label>@objMessageKey.Movie / @objMessageKey.Album </label>
+                                <label> Music Movie / Album </label>
                                 <br />
                                 @*@Html.DropDownList("Music_Album_Name", (List<SelectListItem>)ViewBag.MovieAlbum, new { @id = "Music_Album_Name", @class = "form_input chosen-select", onchange = "jsFunction(this.value);" })*@
-                                <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbum" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:250px" onkeyup="AutoCompleteMovieAlbum(this)" />
+                                <input type="text" placeholder="Music Movie / Album" name="Music_Album_Name" id="txtmusicAlbum" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:250px" onkeyup="AutoCompleteMovieAlbum(this)" />
                                 <input type="hidden" id="hdnMovieAlbumCode" />
                                 <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddMovieAlbum" onclick="AddTalent();" />
                             </li>
