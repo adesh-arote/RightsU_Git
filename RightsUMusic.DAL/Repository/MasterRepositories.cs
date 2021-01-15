@@ -509,6 +509,29 @@ namespace RightsUMusic.DAL.Repository
         }
     }
 
+    public class USPMHConsumptionRequestDetailRepositories : MainRepository<USPMHConsumptionRequestListDetail>
+    {
+        public IEnumerable<USPMHConsumptionRequestListDetail> GetConsumptionRequestDetailList(MHRequest objMHRequest, ConsumptionRequestListInput objConsumptionRequestList, out int _RecordCount)//,string RecordFor, string PagingRequired, int PageSize, int PageNo, out int _RecordCount)
+        {
+            var param = new DynamicParameters();
+            param.Add("@RequestTypeCode", objMHRequest.MHRequestTypeCode);
+            param.Add("@UsersCode", objMHRequest.UsersCode);
+            param.Add("@RecordFor", objConsumptionRequestList.RecordFor);
+            param.Add("@RecordCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            param.Add("@RequestID", objConsumptionRequestList.RequestID);
+            param.Add("@ChannelCode", objConsumptionRequestList.ChannelCode);
+            param.Add("@ShowCode", objConsumptionRequestList.ShowCode);
+            param.Add("@StatusCode", objConsumptionRequestList.StatusCode);
+            param.Add("@FromDate", objConsumptionRequestList.FromDate.ToString());
+            param.Add("@ToDate", objConsumptionRequestList.ToDate.ToString());
+            param.Add("@SortBy", objConsumptionRequestList.SortBy);
+            param.Add("@Order", objConsumptionRequestList.Order.ToUpper());
+            IEnumerable<USPMHConsumptionRequestListDetail> lstUSPMHConsumptionRequestDetailList = base.ExecuteSQLProcedure<USPMHConsumptionRequestListDetail>("USPMHConsumptionRequestListDetail", param);
+            _RecordCount = param.Get<int>("@RecordCount");
+            return lstUSPMHConsumptionRequestDetailList;
+        }
+    }
+
     public class USPMHMovieAlbumMusicListRepositories : MainRepository<USPMHMovieAlbumMusicList>
     {
         public IEnumerable<USPMHMovieAlbumMusicList> GetMovieAlbumMusicList(MHRequest objMHRequest)
