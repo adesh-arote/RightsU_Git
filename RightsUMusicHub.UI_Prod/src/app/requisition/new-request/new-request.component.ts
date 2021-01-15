@@ -82,11 +82,15 @@ export class NewRequestComponent implements OnInit {
   public quickSelChannelCode: any;
   defaultDate: Date = new Date('Thu Aug 30 2018 00:00:00 GMT+0530 (India Standard Time)');
   todaydate: Date = new Date();
-  public showFromDateMsg: any;
-  public showToDateMsg: any;
   public termsTextFirst: string;
   public termsTextSecond: string;
   public productionHouseName;
+  public order: any;
+  public sortBy: any;
+  public isRequestListclick: boolean = false;
+  public RemarkSpecialInstruction: any = [];
+  public remarksLabel: any;
+  public specialRemarks: any;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.mindatevalue = new Date();
@@ -117,6 +121,7 @@ export class NewRequestComponent implements OnInit {
   }
   public timeStamp;
   public timer;
+
   dateCheck() {
     this.todaydate = new Date();
     this.timeStamp = this.todaydate.getTime();
@@ -128,6 +133,7 @@ export class NewRequestComponent implements OnInit {
   }
   public vendorShortName;
   ngOnInit() {
+    debugger;
     // alert(this.todaydate.getTime())
     // var a:Timestamp=new Timestamp();
 
@@ -285,12 +291,13 @@ export class NewRequestComponent implements OnInit {
       // this.showNameList.unshift({ "Title_Name": "Please select", "Title_Code": 0 });
       this.searchshowName.TitleCode = this.searchshowNameList[0];
     },
-      error => { this.handleResponseError(error) })
+      error => { this.handleResponseError(error) });
     // this.getRequestList();
   }
   Requestlistclick() {
+    debugger;
     if (this.Reqcount == 0) {
-
+      this.isRequestListclick = true;
       this.getRequestList(10, 1);
       this.Reqcount++;
     }
@@ -452,11 +459,20 @@ export class NewRequestComponent implements OnInit {
 
   }
   getRequestList(pageSize, PageNo) {
+    debugger;
     this.exportPageNo = PageNo;
     this.exportPageSize = pageSize;
     this.load = true;
     this.addBlockUI();
     var consumtionListBody;
+    if (this.isRequestListclick == true) {
+      this.sortBy = "RequestDate";
+      this.order = "DESC";
+    }
+    else {
+      this.sortBy = this.sortBy;
+      this.order = this.order;
+    }
     if (this.searchClickevent == 'N') {
       this.first = 0;
       consumtionListBody = {
@@ -469,7 +485,9 @@ export class NewRequestComponent implements OnInit {
         "ShowCode": '',
         "StatusCode": '',
         "FromDate": '',
-        "ToDate": ''
+        "ToDate": '',
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     else if (this.searchClickevent == 'Y') {
@@ -484,7 +502,9 @@ export class NewRequestComponent implements OnInit {
         "ShowCode": this.searchconsumtionListBody.ShowCode,
         "StatusCode": this.searchconsumtionListBody.StatusCode,
         "FromDate": this.searchconsumtionListBody.FromDate,
-        "ToDate": this.searchconsumtionListBody.ToDate
+        "ToDate": this.searchconsumtionListBody.ToDate,
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
       // consumtionListBody=this.searchconsumtionListBody;
     }
@@ -497,9 +517,9 @@ export class NewRequestComponent implements OnInit {
       if (response.Return.IsSuccess == true) {
         this.recordCount = response.RecordCount
         this.requestList = response.RequestList;
+        this.isRequestListclick = false;
         this.cueSheetHeader = false
         this.requestList.forEach(x => x.cueSheet = false);
-
         console.log(this.requestList);
       }
 
@@ -520,6 +540,9 @@ export class NewRequestComponent implements OnInit {
       this.requestCountList = response.RequestDetails;
       this.requestCountFilteredList = response.RequestDetails;
       this.totalCountOfNoOfSongsDetails = response.RequestDetails.length;
+      this.RemarkSpecialInstruction = response.RemarkSpecialInstruction;
+      this.remarksLabel = this.RemarkSpecialInstruction.Remarks;
+      this.specialRemarks = this.RemarkSpecialInstruction.SpecialInstructions;
       this.showRequestCountDetails = true;
       this.requestCountHeader = rowdata.RequestID + ' / ' + rowdata.ChannelName + ' / ' + rowdata.Title_Name + ' ( ' + (rowdata.EpisodeFrom == rowdata.EpisodeTo ? rowdata.EpisodeFrom : rowdata.EpisodeFrom + ' To ' + rowdata.EpisodeTo) + ' )'
       this.newSearchRequest = {
@@ -686,6 +709,20 @@ export class NewRequestComponent implements OnInit {
     debugger;
     var pageNo = event.first;
     var pageSize = event.rows;
+    var sortBy = event.sortField;
+    this.sortBy = sortBy;
+    if (event.sortField == undefined) {
+      this.sortBy = "RequestDate";
+    }
+    else {
+      this.sortBy = this.sortBy;
+    }
+    if (event.sortOrder == 1) {
+      this.order = "ASC";
+    }
+    else {
+      this.order = "DESC";
+    }
     if (this.rowonpage != pageSize) {
       this.rowonpage = pageSize;
       if (event.first == 0) {
@@ -711,6 +748,7 @@ export class NewRequestComponent implements OnInit {
 
   }
   onpagechange(pageSize, pageNo) {
+    debugger;
     this.exportPageSize = pageSize;
     this.exportPageNo = pageNo;
     // this.recordCount=0;
@@ -728,7 +766,9 @@ export class NewRequestComponent implements OnInit {
         "ShowCode": '',
         "StatusCode": '',
         "FromDate": "",
-        "ToDate": ""
+        "ToDate": "",
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     else if (this.searchClickevent == 'Y') {
@@ -742,7 +782,9 @@ export class NewRequestComponent implements OnInit {
         "ShowCode": this.searchconsumtionListBody.ShowCode,
         "StatusCode": this.searchconsumtionListBody.StatusCode,
         "FromDate": this.searchconsumtionListBody.FromDate,
-        "ToDate": this.searchconsumtionListBody.ToDate
+        "ToDate": this.searchconsumtionListBody.ToDate,
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
 
@@ -753,7 +795,7 @@ export class NewRequestComponent implements OnInit {
       console.log(response);
       this.recordCount = response.RecordCount
       this.requestList = response.RequestList;
-
+      this.isRequestListclick = false;
       console.log(this.requestList);
       this.requestListValidation();
 
@@ -795,7 +837,6 @@ export class NewRequestComponent implements OnInit {
   searchClick() {
     debugger;
     var datePipe = new DatePipe('en-GB');
-
     // if (this.searchFromDate > this.searchToDate) {
     //   this.displayalertMessage = true;
     //   this.messageData = {
@@ -861,7 +902,7 @@ export class NewRequestComponent implements OnInit {
     //     });
   }
   searchClickValidation() {
-    this.searchClickevent = 'Y'
+    this.searchClickevent = 'Y';
     var datePipe = new DatePipe('en-GB');
     var channelcode = [];
     var showcode = [];
@@ -920,9 +961,18 @@ export class NewRequestComponent implements OnInit {
 
   }
   exportToExcel() {
+    debugger;
     this.load = true;
     this.addBlockUI();
     var exportConsumptionBody;
+    if (this.isRequestListclick == true) {
+      this.sortBy = "RequestDate";
+      this.order = "DESC";
+    }
+    else {
+      this.sortBy = this.sortBy;
+      this.order = this.order;
+    }
     if (this.searchClickevent == 'N') {
       exportConsumptionBody = {
         "RecordFor": "L",
@@ -935,7 +985,9 @@ export class NewRequestComponent implements OnInit {
         "StatusCode": '',
         "FromDate": "",
         "ToDate": "",
-        "ExportFor": ''
+        "ExportFor": '',
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     else if (this.searchClickevent == 'Y') {
@@ -950,7 +1002,9 @@ export class NewRequestComponent implements OnInit {
         "StatusCode": this.searchconsumtionListBody.StatusCode,
         "FromDate": this.searchconsumtionListBody.FromDate,
         "ToDate": this.searchconsumtionListBody.ToDate,
-        "ExportFor": ''
+        "ExportFor": '',
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
     }
     console.log(exportConsumptionBody);
@@ -1940,25 +1994,7 @@ export class NewRequestComponent implements OnInit {
 
   }
 
-  setDateValidation() {
-    debugger;
-    this.showFromDateMsg = "";
-    this.showToDateMsg = "";
-    if (this.searchFromDate != null && this.searchToDate == null) {
-      this.showFromDateMsg = "";
-      this.showToDateMsg = "";
-    }
-    else if (this.searchFromDate > this.searchToDate) {
-      this.showFromDateMsg = "From date should be less than To date";
-      this.showToDateMsg = "";
-    }
-    else if (this.searchToDate < this.searchFromDate) {
-      this.showToDateMsg = "To date should be greater than From date";
-      this.showFromDateMsg = "";
-    }
-  }
-
-  episodeValidation(){
+  episodeValidation() {
     debugger;
     if (parseInt(this.newMusicConsumptionRequest.EpisodeFrom) >= parseInt(this.newMusicConsumptionRequest.EpisodeTo)) {
       this.displayalertMessage = true;

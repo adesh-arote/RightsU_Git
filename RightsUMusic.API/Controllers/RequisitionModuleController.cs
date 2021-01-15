@@ -386,9 +386,15 @@ namespace RightsUMusic.API.Controllers
             try
             {
                 lstConsumptionRequestDetails = obj.GetConsumptionRequestDetails(objRequestDetailsInput.MHRequestCode, objRequestDetailsInput.MHRequestTypeCode,Convert.ToChar(objRequestDetailsInput.IsCueSheet));
+                var objRemarkSpecialInstruction = lstConsumptionRequestDetails.Select(x => new
+                {
+                    Remarks = x.Remarks,
+                    SpecialInstructions = x.SpecialInstruction
+                }).Distinct().First();
+
                 _objRet.Message = "";
                 _objRet.IsSuccess = true;
-                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, RequestDetails = lstConsumptionRequestDetails }, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, RequestDetails = lstConsumptionRequestDetails, RemarkSpecialInstruction = objRemarkSpecialInstruction }, Configuration.Formatters.JsonFormatter);
             }
             catch (Exception ex)
             {
@@ -744,6 +750,172 @@ namespace RightsUMusic.API.Controllers
                     sheet.Cells["H" + (i + 2)].Style.Font.Name = "Calibri";
                     sheet.Cells["I" + (i + 2)].Style.Font.Name = "Calibri";
                     sheet.Cells["J" + (i + 2)].Style.Font.Name = "Calibri";
+
+                    sheet.Cells["D" + (i + 2)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    sheet.Cells["E" + (i + 2)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    sheet.Cells["F" + (i + 2)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    //sheet.Cells["A" + (i + 2)].Style.Border.BorderAround(ExcelBorderStyle.Thin, System.Drawing.Color.Black);
+                    //sheet.Cells["B" + (i + 2)].Style.Border.BorderAround(ExcelBorderStyle.Thin, System.Drawing.Color.Black);
+                    //sheet.Cells["C" + (i + 2)].Style.Border.BorderAround(ExcelBorderStyle.Thin, System.Drawing.Color.Black);
+                }
+
+                excelPackage.Workbook.Properties.Title = "PlanIT";
+                excelPackage.Workbook.Properties.Author = "";
+                excelPackage.Workbook.Properties.Comments = "";
+
+                // set some extended property values
+                excelPackage.Workbook.Properties.Company = "";
+
+                // set some custom property values
+                excelPackage.Workbook.Properties.SetCustomPropertyValue("Checked by", "");
+                excelPackage.Workbook.Properties.SetCustomPropertyValue("AssemblyName", "EPPlus");
+                // save our new workbook and we are done!
+                excelPackage.Save();
+
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.Message.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage ExportConsumptionDetailList(ConsumptionRequestListInput objConsumptionRequestList)
+        {
+            string UserCode = Convert.ToString(this.ActionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
+            UserCode = UserCode.Replace("Bearer ", "").Trim();
+            int RecordCount = 0;
+
+            objConsumptionRequestList.PagingRequired = "N";
+
+            MHRequest objMHRequest = new MHRequest();
+            objMHRequest.MHRequestTypeCode = 1;
+            objMHRequest.UsersCode = Convert.ToInt32(UserCode);
+            // objMHRequest.UsersCode = Convert.ToInt32(UserCode);
+            List<USPMHConsumptionRequestListDetail> lstConsumptionRequest = new List<USPMHConsumptionRequestListDetail>();
+            Return _objRet = new Return();
+            try
+            {
+                lstConsumptionRequest = (List<USPMHConsumptionRequestListDetail>)obj.GetConsumptionRequestListDetail(objMHRequest, objConsumptionRequestList, out RecordCount);//,objConsumptionRequestList.RecordFor,objConsumptionRequestList.PagingRequired, objConsumptionRequestList.PageSize, objConsumptionRequestList.PageNo,out RecordCount);
+
+
+                HttpResponseMessage response;
+                response = Request.CreateResponse(HttpStatusCode.OK);
+                MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("application/octet-stream");
+
+                var consumptionList = lstConsumptionRequest;
+
+                string Destination = HttpContext.Current.Server.MapPath("~/") + (objConsumptionRequestList.ExportFor == "A" ? "Temp\\AuthorisedReport.xlsx" : "Temp\\ConsumptionRequestList.xlsx");
+                FileInfo OldFile = new FileInfo(HttpContext.Current.Server.MapPath("~/") + "Temp\\Sample1.xlsx");
+                FileInfo newFile = new FileInfo(Destination);
+                string Name = newFile.Name.ToString();
+                if (newFile.Exists)
+                {
+                    newFile.Delete(); // ensures we create a new workbook
+                    newFile = new FileInfo(Destination);
+                }
+                _objRet.Message = newFile.Name;
+                var excelPackage = new ExcelPackage(newFile, OldFile);
+                var sheet = excelPackage.Workbook.Worksheets["Sheet1"];
+                sheet.Name = "Sheet 1";
+                
+                    sheet.Cells[1, 1].Value = "Request #";
+                    sheet.Cells[1, 2].Value = "Channel";
+                    sheet.Cells[1, 3].Value = "Show";
+                    sheet.Cells[1, 4].Value = "Episode";
+                    sheet.Cells[1, 5].Value = "Telecast";
+                    sheet.Cells[1, 6].Value = "Music Title";
+                    sheet.Cells[1, 7].Value = "Movie / Album";
+                    sheet.Cells[1, 8].Value = "Music Label";
+                    sheet.Cells[1, 9].Value = "Status";
+                    sheet.Cells[1, 10].Value = "Requested By";
+                    sheet.Cells[1, 11].Value = "Requested Date";
+                    sheet.Cells[1, 12].Value = "Remarks";
+
+                for (int i = 1; i <= 12; i++)
+                {
+                    Color colFromHex = System.Drawing.ColorTranslator.FromHtml("#C0C0C0");
+                    sheet.Cells[1, i].Style.Font.Bold = true;
+                    sheet.Cells[1, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    sheet.Cells[1, i].Style.Border.BorderAround(ExcelBorderStyle.Thin, System.Drawing.Color.Black);
+                    sheet.Cells[1, i].Style.Font.Size = 11;
+                    sheet.Cells[1, i].Style.Font.Name = "Calibri";
+                    sheet.Cells[1, i].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(colFromHex);
+                    //sheet.Cells.AutoFitColumns(10,50);
+                    sheet.Cells[1, i].AutoFitColumns();
+                }
+
+                ExcelColumn col1 = sheet.Column(1);
+                ExcelColumn col2 = sheet.Column(2);
+                ExcelColumn col3 = sheet.Column(3);
+                ExcelColumn col4 = sheet.Column(4);
+                ExcelColumn col5 = sheet.Column(5);
+                ExcelColumn col6 = sheet.Column(6);
+                ExcelColumn col7 = sheet.Column(7);
+                ExcelColumn col8 = sheet.Column(8);
+                ExcelColumn col9 = sheet.Column(9);
+                ExcelColumn col10 = sheet.Column(10);
+                ExcelColumn col11 = sheet.Column(11);
+                ExcelColumn col12 = sheet.Column(12);
+
+                col1.Width = 18;
+                col2.Width = 20;
+                col3.Width = 25;
+                col4.Width = 18;
+                col5.Width = objConsumptionRequestList.ExportFor == "A" ? 18 : 12;
+                col6.Width = 25;
+                col7.Width = 15;
+                col8.Width = 18;
+                col9.Width = 22;
+                col10.Width = 25;
+                col11.Width = 25;
+                col12.Width = 25;
+
+                for (int i = 0; i < consumptionList.Count; i++)
+                {
+                    //.Remove(10, 9);
+                    DateTime dtFrom = Convert.ToDateTime(consumptionList[i].TelecastFrom.ToString());
+                    string TelecastFrom = dtFrom.ToString("dd-MMM-yyyy");
+
+                    DateTime dtTo = Convert.ToDateTime(consumptionList[i].TelecastTo.ToString());
+                    string TelecastTo = dtTo.ToString("dd-MMM-yyyy");
+
+                    
+                    sheet.Cells["A" + (i + 2)].Value = consumptionList[i].RequestID;
+                    sheet.Cells["B" + (i + 2)].Value = consumptionList[i].ChannelName;
+                    sheet.Cells["C" + (i + 2)].Value = consumptionList[i].Title_Name;
+                    sheet.Cells["D" + (i + 2)].Value = consumptionList[i].EpisodeFrom == consumptionList[i].EpisodeTo ? consumptionList[i].EpisodeFrom.ToString() : consumptionList[i].EpisodeFrom + " - " + consumptionList[i].EpisodeTo;
+                    sheet.Cells["E" + (i + 2)].Value = consumptionList[i].TelecastFrom.ToString().Remove(10, 9) == consumptionList[i].TelecastTo.ToString().Remove(10, 9) ?
+                        TelecastFrom : TelecastFrom + " To " + TelecastTo;
+                    sheet.Cells["F" + (i + 2)].Value = consumptionList[i].Music_Title;
+                    sheet.Cells["G" + (i + 2)].Value = consumptionList[i].MusicMovieAlbum;
+                    sheet.Cells["H" + (i + 2)].Value = consumptionList[i].LabelName;
+                    sheet.Cells["I" + (i + 2)].Value = consumptionList[i].Status;
+                    sheet.Cells["J" + (i + 2)].Value = consumptionList[i].Login_Name;
+                    sheet.Cells["K" + (i + 2)].Value = consumptionList[i].RequestDate;
+                    sheet.Cells["L" + (i + 2)].Value = consumptionList[i].Remarks;
+
+
+                    sheet.Cells["A" + (i + 2)].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    sheet.Cells["A" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["B" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["C" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["D" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["E" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["F" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["G" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["H" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["I" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["J" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["K" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["L" + (i + 2)].Style.Font.Name = "Calibri";
 
                     sheet.Cells["D" + (i + 2)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                     sheet.Cells["E" + (i + 2)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;

@@ -31,6 +31,29 @@ namespace RightsUMusic.API.Controllers
         private string _retMsg;
 
 
+        [AllowAnonymous]
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        [ActionName("GetSystemVersions")]
+        public HttpResponseMessage GetSystemVersions()
+        {
+            Return _objRet = new Return();
+            try
+            {
+                var SystemVersions = objUserManagementService.GetSystemVersions();
+                _objRet.Message = "Success";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, SystemVersion = SystemVersions }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+
+        }
+
         //    [AllowAnonymous]
         [AcceptVerbs("GET", "POST")]
         [HttpPost]

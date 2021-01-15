@@ -3,6 +3,7 @@ import { CommonUiService } from '../../common-ui/common-ui.service'
 import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute, ParamMap, NavigationEnd } from '@angular/router';
 import { ComParentChildService } from '../../services/comparentchild.service'
+import { BootstrapOptions } from '@angular/core/src/application_ref';
 declare var $: any;
 
 @Component({
@@ -47,6 +48,9 @@ export class CartGridComponent implements OnInit {
   public first = 0;
   public searchShowGrid: boolean = false;
   public languageList: any = [];
+  public order: any;
+  public sortBy: any;
+  public sortingDefault:boolean=false;
 
   constructor(private _CommonUiService: CommonUiService, private router: Router, private comparentchildservice: ComParentChildService) {
 
@@ -90,7 +94,7 @@ export class CartGridComponent implements OnInit {
   ngOnInit() {
     console.log(this.gridvalue);
     console.log(this.componentData)
-
+    this.sortingDefault = true;
     this.comparentchildservice.on('playlist-grid').subscribe(() => this.quickSelectionGridData(this.gridvalue.MHPlayListCode));
     console.log("Consumption data");
     console.log(this.newMusicConsumptionRequest);
@@ -210,7 +214,7 @@ export class CartGridComponent implements OnInit {
       console.log(response);
       this.recordCount = response.RecordCount;
       this.searchList = response.Show;
-
+      this.sortingDefault=false;
       $(function () {
         $('.dropdwnbody').slimScroll({
           height: '100px',
@@ -249,6 +253,14 @@ export class CartGridComponent implements OnInit {
       this.playListName = '';
     }
     this.playListWiseClick = 'N';
+    if(this.sortingDefault == true){
+      this.sortBy = "MusicTrack";
+      this.order = "ASC";
+    }
+    else{
+      this.sortBy= this.sortBy;
+      this.order=this.order;
+    }
     var body = {
       'MusicLabelCode': this.newSearchRequest.MusicLabelCode.MusicLabelCode == null ? 0 : this.newSearchRequest.MusicLabelCode.MusicLabelCode,
       'MusicTrack': this.newSearchRequest.MusicTrack,
@@ -262,7 +274,9 @@ export class CartGridComponent implements OnInit {
       'PageNo': '1',
       'ChannelCode': this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
       'TitleCode': this.newMusicConsumptionRequest.TitleCode.Title_Code,
-      'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code == null ? 0 :this.newSearchRequest.MusicLanguageCode.Music_Language_Code
+      'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code == null ? 0 :this.newSearchRequest.MusicLanguageCode.Music_Language_Code,
+      "SortBy": this.sortBy,
+      "Order": this.order
     }
     debugger;
     var count = 0
@@ -307,6 +321,7 @@ export class CartGridComponent implements OnInit {
         console.log(response);
         this.recordCount = response.RecordCount;
         this.searchList = response.Show;
+        this.sortingDefault=false;
         // this.TotalRecords=this.searchList.length;
         // for(let i=0;i<this.searchList.length;i++){
         $(function () {
@@ -1027,6 +1042,27 @@ export class CartGridComponent implements OnInit {
     console.log("Lazy Loading.....");
     var pageNo = event.first;
     var pageSize = event.rows;
+    var sortBy = event.sortField;
+    this.sortBy = sortBy;
+   
+    if(this.sortingDefault == true){
+      this.sortBy = "MusicTrack";
+      this.order = "ASC";
+    }
+    else{
+      if( event.sortField == undefined){
+        this.sortBy="MusicTrack";
+      }
+      if (event.sortOrder == 1) {
+        this.order = "ASC";
+      }
+      else {
+        this.order = "DESC";
+      }
+      this.sortBy= this.sortBy;
+      this.order=this.order;
+    }
+    
     if (this.rowonpage != pageSize) {
       this.rowonpage = pageSize;
       if (event.first == 0) {
@@ -1069,7 +1105,10 @@ export class CartGridComponent implements OnInit {
         'PageNo': pageNo,
         'ChannelCode': this.playListWiseClick == 'Y' ? '' : this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
         'TitleCode': this.playListWiseClick == 'Y' ? '' : this.newMusicConsumptionRequest.TitleCode.Title_Code,
-        'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code
+        'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code,
+        "SortBy": this.sortBy,
+        "Order": this.order
+
       }
     }
     else if (this.componentType == "quickSelection") {
@@ -1086,7 +1125,9 @@ export class CartGridComponent implements OnInit {
         'PageNo': pageNo,
         'ChannelCode': '',
         'TitleCode': '',
-        'MusicLanguageCode': ''
+        'MusicLanguageCode': '',
+        "SortBy": this.sortBy,
+        "Order": this.order
       }
       // this.quickSelectionGridData(this.gridvalue);
 
@@ -1104,6 +1145,7 @@ export class CartGridComponent implements OnInit {
       console.log(response);
       this.recordCount = response.RecordCount;
       this.searchList = response.Show;
+      this.sortingDefault=false;
       // this.TotalRecords=this.searchList.length;
       // for(let i=0;i<this.searchList.length;i++){
       $(function () {

@@ -96,7 +96,7 @@
             <span>{{row.RequestedDate | date:'dd-MMM-yyyy'}}</span>
           </ng-template>
         </p-column>
-      <p-column header="File Name" [sortable]="true" [style]="{'width':'250px'}">
+      <p-column header="File Name" field="FileName" [sortable]="true" [style]="{'width':'250px'}">
         <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
           <span data-toggle="tooltip" data-placement="top" title="{{row.FileName}}">{{ (row.FileName.length>50)? (row.FileName | slice:0:49)+'..':(row.FileName) }}</span>
         </ng-template>
@@ -104,7 +104,7 @@
       
       <p-column field="RequestedBy" header="Requested By" [sortable]="true" [style]="{'width':'100px'}" styleClass="text-center"></p-column>
       <p-column field="Status" header="Status" [sortable]="true" [style]="{'width':'100px'}" styleClass="text-center"></p-column>
-      <p-column header="Error Count" [sortable]="true" [style]="{'width':'150px'}" styleClass="text-center">
+      <p-column header="Error Count" [sortable]="false" [style]="{'width':'150px'}" styleClass="text-center">
         <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
           <div class="progress" style="margin:2px">
             <div id="success'{{row.RequestID}}'" class="progress-bar progress-bar-success" role="progressbar" [style.width.%]="row.successPercent" pTooltip="Success" tooltipPosition="top">
@@ -157,7 +157,12 @@
               <i class="fa fa-refresh"></i>
             </button> -->
           </span>
-
+          <span>
+            <button class="btn  btn-xs" (click)="downLoadFile(row.MHCueSheetCode)"data-toggle="tooltip" data-placement="top" title="Download">
+              <i class="fa fa-download" aria-hidden="true">
+              </i>
+            </button>
+          </span>
         </ng-template>
       </p-column>
       <p-footer class="musiccuesheet">
@@ -179,7 +184,7 @@
     </span>
     <div class="remarkDiv" style="margin-top:20px">
       <label for="comment">Remark </label> (
-      <i>{{textRemarkCount}} / 4000 </i> )
+      <i>{{textRemarkCount}} / 4000 </i> )<span class="asterisk">*</span>
       <textarea rows="3" id="remark" [(ngModel)]="remarks" (ngModelChange)="remarkChange()" required name="Remarks" maxlength=4000></textarea>
 
     </div>
@@ -264,7 +269,7 @@
         </p-header>
         <div class="remarkDiv" style="margin-top:20px">
           <label for="comment">Remark </label> (
-          <i>{{textRemarkCount}} / 4000 </i> )
+          <i>{{textRemarkCount}} / 4000 </i> )<span class="asterisk">*</span>
          
           <textarea style="resize:none" rows="3" id="remark" [(ngModel)]="remarks" (ngModelChange)="remarkChange()" required name="ApprovalRemarks" maxlength=4000></textarea>
     
@@ -277,10 +282,25 @@
     
     
       </p-dialog>
+
+
+      <p-dialog [(visible)]="showDownloaderror" [contentStyle]="{'overflow':'visible'}" [blockScroll]="true" [width]="500" [positionTop]="60" [modal]="true" [responsive]="false" [draggable]="false">
+        <p-header>
+        <label>Error Message</label>
+      </p-header>
+        <div>
+          File not found
+        </div>
+        <p-footer>
+          <button type="button" pButton (click)="showDownloaderror = false" label="Close"></button>
+        </p-footer>
+        </p-dialog>
+
       <div *ngIf="displayalertMessage">
         <app-message-box  [messageData]="messageData"></app-message-box>
     
       </div>
+      
     <div *ngIf="load" id="loadingDiv"></div>
     
 </div>

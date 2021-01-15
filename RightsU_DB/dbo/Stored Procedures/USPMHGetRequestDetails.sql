@@ -15,7 +15,7 @@ BEGIN
 					 ISNULL(ML.Music_Label_Name,'') AS LabelName,MA.Music_Album_Name AS MusicMovieAlbum,
 				CASE WHEN MRD.IsApprove = 'P' THEN 'Pending'
 					 WHEN MRD.IsApprove = 'Y' THEN 'Approve'
-					 ELSE 'Reject' END AS IsApprove,ISNULL(MRD.Remarks,'') AS Remarks,MR.MHRequestCode,MR.TitleCode,ISNULL(T.Title_Name,'') AS Title_Name,MR.EpisodeFrom,MR.EpisodeTo
+					 ELSE 'Reject' END AS IsApprove,ISNULL(MRD.Remarks,'') AS Remarks,MR.MHRequestCode,MR.TitleCode,ISNULL(T.Title_Name,'') AS Title_Name,MR.EpisodeFrom,MR.EpisodeTo,MR.SpecialInstruction
 				FROM MHRequestDetails MRD
 				INNER JOIN Music_Title MT ON MT.Music_Title_Code = MRD.MusicTitleCode
 				LEFT JOIN Music_Title_Label MTL ON MTL.Music_Title_Code = MRD.MusicTitleCode AND MTL.Effective_To IS NULL
@@ -34,7 +34,7 @@ BEGIN
 					 ISNULL(ML.Music_Label_Name,'') AS LabelName,MA.Music_Album_Name AS MusicMovieAlbum,
 				CASE WHEN MRD.IsApprove = 'P' THEN 'Pending'
 					 WHEN MRD.IsApprove = 'Y' THEN 'Approve'
-					 ELSE 'Reject' END AS IsApprove,ISNULL(MRD.Remarks,'') AS Remarks,MR.MHRequestCode,MR.TitleCode,ISNULL(T.Title_Name,'') AS Title_Name,MR.EpisodeFrom,MR.EpisodeTo
+					 ELSE 'Reject' END AS IsApprove,ISNULL(MRD.Remarks,'') AS Remarks,MR.MHRequestCode,MR.TitleCode,ISNULL(T.Title_Name,'') AS Title_Name,MR.EpisodeFrom,MR.EpisodeTo,MR.SpecialInstruction
 				FROM MHRequestDetails MRD
 				INNER JOIN Music_Title MT ON MT.Music_Title_Code = MRD.MusicTitleCode
 				LEFT JOIN Music_Title_Label MTL ON MTL.Music_Title_Code = MRD.MusicTitleCode AND MTL.Effective_To IS NULL
@@ -80,3 +80,5 @@ BEGIN
 			WHERE MRD.MHRequestCode = @RequestCode
 		END
 END
+GO
+

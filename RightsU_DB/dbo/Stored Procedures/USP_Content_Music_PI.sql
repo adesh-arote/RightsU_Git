@@ -43,6 +43,11 @@ BEGIN
 	FROM DM_Content_Music T
 	WHERE T.Music_Track = '' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
 
+	UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL(T.[Error_Message], '') + '~' + T.[Music_Track] + ' - Music Track Name is Deactivated in system.'
+	FROM Music_Title MT
+	INNER JOIN DM_Content_Music T ON T.Music_Track = MT.Music_Title_Name
+	WHERE ISNULL (T.Record_Status,'') <> 'C' AND MT.Is_Active = 'N' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+
 	UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Either TC IN, TC OUT or Duration cannot be zero~' 
 	FROM DM_Content_Music T
 	WHERE ((T.[From] = '' AND T.[To] = '' AND T.[Duration] = '') OR (T.[From] != '' AND T.[To] = '') OR (T.[From] = '' AND T.[To] != '')) AND T.DM_Master_Import_Code = @DM_Master_Import_Code

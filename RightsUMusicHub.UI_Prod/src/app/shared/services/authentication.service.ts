@@ -58,4 +58,8 @@ return super.releaseAccount(obj);
     return super.postUpload('Login/UploadImage', fileData);
   }
 
+  public GetSystemVersions(dataObj): Observable<any> {
+    return super.post('Login/GetSystemVersions', dataObj)
+  }
+  
 }

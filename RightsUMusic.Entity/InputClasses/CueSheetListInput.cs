@@ -15,6 +15,8 @@ namespace RightsUMusic.Entity
         public string StatusCode { get; set; }
         public string FromDate { get; set; }
         public string ToDate { get; set; }
+        public string SortBy { get; set; }
+        public string Order { get; set; }
 
     }
 }

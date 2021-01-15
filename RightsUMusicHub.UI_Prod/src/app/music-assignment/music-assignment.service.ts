@@ -46,4 +46,14 @@ export class MusicAssignmentService extends BaseService{
     let obj=JSON.stringify(body);
     return super.post('CueSheet/CuesheetSubmit', obj);
   }
+
+  public DownloadCuesheet(body:any): Observable<any> {
+    let obj=JSON.stringify(body);
+    return super.post('Cuesheet/DownloadCuesheet', obj);
+  }
+
+  public DownloadFileNew():string{
+    return super.getBaseUrl() + '/Uploads/';  
+  }
+
 }
