@@ -1444,13 +1444,10 @@
     <Build Include="dbo\User Defined Types\Acq_Deal_Movie_Contents_Import_UDT.sql" />
     <Build Include="dbo\User Defined Types\CuratedPreview_UDT.sql" />
     <Build Include="dbo\User Defined Types\RightsDefination.sql" />
-<<<<<<< RightsU_DB/RightsU_DB.sqlproj
     <Build Include="dbo\Dev_Query\DevTagQuery.sql" />
     <Build Include="dbo\Stored Procedures\USPMHConsumptionRequestListDetail.sql" />
-=======
     <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
     <Build Include="dbo\Stored Procedures\USP_Music_Schedule_Process_Neo.sql" />
     <Build Include="dbo\User Defined Types\MusicScheduleProcess.sql" />
->>>>>>> RightsU_DB/RightsU_DB.sqlproj
   </ItemGroup>
 </Project>
