@@ -45,6 +45,11 @@ export class MusicAssignmentComponent implements OnInit {
   public termsTextFirst: string;
   public termsTextSecond: string;
   public productionHouseName;
+  public sortingDefault: boolean = false;
+  public order: any;
+  public sortBy: any;
+  public downloadURLPath: any;
+  public showDownloaderror: boolean = false;
 
   constructor(private _musicAssignmentService: MusicAssignmentService, private router: Router) {
     this.Status = [
@@ -61,7 +66,7 @@ export class MusicAssignmentComponent implements OnInit {
     }
   }
   ngOnInit() {
-
+    this.sortingDefault = true;
 
     this.cueSheetList(25, 1);
   }
@@ -161,25 +166,25 @@ export class MusicAssignmentComponent implements OnInit {
     var cuesheetbody;
     if (this.searchClickevent == 'N') {
       cuesheetbody =
-        {
-          "PagingRequired": "Y",
-          "PageSize": PageSize,
-          "PageNo": PageNo,
-          "StatusCode": '',
-          "FromDate": "",
-          "ToDate": ""
-        }
+      {
+        "PagingRequired": "Y",
+        "PageSize": PageSize,
+        "PageNo": PageNo,
+        "StatusCode": '',
+        "FromDate": "",
+        "ToDate": ""
+      }
     }
     else if (this.searchClickevent == 'Y') {
       cuesheetbody =
-        {
-          "PagingRequired": "Y",
-          "PageSize": PageSize,
-          "PageNo": PageNo,
-          "StatusCode": this.searchcueSheetBody.StatusCode,
-          "FromDate": this.searchcueSheetBody.FromDate,
-          "ToDate": this.searchcueSheetBody.ToDate
-        }
+      {
+        "PagingRequired": "Y",
+        "PageSize": PageSize,
+        "PageNo": PageNo,
+        "StatusCode": this.searchcueSheetBody.StatusCode,
+        "FromDate": this.searchcueSheetBody.FromDate,
+        "ToDate": this.searchcueSheetBody.ToDate
+      }
     }
 
     console.log(JSON.stringify(cuesheetbody));
@@ -311,6 +316,28 @@ export class MusicAssignmentComponent implements OnInit {
     debugger;
     var pageNo = event.first;
     var pageSize = event.rows;
+    var sortBy = event.sortField;
+    this.sortBy = sortBy;
+    if (this.sortingDefault == true) {
+      this.sortBy = "RequestedDate";
+      this.order = "DESC";
+    }
+    else {
+      if (event.sortField == undefined) {
+        this.sortBy = "RequestedDate";
+      }
+      else {
+        this.sortBy = this.sortBy;
+      }
+      if (event.sortOrder == 1) {
+        this.order = "ASC";
+      }
+      else {
+        this.order = "DESC";
+      }
+      this.sortBy = this.sortBy;
+      this.order = this.order;
+    }
     if (this.rowonpage != pageSize) {
       this.rowonpage = pageSize;
       if (event.first == 0) {
@@ -345,26 +372,30 @@ export class MusicAssignmentComponent implements OnInit {
     var cuesheetbody;
     if (this.searchClickevent == 'N') {
       cuesheetbody =
-        {
-          "PagingRequired": "Y",
-          "PageSize": pageSize,
-          "PageNo": pageNo,
-          "StatusCode": '',
-          "FromDate": "",
-          "ToDate": ""
+      {
+        "PagingRequired": "Y",
+        "PageSize": pageSize,
+        "PageNo": pageNo,
+        "StatusCode": '',
+        "FromDate": "",
+        "ToDate": "",
+        "SortBy": this.sortBy,
+        "Order": this.order
 
-        }
+      }
     }
     else if (this.searchClickevent == 'Y') {
       cuesheetbody =
-        {
-          "PagingRequired": "Y",
-          "PageSize": pageSize,
-          "PageNo": pageNo,
-          "StatusCode": this.searchcueSheetBody.StatusCode,
-          "FromDate": this.searchcueSheetBody.FromDate,
-          "ToDate": this.searchcueSheetBody.ToDate
-        }
+      {
+        "PagingRequired": "Y",
+        "PageSize": pageSize,
+        "PageNo": pageNo,
+        "StatusCode": this.searchcueSheetBody.StatusCode,
+        "FromDate": this.searchcueSheetBody.FromDate,
+        "ToDate": this.searchcueSheetBody.ToDate,
+        "SortBy": this.sortBy,
+        "Order": this.order
+      }
     }
 
     console.log(JSON.stringify(cuesheetbody));
@@ -372,7 +403,8 @@ export class MusicAssignmentComponent implements OnInit {
       this.load = false;
       this.removeBlockUI();
       console.log(response);
-      this.recordCount = response.RecordCount
+      this.recordCount = response.RecordCount;
+      this.sortingDefault = false;
       demoList = response.CueSheet;
       demoList.forEach(x => x.successPercent = x.SuccessRecords != 0 ? (x.SuccessRecords / x.TotalRecords) * 100 : 0)
       demoList.forEach(x => x.errorPercent = x.ErrorRecords != 0 ? (x.ErrorRecords / x.TotalRecords) * 100 : 0)
@@ -414,13 +446,13 @@ export class MusicAssignmentComponent implements OnInit {
     console.log(this.searchToDate);
 
     var cuesheetbody =
-      {
+    {
 
-        "StatusCode": this.searchStatus.toString(),
-        "FromDate": this.searchFromDate == null ? '' : datePipe.transform(this.searchFromDate.toString(), 'dd-MMM-yyyy'),
-        "ToDate": this.searchToDate == null ? '' : datePipe.transform(this.searchToDate.toString(), 'dd-MMM-yyyy')
+      "StatusCode": this.searchStatus.toString(),
+      "FromDate": this.searchFromDate == null ? '' : datePipe.transform(this.searchFromDate.toString(), 'dd-MMM-yyyy'),
+      "ToDate": this.searchToDate == null ? '' : datePipe.transform(this.searchToDate.toString(), 'dd-MMM-yyyy')
 
-      }
+    }
     this.searchcueSheetBody = cuesheetbody;
     console.log(JSON.stringify(cuesheetbody));
     this.cueSheetList(25, 1);
@@ -440,28 +472,40 @@ export class MusicAssignmentComponent implements OnInit {
     this.load = true;
     this.addBlockUI();
     var exportcuesheetbody;
+    if (this.sortingDefault == true) {
+      this.sortBy = "RequestedDate";
+      this.order = "DESC";
+    }
+    else {
+      this.order = this.order;
+      this.sortBy = this.sortBy;
+    }
     if (this.searchClickevent == 'N') {
       exportcuesheetbody =
-        {
-          "PagingRequired": "Y",
-          "PageSize": this.exportPageSize,
-          "PageNo": this.exportPageNo,
-          "StatusCode": '',
-          "FromDate": "",
-          "ToDate": ""
+      {
+        "PagingRequired": "Y",
+        "PageSize": this.exportPageSize,
+        "PageNo": this.exportPageNo,
+        "StatusCode": '',
+        "FromDate": "",
+        "ToDate": "",
+        "SortBy": this.sortBy,
+        "Order": this.order
 
-        }
+      }
     }
     else if (this.searchClickevent == 'Y') {
       exportcuesheetbody =
-        {
-          "PagingRequired": "Y",
-          "PageSize": this.exportPageSize,
-          "PageNo": this.exportPageNo,
-          "StatusCode": this.searchcueSheetBody.StatusCode,
-          "FromDate": this.searchcueSheetBody.FromDate,
-          "ToDate": this.searchcueSheetBody.ToDate
-        }
+      {
+        "PagingRequired": "Y",
+        "PageSize": this.exportPageSize,
+        "PageNo": this.exportPageNo,
+        "StatusCode": this.searchcueSheetBody.StatusCode,
+        "FromDate": this.searchcueSheetBody.FromDate,
+        "ToDate": this.searchcueSheetBody.ToDate,
+        "SortBy": this.sortBy,
+        "Order": this.order
+      }
     }
     console.log(exportcuesheetbody);
     this._musicAssignmentService.getExportCueSheetList(exportcuesheetbody).subscribe(response => {
@@ -478,6 +522,30 @@ export class MusicAssignmentComponent implements OnInit {
     window.location.href = (this._musicAssignmentService.DownloadFile().toString() + b).toString();
   }
 
+  downLoadFile(data) {
+    debugger;
+    let dataObj = {
+      "MHCueSheetCode": data
+    }
+    this.load = true;
+    this._musicAssignmentService.DownloadCuesheet(dataObj).subscribe(outputData => {
+      this.load = false;
+      this.downloadURLPath = outputData.FilePath;
+      if (this.downloadURLPath != "") {
+        window.location.href = (this._musicAssignmentService.DownloadFileNew().toString() + this.downloadURLPath).toString();
+      }
+      else {
+        this.showDownloaderror = true;
+      }
+    }, error => { this.handleResponseError(error) });
+  }
+
+  downloadFile(filePath) {
+    debugger;
+    var link = document.createElement('a');
+    link.href = filePath;
+    link.click();
+  }
   alertClose() {
     this.cueSheetViewDialog = false;
   }

@@ -41,7 +41,11 @@ BEGIN
 					,@EpisodeNo = CASE WHEN ISNULL(MR.EpisodeFrom,0)  < ISNULL(MR.EpisodeTo,0) THEN  CAST(MR.EpisodeFrom AS VARCHAR(MAX)) +' - '+ CAST(MR.EpisodeTo AS VARCHAR(MAX))
 						 WHEN ISNULL(MR.EpisodeFrom,0)  = ISNULL(MR.EpisodeTo,0) THEN  CAST(MR.EpisodeFrom AS VARCHAR(MAX))
 						 ELSE '' END
-					,@TelecastDate = CONVERT(varchar(11),IsNull(MR.TelecastFrom,''), 106)  + ' - ' + CONVERT(varchar(11),IsNull(MR.TelecastTo,''), 106)
+					,@TelecastDate = CASE WHEN CAST(MR.TelecastFrom AS DATE) =  CAST(MR.TelecastTo AS DATE) 
+									THEN CONVERT(varchar(11),IsNull(MR.TelecastFrom,''), 106)
+									ELSE
+									CONVERT(varchar(11),IsNull(MR.TelecastFrom,''), 106)  + ' - ' + CONVERT(varchar(11),IsNull(MR.TelecastTo,''), 106)
+									END
 					,@MusicLabel = STUFF((SELECT DISTINCT ', ' + CAST(ML.Music_Label_Name AS NVARCHAR) FROM MHRequestDetails MRD1
 						 INNER JOIN Music_Title_Label MTL ON MRD1.MusicTitleCode = MTL.Music_Title_Code 
 						 INNER JOIN Music_Label ML ON ML.Music_Label_Code = MTL.Music_Label_Code
@@ -228,7 +232,7 @@ BEGIN
 
 					EXEC sp_executesql @SQL,N'@Count INT OUTPUT',@Count=@returnCount OUTPUT
 
-					SELECT @Emailbody=@Emailbody +'<tr><td align="center" class="tblData" rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' >'+ CAST  (ISNULL(@RequestDate, '') as varchar(MAX))+' </td>		
+					SELECT @Emailbody=@Emailbody +'<tr><td align="center" class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px" rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' >'+ CAST  (ISNULL(@RequestDate, '') as varchar(MAX))+' </td>		
 								{{DYNAMIC}}
 								<td align="center" class="tblData" rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ CAST (ISNULL(@AuthorisedBy,'') AS NVARCHAR(MAX)) +' </td>
 								<td align="center" class="tblData" rowspan='+CAST(@returnCount AS VARCHAR(MAX))+' style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ CAST (IsNull(@AuthorisedDate,'') AS NVARCHAR(MAX)) +' </td></tr>'
@@ -340,3 +344,5 @@ END
 --BEGIN
 --	SELECT '' as Result  
 --END
+GO
+

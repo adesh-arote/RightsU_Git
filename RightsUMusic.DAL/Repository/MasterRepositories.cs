@@ -475,6 +475,8 @@ namespace RightsUMusic.DAL.Repository
             param.Add("@TitleCode", objMusicTrackInput.TitleCode);
             param.Add("@MusicLanguageCode", objMusicTrackInput.MusicLanguageCode);
             param.Add("@RecordCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            param.Add("@SortBy", objMusicTrackInput.SortBy);
+            param.Add("@Order", objMusicTrackInput.Order.ToUpper());
             IEnumerable<USPMHSearchMusicTrack> lstUSPMHSearchMusicTrack = base.ExecuteSQLProcedure<USPMHSearchMusicTrack>("USPMHSearchMusicTrack", param);
             _RecordCount = param.Get<int>("@RecordCount");
             return lstUSPMHSearchMusicTrack;
@@ -499,9 +501,34 @@ namespace RightsUMusic.DAL.Repository
             param.Add("@StatusCode", objConsumptionRequestList.StatusCode);
             param.Add("@FromDate", objConsumptionRequestList.FromDate.ToString());
             param.Add("@ToDate", objConsumptionRequestList.ToDate.ToString());
+            param.Add("@SortBy", objConsumptionRequestList.SortBy);
+            param.Add("@Order", objConsumptionRequestList.Order.ToUpper());
             IEnumerable<USPMHConsumptionRequestList> lstUSPMHConsumptionRequestList = base.ExecuteSQLProcedure<USPMHConsumptionRequestList>("USPMHConsumptionRequestList", param);
             _RecordCount = param.Get<int>("@RecordCount");
             return lstUSPMHConsumptionRequestList;
+        }
+    }
+
+    public class USPMHConsumptionRequestDetailRepositories : MainRepository<USPMHConsumptionRequestListDetail>
+    {
+        public IEnumerable<USPMHConsumptionRequestListDetail> GetConsumptionRequestDetailList(MHRequest objMHRequest, ConsumptionRequestListInput objConsumptionRequestList, out int _RecordCount)//,string RecordFor, string PagingRequired, int PageSize, int PageNo, out int _RecordCount)
+        {
+            var param = new DynamicParameters();
+            param.Add("@RequestTypeCode", objMHRequest.MHRequestTypeCode);
+            param.Add("@UsersCode", objMHRequest.UsersCode);
+            param.Add("@RecordFor", objConsumptionRequestList.RecordFor);
+            param.Add("@RecordCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            param.Add("@RequestID", objConsumptionRequestList.RequestID);
+            param.Add("@ChannelCode", objConsumptionRequestList.ChannelCode);
+            param.Add("@ShowCode", objConsumptionRequestList.ShowCode);
+            param.Add("@StatusCode", objConsumptionRequestList.StatusCode);
+            param.Add("@FromDate", objConsumptionRequestList.FromDate.ToString());
+            param.Add("@ToDate", objConsumptionRequestList.ToDate.ToString());
+            param.Add("@SortBy", objConsumptionRequestList.SortBy);
+            param.Add("@Order", objConsumptionRequestList.Order.ToUpper());
+            IEnumerable<USPMHConsumptionRequestListDetail> lstUSPMHConsumptionRequestDetailList = base.ExecuteSQLProcedure<USPMHConsumptionRequestListDetail>("USPMHConsumptionRequestListDetail", param);
+            _RecordCount = param.Get<int>("@RecordCount");
+            return lstUSPMHConsumptionRequestDetailList;
         }
     }
 
@@ -575,6 +602,8 @@ namespace RightsUMusic.DAL.Repository
             param.Add("@FromDate", objCueSheetListInput.FromDate);
             param.Add("@ToDate", objCueSheetListInput.ToDate);
             param.Add("@RecordCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            param.Add("@SortBy", objCueSheetListInput.SortBy);
+            param.Add("@Order", objCueSheetListInput.Order.ToUpper());
             IEnumerable <USPMHGetCueSheetList> lstUSPMHGetCueSheetList = base.ExecuteSQLProcedure<USPMHGetCueSheetList>("USPMHGetCueSheetList", param);
             _RecordCount = param.Get<int>("@RecordCount");
             return lstUSPMHGetCueSheetList;
@@ -763,6 +792,19 @@ namespace RightsUMusic.DAL.Repository
     }
 
     #endregion
+
+    #region -------- GetSystemVersions -----------
+    public class GetSystemVersionsRepositories : MainRepository<GetSystemVersionsRepositories>
+    {
+        public USPGetSystemVersions GetSystemVersions()
+        {
+            string query = "SELECT TOP 1 Version_No, FORMAT(Version_Published_Date, 'dddd, MMM dd,yyyy hh:mm tt') as Version_Published_Date FROM System_Versions WHERE System_Name = 'MusicHub' ORDER BY 1 DESC";
+            USPGetSystemVersions SystemVersions = base.ExecuteSQLStmt<USPGetSystemVersions>(query).First();
+            return SystemVersions;
+        }
+    }
+    #endregion
+
     #region
 
 

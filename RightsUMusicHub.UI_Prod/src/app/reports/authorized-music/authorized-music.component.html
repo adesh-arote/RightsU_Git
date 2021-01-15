@@ -138,25 +138,25 @@
             <!-- <br> -->
             
             <p-dataTable #reqdt [value]="requestList" [rowsPerPageOptions]="[10,25,50,100]" [paginator]="true" [rows]="10" [responsive]="true"
-              [alwaysShowPaginator]="true" (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true"  [totalRecords]="recordCount" [first]="first">
+              [alwaysShowPaginator]="true" (onLazyLoad)="loadDataOnPagination($event)"  [lazy]="true" [totalRecords]="recordCount" [first]="first">
               
               <p-headerColumnGroup>
                 <p-row>
-                   <p-column header="Request ID" rowspan="2" [sortable]="true"></p-column>
-                   <p-column header="Channel"   rowspan="2" [sortable]="true"></p-column>
-                    <p-column header="Show"     rowspan="2" [sortable]="true"></p-column>
+                   <p-column   header="Request ID" rowspan="2" field="RequestID"  [sortable]="true"></p-column>
+                   <p-column  header="Channel"   rowspan="2"  field="ChannelName" [sortable]="true"></p-column>
+                    <p-column  header="Show"     rowspan="2" field="Title_Name" [sortable]="true"></p-column>
                    <p-column header="Songs"     colspan="2" [style]=" {'width':'150px' }" ></p-column>
-                   <p-column header="Episode"   rowspan="2" [style]=" {'width':'100px' }" [sortable]="true"></p-column>
-                    <p-column header="Telecast" rowspan="2" [sortable]="true"></p-column>
-          <p-column header="Status"   rowspan="2" [style]=" {'width':'100px' }" [sortable]="true"></p-column>
-          <p-column header="Requested By" rowspan="2" [style]=" {'width':'120px' }" [sortable]="true"></p-column>
-                  <p-column header="Requested Date" rowspan="2" [sortable]="true"></p-column>
+                   <p-column header="Episode"   rowspan="2" [style]=" {'width':'100px' }" field="EpisodeFrom" [sortable]="true"></p-column>
+                    <p-column header="Telecast" rowspan="2" [sortable]="true" field="TelecastFrom"></p-column>
+          <p-column header="Status"   rowspan="2" [style]=" {'width':'100px' }" field="Status"  [sortable]="true"></p-column>
+          <p-column header="Requested By" rowspan="2" [style]=" {'width':'120px' }" field="Login_Name" [sortable]="true"></p-column>
+                  <p-column header="Requested Date" rowspan="2"field="RequestDate"  [sortable]="true"></p-column>
                    
                 </p-row>
                 
                 <p-row>
-                   <p-column header="Req." [sortable]="true"></p-column>
-                   <p-column header="App."  [sortable]="true"></p-column>
+                   <p-column header="Req." field="CountRequest"  [sortable]="true"></p-column>
+                   <p-column header="App." field="ApprovedRequest" [sortable]="true"></p-column>
                    
                </p-row>
             </p-headerColumnGroup>
@@ -168,7 +168,7 @@
       </p-column>
       <p-column field="ChannelName" styleClass="text-center"></p-column>
       <p-column field="Title_Name" styleClass="text-center"></p-column>
-      <p-column field="CountRequest" styleClass="text-center"></p-column>
+      <p-column field="CountRequest" styleClass="text-center" ></p-column>
       <p-column field="ApprovedRequest"styleClass="text-center"></p-column>
       <p-column field="EpisodeFrom" styleClass="text-center">
           <ng-template pTemplate="body" let-row="rowData">

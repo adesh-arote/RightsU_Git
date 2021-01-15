@@ -18,6 +18,7 @@ import {GalleriaModule} from 'primeng/galleria';
 import {FilterPipe} from '../shared/pipes/filter.pipes';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import {TooltipModule} from 'primeng/tooltip';
+import {DataGridModule} from 'primeng/primeng';
 
 import {VarDirective} from '../shared/directives/variable-declartion';
 import{DashboardRoutes} from './dashboard.route';
@@ -41,6 +42,7 @@ import{DashboardRoutes} from './dashboard.route';
     TooltipModule,
     CalendarModule,
     FormsModule,
+    DataGridModule,
     RouterModule.forChild(DashboardRoutes)
   ],
   declarations: [DashboardComponent, QuickSelectionComponent,VarDirective

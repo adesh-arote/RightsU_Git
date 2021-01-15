@@ -48,7 +48,7 @@
             </a>
            <span class="pms" style="line-height: 51px !important;margin-left: -8px !important;">&nbsp;&nbsp;{{productionHouseName}}</span>
             <div class="navbar-custom-menu">
-            <ul class="nav navbar-nav">        
+            <ul class="nav navbar-nav" id="notificationList">        
               <!-- Notifications: style can be found in dropdown.less -->
               <!-- Remove Below Notification Link -->
               <li class="dropdown notifications-menu" *ngIf="ChangePSW=='N'"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell-o"></i> <span class="label label-success">{{unreadCount}}</span></a>
@@ -56,7 +56,7 @@
                 <!-- <li class="header">Notifications (Quarter 1- Apr'18 - Jun'18)</li> -->
                 <li>
                 <ul class="menu" *ngFor="let item of notificationList">
-                  <li class="text-success"><a (click)="notificationDetails(item.MHNotificationLogCode,item.MHRequestTypeCode,item.MHRequestCode)" data-toggle="tooltip" data-placement="bottom" title="{{item.Subject}}"><i class="fa fa-music text-navy"></i>{{item.Subject}}</a></li>
+                  <li class="text-success"><a (click)="notificationDetails(item.MHNotificationLogCode,item.MHRequestTypeCode,item.MHRequestCode)"><i class="fa fa-music text-navy"></i>{{item.Subject}}</a></li>
                   <!-- <li class="text-danger"><a (click)="notificationDetails()"><i class="fa fa-music text-danger"></i> Request ID# BT-00002 rejected</a></li>
                   <li><a (click)="notificationDetails()"><i class="fa fa-music text-aqua"></i> Request ID# BT-00006 sent for approval</a></li>
                   <li class="text-success"><a (click)="notificationDetails()"><i class="fa fa-music text-success"></i> New music track request ID# BT-00001 approved</a></li>

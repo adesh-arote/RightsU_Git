@@ -20,6 +20,9 @@ const SESSION_EXPIRE_TIME = "SESSION_EXPIRE_TIME";
 const ARCHIVE_STATUS = "ARCHIVE_STATUS";
 const CHANGEPSW_STATUS = "CHANGEPSW_STATUS";
 const USERS_IMAGE = "USERS_IMAGE";
+const SYSTEM_VERSION = "SYSTEM_VERSION";
+const LAST_MODIFIED = "LAST_MODIFIED";
+const LOGIN_CLICK = "LOGIN_CLICK";
 
 //Added by Sachin ----End----
 
@@ -39,6 +42,11 @@ export class LoginComponent implements OnInit {
   public displayForgot: boolean = false;
   public userDetails: any;
   public displayChangePSW: boolean = false;
+  public currentApplicationVersion: any;
+  public lastModified: any;
+  public Version: any;
+  public isLoginClicked:any;
+
   //added by sachin   ---start---
 
   archiveStatus: any = 0;
@@ -63,6 +71,9 @@ export class LoginComponent implements OnInit {
       this._authService.isLoggedIn = true;
       //added by sachin   ---end---
     }
+    this.isLoginClicked = false;
+    sessionStorage.setItem(LOGIN_CLICK, this.isLoginClicked);
+    this.getSystemVersion();
   }
 
   onEnter(obj) {
@@ -85,6 +96,10 @@ export class LoginComponent implements OnInit {
     sessionStorage.clear();
     localStorage.clear();
     let USERNAME = this.userName;
+    localStorage.setItem(SYSTEM_VERSION, this.currentApplicationVersion);
+    localStorage.setItem(LAST_MODIFIED, this.lastModified)
+    this.isLoginClicked = true;
+    sessionStorage.setItem(LOGIN_CLICK, this.isLoginClicked);
     this._appservice.applogin(this.userName, this.userPassword).subscribe(
       response => {
         debugger;
@@ -216,6 +231,17 @@ export class LoginComponent implements OnInit {
       }
     })
   }
+
+  getSystemVersion() {
+    let dataObj = {}
+    this._authService.GetSystemVersions(dataObj).subscribe(
+      outputData => {
+        this.Version = outputData.SystemVersion;
+        this.currentApplicationVersion = this.Version.Version_No;
+        this.lastModified = this.Version.Version_Published_Date;
+      });
+  }
+
   continueClick() {
     this.islogin = true;
     this.userName = null;

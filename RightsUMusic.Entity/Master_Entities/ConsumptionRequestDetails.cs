@@ -20,5 +20,6 @@ namespace RightsUMusic.Entity
         public string Title_Name { get; set; }
         public int EpisodeFrom { get; set; }
         public int EpisodeTo { get; set; }
+        public string SpecialInstruction { get; set; }
     }
 }

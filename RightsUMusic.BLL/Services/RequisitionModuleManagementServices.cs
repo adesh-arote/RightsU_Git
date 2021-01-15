@@ -35,6 +35,7 @@ namespace RightsUMusic.BLL.Services
         private readonly MHMusicSongTypeRepositories objMHMusicSongTypeRepositories = new MHMusicSongTypeRepositories();
         private readonly USPMHGetChannelFromDealRepositories objUSPMHGetChannelFromDealRepositories = new USPMHGetChannelFromDealRepositories();
         private readonly Music_LanguageRepositories objMusic_LanguageRepositories = new Music_LanguageRepositories();
+        private readonly USPMHConsumptionRequestDetailRepositories objUSPMHConsumptionRequestDetailRepositories = new USPMHConsumptionRequestDetailRepositories();
         public IEnumerable<USPMHShowNameList> GetShowNameList(int UsersCode,int ChannelCode)
         {
           
@@ -50,6 +51,11 @@ namespace RightsUMusic.BLL.Services
         public IEnumerable<USPMHConsumptionRequestList> GetConsumptionRequestList(MHRequest objMHRequest, ConsumptionRequestListInput objConsumptionRequestList, out int _RecordCount)//,string RecordFor,string PagingRequired,int PageSize,int PageNo, out int _RecordCount)
         {
             return objUSPMHConsumptionRequestRepositories.GetConsumptionRequestList(objMHRequest,objConsumptionRequestList, out _RecordCount);//,RecordFor,PagingRequired,PageSize,PageNo, out _RecordCount);
+        }
+
+        public IEnumerable<USPMHConsumptionRequestListDetail> GetConsumptionRequestListDetail(MHRequest objMHRequest, ConsumptionRequestListInput objConsumptionRequestList, out int _RecordCount)//,string RecordFor,string PagingRequired,int PageSize,int PageNo, out int _RecordCount)
+        {
+            return objUSPMHConsumptionRequestDetailRepositories.GetConsumptionRequestDetailList(objMHRequest, objConsumptionRequestList, out _RecordCount);//,RecordFor,PagingRequired,PageSize,PageNo, out _RecordCount);
         }
 
         public IEnumerable<USPMHMovieAlbumMusicList> GetMovieAlbumMusicList(MHRequest objMHRequest)

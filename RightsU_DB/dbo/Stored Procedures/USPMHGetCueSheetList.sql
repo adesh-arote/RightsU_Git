@@ -7,25 +7,45 @@
 @RecordCount INT OUT,
 @StatusCode NVARCHAR(MAX),
 @FromDate NVARCHAR(50),
-@ToDate NVARCHAR(50)
+@ToDate NVARCHAR(50),
+@SortBy NVARCHAR(50)= '',
+@Order NVARCHAR(50)= ''
 AS
 BEGIN
-	--BEGIN
+
 	--DECLARE
 	--@MHCueSheetCode INT= 0,
-	--@UsersCode INT = 1280,
-	--@PagingRequired NVARCHAR(2) = 'N',
+	--@UsersCode INT = 293,
+	--@PagingRequired NVARCHAR(2) = 'Y',
 	--@PageSize INT = 10,
 	--@PageNo INT = 1,
 	--@RecordCount INT,-- OUT,
 	--@StatusCode NVARCHAR(MAX)='C',
-	--@FromDate NVARCHAR(50)='23-Jul-2018',
-	--@ToDate NVARCHAR(50)='26-Jul-2018'
+	--@FromDate NVARCHAR(50)='',
+	--@ToDate NVARCHAR(50)='',
+	--@SortBy NVARCHAR(50)= 'TotalRecords',
+	--@Order NVARCHAR(50)= 'DESC'
 	
 	IF(OBJECT_ID('TEMPDB..#TempCueSheetList') IS NOT NULL)
 		DROP TABLE #TempCueSheetList
+	IF OBJECT_ID('tempdb..#TempCueSheetListFinal') IS NOT NULL DROP TABLE #TempCueSheetListFinal
 
 	CREATE TABLE #TempCueSheetList(
+	Row_No INT IDENTITY(1,1),
+	MHCueSheetCode INT,
+	RequestID NVARCHAR(50),
+	FileName NVARCHAR(MAX),
+	RequestedBy NVARCHAR(MAX),
+	RequestedDate NVARCHAR(50),
+	RecordStatus NVARCHAR(20),
+	Status NVARCHAR(MAX),
+	TotalRecords INT,
+	ErrorRecords INT,
+	WarningRecords INT,
+	SuccessRecords INT
+	)
+
+	CREATE TABLE #TempCueSheetListFinal(
 	Row_No INT IDENTITY(1,1),
 	MHCueSheetCode INT,
 	RequestID NVARCHAR(50),
@@ -83,25 +103,32 @@ BEGIN
 	SELECT @RecordCount = COUNT(*) FROM #TempCueSheetList
 	Print 'Recordcount= ' +CAST(@RecordCount AS NVARCHAR)
 
+	EXEC ('INSERT INTO #TempCueSheetListFinal
+	SELECT MHCueSheetCode,RequestID,FileName,RequestedBy,RequestedDate,RecordStatus,
+	CASE WHEN TotalRecords = SuccessRecords THEN ''Success''
+		WHEN ErrorRecords > 0 THEN ''Error''
+		WHEN (ErrorRecords = 0 AND WarningRecords > 0) THEN ''Data Error''
+		WHEN (RecordStatus = ''P'') Then ''Pending''
+		--ELSE ''Pending''
+	END AS
+	Status,TotalRecords,ErrorRecords,WarningRecords,SuccessRecords FROM #TempCueSheetList ORDER BY '+ @SortBy + ' ' + @Order)
+
 	IF(@PagingRequired  = 'Y')
 		BEGIN
-			DELETE from  #TempCueSheetList
+			DELETE from  #TempCueSheetListFinal
 			WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
 		END
 
-	SELECT MHCueSheetCode,RequestID,FileName,RequestedBy,RequestedDate,RecordStatus,
-	CASE WHEN TotalRecords = SuccessRecords THEN 'Success'
-		WHEN ErrorRecords > 0 THEN 'Error'
-		WHEN (ErrorRecords = 0 AND WarningRecords > 0) THEN 'Data Error'
-		WHEN (RecordStatus = 'P') Then 'Pending'
-		--ELSE 'Pending'
-	END AS
-	Status,TotalRecords,ErrorRecords,WarningRecords,SuccessRecords FROM #TempCueSheetList
+	SELECT * FROM #TempCueSheetListFinal
 
 	IF OBJECT_ID('tempdb..#TempCueSheetList') IS NOT NULL DROP TABLE #TempCueSheetList
+	IF OBJECT_ID('tempdb..#TempCueSheetListFinal') IS NOT NULL DROP TABLE #TempCueSheetListFinal
+
 END
 
 --DECLARE @RecordCount INT
 --EXEC USPMHGetCueSheetList 110,1287,'Y',10,1,@RecordCount OUTPUT,'','',''
 --PRINT 'RecordCount: '+CAST( @RecordCount AS NVARCHAR)
 --select REPLACE(CONVERT(NVARCHAR,GETDATE(), 106), ' ', '-')
+GO
+

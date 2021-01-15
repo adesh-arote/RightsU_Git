@@ -7,28 +7,34 @@ import { Component } from '@angular/core';
   template: '<router-outlet></router-outlet>'
 })
 
-export class AppComponent{
+export class AppComponent {
 }
 
 @Component({
   selector: 'app-frame',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  
+
 })
 // declare var $: any;
 
 export class AppFrameComponent {
 
   title = 'app';
-// constructor(){
+  public VersionNo: any;
+  public lastModified: any;
+  // constructor(){
   // $( "body" ).removeClass( "fixed" );
   // alert("app component");
   // $( "body" ).addClass( "fixed" );
   // $( "body" ).toggleClass( "fixed" );
   // var a = $("body").attr('class');
   // alert(a);
-// }
+  // }
 
-  
+  constructor() {
+    this.VersionNo = localStorage.getItem('SYSTEM_VERSION');
+    this.lastModified = localStorage.getItem('LAST_MODIFIED');
+  }
+
 }
