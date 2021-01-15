@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="b0e704aa-cd07-4ee2-a6e1-345beda02fb5" ChangeDateTime="01/08/2021 05:48:26">
+    <Property Name="ElementName" Value="[dbo].[Acq_Adv_Ancillary_Report].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Acq_Adv_Ancillary_Report]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Acq_Adv_Ancillary_Report_Code" />
+  </Operation>
+</Operations>

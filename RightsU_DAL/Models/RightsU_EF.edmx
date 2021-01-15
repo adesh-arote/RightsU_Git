@@ -5,6 +5,31 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="RightsU_NeoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Acq_Adv_Ancillary_Report">
+          <Key>
+            <PropertyRef Name="Acq_Adv_Ancillary_Report_Code" />
+          </Key>
+          <Property Name="Acq_Adv_Ancillary_Report_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Agreement_No" Type="varchar(max)" />
+          <Property Name="Title_Codes" Type="varchar(max)" />
+          <Property Name="Platform_Codes" Type="varchar(max)" />
+          <Property Name="Business_Unit_Code" Type="int" />
+          <Property Name="IncludeExpired" Type="varchar(max)" />
+          <Property Name="Date_Format" Type="nvarchar" MaxLength="2000" />
+          <Property Name="DateTime_Format" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="2000" />
+          <Property Name="SysLanguageCode" Type="int" />
+          <Property Name="Report_Name" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Accessibility" Type="char" MaxLength="10" />
+          <Property Name="File_Name" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Process_Start" Type="datetime" />
+          <Property Name="Process_End" Type="datetime" />
+          <Property Name="Report_Status" Type="char" MaxLength="1" />
+          <Property Name="Error_Message" Type="nvarchar(max)" />
+          <Property Name="Generated_By" Type="int" />
+          <Property Name="Generated_On" Type="datetime" />
+          <Property Name="Ancillary_Type_Codes" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="Acq_Deal">
           <Key>
             <PropertyRef Name="Acq_Deal_Code" />
@@ -13954,6 +13979,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="contentType" Type="nvarchar(max)" Mode="In" />
         </Function>
         <EntityContainer Name="RightsU_NeoModelStoreContainer">
+          <EntitySet Name="Acq_Adv_Ancillary_Report" EntityType="Self.Acq_Adv_Ancillary_Report" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal" EntityType="Self.Acq_Deal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Ancillary" EntityType="Self.Acq_Deal_Ancillary" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Ancillary_Platform" EntityType="Self.Acq_Deal_Ancillary_Platform" Schema="dbo" store:Type="Tables" />
@@ -20693,6 +20719,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Keyword" Mode="In" Type="String" />
             <Parameter Name="CallFor" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Acq_Adv_Ancillary_Report" EntityType="RightsU_NeoModel.Acq_Adv_Ancillary_Report" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35420,6 +35447,31 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Error_Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Is_Ignore" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="Acq_Adv_Ancillary_Report">
+          <Key>
+            <PropertyRef Name="Acq_Adv_Ancillary_Report_Code" />
+          </Key>
+          <Property Name="Acq_Adv_Ancillary_Report_Code" Type="Int32" Nullable="false" />
+          <Property Name="Agreement_No" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Title_Codes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Platform_Codes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Business_Unit_Code" Type="Int32" />
+          <Property Name="IncludeExpired" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Date_Format" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="DateTime_Format" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Created_By" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="SysLanguageCode" Type="Int32" />
+          <Property Name="Report_Name" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Accessibility" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="File_Name" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Process_Start" Type="DateTime" Precision="3" />
+          <Property Name="Process_End" Type="DateTime" Precision="3" />
+          <Property Name="Report_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Error_Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Generated_By" Type="Int32" />
+          <Property Name="Generated_On" Type="DateTime" Precision="3" />
+          <Property Name="Ancillary_Type_Codes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44419,6 +44471,32 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="USP_Get_ExcelSrNo" FunctionName="RightsU_NeoModel.Store.USP_Get_ExcelSrNo" />
+          <EntitySetMapping Name="Acq_Adv_Ancillary_Report">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Adv_Ancillary_Report">
+              <MappingFragment StoreEntitySet="Acq_Adv_Ancillary_Report">
+                <ScalarProperty Name="Ancillary_Type_Codes" ColumnName="Ancillary_Type_Codes" />
+                <ScalarProperty Name="Generated_On" ColumnName="Generated_On" />
+                <ScalarProperty Name="Generated_By" ColumnName="Generated_By" />
+                <ScalarProperty Name="Error_Message" ColumnName="Error_Message" />
+                <ScalarProperty Name="Report_Status" ColumnName="Report_Status" />
+                <ScalarProperty Name="Process_End" ColumnName="Process_End" />
+                <ScalarProperty Name="Process_Start" ColumnName="Process_Start" />
+                <ScalarProperty Name="File_Name" ColumnName="File_Name" />
+                <ScalarProperty Name="Accessibility" ColumnName="Accessibility" />
+                <ScalarProperty Name="Report_Name" ColumnName="Report_Name" />
+                <ScalarProperty Name="SysLanguageCode" ColumnName="SysLanguageCode" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="DateTime_Format" ColumnName="DateTime_Format" />
+                <ScalarProperty Name="Date_Format" ColumnName="Date_Format" />
+                <ScalarProperty Name="IncludeExpired" ColumnName="IncludeExpired" />
+                <ScalarProperty Name="Business_Unit_Code" ColumnName="Business_Unit_Code" />
+                <ScalarProperty Name="Platform_Codes" ColumnName="Platform_Codes" />
+                <ScalarProperty Name="Title_Codes" ColumnName="Title_Codes" />
+                <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
+                <ScalarProperty Name="Acq_Adv_Ancillary_Report_Code" ColumnName="Acq_Adv_Ancillary_Report_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

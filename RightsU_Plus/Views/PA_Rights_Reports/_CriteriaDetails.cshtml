@@ -1,0 +1,86 @@
+﻿<style>
+    div.ex1 {
+      width: 425px;
+      height: 170px;
+      overflow-y: scroll;
+    }
+</style>
+<div class="" > @*style="height:150px;overflow:auto;"*@
+    <table>
+        @*<tr>
+                <td style="width:40%">Channel :</td>
+                <td style="width:60%">
+                    <div class="expand_Name">@ViewBag.Channel</div>
+                </td>
+            </tr>*@
+        <tr>
+            <td width="50%">Business Unit :</td>
+            <td class="">
+                <div class="expand_Name">@ViewBag.BusinessUnit</div>
+            </td>
+        </tr>
+        <tr>
+            <td>Ancillary Type :</td>
+            <td class="">
+                <div class="expand_Name">@ViewBag.AncillaryType</div>
+            </td>
+        </tr>
+        <tr>
+            <td>Title  :</td>
+            <td>
+                <div class="expand_Name">@ViewBag.Title</div>
+            </td>
+        </tr>
+        <tr>
+            <td>Agreement No :</td>
+            <td>
+                <div class="expand_Name">@ViewBag.AgreementNo</div>
+            </td>
+        </tr>
+        <tr>
+            <td> Include Expired :</td>
+            <td>
+                <div class="expand_Name">@ViewBag.IncludeExpired</div>
+            </td>
+        </tr>
+        <tr>
+            <td> Platform :</td>
+            <td>
+                <div class="expand_Name">@ViewBag.PlatForm</div>
+            </td>
+        </tr>
+        @*r>
+                <td style="width:40%"> Episode From :</td>
+                <td style="width:60%">
+                    <div class="expand_Name">@ViewBag.EpsFrom</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%"> Episode To :</td>
+                <td style="width:60%">
+                    <div class="expand_Name">@ViewBag.EpsTo</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%"> Airing Start Date :</td>
+                <td style="width:60%">
+                    <div class="expand_Name">@ViewBag.AiringSD</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:40%"> Airing End Date :</td>
+                <td style="width:60%">
+                    <div class="expand_Name">@ViewBag.AiringED</div>
+                </td>
+            </tr>*@
+    </table>
+</div>
+<script>
+    $('.expand_Name').expander({
+        slicePoint: 30,
+        expandPrefix: '',
+        expandText: '...Read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>

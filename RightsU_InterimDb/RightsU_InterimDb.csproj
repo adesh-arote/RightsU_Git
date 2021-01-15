@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Acq_Adv_Ancillary_Report.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Acq_Deal.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

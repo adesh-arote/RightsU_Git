@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -1444,6 +1444,11 @@
     <Build Include="dbo\User Defined Types\Acq_Deal_Movie_Contents_Import_UDT.sql" />
     <Build Include="dbo\User Defined Types\CuratedPreview_UDT.sql" />
     <Build Include="dbo\User Defined Types\RightsDefination.sql" />
+    <Build Include="dbo\Tables\Acq_Adv_Ancillary_Report.sql" />
+    <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="RightsU_DB.refactorlog" />
     <Build Include="dbo\Dev_Query\DevTagQuery.sql" />
     <Build Include="dbo\Stored Procedures\USPMHConsumptionRequestListDetail.sql" />
     <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
