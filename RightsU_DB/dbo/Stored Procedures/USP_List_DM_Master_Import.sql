@@ -1,4 +1,4 @@
-﻿ALTER  PROCEDURE [dbo].[USP_List_DM_Master_Import]  
+﻿CREATE  PROCEDURE [dbo].[USP_List_DM_Master_Import]  
 (  
 	@strSearch  NVARCHAR(2000),  
 	@PageNo INT=1,  

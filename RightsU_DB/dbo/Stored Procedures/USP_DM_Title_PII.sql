@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_DM_Title_PII]
+﻿CREATE PROCEDURE [dbo].[USP_DM_Title_PII]
 	@DM_Import_UDT DM_Import_UDT READONLY,
 	@DM_Master_Import_Code Int,
 	@Users_Code Int
