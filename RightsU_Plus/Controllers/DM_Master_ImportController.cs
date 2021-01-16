@@ -866,6 +866,10 @@ namespace RightsU_Plus.Controllers
                 lst = lstTitleBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 lst.Insert(0, firstItem);
             }
+            else
+            {
+                lst.Insert(0, firstItem);
+            }
             ViewBag.FileType = fileType;
             ViewBag.DM_Master_Import_Code = DM_Import_Master_Code;
             objDMTitle = null;
@@ -2108,40 +2112,7 @@ namespace RightsU_Plus.Controllers
                     sql += " AND  [Music_Label] IN (" + "'" + searchMLString + "')";
 
             }
-            if (FileType == "T")
-            {
-                string SearchTitleName = objPage_Properties.TitleName_Search.Replace(",", "','");
-                string SearchTitleType = objPage_Properties.TitleType_Search.Replace(",", "','");
-                string searchTLString = objPage_Properties.TitleLanguage_Search.Replace(",", "','");
-                string searchStarCast = objPage_Properties.KeyStarCast_Search.Replace(",", "','");
-                string searchStatus = objPage_Properties.Status_Search.Replace(",", "','");
-                string searchErrorMsg = objPage_Properties.ErrorMsg_Search.Replace(",", "','");
-                string searchDirector = objPage_Properties.Director_Search.Replace(",", "','");
-                string searchTChkStatusString = objPage_Properties.chkStatus_Search.Replace(",", "','");
-                string searchMusicLabel = objPage_Properties.MusicLabel_Search.Replace(",", "','");
-
-                if (objPage_Properties.TitleName_Search != "")
-                    sql += " AND [Original Title (Tanil/Telugu)] IN(" + "'" + SearchTitleName + "')";
-                if (objPage_Properties.TitleType_Search != "")
-                    sql += " AND [Title Type] IN(" + "'" + SearchTitleType + "')";
-                if (objPage_Properties.TitleLanguage_Search != "")
-                    sql += " AND [Original Language (Hindi)] IN(" + "'" + searchTLString + "')";
-                if (objPage_Properties.KeyStarCast_Search != "")
-                    sql += " AND TKST.StarCast IN(" + "'" + searchStarCast + "')";
-                if (objPage_Properties.Status_Search != "" && objPage_Properties.Status_Search != "Y")
-                    sql += " AND [Record_Status] IN(" + "'" + searchStatus + "')";
-                if (objPage_Properties.Status_Search != "" && objPage_Properties.Status_Search == "Y")
-                    sql += " AND [Is_Ignore] =" + "'" + searchStatus + "'";
-                if (objPage_Properties.chkStatus_Search != "" && objPage_Properties.chkStatus_Search != "Y")
-                    sql += " AND [Record_Status] IN(" + "'" + searchTChkStatusString + "')";
-                if (objPage_Properties.ErrorMsg_Search != "")
-                    sql += " AND TCEM.ErrorMessage  IN(" + "'" + searchErrorMsg + "')";
-                if (objPage_Properties.Director_Search != "")
-                    sql += " AND TD.Director  IN(" + "'" + searchDirector + "')";
-                if (objPage_Properties.MusicLabel_Search != "")
-                    sql += " AND TML.MusicLabel  IN(" + "'" + searchMusicLabel + "')";
-            }
-
+           
             parm[0] = new ReportParameter("DM_Master_Import_Code", Convert.ToString(DM_Import_Master_Code));
             parm[1] = new ReportParameter("SearchCriteria", SearchCriteria);
             parm[2] = new ReportParameter("File_Type", FileType);
