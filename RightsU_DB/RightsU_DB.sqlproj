@@ -1449,7 +1449,6 @@
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
     <Build Include="dbo\Stored Procedures\USPMHConsumptionRequestListDetail.sql" />
-    <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
     <Build Include="dbo\Stored Procedures\USP_Music_Schedule_Process_Neo.sql" />
     <Build Include="dbo\User Defined Types\MusicScheduleProcess.sql" />
   </ItemGroup>
