@@ -67,7 +67,6 @@
     <Folder Include="dbo\Functions\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\User Defined Types\" />
-    <Folder Include="dbo\Dev_Query" />
     <Folder Include="Database Scripts" />
   </ItemGroup>
   <ItemGroup>
@@ -1446,11 +1445,9 @@
     <Build Include="dbo\User Defined Types\CuratedPreview_UDT.sql" />
     <Build Include="dbo\User Defined Types\RightsDefination.sql" />
     <Build Include="dbo\Tables\Acq_Adv_Ancillary_Report.sql" />
-    <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
-    <Build Include="dbo\Dev_Query\DevTagQuery.sql" />
     <Build Include="dbo\Stored Procedures\USPMHConsumptionRequestListDetail.sql" />
     <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
     <Build Include="dbo\Stored Procedures\USP_Music_Schedule_Process_Neo.sql" />
