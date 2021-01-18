@@ -92,6 +92,7 @@
     <Compile Include="Master_Entities\Users_Password_Detail.cs" />
     <Compile Include="Master_Entities\USPGetSystemVersions.cs" />
     <Compile Include="Master_Entities\USPMHConsumptionRequestList.cs" />
+    <Compile Include="Master_Entities\USPMHConsumptionRequestListDetail.cs" />
     <Compile Include="Master_Entities\USPMHGetBarChartData.cs" />
     <Compile Include="Master_Entities\USPMHGetCueSheetList.cs" />
     <Compile Include="Master_Entities\USPMHGetCueSheetSongDetails.cs" />
