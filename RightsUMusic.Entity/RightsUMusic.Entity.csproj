@@ -102,6 +102,7 @@
     <Compile Include="Master_Entities\USPMHGetPieChartData.cs" />
     <Compile Include="Master_Entities\USPMHGetTalents.cs" />
     <Compile Include="Master_Entities\USPMHGetTitleEpisode.cs" />
+    <Compile Include="Master_Entities\USPMHMovieAlbumMusicDetailsList.cs" />
     <Compile Include="Master_Entities\USPMHMovieAlbumMusicList.cs" />
     <Compile Include="Master_Entities\USPMHNotificationList.cs" />
     <Compile Include="Master_Entities\USPMHSearchMusicTrack.cs" />
