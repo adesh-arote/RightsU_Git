@@ -1,0 +1,64 @@
+<div class="Row">
+  <div>
+    <label>Search :</label>&nbsp;
+    <input type="text" class="SearchTextBox" #gb [(ngModel)]="movieSearch" pInputText
+      placeholder="Request ID, Requested By,Requested Date,Status">
+  </div><br>
+  <p-dataTable [globalFilter]="gb" #dt [value]="requestAlbumList" [rowsPerPageOptions]="[10,25,50,100]"
+    [scrollable]="true" scrollHeight="460px" [paginator]="true" [rows]="10" [responsive]="true"
+    [alwaysShowPaginator]="true">
+    <p-column field="RequestID" header="Request ID" [sortable]="true" styleClass="text-center"></p-column>
+    <p-column field="CountRequest" header="No. of Movie / Album" [sortable]="true" styleClass="text-center">
+      <ng-template pTemplate="body" let-row="rowData">
+        <a (click)="albumRequestDetail(row)"><span style="color:blue">{{row.CountRequest}}</span></a>
+      </ng-template>
+    </p-column>
+    <p-column field="RequestedBy" header="Requested By" [sortable]="true" styleClass="text-center">
+    </p-column>
+    <p-column field="RequestDate" header="Requested Date" [sortable]="true" styleClass="text-center">
+      <ng-template pTemplate="body" let-row="rowData">
+        {{row.RequestDate |date:'dd-MMM-yyyy HH:mm a'}}
+      </ng-template>
+    </p-column>
+    <p-column field="Status" header="Status" [sortable]="true" styleClass="text-center"></p-column>
+    <p-footer>
+      Total Records: {{totalCountofMovieAlbum}}
+    </p-footer>
+  </p-dataTable>
+</div>
+
+
+
+<p-dialog header="{{musicReuestHeader}}" [blockScroll]="true" [(visible)]="dialogRequestDetail" [positionTop]="60"
+[modal]="true" [responsive]="false" [width]="1200" [contentStyle]="{'overflow':'visible'}" [draggable]="false">
+<div class="row " *ngIf="isAlbumDetail">
+  <div class="Row">
+    <div>
+      <label>Search :</label>&nbsp;
+      <input type="text" class="SearchTextBox"  #gb
+        placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status"
+        [(ngModel)]="searchAlbumDetail"  pInputText size="50">
+    </div>
+  </div>
+  <br>
+  <p-dataTable [globalFilter]="gb" #dt [value]="albumDetailFilterList" [rowsPerPageOptions]="[10,25,50,100]" [globalFilter]="gb4"
+    [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="300px" [responsive]="true"
+    [alwaysShowPaginator]="true">
+    <p-column field="RequestedMovieAlbumName" header="Req. Movie / Album" [style]=" {'width':'150px' }">
+    </p-column>
+    <p-column field="ApprovedMovieAlbumName" header="App. Movie / Album" [style]=" {'width':'150px' }"></p-column>
+    <p-column field="MovieAlbum" header="Movie / Album" [editable]="true"
+      [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>
+    <p-column field="CreateMap" header="Create-Map" styleClass="text-center" [style]=" {'width':'100px' }">
+    </p-column>
+    <p-column field="IsApprove" header="Status" styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
+    <p-column field="Remarks" header="Remarks" styleClass="text-center" [style]=" {'width':'150px' }"></p-column>
+    <p-footer>
+      Total Records: {{totalAlbumDetailCount}}
+    </p-footer>
+  </p-dataTable>
+</div>
+<p-footer>
+  <button type="button" pButton (click)="close()" label="Close"></button>
+</p-footer>
+</p-dialog>

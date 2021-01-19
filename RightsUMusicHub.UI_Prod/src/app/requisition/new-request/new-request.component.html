@@ -20,10 +20,10 @@
   <p-messages *ngIf="showMsg" [(value)]="msgs"></p-messages>
   <section class="content-subHeader" style="margin-top: -1%;">
     <ul class="nav nav-tabs">
-      <li class="active">
-        <a data-toggle="tab" href="#NRequest" (click)="newRequestClick()">New Request</a>
+      <li [ngClass]="isNewrequest ? 'active' : ''">
+        <a data-toggle="tab" class="nav-link active" href="#NRequest" (click)="newRequestClick()">New Request</a>
       </li>
-      <li>
+      <li [ngClass]="!isNewrequest ? 'active' : ''">
         <a data-toggle="tab" href="#ReqList" (click)="Requestlistclick()">Request List</a>
       </li>
     </ul>
@@ -32,6 +32,13 @@
         <tr>
           <!-- <td class="bold" style="width:15%;">Music Cue Sheet:</td> -->
           <td style="float: right;">
+            <span *ngIf="showSearch">
+              <button type="button" (click)="exportRequestdetails()" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+                title="Download"><i class="fa fa-download fa-lg"></i></button>
+            </span>
+            <!-- <span *ngIf="showSearch">
+              <button type="button"    (click)="exportRequestdetails()" class="btn btn-primary">Detail download</button>
+            </span> -->
             <span style="margin:5px; " *ngIf="showSearch">
 
               <button type="button" id="submitcuesheet" (click)="manualAssignClick('Y')" class="btn btn-primary">Cue
@@ -159,7 +166,7 @@
 
     </p-sidebar>
     <div class="tab-content">
-      <div id="NRequest" class="tab-pane fade in active">
+      <div id="NRequest" [ngClass]="isNewrequest ? 'tab-pane fade in active' : 'tab-pane fade'" class="">
         <section class="content-subHeader">
           <div class="row">
             <form #newSearchRequestForm="ngForm">
@@ -309,7 +316,7 @@
             [componentType]="componentType"></app-cart-grid>
         </div>
       </div>
-      <div id="ReqList" class="tab-pane fade">
+      <div id="ReqList" [ngClass]="!isNewrequest ? 'tab-pane fade in active' : 'tab-pane fade'" class="tab-pane fade">
         <section class="content">
           <div class="row">
             <br>
