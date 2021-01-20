@@ -347,17 +347,24 @@ export class NewRequestComponent implements OnInit {
     if (this.episodeType == 'range') {
       let fromdate = this.newMusicConsumptionRequest.TelecastFrom
       let todate = this.newMusicConsumptionRequest.TelecastTo
-
-      if (parseInt(this.newMusicConsumptionRequest.EpisodeFrom) >= parseInt(this.newMusicConsumptionRequest.EpisodeTo)) {
+      if (fromdate > todate) {
         this.displayalertMessage = true;
-
         this.messageData = {
           'header': "Error",
-          'body': "Episode To should greater than Episode From"
+          'body': "From Date should be Less Than To Date"
         }
-
-        // this.alertErrorMessage="Episode To should greater than Episode From";
+        //     // this.alertErrorMessage="From Date should Less Than To Date";
       }
+      // if (parseInt(this.newMusicConsumptionRequest.EpisodeFrom) >= parseInt(this.newMusicConsumptionRequest.EpisodeTo)) {
+      //   this.displayalertMessage = true;
+
+      //   this.messageData = {
+      //     'header': "Error",
+      //     'body': "Episode To should greater than Episode From"
+      //   }
+
+      //   // this.alertErrorMessage="Episode To should greater than Episode From";
+      // }
       // else
       //   if (fromdate >= todate) {
       //     this.displayalertMessage = true;
@@ -1677,7 +1684,7 @@ export class NewRequestComponent implements OnInit {
                       this.displayalertMessage = true;
                       this.messageData = {
                         'header': "Message",
-                        'body': "Song Type Should not be Blank"
+                        'body': "Usage Type Should not be Blank"
                       }
                     }
                     else {
@@ -1718,7 +1725,7 @@ export class NewRequestComponent implements OnInit {
                       this.displayalertMessage = true;
                       this.messageData = {
                         'header': "Message",
-                        'body': "Song Type Should not be Blank"
+                        'body': "Usage Type Should not be Blank"
                       }
                     }
                     else {
@@ -1765,7 +1772,7 @@ export class NewRequestComponent implements OnInit {
                     this.displayalertMessage = true;
                     this.messageData = {
                       'header': "Message",
-                      'body': "Song Type Should not be Blank"
+                      'body': "Usage Type Should not be Blank"
                     }
                   }
                   else {
@@ -1805,7 +1812,7 @@ export class NewRequestComponent implements OnInit {
                     this.displayalertMessage = true;
                     this.messageData = {
                       'header': "Message",
-                      'body': "Song Type Should not be Blank"
+                      'body': "Usage Type Should not be Blank"
                     }
                   }
                   else {
