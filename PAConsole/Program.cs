@@ -158,8 +158,6 @@ namespace PAConsole
             }
             dt.AcceptChanges();
 
-            List<DataRow> list = dt.AsEnumerable().ToList();
-
             int Acq_Adv_Ancillary_Report_Code = objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
             try
             {
