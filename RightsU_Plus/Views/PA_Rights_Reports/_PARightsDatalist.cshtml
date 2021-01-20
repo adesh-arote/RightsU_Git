@@ -146,15 +146,13 @@
                             <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteConfirmation(@item.Acq_Adv_Ancillary_Report_Code)"></a>
                             <a title="Re-Run" class="glyphicon glyphicon-refresh" style="cursor:pointer;" onclick="RefreshReport(@item.Acq_Adv_Ancillary_Report_Code)"></a>
                         }
-                        @if (item.Report_Status == "P")
+                        @if (item.Report_Status == "P" || item.Report_Status == "W")
                         {
-                        <img id="imgLoading_@item.Acq_Adv_Ancillary_Report_Code" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
-                        <a id="Error_@item.Acq_Adv_Ancillary_Report_Code" title="Please Contact Administrator" class="glyphicon glyphicon-exclamation-sign" ></a>
-                        <a id="NRF_@item.Acq_Adv_Ancillary_Report_Code" title="No Record Found" class="glyphicon glyphicon-exclamation-sign" style="color: red;"></a>
+                            <img id="imgLoading_@item.Acq_Adv_Ancillary_Report_Code" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }
                         @if (item.Report_Status == "E")
                         {
-                            <a title="Please Contact Administrator" class="glyphicon glyphicon-exclamation-sign" style="color: red;"></a>
+                            <a id = "Error_@item.Acq_Adv_Ancillary_Report_Code" title = "Please Contact Administrator" class="glyphicon glyphicon-exclamation-sign" ></a>
                         }
                         @if (item.Report_Status == "N")
                         {
