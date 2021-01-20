@@ -149,7 +149,7 @@
                 <li class="user-header" (click)="fileInput.click()">
                   <input style="display: none" #fileInput type="file" id="uploadFile" name="uploadFile"
                 (change)="fileCheck($event)" />
-                <img [src]="ImageUrl" alt="">
+                <img [src]="ImageUrl" alt="" onerror="this.onerror=null;this.src='../../assets/Images/User_Img.png'">
                 <!-- i class="fa fa-user-circle fa-3x" aria-hidden="true"></i -->
                 <p>
                   {{userName}}

@@ -1562,7 +1562,13 @@ body [name="dataGrid"] .ui-widget-content {
     border: 1px solid #D5D5D5;
     background-color: #ffffff;
     color: #222222;
-    height: 90px;
+	height: 90px;
+}
+
+body [name="dataGrid"] .ui-g-12 {
+    width: 100%;
+	text-align: center;
+	padding: 25px;
 }
 
 @media screen and (max-width: 400px) {
