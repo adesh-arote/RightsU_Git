@@ -2418,6 +2418,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Error_Message" Type="nvarchar(max)" />
           <Property Name="Is_Ignore" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="DM_Title_Resolve_Conflict">
+          <Key>
+            <PropertyRef Name="DM_Title_Resolve_Conflict_Code" />
+          </Key>
+          <Property Name="DM_Title_Resolve_Conflict_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Tab_Name" Type="nvarchar(max)" />
+          <Property Name="Master_Type" Type="nvarchar(max)" />
+          <Property Name="Roles" Type="char" MaxLength="1" />
+          <Property Name="Create_New" Type="char" MaxLength="1" />
+          <Property Name="Order_No" Type="int" />
+        </EntityType>
         <EntityType Name="Document_Type">
           <Key>
             <PropertyRef Name="Document_Type_Code" />
@@ -3628,6 +3639,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Music_Album_Code" Type="int" />
           <Property Name="Music_Tag" Type="nvarchar" MaxLength="200" />
           <Property Name="Public_Domain" Type="char" MaxLength="1" />
+          <Property Name="ISRC" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Music_Title_Label">
           <Key>
@@ -14115,6 +14127,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="DM_Music_Title" EntityType="Self.DM_Music_Title" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Title_Import_Utility" EntityType="Self.DM_Title_Import_Utility" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Title_Import_Utility_Data" EntityType="Self.DM_Title_Import_Utility_Data" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DM_Title_Resolve_Conflict" EntityType="Self.DM_Title_Resolve_Conflict" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document_Type" EntityType="Self.Document_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config" EntityType="Self.Email_Config" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config_Detail" EntityType="Self.Email_Config_Detail" Schema="dbo" store:Type="Tables" />
@@ -20720,6 +20733,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="CallFor" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Acq_Adv_Ancillary_Report" EntityType="RightsU_NeoModel.Acq_Adv_Ancillary_Report" />
+          <EntitySet Name="DM_Title_Resolve_Conflict" EntityType="RightsU_NeoModel.DM_Title_Resolve_Conflict" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -30509,6 +30523,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="MHPlayListSongs" Relationship="RightsU_NeoModel.FK_MHPlayListSong_Music_Title" FromRole="Music_Title" ToRole="MHPlayListSong" />
           <NavigationProperty Name="MHRequestDetails" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Music_Title" FromRole="Music_Title" ToRole="MHRequestDetail" />
           <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title" FromRole="Music_Title" ToRole="MHCueSheetSong" />
+          <Property Name="ISRC" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Music_Title_Label">
           <Key>
@@ -35471,6 +35486,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Generated_By" Type="Int32" />
           <Property Name="Generated_On" Type="DateTime" Precision="3" />
           <Property Name="Ancillary_Type_Codes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="DM_Title_Resolve_Conflict">
+          <Key>
+            <PropertyRef Name="DM_Title_Resolve_Conflict_Code" />
+          </Key>
+          <Property Name="DM_Title_Resolve_Conflict_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tab_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Master_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Roles" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Create_New" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Order_No" Type="Int32" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -40997,6 +41023,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Music_Title">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Music_Title">
               <MappingFragment StoreEntitySet="Music_Title">
+                <ScalarProperty Name="ISRC" ColumnName="ISRC" />
                 <ScalarProperty Name="Public_Domain" ColumnName="Public_Domain" />
                 <ScalarProperty Name="Music_Tag" ColumnName="Music_Tag" />
                 <ScalarProperty Name="Music_Album_Code" ColumnName="Music_Album_Code" />
@@ -44494,6 +44521,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Title_Codes" ColumnName="Title_Codes" />
                 <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
                 <ScalarProperty Name="Acq_Adv_Ancillary_Report_Code" ColumnName="Acq_Adv_Ancillary_Report_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DM_Title_Resolve_Conflict">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Resolve_Conflict">
+              <MappingFragment StoreEntitySet="DM_Title_Resolve_Conflict">
+                <ScalarProperty Name="Order_No" ColumnName="Order_No" />
+                <ScalarProperty Name="Create_New" ColumnName="Create_New" />
+                <ScalarProperty Name="Roles" ColumnName="Roles" />
+                <ScalarProperty Name="Master_Type" ColumnName="Master_Type" />
+                <ScalarProperty Name="Tab_Name" ColumnName="Tab_Name" />
+                <ScalarProperty Name="DM_Title_Resolve_Conflict_Code" ColumnName="DM_Title_Resolve_Conflict_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

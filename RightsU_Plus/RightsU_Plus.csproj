@@ -990,6 +990,7 @@
     <Content Include="Content\jquery.fancytree-css\skin-bootstrap\ui.fancytree.less" />
     <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\ui.fancytree.less" />
     <Content Include="Content\jquery.fancytree-css\skin-awesome\ui.fancytree.less" />
+    <Content Include="Download\Title_Import_Utility_Sample.xlsx" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\RightsU_Publish.pubxml" />
     <None Include="Properties\PublishProfiles\RU_Publish.pubxml" />

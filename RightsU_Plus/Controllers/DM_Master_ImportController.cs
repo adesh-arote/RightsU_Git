@@ -621,20 +621,8 @@ namespace RightsU_Plus.Controllers
             DM_Master_Log lstDMLog = new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.DM_Master_Import_Code.Contains(lstDMCodes)).FirstOrDefault();
             ViewBag.FileStatus = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.DM_Master_Import_Code == DM_Import_Master_Code).Select(s => s.Status).FirstOrDefault();
 
-            var lstTemp = new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code.ToString()).Select(x => x.Master_Type).Distinct().ToList();
-            ViewBag.ShortName = String.Join(",", lstTemp);
-            //ViewBag.ShortName = string.Join(",", new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Allowed_For_Resolve_Conflict).Select(y => y.ShortName).Distinct().ToList());
-            // var lstTemp = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Allowed_For_Resolve_Conflict == "Y").Select(x => x.ShortName).Distinct().ToList();
-            //String.Join(",", lstMusicTitle.Where(x => x.Singers != "" && x.Singers != null)
-            //ViewBag.lstShortName = lstTemp.Select(x => x.Key).ToList();
-            //ViewBag.lstReferenceTable = lstTemp.Select(x => x.Value).ToList();
-            // new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Allowed_For_Resolve_Conflict == "Y").Select(x => x.Reference_Table).Distinct().ToList();
-
-            //ViewBag.IsResolveConflictTalent = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Reference_Table == "Talent").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault();
-            //ViewBag.IsResolveConflictLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Language Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
-            //ViewBag.IsResolveConflictTitleType = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Type").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
-            //ViewBag.IsResolveConflictTitleLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Language Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
-            //ViewBag.IsResolveConflictOriginalLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Original Title Language  Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
+            ViewBag.ShortName = String.Join(",",new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code.ToString()).Select(x => x.Master_Type).Distinct().ToList());
+            ViewBag.DM_Title_RC_Lst = new DM_Title_Resolve_Conflict_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderBy(x => x.Order_No).ToList();
 
             return PartialView("~/Views/DM_Master_Import/_DM_Master_Log_List.cshtml", lstDMLog);
         }
@@ -966,6 +954,11 @@ namespace RightsU_Plus.Controllers
                 else
                     lst = lstSystemDMLog.Where(w => w.Master_Type == currentTabName).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
+            ViewBag.DM_Title_RC = new DM_Title_Resolve_Conflict_Service(objLoginEntity.ConnectionStringName)
+                                    .SearchFor(x => x.Master_Type == currentTabName)
+                                    .OrderBy(x => x.Order_No)
+                                    .FirstOrDefault();
+
             if (MappedData == "U")
             {
                 return PartialView("~/Views/DM_Master_Import/DM_Import_Log.cshtml", lst);
@@ -1014,55 +1007,6 @@ namespace RightsU_Plus.Controllers
             result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_ResolveConflict_Data(keyword, tabName, RoleName)
                                .Select(R => new { Mapping_Name = R.TextField, Mapping_Code = R.ValueField }).ToList();
 
-            //if (tabName == "TA")
-            //{
-            //    result = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Talent_Name, Mapping_Code = R.Talent_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "LB")
-            //{
-            //    result = new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Label_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Music_Label_Name, Mapping_Code = R.Music_Label_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "GE")
-            //{
-            //    result = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Genres_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Genres_Name, Mapping_Code = R.Genres_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "MA")
-            //{
-            //    result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Music_Album_Name, Mapping_Code = R.Music_Album_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "ML")
-            //{
-            //    result = new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Language_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Language_Name, Mapping_Code = R.Music_Language_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "MT")
-            //{
-            //    result = new Music_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Theme_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Music_Theme_Name, Mapping_Code = R.Music_Theme_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "TT")
-            //{
-            //    result = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y" && x.Deal_Or_Title.Contains("T") && x.Deal_Type_Code != Deal_type_Code_Other).Distinct()
-            //               .Select(R => new { Mapping_Name = R.Deal_Type_Name, Mapping_Code = R.Deal_Type_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "TL" || tabName == "OL")
-            //{
-            //    result = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Language_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //               .Select(R => new { Mapping_Name = R.Language_Name, Mapping_Code = R.Language_Code }).Take(100).ToList();
-            //}
-            //if (Is_Allow_Program_Category == "Y")
-            //{
-            //    int Program_Category_Code = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Columns_Name == "Program Category").ToList().FirstOrDefault().Columns_Code;
-            //    if (tabName == "PC")
-            //    {
-            //        result = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Value.Contains(keyword.ToUpper()) && x.Columns_Code == Program_Category_Code).Distinct()
-            //                    .Select(R => new { Mapping_Name = R.Columns_Value, Mapping_Code = R.Columns_Value_Code }).Take(100).ToList();
-            //    }
-            //}
             return Json(result);
         }
         public ActionResult ValidateTalent(List<RightsU_Entities.DM_Master_Log> lst)
@@ -2192,6 +2136,8 @@ namespace RightsU_Plus.Controllers
         public int PageSize_OL { get; set; }
         public int PageNo_CBFC { get; set; }
         public int PageSize_CBFC { get; set; }
+        public int PageNo_PG { get; set; }
+        public int PageSize_PG { get; set; }
 
         public object GetPropertyValue(string propertyName)
         {

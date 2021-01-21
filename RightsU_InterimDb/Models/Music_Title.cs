@@ -46,6 +46,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Music_Album_Code { get; set; }
     	    public string Music_Tag { get; set; }
     	    public string Public_Domain { get; set; }
+    	    public string ISRC { get; set; }
     
         public virtual Language Language { get; set; }
         public virtual ICollection<Music_Title_Label> Music_Title_Label { get; set; }

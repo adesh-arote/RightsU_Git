@@ -5,7 +5,7 @@
 AS 
 BEGIN
 	SET NOCOUNT ON
-	--DECLARE @DM_Master_Import_Code INT = 2
+	--DECLARE @DM_Master_Import_Code INT = 15
 	DECLARE @ISError CHAR(1) = 'N', @Error_Message NVARCHAR(MAX) = '', @ExcelCnt INT = 0
 
 	IF(OBJECT_ID('tempdb..#TempTitle') IS NOT NULL) DROP TABLE #TempTitle
@@ -575,6 +575,10 @@ BEGIN
 					UPDATE A SET A.EMDCode= ECV.Columns_Value_Code  FROM #TempExtentedMetaData A
 					INNER JOIN Extended_Columns_Value ECV 
 					ON ECV.Columns_Value COLLATE Latin1_General_CI_AI = A.EMDName COLLATE Latin1_General_CI_AI AND ECV.Columns_Code = A.Columns_Code 
+
+					IF(@Is_Allowed_For_Resolve_Conflict = 'N')
+						UPDATE  #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~' + @Display_Name +' Not Available~' 
+						WHERE  ExcelSrNo IN (SELECT ExcelSrNo FROM #TempExtentedMetaData WHERE EMDCode is null AND HeaderName = @Display_Name )
 				END
 				FETCH NEXT FROM db_cursor_EMDY_Reference INTO  @Display_Name, @Is_Allowed_For_Resolve_Conflict, @ShortName
 		END 
@@ -582,7 +586,7 @@ BEGIN
 		CLOSE db_cursor_EMDY_Reference  
 		DEALLOCATE db_cursor_EMDY_Reference 
 	END
-		
+
 	BEGIN
 		PRINT 'Resolve Conflict'
 		
@@ -684,7 +688,7 @@ BEGIN
 		IF EXISTS (SELECT TOP 1 * FROM #TempResolveConflict)
 		BEGIN
 			UPDATE TIU SET TIU.Record_Status = 'R' , TIU.Is_Ignore = 'N'
-			FROM DM_Title_Import_Utility_Data AS TIU WHERE DM_Master_Import_Code = @DM_Master_Import_Code 
+			FROM DM_Title_Import_Utility_Data AS TIU WHERE ISNULL(TIU.Record_Status,'') <> 'E' AND DM_Master_Import_Code = @DM_Master_Import_Code 
 			AND ISNUMERIC(TIU.Col1) = 1 AND TIU.Col1 COLLATE Latin1_General_CI_AI IN (
 			SELECT DISTINCT A.ExcelSrNo FROM (
 				SELECT A.ExcelSrNo
@@ -720,8 +724,9 @@ BEGIN
 				WHERE A.TalentCode IS NULL AND B.Is_Allowed_For_Resolve_Conflict = 'Y' AND B.Is_Active = 'Y'
 			) AS A )
 
-			UPDATE DM_Master_Import SET Status = 'R' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
-
+			IF EXISTS(SELECT TOP 1 * FROM DM_Title_Import_Utility_Data WHERE ISNULL(Record_Status,'') = 'R' AND DM_Master_Import_Code = @DM_Master_Import_Code )
+				UPDATE DM_Master_Import SET Status = 'R' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
+			
 			INSERT INTO DM_Master_Log (DM_Master_Import_Code, Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By)
 			SELECT @DM_Master_Import_Code, Name, Master_Type, Master_Code, Roles,'N',Mapped_By FROM #TempResolveConflict
 		END
@@ -732,29 +737,31 @@ BEGIN
 		IF EXISTS(SELECT * FROM #TempTitleUnPivot WHERE IsError = 'Y') 
 		BEGIN
 
-			UPDATE A SET A.Error_Message = B.ErrorMessage, Record_Status = 'E'
+			UPDATE A SET A.Error_Message =ISNULL(A.Error_Message,'') + B.ErrorMessage, Record_Status = 'E'
 			FROM DM_Title_Import_Utility_Data A
 			INNER JOIN 
 			(SELECT DISTINCT ExcelSrNo, ErrorMessage FROM #TempTitleUnPivot WHERE IsError = 'Y') as B on B.ExcelSrNo = A.Col1 COLLATE SQL_Latin1_General_CP1_CI_AS
 			WHERE A.DM_Master_Import_Code = @DM_Master_Import_Code AND A.Col1 NOT LIKE '%Sr%' 
 			
 		END
-
-		IF EXISTS(SELECT * FROM #TempTitleUnPivot WHERE IsError <> 'Y')
+	
+		IF EXISTS(SELECT * FROM #TempTitleUnPivot WHERE ISNULL(IsError,'') <> 'Y')
 		BEGIN
 			IF NOT EXISTS (SELECT TOP 1 * FROM #TempResolveConflict)
-				BEGIN	
+			BEGIN	
 				DECLARE @cols_DisplayName AS NVARCHAR(MAX), @cols_TargetColumn AS NVARCHAR(MAX), @query AS NVARCHAR(MAX)
+				UPDATE #TempTitleUnPivot SET IsError = '' WHERE IsError IS NULL
 
 				-----------Title COLUMN--------------------
 				SELECT @cols_DisplayName = STUFF(( SELECT ',[' + Display_Name +']' FROM DM_Title_Import_Utility WHERE Is_Active = 'Y' and Target_Table = 'Title' ORDER BY Display_Name FOR XML PATH('') ), 1, 1, '')		
 				SELECT @cols_TargetColumn = STUFF(( SELECT ',[' + Target_Column +']' FROM DM_Title_Import_Utility WHERE Is_Active = 'Y' and Target_Table = 'Title' ORDER BY Display_Name FOR XML PATH('') ), 1, 1, '')
+				
 				EXEC ('
 				INSERT INTO Title ( Is_Active, '+@cols_TargetColumn+')
 				SELECT ''Y'', '+@cols_DisplayName+' FROM (SELECT ExcelSrNo, ColumnHeader, 
 				CASE WHEN RefKey IS NULL THEN TitleData ELSE RefKey END
 				TitleData FROM #TempTitleUnPivot WHERE ISError <> ''Y'') AS Tbl PIVOT( MAX(TitleData) FOR ColumnHeader IN ('+@cols_DisplayName+')) AS Pvt ')
-				
+			
 				UPDATE A SET A.RefKey = B.Title_Code 
 				FROM #TempTitleUnPivot A
 				INNER JOIN Title B ON A.TitleData COLLATE SQL_Latin1_General_CP1_CI_AS = B.Title_Name
@@ -863,9 +870,9 @@ BEGIN
 				UPDATE DM_Master_Import SET Status = 'S' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
 			END
 		END
-		ELSE
+		ELSE 
 		BEGIN 
-			UPDATE DM_Master_Import SET Status = 'E' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
+			UPDATE DM_Master_Import SET Status = 'E' WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND ISNULL(Status,'') <> 'R'
 		END
 	END
 	END TRY
@@ -876,8 +883,4 @@ BEGIN
 		FROM DM_Title_Import_Utility_Data A WHERE A.DM_Master_Import_Code = @DM_Master_Import_Code
 	END CATCH
 END
-------------
---exec USP_Title_Import_Utility_PII 10168
---SELECT * FROM DM_Master_Log order by 1 desc
 
---select * from DM_Title_Import_Utility_Data order by 1 desc where DM_Master_Import_Code = 10161

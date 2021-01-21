@@ -625,13 +625,13 @@
         <div class="navigation_tabs">
             <span class="pull-left" id="lblTotal"></span>
             <input type="hidden" id="hdnMappedCount" value="0" />
-            <input type="hidden" id="hdnTabName" value="TA" />
             <input type="hidden" id="hdnMasterImportCode" value="@Model.DM_Master_Import_Code" />
             <div class="tabbable">
                 <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
                     @if (ViewBag.FileType == "M")
                     {
                         <li class="active">
+                            <input type="hidden" id="hdnTabName" value="TA" />
                             <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
                         </li>
 
@@ -653,41 +653,20 @@
                     }
                     @if (ViewBag.FileType == "T")
                     {
-                        if (ViewBag.ShortName.Contains("TA"))
+                        int Count = 0;
+                        foreach (RightsU_Entities.DM_Title_Resolve_Conflict objDTRC in ViewBag.DM_Title_RC_Lst)
                         {
-                            <li class="active">
-                                <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
-                            </li>
-                        }
-                        if (ViewBag.ShortName.Contains("LB"))
-                        {
-                            <li class="">
-                                <a data-toggle="tab" role="tab" data-tabname="LB">Music Label</a>
-                            </li>
-                        }
-                        if (ViewBag.ShortName.Contains("TT"))
-                        {
-                            <li class="">
-                                <a data-toggle="tab" data-tabname="TT" role="tab">Title Type</a>
-                            </li>
-                        }
-                        if (ViewBag.ShortName.Contains("TL"))
-                        {
-                            <li class="">
-                                <a data-toggle="tab" data-tabname="TL" role="tab">Title Language</a>
-                            </li>
-                        }
-                        if (ViewBag.ShortName.Contains("OL"))
-                        {
-                            <li class="">
-                                <a data-toggle="tab" data-tabname="OL" role="tab">Original Language</a>
-                            </li>
-                        }
-                        if (ViewBag.ShortName.Contains("GE"))
-                        {
-                            <li class="">
-                                <a data-toggle="tab" data-tabname="GE" role="tab">Genres</a>
-                            </li>
+                            if (ViewBag.ShortName.Contains(objDTRC.Master_Type))
+                            {
+                                <li class="@(Count == 0 ? "active" : "")">
+                                    @if (Count == 0)
+                                    {
+                                        <input type="hidden" id="hdnTabName" value="@objDTRC.Master_Type" />
+                                    }
+                                    <a data-toggle="tab" role="tab" data-tabname="@objDTRC.Master_Type">@objDTRC.Tab_Name</a>
+                                </li>
+                                Count = Count + 1;
+                            }
                         }
                     }
                 </ul>
