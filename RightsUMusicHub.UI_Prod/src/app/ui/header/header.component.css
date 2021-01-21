@@ -4,6 +4,26 @@
     min-width: 100%;
     max-width: 100%;
 }
+
+.divRemarks {
+    display: inline-block;
+    font-weight: bold;
+    border-bottom: 1px dotted #777;
+    padding: 5px;
+    background-color: #eee;
+    width: 500px;
+  }
+  
+  .vl {
+    border-left: 2px solid;
+    height: 25px;
+    width: 40px;
+  }
+
+  #movieAlbum {
+    width: 35% !important;
+}
+
 /* .label{
     position: absolute;
     top: 9px;

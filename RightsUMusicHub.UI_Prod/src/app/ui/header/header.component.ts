@@ -44,12 +44,17 @@ export class HeaderComponent implements OnInit {
   public requestCountSearch;
   public searchMusicDetail: any;
   public searchAlbumDetail: any;
+  public RemarkSpecialInstruction: any = [];
+  public remarksLabel: any;
+  public specialRemarks: any;
+
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private comparentchildservice: ComParentChildService, private _requisitionService: RequisitionService) {
   }
   public count = 0;
   ngOnInit() {
     debugger;
+   
     this.ChangePSW = sessionStorage.getItem('CHANGEPSW_STATUS');
     this.router.events.subscribe((res) => {
 
@@ -72,6 +77,7 @@ export class HeaderComponent implements OnInit {
       this.ImageUrl = "../../../assets/Images/" + this.userImage;
     }
     //this.ImageUrl = "../../../assets/Images/User_Img.png";
+    this.removeScroll();
   }
 
   Notification() {
@@ -84,6 +90,8 @@ export class HeaderComponent implements OnInit {
         console.log(response);
         this.notificationList = response.NotifiactionList;
         this.unreadCount = response.UnReadCount;
+        this.removeScroll();
+        $('.slimScrollDiv').css("height","42px !important");
         console.log(this.unreadCount)
       }, error => { this.handleResponseError(error) })
 
@@ -122,6 +130,7 @@ export class HeaderComponent implements OnInit {
     this.displayMessage = true;
     this.MHRequestCode = MHRequestCode;
     this.MHRequestTypeCode = MHRequestTypeCode;
+   
     var notificationDetail = {
       "MHNotificationLogCode": code
     }
@@ -147,6 +156,15 @@ export class HeaderComponent implements OnInit {
 
   }
 
+  removeScroll(){
+    $(function () {
+      $('.slimScrollDiv').slimScroll({
+        height: '42px !important',
+
+      });
+    });
+  }
+
   showRequsetDetails() {
     if (this.MHRequestTypeCode == 1) {
       this.displayMessage = false;
@@ -155,6 +173,9 @@ export class HeaderComponent implements OnInit {
       this._requisitionService.getRequestCountDetails({ MHRequestCode: this.MHRequestCode, IsCueSheet: 'N' }).subscribe(response => {
         this.requestCountFilteredList = response.RequestDetails;
         this.totalCountOfNoOfSongsDetails = response.RequestDetails.length;
+        this.RemarkSpecialInstruction = response.RemarkSpecialInstruction;
+        this.remarksLabel = this.RemarkSpecialInstruction.Remarks;
+        this.specialRemarks = this.RemarkSpecialInstruction.SpecialInstructions;
       }, error => { this.handleResponseError(error) }
       );
       let obj = {

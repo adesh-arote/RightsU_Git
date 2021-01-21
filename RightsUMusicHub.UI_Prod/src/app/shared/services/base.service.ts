@@ -80,7 +80,7 @@ export abstract class BaseService {
    * @returns {Observable<>}
    */
   protected post(service: string, body: any): Observable<any> {
-    debugger;
+    
     let headers = new Headers();
     if (sessionStorage.getItem("AUTH_TOKEN")) {
       headers.append('Authorization', 'Bearer ' + sessionStorage.getItem("AUTH_TOKEN"));
@@ -93,7 +93,7 @@ export abstract class BaseService {
       headers.append('Content-Type', 'application/json');
     }
     else {
-      debugger;
+      
       if (localStorage.getItem('passwordExpire')) {
         headers.append('Content-Type', 'application/json');
       }
@@ -102,18 +102,18 @@ export abstract class BaseService {
       }
     }
     this.requestOptions = new RequestOptions({ headers: headers });
-    debugger
+    
     return this._http.post(this.getFullUrl(service), body, this.requestOptions).pipe(
       map((response) => {
-        debugger;
+        
         return response.json();
       }),
       catchError(this.handleError));
   }
 
   protected postUpload(service: string, formData: any): Observable<any> {
-    debugger;
-    debugger;
+    
+    
     let headers = new Headers();
     if (sessionStorage.getItem("AUTH_TOKEN")) {
       headers.append('Authorization', 'Bearer ' + sessionStorage.getItem("AUTH_TOKEN"));
@@ -142,7 +142,7 @@ export abstract class BaseService {
   }
 
   public login(username: string, password: string): Observable<Response> {
-    debugger;
+    
     let headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');
     this.requestOptions = new RequestOptions({ headers: headers });
@@ -173,7 +173,7 @@ export abstract class BaseService {
   //Added By Sachin ----------- End ------
 
   private handleData(res: Response) {
-    debugger;
+    
     let body = res.json();
     return body;
   }
@@ -188,7 +188,7 @@ export abstract class BaseService {
   }
  
   public validateLogin(): Observable<any> {
-    debugger;
+    
     let data: Object = { Login_Name: sessionStorage.getItem("USER_NAME") };
     return this.post('Login/GetLoginDetails', data);
     // ._http.post(this.getFullUrl('Login/GetLoginDetails'), '').pipe(
@@ -197,7 +197,7 @@ export abstract class BaseService {
     //  }));
   }
   public changePassword(changePasswordBody): Observable<any> {
-    debugger;
+    
     let body=JSON.stringify(changePasswordBody)
     return this.post('Login/ChangePassword', body);
     // ._http.post(this.getFullUrl('Login/GetLoginDetails'), '').pipe(
@@ -268,7 +268,7 @@ export abstract class BaseService {
 
 
   protected handleError(error: Response, request?: Observable<any>) {
-    debugger;
+    
     // in a real world app, we may send the error to some remote logging infrastructure
     // instead of just logging it to the console
     let msg = '';

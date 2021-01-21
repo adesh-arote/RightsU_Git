@@ -556,7 +556,7 @@
                 <div >
                   
                   <label>Search :</label>&nbsp;
-                  <input type="text" class="SearchTextBox" [(ngModel)]="searchMusicDetail"  placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filter(searchMusicDetail,'musicDetail')" pInputText size="50" >
+                  <input type="text" class="SearchTextBox" autocomplete="off" [(ngModel)]="searchMusicDetail"  placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filter(searchMusicDetail,'musicDetail')" pInputText size="50" >
                   </div>
                   
                   </div>
@@ -582,7 +582,7 @@
                 <div >
                   
                   <label>Search :</label>&nbsp;
-                  <input  type="text" class="SearchTextBox" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filter(searchAlbumDetail,'albumDetail')" pInputText size="50" >
+                  <input  type="text" class="SearchTextBox" autocomplete="off" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filter(searchAlbumDetail,'albumDetail')" pInputText size="50" >
                   </div>
                   </div>
                   <br>

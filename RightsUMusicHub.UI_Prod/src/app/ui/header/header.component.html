@@ -299,7 +299,7 @@
       <div class="Row">
         <div>
           <label>Search</label>&nbsp;
-          <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30" placeholder="Music Title, Movie/ Album" [(ngModel)]="requestCountSearch" 
+          <input id="input" class="SearchTextBox" #reqCountSearch type="text"  autocomplete="off" size="30" placeholder="Music Title, Movie/ Album" [(ngModel)]="requestCountSearch" 
                  pInputText>
         </div>
       </div>
@@ -315,7 +315,39 @@
         <p-footer>
           Total Records: {{totalCountOfNoOfSongsDetails}}
         </p-footer>
-      </p-dataTable>
+      </p-dataTable><br>
+      <div style="margin-left: 15px;">
+        <table style="margin-left: -14px;">
+          <tbody>
+            <tr>
+              <td>
+                <div class="divRemarks">Production House Remarks: </div>
+              </td>
+              <td class="vl"></td>
+              <td>
+                <div class="divRemarks">Special Instructions to Production House: </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="remarksDetails">
+                  <div class="expand_Remark">
+                    <span>{{remarksLabel}}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="vl"></td>
+              <td>
+                <div class="remarksDetails">
+                  <div class="expand_Remark">
+                    <span>{{specialRemarks}}</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p-footer>
         <button type="button" pButton (click)="closeConsumption()" label="Close"></button>
       </p-footer>
@@ -329,7 +361,7 @@
                 <div >
                   
                   <label>Search :</label>&nbsp;
-                  <input type="text" class="SearchTextBox" [(ngModel)]="searchMusicDetail"  placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filter(searchMusicDetail,'musicDetail')" pInputText size="50" >
+                  <input type="text" class="SearchTextBox" [(ngModel)]="searchMusicDetail"   autocomplete="off" id="movieAlbum" placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filter(searchMusicDetail,'musicDetail')" pInputText size="50" >
                   </div>
                   
                   </div>
@@ -355,7 +387,7 @@
                 <div >
                   
                   <label>Search :</label>&nbsp;
-                  <input  type="text" class="SearchTextBox" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filter(searchAlbumDetail,'albumDetail')" pInputText size="50" >
+                  <input  type="text" class="SearchTextBox"  id="movieAlbum"  autocomplete="off" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filter(searchAlbumDetail,'albumDetail')" pInputText size="50" >
                   </div>
                   </div>
                   <br>
