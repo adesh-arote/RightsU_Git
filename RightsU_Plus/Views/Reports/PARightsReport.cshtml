@@ -771,7 +771,7 @@
             if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
                 var PARCode = SiblingClass.slice(12, SiblingClass.length - 1);
 
-                if (SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'W' || SiblingClass.substr(SiblingClass.length - 1) == 'C') {
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'W') {
                     debugger
                     $.ajax({
                         type: "POST",
@@ -857,7 +857,7 @@
             }
         });
         if (pendingRecord > 0) {
-            setTimeout(GetMURStatus, 5000);
+            setTimeout(GetPARStatus, 5000);
         }
     }
     function DeleteConfirmation(MURCode) {

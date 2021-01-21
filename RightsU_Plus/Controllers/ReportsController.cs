@@ -1731,7 +1731,8 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult GetPARStatus(string PARCode)
         {
-            string recordStatus = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Acq_Adv_Ancillary_Report_Code == Convert.ToInt32(PARCode)).Select(s => s.Report_Status).FirstOrDefault();
+            int PACode = Convert.ToInt32(PARCode);
+            string recordStatus = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Acq_Adv_Ancillary_Report_Code == PACode).Select(s => s.Report_Status).FirstOrDefault();
             var obj = new
             {
                 RecordStatus = recordStatus,
