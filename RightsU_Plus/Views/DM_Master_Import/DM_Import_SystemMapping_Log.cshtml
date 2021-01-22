@@ -5,9 +5,6 @@
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
     }
-
-    RightsU_Entities.DM_Title_Resolve_Conflict objDTRC = ViewBag.DM_Title_RC;
-    
 }
 
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
@@ -82,11 +79,6 @@
                     {
                         Mapped_Name = new RightsU_BLL.Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Columns_Value_Code == code).Select(s => s.Columns_Value).FirstOrDefault();
                     }
-                    else if (ViewBag.TabName == "PG")
-                    {
-                        Mapped_Name = new RightsU_BLL.Program_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Program_Code == code).Select(s => s.Program_Name).FirstOrDefault();
-                    }
-
                     <tr>
                         <td>
                             <label id="lblName_@item.DM_Master_Log_Code">@item.Name</label>

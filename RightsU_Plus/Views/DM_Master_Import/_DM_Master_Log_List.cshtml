@@ -1,4 +1,4 @@
-@model RightsU_Entities.DM_Master_Log
+﻿@model RightsU_Entities.DM_Master_Log
 @using UTOFrameWork.FrameworkClasses;
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -72,7 +72,6 @@
         });
     }
     function SetPaging() {
-        debugger
         IsCall = 'N';
         var pageNo = 1, recordCount = 0, pagePerBatch = 0, recordPerPage = 0;
         pageNo = parseInt($('#hdnPageNo').val());
@@ -105,7 +104,6 @@
         $("#Pagination").pagination(recordCount, opt);
     }
     function pageselectCallback(page_index, jq) {
-        debugger
         $('.required').removeClass('required');
 
         if (!ValidatePageSize('txtPageSize'))
@@ -122,7 +120,6 @@
             IsCall = 'Y';
     }
     function txtPageSize_OnChange(txtID) {
-        debugger
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
         if (!ValidatePageSize(txtID))
@@ -132,7 +129,6 @@
         SetPaging();
     }
     function ValidatePageSize(txtID) {
-        debugger
         var recordPerPage = $('#' + txtID).val()
         if ($.trim(recordPerPage) != '') {
             var pageSize = parseInt(recordPerPage);
@@ -144,13 +140,11 @@
         return false
     }
     function pageBinding() {
-        debugger
         var MappedData = $('input[name=MappedData]:checked').val();
         BindGrid(false, false, '', MappedData);
         SetPaging();
     }
     function TabChange(tabName, DM_Master_Import_Code) {
-        debugger
         var isValidate = true;
         isValidate = SaveMappedData();
         if (isValidate) {
@@ -164,7 +158,6 @@
         }
     }
     function BindGrid(fetchData, isTabChanged, previousTabName, MappedData) {
-        debugger
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -277,7 +270,7 @@
             }
         });
     }
-    function PopulateAutoCompleteData(masterLogCode, tabName, RoleName) {
+    function PopulateAutoCompleteData(masterLogCode, tabName) {
         var keyword = $("#txtMappedName_" + masterLogCode).val();
         $("#txtMappedName_" + masterLogCode).autocomplete({
             focus: function () {
@@ -290,8 +283,7 @@
                 $("#hdnMappedCode_" + masterLogCode).val('');
                 var param = {
                     keyword: keyword,
-                    tabName: tabName,
-                    RoleName: RoleName
+                    tabName: tabName
                 };
                 $.ajax({
                     url: URL_PopulateAutoCompleteData,
@@ -461,7 +453,7 @@
             url: URL_ValidateTalnet,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
-            dataType: "html",
+
             async: false,
             data: JSON.stringify({
                 lst: lstDM_MasterLog
@@ -625,48 +617,47 @@
         <div class="navigation_tabs">
             <span class="pull-left" id="lblTotal"></span>
             <input type="hidden" id="hdnMappedCount" value="0" />
+            <input type="hidden" id="hdnTabName" value="TA" />
             <input type="hidden" id="hdnMasterImportCode" value="@Model.DM_Master_Import_Code" />
             <div class="tabbable">
                 <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
+                    <li class="active">
+                        <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
+                    </li>
+                    <li class="">
+                        <a data-toggle="tab" role="tab" data-tabname="LB">Music Label</a>
+                    </li>
                     @if (ViewBag.FileType == "M")
                     {
-                        <li class="active">
-                            <input type="hidden" id="hdnTabName" value="TA" />
-                            <a data-toggle="tab" role="tab" data-tabname="TA">Talent</a>
-                        </li>
-
                         <li class="">
-                            <a data-toggle="tab" role="tab" data-tabname="LB">Music Label</a>
+                            <a data-toggle="tab"  data-tabname="GE" role="tab">Genres</a>
                         </li>
                         <li class="">
-                            <a data-toggle="tab" data-tabname="GE" role="tab">Genres</a>
+                            <a data-toggle="tab"  data-tabname="MA" role="tab">Movie/Album</a>
                         </li>
                         <li class="">
-                            <a data-toggle="tab" data-tabname="MA" role="tab">Movie/Album</a>
+                            <a data-toggle="tab"  data-tabname="ML" role="tab">Language</a>
                         </li>
                         <li class="">
-                            <a data-toggle="tab" data-tabname="ML" role="tab">Language</a>
-                        </li>
-                        <li class="">
-                            <a data-toggle="tab" data-tabname="MT" role="tab">Theme</a>
+                            <a data-toggle="tab"  data-tabname="MT" role="tab">Theme</a>
                         </li>
                     }
                     @if (ViewBag.FileType == "T")
                     {
-                        int Count = 0;
-                        foreach (RightsU_Entities.DM_Title_Resolve_Conflict objDTRC in ViewBag.DM_Title_RC_Lst)
+                        <li class="">
+                            <a data-toggle="tab" data-tabname="TT" role="tab">Title Type</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" data-tabname="TL" role="tab">Title Language</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" data-tabname="OL" role="tab">Original Language</a>
+                        </li>
+                        if (ViewBag.Is_Allow_Program_Category == "Y")
                         {
-                            if (ViewBag.ShortName.Contains(objDTRC.Master_Type))
-                            {
-                                <li class="@(Count == 0 ? "active" : "")">
-                                    @if (Count == 0)
-                                    {
-                                        <input type="hidden" id="hdnTabName" value="@objDTRC.Master_Type" />
-                                    }
-                                    <a data-toggle="tab" role="tab" data-tabname="@objDTRC.Master_Type">@objDTRC.Tab_Name</a>
-                                </li>
-                                Count = Count + 1;
-                            }
+                            <li class="">
+                                <a data-toggle="tab" data-tabname="PC" role="tab">Program Category</a>
+                            </li>
                         }
                     }
                 </ul>
@@ -687,7 +678,7 @@
                         </div>
                         <span class="pull-right">
                             Page Size:
-                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="@((ViewBag.PageSize ?? 25))"
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="@((ViewBag.PageSize ?? 25))" 
                                    onchange="txtPageSize_OnChange('txtPageSize')" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
@@ -696,7 +687,7 @@
                 <br />
                 <div class="bottom_action">
                     @*<input type="button" id="btnMap" value="Map" class="btn btn-primary" onclick="return ValidateMap();" />*@
-                    <input type="button" id="btnMap" value="Map" class="btn btn-primary" onclick="MapImportData();" />
+                    <input type="button" id="btnMap" value="Map" class="btn btn-primary" onclick="return MapImportData();" />
                     @if (ViewBag.FileType == "M")
                     {
                         <input type="button" value="BACK" class="btn btn-primary" onclick="return btnMusicCancel();" />
@@ -727,7 +718,6 @@
         max-width: 600px;
         overflow-y: auto;
     }
-
     .loader {
         background: url('../../Images/ajax-loader.gif');
         background-repeat: no-repeat;

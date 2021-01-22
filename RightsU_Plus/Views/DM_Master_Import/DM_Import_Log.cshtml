@@ -1,7 +1,5 @@
 ﻿@model List<RightsU_Entities.DM_Master_Log>
-@{ 
-    RightsU_Entities.DM_Title_Resolve_Conflict objDTRC = ViewBag.DM_Title_RC;
-}
+
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 <script>
@@ -19,11 +17,11 @@
         <thead>
             <tr>
                 <th style="width:25%;">Name </th>
-                @if (objDTRC.Roles == "Y")
+                @if (ViewBag.TabName == "TA")
                 {
                     <th style="width:20%;">Roles</th>
                 }
-                @if (objDTRC.Create_New == "Y")
+                @if (ViewBag.TabName != "TL" && ViewBag.TabName != "TT" && ViewBag.TabName != "PC" && ViewBag.TabName != "OL")
                 {
                     <th style="width:20%;"><input type="checkbox" id="chkAll" /> Create New </th>
                 }
@@ -38,11 +36,11 @@
                 {
                     <tr>
                         <td>@item.Name</td>
-                        @if (objDTRC.Roles == "Y")
+                        @if (ViewBag.TabName == "TA")
                         {
                             <td align="center">@item.Roles</td>
                         }
-                        @if (objDTRC.Create_New == "Y")
+                        @if (ViewBag.TabName != "TL" && ViewBag.TabName != "TT" && ViewBag.TabName != "PC" && ViewBag.TabName != "OL")
                         {
                             <td align="center">
                                 @if (item.IsIgnore)
@@ -64,16 +62,16 @@
                         <td align="center">
                             @if (item.IsIgnore)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" disabled="disabled" />
 
                             }
                             else if (item.Is_Create_New)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" disabled="disabled" />
                             }
                             else if(!item.Is_Create_New)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" />
                             }
                             
                            
