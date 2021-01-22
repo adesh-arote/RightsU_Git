@@ -67,7 +67,7 @@
     <Folder Include="dbo\Functions\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\User Defined Types\" />
-    <Folder Include="dbo\Dev_Query" />
+    <Folder Include="Database Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Module_Status_History.sql" />
@@ -1452,10 +1452,12 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
-    <Build Include="dbo\Dev_Query\DevTagQuery.sql" />
     <Build Include="dbo\Stored Procedures\USPMHConsumptionRequestListDetail.sql" />
-    <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
     <Build Include="dbo\Stored Procedures\USP_Music_Schedule_Process_Neo.sql" />
     <Build Include="dbo\User Defined Types\MusicScheduleProcess.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Database Scripts\DBSchema_v5.0.1.12.sql" />
+    <None Include="Database Scripts\DBConfig_v5.0.1.12.sql" />
   </ItemGroup>
 </Project>

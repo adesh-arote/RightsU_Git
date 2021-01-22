@@ -1,5 +1,4 @@
-
-ALTER PROC [dbo].[USP_Title_Import_Utility_PI] 
+CREATE PROC [dbo].[USP_Title_Import_Utility_PI] 
 (  
 	@Title_Import_Utility Title_Import_Utility READONLY, 
 	@CallFor NVARCHAR(MAX),
