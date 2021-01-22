@@ -2,14 +2,14 @@
   <Entity>
     <ShortName>VMP</ShortName>
     <FullName>Viacom18 Motion Pictures</FullName>
-    <DatabaseName>RightsU_sel_13Jan2021</DatabaseName>
+    <DatabaseName>RightsU_UAT</DatabaseName>
     <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
   </Entity>
   <Entity>
     <ShortName>VIACOM18 Network</ShortName>
     <FullName>Viacom18 Network</FullName>
-    <DatabaseName>RightsU_sel_13Jan2021</DatabaseName>
+    <DatabaseName>RightsU_UAT</DatabaseName>
     <ConnectionStringName>RightsU_Broadcaster</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
   </Entity>

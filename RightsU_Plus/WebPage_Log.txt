@@ -24949,3 +24949,189 @@
 27 October 2020 13:01:56
   :Calling Index method of Acq_DealController
 -------------------------------
+18 January 2021 19:10:55
+  :Index method of Acq_ListController is executing
+-------------------------------
+18 January 2021 19:10:55
+  :Condition 1 executing
+-------------------------------
+18 January 2021 19:10:55
+  :Condition 1 executed
+-------------------------------
+18 January 2021 19:10:55
+  :Condition 2 executing
+-------------------------------
+18 January 2021 19:10:55
+  :Condition 2 executed
+-------------------------------
+18 January 2021 19:10:55
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+18 January 2021 19:10:55
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+18 January 2021 19:10:55
+  :BindBUList() method is executing
+-------------------------------
+18 January 2021 19:10:56
+  :BindBUList() method has been executed
+-------------------------------
+18 January 2021 19:10:56
+  :Condition 4 executing
+-------------------------------
+18 January 2021 19:10:56
+  :Condition 4 executed
+-------------------------------
+18 January 2021 19:10:56
+  :Index method of Acq_ListController has been executed
+-------------------------------
+18 January 2021 19:11:00
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+18 January 2021 19:11:00
+  :USP_List_Acq is executing
+-------------------------------
+18 January 2021 19:11:00
+  :USP_List_Acq has been executed
+-------------------------------
+18 January 2021 19:11:00
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+19 January 2021 14:31:06
+  :Index method of Acq_ListController is executing
+-------------------------------
+19 January 2021 14:31:06
+  :Condition 1 executing
+-------------------------------
+19 January 2021 14:31:06
+  :Condition 1 executed
+-------------------------------
+19 January 2021 14:31:06
+  :Condition 2 executing
+-------------------------------
+19 January 2021 14:31:06
+  :Condition 2 executed
+-------------------------------
+19 January 2021 14:31:06
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+19 January 2021 14:31:06
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+19 January 2021 14:31:06
+  :BindBUList() method is executing
+-------------------------------
+19 January 2021 14:31:06
+  :BindBUList() method has been executed
+-------------------------------
+19 January 2021 14:31:06
+  :Condition 4 executing
+-------------------------------
+19 January 2021 14:31:07
+  :Condition 4 executed
+-------------------------------
+19 January 2021 14:31:07
+  :Index method of Acq_ListController has been executed
+-------------------------------
+19 January 2021 14:31:54
+  :Index method of Acq_ListController is executing
+-------------------------------
+19 January 2021 14:31:54
+  :Condition 1 executing
+-------------------------------
+19 January 2021 14:31:54
+  :Condition 1 executed
+-------------------------------
+19 January 2021 14:31:54
+  :Condition 2 executing
+-------------------------------
+19 January 2021 14:31:54
+  :Condition 2 executed
+-------------------------------
+19 January 2021 14:31:54
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+19 January 2021 14:31:54
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+19 January 2021 14:31:54
+  :BindBUList() method is executing
+-------------------------------
+19 January 2021 14:31:54
+  :BindBUList() method has been executed
+-------------------------------
+19 January 2021 14:31:54
+  :Condition 4 executing
+-------------------------------
+19 January 2021 14:31:55
+  :Condition 4 executed
+-------------------------------
+19 January 2021 14:31:55
+  :Index method of Acq_ListController has been executed
+-------------------------------
+19 January 2021 14:31:56
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+19 January 2021 14:31:56
+  :USP_List_Acq is executing
+-------------------------------
+19 January 2021 14:31:56
+  :USP_List_Acq has been executed
+-------------------------------
+19 January 2021 14:31:56
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+19 January 2021 14:38:47
+  :Index method of Acq_ListController is executing
+-------------------------------
+19 January 2021 14:38:47
+  :Condition 1 executing
+-------------------------------
+19 January 2021 14:38:47
+  :Condition 1 executed
+-------------------------------
+19 January 2021 14:38:47
+  :Condition 2 executing
+-------------------------------
+19 January 2021 14:38:47
+  :Condition 2 executed
+-------------------------------
+19 January 2021 14:38:47
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+19 January 2021 14:38:47
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+19 January 2021 14:38:47
+  :BindBUList() method is executing
+-------------------------------
+19 January 2021 14:38:47
+  :BindBUList() method has been executed
+-------------------------------
+19 January 2021 14:38:47
+  :Condition 4 executing
+-------------------------------
+19 January 2021 14:38:47
+  :Condition 4 executed
+-------------------------------
+19 January 2021 14:38:47
+  :Index method of Acq_ListController has been executed
+-------------------------------
+19 January 2021 14:38:49
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+19 January 2021 14:38:49
+  :USP_List_Acq is executing
+-------------------------------
+19 January 2021 14:38:49
+  :USP_List_Acq has been executed
+-------------------------------
+19 January 2021 14:38:49
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+19 January 2021 14:39:06
+  :Called ButtonEvents method of Acq_ListController for CommandName = 'View'
+-------------------------------
+19 January 2021 14:39:06
+  :Calling Index method of Acq_DealController
+-------------------------------
