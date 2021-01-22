@@ -298,7 +298,6 @@ namespace RightsU_InterimDb.Models
         public DbSet<IPR_Opp_Status> IPR_Opp_Status { get; set; }
         public DbSet<IPR_Opp_Status_History> IPR_Opp_Status_History { get; set; }
         public DbSet<Music_Label> Music_Label { get; set; }
-        public DbSet<Music_Title> Music_Title { get; set; }
         public DbSet<Music_Title_Label> Music_Title_Label { get; set; }
         public DbSet<Music_Title_Talent> Music_Title_Talent { get; set; }
         public DbSet<Music_Type> Music_Type { get; set; }
@@ -427,6 +426,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<DM_Title_Import_Utility_Data> DM_Title_Import_Utility_Data { get; set; }
         public DbSet<Acq_Adv_Ancillary_Report> Acq_Adv_Ancillary_Report { get; set; }
         public DbSet<DM_Title_Resolve_Conflict> DM_Title_Resolve_Conflict { get; set; }
+        public DbSet<Music_Title> Music_Title { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {

@@ -702,23 +702,16 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_IPR_Opp_Status" />
         <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_IPR_REP" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Label" Width="1.5" PointX="9.5106196280152631" PointY="0.15237039334716759" />
-        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title" Width="1.5" PointX="7.61307953838868" PointY="26.268954587294232" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title_Label" Width="1.5" PointX="0.11564764944633825" PointY="15.119777805693344" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title_Talent" Width="1.5" PointX="11.982941916204496" PointY="21.228634054413362" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Type" Width="1.5" PointX="4.2369070594370868" PointY="24.924037810845316" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Language" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Label_Music_Label" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Label_Music_Title" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Type" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Talent_Role" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Talent_Talent" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Music" Width="1.5" PointX="6.7403390885984233" PointY="25.027873468132629" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Music_Link" Width="1.5" PointX="1.6434707574748764" PointY="28.491913898145739" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Link_Acq_Deal_Movie_Music" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Music_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Link_Title" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Type1" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Glossary" Width="1.5" PointX="33.625" PointY="30.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Glossary_AskExpert" Width="1.5" PointX="33.625" PointY="33.75" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Glossary_AskExpert_Users" />
@@ -731,7 +724,6 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Release_Region_Title_Release" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Content_Music_Link" Width="1.5" PointX="31.375" PointY="52.375" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Program_Link_Acq_Deal_Movie" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Program_Link_Music_Title" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Tab_Version" Width="1.5" PointX="26" PointY="34.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Content_Status_History" Width="1.5" PointX="22.5" PointY="67.375" />
         <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Opp_Business_Unit" Width="1.5" PointX="18.125" PointY="54.25" />
@@ -752,15 +744,12 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title_Theme" Width="1.5" PointX="20.125" PointY="37.125" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Language_Music_Language" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Theme_Music_Theme" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Language_Music_Title" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Theme_Music_Title" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Album" Width="1.5" PointX="21.5" PointY="86.25" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Album_Talent" Width="1.5" PointX="23.75" PointY="61.5" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Override_Reason" Width="1.5" PointX="15.875" PointY="4.75" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Album_Talent_Music_Album" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Album_Talent_Role" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Album_Talent_Talent" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Album" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Schedule_Transaction" Width="1.5" PointX="1" PointY="35.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Content_Category" Width="1.5" PointX="3.75" PointY="35.875" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Category" />
@@ -930,14 +919,12 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayList_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayList_Vendor" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayListSong_MHPlayList" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayListSong_Music_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_MHRequestStatus" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_MHRequestType" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_Vendor" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_MHRequest" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Album" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestStatus_System_Module" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHUsers_Users" />
@@ -945,7 +932,6 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.MHCueSheetSong" Width="1.5" PointX="17.5" PointY="126.625" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheet_Vendor" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_MHCueSheet" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_Title_Content" />
         <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Label" />
@@ -1006,6 +992,20 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.DM_Title_Import_Utility_Data" Width="1.5" PointX="43.5" PointY="44.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Adv_Ancillary_Report" Width="1.5" PointX="45.875" PointY="0.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.DM_Title_Resolve_Conflict" Width="1.5" PointX="5.75" PointY="45.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title" Width="1.5" PointX="38.75" PointY="58.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Program_Link_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayListSong_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Album" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Label_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Language_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Type1" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Theme_Music_Title" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
