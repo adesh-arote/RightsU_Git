@@ -914,8 +914,8 @@ export class CartGridComponent implements OnInit {
       this.load = false;
       this.removeBlockUI();
       debugger;
-      console.log("consumption request..!");
-      console.log(response);
+      //console.log("consumption request..!");
+      //console.log(response);
       var obj = response
 
       $('#Modal_MusicHub').modal('hide');
