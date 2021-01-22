@@ -213,7 +213,7 @@
     function ClearAll() {
         var code = 1;
         $("#txtTitle,#txtAgreementNo").val('').trigger("chosen:updated");
-        $('#ddlBusinessUnit').val(code).trigger('chosen:updated');
+        //$('#ddlBusinessUnit').val(code).trigger('chosen:updated');
         // BindTitleList(code);
 
         $('#ddlAncillaryType').val("");
@@ -810,7 +810,7 @@
                                 var a = '<a title class="glyphicon glyphicon-exclamation-sign" style="color: red;" data-original-title="No Record Found"></a>';
                                 $('.' + SiblingClass).append(a);
 
-                                var a = '<a title class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteReportData(' + PARCode + ')"  data-original-title="Delete" ></a>';
+                                var a = '<a title class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteConfirmation(' + PARCode + ')"  data-original-title="Delete" ></a>';
                                 $('.' + SiblingClass).append(a);
                                 $('.clsTdStatus_' + PARCode).empty();
                                 $('.clsTdStatus_' + PARCode).append('Delete');
@@ -836,7 +836,7 @@
                                 $('.clsTdStatus_' + PARCode).empty();
                                 $('.clsTdStatus_' + PARCode).append('Download');
 
-                                var a = '<a title class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteReportData(' + PARCode + ')" data-original-title="Delete"></a>';
+                                var a = '<a title class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteConfirmation(' + PARCode + ')" data-original-title="Delete"></a>';
                                 $('.' + SiblingClass).append(a);
                                 $('.clsTdStatus_' + PARCode).empty();
                                 $('.clsTdStatus_' + PARCode).append('Delete');

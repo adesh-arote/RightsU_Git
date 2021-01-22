@@ -164,7 +164,7 @@ namespace RightsU_PAReport_Service
                 foreach (DataColumn col in dt.Columns)
                 {
                     string CellValue = row[col.ColumnName].ToString();
-                    if (col.ColumnName != "Agreement_No" && col.ColumnName != "Title" && col.ColumnName != "Title_Type" && col.ColumnName != "Ancillary_Type" && col.ColumnName != "Duration(Sec)" && col.ColumnName != "Period(Day)" && col.ColumnName != "Remarks")
+                    if (col.ColumnName != "Agreement No" && col.ColumnName != "Title" && col.ColumnName != "Title Type" && col.ColumnName != "Ancillary Type" && col.ColumnName != "Duration(Sec)" && col.ColumnName != "Period(Day)" && col.ColumnName != "Remarks")
                     {
                         if (CellValue == col.ColumnName)
                         {
@@ -236,12 +236,12 @@ namespace RightsU_PAReport_Service
                             }
                             if (Erow > 2)
                             {
-                                if (col.ColumnName == "Agreement_No" || col.ColumnName == "Title" || col.ColumnName == "Title_Type")
+                                if (col.ColumnName == "Agreement No" || col.ColumnName == "Title" || col.ColumnName == "Title Type")
                                 {
 
                                     string firstCellValue = "";
                                     string secondCellValue = "";
-                                    if (col.ColumnName == "Agreement_No")
+                                    if (col.ColumnName == "Agreement No")
                                     {
                                         Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Agreement No");
 
@@ -255,7 +255,7 @@ namespace RightsU_PAReport_Service
                                         firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString();
                                         secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
-                                    else if (col.ColumnName == "Title_Type")
+                                    else if (col.ColumnName == "Title Type")
                                     {
                                         Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Title Type");
 
@@ -266,13 +266,13 @@ namespace RightsU_PAReport_Service
                                     if (firstCellValue == secondCellValue)
                                     {
                                         Alltcnt++;
-                                        if (col.ColumnName == "Agreement_No")
+                                        if (col.ColumnName == "Agreement No")
                                             Agreemntcnt++;
 
                                         if (col.ColumnName == "Title")
                                             Titlecnt++;
 
-                                        if (col.ColumnName == "Title_Type")
+                                        if (col.ColumnName == "Title Type")
                                             TitleTypecnt++;
 
                                         //sheet.Cells["A1:A2"].Merge = true;
@@ -281,7 +281,7 @@ namespace RightsU_PAReport_Service
                                     {
                                         //Alltcnt = 1;
                                         //rowNo = Erow;
-                                        if (col.ColumnName == "Agreement_No")
+                                        if (col.ColumnName == "Agreement No")
                                         {
                                             Agreemntcnt = 0;
                                             rowNo = Erow;
@@ -291,7 +291,7 @@ namespace RightsU_PAReport_Service
                                             Titlecnt = 0;
                                             rowNo = Erow;
                                         }
-                                        if (col.ColumnName == "Title_Type")
+                                        if (col.ColumnName == "Title Type")
                                         {
                                             TitleTypecnt = 0;
                                             rowNo = Erow;
@@ -302,7 +302,7 @@ namespace RightsU_PAReport_Service
                                     //{
                                     //    sheet.Cells[rowNo, Ecolumn, (Alltcnt + (rowNo)), Ecolumn].Merge = true;
                                     //}
-                                    if (Agreemntcnt > 0 && col.ColumnName == "Agreement_No")
+                                    if (Agreemntcnt > 0 && col.ColumnName == "Agreement No")
                                     {
                                         Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Agreement No");
 
@@ -314,7 +314,7 @@ namespace RightsU_PAReport_Service
 
                                         sheet.Cells[rowNo, Ecolumn, (Titlecnt + (rowNo)), Ecolumn].Merge = true;
                                     }
-                                    if (TitleTypecnt > 0 && col.ColumnName == "Title_Type")
+                                    if (TitleTypecnt > 0 && col.ColumnName == "Title Type")
                                     {
                                         Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Title Type");
 
@@ -337,7 +337,7 @@ namespace RightsU_PAReport_Service
                         sheet.Cells[1, i].Style.Font.Name = "Calibri";
                         sheet.Cells[1, i].Style.Fill.PatternType = ExcelFillStyle.Solid;
 
-                        if (dt.Columns[i - 1].ColumnName != "Agreement_No" && dt.Columns[i - 1].ColumnName != "Title" && dt.Columns[i - 1].ColumnName != "Title_Type" && dt.Columns[i - 1].ColumnName != "Ancillary_Type" && dt.Columns[i - 1].ColumnName != "Duration(Sec)" && dt.Columns[i - 1].ColumnName != "Period(Day)" && dt.Columns[i - 1].ColumnName != "Remarks")
+                        if (dt.Columns[i - 1].ColumnName != "Agreement No" && dt.Columns[i - 1].ColumnName != "Title" && dt.Columns[i - 1].ColumnName != "Title Type" && dt.Columns[i - 1].ColumnName != "Ancillary Type" && dt.Columns[i - 1].ColumnName != "Duration(Sec)" && dt.Columns[i - 1].ColumnName != "Period(Day)" && dt.Columns[i - 1].ColumnName != "Remarks")
                         {
                             sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#565656"));
                             sheet.Cells[1, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
