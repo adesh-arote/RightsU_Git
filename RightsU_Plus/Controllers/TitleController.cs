@@ -2271,7 +2271,7 @@ namespace RightsU_Plus.Controllers
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForTitle);
 
             string ReturnViewName = "Title_Import";
-            string Is_New_DM_TitleImport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_New_DM_Title_Master_Import").Select(x => x.Parameter_Value).FirstOrDefault();
+            string Is_New_DM_TitleImport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Advance_Title_Import").Select(x => x.Parameter_Value).FirstOrDefault();
             if (Is_New_DM_TitleImport == "Y")
             {
                 ReturnViewName = "Title_Import_New";
@@ -2631,7 +2631,7 @@ namespace RightsU_Plus.Controllers
 
         public void SampleDownload()
         {
-            string Is_New_DM_TitleImport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_New_DM_Title_Master_Import").Select(x => x.Parameter_Value).FirstOrDefault();
+            string Is_New_DM_TitleImport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Advance_Title_Import").Select(x => x.Parameter_Value).FirstOrDefault();
             string filePath;
             string Is_Allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
             filePath = HttpContext.Server.MapPath("~/UploadFolder/Title_Import_" + DateTime.Now.ToString("ddMMyyyyhhmmss.fff") + ".xlsx");
