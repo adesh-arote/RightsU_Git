@@ -91,6 +91,7 @@ export class NewRequestComponent implements OnInit {
   public RemarkSpecialInstruction: any = [];
   public remarksLabel: any;
   public specialRemarks: any;
+  public isDateSame: string;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.mindatevalue = new Date();
@@ -442,9 +443,25 @@ export class NewRequestComponent implements OnInit {
   }
   telcastFromDateChnge() {
     debugger;
-    if (this.newMusicConsumptionRequest.TelecastFrom == null) {
-      this.newMusicConsumptionRequest.TelecastTo = '';
+    //if (this.newMusicConsumptionRequest.TelecastFrom == null) {
+    //  this.newMusicConsumptionRequest.TelecastTo = '';
+
+    let fromdate = new Date(this.newMusicConsumptionRequest.TelecastFrom)
+    let todate = new Date(this.newMusicConsumptionRequest.TelecastTo)
+
+    if (fromdate >= todate) {
+      this.isDateSame = "Y";
+      this.displayalertMessage = true;
+      this.messageData = {
+        'header': "Error",
+        'body': "From Date should be Less Than To Date"
+      }
     }
+    else {
+      this.isDateSame = "N";
+    }
+   
+    
   }
   public requestCountFilteredList: any;
 
