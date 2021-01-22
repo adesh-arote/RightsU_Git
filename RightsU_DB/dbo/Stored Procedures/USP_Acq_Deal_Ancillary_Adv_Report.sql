@@ -242,7 +242,7 @@ BEGIN
 
 	IF(@COUNT > 0)
 	BEGIN
-		EXEC ('SELECT [Agreement_No],[Title_Name] AS [Title],[Title_Type],[Ancillary_Type_Name] AS [Ancillary_Type],[Duration] AS [Duration(Sec)],[Day] AS [Period(Day)],[Remarks] ,'+ @TableColumns +' FROM   
+		EXEC ('SELECT [Agreement_No] AS [Agreement No],[Title_Name] AS [Title],[Title_Type] AS [Title Type],[Ancillary_Type_Name] AS [Ancillary Type],[Duration] AS [Duration(Sec)],[Day] AS [Period(Day)],[Remarks] ,'+ @TableColumns +' FROM   
 		(SELECT [Agreement_No],[Title_Name],[Title_Type],[Ancillary_Type_Name],[Duration], [Day],[Remarks],[Platform_Hiearachy]
 		FROM #Tmp_Report)Tab1  
 		PIVOT  
