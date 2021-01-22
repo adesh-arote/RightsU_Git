@@ -37,8 +37,8 @@ namespace RightsU_InterimDb.Models
         public virtual Language Language { get; set; }
         public virtual MHRequest MHRequest { get; set; }
         public virtual Music_Album Music_Album { get; set; }
-        public virtual Music_Title Music_Title { get; set; }
         public virtual Title Title { get; set; }
         public virtual Music_Label Music_Label { get; set; }
+        public virtual Music_Title Music_Title { get; set; }
     }
 }

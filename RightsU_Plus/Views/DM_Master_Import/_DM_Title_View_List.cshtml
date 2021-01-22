@@ -14,17 +14,15 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script src="~/JS_Core/jquery.mark.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <style>
-    .SumoSelect {
-        width: 313px !important;
-    }
-
-    #ddlDealTypeAd_chosen {
-        width: 313px !important;
-    }
-
-    #ddlStatus_chosen {
-        width: 313px !important;
-    }
+      .SumoSelect {
+            width: 313px !important;
+        }
+       #ddlDealTypeAd_chosen{
+           width: 313px !important;
+       }
+       #ddlStatus_chosen{
+           width: 313px !important;
+       }
 </style>
 
 <div class="main_section" onclick="AllsubmenuHide();">
@@ -35,7 +33,7 @@
                     Title Details
                     @*<span></span>*@
                 </h2>
-                <span class="pull-left" style="margin-top: 23px;margin-left: 80px;">
+                <span class="pull-left" style="margin-top: 23px;;margin-left: 80px;">
                     <input type="checkbox" name="chkError" id="chkError" value="Y" onclick="OnChecked()" />Error &nbsp;&nbsp;
                     <input type="checkbox" name="chkError" id="chkNoError" value="N" onclick="OnChecked()" />Non Error
                 </span>
@@ -57,7 +55,7 @@
             <span class="pull-right">
                 Page Size:
                 <input type="text" id="txtErrorPageSize" class="smallTextBox pagingSize" value="@(Convert.ToInt32(ViewBag.txtpageSize) == 0 || ViewBag.txtpageSize == null ? 10 : ViewBag.txtpageSize)"
-                       onchange="PageSize_OnChange();" onkeypress="return isNumber(event);" maxlength="3" onblur="setDefaultPaging('txtErrorPageSize')" />
+                       onchange="return PageSize_OnChange();" onkeypress="return isNumber(event);" maxlength="3" onblur="setDefaultPaging('txtErrorPageSize')" />
             </span>
         </div>
         <div class="tab-content clearfix table-wrapper scale_table_container">
@@ -89,7 +87,7 @@
         var SearchCriteria = $('#srchCommon').val();
         initializeChosen();
         AllsubmenuHide();
-        initializeExpander();
+        initializeExpander();       
         BindTitleView(0, DM_Master_Import_Code, SearchCriteria, File_Type,'Y');
     });
     function OnChecked() {
@@ -110,9 +108,9 @@
         }
         BindTitleView(0, DM_Master_Import_Code, '', File_Type,'N');
     }
-
+  
     function AllsubmenuHide() {
-
+        debugger
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
             $('.RightPanel').css('left', LeftpanelHideCss);
             $('.leftPanel').css('right', panelHideCss);
@@ -131,7 +129,7 @@
     function btnSearch_OnClick() {
         var SearchCriteria = $.trim($('#srchCommon').val());
         var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
-        var File_Type = '@ViewBag.FileType';
+        var File_Type = '@ViewBag.FileType';       
         if (SearchCriteria == "") {
             $('#srchCommon').val('')
             $('#srchCommon').attr('required', true);
@@ -147,7 +145,7 @@
         $('#srchCommon').attr('required', false);
         $('#srchCommon').val('');
         $('#txtTitleName').val('');
-
+   
         $("#ddlLangugaeAd").find("option").attr("selected", false);
         $("#ddlLangugaeAd").val('')[0].sumo.reload();
         $("#ddlStarCast").find("option").attr("selected", false);
@@ -209,7 +207,7 @@
         if ($('#ddlErrorMsg').val() != null)
             ErrorMsg = $('#ddlErrorMsg').val().join(',');
         Status = $('#ddlStatus').val();
-
+        
         $.ajax({
             type: "POST",
             url: '@Url.Action("AdvanceSearchT", "DM_Master_Import")',
@@ -262,7 +260,7 @@
                 txtpagesize: txtpagesize,
                 DM_Import_Master_Code: DM_Import_Master_Code,
                 fileType: File_Type,
-                IsShowAll: IsShowAll,
+                IsShowAll: IsShowAll,         
                 Error: Error
             }),
             async: false,
@@ -293,7 +291,7 @@
                 hideLoading();
             }
         });
-    }
+   }
     var panelVisible = false;
     var RightpanelHideCss = '-350px';
     var RightpanelShowCss = '0px';
@@ -396,7 +394,7 @@
                         $("#ddlMusicLabel").append($("<option>").val(this.Value).text(this.Text));
                     });
                     $("#ddlMusicLabel").val(obj_Search[0].MusicLabel_Search.split(',')).attr("selected", "true")[0].sumo.reload();
-
+                   
                     $(result.lstTStarCast).each(function (index, item) {
                         $("#ddlStarCast").append($("<option>").val(this.Value).text(this.Text));
                     });
@@ -469,80 +467,6 @@
             }
         });
     }
-    function PageSize_OnChange() {
-            debugger;
-            if (!ValidatePageSize())
-                return false;
-            var SearchCriteria = $.trim($('#srchCommon').val());
-            var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
-            var File_Type = '@ViewBag.FileType'
-
-            BindTitleView(0, DM_Master_Import_Code, SearchCriteria, File_Type,'N')
-        }
-        function ValidatePageSize() {
-            var recordPerPage = $('#txtErrorPageSize').val();
-            if ($.trim(recordPerPage) != '') {
-                var txtPageSize = parseInt(recordPerPage);
-                if (txtPageSize > 0)
-                    return true;
-            }
-            $('#txtErrorPageSize').addClass("required");
-            return false;
-        }
-        function pageBinding() {
-            debugger;
-            var SearchCriteria = $.trim($('#srchCommon').val());
-            var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
-            var File_Type = '@ViewBag.FileType'
-
-            BindTitleView(0, DM_Master_Import_Code, SearchCriteria, File_Type,'N')
-            SetViewPaging();
-        }
-        function isNumber(evt) {
-            evt = (evt) ? evt : window.event;
-            var charCode = (evt.which) ? evt.which : evt.keyCode;
-            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                return false;
-            }
-            return true;
-        }
-        function SetViewPaging() {
-            debugger;
-            IsCall = 'N';
-            var PageNo, recordCnt;
-            var txtPageSize = $('#txtErrorPageSize').val();
-            if ('@ViewBag.PageNo' != null)
-                PageNo = '@ViewBag.PageNo';
-
-            if ('@ViewBag.RecordCount' != null && '@ViewBag.RecordCount' != '0')
-                recordCnt = '@ViewBag.RecordCount';
-
-            PageNo = PageNo - 1;
-
-            var opt = { callback: pageselectCallback };
-            opt["items_per_page"] = @(Convert.ToInt32(ViewBag.txtpageSize) == 0 || ViewBag.txtpageSize == null ? 10 : ViewBag.txtpageSize);
-            opt["num_display_entries"] = 5;
-            opt["num"] = 10;
-            opt["prev_text"] = "<<";
-            opt["next_text"] = ">>";
-            opt["current_page"] = PageNo;
-            $("#ErrorPagination").pagination(recordCnt, opt);
-        }
-        function pageselectCallback(page_index, jq) {
-            debugger
-            var SearchCriteria = $.trim($('#srchCommon').val());
-            var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
-            var File_Type = '@ViewBag.FileType'
-
-            $("#hdnPageNo").val(page_index);
-
-            if (IsCall == 'Y') {
-                BindTitleView(page_index, DM_Master_Import_Code, SearchCriteria, File_Type,'N')
-            }
-            else
-                IsCall = 'Y';
-
-        }
     function populateTitle(evt) {
         var txtTitleName = $('#txtTitleName').val();
         var txt = txtTitleName.split(',');
@@ -672,35 +596,35 @@
                 <input type="text" placeholder="Title Name" id="txtTitleName" autocomplete="on" style="width:230px" value='@ViewBag.SrchTitle' onkeyup="populateTitle(event)" />
                 <input type="text" id="lbTitle_Code" style="display: none;" />
                 @Html.Hidden("TitleName")
-            </li>
+            </li>             
             <li class="AdSearch">
-                <label>Title Type:</label><br />
+                <label>Title Type:</label><br />              
                 <select id="ddlDealTypeAd" class="form_input chosen-select"></select>
             </li>
             <li class="AdSearch">
                 <label>Title Language:</label><br />
                 <select id="ddlLangugaeAd" multiple="multiple"></select>
-            </li>
+            </li>                              
             <li class="AdSearch">
                 <label>Key Star Cast:</label><br />
                 <select id="ddlStarCast" multiple="multiple"></select>
-            </li>
+            </li>  
             <li class="AdSearch">
                 <label>Director:</label><br />
                 <select id="ddlDirector" multiple="multiple"></select>
-            </li>
+            </li>   
             <li class="AdSearch">
                 <label>Music Label:</label><br />
                 <select id="ddlMusicLabel" multiple="multiple"></select>
-            </li>
+            </li>    
             <li class="AdSearch">
                 <label>@objMessageKey.Status:</label><br />
                 <select id="ddlStatus" class="form_input chosen-select"></select>
-            </li>
+            </li>    
             <li class="AdSearch">
                 <label>Error Message:</label><br />
                 <select id="ddlErrorMsg" multiple="multiple" style="width:100%;"></select>
-            </li>
+            </li>    
         </ul>
         <br />
         <div style="text-align:center;">

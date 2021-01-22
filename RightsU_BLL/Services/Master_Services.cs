@@ -3671,6 +3671,43 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class DM_Title_Resolve_Conflict_Service : BusinessLogic<DM_Title_Resolve_Conflict>
+    {
+        private readonly DM_Title_Resolve_Conflict_Repository objRepository;
+
+        public DM_Title_Resolve_Conflict_Service(string Connection_Str)
+        {
+            this.objRepository = new DM_Title_Resolve_Conflict_Repository(Connection_Str);
+        }
+        public IQueryable<DM_Title_Resolve_Conflict> SearchFor(Expression<Func<DM_Title_Resolve_Conflict, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public DM_Title_Resolve_Conflict GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public override bool Validate(DM_Title_Resolve_Conflict objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(DM_Title_Resolve_Conflict objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(DM_Title_Resolve_Conflict objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
     public class DM_Music_Title_Service : BusinessLogic<DM_Music_Title>
     {
         private readonly DM_Music_Title_Repository objRepository;

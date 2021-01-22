@@ -902,7 +902,6 @@
     <Build Include="dbo\Stored Procedures\USP_Content_Music_PI.sql" />
     <Build Include="dbo\Stored Procedures\USP_Check_Autopush_Ammend_Acq.sql" />
     <Build Include="dbo\Stored Procedures\USP_Delete_IPR_Opp.sql" />
-    <Build Include="dbo\Stored Procedures\USP_Get_ResolveConflict_Data.sql" />
     <Build Include="dbo\Stored Procedures\USP_ValidateWithDeal.sql" />
     <Build Include="dbo\Stored Procedures\USP_Content_Music_PII.sql" />
     <Build Include="dbo\Stored Procedures\USP_List_Acq_Ancillary.sql" />
@@ -1446,6 +1445,10 @@
     <Build Include="dbo\User Defined Types\RightsDefination.sql" />
     <Build Include="dbo\Tables\Acq_Adv_Ancillary_Report.sql" />
     <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
+    <Build Include="dbo\Tables\DM_Title_Resolve_Conflict.sql" />
+    <Build Include="dbo\Dev_Query\DB_Script_15165.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_PIII.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Title_Import_RCData.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

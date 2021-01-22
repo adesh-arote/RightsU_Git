@@ -21,7 +21,6 @@ namespace RightsU_Plus.Controllers
     public class DM_Master_ImportController : BaseController
     {
         ReportViewer ReportViewer1;
-        //bool IsFromResolveConflict = false;
         public List<USP_DM_Music_Title_PI> lstError
         {
             get
@@ -111,16 +110,6 @@ namespace RightsU_Plus.Controllers
                 return (DM_Master_Log)Session["objDMLog"];
             }
             set { Session["objDMLog"] = value; }
-        }
-        public bool IsFromResolveConflict
-        {
-            get
-            {
-                if (Session["IsFromResolveConflict"] == null)
-                    Session["IsFromResolveConflict"] = false;
-                return (bool)Session["IsFromResolveConflict"];
-            }
-            set { Session["IsFromResolveConflict"] = value; }
         }
         public List<DM_Master_Log> lstDMLog
         {
@@ -613,29 +602,12 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindDMMasterLog(int DM_Import_Master_Code, string fileType = "")
         {
-            IsFromResolveConflict = true;
             ViewBag.Is_Allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
             lstDMCodes = DM_Import_Master_Code.ToString();
             ViewBag.FileType = fileType;
             List<RightsU_Entities.DM_Master_Log> lst = new List<RightsU_Entities.DM_Master_Log>();
             DM_Master_Log lstDMLog = new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.DM_Master_Import_Code.Contains(lstDMCodes)).FirstOrDefault();
             ViewBag.FileStatus = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.DM_Master_Import_Code == DM_Import_Master_Code).Select(s => s.Status).FirstOrDefault();
-
-            var lstTemp = new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code.ToString()).Select(x => x.Master_Type).Distinct().ToList();
-            ViewBag.ShortName = String.Join(",", lstTemp);
-            //ViewBag.ShortName = string.Join(",", new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Allowed_For_Resolve_Conflict).Select(y => y.ShortName).Distinct().ToList());
-            // var lstTemp = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Allowed_For_Resolve_Conflict == "Y").Select(x => x.ShortName).Distinct().ToList();
-            //String.Join(",", lstMusicTitle.Where(x => x.Singers != "" && x.Singers != null)
-            //ViewBag.lstShortName = lstTemp.Select(x => x.Key).ToList();
-            //ViewBag.lstReferenceTable = lstTemp.Select(x => x.Value).ToList();
-            // new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Allowed_For_Resolve_Conflict == "Y").Select(x => x.Reference_Table).Distinct().ToList();
-
-            //ViewBag.IsResolveConflictTalent = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Reference_Table == "Talent").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault();
-            //ViewBag.IsResolveConflictLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Language Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
-            //ViewBag.IsResolveConflictTitleType = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Type").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
-            //ViewBag.IsResolveConflictTitleLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Title Language Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
-            //ViewBag.IsResolveConflictOriginalLanguage = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Display_Name == "Original Title Language  Name").Select(x => x.Is_Allowed_For_Resolve_Conflict).FirstOrDefault(); //.Parameter_Value
-
             return PartialView("~/Views/DM_Master_Import/_DM_Master_Log_List.cshtml", lstDMLog);
         }
         public JsonResult BindProceed(int DM_Import_Master_Code, string fileType = "")
@@ -818,14 +790,11 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.DM_Master_Import_Code = DM_Master_Import_Code;
             ViewBag.FileType = fileType;
-            var lstTitleBulkImport = new DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Master_Import_Code).ToList();
-            ViewBag.BulkImportCount = lstTitleBulkImport.Count - 1;
             return PartialView("~/Views/DM_Master_Import/_DM_Title_View_List.cshtml");
         }
         public PartialViewResult BindTitleView(int DM_Import_Master_Code, string SearchCriteria = "", int pageNo = 0, int txtpagesize = 10, string fileType = "", string IsShowAll = "", string Error = "")
         {
             int pgNo = pageNo + 1;
-            IsFromResolveConflict = false;
             int RecordCount = 0;
             string Status = "";
             if (IsShowAll == "Y")
@@ -839,37 +808,8 @@ namespace RightsU_Plus.Controllers
             else
                 Status = objPage_Properties.Status_Search;
             objPage_Properties.chkStatus_Search = Status;
-            var ExcelSrNo = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_ExcelSrNo(DM_Import_Master_Code, SearchCriteria, "").ToList();
-            List<DM_Title_Import_Utility_Data> lstTitleBulkImport, lst = new List<DM_Title_Import_Utility_Data>();
-            if (Status == "C,P,R,N")
-            {
-                lstTitleBulkImport = new DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code && (ExcelSrNo.Contains(x.Col1) || x.Col1 == "Excel Sr. No") && x.Record_Status != "E").ToList();
-            }
-            else if (Status == "E")
-            {
-                lstTitleBulkImport = new DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code && ((ExcelSrNo.Contains(x.Col1) && x.Record_Status == "E") || x.Col1 == "Excel Sr. No")).ToList();
-            }
-            else
-            {
-                lstTitleBulkImport = new DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code && (ExcelSrNo.Contains(x.Col1) || x.Col1 == "Excel Sr. No")).ToList();
-            }
-            ViewBag.RecordCount = lstTitleBulkImport.Count - 1;
-
-            var firstItem = lstTitleBulkImport[0];
-            lstTitleBulkImport.RemoveAt(0);
-
-            RecordCount = ViewBag.RecordCount;//Convert.ToInt32(objRecordCount.Value);
-            if (RecordCount > 0)
-            {
-                int noOfRecordSkip, noOfRecordTake;
-                pageNo = GetPaging(pageNo, txtpagesize, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                lst = lstTitleBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                lst.Insert(0, firstItem);
-            }
-            else
-            {
-                lst.Insert(0, firstItem);
-            }
+            lstTitleBulkImport = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_TitleBulkImport(DM_Import_Master_Code, objPage_Properties.TitleName_Search, objPage_Properties.TitleType_Search, objPage_Properties.TitleLanguage_Search, objPage_Properties.KeyStarCast_Search, Status, objPage_Properties.ErrorMsg_Search, objPage_Properties.Director_Search, objPage_Properties.MusicLabel_Search, SearchCriteria, pgNo, txtpagesize, objRecordCount).ToList();
+            RecordCount = Convert.ToInt32(objRecordCount.Value);
             ViewBag.FileType = fileType;
             ViewBag.DM_Master_Import_Code = DM_Import_Master_Code;
             objDMTitle = null;
@@ -878,7 +818,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.PageNo = pgNo;
             ViewBag.txtpageSize = txtpagesize;
             TempData["DM_Import_Master_CodeT"] = DM_Import_Master_Code;
-            return PartialView("~/Views/DM_Master_Import/_Title_View_List.cshtml", lst);
+            return PartialView("~/Views/DM_Master_Import/_Title_View_List.cshtml", lstTitleBulkImport);
         }
         public JsonResult GetTitleName(string Searched_User)
         {
@@ -990,15 +930,7 @@ namespace RightsU_Plus.Controllers
                     else
                         pageNo = v1 + 1;
                 }
-                if (IsFromResolveConflict)
-                {
-                    noOfRecordSkip = recordPerPage * (pageNo - 1);
-                    //IsFromResolveConflict = false;
-                }
-                else
-                {
-                    noOfRecordSkip = recordPerPage * (pageNo - 1) + 1;
-                }
+                noOfRecordSkip = recordPerPage * (pageNo - 1);
                 if (recordCount < (noOfRecordSkip + recordPerPage))
                     noOfRecordTake = recordCount - noOfRecordSkip;
                 else
@@ -1006,63 +938,60 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
-        public ActionResult PopulateAutoCompleteData(string keyword, string tabName, string RoleName)
+        public ActionResult PopulateAutoCompleteData(string keyword, string tabName)
         {
             string Is_Allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
             int Deal_type_Code_Other = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Deal_Type_Other").FirstOrDefault().Parameter_Value);
             dynamic result = "";
-            result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_ResolveConflict_Data(keyword, tabName, RoleName)
-                               .Select(R => new { Mapping_Name = R.TextField, Mapping_Code = R.ValueField }).ToList();
-
-            //if (tabName == "TA")
-            //{
-            //    result = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Talent_Name, Mapping_Code = R.Talent_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "LB")
-            //{
-            //    result = new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Label_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Music_Label_Name, Mapping_Code = R.Music_Label_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "GE")
-            //{
-            //    result = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Genres_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Genres_Name, Mapping_Code = R.Genres_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "MA")
-            //{
-            //    result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Music_Album_Name, Mapping_Code = R.Music_Album_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "ML")
-            //{
-            //    result = new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Language_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Language_Name, Mapping_Code = R.Music_Language_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "MT")
-            //{
-            //    result = new Music_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Theme_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //                .Select(R => new { Mapping_Name = R.Music_Theme_Name, Mapping_Code = R.Music_Theme_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "TT")
-            //{
-            //    result = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y" && x.Deal_Or_Title.Contains("T") && x.Deal_Type_Code != Deal_type_Code_Other).Distinct()
-            //               .Select(R => new { Mapping_Name = R.Deal_Type_Name, Mapping_Code = R.Deal_Type_Code }).Take(100).ToList();
-            //}
-            //if (tabName == "TL" || tabName == "OL")
-            //{
-            //    result = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Language_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-            //               .Select(R => new { Mapping_Name = R.Language_Name, Mapping_Code = R.Language_Code }).Take(100).ToList();
-            //}
-            //if (Is_Allow_Program_Category == "Y")
-            //{
-            //    int Program_Category_Code = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Columns_Name == "Program Category").ToList().FirstOrDefault().Columns_Code;
-            //    if (tabName == "PC")
-            //    {
-            //        result = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Value.Contains(keyword.ToUpper()) && x.Columns_Code == Program_Category_Code).Distinct()
-            //                    .Select(R => new { Mapping_Name = R.Columns_Value, Mapping_Code = R.Columns_Value_Code }).Take(100).ToList();
-            //    }
-            //}
+            if (tabName == "TA")
+            {
+                result = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+                            .Select(R => new { Mapping_Name = R.Talent_Name, Mapping_Code = R.Talent_Code }).Take(100).ToList();
+            }
+            if (tabName == "LB")
+            {
+                result = new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Label_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+                            .Select(R => new { Mapping_Name = R.Music_Label_Name, Mapping_Code = R.Music_Label_Code }).Take(100).ToList();
+            }
+            if (tabName == "GE")
+            {
+                result = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Genres_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+                            .Select(R => new { Mapping_Name = R.Genres_Name, Mapping_Code = R.Genres_Code }).Take(100).ToList();
+            }
+            if (tabName == "MA")
+            {
+                result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+                            .Select(R => new { Mapping_Name = R.Music_Album_Name, Mapping_Code = R.Music_Album_Code }).Take(100).ToList();
+            }
+            if (tabName == "ML")
+            {
+                result = new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Language_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+                            .Select(R => new { Mapping_Name = R.Language_Name, Mapping_Code = R.Music_Language_Code }).Take(100).ToList();
+            }
+            if (tabName == "MT")
+            {
+                result = new Music_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Theme_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+                            .Select(R => new { Mapping_Name = R.Music_Theme_Name, Mapping_Code = R.Music_Theme_Code }).Take(100).ToList();
+            }
+            if (tabName == "TT")
+            {
+                result = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y" && x.Deal_Or_Title.Contains("T") && x.Deal_Type_Code != Deal_type_Code_Other).Distinct()
+                           .Select(R => new { Mapping_Name = R.Deal_Type_Name, Mapping_Code = R.Deal_Type_Code }).Take(100).ToList();
+            }
+            if (tabName == "TL" || tabName == "OL")
+            {
+                result = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Language_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+                           .Select(R => new { Mapping_Name = R.Language_Name, Mapping_Code = R.Language_Code }).Take(100).ToList();
+            }
+            if (Is_Allow_Program_Category == "Y")
+            {
+                int Program_Category_Code = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Columns_Name == "Program Category").ToList().FirstOrDefault().Columns_Code;
+                if (tabName == "PC")
+                {
+                    result = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Value.Contains(keyword.ToUpper()) && x.Columns_Code == Program_Category_Code).Distinct()
+                                .Select(R => new { Mapping_Name = R.Columns_Value, Mapping_Code = R.Columns_Value_Code }).Take(100).ToList();
+                }
+            }
             return Json(result);
         }
         public ActionResult ValidateTalent(List<RightsU_Entities.DM_Master_Log> lst)
@@ -1169,8 +1098,8 @@ namespace RightsU_Plus.Controllers
                         //}
                         //else
                         //{
-                        objDMLogT.Mapped_Name = objDMTemp.System_Mapped_Name;
-                        objDMLogT.Mapped_Code = objDMTemp.System_Mapped_Code;
+                        objDMLogT.Mapped_Name = objDMTemp.Mapped_Name;
+                        objDMLogT.Mapped_Code = objDMTemp.Mapped_Code;
                         //}
                     }
                     DM_Import_UDT objDMUDT = lst_DM_Import_UDT.Where(w => w.Key == objDMTemp.DM_Master_Log_Code.ToString()).FirstOrDefault();
@@ -1271,7 +1200,6 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-        /*
         public PartialViewResult UploadTitles(HttpPostedFileBase InputFile, string txtpageSize, string FilterBy)
         {
             string Is_allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
@@ -1290,7 +1218,7 @@ namespace RightsU_Plus.Controllers
                 string ext = System.IO.Path.GetExtension(PostedFile.FileName);
                 if (ext == ".xlsx" || ext == ".xls")
                 {
-                    //Read Excel File
+                    /*Read Excel File*/
                     ExcelReader objExcelReader = new ExcelReader();
                     DataSet ds = new DataSet();
 
@@ -1314,7 +1242,7 @@ namespace RightsU_Plus.Controllers
                             OleDbCommand cmdExcel = new OleDbCommand();
                             OleDbDataAdapter oda = new OleDbDataAdapter();
                             cmdExcel.Connection = cn;
-                            sheetName = "Sheet1$";
+                            //string sheetName = "Sheet1$";
 
                             OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "]", cn);
                             da.Fill(ds);
@@ -1362,7 +1290,7 @@ namespace RightsU_Plus.Controllers
                                     }
                                 }
                             }
-                            //Data Insertion
+                            /*Data Insertion*/
                             if (Is_allow_Program_Category == "Y")
                             {
                                 if (ds.Tables[0].Columns[0].ColumnName != "Sr. No" || ds.Tables[0].Columns[1].ColumnName != "Title"
@@ -1494,212 +1422,6 @@ namespace RightsU_Plus.Controllers
             //ViewBag.status = Acq_Status_HistoryController;
             return PopulateTitleGrid(Convert.ToString(PageNo), txtpageSize, FilterBy);
         }
-        */
-
-        public PartialViewResult UploadTitles(HttpPostedFileBase InputFile, string txtpageSize, string FilterBy)
-        {
-            string Is_allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
-            string Modified_Data = "N";
-            string message = "";
-            string status = "";
-            int pageSize = 10;
-            int PageNo = 0;
-            string sheetName = "Sheet1$";
-            List<USP_DM_Title_PI> lstRE = new List<USP_DM_Title_PI>();
-
-            //USP_Service 
-            //List<USP_Title_Import_Utility_PI_UDT> lstDealRights = new List<USP_Title_Import_Utility_PI_UDT>();
-            //List<USP_Title_Import_Utility_PI> lstVal = new List<USP_Title_Import_Utility_PI>();
-            //var List = USP_Title_Import_Utility_PI.Cast<USP_Title_Import_Utility_PI>()
-            //         .Select(s => s.GetInt32(0)).ToList();
-
-
-
-            DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
-            if (System.Web.HttpContext.Current.Request.Files.AllKeys.Any())
-            {
-                var PostedFile = InputFile;
-                string fullPath = Server.MapPath("~") + "\\" + ConfigurationManager.AppSettings["UploadFilePath"];
-                string ext = System.IO.Path.GetExtension(PostedFile.FileName);
-
-                List<USP_Title_Import_Utility_PI> lst = new List<USP_Title_Import_Utility_PI>();
-                // lst.
-                if (ext == ".xlsx" || ext == ".xls")
-                {
-                    /*Read Excel File*/
-                    ExcelReader objExcelReader = new ExcelReader();
-                    DataSet ds = new DataSet();
-
-                    try
-                    {
-                        #region EXCEL File Upload 
-                        string strActualFileNameWithDate;
-                        string fileExtension = "";
-                        string strFileName = System.IO.Path.GetFileName(PostedFile.FileName);
-                        fileExtension = System.IO.Path.GetExtension(PostedFile.FileName);
-                        strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
-                        string fullpathname = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadFilePath"] + strActualFileNameWithDate);
-                        PostedFile.SaveAs(fullpathname);
-                        StringBuilder sb1 = new StringBuilder();
-                        string strConn = string.Empty;
-                        bool hasHeaders = false;
-                        string HDR = hasHeaders ? "Yes" : "No";
-                        try
-                        {
-                            OleDbConnection cn = new OleDbConnection();
-                            cn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fullpathname + ";Extended Properties='Excel 12.0;HDR=No;IMEX=1'");
-                            OleDbCommand cmdExcel = new OleDbCommand();
-                            OleDbDataAdapter oda = new OleDbDataAdapter();
-                            cmdExcel.Connection = cn;
-                            sheetName = "Sheet1$";
-
-                            OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "]", cn);
-                            da.Fill(ds);
-                        }
-                        catch (Exception ex)
-                        {
-                            message = ex.ToString();
-                            status = "E";
-                        }
-                        finally
-                        {
-                            //Always delete uploaded excel file from folder.
-                            System.IO.File.Delete(fullpathname.Trim());
-                        }
-                        if (status != "E")
-                        {
-                            var count = ds.Tables.Count;
-                            if (count == 0)
-                            {
-                                message = "'" + sheetName.Trim('$') + "' " + " Sheet name should not be existing in uploaded excel";
-                                status = "E";
-                            }
-                        }
-                        #endregion
-
-                        if (ds.Tables.Count > 0)
-                        {
-                            if (ds.Tables[0].Rows.Count > 1)
-                            {
-                                if (ds.Tables[0].Rows[0].ItemArray.ElementAt(0).ToString().ToUpper() == "EXCEL SR. NO")
-                                {
-                                    List<Title_Import_Utility_UDT> lst_Title_Import_Utility_UDT = new List<Title_Import_Utility_UDT>();
-                                    Title_Import_Utility_UDT obj_Title_Import_Utility_UDT = new Title_Import_Utility_UDT();
-                                    string Result = "";
-
-                                    #region Header Validation
-                                    DataRow HeaderRow = ds.Tables[0].Rows[0];
-                                    int HRCount = 0;
-                                    Type type = typeof(Title_Import_Utility_UDT);
-                                    PropertyInfo[] properties = type.GetProperties();
-
-                                    foreach (PropertyInfo property in properties)
-                                    {
-                                        if (HRCount == HeaderRow.ItemArray.Count())
-                                            break;
-
-                                        if (HeaderRow.ItemArray.ElementAt(HRCount) is DBNull)
-                                            property.SetValue(obj_Title_Import_Utility_UDT, "");
-                                        else
-                                            property.SetValue(obj_Title_Import_Utility_UDT, HeaderRow.ItemArray.ElementAt(HRCount));
-
-                                        HRCount++;
-                                    }
-                                    lst_Title_Import_Utility_UDT.Add(obj_Title_Import_Utility_UDT);
-
-                                    Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "HV", objLoginUser.Users_Code, 0).FirstOrDefault().Result;
-
-                                    string _Status = Result.Split('~')[0];
-                                    string _Message = Result.Split('~')[1];
-                                    string _ColName = Result.Split('~')[2];
-                                    #endregion
-                                    #region Insertion along with headers
-                                    if (_Status == "S")
-                                    {
-                                        dynamic resultSet;
-                                        obj_DM_Master_Import.File_Name = PostedFile.FileName;
-                                        obj_DM_Master_Import.System_File_Name = PostedFile.FileName;
-                                        obj_DM_Master_Import.Upoaded_By = objLoginUser.Users_Code;
-                                        obj_DM_Master_Import.Uploaded_Date = DateTime.Now;
-                                        obj_DM_Master_Import.Action_By = objLoginUser.Users_Code;
-                                        obj_DM_Master_Import.Action_On = DateTime.Now;
-                                        obj_DM_Master_Import.Status = "N";
-                                        obj_DM_Master_Import.File_Type = "T";
-                                        obj_DM_Master_Import.EntityState = State.Added;
-                                        lst_DM_Master_Import.Add(obj_DM_Master_Import);
-                                        objDMService.Save(obj_DM_Master_Import, out resultSet);
-
-                                        lst_Title_Import_Utility_UDT = new List<Title_Import_Utility_UDT>();
-                                        foreach (DataRow row in ds.Tables[0].Rows)
-                                        {
-                                            HRCount = 0;
-                                            obj_Title_Import_Utility_UDT = new Title_Import_Utility_UDT();
-                                            foreach (PropertyInfo property in properties)
-                                            {
-                                                if (HRCount == row.ItemArray.Count())
-                                                    break;
-                                                if (row.ItemArray.ElementAt(HRCount) is DBNull)
-                                                    property.SetValue(obj_Title_Import_Utility_UDT, "");
-                                                else
-                                                    property.SetValue(obj_Title_Import_Utility_UDT, row.ItemArray.ElementAt(HRCount));
-                                                HRCount++;
-                                            }
-                                            lst_Title_Import_Utility_UDT.Add(obj_Title_Import_Utility_UDT);
-                                        }
-                                        Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "INS", objLoginUser.Users_Code, obj_DM_Master_Import.DM_Master_Import_Code).FirstOrDefault().Result;
-
-                                        _Status = Result.Split('~')[0];
-                                        _Message = Result.Split('~')[1];
-                                        _ColName = Result.Split('~')[2];
-
-                                        message = _Message;
-                                        status = "S";
-                                    }
-                                    else
-                                    {
-                                        message = _Message + " And Column Names are " + _ColName;
-                                        status = "E";
-                                    }
-                                    #endregion
-                                }
-                                else
-                                {
-                                    message = "Column Excel Sr. No is missing or should always be in the 1st Column";
-                                    status = "E";
-                                }
-                            }
-                            else
-                            {
-                                message = "Please fill the data in the excel file";
-                                status = "E";
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        message = ex.Message;
-                        status = "E";
-                    }
-                }
-                else
-                {
-                    message = "Please select excel file...";
-                    status = "E";
-                }
-            }
-            else
-            {
-                message = "Please select excel file...";
-                status = "E";
-            }
-            //string File_Type = obj_DM_Master_Import.File_Type;
-            ViewBag.File_Type = obj_DM_Master_Import.File_Type;
-            ViewBag.Message = message;
-            ViewBag.status = status;
-            //ViewBag.status = Acq_Status_HistoryController;
-            return PopulateTitleGrid(Convert.ToString(PageNo), txtpageSize, FilterBy);
-        }
-
         public PartialViewResult PopulateTitleGrid(string PgNo = "0", string txtPageSize = "", string FilterBy = "")
         {
             TempData["FilterByStatusTitle"] = FilterBy;
@@ -1737,45 +1459,21 @@ namespace RightsU_Plus.Controllers
         public JsonResult GetTitleFileImportStatus(int dealCode)
         {
             string recordStatus = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.DM_Master_Import_Code == dealCode).Select(s => s.Status).FirstOrDefault();
-            double TotalCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode).Count();
-            double SuccessCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "C").Count();
-            double ConflictCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "N" && (x.Record_Status == "R")).Count();
-            double IgnoreCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "Y").Count();
-            double WaitingCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "N" && x.Is_Ignore != "Y").Count();
+            double TotalCount = new RightsU_BLL.DM_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode).Count();
+            double SuccessCount = new RightsU_BLL.DM_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "C").Count();
+            double ConflictCount = new RightsU_BLL.DM_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "N" && (x.Record_Status == "R")).Count();
+            double IgnoreCount = new RightsU_BLL.DM_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "Y").Count();
+            double WaitingCount = new RightsU_BLL.DM_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "N" && x.Is_Ignore != "Y").Count();
 
-            double ErrorCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "E").Count();
+            double ErrorCount = new RightsU_BLL.DM_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "E").Count();
 
             //double div = @MessageCount / @totalMessageCount;
             //double quotient = Convert.ToDouble(div);
             double Completion = (SuccessCount / TotalCount) * 100;
-            // double.IsNaN.Completion
-            if (double.IsNaN(Completion))
-            {
-                Completion = 0;
-            }
-
-
             double ErrorCompletion = (ErrorCount / TotalCount) * 100;
-            if (double.IsNaN(ErrorCompletion))
-            {
-                ErrorCompletion = 0;
-
-            }
             double ConflictCompletion = (ConflictCount / TotalCount) * 100;
-            if (double.IsNaN(ConflictCompletion))
-            {
-                ConflictCompletion = 0;
-            }
             double IgnoreCompletion = (IgnoreCount / TotalCount) * 100;
-            if (double.IsNaN(IgnoreCompletion))
-            {
-                IgnoreCompletion = 0;
-            }
             double WaitingCompletion = (WaitingCount / TotalCount) * 100;
-            if (double.IsNaN(WaitingCompletion))
-            {
-                WaitingCompletion = 0;
-            }
             var obj = new
             {
                 RecordStatus = recordStatus,
@@ -1791,7 +1489,6 @@ namespace RightsU_Plus.Controllers
                 IgnoreCompletion = Convert.ToInt32(IgnoreCompletion),
                 WaitingCompletion = Convert.ToInt32(WaitingCompletion)
             };
-
             return Json(obj);
 
 
@@ -2112,7 +1809,40 @@ namespace RightsU_Plus.Controllers
                     sql += " AND  [Music_Label] IN (" + "'" + searchMLString + "')";
 
             }
-           
+            if (FileType == "T")
+            {
+                string SearchTitleName = objPage_Properties.TitleName_Search.Replace(",", "','");
+                string SearchTitleType = objPage_Properties.TitleType_Search.Replace(",", "','");
+                string searchTLString = objPage_Properties.TitleLanguage_Search.Replace(",", "','");
+                string searchStarCast = objPage_Properties.KeyStarCast_Search.Replace(",", "','");
+                string searchStatus = objPage_Properties.Status_Search.Replace(",", "','");
+                string searchErrorMsg = objPage_Properties.ErrorMsg_Search.Replace(",", "','");
+                string searchDirector = objPage_Properties.Director_Search.Replace(",", "','");
+                string searchTChkStatusString = objPage_Properties.chkStatus_Search.Replace(",", "','");
+                string searchMusicLabel = objPage_Properties.MusicLabel_Search.Replace(",", "','");
+
+                if (objPage_Properties.TitleName_Search != "")
+                    sql += " AND [Original Title (Tanil/Telugu)] IN(" + "'" + SearchTitleName + "')";
+                if (objPage_Properties.TitleType_Search != "")
+                    sql += " AND [Title Type] IN(" + "'" + SearchTitleType + "')";
+                if (objPage_Properties.TitleLanguage_Search != "")
+                    sql += " AND [Original Language (Hindi)] IN(" + "'" + searchTLString + "')";
+                if (objPage_Properties.KeyStarCast_Search != "")
+                    sql += " AND TKST.StarCast IN(" + "'" + searchStarCast + "')";
+                if (objPage_Properties.Status_Search != "" && objPage_Properties.Status_Search != "Y")
+                    sql += " AND [Record_Status] IN(" + "'" + searchStatus + "')";
+                if (objPage_Properties.Status_Search != "" && objPage_Properties.Status_Search == "Y")
+                    sql += " AND [Is_Ignore] =" + "'" + searchStatus + "'";
+                if (objPage_Properties.chkStatus_Search != "" && objPage_Properties.chkStatus_Search != "Y")
+                    sql += " AND [Record_Status] IN(" + "'" + searchTChkStatusString + "')";
+                if (objPage_Properties.ErrorMsg_Search != "")
+                    sql += " AND TCEM.ErrorMessage  IN(" + "'" + searchErrorMsg + "')";
+                if (objPage_Properties.Director_Search != "")
+                    sql += " AND TD.Director  IN(" + "'" + searchDirector + "')";
+                if (objPage_Properties.MusicLabel_Search != "")
+                    sql += " AND TML.MusicLabel  IN(" + "'" + searchMusicLabel + "')";
+            }
+
             parm[0] = new ReportParameter("DM_Master_Import_Code", Convert.ToString(DM_Import_Master_Code));
             parm[1] = new ReportParameter("SearchCriteria", SearchCriteria);
             parm[2] = new ReportParameter("File_Type", FileType);
@@ -2162,12 +1892,14 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-        public class Talent_Validation
-        {
-            public string Talent_Name;
-            public string Role_Name;
-        }
+     
     }
+    public class Talent_Validation
+    {
+        public string Talent_Name;
+        public string Role_Name;
+    }
+
     internal class TabPaging
     {
         public int PageNo_TA { get; set; }
@@ -2190,8 +1922,6 @@ namespace RightsU_Plus.Controllers
         public int PageSize_PC { get; set; }
         public int PageNo_OL { get; set; }
         public int PageSize_OL { get; set; }
-        public int PageNo_CBFC { get; set; }
-        public int PageSize_CBFC { get; set; }
 
         public object GetPropertyValue(string propertyName)
         {

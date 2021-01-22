@@ -19,8 +19,8 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Talent_Code { get; set; }
     	    public Nullable<int> Role_Code { get; set; }
     
-        public virtual Music_Title Music_Title { get; set; }
         public virtual Role Role { get; set; }
         public virtual Talent Talent { get; set; }
+        public virtual Music_Title Music_Title { get; set; }
     }
 }

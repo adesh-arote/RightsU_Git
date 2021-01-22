@@ -2269,7 +2269,14 @@ namespace RightsU_Plus.Controllers
             ViewBag.txtPageSizeBack = TempData["txtPageSizeBackTitle"] == null ? 10 : TempData["txtPageSizeBackTitle"];
 
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForTitle);
-            return View("Title_Import");
+
+            string ReturnViewName = "Title_Import";
+            string Is_New_DM_TitleImport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Advance_Title_Import").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_New_DM_TitleImport == "Y")
+            {
+                ReturnViewName = "Title_Import_New";
+            }
+            return View(ReturnViewName);
         }
 
         private string GetUserModuleRights()
@@ -2624,51 +2631,91 @@ namespace RightsU_Plus.Controllers
 
         public void SampleDownload()
         {
+            string Is_New_DM_TitleImport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Advance_Title_Import").Select(x => x.Parameter_Value).FirstOrDefault();
             string filePath;
+            string Is_Allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
             filePath = HttpContext.Server.MapPath("~/UploadFolder/Title_Import_" + DateTime.Now.ToString("ddMMyyyyhhmmss.fff") + ".xlsx");
             FileInfo flInfo = new FileInfo(filePath);
             FileInfo fliTemplate;
 
-            fliTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/Title_Import_Utility_Sample.xlsx"));
-            using (ExcelPackage package = new ExcelPackage(flInfo, fliTemplate))
+            if (Is_New_DM_TitleImport == "Y")
             {
-                List<DM_Title_Import_Utility> lstTIU = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName)
-                                                        .SearchFor(x => x.Is_Active == "Y")
-                                                        .OrderBy(y => y.Order_No)
-                                                        .ToList();
-
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
-                int ColNo = 1, RowNo = 1;
-                Color colRed = System.Drawing.ColorTranslator.FromHtml("#F73131");
-                Color colGreen = System.Drawing.ColorTranslator.FromHtml("#8FD64B");
-
-                worksheet.Cells[RowNo, ColNo].Value = "Excel Sr. No";
-                worksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
-                worksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                worksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
-
-                foreach (DM_Title_Import_Utility item in lstTIU)
+                fliTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/Title_Import_Utility_Sample.xlsx"));
+                using (ExcelPackage package = new ExcelPackage(flInfo, fliTemplate))
                 {
-                    ColNo++;
-                    worksheet.Cells[RowNo, ColNo].Value = item.Display_Name;
+                    List<DM_Title_Import_Utility> lstTIU = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName)
+                                                            .SearchFor(x => x.Is_Active == "Y")
+                                                            .OrderBy(y => y.Order_No)
+                                                            .ToList();
+
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+                    int ColNo = 1, RowNo = 1;
+                    Color colRed = System.Drawing.ColorTranslator.FromHtml("#F73131");
+                    Color colGreen = System.Drawing.ColorTranslator.FromHtml("#8FD64B");
+
+                    worksheet.Cells[RowNo, ColNo].Value = "Excel Sr. No";
                     worksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
                     worksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                     worksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
 
-                    if (item.validation.Contains("man"))
-                        worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
-                    else
-                        worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colGreen);
+                    foreach (DM_Title_Import_Utility item in lstTIU)
+                    {
+                        ColNo++;
+                        worksheet.Cells[RowNo, ColNo].Value = item.Display_Name;
+                        worksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
+                        worksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        worksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                        if (item.validation.Contains("man"))
+                            worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
+                        else
+                            worksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colGreen);
+                    }
+
+                    ColNo = 1;
+                    for (int i = 1; i <= 2; i++)
+                    {
+                        RowNo = i + 1;
+                        worksheet.Cells[RowNo, ColNo].Value = i;
+                    }
+                    package.Save();
                 }
-
-                ColNo = 1;
-                for (int i = 1; i <= 2; i++)
+            }
+            else
+            {
+                if (Is_Allow_Program_Category == "Y")
                 {
-                    RowNo = i+1;
-                    worksheet.Cells[RowNo, ColNo].Value = i;
+                    fliTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/Title_Import.xlsx"));
                 }
-                package.Save();
+                else
+                {
+                    fliTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/Title_Import_Sample.xlsx"));
+
+                }
+                using (ExcelPackage package = new ExcelPackage(flInfo, fliTemplate))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+                    worksheet.Cells[1, 1].Value = objMessageKey.Srno;
+                    worksheet.Cells[1, 2].Value = objMessageKey.Title;
+                    worksheet.Cells[1, 3].Value = objMessageKey.OriginalTitle;
+                    worksheet.Cells[1, 4].Value = objMessageKey.TitleType;
+                    worksheet.Cells[1, 5].Value = objMessageKey.TitleLanguage;
+                    worksheet.Cells[1, 6].Value = objMessageKey.OriginalLanguage;
+                    worksheet.Cells[1, 7].Value = objMessageKey.YearOfRelease;
+                    worksheet.Cells[1, 8].Value = objMessageKey.DurationInMin;
+                    worksheet.Cells[1, 9].Value = objMessageKey.KeyStarCast;
+                    worksheet.Cells[1, 10].Value = objMessageKey.Director;
+                    worksheet.Cells[1, 11].Value = objMessageKey.MusicLabel;
+                    if (Is_Allow_Program_Category == "Y")
+                    {
+                        worksheet.Cells[1, 12].Value = objMessageKey.TitleProgramCategory;
+                        worksheet.Cells[1, 13].Value = objMessageKey.Synopsis;
+                    }
+                    else
+                        worksheet.Cells[1, 12].Value = objMessageKey.Synopsis;
+                    package.Save();
+                }
             }
             WebClient client = new WebClient();
             Byte[] buffer = client.DownloadData(filePath);

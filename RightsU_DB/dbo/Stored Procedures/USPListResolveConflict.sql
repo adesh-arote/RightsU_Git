@@ -72,6 +72,7 @@ BEGIN
 			 WHEN DML.Master_Type = 'OL' THEN 'Original Language'
 			 WHEN DML.Master_Type = 'PC' THEN 'Program Category'
 			 WHEN DML.Master_Type = 'CM' THEN 'Music Track'
+			 WHEN DML.Master_Type = 'PG' THEN 'Program'
 		END AS Type, 
 		DML.Name, 
 		CASE WHEN DML.Master_Type = 'TA' THEN T.Talent_Name
@@ -85,6 +86,7 @@ BEGIN
 			 WHEN DML.Master_Type = 'OL' THEN TL.Language_Name
 			 WHEN DML.Master_Type = 'PC' THEN ECV.Columns_Value
 			 WHEN DML.Master_Type = 'CM' THEN TM.Music_Title_Name
+			 WHEN DML.Master_Type = 'PG' THEN PG.Program_Name
 		END AS MappedTo,
 		CASE WHEN (DML.Mapped_By = 'U' AND DML.Master_Code IS NOT NULL)THEN 'Users'
 			 WHEN (DML.Mapped_By = 'S' OR DML.Mapped_By = 'V' AND DML.Master_Code IS NOT NULL )THEN 'System'
@@ -99,6 +101,7 @@ BEGIN
 	LEFT JOIN Talent T ON T.Talent_Code = DML.Master_Code
 	LEFT JOIN Music_Label LB ON LB.Music_Label_Code = DML.Master_Code
 	LEFT JOIN Genres G ON G.Genres_Code = DML.Master_Code
+	LEFT JOIN Program PG ON PG.Program_Code = DML.Master_Code
 	LEFT JOIN Music_Album MA ON MA.Music_Album_Code = DML.Master_Code
 	LEFT JOIN Music_Language ML ON ML.Music_Language_Code = DML.Master_Code
 	LEFT JOIN Music_Theme MT ON MT.Music_Theme_Code = DML.Master_Code

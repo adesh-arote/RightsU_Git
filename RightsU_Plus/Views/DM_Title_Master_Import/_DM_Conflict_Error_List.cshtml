@@ -1,0 +1,33 @@
+﻿
+@model RightsU_Entities.DM_Master_Import
+
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="ClosePopup()">
+                            <span>X</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>Error Message Details </h2>
+                    </div>
+                    <br />
+                    <div class="modal_block sty" style="margin-left: 20px;margin-right: 20px;">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:10%;">Master Import Code</th>
+                                    <th style="width:30%;">File Name</th>
+                                    <th style="width:15%;">File Type</th>
+                                    <th style="width:45%;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@Model.DM_Master_Import_Code</td>
+                                    <td>@Model.File_Name</td>
+                                    <td>@Model.File_Type</td>
+                                    <td>@Model.Status</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br />
+                    </div>
+                 
