@@ -438,6 +438,7 @@
     <Compile Include="StoreProcedure_Entities\USPTATSLAList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPValidateMHRequestConsumption_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPVWTitleList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_Import_RCData_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_ResolveConflict_Data_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Rights_Holdback_Release_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Rights_Holdback_Validation_Result.cs" />

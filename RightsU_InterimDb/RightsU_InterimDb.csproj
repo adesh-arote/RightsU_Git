@@ -1410,9 +1410,6 @@
     <Compile Include="Models\USP_Get_Release_Content_List_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\USP_Get_ResolveConflict_Data_Result.cs">
-      <DependentUpon>RightsU_EF.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\USP_Get_Security_Group_Tree_Hierarchy_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1636,6 +1633,9 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_Title_Deal_Info_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Title_Import_RCData_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_Title_List_Result.cs">

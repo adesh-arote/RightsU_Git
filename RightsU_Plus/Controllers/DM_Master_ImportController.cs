@@ -1004,7 +1004,7 @@ namespace RightsU_Plus.Controllers
             string Is_Allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
             int Deal_type_Code_Other = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Deal_Type_Other").FirstOrDefault().Parameter_Value);
             dynamic result = "";
-            result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_ResolveConflict_Data(keyword, tabName, RoleName)
+            result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_RCData(keyword, tabName, RoleName)
                                .Select(R => new { Mapping_Name = R.TextField, Mapping_Code = R.ValueField }).ToList();
 
             return Json(result);
@@ -2106,11 +2106,12 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-        public class Talent_Validation
-        {
-            public string Talent_Name;
-            public string Role_Name;
-        }
+       
+    }
+    public class Talent_Validation
+    {
+        public string Talent_Name;
+        public string Role_Name;
     }
     internal class TabPaging
     {

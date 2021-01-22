@@ -4893,23 +4893,6 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Syn_Deal_Right_Clone", new_Syn_Deal_CodeParameter, syn_Deal_Rights_CodeParameter, syn_Deal_Rights_Title_CodeParameter, title_CodeParameter, is_ProgramParameter);
         }
     
-        public virtual ObjectResult<USP_Get_ResolveConflict_Data_Result> USP_Get_ResolveConflict_Data(string keyword, string tabName, string roles)
-        {
-            var keywordParameter = keyword != null ?
-                new ObjectParameter("Keyword", keyword) :
-                new ObjectParameter("Keyword", typeof(string));
-    
-            var tabNameParameter = tabName != null ?
-                new ObjectParameter("TabName", tabName) :
-                new ObjectParameter("TabName", typeof(string));
-    
-            var rolesParameter = roles != null ?
-                new ObjectParameter("Roles", roles) :
-                new ObjectParameter("Roles", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_ResolveConflict_Data_Result>("USP_Get_ResolveConflict_Data", keywordParameter, tabNameParameter, rolesParameter);
-        }
-    
         public virtual ObjectResult<string> USP_Get_ExcelSrNo(Nullable<int> dM_Master_Import_Code, string keyword, string callFor)
         {
             var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
@@ -4925,6 +4908,23 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("CallFor", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_ExcelSrNo", dM_Master_Import_CodeParameter, keywordParameter, callForParameter);
+        }
+    
+        public virtual ObjectResult<USP_Title_Import_RCData_Result> USP_Title_Import_RCData(string keyword, string tabName, string roles)
+        {
+            var keywordParameter = keyword != null ?
+                new ObjectParameter("Keyword", keyword) :
+                new ObjectParameter("Keyword", typeof(string));
+    
+            var tabNameParameter = tabName != null ?
+                new ObjectParameter("TabName", tabName) :
+                new ObjectParameter("TabName", typeof(string));
+    
+            var rolesParameter = roles != null ?
+                new ObjectParameter("Roles", roles) :
+                new ObjectParameter("Roles", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Import_RCData_Result>("USP_Title_Import_RCData", keywordParameter, tabNameParameter, rolesParameter);
         }
     }
 }

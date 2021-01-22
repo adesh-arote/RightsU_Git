@@ -12476,11 +12476,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Get_Release_Content_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
         </Function>
-        <Function Name="USP_Get_ResolveConflict_Data" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Keyword" Type="nvarchar(max)" Mode="In" />
-          <Parameter Name="TabName" Type="nvarchar(max)" Mode="In" />
-          <Parameter Name="Roles" Type="nvarchar(max)" Mode="In" />
-        </Function>
         <Function Name="USP_Get_Security_Group_Tree_Hierarchy" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ModuleCodes" Type="varchar" Mode="In" />
           <Parameter Name="Search_Module_Name" Type="nvarchar" Mode="In" />
@@ -13502,6 +13497,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Title_Deal_Info" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Title_Code" Type="int" Mode="In" />
           <Parameter Name="User_Code" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Title_Import_RCData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Keyword" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="TabName" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Roles" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_Title_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Type_code" Type="int" Mode="In" />
@@ -20721,11 +20721,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Users_Detail" EntitySet="Users_Detail" />
           </AssociationSet>
           <EntitySet Name="DM_Title_Import_Utility" EntityType="RightsU_NeoModel.DM_Title_Import_Utility" />
-          <FunctionImport Name="USP_Get_ResolveConflict_Data" ReturnType="Collection(RightsU_NeoModel.USP_Get_ResolveConflict_Data_Result)">
-            <Parameter Name="Keyword" Mode="In" Type="String" />
-            <Parameter Name="TabName" Mode="In" Type="String" />
-            <Parameter Name="Roles" Mode="In" Type="String" />
-          </FunctionImport>
           <EntitySet Name="DM_Title_Import_Utility_Data" EntityType="RightsU_NeoModel.DM_Title_Import_Utility_Data" />
           <FunctionImport Name="USP_Get_ExcelSrNo" ReturnType="Collection(String)">
             <Parameter Name="DM_Master_Import_Code" Mode="In" Type="Int32" />
@@ -20734,6 +20729,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </FunctionImport>
           <EntitySet Name="Acq_Adv_Ancillary_Report" EntityType="RightsU_NeoModel.Acq_Adv_Ancillary_Report" />
           <EntitySet Name="DM_Title_Resolve_Conflict" EntityType="RightsU_NeoModel.DM_Title_Resolve_Conflict" />
+          <FunctionImport Name="USP_Title_Import_RCData" ReturnType="Collection(RightsU_NeoModel.USP_Title_Import_RCData_Result)">
+            <Parameter Name="Keyword" Mode="In" Type="String" />
+            <Parameter Name="TabName" Mode="In" Type="String" />
+            <Parameter Name="Roles" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35348,10 +35348,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Allowed_For_Resolve_Conflict" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="ShortName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <ComplexType Name="USP_Get_ResolveConflict_Data_Result">
-          <Property Type="String" Name="ValueField" Nullable="true" />
-          <Property Type="String" Name="TextField" Nullable="true" />
-        </ComplexType>
         <EntityType Name="DM_Title_Import_Utility_Data">
           <Key>
             <PropertyRef Name="DM_Title_Import_Utility_Data_Code" />
@@ -35498,6 +35494,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Create_New" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Order_No" Type="Int32" />
         </EntityType>
+        <ComplexType Name="USP_Title_Import_RCData_Result">
+          <Property Type="String" Name="ValueField" Nullable="true" />
+          <Property Type="String" Name="TextField" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44378,14 +44378,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="USP_Get_ResolveConflict_Data" FunctionName="RightsU_NeoModel.Store.USP_Get_ResolveConflict_Data">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_ResolveConflict_Data_Result">
-                <ScalarProperty Name="ValueField" ColumnName="ValueField" />
-                <ScalarProperty Name="TextField" ColumnName="TextField" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="DM_Title_Import_Utility_Data">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Import_Utility_Data">
               <MappingFragment StoreEntitySet="DM_Title_Import_Utility_Data">
@@ -44536,6 +44528,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Title_Import_RCData" FunctionName="RightsU_NeoModel.Store.USP_Title_Import_RCData">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Title_Import_RCData_Result">
+                <ScalarProperty Name="ValueField" ColumnName="ValueField" />
+                <ScalarProperty Name="TextField" ColumnName="TextField" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

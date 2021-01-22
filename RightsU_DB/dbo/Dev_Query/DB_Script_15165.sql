@@ -32,3 +32,6 @@ INSERT [dbo].[DM_Title_Resolve_Conflict] ([DM_Title_Resolve_Conflict_Code], [Tab
 GO
 SET IDENTITY_INSERT [dbo].[DM_Title_Resolve_Conflict] OFF
 GO
+
+INSERT INTO system_parameter_new (Parameter_Name, Parameter_Value, IsActive)
+SELECT 'Is_New_DM_Title_Master_Import','Y','Y'
