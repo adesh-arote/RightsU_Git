@@ -1497,7 +1497,7 @@ namespace RightsU_Plus.Controllers
         public void GetSystemVersion()
         {
             System_Versions objSysVersion = new System_Versions();
-            objSysVersion = new System_Versions_Service(objLoginEntity.ConnectionStringName).SearchFor(p => true).OrderByDescending(x => x.Version_Code).FirstOrDefault();
+            objSysVersion = new System_Versions_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.System_Name == "RightsU").OrderByDescending(x => x.Version_Code).FirstOrDefault();
             Session["VersionDetails"] = objSysVersion;
         }
 
