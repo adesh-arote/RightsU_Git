@@ -1,19 +1,4 @@
-﻿
-CREATE TABLE [dbo].[DM_Title_Resolve_Conflict](
-	[DM_Title_Resolve_Conflict_Code] [int] IDENTITY(1,1) NOT NULL,
-	[Tab_Name] [nvarchar](max) NULL,
-	[Master_Type] [nvarchar](max) NULL,
-	[Roles] [char](1) NULL,
-	[Create_New] [char](1) NULL,
-	[Order_No] [int] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[DM_Title_Resolve_Conflict_Code] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-GO
-SET ANSI_PADDING OFF
+﻿SET ANSI_PADDING OFF
 GO
 SET IDENTITY_INSERT [dbo].[DM_Title_Resolve_Conflict] ON 
 
@@ -33,5 +18,8 @@ GO
 SET IDENTITY_INSERT [dbo].[DM_Title_Resolve_Conflict] OFF
 GO
 
-INSERT INTO system_parameter_new (Parameter_Name, Parameter_Value, IsActive)
-SELECT 'Is_Advance_Title_Import','Y','Y'
+IF NOT EXISTS (Select TOP 1 * from System_Parameter_New Where Parameter_Name = 'Is_Advance_Title_Import')
+BEGIN
+	INSERT INTO system_parameter_new (Parameter_Name, Parameter_Value, IsActive)
+	SELECT 'Is_Advance_Title_Import','N','Y'
+END

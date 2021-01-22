@@ -1444,9 +1444,7 @@
     <Build Include="dbo\User Defined Types\CuratedPreview_UDT.sql" />
     <Build Include="dbo\User Defined Types\RightsDefination.sql" />
     <Build Include="dbo\Tables\Acq_Adv_Ancillary_Report.sql" />
-    <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
     <Build Include="dbo\Tables\DM_Title_Resolve_Conflict.sql" />
-    <Build Include="dbo\Dev_Query\DB_Script_15165.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_PIII.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_RCData.sql" />
   </ItemGroup>
@@ -1459,5 +1457,7 @@
   <ItemGroup>
     <None Include="Database Scripts\DBSchema_v5.0.1.12.sql" />
     <None Include="Database Scripts\DBConfig_v5.0.1.12.sql" />
+    <None Include="Database Scripts\DBConfig_v5.0.1.13.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.1.13.sql" />
   </ItemGroup>
 </Project>
