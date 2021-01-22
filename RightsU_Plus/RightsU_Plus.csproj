@@ -204,6 +204,8 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
+    <Compile Include="Controllers\DM_Master_ImportController.cs" />
+    <Compile Include="Controllers\DM_Title_Master_ImportController.cs" />
     <Compile Include="Controllers\PartyCategoryController.cs" />
     <Compile Include="Controllers\Project_MilestoneController.cs" />
     <Compile Include="Controllers\TATSLAController.cs" />
@@ -240,7 +242,6 @@
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CurrencyController.cs" />
     <Compile Include="Controllers\Digital_RightsController.cs" />
-    <Compile Include="Controllers\DM_Master_ImportController.cs" />
     <Compile Include="Controllers\Document_TypeController.cs" />
     <Compile Include="Controllers\Email_ConfigController.cs" />
     <Compile Include="Controllers\GenresController.cs" />
@@ -990,6 +991,7 @@
     <Content Include="Content\jquery.fancytree-css\skin-bootstrap\ui.fancytree.less" />
     <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\ui.fancytree.less" />
     <Content Include="Content\jquery.fancytree-css\skin-awesome\ui.fancytree.less" />
+    <Content Include="Download\Title_Import_Utility_Sample.xlsx" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\RightsU_Publish.pubxml" />
     <None Include="Properties\PublishProfiles\RU_Publish.pubxml" />
@@ -1080,7 +1082,6 @@
     <Content Include="Service References\MSM_SAP_WS\RightsU_Plus.MSM_SAP_WS.ZpsWebWbsDates.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
-    <Content Include="Views\DM_Master_Import\_Title_Validate.cshtml" />
     <Content Include="Views\Promoter_Remarks\Index.cshtml" />
     <Content Include="Views\Promoter_Remarks\_Promoter_RemarksList.cshtml" />
     <Content Include="Views\Title_Content_View\_Run_Defintion_List.cshtml" />
@@ -1098,7 +1099,6 @@
     <Content Include="Views\Shared\_List_More_Title.cshtml" />
     <Content Include="Views\Title_Content_ImportExport\_DM_Resolve_Conflict_SystemMapping.cshtml" />
     <Content Include="Views\Syn_Deal\_Syn_Rights_Promoter_List.cshtml" />
-    <Content Include="Views\DM_Master_Import\DM_Import_SystemMapping_Log.cshtml" />
     <Content Include="Views\MQ_Log\Index.cshtml" />
     <Content Include="Views\MQ_Log\_MQ_LogList.cshtml" />
     <Content Include="Views\Amort\Index.cshtml" />
@@ -1189,7 +1189,6 @@
     <Content Include="Views\Shared\_Linear_Status.cshtml" />
     <Content Include="Views\Reports\AuditTrailReport.cshtml" />
     <Content Include="Views\Shared\_Rights_Filter_Bulk.cshtml" />
-    <Content Include="Views\DM_Master_Import\_DM_Resolve_Conflict_Popup.cshtml" />
     <Content Include="Views\Acq_Rights_Template\Index.cshtml" />
     <Content Include="Views\Acq_Rights_Template\_Acq_Rights_TemplateList.cshtml" />
     <Content Include="Views\Acq_Rights_Template\_Acq_Rights_Template.cshtml" />
@@ -1201,6 +1200,33 @@
     <Content Include="Views\Reports\DealWorkflowStatusPending.cshtml" />
     <Content Include="Views\PA_Rights_Reports\_PARightsDatalist.cshtml" />
     <Content Include="Views\PA_Rights_Reports\_CriteriaDetails.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Conflict_Error_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Import_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Master_Log_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Music_Error_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Resolve_Conflict_Popup.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Title_Error_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Title_View_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_View_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_Music_View_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_Title_Validate.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_Title_View_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\DM_Import_Log.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\DM_Import_SystemMapping_Log.cshtml" />
+    <Content Include="Views\Title\Title_Import_New.cshtml" />
+    <Content Include="Views\DM_Master_Import\DM_Import_Log.cshtml" />
+    <Content Include="Views\DM_Master_Import\DM_Import_SystemMapping_Log.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Conflict_Error_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Import_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Master_Log_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Music_Error_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Resolve_Conflict_Popup.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Title_Error_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Title_View_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_View_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_Music_View_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_Title_Validate.cshtml" />
+    <Content Include="Views\DM_Master_Import\_Title_View_List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1605,21 +1631,16 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Vendor\_Vendor.cshtml" />
     <Content Include="Views\Vendor\_AddEditPartyVendor.cshtml" />
-    <Content Include="Views\DM_Master_Import\_DM_Import_List.cshtml" />
     <Content Include="Views\Channel\_Channel.cshtml" />
     <Content Include="Views\Channel\_Add_Edit_Channel.cshtml" />
     <Content Include="Views\Royalty_Recoupment\_RoyaltyRecoupment.cshtml" />
     <Content Include="Views\Royalty_Recoupment\_AddEditRoyaltyRecoupment.cshtml" />
     <Content Include="Views\Security_Group\_SecurityGroup.cshtml" />
     <Content Include="Views\Security_Group\_AddEditSecurityGroup.cshtml" />
-    <Content Include="Views\DM_Master_Import\_DM_Music_Error_List.cshtml" />
-    <Content Include="Views\DM_Master_Import\_DM_Master_Log_List.cshtml" />
     <Content Include="Views\RightRule\_RgtRule.cshtml" />
     <Content Include="Views\RightRule\_AddRightRule.cshtml" />
     <Content Include="Views\IPR_Country\_IPR_CountryList.cshtml" />
     <Content Include="Views\IPR_Country\Index.cshtml" />
-    <Content Include="Views\DM_Master_Import\_DM_View_List.cshtml" />
-    <Content Include="Views\DM_Master_Import\DM_Import_Log.cshtml" />
     <Content Include="Views\ApprovalWorkflow\_Add_Edit_AWSecurityGroup.cshtml" />
     <Content Include="Views\ApprovalWorkflow\_AddEditApprovalWorkFlow.cshtml" />
     <Content Include="Views\ApprovalWorkflow\_ApprovalWorkflow.cshtml" />
@@ -1635,18 +1656,13 @@
     <Content Include="Views\AssignWorkflow\Index.cshtml" />
     <Content Include="Views\Reports\DealVersionHistory.cshtml" />
     <Content Include="Views\BV_Log\_BV_LogXML.cshtml" />
-    <Content Include="Views\DM_Master_Import\_DM_Conflict_Error_List.cshtml" />
-    <Content Include="Views\DM_Master_Import\_DM_Title_Error_List.cshtml" />
     <Content Include="Views\AssignWorkflow\_HistoryWorkflowList.cshtml" />
-    <Content Include="Views\DM_Master_Import\_DM_Title_View_List.cshtml" />
     <Content Include="Views\SAP_WBS_Import\Index.cshtml" />
     <Content Include="Views\SAP_WBS_Import\_SAP_WBS_Import_List.cshtml" />
     <Content Include="Views\SAP_WBS_Import\_SAP_WBS_Import_ListDetails.cshtml" />
     <Content Include="Views\SAP_WBS_Export\Index.cshtml" />
     <Content Include="Views\SAP_WBS_Export\_SAP_WBS_Export_List.cshtml" />
     <Content Include="Views\SAP_WBS_Export\_SAP_WBS_Export_ListDetails.cshtml" />
-    <Content Include="Views\DM_Master_Import\_Title_View_List.cshtml" />
-    <Content Include="Views\DM_Master_Import\_Music_View_List.cshtml" />
     <Content Include="Views\Title_Content\_Title_Content.cshtml" />
     <Content Include="Views\Title_Content\_Assign_Music.cshtml" />
     <Content Include="Views\Reports\AcqDealListReport.cshtml" />

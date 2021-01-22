@@ -16,5 +16,5 @@ BEGIN
 		MA.Music_Album_Name LIKE N'%' + @searchText + '%' OR    
 		ML.Music_Label_Name LIKE N'%' + @searchText + '%') AND MT.Is_Active = 'Y'
 	)
-	AND  MTL.Effective_To IS NULL  
+	AND  MTL.Effective_From <= GETDATE()
 END 

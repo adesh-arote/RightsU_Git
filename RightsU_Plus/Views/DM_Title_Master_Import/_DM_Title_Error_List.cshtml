@@ -1,0 +1,175 @@
+﻿@model List<RightsU_Entities.DM_Title>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <h2>Error Message Details </h2>
+</div>
+<input type="hidden" id="hdnPageNo" name="hdnPageNo" />
+<div class="paging_area clearfix">
+    <div id="ErrorPagination" class="pagination">
+    </div>
+    <span class="pull-left" id="lblTotal">Total Records : @ViewBag.RecordCount</span>
+    <span class="pull-right">
+        Page Size:
+        <input type="text" id="txtErrorPageSize" class="smallTextBox pagingSize" value="@(Convert.ToInt32(ViewBag.txtpageSize) == 0 || ViewBag.txtpageSize == null ? 10 : ViewBag.txtpageSize)" 
+               onchange="return PageSize_OnChange();" onkeypress="return isNumber(event);" maxlength="2" onblur="setDefaultPaging('txtErrorPageSize')" />
+    </span>
+</div>
+<br />
+<div class="modal_block sty" style="margin-left: 20px;margin-right: 20px;">
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block" id="TitleError">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th style="width:15%;">Excel Sr. No.</th>
+                        <th style="width:15%;">Title Name</th>
+                        <th style="width:12%;">Title Type</th>
+                        <th style="width:18%;">Title Language</th>
+                        @if (@ViewBag.IsMuciVersionSPN == "Y")
+                        {
+                            <th style="width:10%;">Duration (Min)</th>
+                        }
+                        <th style="width:30%;">Error Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count() > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            if (item.Record_Status == "E")
+                            {
+                            <tr>
+                                <td align="center">
+                                @if (item.Excel_Line_No == "")
+                                {
+                                    <span>-</span>
+                                }
+                                else
+                                {
+                                    @item.Excel_Line_No
+                                }</td>
+                                <td align="center">
+                                    <div class="expandable">@item.Original_Title__Tanil_Telugu_</div></td>
+                                <td align="center">@item.Title_Type</td>
+                                <td align="center">@item.Original_Language__Hindi_</td>
+                                @if (@ViewBag.IsMuciVersionSPN == "Y")
+	                            {
+                                    <td align="center">@item.Duration__Min_</td>	 
+	                            }
+                                <td>
+                                    <div class="expandable">@Html.Raw(Convert.ToString(item.Error_Message == null ? "" : item.Error_Message).Trim().Trim('~').Trim().Replace("~", "<br/>").Replace("\r\n", "<br/>").Replace("\n", "<br/>"))</div>
+                                </td>
+                            </tr>
+                            }
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br />
+</div>
+<style>
+    .paging_area {
+        margin-top: 10px;
+    }
+
+    .pagination {
+        padding-right: 10px;
+    }
+
+    .paging_area span.pull-left {
+        padding-left: 10px;
+    }
+
+    #TitleError {
+        overflow: auto;
+        max-height: 200px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        hideLoading();
+        initializeExpander();
+        addNumeric();
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function PageSize_OnChange() {
+        if (!ValidatePageSize())
+            return false;
+        var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
+        var File_Type = '@ViewBag.File_Type'
+        BindTitleError(0,DM_Master_Import_Code,File_Type)
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtErrorPageSize').val();
+        if ($.trim(recordPerPage) != '') {
+            var txtPageSize = parseInt(recordPerPage);
+            if (txtPageSize > 0)
+                return true;
+        }
+        $('#txtErrorPageSize').addClass("required");
+        return false;
+    }
+    function pageBinding() {
+        var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
+            var File_Type = '@ViewBag.File_Type'
+            BindTitleError(0,DM_Master_Import_Code,File_Type)
+            SetErrorPaging();
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function SetErrorPaging() {
+        debugger
+        IsCall = 'N';
+        var PageNo, recordCnt;
+        var txtPageSize = $('#txtErrorPageSize').val();
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = @(Convert.ToInt32(ViewBag.txtpageSize) == 0 || ViewBag.txtpageSize == null ? 10 : ViewBag.txtpageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#ErrorPagination").pagination(recordCnt, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        debugger
+        var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
+        var File_Type = '@ViewBag.File_Type'
+        $("#hdnPageNo").val(page_index);
+
+        if (IsCall == 'Y'){
+            BindTitleError(page_index,DM_Master_Import_Code,File_Type);}
+        else
+            IsCall = 'Y';
+    }
+</script>

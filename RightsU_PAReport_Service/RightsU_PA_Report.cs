@@ -47,9 +47,16 @@ namespace RightsU_PAReport_Service
                 Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Connecting to database");
                 using (var context = new RightsU_Plus_TestingEntities())
                 {
+                    Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Connected to database edmx");
+
                     if (context.Acq_Adv_Ancillary_Report.Where(x => x.Report_Status == "W").Count() == 0)
                     {
+                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Count of W is 0");
+
                         List<Acq_Adv_Ancillary_Report> lstAcq_Adv_Ancillary_Report = context.Acq_Adv_Ancillary_Report.Where(x => x.Report_Status == "P").ToList();
+
+                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Records P picked");
+
                         foreach (Acq_Adv_Ancillary_Report objAcq_Adv_Ancillary_Report in lstAcq_Adv_Ancillary_Report)
                         {
                             Update_Acq_Adv_Ancillary_Report(objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code, "W", "PS");
@@ -59,6 +66,8 @@ namespace RightsU_PAReport_Service
                                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["CS1"].ConnectionString))
                                 using (SqlCommand command = new SqlCommand("USP_Acq_Deal_Ancillary_Adv_Report", connection))
                                 {
+                                    Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Connected to database ADO");
+
                                     command.CommandType = CommandType.StoredProcedure;
 
                                     DataTable dt = new DataTable();
@@ -172,9 +181,7 @@ namespace RightsU_PAReport_Service
             }
             dt.AcceptChanges();
 
-            List<DataRow> list = dt.AsEnumerable().ToList();
-
-            int Acq_Adv_Ancillary_Report_Code = 1;// objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
+            int Acq_Adv_Ancillary_Report_Code = objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
             try
             {
 
@@ -192,8 +199,6 @@ namespace RightsU_PAReport_Service
                 }
                 using (ExcelPackage excelPackage = new ExcelPackage(newFile, OldFile))
                 {
-
-
                     var sheet = excelPackage.Workbook.Worksheets["Sheet1"];
                     foreach (DataRow row in dt.Rows)
                     {
@@ -233,20 +238,27 @@ namespace RightsU_PAReport_Service
                             {
                                 if (col.ColumnName == "Agreement_No" || col.ColumnName == "Title" || col.ColumnName == "Title_Type")
                                 {
+
                                     string firstCellValue = "";
                                     string secondCellValue = "";
                                     if (col.ColumnName == "Agreement_No")
                                     {
+                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Agreement No");
+
                                         firstCellValue = sheet.Cells[(Erow - 1), Ecolumn + 1].Value.ToString();
                                         secondCellValue = row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
                                     else if (col.ColumnName == "Title")
                                     {
+                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Title");
+
                                         firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString();
                                         secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
                                     else if (col.ColumnName == "Title_Type")
                                     {
+                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Title Type");
+
                                         firstCellValue = sheet.Cells[(Erow - 1), Ecolumn - 1].Value.ToString();
                                         secondCellValue = row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
@@ -292,14 +304,20 @@ namespace RightsU_PAReport_Service
                                     //}
                                     if (Agreemntcnt > 0 && col.ColumnName == "Agreement_No")
                                     {
+                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Agreement No");
+
                                         sheet.Cells[rowNo, Ecolumn, (Agreemntcnt + (rowNo)), Ecolumn].Merge = true;
                                     }
                                     if (Titlecnt > 0 && col.ColumnName == "Title")
                                     {
+                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Title");
+
                                         sheet.Cells[rowNo, Ecolumn, (Titlecnt + (rowNo)), Ecolumn].Merge = true;
                                     }
                                     if (TitleTypecnt > 0 && col.ColumnName == "Title_Type")
                                     {
+                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Title Type");
+
                                         sheet.Cells[rowNo, Ecolumn, (TitleTypecnt + (rowNo)), Ecolumn].Merge = true;
                                     }
                                 }

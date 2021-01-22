@@ -1746,6 +1746,10 @@ namespace RightsU_DAL
             base.Delete(objToDelete);
         }
     }
+    public class DM_Title_Resolve_Conflict_Repository : RightsU_Repository<DM_Title_Resolve_Conflict>
+    {
+        public DM_Title_Resolve_Conflict_Repository(string conStr) : base(conStr) { }
+    }
     public class DM_Master_Log_Repository : RightsU_Repository<DM_Master_Log>
     {
         public DM_Master_Log_Repository(string conStr) : base(conStr) { }

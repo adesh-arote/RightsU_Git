@@ -1729,6 +1729,17 @@ namespace RightsU_Plus.Controllers
 
             return PartialView("~/Views/PA_Rights_Reports/_CriteriaDetails.cshtml");
         }
+        public JsonResult GetPARStatus(string PARCode)
+        {
+            int PACode = Convert.ToInt32(PARCode);
+            string recordStatus = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Acq_Adv_Ancillary_Report_Code == PACode).Select(s => s.Report_Status).FirstOrDefault();
+            var obj = new
+            {
+                RecordStatus = recordStatus,
+
+            };
+            return Json(obj);
+        }
         public JsonResult DownloadReport(int MURCode)
         {
             //string fileName = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Acq_Adv_Ancillary_Report_Code == MURCode).Select(s => s.Report_Name).FirstOrDefault();
@@ -1788,6 +1799,20 @@ namespace RightsU_Plus.Controllers
                 //Response.WriteFile(path);
                 //Response.End();
             }
+        }
+
+        public JsonResult DeleteReportData(string MURCode)
+        {
+            Acq_Adv_Ancillary_Report_Service objService = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName);
+            Acq_Adv_Ancillary_Report objMUR = objService.GetById(Convert.ToInt32(MURCode));
+            objMUR.EntityState = State.Deleted;
+
+            dynamic resultSet;
+            bool isValid = objService.Save(objMUR, out resultSet);
+
+            Dictionary<string, object> objdic = new Dictionary<string, object>();
+            objdic.Add("Message", "Data Deleted Successfully");
+            return Json(objdic);
         }
 
         public string Get_Business_Unit(int BUCode)
@@ -1874,6 +1899,22 @@ namespace RightsU_Plus.Controllers
                 Status = status,
                 Message = message
             };
+            return Json(obj);
+        }
+        public JsonResult RefreshReport(int PARCode)
+        {
+            Acq_Adv_Ancillary_Report_Service objService = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName);
+            Acq_Adv_Ancillary_Report objPAR = objService.GetById(PARCode);
+            objPAR.EntityState = State.Modified;
+            objPAR.File_Name = "";
+            objPAR.Report_Status = "P";
+            objPAR.Error_Message = "";
+
+            dynamic resultSet;
+            bool isValid = objService.Save(objPAR, out resultSet);
+
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("Message", "Data Refreshed Successfully");
             return Json(obj);
         }
         //public PartialViewResult BindPARightsReport(string agreementNo, string businessUnitcode, string titleCodes, string AncillaryTypeCode = "", string platformCodes = "", string IncludeExpired = "N")

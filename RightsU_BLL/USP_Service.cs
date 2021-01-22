@@ -1136,10 +1136,10 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_List_DM_Master_Import(strSearch, pageNo, orderByCndition, isPaging, pageSize, recordCount, user_Code);
         }
-        public ObjectResult<USP_Get_ResolveConflict_Data_Result> USP_Get_ResolveConflict_Data(string keyword, string tabName, string roles)
+        public ObjectResult<USP_Title_Import_RCData_Result> USP_Title_Import_RCData(string keyword, string tabName, string roles)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Get_ResolveConflict_Data(keyword, tabName, roles);
+            return objUSPDAL.USP_Title_Import_RCData(keyword, tabName, roles);
         }
 
         public virtual int USP_Lock_Refresh_Release_Record(Nullable<int> record_Code, Nullable<int> module_Code, Nullable<int> user_Code, string iP_Address, ObjectParameter record_Locking_Code, ObjectParameter message, string action)

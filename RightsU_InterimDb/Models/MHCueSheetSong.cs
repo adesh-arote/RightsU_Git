@@ -35,8 +35,8 @@ namespace RightsU_InterimDb.Models
     	    public string SongType { get; set; }
     
         public virtual MHCueSheet MHCueSheet { get; set; }
-        public virtual Music_Title Music_Title { get; set; }
         public virtual Title Title { get; set; }
         public virtual Title_Content Title_Content { get; set; }
+        public virtual Music_Title Music_Title { get; set; }
     }
 }

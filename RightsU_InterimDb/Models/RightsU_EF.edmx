@@ -2418,6 +2418,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Error_Message" Type="nvarchar(max)" />
           <Property Name="Is_Ignore" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="DM_Title_Resolve_Conflict">
+          <Key>
+            <PropertyRef Name="DM_Title_Resolve_Conflict_Code" />
+          </Key>
+          <Property Name="DM_Title_Resolve_Conflict_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Tab_Name" Type="nvarchar(max)" />
+          <Property Name="Master_Type" Type="nvarchar(max)" />
+          <Property Name="Roles" Type="char" MaxLength="1" />
+          <Property Name="Create_New" Type="char" MaxLength="1" />
+          <Property Name="Order_No" Type="int" />
+        </EntityType>
         <EntityType Name="Document_Type">
           <Key>
             <PropertyRef Name="Document_Type_Code" />
@@ -12464,11 +12475,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Get_Release_Content_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
         </Function>
-        <Function Name="USP_Get_ResolveConflict_Data" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Keyword" Type="nvarchar(max)" Mode="In" />
-          <Parameter Name="TabName" Type="nvarchar(max)" Mode="In" />
-          <Parameter Name="Roles" Type="nvarchar(max)" Mode="In" />
-        </Function>
         <Function Name="USP_Get_Security_Group_Tree_Hierarchy" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ModuleCodes" Type="varchar" Mode="In" />
           <Parameter Name="Search_Module_Name" Type="nvarchar" Mode="In" />
@@ -13491,6 +13497,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Title_Code" Type="int" Mode="In" />
           <Parameter Name="User_Code" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_Title_Import_RCData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Keyword" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="TabName" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Roles" Type="nvarchar(max)" Mode="In" />
+        </Function>
         <Function Name="USP_Title_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Type_code" Type="int" Mode="In" />
           <Parameter Name="TitleName" Type="nvarchar" Mode="In" />
@@ -14115,6 +14126,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="DM_Music_Title" EntityType="Self.DM_Music_Title" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Title_Import_Utility" EntityType="Self.DM_Title_Import_Utility" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Title_Import_Utility_Data" EntityType="Self.DM_Title_Import_Utility_Data" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DM_Title_Resolve_Conflict" EntityType="Self.DM_Title_Resolve_Conflict" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document_Type" EntityType="Self.Document_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config" EntityType="Self.Email_Config" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config_Detail" EntityType="Self.Email_Config_Detail" Schema="dbo" store:Type="Tables" />
@@ -19124,29 +19136,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Type" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Music_Label" EntityType="RightsU_NeoModel.Music_Label" />
-          <EntitySet Name="Music_Title" EntityType="RightsU_NeoModel.Music_Title" />
           <EntitySet Name="Music_Title_Label" EntityType="RightsU_NeoModel.Music_Title_Label" />
           <EntitySet Name="Music_Title_Talent" EntityType="RightsU_NeoModel.Music_Title_Talent" />
           <EntitySet Name="Music_Type" EntityType="RightsU_NeoModel.Music_Type" />
-          <AssociationSet Name="FK_Music_Title_Language" Association="RightsU_NeoModel.FK_Music_Title_Language">
-            <End Role="Language" EntitySet="Languages" />
-            <End Role="Music_Title" EntitySet="Music_Title" />
-          </AssociationSet>
           <AssociationSet Name="FK_Music_Title_Label_Music_Label" Association="RightsU_NeoModel.FK_Music_Title_Label_Music_Label">
             <End Role="Music_Label" EntitySet="Music_Label" />
             <End Role="Music_Title_Label" EntitySet="Music_Title_Label" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Music_Title_Label_Music_Title" Association="RightsU_NeoModel.FK_Music_Title_Label_Music_Title">
-            <End Role="Music_Title" EntitySet="Music_Title" />
-            <End Role="Music_Title_Label" EntitySet="Music_Title_Label" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Music_Title_Music_Type" Association="RightsU_NeoModel.FK_Music_Title_Music_Type">
-            <End Role="Music_Type" EntitySet="Music_Type" />
-            <End Role="Music_Title" EntitySet="Music_Title" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Music_Title_Talent_Music_Title_Talent" Association="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent">
-            <End Role="Music_Title" EntitySet="Music_Title" />
-            <End Role="Music_Title_Talent" EntitySet="Music_Title_Talent" />
           </AssociationSet>
           <AssociationSet Name="FK_Music_Title_Talent_Role" Association="RightsU_NeoModel.FK_Music_Title_Talent_Role">
             <End Role="Role" EntitySet="Roles" />
@@ -19227,10 +19222,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Acq_Deal_Movie_Music" EntitySet="Acq_Deal_Movie_Music" />
             <End Role="Acq_Deal_Movie_Music_Link" EntitySet="Acq_Deal_Movie_Music_Link" />
           </AssociationSet>
-          <AssociationSet Name="FK_Acq_Deal_Movie_Music_Music_Title" Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Music_Title">
-            <End Role="Music_Title" EntitySet="Music_Title" />
-            <End Role="Acq_Deal_Movie_Music" EntitySet="Acq_Deal_Movie_Music" />
-          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Movie_Music_Link_Title" Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Link_Title">
             <End Role="Title" EntitySet="Titles" />
             <End Role="Acq_Deal_Movie_Music_Link" EntitySet="Acq_Deal_Movie_Music_Link" />
@@ -19287,10 +19278,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_List_Acq_PaymentTerms" ReturnType="Collection(RightsU_NeoModel.USP_List_Acq_PaymentTerms_Result)">
           <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
-          <AssociationSet Name="FK_Music_Title_Music_Type1" Association="RightsU_NeoModel.FK_Music_Title_Music_Type1">
-            <End Role="Music_Type" EntitySet="Music_Type" />
-            <End Role="Music_Title" EntitySet="Music_Title" />
-          </AssociationSet>
           <FunctionImport Name="USP_Get_Login_Details" ReturnType="Collection(RightsU_NeoModel.USP_Get_Login_Details_Result)">
             <Parameter Name="Data_For" Mode="In" Type="String" />
             <Parameter Name="Entity_Code" Mode="In" Type="Int32" />
@@ -19423,10 +19410,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Acq_Deal_Movie" EntitySet="Acq_Deal_Movie" />
             <End Role="Content_Music_Link" EntitySet="Content_Music_Link" />
           </AssociationSet>
-          <AssociationSet Name="FK_Music_Program_Link_Music_Title" Association="RightsU_NeoModel.FK_Music_Program_Link_Music_Title">
-            <End Role="Music_Title" EntitySet="Music_Title" />
-            <End Role="Content_Music_Link" EntitySet="Content_Music_Link" />
-          </AssociationSet>
           <FunctionImport Name="USP_List_MusicTrack" ReturnType="Collection(RightsU_NeoModel.USP_List_MusicTrack_Result)">
           <Parameter Name="searchText" Mode="In" Type="String" />
           </FunctionImport>
@@ -19509,14 +19492,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Music_Theme" EntitySet="Music_Theme" />
             <End Role="Music_Title_Theme" EntitySet="Music_Title_Theme" />
           </AssociationSet>
-          <AssociationSet Name="FK_Music_Title_Language_Music_Title" Association="RightsU_NeoModel.FK_Music_Title_Language_Music_Title">
-            <End Role="Music_Title" EntitySet="Music_Title" />
-            <End Role="Music_Title_Language" EntitySet="Music_Title_Language" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Music_Title_Theme_Music_Title" Association="RightsU_NeoModel.FK_Music_Title_Theme_Music_Title">
-            <End Role="Music_Title" EntitySet="Music_Title" />
-            <End Role="Music_Title_Theme" EntitySet="Music_Title_Theme" />
-          </AssociationSet>
           <AssociationSet Name="FK_Channel_Genres" Association="RightsU_NeoModel.FK_Channel_Genres">
             <End Role="Genre" EntitySet="Genres" />
             <End Role="Channel" EntitySet="Channels" />
@@ -19555,10 +19530,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="StartDate" Mode="In" Type="DateTime" />
             <Parameter Name="EndDate" Mode="In" Type="DateTime" />
           </FunctionImport>
-          <AssociationSet Name="FK_Music_Title_Music_Album" Association="RightsU_NeoModel.FK_Music_Title_Music_Album">
-            <End Role="Music_Album" EntitySet="Music_Album" />
-            <End Role="Music_Title" EntitySet="Music_Title" />
-          </AssociationSet>
           <EntitySet Name="Music_Schedule_Transaction" EntityType="RightsU_NeoModel.Music_Schedule_Transaction" />
           <FunctionImport Name="USP_Music_Schedule_Process">
             <Parameter Name="TitleCode" Mode="In" Type="Int64" />
@@ -20315,10 +20286,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="MHPlayList" EntitySet="MHPlayLists" />
             <End Role="MHPlayListSong" EntitySet="MHPlayListSongs" />
           </AssociationSet>
-          <AssociationSet Name="FK_MHPlayListSong_Music_Title" Association="RightsU_NeoModel.FK_MHPlayListSong_Music_Title">
-            <End Role="Music_Title" EntitySet="Music_Title" />
-            <End Role="MHPlayListSong" EntitySet="MHPlayListSongs" />
-          </AssociationSet>
           <AssociationSet Name="FK_MHRequest_MHRequestStatus" Association="RightsU_NeoModel.FK_MHRequest_MHRequestStatus">
             <End Role="MHRequestStatu" EntitySet="MHRequestStatus" />
             <End Role="MHRequest" EntitySet="MHRequests" />
@@ -20341,10 +20308,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </AssociationSet>
           <AssociationSet Name="FK_MHRequestDetails_Music_Album" Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Album">
             <End Role="Music_Album" EntitySet="Music_Album" />
-            <End Role="MHRequestDetail" EntitySet="MHRequestDetails" />
-          </AssociationSet>
-          <AssociationSet Name="FK_MHRequestDetails_Music_Title" Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Title">
-            <End Role="Music_Title" EntitySet="Music_Title" />
             <End Role="MHRequestDetail" EntitySet="MHRequestDetails" />
           </AssociationSet>
           <AssociationSet Name="FK_MHRequestDetails_Title" Association="RightsU_NeoModel.FK_MHRequestDetails_Title">
@@ -20379,10 +20342,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USPGetTitleEpisodes" ReturnType="Collection(RightsU_NeoModel.USPGetTitleEpisodes_Result)">
           <Parameter Name="titleCode" Mode="In" Type="Int32" />
           </FunctionImport>
-          <AssociationSet Name="FK_MHCueSheetSong_Music_Title" Association="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title">
-            <End Role="Music_Title" EntitySet="Music_Title" />
-            <End Role="MHCueSheetSong" EntitySet="MHCueSheetSongs" />
-          </AssociationSet>
           <AssociationSet Name="FK_MHCueSheetSong_Title" Association="RightsU_NeoModel.FK_MHCueSheetSong_Title">
             <End Role="Title" EntitySet="Titles" />
             <End Role="MHCueSheetSong" EntitySet="MHCueSheetSongs" />
@@ -20708,11 +20667,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Users_Detail" EntitySet="Users_Detail" />
           </AssociationSet>
           <EntitySet Name="DM_Title_Import_Utility" EntityType="RightsU_NeoModel.DM_Title_Import_Utility" />
-          <FunctionImport Name="USP_Get_ResolveConflict_Data" ReturnType="Collection(RightsU_NeoModel.USP_Get_ResolveConflict_Data_Result)">
-            <Parameter Name="Keyword" Mode="In" Type="String" />
-            <Parameter Name="TabName" Mode="In" Type="String" />
-            <Parameter Name="Roles" Mode="In" Type="String" />
-          </FunctionImport>
           <EntitySet Name="DM_Title_Import_Utility_Data" EntityType="RightsU_NeoModel.DM_Title_Import_Utility_Data" />
           <FunctionImport Name="USP_Get_ExcelSrNo" ReturnType="Collection(String)">
             <Parameter Name="DM_Master_Import_Code" Mode="In" Type="Int32" />
@@ -20720,6 +20674,65 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="CallFor" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Acq_Adv_Ancillary_Report" EntityType="RightsU_NeoModel.Acq_Adv_Ancillary_Report" />
+          <EntitySet Name="DM_Title_Resolve_Conflict" EntityType="RightsU_NeoModel.DM_Title_Resolve_Conflict" />
+          <FunctionImport Name="USP_Title_Import_RCData" ReturnType="Collection(RightsU_NeoModel.USP_Title_Import_RCData_Result)">
+            <Parameter Name="Keyword" Mode="In" Type="String" />
+            <Parameter Name="TabName" Mode="In" Type="String" />
+            <Parameter Name="Roles" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="Music_Title" EntityType="RightsU_NeoModel.Music_Title" />
+          <AssociationSet Name="FK_Acq_Deal_Movie_Music_Music_Title" Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Music_Title">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="Acq_Deal_Movie_Music" EntitySet="Acq_Deal_Movie_Music" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Program_Link_Music_Title" Association="RightsU_NeoModel.FK_Music_Program_Link_Music_Title">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="Content_Music_Link" EntitySet="Content_Music_Link" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Language" Association="RightsU_NeoModel.FK_Music_Title_Language">
+            <End Role="Language" EntitySet="Languages" />
+            <End Role="Music_Title" EntitySet="Music_Title" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MHCueSheetSong_Music_Title" Association="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="MHCueSheetSong" EntitySet="MHCueSheetSongs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MHPlayListSong_Music_Title" Association="RightsU_NeoModel.FK_MHPlayListSong_Music_Title">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="MHPlayListSong" EntitySet="MHPlayListSongs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MHRequestDetails_Music_Title" Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Title">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="MHRequestDetail" EntitySet="MHRequestDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Music_Album" Association="RightsU_NeoModel.FK_Music_Title_Music_Album">
+            <End Role="Music_Album" EntitySet="Music_Album" />
+            <End Role="Music_Title" EntitySet="Music_Title" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Label_Music_Title" Association="RightsU_NeoModel.FK_Music_Title_Label_Music_Title">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="Music_Title_Label" EntitySet="Music_Title_Label" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Language_Music_Title" Association="RightsU_NeoModel.FK_Music_Title_Language_Music_Title">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="Music_Title_Language" EntitySet="Music_Title_Language" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Music_Type" Association="RightsU_NeoModel.FK_Music_Title_Music_Type">
+            <End Role="Music_Type" EntitySet="Music_Type" />
+            <End Role="Music_Title" EntitySet="Music_Title" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Music_Type1" Association="RightsU_NeoModel.FK_Music_Title_Music_Type1">
+            <End Role="Music_Type" EntitySet="Music_Type" />
+            <End Role="Music_Title" EntitySet="Music_Title" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Talent_Music_Title_Talent" Association="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="Music_Title_Talent" EntitySet="Music_Title_Talent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Theme_Music_Title" Association="RightsU_NeoModel.FK_Music_Title_Theme_Music_Title">
+            <End Role="Music_Title" EntitySet="Music_Title" />
+            <End Role="Music_Title_Theme" EntitySet="Music_Title_Theme" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -22408,10 +22421,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title_Languages" Relationship="RightsU_NeoModel.FK_Title_Language" FromRole="Language" ToRole="Title" />
           <NavigationProperty Name="Original_Languages" Relationship="RightsU_NeoModel.FK_Title_Original_Language" FromRole="Language" ToRole="Title" />
           <NavigationProperty Name="Acq_Deal_Sport_Language" Relationship="RightsU_NeoModel.FK_Acq_Deal_Sport_Language_Language" FromRole="Language" ToRole="Acq_Deal_Sport_Language" />
-          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Language" FromRole="Language" ToRole="Music_Title" />
           <NavigationProperty Name="Title_Alternate" Relationship="RightsU_NeoModel.FK_Title_Alternate_Language" FromRole="Language" ToRole="Title_Alternate" />
           <NavigationProperty Name="Title_Alternate1" Relationship="RightsU_NeoModel.FK_Title_Alternate_Language1" FromRole="Language" ToRole="Title_Alternate" />
           <NavigationProperty Name="MHRequestDetails" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Language" FromRole="Language" ToRole="MHRequestDetail" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Language" FromRole="Language" ToRole="Music_Title" />
         </EntityType>
         <EntityType Name="Language_Group">
           <Key>
@@ -30473,43 +30486,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Music_Deal" Relationship="RightsU_NeoModel.FK_Music_Deal_Music_Label" FromRole="Music_Label" ToRole="Music_Deal" />
           <NavigationProperty Name="MHRequestDetails" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Music_Label" FromRole="Music_Label" ToRole="MHRequestDetail" />
         </EntityType>
-        <EntityType Name="Music_Title">
-          <Key>
-            <PropertyRef Name="Music_Title_Code" />
-          </Key>
-          <Property Type="Int32" Name="Music_Title_Code" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="Music_Title_Name" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Type="Decimal" Name="Duration_In_Min" Precision="18" Scale="2" />
-          <Property Type="String" Name="Movie_Album" MaxLength="400" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="Release_Year" />
-          <Property Type="Int32" Name="Language_Code" />
-          <Property Type="Int32" Name="Music_Type_Code" />
-          <Property Type="String" Name="Image_Path" MaxLength="2000" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="Is_Active" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Type="Int32" Name="Inserted_By" />
-          <Property Type="DateTime" Name="Inserted_On" Precision="3" />
-          <Property Type="DateTime" Name="Last_UpDated_Time" Precision="3" />
-          <Property Type="Int32" Name="Last_Action_By" />
-          <Property Type="DateTime" Name="Lock_Time" Precision="3" />
-          <NavigationProperty Name="Language" Relationship="RightsU_NeoModel.FK_Music_Title_Language" FromRole="Music_Title" ToRole="Language" />
-          <NavigationProperty Name="Music_Title_Label" Relationship="RightsU_NeoModel.FK_Music_Title_Label_Music_Title" FromRole="Music_Title" ToRole="Music_Title_Label" />
-          <NavigationProperty Name="Music_Type" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Type" FromRole="Music_Title" ToRole="Music_Type" />
-          <NavigationProperty Name="Music_Title_Talent" Relationship="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent" FromRole="Music_Title" ToRole="Music_Title_Talent" />
-          <NavigationProperty Name="Acq_Deal_Movie_Music" Relationship="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Music_Title" FromRole="Music_Title" ToRole="Acq_Deal_Movie_Music" />
-          <Property Type="Int32" Name="Music_Version_Code" />
-          <NavigationProperty Name="Music_Type1" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Type1" FromRole="Music_Title" ToRole="Music_Type" />
-          <NavigationProperty Name="Content_Music_Link" Relationship="RightsU_NeoModel.FK_Music_Program_Link_Music_Title" FromRole="Music_Title" ToRole="Content_Music_Link" />
-          <Property Name="Genres_Code" Type="Int32" />
-          <NavigationProperty Name="Music_Title_Language" Relationship="RightsU_NeoModel.FK_Music_Title_Language_Music_Title" FromRole="Music_Title" ToRole="Music_Title_Language" />
-          <NavigationProperty Name="Music_Title_Theme" Relationship="RightsU_NeoModel.FK_Music_Title_Theme_Music_Title" FromRole="Music_Title" ToRole="Music_Title_Theme" />
-          <Property Name="Music_Album_Code" Type="Int32" />
-          <Property Name="Music_Tag" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Music_Album" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Album" FromRole="Music_Title" ToRole="Music_Album" />
-          <Property Name="Public_Domain" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <NavigationProperty Name="MHPlayListSongs" Relationship="RightsU_NeoModel.FK_MHPlayListSong_Music_Title" FromRole="Music_Title" ToRole="MHPlayListSong" />
-          <NavigationProperty Name="MHRequestDetails" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Music_Title" FromRole="Music_Title" ToRole="MHRequestDetail" />
-          <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title" FromRole="Music_Title" ToRole="MHCueSheetSong" />
-        </EntityType>
         <EntityType Name="Music_Title_Label">
           <Key>
             <PropertyRef Name="Music_Title_Label_Code" />
@@ -30518,9 +30494,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Music_Title_Code" />
           <Property Type="Int32" Name="Music_Label_Code" />
           <NavigationProperty Name="Music_Label" Relationship="RightsU_NeoModel.FK_Music_Title_Label_Music_Label" FromRole="Music_Title_Label" ToRole="Music_Label" />
-          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Label_Music_Title" FromRole="Music_Title_Label" ToRole="Music_Title" />
           <Property Name="Effective_From" Type="DateTime" Precision="3" />
           <Property Name="Effective_To" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Label_Music_Title" FromRole="Music_Title_Label" ToRole="Music_Title" />
         </EntityType>
         <EntityType Name="Music_Title_Talent">
           <Key>
@@ -30530,9 +30506,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Music_Title_Code" />
           <Property Type="Int32" Name="Talent_Code" />
           <Property Type="Int32" Name="Role_Code" />
-          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent" FromRole="Music_Title_Talent" ToRole="Music_Title" />
           <NavigationProperty Name="Role" Relationship="RightsU_NeoModel.FK_Music_Title_Talent_Role" FromRole="Music_Title_Talent" ToRole="Role" />
           <NavigationProperty Name="Talent" Relationship="RightsU_NeoModel.FK_Music_Title_Talent_Talent" FromRole="Music_Title_Talent" ToRole="Talent" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent" FromRole="Music_Title_Talent" ToRole="Music_Title" />
         </EntityType>
         <EntityType Name="Music_Type">
           <Key>
@@ -30541,22 +30517,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Music_Type_Code" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Music_Type_Name" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Is_Active" MaxLength="1" FixedLength="true" Unicode="false" />
-          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Type" FromRole="Music_Type" ToRole="Music_Title" />
           <Property Type="String" Name="Type" MaxLength="3" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Type" FromRole="Music_Type" ToRole="Music_Title" />
           <NavigationProperty Name="Music_Title1" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Type1" FromRole="Music_Type" ToRole="Music_Title" />
         </EntityType>
-        <Association Name="FK_Music_Title_Language">
-          <End Type="RightsU_NeoModel.Language" Role="Language" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Language">
-              <PropertyRef Name="Language_Code" />
-            </Principal>
-            <Dependent Role="Music_Title">
-              <PropertyRef Name="Language_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Music_Title_Label_Music_Label">
           <End Type="RightsU_NeoModel.Music_Label" Role="Music_Label" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.Music_Title_Label" Role="Music_Title_Label" Multiplicity="*" />
@@ -30566,42 +30530,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Music_Title_Label">
               <PropertyRef Name="Music_Label_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Music_Title_Label_Music_Title">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Music_Title_Label" Role="Music_Title_Label" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="Music_Title_Label">
-              <PropertyRef Name="Music_Title_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Music_Title_Music_Type">
-          <End Type="RightsU_NeoModel.Music_Type" Role="Music_Type" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Type">
-              <PropertyRef Name="Music_Type_Code" />
-            </Principal>
-            <Dependent Role="Music_Title">
-              <PropertyRef Name="Music_Type_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Music_Title_Talent_Music_Title_Talent">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Music_Title_Talent" Role="Music_Title_Talent" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="Music_Title_Talent">
-              <PropertyRef Name="Music_Title_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -30745,18 +30673,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Acq_Deal_Movie_Music_Music_Title">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Acq_Deal_Movie_Music" Role="Acq_Deal_Movie_Music" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="Acq_Deal_Movie_Music">
-              <PropertyRef Name="Music_Title_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Acq_Deal_Movie_Music_Link_Title">
           <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.Acq_Deal_Movie_Music_Link" Role="Acq_Deal_Movie_Music_Link" Multiplicity="*" />
@@ -30824,18 +30740,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Payment_Terms" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Cost_Type_Name" Nullable="true" MaxLength="100" />
         </ComplexType>
-        <Association Name="FK_Music_Title_Music_Type1">
-          <End Type="RightsU_NeoModel.Music_Type" Role="Music_Type" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Type">
-              <PropertyRef Name="Music_Type_Code" />
-            </Principal>
-            <Dependent Role="Music_Title">
-              <PropertyRef Name="Music_Version_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <ComplexType Name="USP_Get_Login_Details_Result">
           <Property Type="String" Name="Parameter_Value" Nullable="true" />
           <Property Type="String" Name="Data_For" Nullable="true" MaxLength="3" />
@@ -31007,11 +30911,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_UpDated_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Action_By" Type="Int32" />
           <NavigationProperty Name="Acq_Deal_Movie" Relationship="RightsU_NeoModel.FK_Music_Program_Link_Acq_Deal_Movie" FromRole="Content_Music_Link" ToRole="Acq_Deal_Movie" />
-          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Program_Link_Music_Title" FromRole="Content_Music_Link" ToRole="Music_Title" />
           <Property Name="Title_Content_Code" Type="Int32" />
           <Property Name="Title_Content_Version_Code" Type="Int32" />
           <NavigationProperty Name="Title_Content_Version" Relationship="RightsU_NeoModel.FK_Content_Music_Link_Title_Content_Version" FromRole="Content_Music_Link" ToRole="Title_Content_Version" />
           <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_Music_Program_Link_Acq_Deal_Movie_Contents1" FromRole="Content_Music_Link" ToRole="Title_Content" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Program_Link_Music_Title" FromRole="Content_Music_Link" ToRole="Music_Title" />
         </EntityType>
         <Association Name="FK_Music_Program_Link_Acq_Deal_Movie">
           <End Type="RightsU_NeoModel.Acq_Deal_Movie" Role="Acq_Deal_Movie" Multiplicity="0..1" />
@@ -31022,18 +30926,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Content_Music_Link">
               <PropertyRef Name="Acq_Deal_Movie_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Music_Program_Link_Music_Title">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Content_Music_Link" Role="Content_Music_Link" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="Content_Music_Link">
-              <PropertyRef Name="Music_Title_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -31342,30 +31234,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Music_Title_Language_Music_Title">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Music_Title_Language" Role="Music_Title_Language" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="Music_Title_Language">
-              <PropertyRef Name="Music_Title_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Music_Title_Theme_Music_Title">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Music_Title_Theme" Role="Music_Title_Theme" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="Music_Title_Theme">
-              <PropertyRef Name="Music_Title_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Channel_Genres">
           <End Type="RightsU_NeoModel.Genre" Role="Genre" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.Channel" Role="Channel" Multiplicity="*" />
@@ -31391,8 +31259,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_UpDated_Time" Type="DateTime" Precision="3" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Music_Album_Talent" Relationship="RightsU_NeoModel.FK_Music_Album_Talent_Music_Album" FromRole="Music_Album" ToRole="Music_Album_Talent" />
-          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Album" FromRole="Music_Album" ToRole="Music_Title" />
           <NavigationProperty Name="MHRequestDetails" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Music_Album" FromRole="Music_Album" ToRole="MHRequestDetail" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Album" FromRole="Music_Album" ToRole="Music_Title" />
         </EntityType>
         <EntityType Name="Music_Album_Talent">
           <Key>
@@ -31468,18 +31336,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Button_Visibility" Nullable="false" MaxLength="1" />
           <Property Type="String" Name="IsZeroWorkflow" Nullable="false" MaxLength="1" />
         </ComplexType>
-        <Association Name="FK_Music_Title_Music_Album">
-          <End Type="RightsU_NeoModel.Music_Album" Role="Music_Album" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Album">
-              <PropertyRef Name="Music_Album_Code" />
-            </Principal>
-            <Dependent Role="Music_Title">
-              <PropertyRef Name="Music_Album_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Music_Schedule_Transaction">
           <Key>
             <PropertyRef Name="Music_Schedule_Transaction_Code" />
@@ -33948,7 +33804,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Language" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Language" FromRole="MHRequestDetail" ToRole="Language" />
           <NavigationProperty Name="MHRequest" Relationship="RightsU_NeoModel.FK_MHRequestDetails_MHRequest" FromRole="MHRequestDetail" ToRole="MHRequest" />
           <NavigationProperty Name="Music_Album" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Music_Album" FromRole="MHRequestDetail" ToRole="Music_Album" />
-          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Music_Title" FromRole="MHRequestDetail" ToRole="Music_Title" />
           <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Title" FromRole="MHRequestDetail" ToRole="Title" />
           <Property Name="IsValid" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Remarks" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
@@ -33958,6 +33813,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="ValidationMessage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Singers" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="StarCasts" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Music_Title" FromRole="MHRequestDetail" ToRole="Music_Title" />
         </EntityType>
         <EntityType Name="MHRequestStatu">
           <Key>
@@ -34036,18 +33892,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_MHPlayListSong_Music_Title">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.MHPlayListSong" Role="MHPlayListSong" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="MHPlayListSong">
-              <PropertyRef Name="MusicTitleCode" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_MHRequest_MHRequestStatus">
           <End Type="RightsU_NeoModel.MHRequestStatu" Role="MHRequestStatu" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.MHRequest" Role="MHRequest" Multiplicity="*" />
@@ -34117,18 +33961,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="MHRequestDetail">
               <PropertyRef Name="MovieAlbumCode" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_MHRequestDetails_Music_Title">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.MHRequestDetail" Role="MHRequestDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="MHRequestDetail">
-              <PropertyRef Name="MusicTitleCode" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -34209,11 +34041,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="TitleCode" Type="Int32" />
           <Property Name="TitleContentCode" Type="Int32" />
           <Property Name="MusicTitleCode" Type="Int32" />
-          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title" FromRole="MHCueSheetSong" ToRole="Music_Title" />
           <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title" FromRole="MHCueSheetSong" ToRole="Title" />
           <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title_Content" FromRole="MHCueSheetSong" ToRole="Title_Content" />
           <Property Name="IsApprove" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="SongType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title" FromRole="MHCueSheetSong" ToRole="Music_Title" />
         </EntityType>
         <Association Name="FK_MHCueSheet_Vendor">
           <End Type="RightsU_NeoModel.Vendor" Role="Vendor" Multiplicity="0..1" />
@@ -34251,18 +34083,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Title_Content_Code" Nullable="false" />
           <Property Type="Int32" Name="Episode_No" Nullable="false" />
         </ComplexType>
-        <Association Name="FK_MHCueSheetSong_Music_Title">
-          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.MHCueSheetSong" Role="MHCueSheetSong" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Music_Title">
-              <PropertyRef Name="Music_Title_Code" />
-            </Principal>
-            <Dependent Role="MHCueSheetSong">
-              <PropertyRef Name="MusicTitleCode" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_MHCueSheetSong_Title">
           <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.MHCueSheetSong" Role="MHCueSheetSong" Multiplicity="*" />
@@ -35333,10 +35153,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Allowed_For_Resolve_Conflict" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="ShortName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <ComplexType Name="USP_Get_ResolveConflict_Data_Result">
-          <Property Type="String" Name="ValueField" Nullable="true" />
-          <Property Type="String" Name="TextField" Nullable="true" />
-        </ComplexType>
         <EntityType Name="DM_Title_Import_Utility_Data">
           <Key>
             <PropertyRef Name="DM_Title_Import_Utility_Data_Code" />
@@ -35472,6 +35288,214 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Generated_On" Type="DateTime" Precision="3" />
           <Property Name="Ancillary_Type_Codes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="DM_Title_Resolve_Conflict">
+          <Key>
+            <PropertyRef Name="DM_Title_Resolve_Conflict_Code" />
+          </Key>
+          <Property Name="DM_Title_Resolve_Conflict_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tab_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Master_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Roles" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Create_New" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Order_No" Type="Int32" />
+        </EntityType>
+        <ComplexType Name="USP_Title_Import_RCData_Result">
+          <Property Type="String" Name="ValueField" Nullable="true" />
+          <Property Type="String" Name="TextField" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="Music_Title">
+          <Key>
+            <PropertyRef Name="Music_Title_Code" />
+          </Key>
+          <Property Name="Music_Title_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Music_Title_Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Duration_In_Min" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Movie_Album" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="Release_Year" Type="Int32" />
+          <Property Name="Language_Code" Type="Int32" />
+          <Property Name="Music_Type_Code" Type="Int32" />
+          <Property Name="Image_Path" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="Music_Version_Code" Type="Int32" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_UpDated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <Property Name="Genres_Code" Type="Int32" />
+          <Property Name="Music_Album_Code" Type="Int32" />
+          <Property Name="Music_Tag" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Public_Domain" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Acq_Deal_Movie_Music" Relationship="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Music_Title" FromRole="Music_Title" ToRole="Acq_Deal_Movie_Music" />
+          <NavigationProperty Name="Content_Music_Link" Relationship="RightsU_NeoModel.FK_Music_Program_Link_Music_Title" FromRole="Music_Title" ToRole="Content_Music_Link" />
+          <NavigationProperty Name="Language" Relationship="RightsU_NeoModel.FK_Music_Title_Language" FromRole="Music_Title" ToRole="Language" />
+          <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title" FromRole="Music_Title" ToRole="MHCueSheetSong" />
+          <NavigationProperty Name="MHPlayListSongs" Relationship="RightsU_NeoModel.FK_MHPlayListSong_Music_Title" FromRole="Music_Title" ToRole="MHPlayListSong" />
+          <NavigationProperty Name="MHRequestDetails" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Music_Title" FromRole="Music_Title" ToRole="MHRequestDetail" />
+          <NavigationProperty Name="Music_Album" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Album" FromRole="Music_Title" ToRole="Music_Album" />
+          <NavigationProperty Name="Music_Title_Label" Relationship="RightsU_NeoModel.FK_Music_Title_Label_Music_Title" FromRole="Music_Title" ToRole="Music_Title_Label" />
+          <NavigationProperty Name="Music_Title_Language" Relationship="RightsU_NeoModel.FK_Music_Title_Language_Music_Title" FromRole="Music_Title" ToRole="Music_Title_Language" />
+          <NavigationProperty Name="Music_Type" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Type" FromRole="Music_Title" ToRole="Music_Type" />
+          <NavigationProperty Name="Music_Type1" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Type1" FromRole="Music_Title" ToRole="Music_Type" />
+          <NavigationProperty Name="Music_Title_Talent" Relationship="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent" FromRole="Music_Title" ToRole="Music_Title_Talent" />
+          <NavigationProperty Name="Music_Title_Theme" Relationship="RightsU_NeoModel.FK_Music_Title_Theme_Music_Title" FromRole="Music_Title" ToRole="Music_Title_Theme" />
+        </EntityType>
+        <Association Name="FK_Acq_Deal_Movie_Music_Music_Title">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal_Movie_Music" Role="Acq_Deal_Movie_Music" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Movie_Music">
+              <PropertyRef Name="Music_Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Program_Link_Music_Title">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Content_Music_Link" Role="Content_Music_Link" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="Content_Music_Link">
+              <PropertyRef Name="Music_Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Title_Language">
+          <End Type="RightsU_NeoModel.Language" Role="Language" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Language">
+              <PropertyRef Name="Language_Code" />
+            </Principal>
+            <Dependent Role="Music_Title">
+              <PropertyRef Name="Language_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MHCueSheetSong_Music_Title">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.MHCueSheetSong" Role="MHCueSheetSong" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="MHCueSheetSong">
+              <PropertyRef Name="MusicTitleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MHPlayListSong_Music_Title">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.MHPlayListSong" Role="MHPlayListSong" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="MHPlayListSong">
+              <PropertyRef Name="MusicTitleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MHRequestDetails_Music_Title">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.MHRequestDetail" Role="MHRequestDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="MHRequestDetail">
+              <PropertyRef Name="MusicTitleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Title_Music_Album">
+          <End Type="RightsU_NeoModel.Music_Album" Role="Music_Album" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Album">
+              <PropertyRef Name="Music_Album_Code" />
+            </Principal>
+            <Dependent Role="Music_Title">
+              <PropertyRef Name="Music_Album_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Title_Label_Music_Title">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title_Label" Role="Music_Title_Label" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="Music_Title_Label">
+              <PropertyRef Name="Music_Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Title_Language_Music_Title">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title_Language" Role="Music_Title_Language" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="Music_Title_Language">
+              <PropertyRef Name="Music_Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Title_Music_Type">
+          <End Type="RightsU_NeoModel.Music_Type" Role="Music_Type" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Type">
+              <PropertyRef Name="Music_Type_Code" />
+            </Principal>
+            <Dependent Role="Music_Title">
+              <PropertyRef Name="Music_Type_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Title_Music_Type1">
+          <End Type="RightsU_NeoModel.Music_Type" Role="Music_Type" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Type">
+              <PropertyRef Name="Music_Type_Code" />
+            </Principal>
+            <Dependent Role="Music_Title">
+              <PropertyRef Name="Music_Version_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Title_Talent_Music_Title_Talent">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title_Talent" Role="Music_Title_Talent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="Music_Title_Talent">
+              <PropertyRef Name="Music_Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Title_Theme_Music_Title">
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title_Theme" Role="Music_Title_Theme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Title">
+              <PropertyRef Name="Music_Title_Code" />
+            </Principal>
+            <Dependent Role="Music_Title_Theme">
+              <PropertyRef Name="Music_Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -40994,31 +41018,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Music_Title">
-            <EntityTypeMapping TypeName="RightsU_NeoModel.Music_Title">
-              <MappingFragment StoreEntitySet="Music_Title">
-                <ScalarProperty Name="Public_Domain" ColumnName="Public_Domain" />
-                <ScalarProperty Name="Music_Tag" ColumnName="Music_Tag" />
-                <ScalarProperty Name="Music_Album_Code" ColumnName="Music_Album_Code" />
-                <ScalarProperty Name="Genres_Code" ColumnName="Genres_Code" />
-                <ScalarProperty Name="Music_Version_Code" ColumnName="Music_Version_Code" />
-                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
-                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
-                <ScalarProperty Name="Last_UpDated_Time" ColumnName="Last_UpDated_Time" />
-                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
-                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
-                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
-                <ScalarProperty Name="Image_Path" ColumnName="Image_Path" />
-                <ScalarProperty Name="Music_Type_Code" ColumnName="Music_Type_Code" />
-                <ScalarProperty Name="Language_Code" ColumnName="Language_Code" />
-                <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
-                <ScalarProperty Name="Movie_Album" ColumnName="Movie_Album" />
-                <ScalarProperty Name="Duration_In_Min" ColumnName="Duration_In_Min" />
-                <ScalarProperty Name="Music_Title_Name" ColumnName="Music_Title_Name" />
-                <ScalarProperty Name="Music_Title_Code" ColumnName="Music_Title_Code" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Music_Title_Label">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Music_Title_Label">
               <MappingFragment StoreEntitySet="Music_Title_Label">
@@ -44351,14 +44350,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="USP_Get_ResolveConflict_Data" FunctionName="RightsU_NeoModel.Store.USP_Get_ResolveConflict_Data">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_ResolveConflict_Data_Result">
-                <ScalarProperty Name="ValueField" ColumnName="ValueField" />
-                <ScalarProperty Name="TextField" ColumnName="TextField" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="DM_Title_Import_Utility_Data">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Import_Utility_Data">
               <MappingFragment StoreEntitySet="DM_Title_Import_Utility_Data">
@@ -44494,6 +44485,51 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Title_Codes" ColumnName="Title_Codes" />
                 <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
                 <ScalarProperty Name="Acq_Adv_Ancillary_Report_Code" ColumnName="Acq_Adv_Ancillary_Report_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DM_Title_Resolve_Conflict">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Resolve_Conflict">
+              <MappingFragment StoreEntitySet="DM_Title_Resolve_Conflict">
+                <ScalarProperty Name="Order_No" ColumnName="Order_No" />
+                <ScalarProperty Name="Create_New" ColumnName="Create_New" />
+                <ScalarProperty Name="Roles" ColumnName="Roles" />
+                <ScalarProperty Name="Master_Type" ColumnName="Master_Type" />
+                <ScalarProperty Name="Tab_Name" ColumnName="Tab_Name" />
+                <ScalarProperty Name="DM_Title_Resolve_Conflict_Code" ColumnName="DM_Title_Resolve_Conflict_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Title_Import_RCData" FunctionName="RightsU_NeoModel.Store.USP_Title_Import_RCData">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Title_Import_RCData_Result">
+                <ScalarProperty Name="ValueField" ColumnName="ValueField" />
+                <ScalarProperty Name="TextField" ColumnName="TextField" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Music_Title">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Music_Title">
+              <MappingFragment StoreEntitySet="Music_Title">
+                <ScalarProperty Name="Public_Domain" ColumnName="Public_Domain" />
+                <ScalarProperty Name="Music_Tag" ColumnName="Music_Tag" />
+                <ScalarProperty Name="Music_Album_Code" ColumnName="Music_Album_Code" />
+                <ScalarProperty Name="Genres_Code" ColumnName="Genres_Code" />
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_UpDated_Time" ColumnName="Last_UpDated_Time" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Music_Version_Code" ColumnName="Music_Version_Code" />
+                <ScalarProperty Name="Image_Path" ColumnName="Image_Path" />
+                <ScalarProperty Name="Music_Type_Code" ColumnName="Music_Type_Code" />
+                <ScalarProperty Name="Language_Code" ColumnName="Language_Code" />
+                <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+                <ScalarProperty Name="Movie_Album" ColumnName="Movie_Album" />
+                <ScalarProperty Name="Duration_In_Min" ColumnName="Duration_In_Min" />
+                <ScalarProperty Name="Music_Title_Name" ColumnName="Music_Title_Name" />
+                <ScalarProperty Name="Music_Title_Code" ColumnName="Music_Title_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

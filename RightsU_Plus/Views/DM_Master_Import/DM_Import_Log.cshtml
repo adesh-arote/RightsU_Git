@@ -62,16 +62,16 @@
                         <td align="center">
                             @if (item.IsIgnore)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" disabled="disabled" />
 
                             }
                             else if (item.Is_Create_New)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" disabled="disabled" />
                             }
                             else if(!item.Is_Create_New)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" />
                             }
                             
                            

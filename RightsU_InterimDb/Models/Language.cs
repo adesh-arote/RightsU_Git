@@ -35,10 +35,10 @@ namespace RightsU_InterimDb.Models
             this.Title_Languages = new HashSet<Title>();
             this.Original_Languages = new HashSet<Title>();
             this.Acq_Deal_Sport_Language = new HashSet<Acq_Deal_Sport_Language>();
-            this.Music_Title = new HashSet<Music_Title>();
             this.Title_Alternate = new HashSet<Title_Alternate>();
             this.Title_Alternate1 = new HashSet<Title_Alternate>();
             this.MHRequestDetails = new HashSet<MHRequestDetail>();
+            this.Music_Title = new HashSet<Music_Title>();
         }
     
     	public State EntityState { get; set; }    public int Language_Code { get; set; }
@@ -69,9 +69,9 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<Title> Title_Languages { get; set; }
         public virtual ICollection<Title> Original_Languages { get; set; }
         public virtual ICollection<Acq_Deal_Sport_Language> Acq_Deal_Sport_Language { get; set; }
-        public virtual ICollection<Music_Title> Music_Title { get; set; }
         public virtual ICollection<Title_Alternate> Title_Alternate { get; set; }
         public virtual ICollection<Title_Alternate> Title_Alternate1 { get; set; }
         public virtual ICollection<MHRequestDetail> MHRequestDetails { get; set; }
+        public virtual ICollection<Music_Title> Music_Title { get; set; }
     }
 }

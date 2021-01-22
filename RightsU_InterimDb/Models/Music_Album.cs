@@ -17,8 +17,8 @@ namespace RightsU_InterimDb.Models
         public Music_Album()
         {
             this.Music_Album_Talent = new HashSet<Music_Album_Talent>();
-            this.Music_Title = new HashSet<Music_Title>();
             this.MHRequestDetails = new HashSet<MHRequestDetail>();
+            this.Music_Title = new HashSet<Music_Title>();
         }
     
     	public State EntityState { get; set; }    public int Music_Album_Code { get; set; }
@@ -31,7 +31,7 @@ namespace RightsU_InterimDb.Models
     	    public string Is_Active { get; set; }
     
         public virtual ICollection<Music_Album_Talent> Music_Album_Talent { get; set; }
-        public virtual ICollection<Music_Title> Music_Title { get; set; }
         public virtual ICollection<MHRequestDetail> MHRequestDetails { get; set; }
+        public virtual ICollection<Music_Title> Music_Title { get; set; }
     }
 }

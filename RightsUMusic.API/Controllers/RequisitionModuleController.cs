@@ -388,7 +388,7 @@ namespace RightsUMusic.API.Controllers
                 lstConsumptionRequestDetails = obj.GetConsumptionRequestDetails(objRequestDetailsInput.MHRequestCode, objRequestDetailsInput.MHRequestTypeCode,Convert.ToChar(objRequestDetailsInput.IsCueSheet));
                 var objRemarkSpecialInstruction = lstConsumptionRequestDetails.Select(x => new
                 {
-                    Remarks = x.Remarks,
+                    Remarks = x.ProductionHouseRemarks,
                     SpecialInstructions = x.SpecialInstruction
                 }).Distinct().First();
 
