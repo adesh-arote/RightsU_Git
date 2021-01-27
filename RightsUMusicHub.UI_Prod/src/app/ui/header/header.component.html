@@ -210,7 +210,7 @@
         <!-- <li ng-class="$Request==='/app/requisition/new-request' ? 'treeview active' :$Request==='/app/requisition/new-music-track'?'treeview active': 'treeview'" id="Requsition">           -->
           <a href="#"><i class="fa fa-fax" ></i><span>Music Requisition</span><i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
-            <li><a routerLink="/app/requisition/new-request" ><i class="fa fa-circle-o text-aqua"></i> Usage Request </a></li>
+            <li><a (click)="getUsageroutelink('/app/requisition/new-request')"><i class="fa fa-circle-o text-aqua"></i> Usage Request </a></li>
             <li><a routerLink="/app/requisition/new-music-track" ><i class="fa fa-circle-o text-aqua"></i> New Music Tracks</a></li>            
           </ul>
         </li>	

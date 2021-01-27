@@ -336,4 +336,9 @@ export class HeaderComponent implements OnInit {
     }, error => { this.handleResponseError(error) });
   }
 
+  getUsageroutelink(url){
+    debugger;
+    this.router.navigate([url]);
+    localStorage.setItem('VIEW_ALL_REQUEST', 'false');
+  }
 }

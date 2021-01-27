@@ -543,6 +543,17 @@ namespace RightsUMusic.DAL.Repository
         }
     }
 
+    public class USPMHMovieAlbumMusicDetailsListRepositories : MainRepository<USPMHMovieAlbumMusicDetailsList>
+    {
+        public IEnumerable<USPMHMovieAlbumMusicDetailsList> GetMovieAlbumMusicDetailsList(MHRequest objMHRequest)
+        {
+            var param = new DynamicParameters();
+            param.Add("@RequestTypeCode", objMHRequest.MHRequestTypeCode);
+            param.Add("@UsersCode", objMHRequest.UsersCode);
+            return base.ExecuteSQLProcedure<USPMHMovieAlbumMusicDetailsList>("USPMHMovieAlbumMusicDetailsList", param);
+        }
+    }
+
     public class ConsumptionRequestDetailsRepositories : MainRepository<ConsumptionRequestDetails>
     {
         public IEnumerable<ConsumptionRequestDetails> GetConsumptionRequestDetails(string MHRequestCode, int MHRequestTypeCode,char IsCueSheet)

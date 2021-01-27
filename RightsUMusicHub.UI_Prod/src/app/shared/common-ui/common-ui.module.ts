@@ -11,7 +11,11 @@ import { MessageBoxComponent } from './message-box/message-box.component';
 import {TooltipModule} from 'primeng/tooltip';
 import { PieChartComponent } from './pie-chart/pie-chart.component';
 import { ColumnChartComponent } from './column-chart/column-chart.component';
-import {GoogleChartsModule} from 'angular-google-charts'
+import {GoogleChartsModule} from 'angular-google-charts';
+import { MessagesModule } from 'primeng/messages';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { CommonMusicTrackComponent } from './common-music-track/common-music-track.component';
+import { CommonMovieAlbumComponent } from './common-movie-album/common-movie-album.component'
 @NgModule({
   imports: [
     CommonModule,
@@ -22,10 +26,13 @@ import {GoogleChartsModule} from 'angular-google-charts'
     DataTableModule,
     DropdownModule,
     TooltipModule,
-    GoogleChartsModule
+    GoogleChartsModule,
+    RadioButtonModule,
+    MessagesModule
+    
   ],
-  declarations: [CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent],
-  exports:[CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent],
+  declarations: [CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent, CommonMusicTrackComponent, CommonMovieAlbumComponent],
+  exports:[CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent,CommonMusicTrackComponent,CommonMovieAlbumComponent],
   // schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA]
 })
 export class CommonUiModule { }
