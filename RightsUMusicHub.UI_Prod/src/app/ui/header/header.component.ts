@@ -47,8 +47,8 @@ export class HeaderComponent implements OnInit {
   public RemarkSpecialInstruction: any = [];
   public remarksLabel: any;
   public specialRemarks: any;
-  public reuestID: any;
-  public requsetdetails:any;
+  public requestID: any;
+  public requestdetails:any;
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private comparentchildservice: ComParentChildService, private _requisitionService: RequisitionService) {
   }
@@ -142,8 +142,8 @@ export class HeaderComponent implements OnInit {
       console.log(response);
       this.alertHeader = response.NotificationDetail.Subject;
       var header = this.alertHeader.split('-');
-      this.reuestID = header[0] + "-" + header[1] + "-" + header[2] + "-" +  header[3] ;
-      this.requsetdetails=header[4];
+      this.requestID = header[0] + "-" + header[1] + "-" + header[2] + "-" +  header[3] ;
+      this.requestdetails=header[4];
       var notifybody = response.NotificationDetail.Email_Body;
       console.log(notifybody);
       $("#NotifyMessage").html("" + notifybody + "");

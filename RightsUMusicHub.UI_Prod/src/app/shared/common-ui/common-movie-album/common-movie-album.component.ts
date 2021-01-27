@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
 export class CommonMovieAlbumComponent implements OnInit {
 
   public requestAlbumList: any = [];
-  public totalCountofMovieAlbum: number;
   public isMusicDetail: boolean = false;
   public isAlbumDetail: boolean = false;
   public musicReuestHeader;
@@ -22,10 +21,6 @@ export class CommonMovieAlbumComponent implements OnInit {
   @Input() set moviealbumDetails(data) {
     debugger;
     this.requestAlbumList = data;
-  }
-
-  @Input() set totalCount(data) {
-    this.totalCountofMovieAlbum = data;
   }
 
   constructor(private _requisitionService: RequisitionService, private router: Router) { }
@@ -47,7 +42,6 @@ export class CommonMovieAlbumComponent implements OnInit {
       this.load = false;
       this.albumDetailFilterList = response.RequestDetails;
       this.totalAlbumDetailCount = response.RequestDetails.length;
-
     }, error => { this.handleResponseError(error) });
   }
 

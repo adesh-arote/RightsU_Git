@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
 })
 export class CommonMusicTrackComponent implements OnInit {
 
-  public totalCountOfMusicTrack: number;
   public totalMusicDetailCount: number;
   public requestMusicList: any = [];
   public musicReuestHeader;
@@ -24,10 +23,7 @@ export class CommonMusicTrackComponent implements OnInit {
     this.requestMusicList = data;
   }
 
-  @Input() set totalCount(data) {
-    this.totalCountOfMusicTrack = data;
-  }
-
+  
   constructor(private _requisitionService: RequisitionService, private router: Router) { }
 
   ngOnInit() {

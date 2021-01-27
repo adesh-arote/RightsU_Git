@@ -5,9 +5,9 @@
       placeholder="Request ID, Requested By,Requested Date,Status">
   </div>
   <br>
-  <p-dataTable [globalFilter]="gb" #dt [value]="requestMusicList" [rowsPerPageOptions]="[10,25,50,100]"
+  <p-dataTable [globalFilter]="gb"  [value]="requestMusicList" [rowsPerPageOptions]="[10,25,50,100]"
     [scrollable]="true" scrollHeight="460px" [paginator]="true" [rows]="10" [responsive]="true" 
-    [alwaysShowPaginator]="true">
+    [alwaysShowPaginator]="true" #music>
     <p-column field="RequestID" header="Request ID" [sortable]="true" styleClass="text-center"></p-column>
     <p-column field="CountRequest" header="No. of Songs" [sortable]="true" styleClass="text-center">
       <ng-template pTemplate="body" let-row="rowData">
@@ -22,7 +22,7 @@
     </p-column>
     <p-column field="Status" header="Status" [sortable]="true" styleClass="text-center"></p-column>
     <p-footer>
-      Total Records: {{totalCountOfMusicTrack}}
+      Total Records: {{music.totalRecords}}
     </p-footer>
   </p-dataTable>
 </div>
