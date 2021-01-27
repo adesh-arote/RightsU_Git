@@ -411,8 +411,8 @@
     <div class="Row">
       <div>
         <label>Search</label>&nbsp;
-        <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30"
-          placeholder="Music Title, Movie/ Album" [(ngModel)]="requestCountSearch" (keyup)="filter(requestCountSearch)"
+        <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30" autocomplete="off"
+          placeholder="Music Title, Movie/ Album , Status" [(ngModel)]="requestCountSearch" (keyup)="filter(requestCountSearch)"
           pInputText>
       </div>
     </div>
@@ -420,7 +420,7 @@
 
     <p-dataTable [value]="requestCountFilteredList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch"
       [paginator]="true" rows="5" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true"
-      scrollHeight="300px">
+      scrollHeight="300px" #dt>
       <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}">
       </p-column>
       <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10" styleClass="text-center">
@@ -430,7 +430,7 @@
       <!-- <p-column field="IsValid" header="Valid" [sortable]="true" width="10" styleClass="text-center"></p-column> -->
       <p-column field="Remarks" header="Remarks" [sortable]="true" [style]="{'width':'300px'}"></p-column>
       <p-footer>
-        Total Records: {{totalCountOfNoOfSongsDetails}}
+        Total Records: {{dt.totalRecords}}
       </p-footer>
     </p-dataTable><br>
     <div style="margin-left: 15px;">

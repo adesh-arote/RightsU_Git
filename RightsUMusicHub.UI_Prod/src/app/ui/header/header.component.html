@@ -264,7 +264,7 @@
       <!-- <app-message-box  [messageData]="messageData"></app-message-box> -->
       <p-dialog [(visible)]="displayMessage" [draggable]="false" [blockScroll]="true"  [modal]="true"  [positionTop]="60" [width]="900"  [responsive]="false">
         <p-header>
-            <span style="cursor: pointer;" (click)="showRequsetDetails()">{{alertHeader}}</span>
+          <span style="cursor: pointer;color:mediumblue" (click)="showRequsetDetails()">{{reuestID}}</span> - <span>{{requsetdetails}}</span>
         </p-header>
         <div id="NotifyMessage" style="height:200px;">
             <!-- [height]="300" -->
@@ -299,7 +299,7 @@
       <div class="Row">
         <div>
           <label>Search</label>&nbsp;
-          <input id="input" class="SearchTextBox" #reqCountSearch type="text"  autocomplete="off" size="30" placeholder="Music Title, Movie/ Album" [(ngModel)]="requestCountSearch" 
+          <input id="input" class="SearchTextBox" #reqCountSearch type="text"  autocomplete="off" size="30" placeholder="Music Title, Movie/ Album, Status" [(ngModel)]="requestCountSearch" 
                  pInputText>
         </div>
       </div>
