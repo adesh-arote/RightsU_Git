@@ -93,6 +93,7 @@ export class NewRequestComponent implements OnInit {
   public specialRemarks: any;
   public isViewallclicked: boolean = false;
   public isNewrequest: boolean = false;
+  public isDateSame: any;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.mindatevalue = new Date();
