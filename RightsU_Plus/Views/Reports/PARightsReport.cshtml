@@ -27,8 +27,11 @@
     var URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNo", "Reports")';
     var URL_BindPARList = '@Url.Action("BindPARList", "Reports")';
     var URL_DownloadReport = '@Url.Action("DownloadReport", "Reports")';
+    var URL_RefreshReport = '@Url.Action("RefreshReport", "Reports")';
+    var URL_DeleteReportData = '@Url.Action("DeleteReportData", "Reports")';
+    var URL_GetPARStatus = '@Url.Action("GetPARStatus", "Reports")'; 
 
-    var platformCodes_G = " ";
+    var platformCodes_G = "";
     var platformCodes_GP = " ";
     var moduleCode_G = "";
 
@@ -210,7 +213,7 @@
     function ClearAll() {
         var code = 1;
         $("#txtTitle,#txtAgreementNo").val('').trigger("chosen:updated");
-        $('#ddlBusinessUnit').val(code).trigger('chosen:updated');
+        //$('#ddlBusinessUnit').val(code).trigger('chosen:updated');
         // BindTitleList(code);
 
         $('#ddlAncillaryType').val("");
@@ -662,7 +665,7 @@
                     $('#divDealDataList').empty();
                     $('#divDealDataList').html(result);
                     SetPaging();
-                   // GetMURStatus();
+                    GetPARStatus();
                     initializeTooltip();
                     initializeExpander();
                 }
@@ -698,7 +701,7 @@
                 }
             });
     }
-    function RefreshReport(MURCode) {
+    function RefreshReport(PARCode) {
         debugger;
         $.ajax({
             type: "POST",
@@ -708,7 +711,7 @@
             contentType: "application/json; charset=utf-8",
             dataType: "html",
             data: JSON.stringify({
-                MURCode: MURCode
+                PARCode: PARCode
             }),
             success: function (result) {
                 if (result == "true") {
@@ -725,6 +728,137 @@
                 alert('Error: ' + result.responseText);
             }
         });
+    }
+    function handleOk() {
+        debugger
+        DeleteReportData($('#hdnDeleteId').val());
+    }
+    function DeleteReportData(PARCode) {
+        debugger
+        var MURCode = PARCode;
+        hideLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_DeleteReportData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                MURCode: MURCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    showAlert("S", result.Message)
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        BindDealDataList();
+    }
+    function GetPARStatus() {
+        debugger;
+        var pendingRecord = 0;
+
+        $(".deal_action").each(function () {
+            debugger
+            var SiblingClass = $(this).attr('class').split(' ')[1];
+            if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+                var PARCode = SiblingClass.slice(12, SiblingClass.length - 1);
+
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'W') {
+                    debugger
+                    $.ajax({
+                        type: "POST",
+                        url: URL_GetPARStatus,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: false,
+                        data: JSON.stringify({
+                            PARCode: PARCode
+                        }),
+                        success: function (result) {
+                            debugger;
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            if (result.RecordStatus == "P" || result.RecordStatus == "W") {
+                                $("#imgLoading_" + PARCode).css("display", '');
+
+                                pendingRecord++;
+                                initializeTooltip();
+                            }
+                            if (result.RecordStatus == "E") {
+                                $("#imgLoading_" + PARCode).css("display", 'none');
+                                $("#Error_" + PARCode).css("display", '');
+
+                                $('.' + SiblingClass).addClass('clsTdAction_' + PARCode + result.RecordStatus).removeClass(SiblingClass);
+                                pendingRecord++;
+                                initializeTooltip();
+                            }
+                            if (result.RecordStatus == "N") {
+                                debugger;
+                                $("#imgLoading_" + PARCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+
+                                var a = '<a title class="glyphicon glyphicon-exclamation-sign" style="color: red;" data-original-title="No Record Found"></a>';
+                                $('.' + SiblingClass).append(a);
+
+                                var a = '<a title class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteConfirmation(' + PARCode + ')"  data-original-title="Delete" ></a>';
+                                $('.' + SiblingClass).append(a);
+                                $('.clsTdStatus_' + PARCode).empty();
+                                $('.clsTdStatus_' + PARCode).append('Delete');
+
+                                var a = '<a title="Re-Run" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshReport(' + PARCode + ')" data-original-title="Re-Run"></a>';
+                                $('.' + SiblingClass).append(a);
+                                $('.clsTdStatus_' + PARCode).empty();
+                                $('.clsTdStatus_' + PARCode).append('Refresh');
+
+                                //$('.' + SiblingClass).addClass('clsTdAction_' + MURCode + result.RecordStatus)
+                                //$('.clsTdAction_' + MURCode + result.RecordStatus).removeClass(SiblingClass);
+                                $('.' + SiblingClass).addClass('clsTdAction_' + PARCode + result.RecordStatus).removeClass(SiblingClass);
+
+                                pendingRecord++;
+                                initializeTooltip();
+                            }
+                            else if (result.RecordStatus == "C") {
+                                $("#imgLoading_" + PARCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+
+                                var a = '<a title class="glyphicon glyphicon-save" style="cursor: pointer;" onclick="DownloadReport(' + PARCode + ')"  data-original-title="Download"></a>';
+                                $('.' + SiblingClass).append(a);
+                                $('.clsTdStatus_' + PARCode).empty();
+                                $('.clsTdStatus_' + PARCode).append('Download');
+
+                                var a = '<a title class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteConfirmation(' + PARCode + ')" data-original-title="Delete"></a>';
+                                $('.' + SiblingClass).append(a);
+                                $('.clsTdStatus_' + PARCode).empty();
+                                $('.clsTdStatus_' + PARCode).append('Delete');
+
+                                var a = '<a title="Re-Run" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshReport(' + PARCode + ')" data-original-title="Re-Run"></a>';
+                                $('.' + SiblingClass).append(a);
+                                $('.clsTdStatus_' + PARCode).empty();
+                                $('.clsTdStatus_' + PARCode).append('Refresh');
+
+                                $('.' + SiblingClass).addClass('clsTdAction_' + PARCode + result.RecordStatus).removeClass(SiblingClass);
+                                initializeTooltip();
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+            }
+        });
+        if (pendingRecord > 0) {
+            setTimeout(GetPARStatus, 5000);
+        }
     }
     function DeleteConfirmation(MURCode) {
         debugger
@@ -819,7 +953,7 @@
                             </label>
                         </td>
                         <td style="width:25%;">
-                            @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", @onchange = "BindPATitleList()" })
+                            @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", @onchange = "BindDealDataList()" })
                         </td>
                         <td style="width:4%;">
                             <label class="bold">@objMessageKey.Title</label>

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE USP_Get_ResolveConflict_Data(
+﻿CREATE PROCEDURE USP_Title_Import_RCData(
 	@Keyword NVARCHAR(MAX),
 	@TabName NVARCHAR(MAX),
 	@Roles NVARCHAR(MAX)

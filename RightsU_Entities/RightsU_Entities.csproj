@@ -175,6 +175,7 @@
     <Compile Include="IPR\IPR_REP_EMAIL_FREQ.cs" />
     <Compile Include="IPR\IPR_REP_STATUS_HISTORY.cs" />
     <Compile Include="IPR\IPR_TYPE.cs" />
+    <Compile Include="Master_Entities\DM_Title_Resolve_Conflict.cs" />
     <Compile Include="Master_Entities\DM_Title_Import_Utility_Data.cs" />
     <Compile Include="Master_Entities\DM_Title_Import_Utility.cs" />
     <Compile Include="Master_Entities\Attrib_Group.cs" />
@@ -437,6 +438,7 @@
     <Compile Include="StoreProcedure_Entities\USPTATSLAList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPValidateMHRequestConsumption_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPVWTitleList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_Import_RCData_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_ResolveConflict_Data_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Rights_Holdback_Release_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Rights_Holdback_Validation_Result.cs" />

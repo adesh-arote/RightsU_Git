@@ -271,9 +271,10 @@
                       <span class="block" id="txtFromDate">
                         From:
                         <!-- [maxDate]="newMusicConsumptionRequest.TelecastTo" (ngModelChange)="telcastFromDateChnge()" -->
-                        <p-calendar id="Telecastfrom" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom"
-                          name="epiFromDate" [showIcon]="true" [maxDate]="newMusicConsumptionRequest.TelecastTo"
-                          readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+                        <!--[maxDate]="newMusicConsumptionRequest.TelecastTo"-->
+                        <p-calendar id="Telecastfrom" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" (ngModelChange)="telcastFromDateChnge()"
+                                    name="epiFromDate" [showIcon]="true"
+                                    readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
 
                         <!-- <input type="date" value="" placeholder="dd/mm/yyyy" class="TextBox5" name="epiFromDate" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom"> -->
                       </span>
@@ -281,10 +282,11 @@
                       <span class="block" id="txtToDate" style="padding-top: 1%">
                         To: &nbsp;&nbsp;&nbsp;&nbsp;
                         <!-- [minDate]="newMusicConsumptionRequest.TelecastFrom" [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null" -->
-                        <p-calendar id="Telecastto" [(ngModel)]="newMusicConsumptionRequest.TelecastTo"
-                          [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null"
-                          [minDate]="newMusicConsumptionRequest.TelecastFrom" name="epiToDate" readonlyInput="true"
-                          [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+                        <!--[minDate]="newMusicConsumptionRequest.TelecastFrom"-->
+                        <p-calendar id="Telecastto" [(ngModel)]="newMusicConsumptionRequest.TelecastTo" (ngModelChange)="telcastFromDateChnge()"
+                                    [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null"
+                                    name="epiToDate" readonlyInput="true"
+                                    [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
 
                         <!-- <input type="date" value="" placeholder="dd/mm/yyyy" class="TextBox5" name="epiToDate" [(ngModel)]="newMusicConsumptionRequest.TelecastTo"> -->
                       </span>
@@ -293,7 +295,7 @@
                 </div>
                 <div *ngIf="episodeType=='range'" class="box-body pull-right">
                   <button id="showDetails" class="btn btn-sm btn-primary btn-flat pull-left"
-                    [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 || !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.EpisodeTo || !newMusicConsumptionRequest.TelecastFrom || !newMusicConsumptionRequest.TelecastTo"
+                    [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 || !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.EpisodeTo || !newMusicConsumptionRequest.TelecastFrom || !newMusicConsumptionRequest.TelecastTo || isDateSame=='Y'"
                     (click)="showRecommendations()">
                     Viacom18 Recommendations
                   </button>
@@ -301,7 +303,7 @@
                 <div *ngIf="episodeType=='tentative'" class="box-body pull-right">
                   <!--  -->
                   <button id="showDetails" class="btn btn-sm btn-primary btn-flat pull-left"
-                    [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 ||  !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.TelecastFrom"
+                    [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 ||  !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.TelecastFrom || isDateSame=='Y'"
                     (click)="showRecommendations()">
                     Viacom18 Recommendations
                   </button>
@@ -469,27 +471,6 @@
           </tr>
         </tbody>
       </table>
-      <!-- <div class="row">
-        <div  class="col-md-4  border-Css padding-Css">
-          <label><b>Production House Remarks:</b></label><br>
-        </div>
-        <div class="col-md-2 separator"></div>
-        <div class="col-md-4 border-Css padding-Css" >
-          <label><b>Special Instructions to Production House:</b></label><br>
-        </div>
-        <div class="col-md-2"></div>
-      </div> -->
-      <!-- <div class="row"></div>
-      <div class="row">
-        <div  class="col-md-4 padding-Css">
-          {{remarksLabel}}
-        </div>
-        <div class="col-md-2"></div>
-        <div  class="col-md-4 padding-Css">
-          {{specialRemarks}}
-        </div>
-        <div class="col-md-2"></div>
-      </div>   -->
     </div>
     <p-footer>
       <button type="button" pButton (click)="close()" label="Close"></button>

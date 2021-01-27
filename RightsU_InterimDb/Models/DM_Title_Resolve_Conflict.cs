@@ -10,10 +10,15 @@
 namespace RightsU_InterimDb.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class USP_Get_ResolveConflict_Data_Result
+    public partial class DM_Title_Resolve_Conflict
     {
-        public string ValueField { get; set; }
-        public string TextField { get; set; }
+    	public State EntityState { get; set; }    public int DM_Title_Resolve_Conflict_Code { get; set; }
+    	    public string Tab_Name { get; set; }
+    	    public string Master_Type { get; set; }
+    	    public string Roles { get; set; }
+    	    public string Create_New { get; set; }
+    	    public Nullable<int> Order_No { get; set; }
     }
 }

@@ -50,12 +50,14 @@ export class CartGridComponent implements OnInit {
   public languageList: any = [];
   public order: any;
   public sortBy: any;
-  public sortingDefault:boolean=false;
+  public sortingDefault: boolean = false;
+  public showDetails: any;
 
   constructor(private _CommonUiService: CommonUiService, private router: Router, private comparentchildservice: ComParentChildService) {
 
   }
   ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+    debugger;
     let log: string[] = [];
     // console.log(changes);
     for (let propName in changes) {
@@ -70,7 +72,13 @@ export class CartGridComponent implements OnInit {
         console.log("On Changes value.....! ");
         console.log(changedProp.currentValue);
         if (this.componentType == "consumption") {
-          this.quickSelectionGridData(changedProp.currentValue);
+          //  this.quickSelectionGridData(changedProp.currentValue);
+          this.showDetails = changedProp.currentValue;
+          for (let i = 0; i < this.showDetails.listview.length; i++) {
+            this.showDetails.listview[i].MHPlayListCode;
+            changedProp.currentValue = this.showDetails.listview[i].MHPlayListCode;
+            this.quickSelectionGridData(changedProp.currentValue)
+          }
         }
         if (this.componentType == "quickSelection") {
           console.log(changedProp.currentValue.listview);
@@ -188,6 +196,10 @@ export class CartGridComponent implements OnInit {
   }
 
   quickSelectionGridData(playlistvalue) {
+    if (this.sortBy == undefined || this.order == undefined) {
+      this.sortBy = "MusicTrack";
+      this.order = "ASC";
+    }
     // console.log("Grid Call....")
     var body = {
       'MusicLabelCode': '',
@@ -202,7 +214,9 @@ export class CartGridComponent implements OnInit {
       'PageNo': '1',
       'ChannelCode': '',
       'TitleCode': '',
-      'MusicLanguageCode': ''
+      'MusicLanguageCode': '',
+      "SortBy": this.sortBy,
+      "Order": this.order
     }
     console.log(JSON.stringify(body));
     this.load = true;
@@ -214,7 +228,7 @@ export class CartGridComponent implements OnInit {
       console.log(response);
       this.recordCount = response.RecordCount;
       this.searchList = response.Show;
-      this.sortingDefault=false;
+      this.sortingDefault = false;
       $(function () {
         $('.dropdwnbody').slimScroll({
           height: '100px',
@@ -253,13 +267,13 @@ export class CartGridComponent implements OnInit {
       this.playListName = '';
     }
     this.playListWiseClick = 'N';
-    if(this.sortingDefault == true){
+    if (this.sortingDefault == true) {
       this.sortBy = "MusicTrack";
       this.order = "ASC";
     }
-    else{
-      this.sortBy= this.sortBy;
-      this.order=this.order;
+    else {
+      this.sortBy = this.sortBy;
+      this.order = this.order;
     }
     var body = {
       'MusicLabelCode': this.newSearchRequest.MusicLabelCode.MusicLabelCode == null ? 0 : this.newSearchRequest.MusicLabelCode.MusicLabelCode,
@@ -274,7 +288,7 @@ export class CartGridComponent implements OnInit {
       'PageNo': '1',
       'ChannelCode': this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
       'TitleCode': this.newMusicConsumptionRequest.TitleCode.Title_Code,
-      'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code == null ? 0 :this.newSearchRequest.MusicLanguageCode.Music_Language_Code,
+      'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code == null ? 0 : this.newSearchRequest.MusicLanguageCode.Music_Language_Code,
       "SortBy": this.sortBy,
       "Order": this.order
     }
@@ -321,7 +335,7 @@ export class CartGridComponent implements OnInit {
         console.log(response);
         this.recordCount = response.RecordCount;
         this.searchList = response.Show;
-        this.sortingDefault=false;
+        this.sortingDefault = false;
         // this.TotalRecords=this.searchList.length;
         // for(let i=0;i<this.searchList.length;i++){
         $(function () {
@@ -371,7 +385,9 @@ export class CartGridComponent implements OnInit {
       'PageNo': '1',
       'ChannelCode': '',
       'TitleCode': '',
-      'MusicLanguageCode': ''
+      'MusicLanguageCode': '',
+      "SortBy": this.sortBy,
+      "Order": this.order
     }
     console.log(JSON.stringify(body));
     this.load = true;
@@ -624,18 +640,18 @@ export class CartGridComponent implements OnInit {
         let fromdate = new Date(this.newMusicConsumptionRequest.TelecastFrom)
         let todate = new Date(this.newMusicConsumptionRequest.TelecastTo)
 
-        if (parseInt(this.newMusicConsumptionRequest.EpisodeFrom) >= parseInt(this.newMusicConsumptionRequest.EpisodeTo)) {
-          // $('#Modal_MusicHub').modal('hide');
+        // if (parseInt(this.newMusicConsumptionRequest.EpisodeFrom) >= parseInt(this.newMusicConsumptionRequest.EpisodeTo)) {
+        //   // $('#Modal_MusicHub').modal('hide');
 
-          this.displayalertMessage = true;
+        //   this.displayalertMessage = true;
 
-          this.messageData = {
-            'header': "Error",
-            'body': "Episode To should greater than Episode From"
-          }
+        //   this.messageData = {
+        //     'header': "Error",
+        //     'body': "Episode To should greater than Episode From"
+        //   }
 
-        }
-        else if (this.newMusicConsumptionRequest.EpisodeFrom == null || this.newMusicConsumptionRequest.EpisodeTo == null) {
+        // }
+        if (this.newMusicConsumptionRequest.EpisodeFrom == null || this.newMusicConsumptionRequest.EpisodeTo == null) {
           // $('#Modal_MusicHub').modal('hide');
           this.displayalertMessage = true;
 
@@ -644,32 +660,31 @@ export class CartGridComponent implements OnInit {
             'body': "Episode should not be blank..!"
           }
         }
-        else
-          if (fromdate >= todate) {
-            // $('#Modal_MusicHub').modal('hide');
-            this.displayalertMessage = true;
+        // if (fromdate >= todate) {
+        //   // $('#Modal_MusicHub').modal('hide');
+        //   this.displayalertMessage = true;
 
-            this.messageData = {
-              'header': "Error",
-              'body': "From Date should be Less Than To Date"
-            }
-            //         this.displaysubmitalertMessage=true;
-            // this.alertErrorMessage="From Date should Less Than To Date";
-            // $( "#Telecastto" ).focus();
-            // this.renderer.selectRootElement('#Telecastto').onElement.focus();
-          }
-          else if (this.newMusicConsumptionRequest.TelecastFrom == null || this.newMusicConsumptionRequest.TelecastTo == null) {
-            // $('#Modal_MusicHub').modal('hide');
-            this.displayalertMessage = true;
+        //   this.messageData = {
+        //     'header': "Error",
+        //     'body': "From Date should be Less Than To Date"
+        //   }
+        //   //         this.displaysubmitalertMessage=true;
+        //   // this.alertErrorMessage="From Date should Less Than To Date";
+        //   // $( "#Telecastto" ).focus();
+        //   // this.renderer.selectRootElement('#Telecastto').onElement.focus();
+        // }
+        else if (this.newMusicConsumptionRequest.TelecastFrom == null || this.newMusicConsumptionRequest.TelecastTo == null) {
+          // $('#Modal_MusicHub').modal('hide');
+          this.displayalertMessage = true;
 
-            this.messageData = {
-              'header': "Error",
-              'body': "Date should not be Blank"
-            }
+          this.messageData = {
+            'header': "Error",
+            'body': "Date should not be Blank"
           }
-          else {
-            return true;
-          }
+        }
+        else {
+          return true;
+        }
       }
       else if (this.episodeType == 'tentative') {
         if (this.newMusicConsumptionRequest.EpisodeFrom == null || this.newMusicConsumptionRequest.EpisodeFrom == "") {
@@ -821,6 +836,7 @@ export class CartGridComponent implements OnInit {
 
   }
   cartModalShow() {
+    debugger;
     if (this.ValidationCheck()) {
       $('#Modal_MusicHub').modal('show');
     }
@@ -898,8 +914,8 @@ export class CartGridComponent implements OnInit {
       this.load = false;
       this.removeBlockUI();
       debugger;
-      console.log("consumption request..!");
-      console.log(response);
+      //console.log("consumption request..!");
+      //console.log(response);
       var obj = response
 
       $('#Modal_MusicHub').modal('hide');
@@ -1044,14 +1060,14 @@ export class CartGridComponent implements OnInit {
     var pageSize = event.rows;
     var sortBy = event.sortField;
     this.sortBy = sortBy;
-   
-    if(this.sortingDefault == true){
+
+    if (this.sortingDefault == true) {
       this.sortBy = "MusicTrack";
       this.order = "ASC";
     }
-    else{
-      if( event.sortField == undefined){
-        this.sortBy="MusicTrack";
+    else {
+      if (event.sortField == undefined) {
+        this.sortBy = "MusicTrack";
       }
       if (event.sortOrder == 1) {
         this.order = "ASC";
@@ -1059,10 +1075,10 @@ export class CartGridComponent implements OnInit {
       else {
         this.order = "DESC";
       }
-      this.sortBy= this.sortBy;
-      this.order=this.order;
+      this.sortBy = this.sortBy;
+      this.order = this.order;
     }
-    
+
     if (this.rowonpage != pageSize) {
       this.rowonpage = pageSize;
       if (event.first == 0) {
@@ -1145,7 +1161,7 @@ export class CartGridComponent implements OnInit {
       console.log(response);
       this.recordCount = response.RecordCount;
       this.searchList = response.Show;
-      this.sortingDefault=false;
+      this.sortingDefault = false;
       // this.TotalRecords=this.searchList.length;
       // for(let i=0;i<this.searchList.length;i++){
       $(function () {

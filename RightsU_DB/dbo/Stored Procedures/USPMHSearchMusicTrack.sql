@@ -122,7 +122,7 @@ SET FMTONLY OFF
 	INNER JOIN Talent T WITH(NOLOCK) ON T.Talent_Code = MTT.Talent_Code
 	--INNER JOIN Talent_Role TR ON TR.Talent_Code = T.Talent_Code
 	INNER JOIN ROLE R WITH(NOLOCK) ON R.Role_Code = MTT.Role_Code
-	Where R.Role_Code = 2 Order by Talent_Code
+	Where R.Role_Code = 2 Order by T.Talent_Code
 
 	INSERT INTO #tempStuff2(Talent_Code,Talent_Name,Role_Name,Music_Title_Code)
 	Select T.Talent_Code,T.Talent_Name,R.Role_Name,MTT.Music_Title_Code 
@@ -130,7 +130,7 @@ SET FMTONLY OFF
 	INNER JOIN Talent T WITH(NOLOCK) ON T.Talent_Code = MTT.Talent_Code
 	--INNER JOIN Talent_Role TR ON TR.Talent_Code = T.Talent_Code
 	INNER JOIN ROLE R WITH(NOLOCK) ON R.Role_Code = MTT.Role_Code
-	Where R.Role_Code= '13' Order by Talent_Code
+	Where R.Role_Code= '13' Order by T.Talent_Code
 
 	INSERT INTO #tempStuff3(Talent_Code,Talent_Name,Role_Name,Music_Title_Code)
 	Select T.Talent_Code,T.Talent_Name,R.Role_Name,MTT.Music_Title_Code 
@@ -138,7 +138,7 @@ SET FMTONLY OFF
 	INNER JOIN Talent T WITH(NOLOCK) ON T.Talent_Code = MTT.Talent_Code
 	--INNER JOIN Talent_Role TR ON TR.Talent_Code = T.Talent_Code
 	INNER JOIN ROLE R WITH(NOLOCK) ON R.Role_Code = MTT.Role_Code
-	Where R.Role_Name= '21' Order by Talent_Code
+	Where R.Role_Name= '21' Order by T.Talent_Code
 	if(@PageNo = 0)
         Set @PageNo = 1
 

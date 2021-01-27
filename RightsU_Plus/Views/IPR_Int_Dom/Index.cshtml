@@ -145,7 +145,7 @@
         $('#ddlBusinessUnit,#ddlChannel').SumoSelect();
         $('#ddlBusinessUnit')[0].sumo.reload();
         $('#ddlChannel')[0].sumo.reload();
-        var a =  '@ViewBag.hdnIPR_Renewed_Untill_Year1';
+        var a = parseInt('@ViewBag.hdnIPR_Renewed_Untill_Year1');
         $(function() {
             $('#txtApplication_Date').change(function () {
                 debugger;
