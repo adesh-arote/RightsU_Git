@@ -417,7 +417,7 @@ BEGIN
 		AND AD.Agreement_No like '%' + @Agreement_No + '%' 
 		AND (AD.Is_Master_Deal = @Is_Master_Deal Or @Is_Master_Deal = '')
 		AND (AD.Deal_Tag_Code = @Deal_Tag_Code OR @Deal_Tag_Code = 0) 
-		AND (AD.Business_Unit_Code = CAST(@Business_Unit_code AS INT) OR CAST(@Business_Unit_code AS INT) = 0)
+		AND (AD.Business_Unit_Code in (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
 		AND (
 				@Title_Name = '' OR ADRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,','))
 				OR 
@@ -669,7 +669,7 @@ BEGIN
 			AND AD.Agreement_No like '%' + @Agreement_No + '%' 
 			AND (AD.Is_Master_Deal = @Is_Master_Deal Or @Is_Master_Deal = '')
 			AND (AD.Deal_Tag_Code = @Deal_Tag_Code OR @Deal_Tag_Code = 0) 
-			AND (AD.Business_Unit_Code = CAST(@Business_Unit_code AS INT)OR CAST(@Business_Unit_code AS INT) = 0)
+			AND (AD.Business_Unit_Code in (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
 			AND (@Title_Name = '' OR ADPT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,',')))
 
 		PRINT 'Insertion in temp table In Pushback'

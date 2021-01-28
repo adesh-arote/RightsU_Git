@@ -39,10 +39,10 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "RightsU PA Service";
-            this.serviceInstaller1.DisplayName = "RightsU PA Service";
+            this.serviceInstaller1.Description = "RightsU_VMP PA Service";
+            this.serviceInstaller1.DisplayName = "RightsU_VMP PA Service";
 
-            this.serviceInstaller1.ServiceName = "RightsU PA Service";
+            this.serviceInstaller1.ServiceName = "RightsU_VMP PA Service";
             // 
             // ProjectInstaller
             // 
