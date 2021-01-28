@@ -78,7 +78,6 @@ export class HeaderComponent implements OnInit {
       this.ImageUrl = "../../../assets/Images/" + this.userImage;
     }
     //this.ImageUrl = "../../../assets/Images/User_Img.png";
-    this.removeScroll();
   }
 
   Notification() {
@@ -91,8 +90,6 @@ export class HeaderComponent implements OnInit {
         console.log(response);
         this.notificationList = response.NotifiactionList;
         this.unreadCount = response.UnReadCount;
-        this.removeScroll();
-        $('.slimScrollDiv').css("height", "42px !important");
         console.log(this.unreadCount)
       }, error => { this.handleResponseError(error) })
 
@@ -158,15 +155,6 @@ export class HeaderComponent implements OnInit {
     //   'body': "Request is Approved....!!!!"
     // }
 
-  }
-
-  removeScroll() {
-    $(function () {
-      $('.slimScrollDiv').slimScroll({
-        height: '42px !important',
-
-      });
-    });
   }
 
   showRequsetDetails() {
