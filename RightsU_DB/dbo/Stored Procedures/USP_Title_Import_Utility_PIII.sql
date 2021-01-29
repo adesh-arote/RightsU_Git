@@ -830,6 +830,11 @@ BEGIN
 				INNER JOIN Title B ON A.TitleData COLLATE SQL_Latin1_General_CP1_CI_AS = B.Title_Name
 				WHERE A.ColumnHeader = 'Title Name' AND A.ISError <> 'Y'
 
+				UPDATE B SET B.Inserted_By = 143, B.Inserted_On = GETDATE(), B.Last_UpDated_Time = GETDATE()
+				FROM #TempTitleUnPivot A
+				INNER JOIN Title B ON A.TitleData COLLATE SQL_Latin1_General_CP1_CI_AS = B.Title_Name
+				WHERE A.ColumnHeader = 'Title Name' AND A.ISError <> 'Y'
+
 				UPDATE B SET B.TitleCode = A.RefKey FROM  #TempTitleUnPivot A
 				INNER JOIN #TempHeaderWithMultiple B ON A.ExcelSrNo = B.ExcelSrNo
 				WHERE A.ColumnHeader = 'Title Name'  AND A.ISError <> 'Y'
