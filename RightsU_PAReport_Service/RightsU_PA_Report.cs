@@ -79,7 +79,16 @@ namespace RightsU_PAReport_Service
                                     command.Parameters.Add(new SqlParameter("@Business_Unit_Code", objAcq_Adv_Ancillary_Report.Business_Unit_Code));
                                     command.Parameters.Add(new SqlParameter("@IncludeExpired", objAcq_Adv_Ancillary_Report.IncludeExpired));
 
+                                    //command.Parameters.Add(new SqlParameter("@Agreement_No", ""));
+                                    //command.Parameters.Add(new SqlParameter("@Title_Codes", "8040"));
+                                    //command.Parameters.Add(new SqlParameter("@Platform_Codes", ""));
+                                    //command.Parameters.Add(new SqlParameter("@Ancillary_Type_Code", "1,2,5,6,7,8,9,10,11"));
+                                    //command.Parameters.Add(new SqlParameter("@Business_Unit_Code", 1));
+                                    //command.Parameters.Add(new SqlParameter("@IncludeExpired", "N"));
+
+
                                     connection.Open();
+                                    command.CommandTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["EF_TimeOut"].ToString());
                                     command.ExecuteNonQuery();
 
                                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : FINISHED running procedure");
@@ -219,7 +228,9 @@ namespace RightsU_PAReport_Service
                         }
                     }
                     int Erow = 2;
-                    int Alltcnt = 0, Agreemntcnt = 0, Titlecnt = 0, TitleTypecnt = 0, rowNo = 2;
+                    int Alltcnt = 0, Agreemntcnt = 0, Titlecnt = 0, TitleTypecnt = 0, AgrowNo = 2, TitrowNo = 2, TitTypeRowNo = 2;
+                    int TotalRowCnt = dt.Rows.Count;
+                    int currentRowCnt = 1;
                     foreach (DataRow row in dt.Rows)
                     {
                         int Ecolumn = 1;
@@ -245,8 +256,8 @@ namespace RightsU_PAReport_Service
                                     {
                                         Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Agreement No");
 
-                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn + 1].Value.ToString();
-                                        secondCellValue = row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
+                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString(); //sheet.Cells[(Erow - 1), Ecolumn + 1].Value.ToString();
+                                        secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();// row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
                                     else if (col.ColumnName == "Title")
                                     {
@@ -259,8 +270,8 @@ namespace RightsU_PAReport_Service
                                     {
                                         Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Title Type");
 
-                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn - 1].Value.ToString();
-                                        secondCellValue = row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
+                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString(); //sheet.Cells[(Erow - 1), Ecolumn - 1].Value.ToString();
+                                        secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();// row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
 
                                     if (firstCellValue == secondCellValue)
@@ -283,18 +294,30 @@ namespace RightsU_PAReport_Service
                                         //rowNo = Erow;
                                         if (col.ColumnName == "Agreement No")
                                         {
+                                            if (Agreemntcnt > 0 && col.ColumnName == "Agreement No")
+                                            {
+                                                sheet.Cells[AgrowNo, Ecolumn, (Agreemntcnt + (AgrowNo)), Ecolumn].Merge = true;
+                                            }
                                             Agreemntcnt = 0;
-                                            rowNo = Erow;
+                                            AgrowNo = Erow;
                                         }
                                         if (col.ColumnName == "Title")
                                         {
+                                            if (Titlecnt > 0 && col.ColumnName == "Title")
+                                            {
+                                                sheet.Cells[TitrowNo, Ecolumn, (Titlecnt + (TitrowNo)), Ecolumn].Merge = true;
+                                            }
                                             Titlecnt = 0;
-                                            rowNo = Erow;
+                                            TitrowNo = Erow;
                                         }
                                         if (col.ColumnName == "Title Type")
                                         {
+                                            if (TitleTypecnt > 0 && col.ColumnName == "Title Type")
+                                            {
+                                                sheet.Cells[TitTypeRowNo, Ecolumn, (TitleTypecnt + (TitTypeRowNo)), Ecolumn].Merge = true;
+                                            }
                                             TitleTypecnt = 0;
-                                            rowNo = Erow;
+                                            TitTypeRowNo = Erow;
                                         }
                                     }
 
@@ -302,28 +325,33 @@ namespace RightsU_PAReport_Service
                                     //{
                                     //    sheet.Cells[rowNo, Ecolumn, (Alltcnt + (rowNo)), Ecolumn].Merge = true;
                                     //}
-                                    if (Agreemntcnt > 0 && col.ColumnName == "Agreement No")
+                                    if (TotalRowCnt == currentRowCnt)
                                     {
-                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Agreement No");
+                                        if (Agreemntcnt > 0 && col.ColumnName == "Agreement No")
+                                        {
+                                            Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Agreement No");
+                                            Error.WriteLog_Conditional("STEP 1 B : " + "AgrowNo = " + AgrowNo + " " + "Merge To ENd = " + (Agreemntcnt + (AgrowNo)) + " " + "Ecolumn = " + Ecolumn);
+                                            sheet.Cells[AgrowNo, Ecolumn, (Agreemntcnt + (AgrowNo)), Ecolumn].Merge = true;
 
-                                        sheet.Cells[rowNo, Ecolumn, (Agreemntcnt + (rowNo)), Ecolumn].Merge = true;
-                                    }
-                                    if (Titlecnt > 0 && col.ColumnName == "Title")
-                                    {
-                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Title");
-
-                                        sheet.Cells[rowNo, Ecolumn, (Titlecnt + (rowNo)), Ecolumn].Merge = true;
-                                    }
-                                    if (TitleTypecnt > 0 && col.ColumnName == "Title Type")
-                                    {
-                                        Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Title Type");
-
-                                        sheet.Cells[rowNo, Ecolumn, (TitleTypecnt + (rowNo)), Ecolumn].Merge = true;
+                                        }
+                                        if (Titlecnt > 0 && col.ColumnName == "Title")
+                                        {
+                                            Error.WriteLog_Conditional("STEP 1 C : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Title");
+                                            Error.WriteLog_Conditional("STEP 1 D : " + "TitrowNo = " + TitrowNo + " " + "Merge To ENd = " + (Titlecnt + (TitrowNo)) + " " + "Ecolumn = " + Ecolumn);
+                                            sheet.Cells[TitrowNo, Ecolumn, (Titlecnt + (TitrowNo)), Ecolumn].Merge = true;
+                                        }
+                                        if (TitleTypecnt > 0 && col.ColumnName == "Title Type")
+                                        {
+                                            Error.WriteLog_Conditional("STEP 1 E : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Merge Title Type");
+                                            Error.WriteLog_Conditional("STEP 1 F : " + "TitTypeRowNo = " + TitTypeRowNo + " " + "Merge To ENd = " + (TitleTypecnt + (TitTypeRowNo)) + " " + "Ecolumn = " + Ecolumn);
+                                            sheet.Cells[TitTypeRowNo, Ecolumn, (TitleTypecnt + (TitTypeRowNo)), Ecolumn].Merge = true;
+                                        }
                                     }
                                 }
                             }
                             Ecolumn++;
                         }
+                        currentRowCnt++;
                         Erow++;
                     }
 
