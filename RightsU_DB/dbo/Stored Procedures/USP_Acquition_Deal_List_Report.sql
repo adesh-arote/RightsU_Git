@@ -17,6 +17,7 @@ As
 -- Description:	Get Acquisition Deal List Report Data
 -- =============================================
 BEGIN
+
 	--DECLARE 
 	-- @Agreement_No Varchar(100)= ''
 	--, @Is_Master_Deal Varchar(2) = 'Y'
@@ -24,10 +25,13 @@ BEGIN
 	--, @End_Date Varchar(30) = ''
 	--, @Deal_Tag_Code Int = 0
 	--, @Title_Name Varchar(100)= ''
-	--, @Business_Unit_code VARCHAR(100)= '9' 
+	--, @Business_Unit_code VARCHAR(100)= '1' 
 	--, @Is_Pushback Varchar(100)= 'Y'
 	--, @SysLanguageCode INT= 1
 	--, @DealSegment INT= 0
+
+	IF CHARINDEX(',',@Business_Unit_code) > 0 
+		set @Business_Unit_code = '0'
 
 	DECLARE 
 	@Col_Head01 NVARCHAR(MAX) = '',  
@@ -359,12 +363,12 @@ BEGIN
 			ELSE 'No Sub Licensing'
 		END AS SubLicencing
 		,ADR.Is_Tentative, ADR.Is_ROFR, ADR.ROFR_Date AS First_Refusal_Date, ADR.Restriction_Remarks AS Restriction_Remarks
-		--,[dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](ADR.Acq_Deal_Rights_Code, 'AR','P') Holdback_Platform
-		--,[dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](ADR.Acq_Deal_Rights_Code, 'AR','R') Holdback_Right
-		--,[dbo].[UFN_Get_Blackout_Period](ADR.Acq_Deal_Rights_Code, 'AR') Blackout
-		,'' Holdback_Platform
-		,'' Holdback_Right
-		,'' Blackout
+		,[dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](ADR.Acq_Deal_Rights_Code, 'AR','P') Holdback_Platform
+		,[dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](ADR.Acq_Deal_Rights_Code, 'AR','R') Holdback_Right
+		,[dbo].[UFN_Get_Blackout_Period](ADR.Acq_Deal_Rights_Code, 'AR') Blackout
+		--,'' Holdback_Platform
+		--,'' Holdback_Right
+		--,'' Blackout
 		,AD.Remarks AS General_Remark, AD.Rights_Remarks AS Rights_Remarks, AD.Payment_Terms_Conditions AS Payment_Remarks, ADR.Right_Type,
 		CASE ADR.Right_Type
 			WHEN 'Y' THEN [dbo].[UFN_Get_Rights_Term](ADR.Actual_Right_Start_Date, ADR.Actual_Right_End_Date, Term) 
@@ -387,10 +391,10 @@ BEGIN
              ELSE 'No'
 		END AS Is_Attachment,
 		P.Program_Name as 'Program_Name'
-		--,[dbo].[UFN_Get_Rights_Promoter_Group_Remarks](ADR.Acq_Deal_Rights_Code,'P','A') AS Promoter_Group_Name
-		,'' Promoter_Group_Name
-		--,[dbo].[UFN_Get_Rights_Promoter_Group_Remarks](ADR.Acq_Deal_Rights_Code,'R','A') AS Promoter_Remarks_Name
-		,'' Promoter_Remarks_Name
+		,[dbo].[UFN_Get_Rights_Promoter_Group_Remarks](ADR.Acq_Deal_Rights_Code,'P','A') AS Promoter_Group_Name
+		--,'' Promoter_Group_Name
+		,[dbo].[UFN_Get_Rights_Promoter_Group_Remarks](ADR.Acq_Deal_Rights_Code,'R','A') AS Promoter_Remarks_Name
+		--,'' Promoter_Remarks_Name
 		,CASE UPPER(LTRIM(RTRIM(ISNULL(ADM.Due_Diligence, '')))) 
 			WHEN 'N' THEN 'No'
 			WHEN 'Y' THEN 'Yes'
@@ -417,7 +421,7 @@ BEGIN
 		AND AD.Agreement_No like '%' + @Agreement_No + '%' 
 		AND (AD.Is_Master_Deal = @Is_Master_Deal Or @Is_Master_Deal = '')
 		AND (AD.Deal_Tag_Code = @Deal_Tag_Code OR @Deal_Tag_Code = 0) 
-		AND (AD.Business_Unit_Code in (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
+		AND (AD.Business_Unit_Code = CAST(@Business_Unit_code AS INT) OR CAST(@Business_Unit_code AS INT) = 0)
 		AND (
 				@Title_Name = '' OR ADRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,','))
 				OR 
@@ -669,7 +673,7 @@ BEGIN
 			AND AD.Agreement_No like '%' + @Agreement_No + '%' 
 			AND (AD.Is_Master_Deal = @Is_Master_Deal Or @Is_Master_Deal = '')
 			AND (AD.Deal_Tag_Code = @Deal_Tag_Code OR @Deal_Tag_Code = 0) 
-			AND (AD.Business_Unit_Code in (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
+			AND (AD.Business_Unit_Code = CAST(@Business_Unit_code AS INT)OR CAST(@Business_Unit_code AS INT) = 0)
 			AND (@Title_Name = '' OR ADPT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,',')))
 
 		PRINT 'Insertion in temp table In Pushback'
