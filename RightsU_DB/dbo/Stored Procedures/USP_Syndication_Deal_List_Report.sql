@@ -39,9 +39,9 @@ BEGIN
 	--SET @End_Date = ''
 	--SET @Deal_Tag_Code = 0
 	--SET @Title_Codes = ''
-	--SET @Business_Unit_code = 1
+	--SET @Business_Unit_code = 5
 	--SET @Is_Pushback = 'N'
-	--SET @IS_Expired  = 'Y'
+	--SET @IS_Expired  = 'N'
 	--SET @IS_Theatrical='N'
 	--SET @SysLanguageCode = 1
 	--SET @DealSegment = 0
@@ -308,12 +308,12 @@ BEGIN
 				ELSE 'No Sub Licensing'
 			 END SubLicencing
 			, SDR.Is_Tentative, SDR.Is_ROFR, SDR.ROFR_Date AS First_Refusal_Date, SDR.Restriction_Remarks AS Restriction_Remarks
-			--, [dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](SDR.Syn_Deal_Rights_Code, 'SR','P') Holdback_Platform
-			--, [dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](SDR.Syn_Deal_Rights_Code, 'SR','R') Holdback_Right
-			--, [dbo].[UFN_Get_Blackout_Period](SDR.Syn_Deal_Rights_Code, 'SR') Blackout
-			,'' as Holdback_Platform
-			,'' as Holdback_Right
-			,'' as Blackout
+			, [dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](SDR.Syn_Deal_Rights_Code, 'SR','P') Holdback_Platform
+			, [dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](SDR.Syn_Deal_Rights_Code, 'SR','R') Holdback_Right
+			, [dbo].[UFN_Get_Blackout_Period](SDR.Syn_Deal_Rights_Code, 'SR') Blackout
+			--,'' as Holdback_Platform
+			--,'' as Holdback_Right
+			--,'' as Blackout
 			, SD.Remarks AS General_Remark, SD.Rights_Remarks AS Rights_Remarks, SD.Payment_Terms_Conditions AS Payment_Remarks, SDR.Right_Type
 			, CASE SDR.Right_Type
 				WHEN 'Y' THEN [dbo].[UFN_Get_Rights_Term](SDR.Right_Start_Date, Right_End_Date, Term) 
@@ -421,10 +421,10 @@ BEGIN
 		
 		UPDATE RT SET RT.Platform_Codes = 
 		STUFF((Select DISTINCT ',' +  CAST(AADRP.Platform_Code AS NVARCHAR(MAX)) from  Syn_Deal_Rights_Platform AADRP 
-		WHERE RT.Syn_Deal_Rights_Code = AADRP.Syn_Deal_Rights_Code --order by AADRP.Platform_Code ASC
+		WHERE  AADRP.Syn_Deal_Rights_Code = RT.Syn_Deal_Rights_Code  --order by AADRP.Platform_Code ASC
 		           FOR XML PATH('')),1,1,'')
 		FROM #RightTable RT 
-		
+	
 		INSERT INTO #PlatformTable(Platform_Codes,Platform_Names)
 		SELECT DISTINCT Platform_Codes,Platform_Names FROM #RightTable
 		
@@ -453,7 +453,7 @@ BEGIN
 		UPDATE RT SET RT.RGType = ADRT.Territory_Type
 		FROM #RightTable RT 
 		INNER JOIN Syn_Deal_Rights_Territory ADRT ON RT.Syn_Deal_Rights_Code = ADRT.Syn_Deal_Rights_Code 
-	
+
 		UPDATE RT SET RT.SL_Codes = 
 		STUFF((Select DISTINCT ',' +  CAST(CASE WHEN AADRS.Language_Code IS NULL THEN AADRS.Language_Group_Code ELSE AADRS.Language_Code END AS NVARCHAR(MAX))
 		from  Syn_Deal_Rights_Subtitling AADRS 

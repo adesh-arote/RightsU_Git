@@ -145,7 +145,7 @@
         </Field>
         <Field Name="Deal_Type_Name">
           <DataField>Deal_Type_Name</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Episode_From">
           <DataField>Episode_From</DataField>
@@ -241,6 +241,14 @@
         </Field>
         <Field Name="Ancillary_Rights">
           <DataField>Ancillary_Rights</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Due_Diligence">
+          <DataField>Due_Diligence</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Category_Name">
+          <DataField>Category_Name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -720,6 +728,20 @@ WHERE        (Parameter_Name = 'Is_Self_Consumption')</CommandText>
         </Field>
         <Field Name="Col75">
           <DataField>Col75</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DS_System_Param">
+      <Query>
+        <DataSourceName>RightsU_Avail_Show</DataSourceName>
+        <CommandText>SELECT TOP (1) Parameter_Value
+FROM     System_Parameter_New
+WHERE  (Parameter_Name = 'AcqDealDueDiligence')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -1568,11 +1590,14 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Digital</Value>
+                                  <Value>Self Consumption</Value>
                                   <Style>
+                                    <FontStyle>Normal</FontStyle>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -4773,6 +4798,9 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                   <Width>2.92709in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1.58338in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>4.03125in</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -4805,6 +4833,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -4859,6 +4888,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -4913,6 +4943,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -4968,6 +4999,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>dd/MMM/yyyy</Format>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5003,6 +5035,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
                                     <Format>dd/MMM/yyyy</Format>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5037,6 +5070,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5091,6 +5125,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5145,6 +5180,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5199,6 +5235,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5253,6 +5290,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5307,6 +5345,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5361,6 +5400,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5415,6 +5455,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5469,6 +5510,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5523,6 +5565,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5577,6 +5620,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5586,6 +5630,61 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Platform_Avail</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Due_Diligence">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Due_Diligence.Value</Value>
+                                  <Style>
+                                    <FontFamily>Verdana</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Due_Diligence</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -5631,6 +5730,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5685,6 +5785,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5739,6 +5840,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5793,6 +5895,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -5847,6 +5950,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                   <Style>
                                     <FontFamily>Verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -6717,6 +6821,67 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                   <TablixHeader>
                     <Size>0.30208in</Size>
                     <CellContents>
+                      <Textbox Name="Textbox226">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>[Due Diligence]</Value>
+                                <Style>
+                                  <FontFamily>Verdana</FontFamily>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox226</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <TopBorder>
+                            <Color>Black</Color>
+                            <Style>Solid</Style>
+                            <Width>1pt</Width>
+                          </TopBorder>
+                          <BottomBorder>
+                            <Color>Black</Color>
+                            <Style>Solid</Style>
+                            <Width>1pt</Width>
+                          </BottomBorder>
+                          <LeftBorder>
+                            <Color>Black</Color>
+                            <Style>Solid</Style>
+                            <Width>1pt</Width>
+                          </LeftBorder>
+                          <RightBorder>
+                            <Color>Black</Color>
+                            <Style>Solid</Style>
+                            <Width>1pt</Width>
+                          </RightBorder>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "DS_System_Param") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.30208in</Size>
+                    <CellContents>
                       <Textbox Name="Textbox42">
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
@@ -7061,6 +7226,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                 <Style>
                                   <FontFamily>Verdana</FontFamily>
                                   <FontSize>9pt</FontSize>
+                                  <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                 </Style>
                               </TextRun>
                             </TextRuns>
@@ -7118,6 +7284,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                     <Style>
                                       <FontFamily>Verdana</FontFamily>
                                       <FontSize>9pt</FontSize>
+                                      <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
@@ -7175,6 +7342,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                         <Style>
                                           <FontFamily>Verdana</FontFamily>
                                           <FontSize>9pt</FontSize>
+                                          <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                         </Style>
                                       </TextRun>
                                     </TextRuns>
@@ -7232,6 +7400,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                                             <Style>
                                               <FontFamily>Verdana</FontFamily>
                                               <FontSize>9pt</FontSize>
+                                              <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
                                             </Style>
                                           </TextRun>
                                         </TextRuns>
@@ -7291,7 +7460,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
             <Top>0.05292cm</Top>
             <Left>0.02646cm</Left>
             <Height>0.55208in</Height>
-            <Width>53.96871in</Width>
+            <Width>55.55209in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>

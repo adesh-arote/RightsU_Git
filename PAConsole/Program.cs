@@ -46,14 +46,15 @@ namespace PAConsole
 
                                     DataTable dt = new DataTable();
                                     SqlDataAdapter adapt = new SqlDataAdapter(command);
-                                    command.Parameters.Add(new SqlParameter("@Agreement_No", objAcq_Adv_Ancillary_Report.Agreement_No));
-                                    command.Parameters.Add(new SqlParameter("@Title_Codes", objAcq_Adv_Ancillary_Report.Title_Codes));
-                                    command.Parameters.Add(new SqlParameter("@Platform_Codes", objAcq_Adv_Ancillary_Report.Platform_Codes));
-                                    command.Parameters.Add(new SqlParameter("@Ancillary_Type_Code", objAcq_Adv_Ancillary_Report.Ancillary_Type_Codes));
-                                    command.Parameters.Add(new SqlParameter("@Business_Unit_Code", objAcq_Adv_Ancillary_Report.Business_Unit_Code));
-                                    command.Parameters.Add(new SqlParameter("@IncludeExpired", objAcq_Adv_Ancillary_Report.IncludeExpired));
+                                    command.Parameters.Add(new SqlParameter("@Agreement_No", ""));
+                                    command.Parameters.Add(new SqlParameter("@Title_Codes", "8040"));//604,25489
+                                    command.Parameters.Add(new SqlParameter("@Platform_Codes", ""));
+                                    command.Parameters.Add(new SqlParameter("@Ancillary_Type_Code", "1,2,5,6,7,8,9,10,11"));
+                                    command.Parameters.Add(new SqlParameter("@Business_Unit_Code", 1));
+                                    command.Parameters.Add(new SqlParameter("@IncludeExpired", "N"));
 
                                     connection.Open();
+                                    command.CommandTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["EF_TimeOut"].ToString());
                                     command.ExecuteNonQuery();
 
                                     Error.WriteLog_Conditional("STEP 1 A : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : FINISHED running procedure");
@@ -141,7 +142,7 @@ namespace PAConsole
                 foreach (DataColumn col in dt.Columns)
                 {
                     string CellValue = row[col.ColumnName].ToString();
-                    if (col.ColumnName != "Agreement_No" && col.ColumnName != "Title" && col.ColumnName != "Title_Type" && col.ColumnName != "Ancillary_Type" && col.ColumnName != "Duration(Sec)" && col.ColumnName != "Period(Day)" && col.ColumnName != "Remarks")
+                    if (col.ColumnName != "Agreement No" && col.ColumnName != "Title" && col.ColumnName != "Title Type" && col.ColumnName != "Ancillary Type" && col.ColumnName != "Duration(Sec)" && col.ColumnName != "Period(Day)" && col.ColumnName != "Remarks")
                     {
                         if (CellValue == col.ColumnName)
                         {
@@ -158,7 +159,7 @@ namespace PAConsole
             }
             dt.AcceptChanges();
 
-            int Acq_Adv_Ancillary_Report_Code = objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
+            int Acq_Adv_Ancillary_Report_Code = 3;// objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
             try
             {
 
@@ -199,11 +200,14 @@ namespace PAConsole
                         }
                     }
                     int Erow = 2;
-                    int Alltcnt = 0, Agreemntcnt = 0, Titlecnt = 0, TitleTypecnt = 0, rowNo = 2;
+                    int Alltcnt = 0, Agreemntcnt = 0, Titlecnt = 0, TitleTypecnt = 0, AgrowNo = 2, TitrowNo = 2 ,TitTypeRowNo = 2;
+                    int TotalRowCnt = dt.Rows.Count;
+                    int currentRowCnt = 1;
                     foreach (DataRow row in dt.Rows)
                     {
                         int Ecolumn = 1;
-
+                     
+                        
                         foreach (DataColumn col in dt.Columns)
                         {
                             if (Erow == 2 && Ecolumn == 1)
@@ -216,36 +220,36 @@ namespace PAConsole
                             }
                             if (Erow > 2)
                             {
-                                if (col.ColumnName == "Agreement_No" || col.ColumnName == "Title" || col.ColumnName == "Title_Type")
+                                if (col.ColumnName == "Agreement No" || col.ColumnName == "Title" || col.ColumnName == "Title Type")
                                 {
                                     string firstCellValue = "";
                                     string secondCellValue = "";
-                                    if(col.ColumnName == "Agreement_No")
+                                    if(col.ColumnName == "Agreement No")
                                     {
-                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn + 1].Value.ToString();
-                                        secondCellValue = row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
+                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString();//sheet.Cells[(Erow - 1), Ecolumn + 1].Value.ToString();
+                                        secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();//row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
                                     else if(col.ColumnName == "Title")
                                     {
                                         firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString();
                                         secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
-                                    else if(col.ColumnName == "Title_Type")
+                                    else if(col.ColumnName == "Title Type")
                                     {
-                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn - 1].Value.ToString();
-                                        secondCellValue = row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
+                                        firstCellValue = sheet.Cells[(Erow - 1), Ecolumn].Value.ToString(); //sheet.Cells[(Erow - 1), Ecolumn - 1].Value.ToString();
+                                        secondCellValue = sheet.Cells[Erow, Ecolumn].Value.ToString(); //row.ItemArray[1].ToString(); //sheet.Cells[Erow, Ecolumn].Value.ToString();
                                     }
 
                                     if (firstCellValue == secondCellValue)
                                     {
                                         Alltcnt++;
-                                        if (col.ColumnName == "Agreement_No")
+                                        if (col.ColumnName == "Agreement No")
                                             Agreemntcnt++;
 
                                         if (col.ColumnName == "Title")
                                             Titlecnt++;
 
-                                        if (col.ColumnName == "Title_Type")
+                                        if (col.ColumnName == "Title Type")
                                             TitleTypecnt++;
 
                                         //sheet.Cells["A1:A2"].Merge = true;
@@ -254,20 +258,32 @@ namespace PAConsole
                                     {
                                         //Alltcnt = 1;
                                         //rowNo = Erow;
-                                        if (col.ColumnName == "Agreement_No")
+                                        if (col.ColumnName == "Agreement No")
                                         {
+                                            if (Agreemntcnt > 0 && col.ColumnName == "Agreement No")
+                                            {
+                                                sheet.Cells[AgrowNo, Ecolumn, (Agreemntcnt + (AgrowNo)), Ecolumn].Merge = true;
+                                            }
                                             Agreemntcnt = 0;
-                                            rowNo = Erow;
+                                            AgrowNo = Erow;
                                         }
                                         if (col.ColumnName == "Title")
                                         {
+                                            if (Titlecnt > 0 && col.ColumnName == "Title")
+                                            {
+                                                sheet.Cells[TitrowNo, Ecolumn, (Titlecnt + (TitrowNo)), Ecolumn].Merge = true;
+                                            }
                                             Titlecnt = 0;
-                                            rowNo = Erow;
+                                            TitrowNo = Erow;
                                         }
-                                        if (col.ColumnName == "Title_Type")
+                                        if (col.ColumnName == "Title Type")
                                         {
+                                            if (TitleTypecnt > 0 && col.ColumnName == "Title Type")
+                                            {
+                                                sheet.Cells[TitTypeRowNo, Ecolumn, (TitleTypecnt + (TitTypeRowNo)), Ecolumn].Merge = true;
+                                            }
                                             TitleTypecnt = 0;
-                                            rowNo = Erow;
+                                            TitTypeRowNo = Erow;
                                         }
                                     }
 
@@ -275,22 +291,26 @@ namespace PAConsole
                                     //{
                                     //    sheet.Cells[rowNo, Ecolumn, (Alltcnt + (rowNo)), Ecolumn].Merge = true;
                                     //}
-                                    if (Agreemntcnt > 0 && col.ColumnName == "Agreement_No")
+                                    if (TotalRowCnt == currentRowCnt)
                                     {
-                                        sheet.Cells[rowNo, Ecolumn, (Agreemntcnt + (rowNo)), Ecolumn].Merge = true;
-                                    }
-                                    if (Titlecnt > 0 && col.ColumnName == "Title")
-                                    {
-                                        sheet.Cells[rowNo, Ecolumn, (Titlecnt + (rowNo)), Ecolumn].Merge = true;
-                                    }
-                                    if (TitleTypecnt > 0 && col.ColumnName == "Title_Type")
-                                    {
-                                        sheet.Cells[rowNo, Ecolumn, (TitleTypecnt + (rowNo)), Ecolumn].Merge = true;
+                                        if (Agreemntcnt > 0 && col.ColumnName == "Agreement No")
+                                        {
+                                            sheet.Cells[AgrowNo, Ecolumn, (Agreemntcnt + (AgrowNo)), Ecolumn].Merge = true;
+                                        }
+                                        if (Titlecnt > 0 && col.ColumnName == "Title")
+                                        {
+                                            sheet.Cells[TitrowNo, Ecolumn, (Titlecnt + (TitrowNo)), Ecolumn].Merge = true;
+                                        }
+                                        if (TitleTypecnt > 0 && col.ColumnName == "Title Type")
+                                        {
+                                            sheet.Cells[TitTypeRowNo, Ecolumn, (TitleTypecnt + (TitTypeRowNo)), Ecolumn].Merge = true;
+                                        }
                                     }
                                 }
                             }
                             Ecolumn++;
                         }
+                        currentRowCnt++;
                         Erow++;
                     }
 
@@ -304,7 +324,7 @@ namespace PAConsole
                         sheet.Cells[1, i].Style.Font.Name = "Calibri";
                         sheet.Cells[1, i].Style.Fill.PatternType = ExcelFillStyle.Solid;
 
-                        if (dt.Columns[i - 1].ColumnName != "Agreement_No" && dt.Columns[i - 1].ColumnName != "Title" && dt.Columns[i - 1].ColumnName != "Title_Type" && dt.Columns[i - 1].ColumnName != "Ancillary_Type" && dt.Columns[i - 1].ColumnName != "Duration(Sec)" && dt.Columns[i - 1].ColumnName != "Period(Day)" && dt.Columns[i - 1].ColumnName != "Remarks")
+                        if (dt.Columns[i - 1].ColumnName != "Agreement No" && dt.Columns[i - 1].ColumnName != "Title" && dt.Columns[i - 1].ColumnName != "Title Type" && dt.Columns[i - 1].ColumnName != "AncillaryT ype" && dt.Columns[i - 1].ColumnName != "Duration(Sec)" && dt.Columns[i - 1].ColumnName != "Period(Day)" && dt.Columns[i - 1].ColumnName != "Remarks")
                         {
                             sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#565656"));
                             sheet.Cells[1, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
