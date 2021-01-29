@@ -1188,8 +1188,8 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (fileType == "T")
                     {
-                        List<USP_DM_Title_PII> lstDMMapping = new List<USP_DM_Title_PII>();
-                        lstDMMapping = new USP_Service(objLoginEntity.ConnectionStringName).USP_DM_Title_PII(lst_DM_Import_UDT, DM_Master_Import_Code, objLoginUser.Users_Code).ToList();
+                        List<USP_Title_Import_Utility_PII> lstDMMapping = new List<USP_Title_Import_Utility_PII>();
+                        lstDMMapping = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PII(lst_DM_Import_UDT, DM_Master_Import_Code, objLoginUser.Users_Code).ToList();
                         Session["lst_DM_Import_UDT"] = null;
                         if (lstDMMapping.Count == 0)
                         {
