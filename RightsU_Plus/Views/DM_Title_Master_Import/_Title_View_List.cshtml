@@ -8,17 +8,10 @@
     }
 }
 <script>
+
     $(document).ready(function () {
-        debugger
         $('#lblTotal').text('Total Records : ' + @ViewBag.RecordCount);
     });
-        $('.expandable').expander({
-            slicePoint: 22,
-            expandPrefix: '',
-            expandText: '...@objMessageKey.readmore',
-            collapseTimer: 0,
-            userCollapseText: '<span>[^]</span>'
-        });
 
 </script>
 <style>
@@ -109,97 +102,101 @@
                         Count = Count + 1;
                         var type = item.GetType();
                         var properties = type.GetProperties();
-            <tr>
-                @foreach (var property in properties)
-                {
-                    if (i > 2)
-                    {
-                        if (Count == 1)
+                    <tr>
+                        @foreach (var property in properties)
                         {
-                            if (property.GetValue(item, null) != null && property.GetValue(item, null).ToString() == "Title Name")
+                            if (i > 2)
                             {
-                                locTitleName = i;
-                            }
-                            if (property.GetValue(item, null) != null && property.Name != "Is_Ignore")
-                            {
-                                <th style="width:8%;font-weight:900;"> @property.GetValue(item, null)</th>
-                            }
-                            else if (property.Name == "Record_Status")
-                            {
-                                <th style="width:8%;font-weight:900;">Record Status</th>
-                            }
-                            else if (property.Name == "Error_Message")
-                            {
-                                <th style="width:8%;font-weight:900;">Error Message</th>
-                            }
-                        }
-                        else
-                        {
-                            if (property.GetValue(item, null) != null && property.Name != "Is_Ignore")
-                            {
-                                if (locTitleName == i)
+                                if (Count == 1)
                                 {
-                                    if (@property.GetValue(item, null) != "")
+                                    if (property.GetValue(item, null) != null && property.GetValue(item, null).ToString() == "Title Name")
                                     {
-                                        <td style="width:16%;color:blue;" class="Highlight" onclick="BindMappingPopUp('@item.DM_Title_Import_Utility_Data_Code')" onmouseover="this.style.cursor='pointer';">
-                                            @property.GetValue(item, null)
-                                        </td>
+                                        locTitleName = i;
                                     }
-                                    else
+                                    if (property.GetValue(item, null) != null && property.Name != "Is_Ignore")
                                     {
-                                        <td></td>
+                                        <th style="width:8%;font-weight:900;"> @property.GetValue(item, null)</th>
                                     }
-
+                                    else if (property.Name == "Record_Status")
+                                    {
+                                        <th style="width:8%;font-weight:900;">Record Status</th>
+                                    }
+                                    else if (property.Name == "Error_Message")
+                                    {
+                                        <th style="width:8%;font-weight:900;">Error Message</th>
+                                    }
                                 }
                                 else
                                 {
-                                    string temp;
-                                    if (property.Name.ToUpper() == "RECORD_STATUS")
+                                    if (property.GetValue(item, null) != null && property.Name != "Is_Ignore")
                                     {
-                                        temp = property.GetValue(item, null).ToString();
-                                        switch (temp)
+                                        if (locTitleName == i)
                                         {
-                                            case "R":
-                                                <td style="width:16%;">Resolve Conflict</td>
-                                                break;
-                                            case "C":
-                                                <td style="width:16%;">Success</td>
-                                                break;
-                                            case "E":
-                                                <td style="width:16%;">Error</td>
-                                                break;
-                                            case "N":
-                                                <td style="width:16%;">New Record</td>
-                                                break;
-                                            default:
-                                                <td style="width:16%;"></td>
-                                                break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (property.Name == "Col1")
-                                        {
-                                            <td style="width:16%;" align="center"> @property.GetValue(item, null)</td>
+                                            if (@property.GetValue(item, null) != "")
+                                            {
+                                                <td style="width:16%;color:blue;" class="Highlight" onclick="BindMappingPopUp('@item.DM_Title_Import_Utility_Data_Code')" onmouseover="this.style.cursor='pointer';">
+                                                    @property.GetValue(item, null)
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+
                                         }
                                         else
                                         {
-                                            <td style="width:16%;"> @property.GetValue(item, null)</td>
+                                            string temp;
+                                            if (property.Name.ToUpper() == "RECORD_STATUS")
+                                            {
+                                                temp = property.GetValue(item, null).ToString();
+                                                switch (temp)
+                                                {
+                                                    case "R":
+                                                        <td style="width:16%;">Resolve Conflict</td>
+                                                        break;
+                                                    case "C":
+                                                        <td style="width:16%;">Success</td>
+                                                        break;
+                                                    case "E":
+                                                        <td style="width:16%;">Error</td>
+                                                        break;
+                                                    case "N":
+                                                        <td style="width:16%;">New Record</td>
+                                                        break;
+                                                    default:
+                                                        <td style="width:16%;"></td>
+                                                        break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (property.Name == "Col1")
+                                                {
+                                                    <td style="width:16%;" align="center"> @property.GetValue(item, null)</td>
+                                                }
+                                                else if (property.Name == "Error_Message")
+                                                {
+                                                    <td style="width:16%;">  @property.GetValue(item, null) </td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="width:16%;"> @property.GetValue(item, null)</td>
+                                                }
+                                            }
+                                            @*<td style="width:16%;"> @property.Name</td>*@
                                         }
                                     }
-                                    @*<td style="width:16%;"> @property.Name</td>*@
+                                    else if (property.Name.ToUpper() == "ERROR_MESSAGE" && property.GetValue(item, null) == null)
+                                    {
+                                        <td style="width:16%;"></td>
+                                    }
                                 }
                             }
-                            else if (property.Name.ToUpper() == "ERROR_MESSAGE" && property.GetValue(item, null) == null)
-                            {
-                                <td style="width:16%;"></td>
-                            }
+                            i++;
                         }
-                    }
-                    i++;
-                }
 
-            </tr>
+                    </tr>
                 }
                 }
 
@@ -212,8 +209,11 @@
 
     <script>
         $(document).ready(function () {
+            debugger
+            initializeExpander();
             addNumeric();
         });
+
         function addNumeric() {
             $(".pagingSize").numeric({
                 allowMinus: false,
@@ -297,4 +297,13 @@
                 IsCall = 'Y';
 
         }
+    </script>
+    <script>
+      $('.expand_ErrorMsg').expander({
+        slicePoint: 50,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
     </script>
