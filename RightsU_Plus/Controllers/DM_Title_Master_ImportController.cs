@@ -1681,13 +1681,16 @@ namespace RightsU_Plus.Controllers
         public JsonResult GetTitleFileImportStatus(int dealCode)
         {
             string recordStatus = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.DM_Master_Import_Code == dealCode).Select(s => s.Status).FirstOrDefault();
-            double TotalCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode).Count();
-            double SuccessCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "C").Count();
-            double ConflictCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "N" && (x.Record_Status == "R")).Count();
-            double IgnoreCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Is_Ignore == "Y").Count();
-            double WaitingCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "N" && x.Is_Ignore != "Y").Count();
 
-            double ErrorCount = new RightsU_BLL.DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "E").Count();
+            List<DM_Title_Import_Utility_Data> lstTIU = new DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName)
+                                    .SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Col1 != "Excel Sr. No").ToList();
+            
+            double TotalCount = lstTIU.Count();
+            double SuccessCount =   lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "C").Count();
+            double ConflictCount =  lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Is_Ignore ?? "") == "N" && (x.Record_Status == "R")).Count();
+            double IgnoreCount =    lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Is_Ignore ?? "") == "Y").Count();
+            double WaitingCount =   lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Record_Status ?? "") == "" && (x.Is_Ignore ?? "") != "Y").Count();
+            double ErrorCount = lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "E").Count();
 
             //double div = @MessageCount / @totalMessageCount;
             //double quotient = Convert.ToDouble(div);
