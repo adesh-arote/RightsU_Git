@@ -1377,11 +1377,14 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Digital</Value>
+                                  <Value>Self Consumption</Value>
                                   <Style>
+                                    <FontStyle>Normal</FontStyle>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>

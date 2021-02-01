@@ -114,6 +114,10 @@
                         {
                             <a title="There is some issue. Contact the administrator" class="glyphicon glyphicon-exclamation-sign" style="cursor: pointer;"></a>
                         }
+                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDownload.ToString() + "~"))
+                        {
+                            <a title="Download File" class="glyphicon glyphicon-save" style="cursor: pointer;" onclick="ValidateDownload(@item.DM_Master_Import_Code)"></a>
+                        }
                         <img id="imgLoading_@item.DM_Master_Import_Code" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
 
                     </td>

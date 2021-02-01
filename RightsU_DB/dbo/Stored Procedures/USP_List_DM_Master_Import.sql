@@ -21,18 +21,41 @@ BEGIN
 		DM_Master_Import_Code INT,  
 		RowId VARCHAR(200)
 	);  
-	SET @SqlPageNo = '  
-		WITH Y AS   
-		(  
-			SELECT ISNULL(DM.DM_Master_Import_Code, 0) AS DM_Master_Import_Code, RowId = ROW_NUMBER() OVER (ORDER BY DM.DM_Master_Import_Code desc)
-			FROM DM_Master_Import DM  
-			Where 1= 1  '+@StrSearch+'  
-			GROUP BY DM.DM_Master_Import_Code  
-		)  
-		INSERT INTO #Temp Select DM_Master_Import_Code,RowId From Y'  
-  
+
+		DECLARE @Is_Advance_Title_Import NVARCHAR(MAX) = ''
+		select @Is_Advance_Title_Import =  Parameter_Value from system_parameter_new  where parameter_name = 'Is_Advance_Title_Import'
+
+		IF(@Is_Advance_Title_Import = 'N')
+		BEGIN
+				SET @SqlPageNo = '  
+				WITH Y AS   
+				(  
+					SELECT ISNULL(DM.DM_Master_Import_Code, 0) AS DM_Master_Import_Code, RowId = ROW_NUMBER() OVER (ORDER BY DM.DM_Master_Import_Code desc)
+					FROM DM_Master_Import DM  
+					Where  DM.DM_Master_Import_Code NOT IN (
+						 SELECT DISTINCT DM_Master_Import_Code FROM DM_TITLE_IMPORT_Utility_data
+						) AND 1= 1  '+@StrSearch+'  
+					GROUP BY DM.DM_Master_Import_Code  
+				)  
+				INSERT INTO #Temp Select DM_Master_Import_Code,RowId From Y'  
+		END
+		ELSE
+		BEGIN
+				SET @SqlPageNo = '  
+				WITH Y AS   
+				(  
+					SELECT ISNULL(DM.DM_Master_Import_Code, 0) AS DM_Master_Import_Code, RowId = ROW_NUMBER() OVER (ORDER BY DM.DM_Master_Import_Code desc)
+					FROM DM_Master_Import DM  
+					INNER JOIN DM_Title_Import_Utility_DATA B ON B.DM_Master_Import_Code = DM.DM_Master_Import_Code
+					Where 1= 1  '+@StrSearch+'  
+					GROUP BY DM.DM_Master_Import_Code  
+				)  
+				INSERT INTO #Temp Select DM_Master_Import_Code,RowId From Y'  
+		END
+
 		PRINT @SqlPageNo  
 		EXEC(@SqlPageNo)  
+
 		SELECT @RecordCount = ISNULL(COUNT(DM_Master_Import_Code),0) FROM #Temp  
   
 	IF(@IsPaging = 'Y')  
@@ -74,24 +97,48 @@ BEGIN
 	END
 	ELSE IF(@FileType= 'T')
 	BEGIN 
-	
-		UPDATE T SET T.TotalCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 and DM_Master_Import_Code = T.DM_Master_Import_Code)
-		FROM #Temp T
+		
+		IF(@Is_Advance_Title_Import = 'N')
+		BEGIN
+			UPDATE T SET T.TotalCount = (SELECT COUNT(*) FROM DM_Title WHERE DM_Master_Import_Code = T.DM_Master_Import_Code)
+			FROM #Temp T
 
-		UPDATE T SET T.SuccessCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'C')
-		FROM #Temp T
+			UPDATE T SET T.SuccessCount = (SELECT COUNT(*) FROM DM_Title WHERE DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'C')
+			FROM #Temp T
 
-		UPDATE T SET T.ConflictCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'R' AND Is_Ignore ='N')
-		FROM #Temp T
+			UPDATE T SET T.ConflictCount = (SELECT COUNT(*) FROM DM_Title WHERE DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'R' AND Is_Ignore ='N')
+			FROM #Temp T
 
-		UPDATE T SET T.IgnoreCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Is_Ignore = 'Y')
-		FROM #Temp T
+			UPDATE T SET T.IgnoreCount = (SELECT COUNT(*) FROM DM_Title WHERE DM_Master_Import_Code = T.DM_Master_Import_Code AND Is_Ignore = 'Y')
+			FROM #Temp T
 
-		UPDATE T SET T.ErrorCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'E' AND Is_Ignore <> 'Y')
-		FROM #Temp T
+			UPDATE T SET T.ErrorCount = (SELECT COUNT(*) FROM DM_Title WHERE DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'E')
+			FROM #Temp T
 
-		UPDATE T SET T.WaitingCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'N' AND Is_Ignore <> 'Y')
-		FROM #Temp T
+			UPDATE T SET T.WaitingCount = (SELECT COUNT(*) FROM DM_Title WHERE DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'N' AND Is_Ignore <> 'Y')
+			FROM #Temp T
+		END
+		ELSE
+		BEGIN
+			UPDATE T SET T.TotalCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 and DM_Master_Import_Code = T.DM_Master_Import_Code)
+			FROM #Temp T
+
+			UPDATE T SET T.SuccessCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'C')
+			FROM #Temp T
+
+			UPDATE T SET T.ConflictCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'R' AND ISNULL(Is_Ignore,'') ='N')
+			FROM #Temp T
+
+			UPDATE T SET T.IgnoreCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND ISNULL(Is_Ignore,'') = 'Y')
+			FROM #Temp T
+
+			UPDATE T SET T.ErrorCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND Record_Status = 'E' AND ISNULL(Is_Ignore,'') <> 'Y')
+			FROM #Temp T
+
+			UPDATE T SET T.WaitingCount = (SELECT COUNT(*) FROM DM_Title_Import_Utility_Data WHERE ISNUMERIC(Col1) = 1 AND DM_Master_Import_Code = T.DM_Master_Import_Code AND ISNULL(Record_Status,'') = '' AND ISNULL(Is_Ignore,'') <> 'Y')
+			FROM #Temp T
+		END
+		
 	END
 	ELSE
 	BEGIN
