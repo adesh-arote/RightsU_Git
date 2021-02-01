@@ -263,7 +263,7 @@ namespace RightsU_Plus.Controllers
                             message = "Please upload Excel Sheet named as " + sheetName.Trim() + " only with .xlsx extension.";
                         }
                         string strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
-                        string fullpathname = fullPath + strActualFileNameWithDate; ;
+                        string fullpathname = fullPath + strActualFileNameWithDate; 
                         PostedFile.SaveAs(fullpathname);
                         OleDbConnection cn;
                         ds = new DataSet();
