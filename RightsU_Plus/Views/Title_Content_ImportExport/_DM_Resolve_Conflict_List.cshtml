@@ -338,8 +338,14 @@
                 $('.txtMapped').attr('required', true);
                 return false;
             }
+            if (mappedName == undefined) {
+                mappedName = $('#lblMappedName_' + masterLogCode).text();
+            }
             var mappedCode = $(value).find('input[name="MappedCode"]').val();
-           
+
+            if (mappedCode == "") {
+                mappedCode = $('#hdnMappedCode_' + masterLogCode).val();
+            }
             lstSystemMapLog.push({
                 Mapped_Name: mappedName, Mapped_Code: mappedCode,  DM_Master_Log_Code: masterLogCode
             });
