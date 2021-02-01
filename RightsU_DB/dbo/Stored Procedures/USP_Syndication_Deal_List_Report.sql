@@ -1,5 +1,4 @@
-﻿
-CREATE Procedure [dbo].[USP_Syndication_Deal_List_Report]
+﻿CREATE Procedure [dbo].[USP_Syndication_Deal_List_Report]
 (
 	@Agreement_No Varchar(100), 
 	@Start_Date Varchar(30), 
@@ -310,10 +309,10 @@ BEGIN
 			, SDR.Is_Tentative, SDR.Is_ROFR, SDR.ROFR_Date AS First_Refusal_Date, SDR.Restriction_Remarks AS Restriction_Remarks
 			, [dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](SDR.Syn_Deal_Rights_Code, 'SR','P') Holdback_Platform
 			, [dbo].[UFN_Get_Holdback_Platform_Name_With_Comments](SDR.Syn_Deal_Rights_Code, 'SR','R') Holdback_Right
-			, [dbo].[UFN_Get_Blackout_Period](SDR.Syn_Deal_Rights_Code, 'SR') Blackout
+			--, [dbo].[UFN_Get_Blackout_Period](SDR.Syn_Deal_Rights_Code, 'SR') Blackout
 			--,'' as Holdback_Platform
 			--,'' as Holdback_Right
-			--,'' as Blackout
+			,'' as Blackout
 			, SD.Remarks AS General_Remark, SD.Rights_Remarks AS Rights_Remarks, SD.Payment_Terms_Conditions AS Payment_Remarks, SDR.Right_Type
 			, CASE SDR.Right_Type
 				WHEN 'Y' THEN [dbo].[UFN_Get_Rights_Term](SDR.Right_Start_Date, Right_End_Date, Term) 

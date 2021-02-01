@@ -1,11 +1,11 @@
-﻿CREATE PROCEDURE USP_Title_Import_Utility_PIII
+﻿CREATE PROCEDURE [dbo].[USP_Title_Import_Utility_PIII]
 (
 	@DM_Master_Import_Code INT
 )
 AS 
 BEGIN
 	SET NOCOUNT ON
-	--DECLARE @DM_Master_Import_Code INT = 94
+	--DECLARE @DM_Master_Import_Code INT = 49
 	DECLARE @ISError CHAR(1) = 'N', @Error_Message NVARCHAR(MAX) = '', @ExcelCnt INT = 0
 
 	IF(OBJECT_ID('tempdb..#TempTitle') IS NOT NULL) DROP TABLE #TempTitle
@@ -16,6 +16,7 @@ BEGIN
 	IF(OBJECT_ID('tempdb..#TempExtentedMetaData') IS NOT NULL) DROP TABLE #TempExtentedMetaData
 	IF(OBJECT_ID('tempdb..#TempResolveConflict') IS NOT NULL) DROP TABLE #TempResolveConflict
 	IF(OBJECT_ID('tempdb..#TempDuplicateRows') IS NOT NULL) DROP TABLE #TempDuplicateRows
+	IF(OBJECT_ID('tempdb..#TempDupTitleName') IS NOT NULL) DROP TABLE #TempDupTitleName
 	
 	CREATE TABLE #TempTitle(
 		DM_Master_Import_Code INT,
@@ -165,6 +166,16 @@ BEGIN
 		HeaderName NVARCHAR(MAX),
 		EMDName NVARCHAR(MAX),
 		EMDCode INT
+	)
+
+	CREATE TABLE #TempDupTitleName
+	(
+		ExcelSrNo NVARCHAR(MAX),
+		Title_Name NVARCHAR(MAX),
+		Title_Code INT,
+		Title_Type NVARCHAR(MAX),
+		Deal_Type_Code INT,
+		IsError CHAR(1)
 	)
 
 	BEGIN TRY
@@ -394,19 +405,45 @@ BEGIN
 		CLOSE db_cursor_Mandatory  
 		DEALLOCATE db_cursor_Mandatory 
 	END
-
+	
 	BEGIN
 		PRINT 'Deleting IsError = Y and updating record status amd error message AND deleting existing title'
+
+		INSERT INTO #TempDupTitleName (ExcelSrNo, Title_Name)
+		SELECT ExcelSrNo, TitleData FROM #TempTitleUnPivot WHERE ColumnHeader = 'Title Name' AND IsError <> 'Y'
+
+		UPDATE A SET A.Title_Type = B.TitleData
+		FROM #TempDupTitleName A
+		INNER JOIN #TempTitleUnPivot B ON A.ExcelSrNo = B.ExcelSrNo
+		WHERE B.ColumnHeader = 'Title Type'
+
+		UPDATE A SET A.Title_Code = B.Title_Code
+		FROM #TempDupTitleName A
+		INNER JOIN Title B ON A.Title_Name = B.Title_Name
+
+		UPDATE A SET A.Deal_Type_Code = B.Deal_Type_Code
+		FROM #TempDupTitleName A
+		INNER JOIN Deal_Type B ON A.Title_Type = B.Deal_Type_Name
+		WHERE  B.Is_Active = 'Y' AND Deal_Or_Title LIKE '%T%'
+
+		UPDATE A SET A.Deal_Type_Code = B.Master_Code
+		FROM #TempDupTitleName A
+		INNER JOIN DM_Master_Log B ON A.Title_Type = B.Name
+		WHERE Master_Type = 'TT' AND Is_Ignore = 'N' AND B.DM_Master_Import_Code = @DM_Master_Import_Code
+	
+		UPDATE A SET A.IsError = 'Y'
+		FROM #TempDupTitleName A
+		inner join Title B ON A.Title_Name = B.Title_Name AND A.Deal_Type_Code = B.Deal_Type_Code
+
 
 		UPDATE A SET A.Record_Status = 'E', Error_Message= ISNULL(Error_Message,'') + 'Title Name Already Existed'--, Is_Ignore = 'Y'
 		FROM DM_Title_Import_Utility_Data A
 		WHERE A.DM_Master_Import_Code =  @DM_Master_Import_Code 
 		AND A.Col1 NOT LIKE '%Sr%' and A.Col1 COLLATE Latin1_General_CI_AI IN 
 		(
-			SELECT DISTINCT ExcelSrNo FROM #TempTitleUnPivot WHERE ColumnHeader = 'Title Name'
-			AND TitleData COLLATE Latin1_General_CI_AI IN (SELECT Title_Name FROM Title)
+			SELECT ExcelSrNo FROM #TempDupTitleName where ISNULL(IsError, '') = 'Y'
 		)
-
+	
 		UPDATE A SET A.Record_Status = 'E', Error_Message= ISNULL(Error_Message,'') + B.ErrorMessage --, Is_Ignore = 'Y'
 		FROM DM_Title_Import_Utility_Data A
 		INNER JOIN (
@@ -417,8 +454,7 @@ BEGIN
 
 		DELETE FROM #TempTitleUnPivot WHERE ExcelSrNo IN
 		(
-			SELECT DISTINCT ExcelSrNo FROM #TempTitleUnPivot WHERE ColumnHeader = 'Title Name'
-			AND TitleData COLLATE Latin1_General_CI_AI IN (SELECT Title_Name FROM Title)
+			SELECT ExcelSrNo FROM #TempDupTitleName where ISNULL(IsError, '') = 'Y'
 		)
 
 		DELETE FROM #TempTitleUnPivot WHERE IsError = 'Y'
@@ -474,7 +510,7 @@ BEGIN
 		CLOSE db_cursor_Reference  
 		DEALLOCATE db_cursor_Reference 
 	END
-
+	
 	BEGIN
 		PRINT 'Referene check where Is_Multiple = ''Y'''
 
