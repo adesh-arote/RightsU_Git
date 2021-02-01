@@ -1450,6 +1450,7 @@
     <Build Include="dbo\Dev_Query\DB_Script_15165.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_PIII.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_RCData.sql" />
+    <Build Include="dbo\Stored Procedures\USPMHMovieAlbumMusicDetailsList.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
