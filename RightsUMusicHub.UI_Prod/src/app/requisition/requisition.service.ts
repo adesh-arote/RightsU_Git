@@ -130,4 +130,14 @@ export class RequisitionService extends BaseService {
     return super.post('RequisitionModule/GetNotificationHeader',obj);
   }
 
+  public ExportConsumptionDetailList(obj):Observable<any>{
+    let body=JSON.stringify(obj);
+    return super.post('RequisitionModule/ExportConsumptionDetailList',obj);
+  }
+
+  public ExportMovieAlbumMusicDetailsList(obj):Observable<any>{
+    let body=JSON.stringify(obj);
+    return super.post('RequisitionModule/ExportMovieAlbumMusicDetailsList',obj);
+  }
+
 }

@@ -232,6 +232,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.FilterbyStatus = FilterByStatus;
             ViewBag.PageNoBack = pageNo == 0 ? 0 : pageNo - 1;
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForContent);
+            ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/Title_Content_ImportExport/Music_Program_Import.cshtml");
         }
         public PartialViewResult UploadTitle(HttpPostedFileBase InputFile, string txtpageSize, string FilterBy)
@@ -262,7 +263,7 @@ namespace RightsU_Plus.Controllers
                             message = "Please upload Excel Sheet named as " + sheetName.Trim() + " only with .xlsx extension.";
                         }
                         string strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
-                        string fullpathname = fullPath + strActualFileNameWithDate; ;
+                        string fullpathname = fullPath + strActualFileNameWithDate; 
                         PostedFile.SaveAs(fullpathname);
                         OleDbConnection cn;
                         ds = new DataSet();
@@ -285,7 +286,7 @@ namespace RightsU_Plus.Controllers
                         finally
                         {
                             //Always delete uploaded excel file from folder.
-                            System.IO.File.Delete(fullpathname.Trim());
+                            //System.IO.File.Delete(fullpathname.Trim());
                         }
                         var count = ds.Tables.Count;
                         if (count == 0)
@@ -346,7 +347,7 @@ namespace RightsU_Plus.Controllers
                                         dynamic resultSet;
                                         List<Content_Music_Link_UDT> lst_Content_Music_Link_UDT = new List<Content_Music_Link_UDT>();
                                         obj_DM_Master_Import.File_Name = PostedFile.FileName;
-                                        obj_DM_Master_Import.System_File_Name = PostedFile.FileName;
+                                        obj_DM_Master_Import.System_File_Name = strActualFileNameWithDate;// PostedFile.FileName;
                                         obj_DM_Master_Import.Upoaded_By = Convert.ToInt32(objLoginUser.Users_Code);
                                         obj_DM_Master_Import.Uploaded_Date = DateTime.Now;
                                         obj_DM_Master_Import.Action_By = objLoginUser.Users_Code;
@@ -539,6 +540,56 @@ namespace RightsU_Plus.Controllers
         //    //obj_Dictionary.Add("Message", message);
         //    //return Json(obj_Dictionary);
         //}
+        public JsonResult ValidateDownload(int ImportLogCode)
+        {
+            string FileName = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).GetById(ImportLogCode).System_File_Name.ToString();
+            string fullPath = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadFilePath"]);
+            string path = fullPath + FileName;
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)
+            {
+                var obj = new
+                {
+                    path = path
+                };
+                return Json(obj);
+            }
+            else
+            {
+                var obj = new
+                {
+                    path = ""
+                };
+                return Json(obj);
+            }
+        }
+        public void Download(int ImportLogCode)
+        {
+            string FileName = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).GetById(ImportLogCode).System_File_Name.ToString();
+            string fullPath = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadFilePath"]);
+            string path = fullPath + FileName;
+            FileInfo file = new FileInfo(path);
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            if (file.Exists)
+            {
+                byte[] bts = System.IO.File.ReadAllBytes(path);
+                Response.Clear();
+                Response.ClearHeaders();
+                Response.AddHeader("Content-Type", "Application/ms-excel");
+                Response.AddHeader("Content-Length", bts.Length.ToString());
+                Response.AddHeader("Content-Disposition", "attachment;   filename=" + FileName);
+                Response.BinaryWrite(bts);
+                Response.Flush();
+                //WebClient client = new WebClient();
+                //Byte[] buffer = client.DownloadData(path);
+                //Response.Clear();
+                //Response.ContentType = "application/ms-excel";
+                //Response.AddHeader("content-disposition", "Attachment;filename=" + fileName);
+                //Response.WriteFile(path);
+                //Response.End();
+
+            }
+        }
         public PartialViewResult PopulateContentGrid(string PgNo = "0", string txtPageSize = "", string FilterBy = "")
 
         {
@@ -571,7 +622,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.FileType = "C";
             ViewBag.RecordCount = RecordCount;
             ViewBag.PageNo = pageNo;
-
+            ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Title_Content_ImportExport/Content_Import_List.cshtml", lst);
         }
         public JsonResult GetFileImportStatus(int dealCode)
@@ -584,7 +635,16 @@ namespace RightsU_Plus.Controllers
             double WaitingCount = new RightsU_BLL.DM_Content_Music_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "N" && x.Is_Ignore != "Y").Count();
 
             double ErrorCount = new RightsU_BLL.DM_Content_Music_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "E").Count();
-
+            string isDownloadRight;
+           
+            if (GetUserModuleRights().Contains("~" + GlobalParams.RightCodeForDownload.ToString() + "~"))
+            {
+                isDownloadRight = "Y";
+            }
+            else
+            {
+                isDownloadRight = "N";
+            }
             //double div = @MessageCount / @totalMessageCount;
             //double quotient = Convert.ToDouble(div);
             double Completion = (SuccessCount / TotalCount) * 100;
@@ -605,7 +665,8 @@ namespace RightsU_Plus.Controllers
                 ErrorCompletion = Convert.ToInt32(ErrorCompletion),
                 ConflictCompletion = Convert.ToInt32(ConflictCompletion),
                 IgnoreCompletion = Convert.ToInt32(IgnoreCompletion),
-                WaitingCompletion = Convert.ToInt32(WaitingCompletion)
+                WaitingCompletion = Convert.ToInt32(WaitingCompletion),
+                isDownloadRight = isDownloadRight
             };
             return Json(obj);
 
@@ -1392,6 +1453,15 @@ namespace RightsU_Plus.Controllers
             objPage_Properties.Status_Search = "";
             objPage_Properties.ErrorMsg_Search = "";
             objPage_Properties.EpisodeNo_Search = "";
+        }
+        private string GetUserModuleRights()
+        {
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string rights = "";
+            if (lstRights.FirstOrDefault() != null)
+                rights = lstRights.FirstOrDefault();
+
+            return rights;
         }
     }
 

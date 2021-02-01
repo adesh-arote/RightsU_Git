@@ -615,7 +615,7 @@ namespace RightsUMusic.API.Controllers
             Return _objRet = new Return();
             try
             {
-                lstConsumptionRequest = (List<USPMHConsumptionRequestList>)obj.GetConsumptionRequestList(objMHRequest, objConsumptionRequestList, out RecordCount);//,objConsumptionRequestList.RecordFor,objConsumptionRequestList.PagingRequired, objConsumptionRequestList.PageSize, objConsumptionRequestList.PageNo,out RecordCount);
+                lstConsumptionRequest = obj.GetConsumptionRequestList(objMHRequest, objConsumptionRequestList, out RecordCount).ToList();//,objConsumptionRequestList.RecordFor,objConsumptionRequestList.PagingRequired, objConsumptionRequestList.PageSize, objConsumptionRequestList.PageNo,out RecordCount);
 
 
                 HttpResponseMessage response;
@@ -801,7 +801,7 @@ namespace RightsUMusic.API.Controllers
             Return _objRet = new Return();
             try
             {
-                lstConsumptionRequest = (List<USPMHConsumptionRequestListDetail>)obj.GetConsumptionRequestListDetail(objMHRequest, objConsumptionRequestList, out RecordCount);//,objConsumptionRequestList.RecordFor,objConsumptionRequestList.PagingRequired, objConsumptionRequestList.PageSize, objConsumptionRequestList.PageNo,out RecordCount);
+                lstConsumptionRequest = obj.GetConsumptionRequestListDetail(objMHRequest, objConsumptionRequestList, out RecordCount).ToList();//,objConsumptionRequestList.RecordFor,objConsumptionRequestList.PagingRequired, objConsumptionRequestList.PageSize, objConsumptionRequestList.PageNo,out RecordCount);
 
 
                 HttpResponseMessage response;
@@ -810,7 +810,7 @@ namespace RightsUMusic.API.Controllers
 
                 var consumptionList = lstConsumptionRequest;
 
-                string Destination = HttpContext.Current.Server.MapPath("~/") + (objConsumptionRequestList.ExportFor == "A" ? "Temp\\AuthorisedReport.xlsx" : "Temp\\ConsumptionRequestList.xlsx");
+                string Destination = HttpContext.Current.Server.MapPath("~/") + (objConsumptionRequestList.ExportFor == "A" ? "Temp\\AuthorisedReport.xlsx" : "Temp\\ConsumptionRequestDetailsList.xlsx");
                 FileInfo OldFile = new FileInfo(HttpContext.Current.Server.MapPath("~/") + "Temp\\Sample1.xlsx");
                 FileInfo newFile = new FileInfo(Destination);
                 string Name = newFile.Name.ToString();
@@ -960,7 +960,7 @@ namespace RightsUMusic.API.Controllers
             Return _objRet = new Return();
             try
             {
-                lstMovieAlbumMusicList = (List<USPMHMovieAlbumMusicList>)obj.GetMovieAlbumMusicList(objMHRequest);
+                lstMovieAlbumMusicList = obj.GetMovieAlbumMusicList(objMHRequest).ToList();
                 HttpResponseMessage response;
                 response = Request.CreateResponse(HttpStatusCode.OK);
                 MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("application/octet-stream");
@@ -1031,6 +1031,175 @@ namespace RightsUMusic.API.Controllers
                     sheet.Cells["C" + (i + 2)].Style.Font.Name = "Calibri";
                     sheet.Cells["D" + (i + 2)].Style.Font.Name = "Calibri";
                     sheet.Cells["E" + (i + 2)].Style.Font.Name = "Calibri";
+
+                    sheet.Cells["B" + (i + 2)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                }
+
+                excelPackage.Workbook.Properties.Title = "PlanIT";
+                excelPackage.Workbook.Properties.Author = "";
+                excelPackage.Workbook.Properties.Comments = "";
+
+                // set some extended property values
+                excelPackage.Workbook.Properties.Company = "";
+
+                // set some custom property values
+                excelPackage.Workbook.Properties.SetCustomPropertyValue("Checked by", "");
+                excelPackage.Workbook.Properties.SetCustomPropertyValue("AssemblyName", "EPPlus");
+                // save our new workbook and we are done!
+                excelPackage.Save();
+
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.Message.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+
+            }
+
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage ExportMovieAlbumMusicDetailsList(MHRequest objMHRequest)
+        {
+            string UserCode = Convert.ToString(this.ActionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
+            UserCode = UserCode.Replace("Bearer ", "").Trim();
+            objMHRequest.UsersCode = Convert.ToInt32(UserCode);
+            List<USPMHMovieAlbumMusicDetailsList> lstMovieAlbumMusicList = new List<USPMHMovieAlbumMusicDetailsList>();
+            Return _objRet = new Return();
+            try
+            {
+                lstMovieAlbumMusicList = obj.GetMovieAlbumMusicDetailsList(objMHRequest).ToList();
+                HttpResponseMessage response;
+                response = Request.CreateResponse(HttpStatusCode.OK);
+                MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("application/octet-stream");
+
+                var movieAlbumMusicList = lstMovieAlbumMusicList;
+                string Destination = objMHRequest.MHRequestTypeCode == 2 ? HttpContext.Current.Server.MapPath("~/") + "Temp\\MusicTrackDetailsList.xlsx" : HttpContext.Current.Server.MapPath("~/") + "Temp\\MovieAlbumDetailsList.xlsx";
+                FileInfo OldFile = new FileInfo(HttpContext.Current.Server.MapPath("~/") + "Temp\\Sample1.xlsx");
+                FileInfo newFile = new FileInfo(Destination);
+                string Name = newFile.Name.ToString();
+                if (newFile.Exists)
+                {
+                    newFile.Delete(); // ensures we create a new workbook
+                    newFile = new FileInfo(Destination);
+                }
+                _objRet.Message = newFile.Name;
+                var excelPackage = new ExcelPackage(newFile, OldFile);
+                var sheet = excelPackage.Workbook.Worksheets["Sheet1"];
+                sheet.Name = "Studio";
+
+                if(objMHRequest.MHRequestTypeCode == 2)
+                {
+                    sheet.Cells[1, 1].Value = "Request #";
+                    sheet.Cells[1, 2].Value = "Req. Music";
+                    sheet.Cells[1, 3].Value = "App. Music";
+                    sheet.Cells[1, 4].Value = "Music Label";
+                    sheet.Cells[1, 5].Value = "Music Album";
+                    sheet.Cells[1, 6].Value = "Create - Map";
+                    sheet.Cells[1, 7].Value = "Status";
+                    sheet.Cells[1, 8].Value = "Requested By";
+                    sheet.Cells[1, 9].Value = "Requested Date";
+                    sheet.Cells[1, 10].Value = "Remarks";
+                }
+                else
+                {
+                    sheet.Cells[1, 1].Value = "Request #";
+                    sheet.Cells[1, 2].Value = "Req. Movie / Album";
+                    sheet.Cells[1, 3].Value = "App. Movie / Album";
+                    sheet.Cells[1, 4].Value = "Movie / Album";
+                    sheet.Cells[1, 5].Value = "Create - Map";
+                    sheet.Cells[1, 6].Value = "Status";
+                    sheet.Cells[1, 7].Value = "Requested By";
+                    sheet.Cells[1, 8].Value = "Requested Date";
+                    sheet.Cells[1, 9].Value = "Remarks";
+                }
+                int n = 9;
+                if (objMHRequest.MHRequestTypeCode == 2)
+                    n = 10;  
+
+                for (int i = 1; i <= n; i++)
+                {
+                    Color colFromHex = System.Drawing.ColorTranslator.FromHtml("#C0C0C0");
+                    sheet.Cells[1, i].Style.Font.Bold = true;
+                    sheet.Cells[1, i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    sheet.Cells[1, i].Style.Border.BorderAround(ExcelBorderStyle.Thin, System.Drawing.Color.Black);
+                    sheet.Cells[1, i].Style.Font.Size = 11;
+                    sheet.Cells[1, i].Style.Font.Name = "Calibri";
+                    sheet.Cells[1, i].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    sheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(colFromHex);
+                    sheet.Cells[1, i].AutoFitColumns();
+
+                }
+
+                ExcelColumn col1 = sheet.Column(1);
+                ExcelColumn col2 = sheet.Column(2);
+                ExcelColumn col3 = sheet.Column(3);
+                ExcelColumn col4 = sheet.Column(4);
+                ExcelColumn col5 = sheet.Column(5);
+                ExcelColumn col6 = sheet.Column(6);
+                ExcelColumn col7 = sheet.Column(7);
+                ExcelColumn col8 = sheet.Column(8);
+                ExcelColumn col9 = sheet.Column(9);
+                ExcelColumn col10 = sheet.Column(10);
+
+                col1.Width = 25;
+                col2.Width = 16;
+                col3.Width = 20;
+                col4.Width = 20;
+                col5.Width = 20;
+                col6.Width = 25;
+                col7.Width = 15;
+                col8.Width = 18;
+                col9.Width = 22;
+                col10.Width = 25;
+
+                for (int i = 0; i < movieAlbumMusicList.Count; i++)
+                {
+                    DateTime dt = Convert.ToDateTime(movieAlbumMusicList[i].RequestDate.ToString());
+                    string RequestedDate = dt.ToString("dd-MMM-yyyy h:mm tt");
+
+                    if (objMHRequest.MHRequestTypeCode == 2)
+                    {
+                        sheet.Cells["A" + (i + 2)].Value = movieAlbumMusicList[i].RequestID;
+                        sheet.Cells["B" + (i + 2)].Value = movieAlbumMusicList[i].RequestedMusicTitleName;
+                        sheet.Cells["C" + (i + 2)].Value = movieAlbumMusicList[i].ApprovedMusicTitleName;
+                        sheet.Cells["D" + (i + 2)].Value = movieAlbumMusicList[i].MusicLabelName; ;
+                        sheet.Cells["E" + (i + 2)].Value = movieAlbumMusicList[i].MusicAlbum;
+                        sheet.Cells["F" + (i + 2)].Value = movieAlbumMusicList[i].CreateMap;
+                        sheet.Cells["G" + (i + 2)].Value = movieAlbumMusicList[i].Status;
+                        sheet.Cells["H" + (i + 2)].Value = movieAlbumMusicList[i].RequestedBy;
+                        sheet.Cells["I" + (i + 2)].Value = RequestedDate; ;
+                        sheet.Cells["J" + (i + 2)].Value = movieAlbumMusicList[i].Remarks;
+                    }
+                    else
+                    {
+                        sheet.Cells["A" + (i + 2)].Value = movieAlbumMusicList[i].RequestID;
+                        sheet.Cells["B" + (i + 2)].Value = movieAlbumMusicList[i].RequestedMusicTitleName;
+                        sheet.Cells["C" + (i + 2)].Value = movieAlbumMusicList[i].ApprovedMusicTitleName;
+                        sheet.Cells["D" + (i + 2)].Value = movieAlbumMusicList[i].MovieAlbum; ;
+                        sheet.Cells["E" + (i + 2)].Value = movieAlbumMusicList[i].CreateMap;
+                        sheet.Cells["F" + (i + 2)].Value = movieAlbumMusicList[i].Status;
+                        sheet.Cells["G" + (i + 2)].Value = movieAlbumMusicList[i].RequestedBy;
+                        sheet.Cells["H" + (i + 2)].Value = RequestedDate;
+                        sheet.Cells["I" + (i + 2)].Value = movieAlbumMusicList[i].Remarks; ;
+                    }
+                    
+                    sheet.Cells["A" + (i + 2)].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    sheet.Cells["A" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["B" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["C" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["D" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["E" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["F" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["G" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["H" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["I" + (i + 2)].Style.Font.Name = "Calibri";
+                    sheet.Cells["J" + (i + 2)].Style.Font.Name = "Calibri";
 
                     sheet.Cells["B" + (i + 2)].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                 }
@@ -1200,7 +1369,7 @@ namespace RightsUMusic.API.Controllers
                     ConsumptionRequestListInput objConsumptionRequestList = new ConsumptionRequestListInput()
                     {
                         RecordFor = "L",
-                        PagingRequired = "Y",
+                        PagingRequired = "N",
                         PageSize = 10,
                         PageNo = 1,
                         RequestID = "",
@@ -1208,7 +1377,10 @@ namespace RightsUMusic.API.Controllers
                         ShowCode = "",
                         StatusCode = "",
                         FromDate = "",
-                        ToDate = ""
+                        ToDate = "",
+                        SortBy = "RequestDate",
+                        Order="DESC"
+                       
                     };
                     lstConsumptionRequest = obj.GetConsumptionRequestList(objMHRequest, objConsumptionRequestList, out RecordCount);
                     Header = lstConsumptionRequest.Where(x => x.RequestCode == objMHRequest.MHRequestCode).Select(x =>

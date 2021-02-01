@@ -1448,6 +1448,7 @@
     <Build Include="dbo\Tables\DM_Title_Resolve_Conflict.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_PIII.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_RCData.sql" />
+    <Build Include="dbo\Stored Procedures\USPMHMovieAlbumMusicDetailsList.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_Schedule.sql" />
   </ItemGroup>
   <ItemGroup>

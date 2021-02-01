@@ -14,7 +14,7 @@
     var URL_SaveMHRequestDetails_List = '@Url.Action("SaveMHRequestDetails_List", "MHRequisition")';
     var URL_FinalMovieMusicApprove = '@Url.Action("FinalMovieMusicApprove", "MHRequisition")';
     var URL_finalConsApprove = '@Url.Action("finalConsApprove", "MHRequisition")';
-    
+
     $(document).ready(function () {
         debugger;
 
@@ -50,12 +50,12 @@
     //    var Val = $(this);
     //    var max = 4000;
     //    var len = $(this).val().length;
-       
+
     //    if (len >= max)
     //        Val.val(Val.val().substring(0, max));
-       
+
     //    $('.charNum').text(Val.val().length.toString() + '/' + max.toString());
-       
+
     //});
 
     jQuery('#txtSpecialInst').on('input', function () {
@@ -91,7 +91,7 @@
         });
     }
     function SetPaging() {
- 
+
         IsCall = 'N';
         var pageNo = parseInt($('#hdnPageNo').val());
         var recordCount = parseInt($('#hdnRecordCount').val());
@@ -327,11 +327,11 @@
         //var atLeastOneIsChecked = $('input[name="chkType"]:checked');
         var atLeastOneIsChecked = $('input[name="chkType"]:not(:disabled):checked')
         var NotChecked = $('input[name="chkType"]:not(:checked)');
-        
+
 
         if (atLeastOneIsChecked.length == 0) {
-                showAlert("E", "Please select atleast one record");
-                return false;
+            showAlert("E", "Please select atleast one record");
+            return false;
         }
         else
         {
@@ -412,15 +412,33 @@
 
     function finalConsApprove(key) {
         debugger;
+        var Is_ApproveRejectYes = 'default';
+        if(key == 'A')
+        {
+            Is_ApproveRejectYes = 'Approve';
+        }
+        else if(key == 'R')
+        {
+            Is_ApproveRejectYes = 'Reject';
+        }
 
+        if(key == 'AYes')
+        {
+            key = 'A';
+            Is_ApproveRejectYes = 'A';
+        }
+        else if(key== 'RYes')
+        {
+            key = 'R';
+            Is_ApproveRejectYes = 'R';
+        }
+        $('#hdnApproveReject').val(key);
         var atLeastOneIsChecked = $('input[name="chkbox"]:not(:disabled):checked')
         if (atLeastOneIsChecked.length == 0) {
             showAlert("E", "Please select atleast one record");
             return false;
         }
         else {
-
-
             SaveMHRequestDetails_List();
             var SpecialInst = $('#txtSpecialInst').val();
             var InternalRmk = $('#txtInternalRmk').val();
@@ -435,7 +453,8 @@
                     SpecialInst: SpecialInst,
                     InternalRmk: InternalRmk,
                     MHRequestCode: MHRequestCode,
-                    key: key
+                    key: key,
+                    Is_ApproveRejectYes: Is_ApproveRejectYes
                 }),
                 async: false,
                 success: function (result) {
@@ -445,10 +464,17 @@
                     else {
                         if (result.Status == "S") {
                             showAlert("S", result.Message);
-                            BindPartialView("LIST", 0);
+                            if(result.Is_ApproveRejectYes != 'R' && result.Is_ApproveRejectYes != 'A' )
+                            {
+                                BindPartialView("LIST", 0);
+                            }
+
                         }
                         else if (result.Status == "E") {
                             showAlert("E", result.Message);
+                        }
+                        else if(result.Status == "C") {
+                            showAlert('I', result.Message,'YESNO'); //Do You want to leave this page
                         }
                     }
                 },
@@ -458,7 +484,38 @@
             });
         }
     }
+    function handleCancel() {
+        debugger;
+        showLoading();
+        var MHRequestCode = $('#hdnMHRequestCode').val();
+        var Is_ApproveReject =  $('#hdnApproveReject').val();
+        if(Is_ApproveReject == 'A')
+        {
+            Is_ApproveReject = 'AYes';
+        }
+        else
+        {
+            Is_ApproveReject = 'RYes';
+        }
+        finalConsApprove(Is_ApproveReject);
+        BindPartialView("CHILD", MHRequestCode);
 
+    }
+    function handleOk() {
+        debugger;
+        showLoading();
+        var Is_ApproveReject =  $('#hdnApproveReject').val();
+        if(Is_ApproveReject == 'A')
+        {
+            Is_ApproveReject = 'AYes';
+        }
+        else
+        {
+            Is_ApproveReject = 'RYes';
+        }
+        finalConsApprove(Is_ApproveReject);
+        BindPartialView("LIST", 0);
+    }
     function checkAll() {
         var IsCheck = $('#chkAll').prop("checked");
         $('.checkboxAll').prop('checked', IsCheck);
@@ -555,6 +612,7 @@
         background-color: #eee;
         width: 500px;
     }
+
     .vl {
         border-left: 2px solid;
         height: 5px;
@@ -723,9 +781,8 @@
             <input type="hidden" id="hdnMHRequestCode" value="@Model.MHRequestCode" />
             <input type="hidden" id="hdnMHRequestTypeCode" value="@Model.MHRequestTypeCode" />
             <input type="hidden" id="hdnAction" name="hdnAction" value="" />
-
+            <input type="hidden" id="hdnApproveReject" value="" />
             <input type="hidden" id="hdnStatus" value="@ViewBag.key" />
-
 
             <div id="divMHRequestDetails_List" class="deal clearfix">
             </div>
@@ -740,15 +797,15 @@
     <br />
     @if (ViewBag.key == "VIEW" && Model.SpecialInstruction != "" && Model.SpecialInstruction != null)
     {
-        
-        
+
+
         <table>
             <tr>
                 <td><div class="divRemarks">Special Instructions to Production House: </div></td>
                 <td class="vl"></td>
                 <td><div class="divRemarks">Viacom18 Remarks: </div></td>
             </tr>
-          
+
             <tr>
                 <td>
                     <div class="remarksDetails">
@@ -775,10 +832,10 @@
                         {
                             <div class="expand_Remark">
                                 <span name="txtPaymentTerms" id="txtInternalRmk" class="textarea restrictChar1">@Model.InternalRemarks</span>
-                             </div>
+                            </div>
                         }
-                       </div>
-</td>
+                    </div>
+                </td>
             </tr>
         </table>
     }
@@ -846,6 +903,7 @@
 
         @if (ViewBag.key != "VIEW")
         {
+
             if (Model.MHRequestTypeCode == 1)
             {
                 <li><a class="btn btn-primary" id="btnApprove" onclick="finalConsApprove('A')">Approve</a></li>

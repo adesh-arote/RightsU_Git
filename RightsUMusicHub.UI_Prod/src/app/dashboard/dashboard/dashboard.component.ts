@@ -275,7 +275,8 @@ debugger;
     this.router.navigate(['/app/requisition/new-request']);
   }
   onViewAllRequestClick() {
-    this.router.navigate(['/app/reports/authorized-report']);
+    this.router.navigate(['app/requisition/new-request']);
+    localStorage.setItem('VIEW_ALL_REQUEST', 'true');
   }
   addBlockUI() {
     $('body').addClass("overlay");

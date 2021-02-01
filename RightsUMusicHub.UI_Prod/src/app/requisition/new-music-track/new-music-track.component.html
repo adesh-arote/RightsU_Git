@@ -1,22 +1,5 @@
 <div class="content-wrapper">
-   <section class=" content-header ">
-     <!-- <h1>
-          <small></small>
-        </h1>
-   
-    <ol class="breadcrumb" style="top:60px;">
-
-      <li>
-       
-          <i class="fa fa-dashboard"></i>Home
-       
-      </li>
-      <li>
-        Requisition Module
-      </li>
-      <li>{{breadcrumbtext}} Track</li>
-    </ol>
- -->
+  <section class=" content-header">
   </section>
   <br>
   <section class="content-subHeader">
@@ -27,455 +10,259 @@
       <li (click)="breadCrumbChangeClick('Movie/Album')">
         <a data-toggle="tab" href="#movieAlbum">Movie / Album</a>
       </li>
-
     </ul>
-
     <div class="tab-content">
       <div id="musicTrack" class="tab-pane fade in active">
-        <div class="row" style="margin-top:10px; margin-bottom:10px">
+        <div class="row">
           <section class="content-subHeader">
-           
-            <!-- <div class="row"> -->
-                <div class="Row">
-                    <div >
-                      
-                      <label>Search :</label>&nbsp;
-                      <input  type="text" #gb class="SearchTextBox" (keyup)="filter(musicSearch,'Music')" [(ngModel)]="musicSearch" pInputText size="50" placeholder="Request ID, Requested By,Requested Date,Status">
-                      
-                       
-                      <div class="pull-right">
-                        
-                        <span >
-                          <button type="button"   (click)="newCreateMusic()"  class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Music Track Request"><i class="fa fa-plus-square-o fa-lg"></i></button>
-                      </span>
-                        
-<!--                           
-                          <a class="btn  btn-with-icon btn-social btn-danger" (click)="newCreateMusic()" data-toggle="tooltip" data-placement="top" title="Export to Excel">
-                              <i class="fa fa-plus-square-o"></i> Music Track Request</a>&nbsp;&nbsp; -->
-                        </div>
-                        <div class="pull-right">
-                          <span >
-                              <button type="button"   (click)="exportToExcel(2)"  class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Export to Excel"><i class="fa fa-file-excel-o fa-lg"></i></button>&nbsp;&nbsp;
-                          </span>
-                     
-                      </div>
-                    </div>
-                    
-                  </div>
-                  <!-- <div class="col-md-9">
-                    <div class="col-md-2">
-                        <label>Search All</label>
-                    </div>
-                    <div class="col-md-8 ">
-                      <input #gb type="text" class="TextBox" pInputText size="50" placeholder="Req. ID , Req. Count , Req. By , Req. Date">
-                    </div>
-                  </div>
-                  <div class="col-md-2" style="padding-left: 4%">
-                    <a class="btn  btn-with-icon btn-social btn-danger" (click)="newCreateMusic()">
-                      <i class="fa fa-plus-square-o"></i> Music Track Request</a>
-                  </div> -->
-
-          <!-- </div> -->
+            <div class="Row">
+              <div>
+                <div style="float:right;margin-left: 6px">
+                  <span>
+                    <button type="button" (click)="exportMusictrackdetails()" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+                      title="Download"><i class="fa fa-download fa-lg"></i></button>
+                  </span>
+                </div>
+                <div class="pull-right">
+                  <span>
+                    <button type="button" (click)="newCreateMusic()" class="btn btn-danger" data-toggle="tooltip"
+                      data-placement="top" title="Music Track Request"><i
+                        class="fa fa-plus-square-o fa-lg"></i></button>
+                  </span>
+                </div>
+                <div class="pull-right">
+                  <span>
+                    <button type="button" (click)="exportToExcel(2)" class="btn btn-success" data-toggle="tooltip"
+                      data-placement="top" title="Export to Excel"><i
+                        class="fa fa-file-excel-o fa-lg"></i></button>&nbsp;&nbsp;
+                  </span>
+                </div>
+              </div>
+            </div>
           </section>
         </div>
         <div class="row">
           <section class="content-subHeader">
-
             <div class="row">
-
-              <div class="col-xs-12">
-
-                <p-dataTable [value]="requestMusicList" [rowsPerPageOptions]="[10,25,50,100]" [scrollable]="true" scrollHeight="460px" [paginator]="true" [rows]="10"
-                  [responsive]="true" [alwaysShowPaginator]="true" [globalFilter]="gb" #movie>
-                  <p-column field="RequestID" header="Request ID" [sortable]="true"  styleClass="text-center"></p-column>
-                  <p-column field="CountRequest" header="No. of Songs" [sortable]="true"  styleClass="text-center">
-                    <ng-template pTemplate="body" let-row="rowData">
-                      <a (click)="musicRequestDetail(row)"><span style="color:blue">{{row.CountRequest}}</span></a>
-                    </ng-template>
-                  </p-column>
-                  <p-column field="RequestedBy" header="Requested By" [sortable]="true"  styleClass="text-center"></p-column>
-                  <p-column field="RequestDate" header="Requested Date" [sortable]="true"  styleClass="text-center">
-                    <ng-template pTemplate="body" let-row="rowData">
-                      {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a' }}
-                    </ng-template>
-                  </p-column>
-                  <p-column field="Status" header="Status" [sortable]="true"  styleClass="text-center"></p-column>
-
-                  <p-footer>
-                    Total Records: {{movie.totalRecords}}
-                  </p-footer>
-
-                </p-dataTable>
-
-                <!-- <div class="box">            
-       
-        <div class="box-body">
-            
-
-
-
-          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"  class="table table-bordered table-striped">
-            <thead>
-              <tr>											
-                
-                <th>Request #</th>
-                <th >Request Count</th>
-                <th>Requested By</th>
-                <th>Requested Date</th>								  
-                <th>Status</th>
-   
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let reqMuscList of requestMusicList">											
-                
-                <td class="action">{{reqMuscList.RequestID}}</td>
-                <td class="action" style="position:relative;"><a (click)="musicRequestDetail(reqMuscList)">{{reqMuscList.CountRequest}}</a>	
-                  
-                </td>
-                
-                <td class="action">{{reqMuscList.RequestedBy}}</td>
-                <td class="action">{{reqMuscList.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}</td>
-                <td class="action"><span class="label label-success">{{reqMuscList.Status}}</span></td>
-              </tr>
-             
-            </tbody>							   
-          </table>
-        </div>
-         <div class="box-footer clearfix">
-                      
-        </div>
-       
-        </div> -->
-
+              <div class="col-xs-12" style="margin-top:-20px">
+                <app-common-music-track [musictrackDetails]="requestMusicList"></app-common-music-track>
               </div>
             </div>
           </section>
         </div>
       </div>
       <div id="movieAlbum" class="tab-pane fade">
-        <div class="row" style="margin-top:10px; margin-bottom:10px">
+        <div class="row">
           <section class="content-subHeader">
-              <div class="Row">
-                  <div >
-                    
-                    <label>Search :</label>&nbsp;
-                    <input  type="text" class="SearchTextBox" #gb  (keyup)="filter(movieSearch,'Movie')" [(ngModel)]="movieSearch" pInputText  placeholder="Request ID, Requested By,Requested Date,Status">
-                    
-                    <div class="pull-right">
-                      <span >
-                        <button type="button"   (click)="newCreateAlbum()"  class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Movie / Album Request"><i class="fa fa-plus-square-o fa-lg"></i></button>
-                    </span>  
-                      <!-- <a class="btn btn--with-icon btn-social btn-danger" (click)="newCreateAlbum()" data-toggle="tooltip" data-placement="top" title="Music Track Request">
-                            <i class="fa fa-plus-square-o"></i> Movie / Album Request</a>&nbsp;&nbsp; -->
-                      </div>
-                      <div class="pull-right">
-                        <span >
-                            <button type="button"   (click)="exportToExcel(3)"  class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Export to Excel"><i class="fa fa-file-excel-o fa-lg"></i></button>&nbsp;&nbsp;
-                        </span>
-                   
-                    </div> 
-                  </div>
-                  
+            <div class="Row">
+              <div>
+                <div style="float:right;margin-left: 6px">
+                  <span>
+                    <button type="button" (click)="exportMoviealbumdetails()" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+                      title="Download"><i class="fa fa-download fa-lg"></i></button>
+                  </span>
                 </div>
-            <!-- <div class="row ">
-            <div class="col-lg-9 no-gutter">
-              <div class="col-lg-2 no-gutter">
-                  <label>Search All</label>
-              </div>
-              
-              <div class="col-lg-8 no-gutter form-group">
-                <input #gb1 type="text" class="TextBox" pInputText  placeholder="Req. ID , Req. Count , Req. By , Req. Date">
+                <div class="pull-right">
+                  <span>
+                    <button type="button" (click)="newCreateAlbum()" class="btn btn-danger" data-toggle="tooltip"
+                      data-placement="top" title="Movie / Album Request"><i
+                        class="fa fa-plus-square-o fa-lg"></i></button>
+                  </span>
+                </div>
+                <div class="pull-right">
+                  <span>
+                    <button type="button"  (click)="exportToExcel(3)" class="btn btn-success" data-toggle="tooltip"
+                      data-placement="top" title="Export to Excel"><i
+                        class="fa fa-file-excel-o fa-lg"></i></button>&nbsp;&nbsp;
+                  </span>
+                </div>
               </div>
             </div>
-
-            <div class="col-lg-2" style="padding-left: 4%">
-
-              <a class="btn btn--with-icon btn-social btn-danger" (click)="newCreateAlbum()">
-                <i class="fa fa-plus-square-o"></i> Music/Album Request</a>
-
-            </div>
-          </div> -->
           </section>
         </div>
         <div class="row">
           <section class="content-subHeader">
-
             <div class="row">
-
-              <div class="col-xs-12">
-                <p-dataTable [value]="requestAlbumList" [rowsPerPageOptions]="[10,25,50,100]" [scrollable]="true" scrollHeight="460px" [paginator]="true" [rows]="10"
-                  [responsive]="true" [alwaysShowPaginator]="true" [globalFilter]="gb" #album>
-                  <p-column field="RequestID" header="Request ID" [sortable]="true"  styleClass="text-center"></p-column>
-                  <p-column field="CountRequest" header="No. of Movie / Album" [sortable]="true"  styleClass="text-center">
-                    <ng-template pTemplate="body" let-row="rowData">
-                      <a (click)="albumRequestDetail(row)"><span style="color:blue">{{row.CountRequest}}</span></a>
-                    </ng-template>
-                  </p-column>
-                  <p-column field="RequestedBy" header="Requested By" [sortable]="true" styleClass="text-center"></p-column>
-                  <p-column field="RequestDate" header="Requested Date" [sortable]="true" styleClass="text-center">
-                    <ng-template pTemplate="body" let-row="rowData">
-                      {{row.RequestDate |date:'dd-MMM-yyyy HH:mm a'}}
-                    </ng-template>
-                  </p-column>
-                  <p-column field="Status" header="Status" [sortable]="true" styleClass="text-center"></p-column>
-                  <p-footer>
-                    Total Records: {{album.totalRecords}}
-                  </p-footer>
-
-
-                </p-dataTable>
-
-
-                <!-- <div class="box">            
-           
-            <div class="box-body">
-              <table datatable [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger1"  class="row-border table table-bordered table-striped">
-                <thead>
-                  <tr>											
-                   
-                    <th>Request #</th>
-                    <th >Requeste Count</th>
-                    
-                    <th>Requested By</th>
-                    <th>Requested Date</th>
-                    <th>Status</th>
-                    								  
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let reqAlbumList of requestAlbumList ">											
-                   
-                    <td class="action">{{reqAlbumList.RequestID}}</td>
-                    <td class="action" style="position:relative;"><a (click)="albumRequestDetail(reqAlbumList)">{{reqAlbumList.CountRequest}}</a>	
-                     
-                    </td>
-                  
-                    <td class="action">{{reqAlbumList.RequestedBy}}</td>
-                    <td class="action">{{reqAlbumList.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}</td>
-                    <td class="action"><span class="label label-success">{{reqAlbumList.Status}}</span></td>
-                    
-                  </tr>
-                  
-                </tbody>							   
-              </table>
-            </div>
-             <div class="box-footer clearfix">
-                          
-            </div>
-           
-            </div> -->
-
+              <div class="col-xs-12" style="margin-top:-20px">
+                <app-common-movie-album [moviealbumDetails]="requestAlbumList"></app-common-movie-album>
               </div>
             </div>
           </section>
         </div>
       </div>
     </div>
+
     <!-- Music Track Request Dialog box -->
-    <p-dialog  header="Music Track Request"   [(visible)]="display" [draggable]="false" [positionTop]="60" [modal]="true" [responsive]="false" [blockScroll]="true" [width]="1200" >
-      <!-- <span> -->
-      <form #MusicForm="ngForm" >
+    <p-dialog header="Music Track Request" [(visible)]="display" [draggable]="false" [positionTop]="60" [modal]="true"
+      [responsive]="false" [blockScroll]="true" [width]="1200">
+      <form #MusicForm="ngForm">
         <div class="row">
           <p-messages [(value)]="msgs"></p-messages>
-
           <div class="pull-right">
-            
             <div class="col-lg-5 ">
               <div class="form-group">
-                <input type="number" [(ngModel)]="noOfRowMusic"  onkeypress="return event.charCode >= 48 && event.charCode <= 57" max="999" maxlength = "3" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)" name="noOfRowMusic" class="form-control TextBox" style="height:32px  !important;width:50px !important "
-                  min=1>
-
+                <input type="number" [(ngModel)]="noOfRowMusic"
+                  onkeypress="return event.charCode >= 48 && event.charCode <= 57" max="999" maxlength="3"
+                  oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)"
+                  name="noOfRowMusic" class="form-control TextBox"
+                  style="height:32px  !important;width:50px !important " min=1>
               </div>
-
             </div>
             <div class="col-lg-3">
-                <span >
-                    <!-- data-toggle="tooltip" data-placement="top" title="Add Rows" -->
-                    <button type="button"   (click)="addRowMusic()"  class="btn btn-info btndialog" pTooltip="Add Rows" tooltipPosition="top" ><i class="fa fa-plus-square-o fa-lg"></i></button>
-                </span>
-                
-              <!-- <a class="btn btn--with-icon btn-social btn-info" (click)="addRowMusic()">
-                <i class="fa fa-plus-square-o"></i>Add Rows</a> -->
+              <span>
+                <!-- data-toggle="tooltip" data-placement="top" title="Add Rows" -->
+                <button type="button" (click)="addRowMusic()" class="btn btn-info btndialog" pTooltip="Add Rows"
+                  tooltipPosition="top"><i class="fa fa-plus-square-o fa-lg"></i></button>
+              </span>
             </div>
           </div>
         </div>
+        <div class="row table-body">
+          <p-dataTable [value]="tablMusicList" [responsive]="true" [immutable]=false>
+            <p-column field="Srno" header="Sr #" styleClass="text-center" [style]=" {'width':'50px' }">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                {{index+1}}
+              </ng-template>
+            </p-column>
+            <p-column field="MusicTrackName" header="Music Track" styleClass="text-center"
+              [style]=" {'width':'200px' }">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                <input type="text" [(ngModel)]="row[col.field]" autocomplete="off"
+                  (ngModelChange)="musicTrackChange(row[col.field])" required placeholder="Music Track"
+                  class="ReuestTextBoxFull" id="MusicTrackName{{row.Srno}}" name="MusicTrackName'{{row.Srno}}'"
+                  #MusicTrackName{{row.Srno}}="ngModel">
+              </ng-template>
+            </p-column>
+            <p-column field="MusicLabelCode" header="Music Label" [editable]="true"
+              [style]=" {'overflow':'visible','width':'150px' }" styleClass="text-center">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                <p-dropdown class="classcss" appendTo="body" [resetFilterOnHide]="true" [options]="musicLabelList"
+                  [autoWidth]="false" [(ngModel)]="row[col.field]" [style]=" {'width':'150px' }"
+                  name="MusicLabelCode'{{row.Srno}}'" #MusicLabelCode{{row.Srno}}="ngModel"
+                  placeholder="Select Music Label" optionLabel="MusicLabelName" filter="true" [showClear]="true">
+                </p-dropdown>
 
-<div class="row table-body" >
-  <p-dataTable [value]="tablMusicList" [responsive]="true" [immutable]=false >
-  <p-column field="Srno" header="Sr #"   styleClass="text-center" [style]=" {'width':'50px' }">
-      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-        {{index+1}}
-      </ng-template>
-  </p-column>
-  <p-column field="MusicTrackName" header="Music Track"   styleClass="text-center" [style]=" {'width':'200px' }">
-      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-    <input type="text" [(ngModel)]="row[col.field]" autocomplete="off" (ngModelChange)="musicTrackChange(row[col.field])" required placeholder="Music Track" class="ReuestTextBoxFull" id="MusicTrackName{{row.Srno}}" name="MusicTrackName'{{row.Srno}}'"
-                      #MusicTrackName{{row.Srno}}="ngModel">
-                    </ng-template>
-  </p-column>
-  <p-column field="MusicLabelCode" header="Music Label"   [editable]="true" [style]=" {'overflow':'visible','width':'150px' }" styleClass="text-center">
-    <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-        <p-dropdown class="classcss" appendTo="body" [resetFilterOnHide]="true"  [options]="musicLabelList" [autoWidth]="false"   [(ngModel)]="row[col.field]" [style]=" {'width':'150px' }"  name="MusicLabelCode'{{row.Srno}}'" #MusicLabelCode{{row.Srno}}="ngModel"  placeholder="Select Music Label" optionLabel="MusicLabelName" filter="true" [showClear]="true"></p-dropdown>
-        
-    </ng-template>
-  </p-column>
-  <p-column field="MovieAlbumCode" header="Movie / Album"  [editable]="true" [style]=" {'overflow':'visible','width':'150px' }"  >
-      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-          <p-autoComplete [(ngModel)]="row[col.field]" appendTo="body"  id="MovieAlbumCode{{row.Srno}}"  name="MovieAlbumCode'{{row.Srno}}'" #MovieAlbumCode{{row.Srno}}="ngModel" [suggestions]="filteredMoviesSingle" (completeMethod)="filteredMovieSingle($event)" field="Music_Album_Name" 
-              placeholder="Movie / Album"  [minLength]="1"></p-autoComplete>
-      </ng-template>
-  </p-column>
-  <p-column field="Singers" header="Singer"  [editable]="true" [style]=" {'overflow':'visible','width':'220px' }"  >
-    <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-        <p-autoComplete [(ngModel)]="row[col.field]" styleClass="autoMax" appendTo="body"  id="singer{{row.Srno}}"  name="singer'{{row.Srno}}'" #singer{{row.Srno}}="ngModel" [suggestions]="singerList" (completeMethod)="filteredSingerList($event)" field="TalentName" 
-            placeholder="Singers"  [minLength]="1" [multiple]="true" [size]="3"></p-autoComplete>
-    </ng-template>
-</p-column>
-<p-column field="StarCasts" header="Star Cast"  [editable]="true" [style]=" {'overflow':'visible','width':'220px' }"  >
-  <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-      <p-autoComplete [(ngModel)]="row[col.field]" styleClass="autoMax" appendTo="body"  id="StarCast{{row.Srno}}"  name="StarCast'{{row.Srno}}'" #StarCast{{row.Srno}}="ngModel" [suggestions]="startCastList" (completeMethod)="filteredStartCastList($event)" field="TalentName" 
-          placeholder="Star Cast"  [minLength]="1" [multiple]="true"></p-autoComplete>
-  </ng-template>
-</p-column>
-  <p-column  header="Action"   styleClass="text-center" [style]=" {'width':'50px' }">
-    <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-        <a class="fa fa-times btnCancel" aria-hidden="true" title="" data-original-title="Cancel" (click)="removeMusicItem(row)"></a>
-       
-    </ng-template>
-  </p-column>
-</p-dataTable>
-</div>
+              </ng-template>
+            </p-column>
+            <p-column field="MovieAlbumCode" header="Movie / Album" [editable]="true"
+              [style]=" {'overflow':'visible','width':'150px' }">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                <p-autoComplete [(ngModel)]="row[col.field]" appendTo="body" id="MovieAlbumCode{{row.Srno}}"
+                  name="MovieAlbumCode'{{row.Srno}}'" #MovieAlbumCode{{row.Srno}}="ngModel"
+                  [suggestions]="filteredMoviesSingle" (completeMethod)="filteredMovieSingle($event)"
+                  field="Music_Album_Name" placeholder="Movie / Album" [minLength]="1"></p-autoComplete>
+              </ng-template>
+            </p-column>
+            <p-column field="Singers" header="Singer" [editable]="true"
+              [style]=" {'overflow':'visible','width':'220px' }">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                <p-autoComplete [(ngModel)]="row[col.field]" styleClass="autoMax" appendTo="body"
+                  id="singer{{row.Srno}}" name="singer'{{row.Srno}}'" #singer{{row.Srno}}="ngModel"
+                  [suggestions]="singerList" (completeMethod)="filteredSingerList($event)" field="TalentName"
+                  placeholder="Singers" [minLength]="1" [multiple]="true" [size]="3"></p-autoComplete>
+              </ng-template>
+            </p-column>
+            <p-column field="StarCasts" header="Star Cast" [editable]="true"
+              [style]=" {'overflow':'visible','width':'220px' }">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                <p-autoComplete [(ngModel)]="row[col.field]" styleClass="autoMax" appendTo="body"
+                  id="StarCast{{row.Srno}}" name="StarCast'{{row.Srno}}'" #StarCast{{row.Srno}}="ngModel"
+                  [suggestions]="startCastList" (completeMethod)="filteredStartCastList($event)" field="TalentName"
+                  placeholder="Star Cast" [minLength]="1" [multiple]="true"></p-autoComplete>
+              </ng-template>
+            </p-column>
+            <p-column header="Action" styleClass="text-center" [style]=" {'width':'50px' }">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                <a class="fa fa-times btnCancel" aria-hidden="true" title="" data-original-title="Cancel"
+                  (click)="removeMusicItem(row)"></a>
+
+              </ng-template>
+            </p-column>
+          </p-dataTable>
+        </div>
         <div id="tblMusicTrack row">
-
-          <!-- <div class="table-body">
-            <table class="rtable rtable1  ">
-              <thead>
-                <tr>
-                  <th class="action" style="width:5%">Sr. No.</th>
-                  <th class="action" style="width:25%">Music Track</th>
-                  <th class="action" style="width:18%">Music Label</th>
-                  <th class="action" style="width:18%">Movie Name</th>
-                  <th class="action" style="width:5%">Action </th>
-                </tr>
-              </thead>
-              <tbody id="newRow">
-                <tr id="RowAdd" *ngFor="let row of tablMusicList; let i = index">
-                  <td>{{i+1}}</td>
-                  <td>
-                    <input type="text" [(ngModel)]="row.MusicTrackName" required placeholder="Music Track" class="TextBoxFull" name="MusicTrackName'{{i}}'"
-                      #MusicTrackName{{i}}="ngModel">
-
-
-                  </td>
-                  <td>
-                   
-                    <p-dropdown  [options]="musicLabelList" [style]="{'width':'250px'}"  [(ngModel)]="row.MusicLabelCode" required name="MusicLabelCode'{{i}}'" #MusicLabelCode{{i}}="ngModel"  placeholder="Select Music Label" optionLabel="Music_Label_Name" filter="true" ></p-dropdown>
-                   \
-                  </td>
-                  <td>
-                    
-                    <p-dropdown [options]="movieList" [autoWidth]="false" [style]="{'width':'250px'}" [(ngModel)]="row.MovieAlbumCode"
-                      required name="MovieAlbumCode'{{i}}'" #MovieAlbumCode{{i}}="ngModel" placeholder="Select Movie Name"
-                      optionLabel="Music_Album_Name" filter="true"></p-dropdown>
-                    
-                  </td>
-                  <td class="action">
-                   
-                    <a class="fa fa-times btnCancel" aria-hidden="true" title="" data-original-title="Cancel" (click)="removeMusicItem(i)"></a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div> -->
           <div class="form-group row" style="margin-top:1%;padding-left: 1% ">
             <label for="comment">Remark </label> (
             <i>{{textRemarkCount}} / 4000 </i>)<span class="asterisk">*</span>
-            <textarea class="form-control" rows="3" style="padding: 5px !important;resize:none" id="remark" [(ngModel)]="saveMusicBody.Remarks" required name="Remarks" #Remarks="ngModel"
+            <textarea class="form-control" rows="3" style="padding: 5px !important;resize:none" id="remark"
+              [(ngModel)]="saveMusicBody.Remarks" required name="Remarks" #Remarks="ngModel"
               (ngModelChange)="musicRemarkChange()" maxlength=4000></textarea>
-            <!-- <label>{{textRemarkCount}}/4000 character lefts</label> -->
           </div>
         </div>
-
       </form>
-      <!-- </span> -->
       <p-footer>
-          <button type="button"  Class="btn btn-info" [disabled]="!MusicForm.form.valid || validateMusicRemark"  (click)="submitMusicClick()">Submit</button>                          
-        
-        <!-- <button type="button" pButton icon="pi pi-check" [disabled]="!MusicForm.form.valid || validateMusicRemark" (click)="submitMusicClick()" label="Submit"></button> -->
-        <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
+        <button type="button" Class="btn btn-info" [disabled]="!MusicForm.form.valid || validateMusicRemark"
+          (click)="submitMusicClick()">Submit</button>
       </p-footer>
-
     </p-dialog>
+
     <!-- Music Album Request Dialog box -->
-    <p-dialog header="Music Album Request" [(visible)]="displayAlbum" [modal]="true" [positionTop]="60" [responsive]="false" [width]="900" [blockScroll]="true" [draggable]="false">
+    <p-dialog header="Music Album Request" [(visible)]="displayAlbum" [modal]="true" [positionTop]="60"
+      [responsive]="false" [width]="900" [blockScroll]="true" [draggable]="false">
       <!-- <span> -->
       <form #movieAlbumForm="ngForm">
         <p-messages [(value)]="msgs1"></p-messages>
         <div class="row">
-
-          <!-- <div class="col-lg-4">
-                <label>
-                  <small>Requested For :
-                    <b>Movies/Album Songs</b>
-                  </small>
-                </label>
-              </div> -->
           <div class="pull-right">
-            
             <div class="col-lg-5">
               <div class="form-group">
-                <input type="number" [(ngModel)]="noOfRowAlbm" max="999" maxlength = "3" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="noOfRowAlbm" class="form-control TextBox" style="height:32px  !important;width:50px !important;"
-                  min=1>
-
+                <input type="number" [(ngModel)]="noOfRowAlbm" max="999" maxlength="3"
+                  oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)"
+                  onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="noOfRowAlbm"
+                  class="form-control TextBox" style="height:32px  !important;width:50px !important;" min=1>
               </div>
             </div>
-
             <div class="col-lg-3">
-                <span >
-                    <!-- data-toggle="tooltip" data-placement="bottom" title="Add Rows" -->
-                    <button type="button"   (click)="addRowAlbum()"  class="btn btn-info"  pTooltip="Add Rows" tooltipPosition="top"><i class="fa fa-plus-square-o fa-lg"></i></button>
-                </span>
+              <span>
+                <!-- data-toggle="tooltip" data-placement="bottom" title="Add Rows" -->
+                <button type="button" (click)="addRowAlbum()" class="btn btn-info" pTooltip="Add Rows"
+                  tooltipPosition="top"><i class="fa fa-plus-square-o fa-lg"></i></button>
+              </span>
               <!-- <a class="btn btn--with-icon btn-social btn-info" (click)="addRowAlbum()">
                 <i class="fa fa-plus-square-o"></i>Add Rows</a> -->
             </div>
           </div>
         </div>
-        <div class="row table-body" >
-          <p-dataTable [value]="tablMovieAlbumList" [responsive]="true" [immutable]=false >
-          <p-column field="Srno" header="Sr #"   styleClass="text-center" [style]=" {'width':'20px' }">
+        <div class="row table-body">
+          <p-dataTable [value]="tablMovieAlbumList" [responsive]="true" [immutable]=false>
+            <p-column field="Srno" header="Sr #" styleClass="text-center" [style]=" {'width':'20px' }">
               <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
                 {{index+1}}
               </ng-template>
-          </p-column>
-          <p-column field="TitleName" header="Movie / Album"   styleClass="text-center" [style]=" {'width':'100px' }">
+            </p-column>
+            <p-column field="TitleName" header="Movie / Album" styleClass="text-center" [style]=" {'width':'100px' }">
               <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-                <input type="text" [(ngModel)]="row[col.field]" (ngModelChange)="movieAlbumChange(row[col.field])" required name="TitleName'{{row.Srno}}'" #TitleName{{row.Srno}}="ngModel" placeholder="Movie / Album"
-                class="ReuestTextBoxFull">
-                            </ng-template>
-          </p-column>
-          <p-column field="MovieAlbum" header="Movie/Album Type"   [editable]="true" [style]=" {'overflow':'visible','width':'80px' }" styleClass="text-center">
-            <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-              <div >
-                <p-radioButton name="group1'{{row.Srno}}'" value="M" label="Movie" [style]=" {'font-weight':'normal' }"  [(ngModel)]="row[col.field]" inputId="opt1"></p-radioButton>
-                &nbsp;&nbsp;<p-radioButton name="group1'{{row.Srno}}'" value="A" label="Album" [(ngModel)]="row[col.field]" inputId="opt2"></p-radioButton>
+                <input type="text" [(ngModel)]="row[col.field]" (ngModelChange)="movieAlbumChange(row[col.field])"
+                  required name="TitleName'{{row.Srno}}'" #TitleName{{row.Srno}}="ngModel" placeholder="Movie / Album"
+                  class="ReuestTextBoxFull">
+              </ng-template>
+            </p-column>
+            <p-column field="MovieAlbum" header="Movie/Album Type" [editable]="true"
+              [style]=" {'overflow':'visible','width':'80px' }" styleClass="text-center">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                <div>
+                  <p-radioButton name="group1'{{row.Srno}}'" value="M" label="Movie"
+                    [style]=" {'font-weight':'normal' }" [(ngModel)]="row[col.field]" inputId="opt1"></p-radioButton>
+                  &nbsp;&nbsp;<p-radioButton name="group1'{{row.Srno}}'" value="A" label="Album"
+                    [(ngModel)]="row[col.field]" inputId="opt2"></p-radioButton>
 
 
-                <!-- <input type="radio" class="flat-red" name="radgroup'{{i}}'" value="M" id="btnRadio1" [(ngModel)]="row[col.field]"> Movie -->
-              </div>
-              <!-- <div>
+                  <!-- <input type="radio" class="flat-red" name="radgroup'{{i}}'" value="M" id="btnRadio1" [(ngModel)]="row[col.field]"> Movie -->
+                </div>
+                <!-- <div>
                 <input type="radio" class="flat-red" name="radgroup'{{i}}'" value="A" id="btnRadio2" [(ngModel)]="row[col.field]"> Album
               
             </div> -->
-            </ng-template>
-          </p-column>
-          <p-column  header="Action"   styleClass="text-center" [style]=" {'width':'20px' }">
-            <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-                <a class="fa fa-times btnCancel" aria-hidden="true" title="" data-original-title="Cancel" (click)="removeAlbumItem(row)"></a>
-               
-            </ng-template>
-          </p-column>
-        </p-dataTable>
+              </ng-template>
+            </p-column>
+            <p-column header="Action" styleClass="text-center" [style]=" {'width':'20px' }">
+              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                <a class="fa fa-times btnCancel" aria-hidden="true" title="" data-original-title="Cancel"
+                  (click)="removeAlbumItem(row)"></a>
+
+              </ng-template>
+            </p-column>
+          </p-dataTable>
         </div>
 
         <div class="row" id="tblAlbumTrack">
@@ -520,7 +307,8 @@
           <div class="form-group" style="margin-top:1%;padding-left: 1% ">
             <label for="comment">Remark </label>
             <i> ({{movieAlbumRemarkCount}} / 4000)<span class="asterisk">*</span></i>
-            <textarea class="form-control" style="padding: 5px !important;resize:none" rows="3" id="remark" [(ngModel)]="saveMovieAlbumBody.Remarks" required name="Remarks" #Remarks="ngModel"
+            <textarea class="form-control" style="padding: 5px !important;resize:none" rows="3" id="remark"
+              [(ngModel)]="saveMovieAlbumBody.Remarks" required name="Remarks" #Remarks="ngModel"
               (ngModelChange)="movieAlbumRemarkChange()" maxlength=4000></textarea>
             <!-- <label>{{movieAlbumRemarkCount}}/4000 character lefts</label> -->
           </div>
@@ -529,149 +317,30 @@
       </form>
       <!-- </span> -->
       <p-footer>
-          <button type="button"  Class="btn btn-info" [disabled]="!movieAlbumForm.form.valid || validateAlbumRemark"  (click)="submitAlbumClick()">Submit</button>                                  
+        <button type="button" Class="btn btn-info" [disabled]="!movieAlbumForm.form.valid || validateAlbumRemark"
+          (click)="submitAlbumClick()">Submit</button>
         <!-- <button type="button" pButton icon="pi pi-check" [disabled]="!movieAlbumForm.form.valid || validateAlbumRemark" (click)="submitAlbumClick()" label="Submit"></button> -->
         <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
       </p-footer>
 
     </p-dialog>
     <!-- On Final Submit of request Dialog box -->
-    <p-dialog header="{{submitHeader}}" [blockScroll]="true" [(visible)]="displayFinal" [positionTop]="60" [modal]="true" [responsive]="false" [draggable]="false">
+    <p-dialog header="{{submitHeader}}" [blockScroll]="true" [(visible)]="displayFinal" [positionTop]="60"
+      [modal]="true" [responsive]="false" [draggable]="false">
       <span>
         <p>{{submitMessage}}</p>
 
       </span>
       <p-footer>
         <button type="button" pButton icon="pi pi-check" (click)="Done()" label="OK"></button>
-        
+
       </p-footer>
 
     </p-dialog>
-
-    <p-dialog header="{{musicReuestHeader}}" [blockScroll]="true" [(visible)]="dialogRequestDetail" [positionTop]="60" [modal]="true" [responsive]="false" [width]="1200"[contentStyle]="{'overflow':'visible'}" [draggable]="false">
-      <!-- <span> -->
-
-        <div   *ngIf="isMusicDetail">
-            <div class="Row">
-                <div >
-                  
-                  <label>Search :</label>&nbsp;
-                  <input type="text" class="SearchTextBox" autocomplete="off" [(ngModel)]="searchMusicDetail"  placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filter(searchMusicDetail,'musicDetail')" pInputText size="50" >
-                  </div>
-                  
-                  </div>
-                  <br>
-          <p-dataTable [value]="musicDetailFilterList"  [rowsPerPageOptions]="[10,25,50,100]" [globalFilter]="gb3"   [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="300px"
-          [responsive]="true" [alwaysShowPaginator]="true" >
-          <p-column field="RequestedMusicTitleName" header="Req. Music"  [style]=" {'width':'150px' }"></p-column>
-          <p-column field="ApprovedMusicTitleName" header="App. Music"    [style]=" {'width':'150px' }"></p-column>
-          <p-column field="MusicLabelName" header="Music Label"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>
-          <p-column field="MusicMovieAlbumName" header="Music Album"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
-          <p-column field="Singers" header="Singers"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
-          <p-column field="StarCasts" header="Star Casts"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
-          <p-column  field="CreateMap" header="Create-Map"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
-          <p-column  field="IsApprove" header="Status"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
-          <p-column  field="Remarks" header="Remarks"   styleClass="text-center" [style]=" {'width':'100px' }"></p-column>
-          <p-footer>
-            Total Records: {{totalMusicDetailCount}}
-          </p-footer>
-        </p-dataTable>
-        </div>
-        <div class="row "  *ngIf="isAlbumDetail">
-            <div class="Row">
-                <div >
-                  
-                  <label>Search :</label>&nbsp;
-                  <input  type="text" class="SearchTextBox" autocomplete="off" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filter(searchAlbumDetail,'albumDetail')" pInputText size="50" >
-                  </div>
-                  </div>
-                  <br>
-          <p-dataTable [value]="albumDetailFilterList" [rowsPerPageOptions]="[10,25,50,100]" [globalFilter]="gb4" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="300px"
-          [responsive]="true" [alwaysShowPaginator]="true">
-          <p-column field="RequestedMovieAlbumName" header="Req. Movie / Album"  [style]=" {'width':'150px' }"></p-column>
-          <p-column field="ApprovedMovieAlbumName" header="App. Movie / Album"    [style]=" {'width':'150px' }"></p-column>
-          <p-column field="MovieAlbum" header="Movie / Album"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>
-          <p-column  field="CreateMap" header="Create-Map"   styleClass="text-center" [style]=" {'width':'100px' }"></p-column>
-          <p-column  field="IsApprove" header="Status"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
-          <p-column  field="Remarks" header="Remarks"   styleClass="text-center" [style]=" {'width':'150px' }"></p-column>
-          <p-footer>
-            Total Records: {{totalAlbumDetailCount}}
-          </p-footer>
-        </p-dataTable>
-        </div>
-      <!-- <div class="row" id="tblMusicDetail" *ngIf="isMusicDetail">
-        <div>
-          <table class=" table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th style="width:15%">Req. Music</th>
-                <th style="width:15%">App. Music</th>
-                <th style="width:15%">Music Label</th>
-                <th style="width:15%">Music Album </th>
-                <th style="width:10%">Create-Map</th>
-                <th style="width:10%">Status</th>
-                <th style="width:20">Remarks</th>
-
-              </tr>
-            </thead>
-            <tbody id="newRow">
-              <tr id="RowAdd" *ngFor="let row of musicDetailList; let i = index">
-                <td>{{row.RequestedMusicTitleName}}</td>
-                <td>{{row.ApprovedMusicTitleName}}</td>
-                <td class="action">{{row.MusicLabelName}}</td>
-                <td class="action">{{row.MusicMovieAlbumName}}</td>
-                <td class="action">{{row.CreateMap}}</td>
-                <td class="action">{{row.IsApprove}}</td>
-                <td class="action">{{row.Remarks}}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div> -->
-
-      <!-- <div class="row" id="tblAlbumDetail" *ngIf="isAlbumDetail">
-        <div>
-          <table class=" table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th style="width:15%">Req. Movie / Album</th>
-                <th style="width:15%">App. Movie / Album</th>
-                <th style="width:15%">Movie / Album</th>
-                <th style="width:15%">Create-Map</th>
-                <th style="width:15%">Status</th>
-                <th style="width:15%">Remarks</th>
-              </tr>
-            </thead>
-            <tbody id="newRow">
-              <tr id="RowAdd" *ngFor="let row of albumDetailList; let i = index">
-                <td>{{row.RequestedMovieAlbumName}}</td>
-                <td>{{row.ApprovedMovieAlbumName}}</td>
-                <td class="action">{{row.MovieAlbum}}</td>
-                <td class="action">{{row.CreateMap}}</td>
-                <td class="action">{{row.IsApprove}}</td>
-                <td class="action">{{row.Remarks}}</td>
-
-
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div> -->
-
-      <!-- </span> -->
-      <p-footer>
-        <button type="button" pButton (click)="close()" label="Close"></button>
-        <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
-      </p-footer>
-
-    </p-dialog>
-
   </section>
   <div *ngIf="load" id="loadingDiv"></div>
   <div *ngIf="displayalertMessage">
-      <app-message-box  [messageData]="messageData"></app-message-box>
-  
-    </div>
+    <app-message-box [messageData]="messageData"></app-message-box>
+
+  </div>
 </div>

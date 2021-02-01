@@ -210,7 +210,7 @@
         <!-- <li ng-class="$Request==='/app/requisition/new-request' ? 'treeview active' :$Request==='/app/requisition/new-music-track'?'treeview active': 'treeview'" id="Requsition">           -->
           <a href="#"><i class="fa fa-fax" ></i><span>Music Requisition</span><i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
-            <li><a routerLink="/app/requisition/new-request" ><i class="fa fa-circle-o text-aqua"></i> Usage Request </a></li>
+            <li><a (click)="getUsageroutelink('/app/requisition/new-request')"><i class="fa fa-circle-o text-aqua"></i> Usage Request </a></li>
             <li><a routerLink="/app/requisition/new-music-track" ><i class="fa fa-circle-o text-aqua"></i> New Music Tracks</a></li>            
           </ul>
         </li>	
@@ -264,7 +264,7 @@
       <!-- <app-message-box  [messageData]="messageData"></app-message-box> -->
       <p-dialog [(visible)]="displayMessage" [draggable]="false" [blockScroll]="true"  [modal]="true"  [positionTop]="60" [width]="900"  [responsive]="false">
         <p-header>
-            <span style="cursor: pointer;" (click)="showRequsetDetails()">{{alertHeader}}</span>
+          <span style="cursor: pointer;color:mediumblue" (click)="showRequsetDetails()">{{requestID}}</span> - <span>{{requestdetails}}</span>
         </p-header>
         <div id="NotifyMessage" style="height:200px;">
             <!-- [height]="300" -->
@@ -299,7 +299,7 @@
       <div class="Row">
         <div>
           <label>Search</label>&nbsp;
-          <input id="input" class="SearchTextBox" #reqCountSearch type="text"  autocomplete="off" size="30" placeholder="Music Title, Movie/ Album" [(ngModel)]="requestCountSearch" 
+          <input id="input" class="SearchTextBox" #reqCountSearch type="text"  autocomplete="off" size="30" placeholder="Music Title, Movie/ Album, Status" [(ngModel)]="requestCountSearch" 
                  pInputText>
         </div>
       </div>

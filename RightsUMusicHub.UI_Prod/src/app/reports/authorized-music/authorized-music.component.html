@@ -1,268 +1,308 @@
 <div class="content-wrapper">
-    
+
   <section class=" content-header">
     <h1>Authorised Music
       <small></small>
     </h1>
-    <div class="pull-right" style="margin-top: -2.5%">
+    <hr class="hrborder">
+  </section>
+    <section class="content-subHeader" style="margin-top: -1%;">
+      <ul class="nav nav-tabs">
+        <li class="active">
+          <a data-toggle="tab" href="#Usagerequest" (click)="checkRequest('usage')">Usage Requests</a>
+        </li>
+        <li>
+          <a data-toggle="tab" href="#MusictrackList" (click)="checkRequest('musictrack')">Music Track</a>
+        </li>
+        <li>
+          <a data-toggle="tab" href="#MoviealbumList" (click)="checkRequest('musicalbum')">Movie / Album</a>
+        </li>
+      </ul><br>
+      <div class="pull-right" style="margin-top: -4.5%" *ngIf="showUsageList && !showMusicTrackList && !showMusicAlbumList">
         <table>
-            <tr>
-              <!-- <td class="bold" style="width:15%;">Music Cue Sheet:</td> -->
-              <td style="float: right;">
-                  <span style="margin:2px; ">
-                      <button type="button"   (click)="exportToExcel()"  class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Export to Excel"><i class="fa fa-file-excel-o fa-lg"></i></button>
-                  </span>
-                  <span style="margin:2px; ">
-                      <button type="button"   (click)="visibleSidebar2 = true"  class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Search"><i class="fa fa-search fa-lg"></i></button>
-                  </span>      
-                <!-- <span style="margin:5px; " >
+          <tr>
+            <!-- <td class="bold" style="width:15%;">Music Cue Sheet:</td> -->
+            <td style="float: right;">
+              <span style="margin:2px; ">
+                <button type="button" (click)="exportToExcel()" class="btn btn-success" data-toggle="tooltip"
+                  data-placement="top" title="Export to Excel"><i class="fa fa-file-excel-o fa-lg"></i></button>
+              </span>
+              <span style="margin:2px; ">
+                <button type="button" (click)="visibleSidebar2 = true" class="btn btn-info" data-toggle="tooltip"
+                  data-placement="top" title="Search"><i class="fa fa-search fa-lg"></i></button>
+              </span>
+              <!-- <span style="margin:5px; " >
                   <button type="text" pButton  pTooltip="Export to Excel" tooltipPosition="top"  appendTo="body" (click)="exportToExcel()" icon="fa fa-file-excel-o" class="ui-button-success"></button>
               </span>
                 <span style="margin:5px; " >
                     <button type="text" pButton  (click)="visibleSidebar2 = true" icon="fa fa-search" pTooltip="Search" tooltipPosition="top"  appendTo="body"></button>
                 </span> -->
-              </td>
+            </td>
+
+          </tr>
+        </table>
+
+      </div>
   
-            </tr>
-          </table>
-  
-    </div>
-    <hr class="hrborder">   
-    
-  </section>
-  <p-sidebar [(visible)]="visibleSidebar2" position="right" [ngStyle]="{width:'400px'}" [baseZIndex]="10000">
+    <p-sidebar [(visible)]="visibleSidebar2" position="right" [ngStyle]="{width:'400px'}" [baseZIndex]="10000">
       <!-- <h1 style="font-weight:normal">Right Sidebar</h1> -->
       <div class="row" style="text-align: center;margin-top: -9%;">
         <h3 style="background-color: lightgray;padding: 2%;">Search</h3>
-  
+
       </div>
       <br>
       <div class="row" style=" padding-top: 5%;">
         <div class="col-lg-5">
-            <label>Request ID : </label>
+          <label>Request ID : </label>
         </div>
-        <div class=" col-lg-4" style="margin-top: -1%; " > 
-            
-            <div  style="margin-left: -38%;">
-                <input id="input" class="searchReqTextBox" type="text" size="30" pInputText [(ngModel)]="searchRequestId"> 
-                <!-- <p-multiSelect [options]="Status" [(ngModel)]="searchStatus" [maxSelectedLabels]="1"></p-multiSelect> -->
-             
-            </div>
+        <div class=" col-lg-4" style="margin-top: -1%; ">
+
+          <div style="margin-left: -38%;">
+            <input id="input" class="searchReqTextBox" type="text" size="30" pInputText [(ngModel)]="searchRequestId">
+            <!-- <p-multiSelect [options]="Status" [(ngModel)]="searchStatus" [maxSelectedLabels]="1"></p-multiSelect> -->
+
+          </div>
         </div>
-    </div>
+      </div>
       <div class="row" style=" padding-top: 5%;">
         <div class="col-lg-6">
-            <label>Primary Channel: </label>
+          <label>Primary Channel: </label>
         </div>
-        <div class=" col-lg-4" style="margin-top: -1%; " > 
-            
-            <div  style="margin-left: -70%;">
-                <!-- (ngModelChange)="searchChannelChange()" -->
-                <p-multiSelect [options]="getChannelList" [panelStyle]="{'width':'146px'}" [(ngModel)]="searchChannel"  optionLabel="Channel_Name" [resetFilterOnHide]="true" [maxSelectedLabels]="1" defaultLabel="Channel"></p-multiSelect>
-             
-            </div>
-        </div>
-    </div>
-    <div class="row" style=" padding-top: 5%;">
-      <div class="col-lg-4">
-          <label>Show : </label>
-      </div>
-      <div class=" col-lg-4" style="margin-top: -1%; " > 
-          
-          <div  >
-              <p-multiSelect [options]="searchshowNameList" [panelStyle]="{'width':'146px'}" [(ngModel)]="searchshowName" [resetFilterOnHide]="true" [maxSelectedLabels]="1" optionLabel="Title_Name" defaultLabel="Show"></p-multiSelect>
-           
+        <div class=" col-lg-4" style="margin-top: -1%; ">
+
+          <div style="margin-left: -70%;">
+            <!-- (ngModelChange)="searchChannelChange()" -->
+            <p-multiSelect [options]="getChannelList" [panelStyle]="{'width':'146px'}" [(ngModel)]="searchChannel"
+              optionLabel="Channel_Name" [resetFilterOnHide]="true" [maxSelectedLabels]="1" defaultLabel="Channel">
+            </p-multiSelect>
+
           </div>
-      </div>
-  </div>
-  <div class="row" style=" padding-top: 5%;">
-    <div class="col-lg-4">
-        <label>Status : </label>
-    </div>
-    <div class=" col-lg-4" style="margin-top: -1%; " > 
-        
-        <div  >
-            <p-multiSelect [options]="Status" [panelStyle]="{'width':'146px'}" [(ngModel)]="searchStatus" [resetFilterOnHide]="true" [maxSelectedLabels]="1" defaultLabel="Status"></p-multiSelect>
-         
         </div>
-    </div>
-  </div>
+      </div>
+      <div class="row" style=" padding-top: 5%;">
+        <div class="col-lg-4">
+          <label>Show : </label>
+        </div>
+        <div class=" col-lg-4" style="margin-top: -1%; ">
+
+          <div>
+            <p-multiSelect [options]="searchshowNameList" [panelStyle]="{'width':'146px'}" [(ngModel)]="searchshowName"
+              [resetFilterOnHide]="true" [maxSelectedLabels]="1" optionLabel="Title_Name" defaultLabel="Show">
+            </p-multiSelect>
+
+          </div>
+        </div>
+      </div>
+      <div class="row" style=" padding-top: 5%;">
+        <div class="col-lg-4">
+          <label>Status : </label>
+        </div>
+        <div class=" col-lg-4" style="margin-top: -1%; ">
+
+          <div>
+            <p-multiSelect [options]="Status" [panelStyle]="{'width':'146px'}" [(ngModel)]="searchStatus"
+              [resetFilterOnHide]="true" [maxSelectedLabels]="1" defaultLabel="Status"></p-multiSelect>
+
+          </div>
+        </div>
+      </div>
       <div class="row" style="padding-top:5%;">
         <div class="col-lg-6" style="margin-right: -17%;">
-            <label>From :</label>
+          <label>From :</label>
         </div>
-        <div class=" col-lg-4" > 
-            <!-- <span class="ui-float-label" style="margin-top: -20px">
+        <div class=" col-lg-4">
+          <!-- <span class="ui-float-label" style="margin-top: -20px">
                 
                 <label for="float-input">From</label>
             </span> -->
-            <div style="margin-top: -5%; ">
-                <p-calendar [(ngModel)]="searchFromDate" [showIcon]="true" readonlyInput="true"  dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" ></p-calendar>
-            </div>
+          <div style="margin-top: -5%; ">
+            <p-calendar [(ngModel)]="searchFromDate" [showIcon]="true" readonlyInput="true" dateFormat="dd/mm/yy"
+              placeholder="dd/mm/yyyy"></p-calendar>
+          </div>
         </div>
+      </div>
+      <div class="row" style="padding-top:5%;">
+        <div class="col-lg-6" style="margin-right: -17%;">
+          <label>To : </label>
         </div>
-        <div class="row" style="padding-top:5%;">
-            <div class="col-lg-6" style="margin-right: -17%;">
-                <label>To : </label>
-            </div>
         <div class=" col-lg-4">
-            <!-- <span class="ui-float-label" style="margin-top: -20px">
+          <!-- <span class="ui-float-label" style="margin-top: -20px">
                   <label for="float-input">To</label>
             </span> -->
-            <div style="margin-top: -5%;">
-            <p-calendar [(ngModel)]="searchToDate" [showIcon]="true" readonlyInput="true"  dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" ></p-calendar>
-            </div>
+          <div style="margin-top: -5%;">
+            <p-calendar [(ngModel)]="searchToDate" [showIcon]="true" readonlyInput="true" dateFormat="dd/mm/yy"
+              placeholder="dd/mm/yyyy"></p-calendar>
           </div>
+        </div>
       </div>
-      
-      
-      <div style="padding-top:10%;"> 
-          <button pButton type="button" (click)="searchClick();visibleSidebar2 = false" label="Search" class="ui-button-success"></button>
-          &nbsp;&nbsp;
-          <button pButton type="button" (click)="clearAllClick();visibleSidebar2 = false" label="Clear All" class="ui-button-success"></button>
+
+
+      <div style="padding-top:10%;">
+        <button pButton type="button" (click)="searchClick();visibleSidebar2 = false" label="Search"
+          class="ui-button-success"></button>
+        &nbsp;&nbsp;
+        <button pButton type="button" (click)="clearAllClick();visibleSidebar2 = false" label="Clear All"
+          class="ui-button-success"></button>
       </div>
-         
-     
-      
-  </p-sidebar>
-  <!-- <p-messages *ngIf="showMsg" [(value)]="msgs"></p-messages> -->
-  <section class="content">
-    
-              <!-- <label>Search </label>&nbsp;
+
+
+
+    </p-sidebar>
+    <!-- <p-messages *ngIf="showMsg" [(value)]="msgs"></p-messages> -->
+    <section class="content">
+
+      <!-- <label>Search </label>&nbsp;
               <input id="input"  class="SearchTextBox" #reqFilter type="text" size="30" placeholder=" Req. ID , Show , Req. By"
                 pInputText > -->
 
-          
-          <section class="content" style="margin-top: -1%;">
-          <div class="row">
-            <!-- <br> -->
-            
-            <p-dataTable #reqdt [value]="requestList" [rowsPerPageOptions]="[10,25,50,100]" [paginator]="true" [rows]="10" [responsive]="true"
-              [alwaysShowPaginator]="true" (onLazyLoad)="loadDataOnPagination($event)"  [lazy]="true" [totalRecords]="recordCount" [first]="first">
-              
-              <p-headerColumnGroup>
-                <p-row>
-                   <p-column   header="Request ID" rowspan="2" field="RequestID"  [sortable]="true"></p-column>
-                   <p-column  header="Channel"   rowspan="2"  field="ChannelName" [sortable]="true"></p-column>
-                    <p-column  header="Show"     rowspan="2" field="Title_Name" [sortable]="true"></p-column>
-                   <p-column header="Songs"     colspan="2" [style]=" {'width':'150px' }" ></p-column>
-                   <p-column header="Episode"   rowspan="2" [style]=" {'width':'100px' }" field="EpisodeFrom" [sortable]="true"></p-column>
-                    <p-column header="Telecast" rowspan="2" [sortable]="true" field="TelecastFrom"></p-column>
-          <p-column header="Status"   rowspan="2" [style]=" {'width':'100px' }" field="Status"  [sortable]="true"></p-column>
-          <p-column header="Requested By" rowspan="2" [style]=" {'width':'120px' }" field="Login_Name" [sortable]="true"></p-column>
-                  <p-column header="Requested Date" rowspan="2"field="RequestDate"  [sortable]="true"></p-column>
-                   
-                </p-row>
-                
-                <p-row>
-                   <p-column header="Req." field="CountRequest"  [sortable]="true"></p-column>
-                   <p-column header="App." field="ApprovedRequest" [sortable]="true"></p-column>
-                   
-               </p-row>
+
+      <div class="tab-content">
+        <div id="Usagerequest" class="tab-pane fade in active">
+          <!-- <br> -->
+
+          <p-dataTable #reqdt [value]="requestList" [rowsPerPageOptions]="[10,25,50,100]" [paginator]="true" [rows]="10"
+            [responsive]="true" [alwaysShowPaginator]="true" (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true"
+            [totalRecords]="recordCount" [first]="first">
+
+            <p-headerColumnGroup>
+              <p-row>
+                <p-column header="Request ID" rowspan="2" field="RequestID" [sortable]="true"></p-column>
+                <p-column header="Channel" rowspan="2" field="ChannelName" [sortable]="true"></p-column>
+                <p-column header="Show" rowspan="2" field="Title_Name" [sortable]="true"></p-column>
+                <p-column header="Songs" colspan="2" [style]=" {'width':'150px' }"></p-column>
+                <p-column header="Episode" rowspan="2" [style]=" {'width':'100px' }" field="EpisodeFrom"
+                  [sortable]="true"></p-column>
+                <p-column header="Telecast" rowspan="2" [sortable]="true" field="TelecastFrom"></p-column>
+                <p-column header="Status" rowspan="2" [style]=" {'width':'100px' }" field="Status" [sortable]="true">
+                </p-column>
+                <p-column header="Requested By" rowspan="2" [style]=" {'width':'120px' }" field="Login_Name"
+                  [sortable]="true"></p-column>
+                <p-column header="Requested Date" rowspan="2" field="RequestDate" [sortable]="true"></p-column>
+
+              </p-row>
+
+              <p-row>
+                <p-column header="Req." field="CountRequest" [sortable]="true"></p-column>
+                <p-column header="App." field="ApprovedRequest" [sortable]="true"></p-column>
+
+              </p-row>
             </p-headerColumnGroup>
-      <p-column field="RequestID" styleClass="text-center">
-      <ng-template pTemplate="body" let-row="rowData">
-                <a (click)="requestCountDetails(row,'N')"><span style="color:blue;font-size: 13px;">{{row.RequestID}}</span></a>
-               
+            <p-column field="RequestID" styleClass="text-center">
+              <ng-template pTemplate="body" let-row="rowData">
+                <a (click)="requestCountDetails(row,'N')"><span
+                    style="color:blue;font-size: 13px;">{{row.RequestID}}</span></a>
+
               </ng-template>
-      </p-column>
-      <p-column field="ChannelName" styleClass="text-center"></p-column>
-      <p-column field="Title_Name" styleClass="text-center"></p-column>
-      <p-column field="CountRequest" styleClass="text-center" ></p-column>
-      <p-column field="ApprovedRequest"styleClass="text-center"></p-column>
-      <p-column field="EpisodeFrom" styleClass="text-center">
-          <ng-template pTemplate="body" let-row="rowData">
-              <div *ngIf="row.EpisodeFrom==row.EpisodeTo">
-                {{row.EpisodeFrom }}
-              </div>
-              <div *ngIf="row.EpisodeFrom !=row.EpisodeTo">
-                {{row.EpisodeFrom}} - {{row.EpisodeTo}}
-              </div>
+            </p-column>
+            <p-column field="ChannelName" styleClass="text-center"></p-column>
+            <p-column field="Title_Name" styleClass="text-center"></p-column>
+            <p-column field="CountRequest" styleClass="text-center"></p-column>
+            <p-column field="ApprovedRequest" styleClass="text-center"></p-column>
+            <p-column field="EpisodeFrom" styleClass="text-center">
+              <ng-template pTemplate="body" let-row="rowData">
+                <div *ngIf="row.EpisodeFrom==row.EpisodeTo">
+                  {{row.EpisodeFrom }}
+                </div>
+                <div *ngIf="row.EpisodeFrom !=row.EpisodeTo">
+                  {{row.EpisodeFrom}} - {{row.EpisodeTo}}
+                </div>
 
-            </ng-template>
-      </p-column>
-      <p-column field="TelecastFrom" styleClass="text-center" [style]=" {'width':'100px' }">
-          <ng-template pTemplate="body" let-row="rowData">
-              <div *ngIf="row.TelecastFrom==row.TelecastTo">
-                {{row.TelecastFrom | date:'dd-MMM-yyyy'}}
-              </div>
-              <div *ngIf="row.TelecastFrom!=row.TelecastTo">
-                {{row.TelecastFrom | date:'dd-MMM-yyyy'}} To {{row.TelecastTo | date:'dd-MMM-yyyy'}}
+              </ng-template>
+            </p-column>
+            <p-column field="TelecastFrom" styleClass="text-center" [style]=" {'width':'100px' }">
+              <ng-template pTemplate="body" let-row="rowData">
+                <div *ngIf="row.TelecastFrom==row.TelecastTo">
+                  {{row.TelecastFrom | date:'dd-MMM-yyyy'}}
+                </div>
+                <div *ngIf="row.TelecastFrom!=row.TelecastTo">
+                  {{row.TelecastFrom | date:'dd-MMM-yyyy'}} To {{row.TelecastTo | date:'dd-MMM-yyyy'}}
 
-              </div>
-            </ng-template>
-      </p-column>
-      <p-column field="Status" styleClass="text-center"></p-column>
-      <p-column field="Login_Name" styleClass="text-center"></p-column>
-      <p-column field="RequestDate" styleClass="text-center">
-          <ng-template pTemplate="body" let-row="rowData">
-              {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}
+                </div>
+              </ng-template>
+            </p-column>
+            <p-column field="Status" styleClass="text-center"></p-column>
+            <p-column field="Login_Name" styleClass="text-center"></p-column>
+            <p-column field="RequestDate" styleClass="text-center">
+              <ng-template pTemplate="body" let-row="rowData">
+                {{row.RequestDate | date:'dd-MMM-yyyy HH:mm a'}}
 
-            </ng-template>
-      </p-column>
-       
-              <p-footer>
-                  Total Records: {{recordCount}}
-                </p-footer>
+              </ng-template>
+            </p-column>
 
-            </p-dataTable>
-          </div>
+            <p-footer>
+              Total Records: {{recordCount}}
+            </p-footer>
 
-          
-        </section>
+          </p-dataTable>
+        </div>
+        <div id="MusictrackList" class="tab-pane fade">
+          <app-common-music-track [musictrackDetails]="requestMusicList">
+          </app-common-music-track>
+        </div>
+        <div id="MoviealbumList" class="tab-pane fade">
+          <app-common-movie-album [moviealbumDetails]="requestAlbumList"></app-common-movie-album>
+        </div>
+      </div>
+
+
+
       <!-- </div> -->
 
-    <!-- </div> -->
+      <!-- </div> -->
 
 
+    </section>
   </section>
-
   <!-- Sidebar Add to contact -->
-  
-  
+
+
   <!-- Modal -->
-  <p-dialog [(visible)]="showRequestCountDetails" [blockScroll]="true" [modal]="true" [resizable]="true"  [responsive]="false"   [width]="1200" [positionTop]="60"  [contentStyle]="{'overflow':'visible'}" [draggable]="false">
+  <p-dialog [(visible)]="showRequestCountDetails" [blockScroll]="true" [modal]="true" [resizable]="true"
+    [responsive]="false" [width]="1200" [positionTop]="60" [contentStyle]="{'overflow':'visible'}" [draggable]="false">
     <p-header>
-        Details:  <span style="font-family: serif;
+      Details: <span style="font-family: serif;
         font-size: medium;">
-            {{requestCountHeader}}
-        </span>
+        {{requestCountHeader}}
+      </span>
     </p-header>
     <div class="Row">
       <div>
         <label>Search</label>&nbsp;
-        <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30" placeholder="Music Title, Movie/ Album, Status"
-          pInputText >
+        <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30"
+          placeholder="Music Title, Movie/ Album, Status" pInputText>
 
       </div>
 
     </div>
     <br>
     <!-- <div class="table-body"> -->
-    <p-dataTable [value]="requestCountList" [rowsPerPageOptions]="[5,10,15,20]"  [globalFilter]="reqCountSearch" [paginator]="true"
-      [rows]="5" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true" scrollHeight="300px" >
-      <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}" ></p-column>
-      <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10" styleClass="text-center"></p-column>
+    <p-dataTable [value]="requestCountList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch"
+      [paginator]="true" [rows]="5" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true"
+      scrollHeight="300px">
+      <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}">
+      </p-column>
+      <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10" styleClass="text-center">
+      </p-column>
       <p-column field="LabelName" header="Music Label" [sortable]="true" width="10" styleClass="text-center"></p-column>
       <p-column field="IsApprove" header="Status" [sortable]="true" width="10" styleClass="text-center"></p-column>
       <!-- <p-column field="IsValid" header="Valid" [sortable]="true" width="10" styleClass="text-center"></p-column> -->
       <p-column field="Remarks" header="Remarks" [sortable]="true" [style]="{'width':'300px'}"></p-column>
-    <p-footer>
-      Total Records: {{totalCountOfNoOfSongsDetails}}
-    </p-footer>
+      <p-footer>
+        Total Records: {{totalCountOfNoOfSongsDetails}}
+      </p-footer>
     </p-dataTable>
-  <!-- </div> -->
+    <!-- </div> -->
     <p-footer>
       <button type="button" pButton (click)="showRequestCountDetails = false;" label="Close"></button>
       <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
     </p-footer>
- 
+
   </p-dialog>
   <div *ngIf="displayalertMessage">
-    <app-message-box  [messageData]="messageData"></app-message-box>
+    <app-message-box [messageData]="messageData"></app-message-box>
 
   </div>
-  
- 
+
+
   <div *ngIf="load" id="loadingDiv"></div>
 </div>
