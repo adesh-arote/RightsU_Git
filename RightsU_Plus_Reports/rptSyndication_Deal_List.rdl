@@ -5873,7 +5873,11 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember>
                   <Visibility>
                     <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDealSegment") = "Y",false,true)</Hidden>
