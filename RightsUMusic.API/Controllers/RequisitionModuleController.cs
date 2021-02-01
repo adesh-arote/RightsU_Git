@@ -1369,7 +1369,7 @@ namespace RightsUMusic.API.Controllers
                     ConsumptionRequestListInput objConsumptionRequestList = new ConsumptionRequestListInput()
                     {
                         RecordFor = "L",
-                        PagingRequired = "Y",
+                        PagingRequired = "N",
                         PageSize = 10,
                         PageNo = 1,
                         RequestID = "",
@@ -1377,7 +1377,10 @@ namespace RightsUMusic.API.Controllers
                         ShowCode = "",
                         StatusCode = "",
                         FromDate = "",
-                        ToDate = ""
+                        ToDate = "",
+                        SortBy = "RequestDate",
+                        Order="DESC"
+                       
                     };
                     lstConsumptionRequest = obj.GetConsumptionRequestList(objMHRequest, objConsumptionRequestList, out RecordCount);
                     Header = lstConsumptionRequest.Where(x => x.RequestCode == objMHRequest.MHRequestCode).Select(x =>
