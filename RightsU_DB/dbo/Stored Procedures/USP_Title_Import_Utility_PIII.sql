@@ -5,7 +5,7 @@
 AS 
 BEGIN
 	SET NOCOUNT ON
-	--DECLARE @DM_Master_Import_Code INT = 15
+	--DECLARE @DM_Master_Import_Code INT = 94
 	DECLARE @ISError CHAR(1) = 'N', @Error_Message NVARCHAR(MAX) = '', @ExcelCnt INT = 0
 
 	IF(OBJECT_ID('tempdb..#TempTitle') IS NOT NULL) DROP TABLE #TempTitle
@@ -205,7 +205,7 @@ BEGIN
 	)
 
 	UPDATE B SET  B.Error_Message= ISNULL(B.Error_Message,'') + '~'+@Mandatory_message , B.Record_Status = 'E'
-	FROM DM_Title_Import_Utility_Data B WHERE B.Col1 IN (SELECT ExcelSrNo FROM #TempDuplicateRows )
+	FROM DM_Title_Import_Utility_Data B WHERE B.Col1 IN (SELECT ExcelSrNo FROM #TempDuplicateRows ) AND B.DM_Master_Import_Code = @DM_Master_Import_Code
 
 	PRINT 'Fetching duplicate rows'
 	UPDATE A SET  Error_Message= ISNULL(Error_Message,'') + '~Duplicate Rows Found', Is_Ignore = 'Y' --,A.Record_Status = 'E'
@@ -252,7 +252,7 @@ BEGIN
 
 		SELECT @ExcelCnt = COUNT(DISTINCT ExcelSrNo) FROM #TempExcelSrNo
 
-		UPDATE T1 SET T1.IsError = NULL, ErrorMessage = NULL FROM #TempTitleUnPivot T1
+		UPDATE T1 SET T1.IsError = '', ErrorMessage = '' FROM #TempTitleUnPivot T1
 	END
 
 	DECLARE @Display_Name NVARCHAR(MAX), @Reference_Table NVARCHAR(MAX), @Reference_Text_Field NVARCHAR(MAX), @Reference_Value_Field NVARCHAR(MAX)
@@ -264,7 +264,7 @@ BEGIN
 
 		DECLARE db_cursor_Duplication CURSOR FOR 
 		SELECT Display_Name FROM DM_Title_Import_Utility WHERE Is_Active = 'Y' AND [validation] like '%dup%'
-
+		
 		OPEN db_cursor_Duplication  
 		FETCH NEXT FROM db_cursor_Duplication INTO @Display_Name  
 
@@ -291,6 +291,8 @@ BEGIN
 
 	BEGIN
 		PRINT 'Check INT Column'
+		DECLARE @Value NVARCHAR(MAX)= '', @ExcelNo_IntDec NVARCHAR(MAX) = ''
+
 		DECLARE db_cursor_Int CURSOR FOR 
 		SELECT Display_Name FROM DM_Title_Import_Utility WHERE Is_Active = 'Y' AND Colum_Type = 'INT'
 
@@ -299,21 +301,77 @@ BEGIN
 
 		WHILE @@FETCH_STATUS = 0  
 		BEGIN 
-			UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') is Not Numeric'
-			WHERE  ColumnHeader = @Display_Name AND ISNUMERIC(TitleData) <> 1
+	
+			DECLARE db_cursor_Int_dec CURSOR FOR 
+			SELECT ExcelSrNo, TitleData FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name	AND ISNULL(TitleData,'') <> ''
 
+			OPEN db_cursor_Int_dec  
+			FETCH NEXT FROM db_cursor_Int_dec INTO @ExcelNo_IntDec, @Value 
+	
+			WHILE @@FETCH_STATUS = 0  
+			BEGIN 
+					IF (ISNUMERIC(Replace(Replace(@Value,'+','A'),'-','A') + '.0e0') > 0)
+					BEGIN
+						UPDATE #TempTitleUnPivot SET RefKey = 1 WHERE ExcelSrNo = @ExcelNo_IntDec AND TitleData = @Value
+					END
+					ELSE IF (REPLACE(ISNUMERIC(REPLACE(REPLACE(@Value,'+','A'),'-','A') + 'e0'),1,CHARINDEX('.',@Value)) > 0 AND @Display_Name = 'Duration In Minute')
+					BEGIN
+						UPDATE #TempTitleUnPivot SET RefKey = 2  WHERE ExcelSrNo = @ExcelNo_IntDec AND TitleData = @Value
+
+						IF (right(@Value, 1) = '.')
+							UPDATE #TempTitleUnPivot SET TitleData = TitleData + '0'  WHERE ExcelSrNo = @ExcelNo_IntDec AND TitleData = @Value
+					END
+					ELSE
+					BEGIN 
+						UPDATE #TempTitleUnPivot SET RefKey = 0 FROM #TempTitleUnPivot WHERE ExcelSrNo = @ExcelNo_IntDec AND TitleData = @Value
+					END
+
+				FETCH NEXT FROM db_cursor_Int_dec INTO @ExcelNo_IntDec, @Value 
+			END 
+
+			CLOSE db_cursor_Int_dec  
+			DEALLOCATE db_cursor_Int_dec 
+	
+			UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') is Not Numeric'
+			WHERE ExcelSrNo IN (
+				SELECT ExcelSrNo FROM #TempTitleUnPivot 
+				WHERE  ColumnHeader = @Display_Name AND RefKey = 0
+			)
+		
 			IF ('YEAR OF RELEASE' = UPPER(@Display_Name))
+			BEGIN
 				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') should be between 1950 and 9999'
-				FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name AND ISNUMERIC(TitleData) = 1 AND CAST(TitleData AS INT) NOT BETWEEN 1950 AND 9999
-			
-			
+				WHERE ExcelSrNo IN (
+				SELECT ExcelSrNo
+				FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name AND  RefKey = 1 AND CAST(TitleData AS INT) NOT BETWEEN 1950 AND 9999
+				)
+
+			END
+
+			IF ('DURATION IN MINUTE' = UPPER(@Display_Name))
+			BEGIN
+				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') should be between 1950 and 9999'
+				WHERE ExcelSrNo IN (
+					SELECT ExcelSrNo
+					FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name AND RefKey = 1 AND CAST(TitleData AS INT) NOT BETWEEN 1 AND 9999
+				)
+
+				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') should be between 1950 and 9999'
+				WHERE ExcelSrNo IN (
+					SELECT ExcelSrNo
+					FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name AND RefKey = 2 AND CAST(TitleData AS DECIMAL(38,2)) NOT BETWEEN 1 AND 9999
+				)
+			END
+
+			UPDATE #TempTitleUnPivot SET RefKey = NULL WHERE RefKey IN (0,1,2) AND ColumnHeader = @Display_Name
+
 			FETCH NEXT FROM db_cursor_Int INTO @Display_Name 
 		END 
 
 		CLOSE db_cursor_Int  
 		DEALLOCATE db_cursor_Int 
 	END
-	
+
 	BEGIN
 		PRINT 'Mandatory Validation'
 
@@ -457,7 +515,7 @@ BEGIN
 		CLOSE db_cursor_Reference  
 		DEALLOCATE db_cursor_Reference 
 	END
-
+	
 	BEGIN
 		PRINT 'Talent Referene check'
 
@@ -734,6 +792,11 @@ BEGIN
 
 	BEGIN
 		PRINT 'if error which cannot be resolved '
+
+		UPDATE T SET T.IsError = 'Y' 
+		FROM #TempTitleUnPivot T WHERE T.ExcelSrNo COLLATE SQL_Latin1_General_CP1_CI_AS IN
+		(SELECT Col1 FROM DM_Title_Import_Utility_Data WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Record_Status = 'E')
+
 		IF EXISTS(SELECT * FROM #TempTitleUnPivot WHERE IsError = 'Y') 
 		BEGIN
 
@@ -744,7 +807,7 @@ BEGIN
 			WHERE A.DM_Master_Import_Code = @DM_Master_Import_Code AND A.Col1 NOT LIKE '%Sr%' 
 			
 		END
-	
+
 		IF EXISTS(SELECT * FROM #TempTitleUnPivot WHERE ISNULL(IsError,'') <> 'Y')
 		BEGIN
 			IF NOT EXISTS (SELECT TOP 1 * FROM #TempResolveConflict)
@@ -763,6 +826,11 @@ BEGIN
 				TitleData FROM #TempTitleUnPivot WHERE ISError <> ''Y'') AS Tbl PIVOT( MAX(TitleData) FOR ColumnHeader IN ('+@cols_DisplayName+')) AS Pvt ')
 			
 				UPDATE A SET A.RefKey = B.Title_Code 
+				FROM #TempTitleUnPivot A
+				INNER JOIN Title B ON A.TitleData COLLATE SQL_Latin1_General_CP1_CI_AS = B.Title_Name
+				WHERE A.ColumnHeader = 'Title Name' AND A.ISError <> 'Y'
+
+				UPDATE B SET B.Inserted_By = 143, B.Inserted_On = GETDATE(), B.Last_UpDated_Time = GETDATE()
 				FROM #TempTitleUnPivot A
 				INNER JOIN Title B ON A.TitleData COLLATE SQL_Latin1_General_CP1_CI_AS = B.Title_Name
 				WHERE A.ColumnHeader = 'Title Name' AND A.ISError <> 'Y'
@@ -880,7 +948,7 @@ BEGIN
 		UPDATE DM_Master_Import SET Status = 'T' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
 
 		UPDATE A SET  A.Error_Message = ISNULL(Error_Message,'')  + '~' + ERROR_MESSAGE()
-		FROM DM_Title_Import_Utility_Data A WHERE A.DM_Master_Import_Code = @DM_Master_Import_Code
+		FROM DM_Title_Import_Utility_Data A WHERE A.DM_Master_Import_Code = @DM_Master_Import_Code AND A.Col1 NOT LIKE '%Sr%'
 	END CATCH
 END
 
