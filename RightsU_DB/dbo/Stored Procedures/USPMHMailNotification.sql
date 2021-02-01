@@ -300,9 +300,9 @@ BEGIN
 					@body = @EmailUser_Body, 
 					@body_format = 'HTML';
 
-					INSERT INTO MHNotificationLog(Email_Config_Code, Created_Time, Is_Read, Email_Body,	User_Code, Vendor_Code, [Subject], Email_Id)
-					SELECT @Email_Config_Code,GETDATE(),'N', @Emailbody, @Users_Code, @VendorCode, @MailSubjectCr, @Email_Id
-
+					INSERT INTO MHNotificationLog(Email_Config_Code, Created_Time, Is_Read, Email_Body,	User_Code, Vendor_Code, [Subject], Email_Id, MHRequestCode, MHRequestTypeCode)
+					SELECT @Email_Config_Code,GETDATE(),'N', @Emailbody, @Users_Code, @VendorCode, @MailSubjectCr, @Email_Id, @MHRequestCode, @MHRequestTypeCode
+					
 					SET @RowCount = 0
 				END
 				SET @EmailUser_Body=''	

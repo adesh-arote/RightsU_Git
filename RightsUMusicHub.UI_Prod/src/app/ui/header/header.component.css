@@ -24,6 +24,10 @@
     width: 35% !important;
 }
 
+:host ::ng-deep div.slimScrollDiv[style] {
+	height:42px !important;
+ } 
+
 /* .label{
     position: absolute;
     top: 9px;

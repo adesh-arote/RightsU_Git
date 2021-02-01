@@ -124,7 +124,7 @@
           </div>
         </ng-template>
       </p-column>
-      <p-column header="Action" [sortable]="true" [style]="{'width':'100px'}" styleClass="text-center">
+      <p-column header="Action" [sortable]="false" [style]="{'width':'100px'}" styleClass="text-center">
         <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
           <span *ngIf="row.RecordStatus=='E'">
             <button (click)="viewRecords('Details',row,'A')" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip" data-placement="top" title="View">

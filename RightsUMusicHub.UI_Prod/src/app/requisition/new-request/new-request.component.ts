@@ -91,7 +91,9 @@ export class NewRequestComponent implements OnInit {
   public RemarkSpecialInstruction: any = [];
   public remarksLabel: any;
   public specialRemarks: any;
-  public isDateSame: string;
+  public isViewallclicked: boolean = false;
+  public isNewrequest: boolean = false;
+  public isDateSame: any;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.mindatevalue = new Date();
@@ -130,11 +132,19 @@ export class NewRequestComponent implements OnInit {
   ngOnDestroy() {
     if (this.timer) {
       clearInterval(this.timer)
+      this.isViewallclicked = false;
     }
   }
   public vendorShortName;
   ngOnInit() {
     debugger;
+    this.isViewallclicked = JSON.parse(localStorage.getItem('VIEW_ALL_REQUEST'));
+    if (this.isViewallclicked == false) {
+      this.isNewrequest = true;
+    }
+    else {
+      this.isNewrequest = false;
+    }
     // alert(this.todaydate.getTime())
     // var a:Timestamp=new Timestamp();
 
@@ -294,11 +304,14 @@ export class NewRequestComponent implements OnInit {
     },
       error => { this.handleResponseError(error) });
     // this.getRequestList();
+
   }
+
   Requestlistclick() {
     debugger;
     if (this.Reqcount == 0) {
       this.isRequestListclick = true;
+      this.isNewrequest = false;
       this.getRequestList(10, 1);
       this.Reqcount++;
     }
@@ -737,6 +750,7 @@ export class NewRequestComponent implements OnInit {
     this.sortBy = sortBy;
     if (event.sortField == undefined) {
       this.sortBy = "RequestDate";
+      event.sortOrder = -1;
     }
     else {
       this.sortBy = this.sortBy;
@@ -2028,6 +2042,25 @@ export class NewRequestComponent implements OnInit {
         'body': "Episode To should greater than Episode From"
       }
     }
+  }
+
+  exportRequestdetails() {
+    let dataObj = {
+      "RequestID": "",
+      "RecordFor": "L",
+      "ChannelCode": "",
+      "ShowCode": "",
+      "ExportFor": "C",
+      "StatusCode": "",
+      "FromDate": "",
+      "ToDate": "",
+      "SortBy": this.sortBy,
+      "Order": this.order
+    }
+    this._requisitionService.ExportConsumptionDetailList(dataObj).subscribe(response => {
+      this.Download(response.Return.Message)
+     }, error => { this.handleResponseError(error) }
+      );
   }
 
   handleResponseError(errorCode) {

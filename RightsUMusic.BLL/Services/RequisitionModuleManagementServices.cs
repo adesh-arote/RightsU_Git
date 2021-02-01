@@ -36,6 +36,7 @@ namespace RightsUMusic.BLL.Services
         private readonly USPMHGetChannelFromDealRepositories objUSPMHGetChannelFromDealRepositories = new USPMHGetChannelFromDealRepositories();
         private readonly Music_LanguageRepositories objMusic_LanguageRepositories = new Music_LanguageRepositories();
         private readonly USPMHConsumptionRequestDetailRepositories objUSPMHConsumptionRequestDetailRepositories = new USPMHConsumptionRequestDetailRepositories();
+        private readonly USPMHMovieAlbumMusicDetailsListRepositories objUSPMHMovieAlbumMusicDetailsListRepositories = new USPMHMovieAlbumMusicDetailsListRepositories();
         public IEnumerable<USPMHShowNameList> GetShowNameList(int UsersCode,int ChannelCode)
         {
           
@@ -61,6 +62,11 @@ namespace RightsUMusic.BLL.Services
         public IEnumerable<USPMHMovieAlbumMusicList> GetMovieAlbumMusicList(MHRequest objMHRequest)
         {
             return objUSPMHMovieAlbumMusicListRepositories.GetMovieAlbumMusicList(objMHRequest);
+        }
+
+        public IEnumerable<USPMHMovieAlbumMusicDetailsList> GetMovieAlbumMusicDetailsList(MHRequest objMHRequest)
+        {
+            return objUSPMHMovieAlbumMusicDetailsListRepositories.GetMovieAlbumMusicDetailsList(objMHRequest);
         }
 
         public IEnumerable<ConsumptionRequestDetails> GetConsumptionRequestDetails(string MHRequestCode,int MHRequestTypeCode,char IsCueSheet)
