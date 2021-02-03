@@ -239,12 +239,28 @@
           <DataField>Platform_Avail</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="HoldbackOn">
+          <DataField>HoldbackOn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Holdback_Type">
+          <DataField>Holdback_Type</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Ancillary_Rights">
           <DataField>Ancillary_Rights</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Holdback_Release_Date">
+          <DataField>Holdback_Release_Date</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Due_Diligence">
           <DataField>Due_Diligence</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Reverse_Holdback">
+          <DataField>Reverse_Holdback</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Category_Name">
@@ -4765,6 +4781,12 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                   <Width>1.27083in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.52088in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>1.05208in</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -5055,6 +5077,77 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Sub_Deal_Restriction_Remark1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=iif(Fields!Holdback_Release_Date.Value = "", Fields!HoldbackOn.Value, Fields!Holdback_Release_Date.Value.ToString())</Value>
+                                  <Style>
+                                    <FontFamily>Verdana</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <Color>Red</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Sub_Deal_Restriction_Remark1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Reverse_Holdback">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Reverse_Holdback.Value</Value>
+                                  <Style>
+                                    <FontFamily>Verdana</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <Color>=SWITCH(Fields!Category_Name.Value = "Critical", "red")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Reverse_Holdback</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -6176,6 +6269,82 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                             </Style>
                           </Paragraph>
                         </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.30208in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox227">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Holdback</Value>
+                                <Style>
+                                  <FontFamily>Verdana</FontFamily>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox227</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.30208in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox229">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Reverse Holdback</Value>
+                                <Style>
+                                  <FontFamily>Verdana</FontFamily>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox229</rd:DefaultName>
                         <Style>
                           <Border>
                             <Style>Solid</Style>
@@ -7460,7 +7629,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
             <Top>0.05292cm</Top>
             <Left>0.02646cm</Left>
             <Height>0.55208in</Height>
-            <Width>55.55209in</Width>
+            <Width>58.07297in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
