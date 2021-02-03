@@ -146,7 +146,10 @@ BEGIN
 	IF(UPPER(@Exclusivity) = 'E')
 		SET @EX_YES = 1
 	ELSE IF(UPPER(@Exclusivity) = 'N')
+	BEGIN
 		SET @EX_NO = 0
+		SET @EX_YES = 0
+	END
 	ELSE IF(UPPER(@Exclusivity) = 'B')
 	BEGIN
 		SET @EX_YES = 1
