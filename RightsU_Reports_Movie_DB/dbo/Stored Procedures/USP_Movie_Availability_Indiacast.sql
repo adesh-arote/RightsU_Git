@@ -110,7 +110,10 @@ BEGIN
 	IF(UPPER(@Exclusivity) = 'E')
 		SET @EX_YES = 1
 	ELSE IF(UPPER(@Exclusivity) = 'N')
+	BEGIN
 		SET @EX_NO = 0
+		SET @EX_YES = 0
+	END
 	ELSE IF(UPPER(@Exclusivity) = 'B')
 	BEGIN
 		SET @EX_YES = 1
@@ -998,8 +1001,8 @@ BEGIN
 	BEGIN
 		-----------------Query to get title details
 		SELECT t.Title_Code, t.Title_Language_Code,
-			t.Title_Name
-			--CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
+			--t.Title_Name
+			CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
 			,Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
 			Star_Cast = [dbo].[UFN_GetStarCastForTitle](t.Title_Code),
 			Director = [dbo].[UFN_GetDirectorForTitle](t.Title_Code),
