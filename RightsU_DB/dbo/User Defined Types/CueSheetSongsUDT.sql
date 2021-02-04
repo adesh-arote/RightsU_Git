@@ -4,7 +4,7 @@
     [Episode]        NVARCHAR (10)  NULL,
     [Music Track]    NVARCHAR (100) NULL,
     [Movie/Album]    NVARCHAR (100) NULL,
-    [Song Type]      NVARCHAR (100) NULL,
+    [Usage Type]     NVARCHAR (100) NULL,
     [TC IN]          NVARCHAR (100) NULL,
     [TC IN Frame]    NVARCHAR (100) NULL,
     [TC OUT]         NVARCHAR (100) NULL,
@@ -12,3 +12,4 @@
     [Duration]       NVARCHAR (100) NULL,
     [Duration Frame] NVARCHAR (100) NULL);
 
+	

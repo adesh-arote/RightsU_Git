@@ -69,10 +69,10 @@ SET FMTONLY OFF
 	ChannelName NVARCHAR(50),
 	RequestDate NVARCHAR(50),
 	ApprovedRequest INT,
-	Music_Title NVARCHAR(50),
-	MusicMovieAlbum NVARCHAR(50),
-	LabelName NVARCHAR(50),
-	Remarks NVARCHAR(50)
+	Music_Title NVARCHAR(MAX),
+	MusicMovieAlbum NVARCHAR(MAX),
+	LabelName NVARCHAR(MAX),
+	Remarks NVARCHAR(MAX)
 	)
 	
 	CREATE TABLE #tempApprovedCount
@@ -170,5 +170,3 @@ END
 --DECLARE @RecordCount INT
 --EXEC USPMHConsumptionRequestList 1,1287,'L','Y',10,1,@RecordCount OUTPUT,'','','','','',''
 --PRINT 'RecordCount: '+CAST( @RecordCount AS NVARCHAR)
-GO
-
