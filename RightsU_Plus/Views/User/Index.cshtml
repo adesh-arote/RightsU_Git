@@ -472,11 +472,12 @@
             returnVal = false;
         }
 
-        if (document.getElementById("ProductionHouseUser").checked)
-        {
-            if ($('#ddlVendors').val() == "") {
-                $('#ddlVendors').addClass('required');
-                returnVal = false;
+        if ($("#ddlVendor").val() != undefined) {
+            if (document.getElementById("ProductionHouseUser").checked) {
+                if ($('#ddlVendors').val() == "") {
+                    $('#ddlVendors').addClass('required');
+                    returnVal = false;
+                }
             }
         }
         return returnVal;
@@ -538,7 +539,7 @@
                     $('#pupupHtml').empty();
                     $('#pupupHtml').html(result);
                     $('#ddlBusinessUnit').SumoSelect();
-                    $('#ddlBusinessUnit')[0].sumo.reload();
+                   // $('#ddlBusinessUnit')[0].sumo.reload();
                     initializeChosen();
                 }
             },
