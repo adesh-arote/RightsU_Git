@@ -1044,6 +1044,19 @@ namespace RightsU_Entities
         [StoredProcedureParameter(SqlDbType.Int, ParameterName = "Users_Code")]
         public Nullable<int> Users_Code { get; set; }
     }
+
+    [StoredProcedure("USP_Title_Import_Utility_PII")]
+    public class USP_Title_Import_Utility_PII
+    {
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "DM_Import_UDT")]
+        public List<DM_Import_UDT> DM_Import_UDT { get; set; }
+        [StoredProcedureParameter(SqlDbType.Int, ParameterName = "DM_Master_Import_Code")]
+        public Nullable<int> DM_Master_Import_Code { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Int, ParameterName = "Users_Code")]
+        public Nullable<int> Users_Code { get; set; }
+    }
+
     [StoredProcedure("USP_DM_Title_PIII")]
     public class USP_DM_Title_PIII
     {

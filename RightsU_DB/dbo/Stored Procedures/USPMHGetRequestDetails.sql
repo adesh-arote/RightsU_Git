@@ -16,14 +16,13 @@ BEGIN
 		IF(@IsCueSheet = 'Y')
 			BEGIN
 
-				--Select COUNT(*) AS Cnt, TitleCode,MusicTitleCode, ma.Music_Album_Name INTO #tempCueSheet
-				--from MHCuesheetsong mcs
-				--INNER JOIN Music_Title mt ON mt.Music_Title_Code = mcs.MusicTitleCode
-				--INNER JOIN Music_Album ma ON ma.Music_Album_Code = mt.Music_Album_Code
-				--GROUP BY TitleCode,MusicTitleCode, ma.Music_Album_Name
+				Select COUNT(*) AS Cnt, TitleCode,MusicTitleCode, ma.Music_Album_Name INTO #tempCueSheet
+				from MHCuesheetsong mcs
+				INNER JOIN Music_Title mt ON mt.Music_Title_Code = mcs.MusicTitleCode
+				INNER JOIN Music_Album ma ON ma.Music_Album_Code = mt.Music_Album_Code
+				GROUP BY TitleCode,MusicTitleCode, ma.Music_Album_Name
 
-				--SELECT ISNULL(MRD.MusicTitleCode,'') AS MusicTitleCode,ISNULL(MT.Music_Title_Name,'') + ' ('+CAST(ISNULL(tcs.Cnt, 0) AS NVARCHAR) +')' AS RequestedMusicTitle, 
-				SELECT ISNULL(MRD.MusicTitleCode,'') AS MusicTitleCode,ISNULL(MT.Music_Title_Name,'') AS RequestedMusicTitle, 
+				SELECT ISNULL(MRD.MusicTitleCode,'') AS MusicTitleCode,ISNULL(MT.Music_Title_Name,'') + ' ('+CAST(ISNULL(tcs.Cnt, 0) AS NVARCHAR) +')' AS RequestedMusicTitle, 
 				CASE WHEN MRD.IsValid = 'N' THEN 'Invalid' 
 					 WHEN MRD.IsValid = 'Y' THEN 'Valid'	
 					 ELSE 'Pending' END AS IsValid,
@@ -38,7 +37,7 @@ BEGIN
 				LEFT JOIN Music_Album MA ON MA.Music_Album_Code = MT.Music_Album_Code
 				INNER JOIN MHRequest MR ON MR.MHRequestCode = MRD.MHRequestCode
 				LEFT JOIN Title T ON T.Title_Code = MR.TitleCode
-				--LEFT  JOIN #tempCueSheet tcs ON tcs.MusicTitleCode = mrd.MusicTitleCode AND tcs.TitleCode = mr.TitleCode
+				LEFT  JOIN #tempCueSheet tcs ON tcs.MusicTitleCode = mrd.MusicTitleCode AND tcs.TitleCode = mr.TitleCode
 				WHERE (MRD.MHRequestCode IN (select number from dbo.fn_Split_withdelemiter('' + ISNULL(@RequestCode, '') +'',','))) AND MRD.IsApprove = 'Y'
 			END
 		ELSE

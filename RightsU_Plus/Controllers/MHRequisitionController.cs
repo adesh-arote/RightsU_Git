@@ -115,7 +115,7 @@ namespace RightsU_Plus.Controllers
         }
         public ViewResult Index()
         {
-           // var lstData = "";
+            // var lstData = "";
             ViewBag.Key = TempData["key"];
             ViewBag.MHRequestCode = TempData["MHRequestCode"];
             ViewBag.CallFor = TempData["callFor"];
@@ -124,11 +124,11 @@ namespace RightsU_Plus.Controllers
             return View("~/Views/MHRequisition/Index.cshtml");
         }
 
-        public PartialViewResult BindPartialPages(string key, int MHRequestCode , string callFor = "")
+        public PartialViewResult BindPartialPages(string key, int MHRequestCode, string callFor = "")
         {
-           
+
             if (callFor == "D")
-            {            
+            {
                 lstMHRequest = lstMHRequest_Searched = new MHRequest_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
             }
             MHRequest_Service objService = new MHRequest_Service(objLoginEntity.ConnectionStringName);
@@ -141,7 +141,7 @@ namespace RightsU_Plus.Controllers
             else if (key == "CHILD" || key == "VIEW")
             {
                 int? MHrequestCode = 0;
-               
+
                 ViewBag.CallFor = callFor;
                 ViewBag.key = key;
                 objMHRequest = lstMHRequest.Where(x => x.MHRequestCode == MHRequestCode).FirstOrDefault();
@@ -217,8 +217,8 @@ namespace RightsU_Plus.Controllers
                 //ViewBag.RecordCount = lstMHRequest.Where(x => x.MHRequestTypeCode == 1).ToList().Count();
                 ViewBag.PageNo = pageNo;
                 ViewBag.PageSize = recordPerPage;
-                
-                lst = new USP_Service(objLoginEntity.ConnectionStringName).USPMHRequisitionList(productionHouseCode, musicLabel, 1, fromDate, toDate, statusCode, titleCodes,"","", pageNo, recordPerPage, "", "", objRecordCount).ToList();
+
+                lst = new USP_Service(objLoginEntity.ConnectionStringName).USPMHRequisitionList(productionHouseCode, musicLabel, 1, fromDate, toDate, statusCode, titleCodes, "", "", pageNo, recordPerPage, "", "", objRecordCount).ToList();
                 RecordCount = Convert.ToInt32(objRecordCount.Value);
                 ViewBag.RecordCount = RecordCount;
                 //}
@@ -229,8 +229,8 @@ namespace RightsU_Plus.Controllers
                 ViewBag.PageNo = pageNo;
                 ViewBag.PageSize = recordPerPage;
 
-              
-                lst = lst = new USP_Service(objLoginEntity.ConnectionStringName).USPMHRequisitionList(productionHouseCode, musicLabel, 2, fromDate, toDate, statusCode, "","","", pageNo, recordPerPage, "", "", objRecordCount).ToList();
+
+                lst = lst = new USP_Service(objLoginEntity.ConnectionStringName).USPMHRequisitionList(productionHouseCode, musicLabel, 2, fromDate, toDate, statusCode, "", "", "", pageNo, recordPerPage, "", "", objRecordCount).ToList();
                 RecordCount = Convert.ToInt32(objRecordCount.Value);
                 ViewBag.RecordCount = RecordCount;
                 //}
@@ -241,7 +241,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.PageNo = pageNo;
                 ViewBag.PageSize = recordPerPage;
 
-                lst = lst = new USP_Service(objLoginEntity.ConnectionStringName).USPMHRequisitionList(productionHouseCode, musicLabel, 3, fromDate, toDate, statusCode, "","","", pageNo, recordPerPage,"" ,"",objRecordCount).ToList();
+                lst = lst = new USP_Service(objLoginEntity.ConnectionStringName).USPMHRequisitionList(productionHouseCode, musicLabel, 3, fromDate, toDate, statusCode, "", "", "", pageNo, recordPerPage, "", "", objRecordCount).ToList();
                 RecordCount = Convert.ToInt32(objRecordCount.Value);
                 ViewBag.RecordCount = RecordCount;
                 //}
@@ -276,9 +276,9 @@ namespace RightsU_Plus.Controllers
             }
             else if (MHRequestTypeCode == 2)
             {
-               
+
                 int noOfRecordSkip, noOfRecordTake;
-                
+
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 lstdata = lstMHRequestDetailsTrack_Searched.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 //RecordCount = lstdata.Count;
@@ -286,7 +286,7 @@ namespace RightsU_Plus.Controllers
                 // lstdata = lstUSPMHRequistionTrackList_Result;
 
                 Url = "~/Views/MHRequisition/_MHRequisitionTrackList.cshtml";
-               
+
             }
             else if (MHRequestTypeCode == 3)
             {
@@ -296,7 +296,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SearchMHRequestDetails(string searchText, string tabName = "CM")
         {
-           
+
             Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
             if (!string.IsNullOrEmpty(searchText))
             {
@@ -306,7 +306,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else if (tabName == "OT")
                 {
-                    
+
                     lstMHRequestDetailsTrack_Searched = lstMHRequestDetailsTrack.Where(w => w.RequestedMusicTitleName.ToUpper().Contains(searchText.ToUpper())).ToList();
 
                 }
@@ -331,12 +331,12 @@ namespace RightsU_Plus.Controllers
                     lstMHRequestDetails_Searched = lstMHRequestDetails;
                 }
             }
-                
+
 
             var obj = new
             {
 
-                Record_Count = tabName == "OT" ? lstMHRequestDetailsTrack_Searched.Count : lstMHRequestDetails_Searched.Count 
+                Record_Count = tabName == "OT" ? lstMHRequestDetailsTrack_Searched.Count : lstMHRequestDetails_Searched.Count
             };
             return Json(obj);
         }
@@ -364,7 +364,7 @@ namespace RightsU_Plus.Controllers
             return Json("S");
         }
 
-        public JsonResult finalConsApprove(string SpecialInst,string InternalRmk, int MHRequestCode, string key)
+        public JsonResult finalConsApprove(string SpecialInst, string InternalRmk, int MHRequestCode, string key, string Is_ApproveRejectYes)
         {
             dynamic resultSet;
             string status = "S", message = objMessageKey.Recordsavedsuccessfully;
@@ -404,39 +404,46 @@ namespace RightsU_Plus.Controllers
                 int TotalCount_Y = objMHRequest.MHRequestDetails.Where(x => x.IsApprove == "Y").ToList().Count();
                 int TotalCount_N = objMHRequest.MHRequestDetails.Where(x => x.IsApprove == "N").ToList().Count();
                 int TotalCount = objMHRequest.MHRequestDetails.Count();
+                int Count_YN = TotalCount_Y + TotalCount_N;
 
-
-                if (TotalCount == TotalCount_Y || TotalCount == TotalCount_N)
+                if ((TotalCount != Count_YN && Is_ApproveRejectYes == "Approve") || (TotalCount != Count_YN && Is_ApproveRejectYes == "Reject"))
                 {
-                    objMHRequest.ApprovedOn = DateTime.Now;
-                    objMHRequest.MHRequestStatusCode = (TotalCount == TotalCount_Y ? 1 : 3);//Approved : REJECT
-                }
-                else if (TotalCount_Y < TotalCount || TotalCount_N < TotalCount)
-                {
-                    objMHRequest.MHRequestStatusCode = 4;
-                }
-
-                objMHRequest.ApprovedOn = DateTime.Now;
-                objMHRequest.ApprovedBy = objLoginUser.Users_Code;
-                bool isValid = objService.Save(objMHRequest, out resultSet);
-
-                if (isValid)
-                {
-                    var result = new USP_Service(objLoginEntity.ConnectionStringName).USPMHMailNotification((int)objMHRequest.MHRequestCode, objMHRequest.MHRequestTypeCode, 0).FirstOrDefault();
-                    lstMHRequest = lstMHRequest_Searched = objService.SearchFor(x => true).ToList();
+                    status = "C";
+                    message = "Do You Want to Leave This Page ?";
                 }
                 else
                 {
-                    status = "E";
-                    message = resultSet;
+                    if (TotalCount == TotalCount_Y || TotalCount == TotalCount_N)
+                    {
+                        objMHRequest.ApprovedOn = DateTime.Now;
+                        objMHRequest.MHRequestStatusCode = (TotalCount == TotalCount_Y ? 1 : 3);//Approved : REJECT
+                    }
+                    else if (TotalCount_Y < TotalCount || TotalCount_N < TotalCount)
+                    {
+                        objMHRequest.MHRequestStatusCode = 4;
+                    }
+
+                    objMHRequest.ApprovedOn = DateTime.Now;
+                    objMHRequest.ApprovedBy = objLoginUser.Users_Code;
+                    bool isValid = objService.Save(objMHRequest, out resultSet);
+
+                    if (isValid)
+                    {
+                        var result = new USP_Service(objLoginEntity.ConnectionStringName).USPMHMailNotification((int)objMHRequest.MHRequestCode, objMHRequest.MHRequestTypeCode, 0).FirstOrDefault();
+                        lstMHRequest = lstMHRequest_Searched = objService.SearchFor(x => true).ToList();
+                    }
+                    else
+                    {
+                        status = "E";
+                        message = resultSet;
+                    }
                 }
             }
-
-
             var objNEW = new
             {
                 Status = status,
-                Message = message
+                Message = message,
+                Is_ApproveRejectYes = Is_ApproveRejectYes
             };
             return Json(objNEW);
         }

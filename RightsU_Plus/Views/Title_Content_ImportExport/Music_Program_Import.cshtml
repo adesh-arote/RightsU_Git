@@ -70,6 +70,8 @@
     var URL_Reload_Current_Page = '@Url.Action("Music_Program_Import", "Title_Content_ImportExport")';
     var URL_BindContentError = '@Url.Action("BindContentError", "Title_Content_ImportExport")';
     var URL_GetFileImportStatus = '@Url.Action("GetFileImportStatus", "Title_Content_ImportExport")';
+    var URL_ValidateDownload = '@Url.Action("ValidateDownload", "Title_Content_ImportExport")';
+
     $(document).ready(function () {
         debugger
         $('#divError').hide();
@@ -420,7 +422,9 @@
                                 $('.' + SiblingClass).empty();
 
                                 var a = '<a  title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindViewData(' + dealCode + ')"></a>';
-
+                                if (result.isDownloadRight == "Y") {
+                                    a = a + '<a title="Download File" class="glyphicon glyphicon-save" style="cursor: pointer;" onclick="ValidateDownload(' + dealCode + ')"></a>'
+                                }
                                 $('.' + SiblingClass).append(a);
                                 $('.clsTdStatus_' + dealCode).empty();
                                 $('.clsTdStatus_' + dealCode).append('Success');
@@ -433,7 +437,9 @@
                                 $("#imgLoading_" + dealCode).css("display", 'none');
                                 $('.' + SiblingClass).empty();
                                 var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindViewData(' + dealCode + ')"></a> <a title="Resolve Conflict" class="glyphicon glyphicon-link" style="cursor: pointer;" onclick="BindResolveConflict(' + dealCode + ')"></a>'
-
+                                if (result.isDownloadRight == "Y") {
+                                    a = a + '<a title="Download File" class="glyphicon glyphicon-save" style="cursor: pointer;" onclick="ValidateDownload(' + dealCode + ')"></a>'
+                                }
                                 $('.' + SiblingClass).append(a);
                                 $('.clsTdStatus_' + dealCode).empty();
                                 $('.clsTdStatus_' + dealCode).append('Resolve Conflict');
@@ -489,6 +495,43 @@
         URL = URL.replace("_fileType_", "C");
         URL = URL.replace(/amp;/g, "");
         window.location.href = URL;
+    }
+    function Download(dealCode) {
+        @*var URL = '@Url.Action("Download", "Title_Content_ImportExport", new
+        {
+            ImportLogCode = "_DM_Import_Master_Code_"
+        })';
+        URL = URL.replace("_ImportLogCode_", dealCode);
+        URL = URL.replace(/amp;/g, "");
+        window.location.href = URL;*@
+        window.location.href = '@Url.Action("Download", "Title_Content_ImportExport")?ImportLogCode=' + dealCode;
+    }
+    function ValidateDownload(dealCode) {
+        debugger;
+
+        $.ajax({
+            type: "POST",
+            url: URL_ValidateDownload,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ImportLogCode: dealCode
+            }),
+            success: function (result) {
+                debugger;
+                if (result.path == "")
+                    showAlert('E', "File Not Found");
+                else {
+                    debugger;
+                    Download(dealCode);
+                }
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
     }
 </script>
 <style>
