@@ -161,21 +161,21 @@ export class PieChartComponent implements OnInit {
     }
   }
 
-  filter(listFilter){
+  // filter(listFilter){
     
     
     
      
-        this.pieChartDetailsList = this.pieChartList.filter(item => (item.ShowName.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1 
-        || item.MusicTrackName.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1 
-        || item.Movie_Album.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1
-        || item.MusicLanguage.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1
-        || item.YearOfRelease.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1)
-        );
+  //       this.pieChartDetailsList = this.pieChartList.filter(item => (item.ShowName.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1 
+  //       || item.MusicTrackName.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1 
+  //       || item.Movie_Album.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1
+  //       || item.MusicLanguage.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1
+  //       || item.YearOfRelease.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1)
+  //       );
       
     
      
-  }
+  // }
   piechartHandler2() {
     $('#piechart').css('cursor','pointer');
      }  

@@ -42,10 +42,8 @@ BEGIN
 	END
 
 	INSERT INTO [dbo].[MHCueSheetSong](MHCueSheetCode, TitleName, EpisodeNo, MusicTrackName,MovieAlbum,SongType, FromTime, FromFrame, ToTime, ToFrame, DurationTime, DurationFrame)
-	SELECT @CueSheetCode, [Show Name], [Episode], [Music Track],[Movie/Album],[Song Type], [TC IN], [TC IN Frame], [TC OUT], [TC OUT Frame], [Duration], [Duration Frame]
+	SELECT @CueSheetCode, [Show Name], [Episode], [Music Track],[Movie/Album],[Usage Type], [TC IN], [TC IN Frame], [TC OUT], [TC OUT Frame], [Duration], [Duration Frame]
 	FROM @udt
 
 	--Select @CueSheetCode AS CueSheetCode
 END
-
-

@@ -358,21 +358,21 @@ demodata.push((barChartData[k]))
    
   }
   
-  filter(listFilter){
+  // filter(listFilter){
     
   
-    debugger;
+  //   debugger;
     
-        this.barChartDetailsList = this.barChartList.filter(item => (item.MusicTrackName.toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1 
-      || item.Movie_Album.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1 
-      || item.MusicLanguage.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1
-      || item.YearOfRelease.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1)
-      );
+  //       this.barChartDetailsList = this.barChartList.filter(item => (item.MusicTrackName.toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1 
+  //     || item.Movie_Album.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1 
+  //     || item.MusicLanguage.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1
+  //     || item.YearOfRelease.toString().toLocaleLowerCase().indexOf(listFilter.toLocaleLowerCase()) > -1)
+  //     );
       
    
     
      
-  }
+  // }
 public columnSelectedData;
   CheckItemSelection(selectedData){
     if(selectedData==null){
