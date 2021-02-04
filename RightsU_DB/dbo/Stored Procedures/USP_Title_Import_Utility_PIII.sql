@@ -5,7 +5,7 @@
 AS 
 BEGIN
 	SET NOCOUNT ON
-	--DECLARE @DM_Master_Import_Code INT = 49
+	--DECLARE @DM_Master_Import_Code INT = 1105
 	DECLARE @ISError CHAR(1) = 'N', @Error_Message NVARCHAR(MAX) = '', @ExcelCnt INT = 0
 
 	IF(OBJECT_ID('tempdb..#TempTitle') IS NOT NULL) DROP TABLE #TempTitle
@@ -387,19 +387,43 @@ BEGIN
 		PRINT 'Mandatory Validation'
 
 		DECLARE db_cursor_Mandatory CURSOR FOR 
-		SELECT Display_Name FROM DM_Title_Import_Utility WHERE Is_Active = 'Y' AND [validation] like '%man%'
+			SELECT Display_Name, Is_Allowed_For_Resolve_Conflict, ShortName FROM DM_Title_Import_Utility WHERE Is_Active = 'Y' AND [validation] like '%man%'
 
 		OPEN db_cursor_Mandatory  
-		FETCH NEXT FROM db_cursor_Mandatory INTO @Display_Name  
+		FETCH NEXT FROM db_cursor_Mandatory INTO @Display_Name , @Is_Allowed_For_Resolve_Conflict, @ShortName
 
 		WHILE @@FETCH_STATUS = 0  
 		BEGIN  
-			 IF((SELECT COUNT(DISTINCT ExcelSrNo) FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name) < 2) --@ExcelCnt
-				BEGIN
-					UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') is Mandatory Field'
-					WHERE ExcelSrNo NOT IN ( SELECT ExcelSrNo FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name)
-				END
-			  FETCH NEXT FROM db_cursor_Mandatory INTO @Display_Name 
+
+			IF(@Is_Allowed_For_Resolve_Conflict = 'Y')
+			BEGIN
+					UPDATE A SET Error_Message= ISNULL(Error_Message,'') + '~Mandatory Columns are Ignored while Mapping', A.Is_Ignore = 'Y'  
+					FROM DM_Title_Import_Utility_Data A
+					WHERE A.DM_Master_Import_Code = @DM_Master_Import_Code AND A.Col1 COLLATE Latin1_General_CI_AI IN (
+						SELECT ExcelSrNo FROM #TempTitleUnPivot T
+						INNER JOIN DM_Master_Log B ON T.TitleData = B.Name COLLATE SQL_Latin1_General_CP1_CI_AS
+						WHERE B.DM_Master_Import_Code = @DM_Master_Import_Code
+						AND  B.Is_Ignore = 'Y'
+						AND  B.Master_Type = @ShortName
+						AND T.ColumnHeader = @Display_Name )
+
+					DELETE FROM #TempTitleUnPivot WHERE ExcelSrNo IN (
+					SELECT ExcelSrNo FROM #TempTitleUnPivot A
+						INNER JOIN DM_Master_Log B ON A.TitleData = B.Name COLLATE SQL_Latin1_General_CP1_CI_AS
+						WHERE DM_Master_Import_Code = @DM_Master_Import_Code
+						AND  B.Is_Ignore = 'Y'
+						AND  B.Master_Type = @ShortName
+						AND A.ColumnHeader = @Display_Name			
+					)
+			END
+
+			IF((SELECT COUNT(DISTINCT ExcelSrNo) FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name) < 2) --@ExcelCnt
+			BEGIN
+				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') is Mandatory Field'
+				WHERE ExcelSrNo NOT IN ( SELECT ExcelSrNo FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name)
+			END
+
+			  FETCH NEXT FROM db_cursor_Mandatory INTO @Display_Name , @Is_Allowed_For_Resolve_Conflict, @ShortName 
 		END 
 
 		CLOSE db_cursor_Mandatory  
@@ -414,26 +438,26 @@ BEGIN
 
 		UPDATE A SET A.Title_Type = B.TitleData
 		FROM #TempDupTitleName A
-		INNER JOIN #TempTitleUnPivot B ON A.ExcelSrNo = B.ExcelSrNo
+		INNER JOIN #TempTitleUnPivot B ON A.ExcelSrNo COLLATE Latin1_General_CI_AI = B.ExcelSrNo
 		WHERE B.ColumnHeader = 'Title Type'
 
 		UPDATE A SET A.Title_Code = B.Title_Code
 		FROM #TempDupTitleName A
-		INNER JOIN Title B ON A.Title_Name = B.Title_Name
+		INNER JOIN Title B ON A.Title_Name  COLLATE Latin1_General_CI_AI  = B.Title_Name
 
 		UPDATE A SET A.Deal_Type_Code = B.Deal_Type_Code
 		FROM #TempDupTitleName A
-		INNER JOIN Deal_Type B ON A.Title_Type = B.Deal_Type_Name
-		WHERE  B.Is_Active = 'Y' AND Deal_Or_Title LIKE '%T%'
+		INNER JOIN Deal_Type B ON A.Title_Type  COLLATE Latin1_General_CI_AI  = B.Deal_Type_Name
+		WHERE  B.Is_Active = 'Y'
 
 		UPDATE A SET A.Deal_Type_Code = B.Master_Code
 		FROM #TempDupTitleName A
-		INNER JOIN DM_Master_Log B ON A.Title_Type = B.Name
+		INNER JOIN DM_Master_Log B ON A.Title_Type COLLATE Latin1_General_CI_AI  = B.Name
 		WHERE Master_Type = 'TT' AND Is_Ignore = 'N' AND B.DM_Master_Import_Code = @DM_Master_Import_Code
 	
 		UPDATE A SET A.IsError = 'Y'
 		FROM #TempDupTitleName A
-		inner join Title B ON A.Title_Name = B.Title_Name AND A.Deal_Type_Code = B.Deal_Type_Code
+		inner join Title B ON A.Title_Name COLLATE Latin1_General_CI_AI  = B.Title_Name AND A.Deal_Type_Code = B.Deal_Type_Code
 
 
 		UPDATE A SET A.Record_Status = 'E', Error_Message= ISNULL(Error_Message,'') + 'Title Name Already Existed'--, Is_Ignore = 'Y'
@@ -452,7 +476,7 @@ BEGIN
 		WHERE A.DM_Master_Import_Code = @DM_Master_Import_Code 
 		AND A.Col1 NOT LIKE '%Sr%'
 
-		DELETE FROM #TempTitleUnPivot WHERE ExcelSrNo IN
+		DELETE FROM #TempTitleUnPivot WHERE ExcelSrNo COLLATE Latin1_General_CI_AI IN
 		(
 			SELECT ExcelSrNo FROM #TempDupTitleName where ISNULL(IsError, '') = 'Y'
 		)
@@ -492,6 +516,7 @@ BEGIN
 						AND B.ColumnHeader   = @Display_Name  
 						AND B.RefKey IS NULL
 						AND A.Master_Code IS NOT NULL
+						AND A.Is_Ignore = 'N'
 				END
 				
 				IF(@Is_Allowed_For_Resolve_Conflict = 'N')
@@ -537,7 +562,7 @@ BEGIN
 			UPDATE A SET A.PropCode = B.Master_Code
 			FROM #TempHeaderWithMultiple A
 			INNER JOIN DM_Master_Log B ON A.PropName = B.Name COLLATE SQL_Latin1_General_CP1_CI_AS
-			WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Master_Type = @ShortName
+			WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Master_Type = @ShortName AND B.Is_Ignore = 'N'
 
 			EXEC ('UPDATE A SET A.PropCode = B.'+@Reference_Value_Field+' 
 			FROM #TempHeaderWithMultiple A
@@ -577,7 +602,7 @@ BEGIN
 
 				UPDATE A SET A.TalentCode = B.Master_Code FROM #TempTalent A
 				INNER JOIN DM_Master_Log B ON A.TalentName = B.Name COLLATE SQL_Latin1_General_CP1_CI_AS
-				WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Master_Type = @ShortName AND Roles = @Display_Name
+				WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Master_Type = @ShortName AND Roles = @Display_Name AND B.Is_Ignore = 'N'
 
 				FETCH NEXT FROM db_cursor_Talent_Reference INTO  @Display_Name, @Is_Allowed_For_Resolve_Conflict, @ShortName
 		END 
@@ -625,6 +650,7 @@ BEGIN
 							AND B.ColumnHeader   = @Display_Name  
 							AND B.RefKey IS NULL
 							AND A.Master_Code IS NOT NULL
+							AND A.Is_Ignore = 'N'
 					END
 
 					IF(@Is_Allowed_For_Resolve_Conflict = 'N')
@@ -664,7 +690,7 @@ BEGIN
 					IF(@Is_Allowed_For_Resolve_Conflict = 'Y')
 						UPDATE A SET A.EMDCode = B.Master_Code FROM #TempExtentedMetaData A
 						INNER JOIN DM_Master_Log B ON A.EMDName = B.Name COLLATE SQL_Latin1_General_CP1_CI_AS
-						WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Master_Type = @ShortName
+						WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Master_Type = @ShortName AND B.Is_Ignore = 'N'
 
 					UPDATE A SET A.EMDCode= ECV.Columns_Value_Code  FROM #TempExtentedMetaData A
 					INNER JOIN Extended_Columns_Value ECV 
@@ -818,11 +844,23 @@ BEGIN
 				WHERE A.TalentCode IS NULL AND B.Is_Allowed_For_Resolve_Conflict = 'Y' AND B.Is_Active = 'Y'
 			) AS A )
 
-			IF EXISTS(SELECT TOP 1 * FROM DM_Title_Import_Utility_Data WHERE ISNULL(Record_Status,'') = 'R' AND DM_Master_Import_Code = @DM_Master_Import_Code )
-				UPDATE DM_Master_Import SET Status = 'R' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
-			
 			INSERT INTO DM_Master_Log (DM_Master_Import_Code, Name, Master_Type, Master_Code, Roles, Is_Ignore, Mapped_By)
 			SELECT @DM_Master_Import_Code, Name, Master_Type, Master_Code, Roles,'N',Mapped_By FROM #TempResolveConflict
+
+			IF EXISTS(SELECT TOP 1 * FROM DM_Title_Import_Utility_Data WHERE ISNULL(Record_Status,'') = 'R' AND DM_Master_Import_Code = @DM_Master_Import_Code )
+			BEGIN
+				DECLARE @SystemCount INT = 0, @OverAllCount INT = 0
+
+				SELECT @SystemCount = COUNT(*) FROM DM_Master_Log WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Is_Ignore = 'N' AND Mapped_By = 'S'
+				SELECT @OverAllCount = COUNT(*) FROM DM_Master_Log WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Is_Ignore = 'N' 
+
+				IF (@SystemCount = @OverAllCount)
+					UPDATE DM_Master_Import SET Status = 'SR' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
+				ELSE
+					UPDATE DM_Master_Import SET Status = 'R' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
+			END
+			
+			
 		END
 	END
 
@@ -892,6 +930,12 @@ BEGIN
 				')
 
 				-----------Title_Talent COLUMN--------------------
+				INSERT INTO Talent_Role (Talent_Code, Role_Code)
+				SELECT A.TalentCode, A.RoleCode
+				FROM #TempTalent A
+				LEFT JOIN TALENT_ROLE TR ON TR.Talent_Code = A.TalentCode AND TR.Role_Code = A.RoleCode
+				WHERE tr.Role_Code IS NULL and TR.Talent_Code IS NULL
+
 				EXEC ('
 				INSERT INTO Title_Talent(Title_Code, Talent_Code, Role_Code)
 				SELECT B.RefKey, A.TalentCode, A.RoleCode FROM #TempTalent A
@@ -970,7 +1014,9 @@ BEGIN
 				WHERE AA.ColumnHeader = 'Title Name'
 					AND AA.ISError <> 'Y'
 				
-				UPDATE DM_Title_Import_Utility_Data SET Record_Status = 'C', Error_Message = NULL WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Record_Status IS NULL AND  ISNUMERIC(Col1) = 1 
+				UPDATE DM_Title_Import_Utility_Data SET Record_Status = 'C', Error_Message = NULL WHERE DM_Master_Import_Code = @DM_Master_Import_Code AND Record_Status IS NULL
+				AND  ISNUMERIC(Col1) = 1 AND Is_Ignore = 'N'
+
 				UPDATE DM_Master_Import SET Status = 'S' WHERE DM_Master_Import_Code = @DM_Master_Import_Code
 			END
 		END

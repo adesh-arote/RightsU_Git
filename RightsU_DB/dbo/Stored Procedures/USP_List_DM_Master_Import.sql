@@ -25,32 +25,47 @@ BEGIN
 		DECLARE @Is_Advance_Title_Import NVARCHAR(MAX) = ''
 		select @Is_Advance_Title_Import =  Parameter_Value from system_parameter_new  where parameter_name = 'Is_Advance_Title_Import'
 
-		IF(@Is_Advance_Title_Import = 'N')
+		IF (@strSearch LIKE '%DM.File_Type = ''T''%')	
 		BEGIN
-				SET @SqlPageNo = '  
-				WITH Y AS   
-				(  
-					SELECT ISNULL(DM.DM_Master_Import_Code, 0) AS DM_Master_Import_Code, RowId = ROW_NUMBER() OVER (ORDER BY DM.DM_Master_Import_Code desc)
-					FROM DM_Master_Import DM  
-					Where  DM.DM_Master_Import_Code NOT IN (
-						 SELECT DISTINCT DM_Master_Import_Code FROM DM_TITLE_IMPORT_Utility_data
-						) AND 1= 1  '+@StrSearch+'  
-					GROUP BY DM.DM_Master_Import_Code  
-				)  
-				INSERT INTO #Temp Select DM_Master_Import_Code,RowId From Y'  
+			IF(@Is_Advance_Title_Import = 'N')
+			BEGIN
+					SET @SqlPageNo = '  
+					WITH Y AS   
+					(  
+						SELECT ISNULL(DM.DM_Master_Import_Code, 0) AS DM_Master_Import_Code, RowId = ROW_NUMBER() OVER (ORDER BY DM.DM_Master_Import_Code desc)
+						FROM DM_Master_Import DM  
+						Where  DM.DM_Master_Import_Code NOT IN (
+							 SELECT DISTINCT DM_Master_Import_Code FROM DM_TITLE_IMPORT_Utility_data
+							) AND 1= 1  '+@StrSearch+'  
+						GROUP BY DM.DM_Master_Import_Code  
+					)  
+					INSERT INTO #Temp Select DM_Master_Import_Code,RowId From Y'  
+			END
+			ELSE
+			BEGIN
+					SET @SqlPageNo = '  
+					WITH Y AS   
+					(  
+						SELECT ISNULL(DM.DM_Master_Import_Code, 0) AS DM_Master_Import_Code, RowId = ROW_NUMBER() OVER (ORDER BY DM.DM_Master_Import_Code desc)
+						FROM DM_Master_Import DM  
+						INNER JOIN DM_Title_Import_Utility_DATA B ON B.DM_Master_Import_Code = DM.DM_Master_Import_Code
+						Where 1= 1  '+@StrSearch+'  
+						GROUP BY DM.DM_Master_Import_Code  
+					)  
+					INSERT INTO #Temp Select DM_Master_Import_Code,RowId From Y'  
+			END
 		END
 		ELSE
 		BEGIN
 				SET @SqlPageNo = '  
-				WITH Y AS   
-				(  
-					SELECT ISNULL(DM.DM_Master_Import_Code, 0) AS DM_Master_Import_Code, RowId = ROW_NUMBER() OVER (ORDER BY DM.DM_Master_Import_Code desc)
-					FROM DM_Master_Import DM  
-					INNER JOIN DM_Title_Import_Utility_DATA B ON B.DM_Master_Import_Code = DM.DM_Master_Import_Code
-					Where 1= 1  '+@StrSearch+'  
-					GROUP BY DM.DM_Master_Import_Code  
-				)  
-				INSERT INTO #Temp Select DM_Master_Import_Code,RowId From Y'  
+					WITH Y AS   
+					(  
+						SELECT ISNULL(DM.DM_Master_Import_Code, 0) AS DM_Master_Import_Code, RowId = ROW_NUMBER() OVER (ORDER BY DM.DM_Master_Import_Code desc)
+						FROM DM_Master_Import DM  
+						Where 1= 1  '+@StrSearch+'  
+						GROUP BY DM.DM_Master_Import_Code  
+					)  
+					INSERT INTO #Temp Select DM_Master_Import_Code,RowId From Y'
 		END
 
 		PRINT @SqlPageNo  

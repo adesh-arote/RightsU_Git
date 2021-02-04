@@ -15,12 +15,12 @@ AS
 BEGIN  
 
 	--DECLARE 
-	--@RecordCode INT =15510,
-	--@module_workflow_detail_code INT = 0,
+	--@RecordCode INT =21617,
+	--@module_workflow_detail_code INT = 37243,
 	--@module_code INT = 30,
-	--@RedirectToApprovalList VARCHAR(100)='WA',
+	--@RedirectToApprovalList VARCHAR(100)='',
 	--@AutoLoginUser VARCHAR(100) = 203,
-	--@Is_Error CHAR(1)
+	--@Is_Error CHAR(1) = 'N'
 
 	SET NOCOUNT ON; 
 	SET @Is_Error='N'  
@@ -78,7 +78,12 @@ BEGIN
 		DECLARE 
 			@Agreement_No VARCHAR(MAX) = '', @Agreement_Date VARCHAR(MAX) = '', @Deal_Desc NVARCHAR(MAX) = '', @Primary_Licensor NVARCHAR(MAX) = '', 
 			@Titles NVARCHAR(MAX) = '', @Max_Titles_In_Approval_Mail INT = 0, @Title_Count INT = 0 ,@BU_Name VARCHAR(MAX) = ''
-	
+
+		DECLARE @Created_By  VARCHAR(MAX) = '',
+				@Creation_Date  VARCHAR(MAX) = '',
+				@Last_Actioned_By  VARCHAR(MAX) = '',
+				@Last_Actioned_Date  VARCHAR(MAX) = ''
+
 		IF(@RecordCode > 0)
 		BEGIN
 			SELECT TOP 1 @Max_Titles_In_Approval_Mail = CAST(Parameter_Value AS INT) FROM System_Parameter_New 
@@ -89,10 +94,16 @@ BEGIN
 				PRINT 'Acquisition Deal Module'
 				SELECT TOP 1 
 					@Agreement_No = Agreement_No, @Agreement_Date = CONVERT(VARCHAR(15), Agreement_Date, 106),
-					@Deal_Desc = Deal_Desc, @Primary_Licensor = V.Vendor_Name, @BU_Name = BU.Business_Unit_Name
+					@Deal_Desc = Deal_Desc, @Primary_Licensor = V.Vendor_Name, @BU_Name = BU.Business_Unit_Name,
+					@Created_By = U1.Login_Name ,
+					@Creation_Date = CONVERT(VARCHAR(15), ad.Inserted_On, 106),
+					@Last_Actioned_By = U2.Login_Name,
+					@Last_Actioned_Date = CONVERT(VARCHAR(15), ad.Last_Updated_Time, 106)
 				FROM Acq_Deal AD
 					INNER JOIN Vendor V ON AD.Vendor_Code = V.Vendor_Code
 					INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = AD.Business_Unit_Code
+					LEFT JOIN Users U1 ON U1.Users_Code = AD.Inserted_By
+					LEFT JOIN Users U2 ON U2.Users_Code = AD.Last_Action_By
 				WHERE Acq_Deal_Code = @RecordCode
 
 			
@@ -116,10 +127,16 @@ BEGIN
 				PRINT 'Syndication Deal Module'
 				SELECT TOP 1 
 					@Agreement_No = Agreement_No, @Agreement_Date = CONVERT(VARCHAR(15), Agreement_Date, 106), 
-					@Deal_Desc = Deal_Description, @Primary_Licensor = V.Vendor_Name,@BU_Name = BU.Business_Unit_Name
+					@Deal_Desc = Deal_Description, @Primary_Licensor = V.Vendor_Name,@BU_Name = BU.Business_Unit_Name,
+					@Created_By = U1.Login_Name ,
+					@Creation_Date = CONVERT(VARCHAR(15), SD.Inserted_On, 106),
+					@Last_Actioned_By = U2.Login_Name,
+					@Last_Actioned_Date = CONVERT(VARCHAR(15), SD.Last_Updated_Time, 106)
 				FROM Syn_Deal SD
 					INNER JOIN Vendor V ON SD.Vendor_Code = V.Vendor_Code
 					INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = SD.Business_Unit_Code
+					LEFT JOIN Users U1 ON U1.Users_Code = SD.Inserted_By
+					LEFT JOIN Users U2 ON U2.Users_Code = SD.Last_Action_By
 				WHERE Syn_Deal_Code = @RecordCode
 			
 				SELECT @Title_Count =  COUNT(DISTINCT Title_Code) FROM Syn_Deal_Movie where Syn_Deal_Code = @RecordCode
@@ -182,39 +199,43 @@ BEGIN
 		)
 
 		IF (@RedirectToApprovalList = 'WA' OR @RedirectToApprovalList = 'AR' OR @RedirectToApprovalList = 'A')
+		BEGIN
 			INSERT INTO #TempCursorOnRej(Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code)
-			SELECT DISTINCT U2.Email_Id, 
-			ISNULL(UPPER(LEFT(U2.First_Name,1))+LOWER(SUBSTRING(U2.First_Name,2,LEN(U2.First_Name))), '') 
-			+ ' ' + ISNULL(UPPER(LEFT(U2.Middle_Name,1))+LOWER(SUBSTRING(U2.Middle_Name,2,LEN(U2.Middle_Name))), '') 
-			+ ' ' + ISNULL(UPPER(LEFT(U2.Last_Name,1))+LOWER(SUBSTRING(U2.Last_Name,2,LEN(U2.Last_Name))), '') 
+			SELECT DISTINCT U1.Email_Id, 
+			ISNULL(UPPER(LEFT(U1.First_Name,1))+LOWER(SUBSTRING(U1.First_Name,2,LEN(U1.First_Name))), '') 
+			+ ' ' + ISNULL(UPPER(LEFT(U1.Middle_Name,1))+LOWER(SUBSTRING(U1.Middle_Name,2,LEN(U1.Middle_Name))), '') 
+			+ ' ' + ISNULL(UPPER(LEFT(U1.Last_Name,1))+LOWER(SUBSTRING(U1.Last_Name,2,LEN(U1.Last_Name))), '') 
 			+ '   ('+ ISNULL(SG.Security_Group_Name,'') + ')',
 			SG.Security_Group_Name, 
 			MWD.Next_Level_Group, 
-			U2.Security_Group_Code, 
-			U2.Users_Code 
-			FROM Users U1
-			INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code IN (@BU_Code)
-			INNER JOIN Users U2 ON U1.Security_Group_Code = U2.Security_Group_Code AND UBU.Users_Code = U2.Users_Code AND U1.Is_Active = 'Y' AND U2.Is_Active = 'Y'
+			U1.Security_Group_Code, 
+			U1.Users_Code 
+			FROM Module_Workflow_Detail MWD 
+			INNER JOIN Users U1 ON U1.Security_Group_Code = MWD.Group_Code AND U1.Is_Active = 'Y'
+			INNER JOIN Users_Business_Unit UBU ON U1.Users_Code = UBU.Users_Code AND UBU.Business_Unit_Code IN (@BU_Code)
 			INNER JOIN Security_Group SG ON SG.Security_Group_Code = U1.Security_Group_Code
-			INNER JOIN Module_Workflow_Detail MWD ON MWD.Primary_User_Code = U1.Users_Code AND MWD.Is_Done = 'Y' 
-			AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
+			WHERE MWD.Is_Done = 'Y' AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode 
+				  AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
+		END
 		ELSE
+		BEGIN
 			INSERT INTO #TempCursorOnRej(Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code)
-			SELECT DISTINCT U2.Email_Id, 
-			ISNULL(UPPER(LEFT(U2.First_Name,1))+LOWER(SUBSTRING(U2.First_Name,2,LEN(U2.First_Name))), '') 
-			+ ' ' + ISNULL(UPPER(LEFT(U2.Middle_Name,1))+LOWER(SUBSTRING(U2.Middle_Name,2,LEN(U2.Middle_Name))), '') 
-			+ ' ' + ISNULL(UPPER(LEFT(U2.Last_Name,1))+LOWER(SUBSTRING(U2.Last_Name,2,LEN(U2.Last_Name))), '') 
+			SELECT DISTINCT U1.Email_Id, 
+			ISNULL(UPPER(LEFT(U1.First_Name,1))+LOWER(SUBSTRING(U1.First_Name,2,LEN(U1.First_Name))), '') 
+			+ ' ' + ISNULL(UPPER(LEFT(U1.Middle_Name,1))+LOWER(SUBSTRING(U1.Middle_Name,2,LEN(U1.Middle_Name))), '') 
+			+ ' ' + ISNULL(UPPER(LEFT(U1.Last_Name,1))+LOWER(SUBSTRING(U1.Last_Name,2,LEN(U1.Last_Name))), '') 
 			+ '   ('+ ISNULL(SG.Security_Group_Name,'') + ')',
 			SG.Security_Group_Name, 
 			MWD.Next_Level_Group, 
-			U2.Security_Group_Code, 
-			U2.Users_Code 
-			FROM Users U1
-			INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code IN (@BU_Code)
-			INNER JOIN Users U2 ON U1.Security_Group_Code = U2.Security_Group_Code AND UBU.Users_Code = U2.Users_Code AND U1.Is_Active = 'Y' AND U2.Is_Active = 'Y'
+			U1.Security_Group_Code, 
+			U1.Users_Code 
+			FROM Module_Workflow_Detail MWD 
+			INNER JOIN Users U1 ON U1.Security_Group_Code = MWD.Group_Code AND U1.Is_Active = 'Y'
+			INNER JOIN Users_Business_Unit UBU ON U1.Users_Code = UBU.Users_Code AND UBU.Business_Unit_Code IN (@BU_Code)
 			INNER JOIN Security_Group SG ON SG.Security_Group_Code = U1.Security_Group_Code
-			INNER JOIN Module_Workflow_Detail MWD ON MWD.Primary_User_Code = U1.Users_Code AND MWD.Is_Done = 'Y' 
-			AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
+			WHERE MWD.Is_Done = 'Y' AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode 
+				  AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
+		END
 
 		/* CURSOR START */
 		DECLARE cur_on_rejection CURSOR KEYSET FOR 
@@ -238,8 +259,6 @@ BEGIN
 					set @body1 = replace(@body1,'{link}',@DefaultSiteUrl)  
 					set @body1 = replace(@body1,'{click here}',@DefaultSiteUrl)  
 					SET @body1 = REPLACE(@body1,'{approved_by}',@Approved_by) 
-					
-
 					
 					IF (@RedirectToApprovalList = 'WA')
 					BEGIN
@@ -291,26 +310,66 @@ BEGIN
 					END  
 				END
 
-				DECLARE @Email_Table NVARCHAR(MAX) = ''
-				SET @Email_Table = '
-				<table class="tblFormat" style="width:100%">    
-					<tr>      
-						<th align="center" width="14%" class="tblHead">Agreement No.</th>      
-						<th align="center" width="14%" class="tblHead">Agreement Date</th>      
-						<th align="center" width="19%" class="tblHead">Deal Description</th>      
-						<th align="center" width="19%" class="tblHead">Primary Licensor</th>      
-						<th align="center" width="25%" class="tblHead">Title(s)</th>  
-						<th align="center" width="10%" class="tblHead">Business Unit</th> 
-					</tr>     
-					<tr>      
-						<td align="center" class="tblData">{Agreement_No}</td>      
-						<td align="center" class="tblData">{Agreement_Date}</td>      
-						<td align="center" class="tblData">{Deal_Desc}</td>      
-						<td align="center" class="tblData">{Primary_Licensor}</td>      
-						<td align="center" class="tblData">{Titles}</td>     
-						<td align="center" class="tblData">{BU_Name}</td>     
-					</tr>   
-				</table>'
+				DECLARE @Email_Table NVARCHAR(MAX) = '' , @Is_RU_Content_Category CHAR(1), @BU_CC NVARCHAR(MAX) = 'Business Unit'
+
+				SELECT @Is_RU_Content_Category = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'Is_RU_Content_Category'
+
+				IF(@Is_RU_Content_Category = 'Y')
+					SET  @BU_CC= 'Content Category'
+
+				IF(@module_code = 163 OR @Is_RU_Content_Category <> 'Y')
+				BEGIN
+					SET @Email_Table = '
+					<table class="tblFormat" style="width:100%">    
+						<tr>      
+							<th align="center" width="14%" class="tblHead">Agreement No.</th>      
+							<th align="center" width="14%" class="tblHead">Agreement Date</th>      
+							<th align="center" width="19%" class="tblHead">Deal Description</th>      
+							<th align="center" width="19%" class="tblHead">Primary Licensor</th>      
+							<th align="center" width="25%" class="tblHead">Title(s)</th>  
+							<th align="center" width="10%" class="tblHead">'+@BU_CC+'</th>
+						</tr>     
+						<tr>      
+							<td align="center" class="tblData">{Agreement_No}</td>      
+							<td align="center" class="tblData">{Agreement_Date}</td>      
+							<td align="center" class="tblData">{Deal_Desc}</td>      
+							<td align="center" class="tblData">{Primary_Licensor}</td>      
+							<td align="center" class="tblData">{Titles}</td>     
+							<td align="center" class="tblData">{BU_Name}</td>     
+						</tr>   
+					</table>'
+				END
+				ELSE
+				BEGIN 
+					SET @Email_Table =	
+					'<table class="tblFormat" style="width:100%"> 
+						 <tr>
+										<th align="center" width="10%" class="tblHead">Agreement No.</th>    
+										<th align="center" width="10%" class="tblHead">Agreement Date</th> 
+										<th align="center" width="10%" class="tblHead">Created By</th> 
+										<th align="center" width="10%" class="tblHead">Creation Date</th> 
+										<th align="center" width="10%" class="tblHead">Deal Description</th> 
+										<th align="center" width="10%" class="tblHead">Primary Licensor</th>   
+										<th align="center" width="10%" class="tblHead">Title(s)</th>
+										<th align="center" width="10%" class="tblHead">'+@BU_CC+'</th>
+										<th align="center" width="10%" class="tblHead">Last Actioned By</th>
+										<th align="center" width="10%" class="tblHead">Last Actioned Date</th>
+						 </tr>  
+						 <tr>
+										<td align="center" class="tblData">{Agreement_No}</td>   
+										<td align="center" class="tblData">{Agreement_Date}</td>    
+										<td align="center" class="tblData">{Created_By}</td>    
+										<td align="center" class="tblData">{Creation_Date}</td>    
+										<td align="center" class="tblData">{Deal_Desc}</td>    
+										<td align="center" class="tblData">{Primary_Licensor}</td>   
+										<td align="center" class="tblData">{Titles}</td> 
+										<td align="center" class="tblData">{BU_Name}</td> 
+										<td align="center" class="tblData">{Last_Actioned_By}</td> 
+										<td align="center" class="tblData">{Last_Actioned_Date}</td> 
+						</tr>  
+					</table>'
+				END
+
 
 				print @DefaultSiteUrl
 				IF (@RedirectToApprovalList = 'WA' OR @RedirectToApprovalList = 'AR' OR @RedirectToApprovalList = 'A')
@@ -332,6 +391,15 @@ BEGIN
 					SET @Email_Table = replace(@Email_Table,'{Primary_Licensor}',@Primary_Licensor)  
 					SET @Email_Table = replace(@Email_Table,'{Titles}',@Titles)  
 					SET @Email_Table = replace(@Email_Table,'{BU_Name}',@BU_Name)
+
+					IF(@module_code <> 163 AND @Is_RU_Content_Category = 'Y')
+					BEGIN
+						SET @Email_Table = REPLACE(@Email_Table,'{Created_By}',@Created_By)  
+						SET @Email_Table = REPLACE(@Email_Table,'{Creation_Date}',@Creation_Date)  
+						SET @Email_Table = replace(@Email_Table,'{Last_Actioned_By}', @Last_Actioned_By)
+						SET @Email_Table = replace(@Email_Table,'{Last_Actioned_Date}', @Last_Actioned_Date)
+					END
+
 					SET @CC=''  
 					SET @body1 = replace(@body1,'{table}',@Email_Table)
 				END
@@ -339,13 +407,11 @@ BEGIN
 				DECLARE @DatabaseEmail_Profile varchar(200)	= ''
 				SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
 
-				
 				EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile  
 				,@recipients =  @cur_email_id    
 				,@copy_recipients = @CC  
 				,@subject = @MailSubjectCr  
 				,@body = @body1,@body_format = 'HTML';    
-
 
 				IF (@RedirectToApprovalList = 'WA')
 					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
