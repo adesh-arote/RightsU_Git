@@ -2,7 +2,7 @@
   <div>
     <label>Search :</label>&nbsp;
     <input type="text" #gb class="SearchTextBox" pInputText size="50"
-      placeholder="Request ID, Requested By,Requested Date,Status">
+      placeholder="Request ID, Requested By,Requested Date,Status" autocomplete="off">
   </div>
   <br>
   <p-dataTable [globalFilter]="gb"  [value]="requestMusicList" [rowsPerPageOptions]="[10,25,50,100]"
@@ -35,7 +35,7 @@
         <label>Search :</label>&nbsp;
         <input type="text" class="SearchTextBox" [(ngModel)]="searchMusicDetail"  #gb
           placeholder="Req. Music, App. Music, Music Label, Music Album, Status"
-        pInputText size="50">
+        pInputText size="50" autocomplete="off">
       </div>
     </div>
     <br>

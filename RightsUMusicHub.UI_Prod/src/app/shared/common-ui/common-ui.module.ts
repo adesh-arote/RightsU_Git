@@ -15,7 +15,8 @@ import {GoogleChartsModule} from 'angular-google-charts';
 import { MessagesModule } from 'primeng/messages';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CommonMusicTrackComponent } from './common-music-track/common-music-track.component';
-import { CommonMovieAlbumComponent } from './common-movie-album/common-movie-album.component'
+import { CommonMovieAlbumComponent } from './common-movie-album/common-movie-album.component';
+import { CommonMusicAssignmentComponent } from './common-music-assignment/common-music-assignment.component'
 @NgModule({
   imports: [
     CommonModule,
@@ -31,8 +32,8 @@ import { CommonMovieAlbumComponent } from './common-movie-album/common-movie-alb
     MessagesModule
     
   ],
-  declarations: [CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent, CommonMusicTrackComponent, CommonMovieAlbumComponent],
-  exports:[CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent,CommonMusicTrackComponent,CommonMovieAlbumComponent],
+  declarations: [CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent, CommonMusicTrackComponent, CommonMovieAlbumComponent, CommonMusicAssignmentComponent],
+  exports:[CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent,CommonMusicTrackComponent,CommonMovieAlbumComponent,CommonMusicAssignmentComponent],
   // schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA]
 })
 export class CommonUiModule { }

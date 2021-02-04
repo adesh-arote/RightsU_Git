@@ -21,14 +21,14 @@
   <div class="Row">
     <div>
       <label>Search</label>&nbsp;
-      <input id="input" class="SearchTextBox" [(ngModel)]="chartSearch" (keyup)="filter(chartSearch)" type="text" size="30" placeholder="{{chartPlaceHolderText}}" pInputText>
+      <input id="input" class="SearchTextBox" #gb [(ngModel)]="chartSearch"  type="text" size="30" placeholder="{{chartPlaceHolderText}}" pInputText autocomplete="off">
 
     </div>
 
   </div>
   <br>
 
-  <p-dataTable  [value]="pieChartDetailsList" [rowsPerPageOptions]="[10,15,20]" [globalFilter]="chartSearch"
+  <p-dataTable #piechart [value]="pieChartDetailsList" [globalFilter]="gb" [rowsPerPageOptions]="[10,15,20]" [globalFilter]="chartSearch"
     [paginator]="true" [rows]="10" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true" scrollHeight="300px">
     <p-column header="Sr.No" [style]="{'width':'50px'}" styleClass="text-center">
       <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
@@ -42,7 +42,7 @@
     <p-column field="MusicLanguage" header="Music Language" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
     <p-column field="YearOfRelease" header="Year Of Release" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
     <p-footer>
-      Total Records: {{TotalCountPieChartDetail}}
+      Total Records: {{piechart.totalRecords}}
     </p-footer>
   </p-dataTable>
 

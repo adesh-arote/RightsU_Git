@@ -43,7 +43,7 @@
                            
                             <li class="searchbody">
                               
-                                  <input [(ngModel)]="searchText1" class="listsearch" placeholder="Search List Here">
+                                  <input [(ngModel)]="searchText1" class="listsearch" placeholder="Search List Here" autocomplete="off">
                               
                               </li>
                             
@@ -91,10 +91,10 @@
                             name=labelname optionLabel="MusicLabelName" [resetFilterOnHide]="true" filter="true"></p-dropdown>
               </span>&nbsp;
               <span style="width:10%">
-                <input type="text" style="width:130px !important" name="musicTrack" value="" placeholder="Music Track" class="RequestTextBox" name="musicTrack" [(ngModel)]="newSearchRequest.MusicTrack">
+                <input type="text" style="width:130px !important" name="musicTrack" value="" placeholder="Music Track" class="RequestTextBox" name="musicTrack" [(ngModel)]="newSearchRequest.MusicTrack" autocomplete="off">
               </span>&nbsp;
               <span>
-                <input style="width:130px !important" type="text" name="musicRequest" value="" placeholder="Movie" class="RequestTextBox" name="movieName" [(ngModel)]="newSearchRequest.MovieName">
+                <input style="width:130px !important" type="text" name="musicRequest" value="" placeholder="Movie" class="RequestTextBox" name="movieName" [(ngModel)]="newSearchRequest.MovieName" autocomplete="off">
               </span>&nbsp;
               <span style="width:10%">
                 <!-- <select name="ddlGenre" style="width:15%" id="ddlGenre" name="genreCode" class="chosen-select ddlwidth2" [(ngModel)]="newSearchRequest.GenreCode">
@@ -107,10 +107,10 @@
                             name=genrename optionLabel="Genres_Name" [resetFilterOnHide]="true" filter="true"></p-dropdown>
               </span>&nbsp;
               <span>
-                <input style="width:130px !important" type="text" value="" name="talentName" placeholder="Talent" class="RequestTextBox" name="talentName" [(ngModel)]="newSearchRequest.TalentName">
+                <input style="width:130px !important" type="text" value="" name="talentName" placeholder="Talent" class="RequestTextBox" name="talentName" [(ngModel)]="newSearchRequest.TalentName" autocomplete="off">
               </span>&nbsp;
               <span>
-                <input style="width:130px !important" type="text" value="" name="tag" placeholder="Tag" class="RequestTextBox" [(ngModel)]="newSearchRequest.Tag">
+                <input style="width:130px !important" type="text" value="" name="tag" placeholder="Tag" class="RequestTextBox" [(ngModel)]="newSearchRequest.Tag" autocomplete="off">
               </span>&nbsp;
               <span style="width:5%">
                 <p-dropdown [options]="languageList" [style]="{'width':'150px'}" [autoWidth]="false" [(ngModel)]="newSearchRequest.MusicLanguageCode"
@@ -215,7 +215,7 @@
 
 <li class="searchbody">
   <!-- <div id="searchbody"> -->
-      <input [(ngModel)]="searchText" class="listsearch" placeholder="Search List Here">
+      <input [(ngModel)]="searchText" class="listsearch" placeholder="Search List Here" autocomplete="off">
   <!-- </div> -->
   </li>
 <!-- style="height:100px;overflow-y: auto;" -->
@@ -396,7 +396,7 @@
       </div> -->
       <!-- <div class="col-md-9"> -->
          Play List Name:
-          <input id="input" class="ReqTextBox" type="text" placeholder="Play List" maxlength="50" [(ngModel)]="newPlayListName" (ngModelChange)="newPlayListName.trim()==''? newPlayListName='':newPlayListName=newPlayListName" pInputText [(ngModel)]="text"> 
+          <input id="input" class="ReqTextBox" type="text" placeholder="Play List" maxlength="50" [(ngModel)]="newPlayListName" autocomplete="off" (ngModelChange)="newPlayListName.trim()==''? newPlayListName='':newPlayListName=newPlayListName" pInputText [(ngModel)]="text"> 
       <!-- </div> -->
 
     </div>

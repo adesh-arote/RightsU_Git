@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef ,Input} from '@angular/core';
 import { RequisitionService } from '../../requisition/requisition.service';
 import { MusicAssignmentService } from '../../music-assignment/music-assignment.service';
 import { Router, ActivatedRoute, ParamMap, NavigationEnd } from '@angular/router';
@@ -82,6 +82,8 @@ export class AuthorizedMusicComponent implements OnInit {
   public isFirstClickedusage: boolean = false;
   public isFirstClickedmusictrack: boolean = false;
   public isFirstClickedmusicalbum: boolean = false;
+  public showMusicassignmentList: boolean = false;
+  public recordCountmusic: boolean = false;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.Status = [
@@ -529,6 +531,7 @@ export class AuthorizedMusicComponent implements OnInit {
       this.showMusicTrackList = false;
       this.showUsageList = true;
       this.showMusicAlbumList = false;
+      this.showMusicassignmentList = false;
       if (data == 'usage' && this.isFirstClickedusage == false) {
         this.getRequestList(25, 1)
       }
@@ -537,6 +540,7 @@ export class AuthorizedMusicComponent implements OnInit {
       this.showMusicTrackList = true;
       this.showUsageList = false;
       this.showMusicAlbumList = false;
+      this.showMusicassignmentList = false;
       if (data == 'musictrack' && this.isFirstClickedmusictrack == false) {
         this.requestMusicListMethod();
       }
@@ -545,9 +549,16 @@ export class AuthorizedMusicComponent implements OnInit {
       this.showMusicTrackList = false;
       this.showUsageList = false;
       this.showMusicAlbumList = true;
+      this.showMusicassignmentList = false;
       if (data == 'musicalbum' && this.isFirstClickedmusicalbum == false) {
         this.requestAlbumListMethod();
       }
+    }
+    else if (data == 'cuesheet') {
+      this.showMusicTrackList = false;
+      this.showUsageList = false;
+      this.showMusicAlbumList = false;
+      this.showMusicassignmentList = true;
     }
   }
 
