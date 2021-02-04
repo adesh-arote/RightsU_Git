@@ -17,8 +17,11 @@
         <li>
           <a data-toggle="tab" href="#MoviealbumList" (click)="checkRequest('musicalbum')">Movie / Album</a>
         </li>
+        <li>
+          <a data-toggle="tab" href="#CuesheetList" (click)="checkRequest('cuesheet')">CueSheet</a>
+        </li>
       </ul><br>
-      <div class="pull-right" style="margin-top: -4.5%" *ngIf="showUsageList && !showMusicTrackList && !showMusicAlbumList">
+      <div class="pull-right" style="margin-top: -4.5%" *ngIf="showUsageList && !showMusicTrackList && !showMusicAlbumList && !showMusicassignmentList">
         <table>
           <tr>
             <!-- <td class="bold" style="width:15%;">Music Cue Sheet:</td> -->
@@ -58,7 +61,7 @@
         <div class=" col-lg-4" style="margin-top: -1%; ">
 
           <div style="margin-left: -38%;">
-            <input id="input" class="searchReqTextBox" type="text" size="30" pInputText [(ngModel)]="searchRequestId">
+            <input id="input" class="searchReqTextBox" type="text" size="30" pInputText [(ngModel)]="searchRequestId" autocomplete="off">
             <!-- <p-multiSelect [options]="Status" [(ngModel)]="searchStatus" [maxSelectedLabels]="1"></p-multiSelect> -->
 
           </div>
@@ -242,6 +245,9 @@
         <div id="MoviealbumList" class="tab-pane fade">
           <app-common-movie-album [moviealbumDetails]="requestAlbumList"></app-common-movie-album>
         </div>
+        <div id="CuesheetList" class="tab-pane fade">
+          <app-common-music-assignment [musicassignmentDetails]="uploadedFilesList" [totalRecords]="recordCountmusic"></app-common-music-assignment>
+        </div>
       </div>
 
 
@@ -269,7 +275,7 @@
       <div>
         <label>Search</label>&nbsp;
         <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30"
-          placeholder="Music Title, Movie/ Album, Status" pInputText>
+          placeholder="Music Title, Movie/ Album, Status" pInputText autocomplete="off">
 
       </div>
 

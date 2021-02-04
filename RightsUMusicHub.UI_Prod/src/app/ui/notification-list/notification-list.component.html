@@ -99,7 +99,7 @@
           <div>
             <label>Search</label>&nbsp;
             <input id="input" class="SearchTextBox" #reqCountSearch type="text" size="30"  autocomplete="off" placeholder="Music Title, Movie/ Album , Status" [(ngModel)]="requestCountSearch" 
-                   pInputText>
+                   pInputText >
           </div>
         </div>
         <br>
@@ -160,7 +160,7 @@
                   <div >
                     
                     <label>Search :</label>&nbsp;
-                    <input type="text" class="SearchTextBox" [(ngModel)]="searchMusicDetail"  placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filterList(searchMusicDetail,'musicDetail')" pInputText size="50" >
+                    <input type="text" class="SearchTextBox" [(ngModel)]="searchMusicDetail"  placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filterList(searchMusicDetail,'musicDetail')" pInputText size="50" autocomplete="off">
                     </div>
                     
                     </div>
@@ -186,7 +186,7 @@
                   <div >
                     
                     <label>Search :</label>&nbsp;
-                    <input  type="text" class="SearchTextBox" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filterList(searchAlbumDetail,'albumDetail')" pInputText size="50" >
+                    <input  type="text" class="SearchTextBox" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filterList(searchAlbumDetail,'albumDetail')" pInputText size="50" autocomplete="off" >
                     </div>
                     </div>
                     <br>
