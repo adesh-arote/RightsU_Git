@@ -83,93 +83,7 @@
 </p-sidebar>
   <!-- Main content -->
   <section class="content" style="margin-top: -1%;">
-    <p-dataTable   #dt [value]="uploadedFilesList" exportFilename="MusicAssignmentList" [rowsPerPageOptions]="[25,50,75,100]" [scrollable]="true" scrollHeight="1000px"
-      [paginator]="true" [rows]="25" [responsive]="true"  [alwaysShowPaginator]="true" [loadingIcon]="fa-spinner" (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true"  [totalRecords]="recordCount" [first]="first">
-      <!-- <p-column field="RequestedBy" header="Sr.No" [sortable]="true" [style]="{'width':'50px'}" styleClass="text-center">
-        <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-          <span>{{index+1}}</span>
-        </ng-template>
-      </p-column> -->
-      <p-column field="RequestID" header="Request ID" [sortable]="true" [style]="{'width':'150px'}" styleClass="text-center"></p-column>      
-      <p-column field="RequestedDate" header="Date" [sortable]="true" [style]="{'width':'100px'}" styleClass="text-center">
-          <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-            <span>{{row.RequestedDate | date:'dd-MMM-yyyy'}}</span>
-          </ng-template>
-        </p-column>
-      <p-column header="File Name" field="FileName" [sortable]="true" [style]="{'width':'250px'}">
-        <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-          <span data-toggle="tooltip" data-placement="top" title="{{row.FileName}}">{{ (row.FileName.length>50)? (row.FileName | slice:0:49)+'..':(row.FileName) }}</span>
-        </ng-template>
-      </p-column>
-      
-      <p-column field="RequestedBy" header="Requested By" [sortable]="true" [style]="{'width':'100px'}" styleClass="text-center"></p-column>
-      <p-column field="Status" header="Status" [sortable]="true" [style]="{'width':'100px'}" styleClass="text-center"></p-column>
-      <p-column header="Error Count" [sortable]="false" [style]="{'width':'150px'}" styleClass="text-center">
-        <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-          <div class="progress" style="margin:2px">
-            <div id="success'{{row.RequestID}}'" class="progress-bar progress-bar-success" role="progressbar" [style.width.%]="row.successPercent" pTooltip="Success" tooltipPosition="top">
-              {{row.SuccessRecords}}
-            </div>
-
-            <div id="error'{{row.RequestID}}'" class="progress-bar progress-bar-danger pcolumncursor" (click)="viewRecords('Error',row,'E')" role="progressbar" [style.width.%]="row.errorPercent" data-toggle="tooltip" data-placement="top" title="Error">
-              {{row.ErrorRecords}}
-            </div>
-
-            <div id="warning'{{row.RequestID}}'" class="progress-bar progress-bar-warning pcolumncursor" (click)="viewRecords('Warning',row,'W')" role="progressbar" [style.width.%]="row.warningPercent" data-toggle="tooltip" data-placement="top" title="Warning">
-                {{row.WarningRecords}}
-              </div>
-                             <div id="info'{{row.RequestID}}'" class="progress-bar"  role="progressbar" [style.width.%]="row.defaultPercent" data-toggle="tooltip" data-placement="top" title="Not Available">
-                  {{row.defaultRecord}}
-                </div>  
-          </div>
-        </ng-template>
-      </p-column>
-      <p-column header="Action" [sortable]="false" [style]="{'width':'100px'}" styleClass="text-center">
-        <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-          <span *ngIf="row.RecordStatus=='E'">
-            <button (click)="viewRecords('Details',row,'A')" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip" data-placement="top" title="View">
-              <i class="fa fa-eye"></i>
-            </button>
-            <button style="margin:2px;" class="btn  btn-xs" data-toggle="tooltip" data-placement="top" title="Replace" (click)="uploadFile(row.MHCueSheetCode)">
-              <i class="fa fa-exchange"></i>
-            </button>
-          
-          </span>
-          <span *ngIf="row.RecordStatus=='W'">
-            <button (click)="viewRecords('Details',row,'A')" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip" data-placement="top" title="View">
-              <i class="fa fa-eye"></i>
-            </button>
-            <button style="margin:2px" class="btn  btn-xs" data-toggle="tooltip" data-placement="top" title="Replace" (click)="uploadFile(row.MHCueSheetCode)">
-              <i class="fa fa-exchange"></i>
-            </button>
-            <button style="margin:2px" class="btn  btn-xs" data-toggle="tooltip" data-placement="left" title="Send with warning" (click)="sendToApproval(row.MHCueSheetCode);">
-              <i class="fa fa-arrow-circle-right"></i>
-            </button>
-          </span>
-          <span *ngIf="row.RecordStatus=='S' || row.RecordStatus=='C'">
-            <button  (click)="viewRecords('Details',row,'A')" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip" data-placement="top" title="View">
-              <i class="fa fa-eye"></i>
-            </button>
-          </span>
-          <span *ngIf="row.RecordStatus=='P'">
-            <img  data-toggle="tooltip" data-placement="top" title="Pending" src=".../../../../../assets/Images/square_dots_loading.gif" style="height: 30px;">
-            <!-- <button  (click)="cueSheetStatusCheck(row)" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip" data-placement="top" title="View">
-              <i class="fa fa-refresh"></i>
-            </button> -->
-          </span>
-          <span>
-            <button class="btn  btn-xs" (click)="downLoadFile(row.MHCueSheetCode)"data-toggle="tooltip" data-placement="top" title="Download">
-              <i class="fa fa-download" aria-hidden="true">
-              </i>
-            </button>
-          </span>
-        </ng-template>
-      </p-column>
-      <p-footer class="musiccuesheet">
-          Total Records: {{recordCount}}
-        </p-footer>
-    </p-dataTable>
-
+    <app-common-music-assignment [musicassignmentDetails]="uploadedFilesList" [totalRecords]="recordCountmusic"></app-common-music-assignment>
   </section>
   <!-- /.content -->
   <!-- Content Header (Page header) -->
@@ -178,7 +92,6 @@
     <p-header>
       {{alertHeader}}
     </p-header>
-
     <span>
       <input type="file" #chooseUpload class="upload" (change)="changeEventData=$event;" class="" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
     </span>
@@ -186,7 +99,6 @@
       <label for="comment">Remark </label> (
       <i>{{textRemarkCount}} / 4000 </i> )<span class="asterisk">*</span>
       <textarea rows="3" id="remark" [(ngModel)]="remarks" (ngModelChange)="remarkChange()" required name="Remarks" maxlength=4000></textarea>
-
     </div>
     <!-- <span style="float:right"> -->
       <p-footer>
@@ -218,83 +130,6 @@
 
   </p-dialog>
   
-  <!-- <p-dialog [(visible)]="messageDialog" [width]="300" [positionTop]="60" [blockScroll]="true" [modal]="true" [responsive]="true">
-    <p-header>
-      {{alertHeader}}
-    </p-header>
-    {{alertMessage}}
-  </p-dialog> -->
-
-  <p-dialog [(visible)]="cueSheetViewDialog" [blockScroll]="true" [width]="1150" [positionTop]="60" [modal]="true" [responsive]="false" [contentStyle]="{'overflow':'visible'}" [draggable]="false">
-      <p-header>
-        {{alertHeader}}
-      </p-header>
-      <div class="Row">
-          <div>
-            <label>Search</label>&nbsp;
-            <input id="input" class="SearchTextBox"  type="text" size="30"  (keyup)="filter(countGridSearch,'test')" placeholder="Music Track"
-              pInputText [(ngModel)]="countGridSearch">
-    
-          </div>
-    
-        </div>
-        <br>
-        <div class="Row">
-          <p-dataTable [value]="viewCueSheetList" [rowsPerPageOptions]="[5,10,15,20]" [paginator]="true"
-                       rows="5" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true" scrollHeight="300px">
-            <p-column field="ShowName" header="Show Name" [style]="{'width':'100px'}" [sortable]="true"></p-column>
-            <p-column field="Episode" header="Episode" [sortable]="true" [style]="{'width':'70px'}" styleClass="text-center"></p-column>
-            <p-column field="MusicTrack" header="Music Track" [style]="{'width':'150px'}" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
-            <p-column field="MovieAlbum" header="Movie/Album" [style]="{'width':'150px'}" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
-            <p-column field="SongType" header="Song Type" [style]="{'width':'150px'}" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
-            <p-column field="TCIn" header="TC In" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
-            <p-column field="TCInFrame" header="TC In Frame" [sortable]="true" [style]="{'width':'70px'}" styleClass="text-center"></p-column>
-            <p-column field="TCOut" header="TC Out" styleClass="text-center" [style]="{'width':'80px'}" [sortable]="true"></p-column>
-            <p-column field="TCOutFrame" header="TC Out Frame" [style]="{'width':'70px'}" [sortable]="true" styleClass="text-center"></p-column>
-            <p-column field="Duration" header="Duration" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
-            <p-column field="DurationFrame" header="Duration Frame" [sortable]="true" [style]="{'width':'70px'}" styleClass="text-center"></p-column>
-            <p-column field="ErrorMessage" header="Error Message" [style]="{'width':'150px'}"></p-column>
-            <p-footer>
-              Total Records: {{totalCountRecord}}
-            </p-footer>
-          </p-dataTable>
-        </div>
-      <p-footer>
-        <button type="button" pButton (click)="alertClose()" label="Close"></button>
-      </p-footer>
-    </p-dialog>
-    <p-dialog [(visible)]="sendForApprovalDialog" [blockScroll]="true" [width]="500" [positionTop]="60" [modal]="true" [responsive]="false" [draggable]="false" >
-        <p-header>
-          {{alertHeader}}
-        </p-header>
-        <div class="remarkDiv" style="margin-top:20px">
-          <label for="comment">Remark </label> (
-          <i>{{textRemarkCount}} / 4000 </i> )<span class="asterisk">*</span>
-         
-          <textarea style="resize:none" rows="3" id="remark" [(ngModel)]="remarks" (ngModelChange)="remarkChange()" required name="ApprovalRemarks" maxlength=4000></textarea>
-    
-        </div>
-        <span style="float:right">
-          <button class="btn btn-sm  btn-primary pull-left " (click)="submitForApproval()">
-            <span >Submit</span>
-            </button>
-        </span>
-    
-    
-      </p-dialog>
-
-
-      <p-dialog [(visible)]="showDownloaderror" [contentStyle]="{'overflow':'visible'}" [blockScroll]="true" [width]="500" [positionTop]="60" [modal]="true" [responsive]="false" [draggable]="false">
-        <p-header>
-        <label>Error Message</label>
-      </p-header>
-        <div>
-          File not found
-        </div>
-        <p-footer>
-          <button type="button" pButton (click)="showDownloaderror = false" label="Close"></button>
-        </p-footer>
-        </p-dialog>
 
       <div *ngIf="displayalertMessage">
         <app-message-box  [messageData]="messageData"></app-message-box>

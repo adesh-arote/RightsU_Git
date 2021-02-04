@@ -102,8 +102,8 @@ export class QuickSelectionComponent implements OnInit {
       this.load = false;
       this.removeBlockUI();
       this.getChannelList = response.Channel;
-      this.getChannelList.unshift({ "Channel_Name": "Please Select", "Channel_Code": 0 });
-      this.newMusicConsumptionRequest.ChannelCode = this.getChannelList[0];
+     // this.getChannelList.unshift({ "Channel_Name": "Please Select", "Channel_Code": 0 });
+     // this.newMusicConsumptionRequest.ChannelCode = this.getChannelList[0];
 
 
     }, error => { this.handleResponseError(error) })
