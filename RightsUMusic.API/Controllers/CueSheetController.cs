@@ -123,7 +123,7 @@ namespace RightsUMusic.API.Controllers
                         _objRet.Message = "Column Name Mismatch";
                         return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
                     }
-                    else if (dt.Columns[5].ToString() != "Song Type")
+                    else if (dt.Columns[5].ToString() != "Usage Type")
                     {
                         _objRet.IsSuccess = false;
                         _objRet.Message = "Column Name Mismatch";
