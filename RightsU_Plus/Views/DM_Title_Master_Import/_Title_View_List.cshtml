@@ -102,6 +102,10 @@
                         Count = Count + 1;
                         var type = item.GetType();
                         var properties = type.GetProperties();
+                        if (Count > 1)
+                        {
+                            item.Record_Status = item.Is_Ignore == "Y" ? "Ignore" : item.Record_Status == null ? "" : item.Record_Status;
+                        }
                     <tr>
                         @foreach (var property in properties)
                         {

@@ -1,11 +1,11 @@
-﻿CREATE PROCEDURE [dbo].[USP_Title_Import_Utility_PIII]
+﻿ALTER PROCEDURE [dbo].[USP_Title_Import_Utility_PIII]
 (
 	@DM_Master_Import_Code INT
 )
 AS 
 BEGIN
 	SET NOCOUNT ON
-	--DECLARE @DM_Master_Import_Code INT = 1105
+	--DECLARE @DM_Master_Import_Code INT = 82
 	DECLARE @ISError CHAR(1) = 'N', @Error_Message NVARCHAR(MAX) = '', @ExcelCnt INT = 0
 
 	IF(OBJECT_ID('tempdb..#TempTitle') IS NOT NULL) DROP TABLE #TempTitle
@@ -361,13 +361,13 @@ BEGIN
 
 			IF ('DURATION IN MINUTE' = UPPER(@Display_Name))
 			BEGIN
-				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') should be between 1950 and 9999'
+				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') should be between 1 and 9999'
 				WHERE ExcelSrNo IN (
 					SELECT ExcelSrNo
 					FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name AND RefKey = 1 AND CAST(TitleData AS INT) NOT BETWEEN 1 AND 9999
 				)
 
-				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') should be between 1950 and 9999'
+				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') should be between 1 and 9999'
 				WHERE ExcelSrNo IN (
 					SELECT ExcelSrNo
 					FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name AND RefKey = 2 AND CAST(TitleData AS DECIMAL(38,2)) NOT BETWEEN 1 AND 9999
@@ -706,10 +706,16 @@ BEGIN
 		CLOSE db_cursor_EMDY_Reference  
 		DEALLOCATE db_cursor_EMDY_Reference 
 	END
-
+	
+	
 	BEGIN
 		PRINT 'Resolve Conflict'
-		
+		PRINT 'Deletting unnecessary data before Resolve Conflict'
+
+		DELETE FROM #TempHeaderWithMultiple WHERE ExcelSrNo IN (SELECT DISTINCT ExcelSrNo FROM #TempTitleUnPivot WHERE IsError = 'Y')
+		DELETE FROM #TempExtentedMetaData	WHERE ExcelSrNo IN (SELECT DISTINCT ExcelSrNo FROM #TempTitleUnPivot WHERE IsError = 'Y')
+		DELETE FROM #TempTalent				WHERE ExcelSrNo IN (SELECT DISTINCT ExcelSrNo FROM #TempTitleUnPivot WHERE IsError = 'Y')
+
 		DELETE FROM DM_Master_Log WHERE DM_Master_Import_Code = @DM_Master_Import_Code and Master_Code IS NULL AND Is_Ignore = 'N'
 		--UPDATE DM_Title_Import_Utility_Data SET Record_Status = NULL WHERE Record_Status = 'R' AND DM_Master_Import_Code = @DM_Master_Import_Code
 
@@ -720,7 +726,7 @@ BEGIN
 				WHERE A.RefKey IS NULL
 					  AND B.Is_Allowed_For_Resolve_Conflict = 'Y' 
 					  AND B.Reference_Table <> 'Talent' 
-					  AND B.Reference_Table <> '' AND B.Is_Active = 'Y' AND B.Is_Multiple = 'N'
+					  AND B.Reference_Table <> '' AND B.Is_Active = 'Y' AND B.Is_Multiple = 'N' AND A.ExcelSrNo NOT IN (SELECT DISTINCT ExcelSrNo FROM #TempTitleUnPivot WHERE IsError = 'Y')
 				UNION ALL --TITLE PROPERTIES WITH SINGLE FIELD
 				SELECT A.PropName AS Name ,B.ShortName AS Master_Type,'' AS Roles
 				FROM #TempHeaderWithMultiple A
@@ -734,6 +740,7 @@ BEGIN
 						AND B.Target_Table = 'Map_Extended_Column' 
 						AND Is_Multiple = 'N'
 						AND B.Is_Allowed_For_Resolve_Conflict = 'Y' 
+						AND A.ExcelSrNo NOT IN (SELECT DISTINCT ExcelSrNo FROM #TempTitleUnPivot WHERE IsError = 'Y')
 				UNION ALL --TITLE PROPERTIES WITH SINGLE FIELD EXTENDED META DATA
 				SELECT A.EMDName AS Name, B.ShortName AS Master_Type ,''AS Roles
 				FROM #TempExtentedMetaData A

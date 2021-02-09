@@ -1568,5 +1568,11 @@ namespace RightsU_DAL
             return objContext.USP_Get_ExcelSrNo(dM_Master_Import_Code, keyword, callFor);
         }
 
+        public virtual ObjectResult<USP_Get_Title_Import_Utility_AdvSearch_Result> USP_Get_Title_Import_Utility_AdvSearch(Nullable<int> dM_Master_Import_Code, string callFor)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Title_Import_Utility_AdvSearch(dM_Master_Import_Code, callFor);
+        }
+
     }
 }

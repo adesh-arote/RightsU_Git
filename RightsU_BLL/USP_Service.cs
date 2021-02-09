@@ -1556,6 +1556,12 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Get_ExcelSrNo(dM_Master_Import_Code, keyword, callFor);
         }
-        
+
+        public virtual ObjectResult<USP_Get_Title_Import_Utility_AdvSearch_Result> USP_Get_Title_Import_Utility_AdvSearch(Nullable<int> dM_Master_Import_Code, string callFor)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Get_Title_Import_Utility_AdvSearch(dM_Master_Import_Code, callFor);
+        }
+
     }
 }

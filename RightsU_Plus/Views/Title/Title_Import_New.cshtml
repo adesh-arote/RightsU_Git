@@ -311,6 +311,20 @@
                                     $('#statusbar_' + dealCode).append(a);
                                     initializeTooltip();
                                 }
+                                else if (result.RecordStatus == "E") {
+                                    $("#imgLoading_" + dealCode).css("display", 'none');
+                                    $('.' + SiblingClass).empty();
+
+                                    var a = '<a  title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindViewData(' + dealCode + ')"></a>';
+
+                                    $('.' + SiblingClass).append(a);
+                                    $('.clsTdStatus_' + dealCode).empty();
+                                    $('.clsTdStatus_' + dealCode).append('Error');
+                                    var a = '<div title="Proper Records" id="Success_' + dealCode + '" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: ' + result.Completion + '%;" aria-valuenow="' + result.SuccessCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.SuccessCount + '</div><div title="Ignored Records" id="Ignored_' + dealCode + '" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:' + result.IgnoreCompletion + '%" aria-valuenow="' + result.IgnoreCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.IgnoreCount + '</div><div title="Error Records" id="Error_' + dealCode + '" data-placement="top" class="progress-bar bg-danger"  role="progressbar" style="width:' + result.ErrorCompletion + '%" aria-valuenow="' + result.ErrorCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ErrorCount + '</div><div title="Conflict Records" id="Conflict_' + dealCode + '" class="progress-bar bg-warning" role="progressbar" style="width:' + result.ConflictCompletion + '%" data-placement="top" aria-valuenow="' + result.ConflictCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ConflictCount + '</div><div title="No Error Records" id="NoError_' + dealCode + '" class="progress-bar" role="progressbar" data-placement="top" style="width: ' + result.WaitingCompletion + '%" aria-valuenow="' + result.WaitingCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.WaitingCount + '</div>'
+                                    $('#statusbar_' + dealCode).empty();
+                                    $('#statusbar_' + dealCode).append(a);
+                                    initializeTooltip();
+                                }
                                 else if (result.RecordStatus == "R") {
                                     $("#imgLoading_" + dealCode).css("display", 'none');
                                     $('.' + SiblingClass).empty();
