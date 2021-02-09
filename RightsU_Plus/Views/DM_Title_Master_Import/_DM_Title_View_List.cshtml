@@ -600,6 +600,9 @@
                     //this.value.push("");
                     $("#hdnTitleName")[0].value = value.join(", ");
                     return false;
+
+                   
+                    return false;
                 },
                 minLength: 2,
                 open: function (event, ui) {
@@ -672,7 +675,7 @@
                 <br>
                 <input type="text" placeholder="Title Name" id="txtTitleName" autocomplete="on" style="width:230px" value='@ViewBag.SrchTitle' onkeyup="populateTitle(event)" />
                 <input type="text" id="lbTitle_Code" style="display: none;" />
-                @Html.Hidden("TitleName")
+                @Html.Hidden("hdnTitleName")
             </li>
             <li class="AdSearch">
                 <label>Title Type:</label><br />
