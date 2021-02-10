@@ -1456,9 +1456,7 @@
     <Build Include="dbo\User Defined Types\MusicScheduleProcess.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Database Scripts\DBSchema_v5.0.1.12.sql" />
-    <None Include="Database Scripts\DBConfig_v5.0.1.12.sql" />
-    <None Include="Database Scripts\DBConfig_v5.0.1.13.sql" />
-    <None Include="Database Scripts\DBSchema_v5.0.1.13.sql" />
+    <None Include="Database Scripts\DBConfig_v5.0.2.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.2.sql" />
   </ItemGroup>
 </Project>
