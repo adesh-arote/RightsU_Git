@@ -1,19 +1,20 @@
-﻿
---[USP_SendMail_To_NextApprover_New] 14571,30,'NAPP',143,''
-
-CREATE PROCEDURE [dbo].[USP_SendMail_To_NextApprover_New]
+﻿CREATE PROCEDURE [dbo].[USP_SendMail_To_NextApprover_New]
 (
---select * from Acq_Deal where Agreement_No='A-2017-00055'
---declare
 	@RecordCode Int=3
 	,@Module_code Int=30
 	,@RedirectToApprovalList Varchar(100)='N'
 	,@AutoLoginUser Varchar(100)=143
 	,@Is_Error Char(1) 	Output
 )
-	
 AS
 BEGIN	
+	--declare
+	--@RecordCode Int=21617
+	--,@Module_code Int=30
+	--,@RedirectToApprovalList Varchar(100)='N'
+	--,@AutoLoginUser Varchar(100)=143
+	--,@Is_Error Char(1) ='N'
+
 	SET NOCOUNT ON;
 	--DECLARE @Module_code INT --//--This  is a module code for Acquisition Deal	
 	--SET @Module_code =30
@@ -56,11 +57,11 @@ BEGIN
 			select @Promoter_Count = count(*) from Acq_Deal_Rights_Promoter where Acq_Deal_Rights_Code in (SELECT number FROM fn_Split_withdelemiter(@Acq_Deal_Rights_Code,',')) 
 			IF(@Promoter_Count > 0)
 			BEGIN
-			 SET @Promoter_Message = 'Promoter Group details are  added for the deal'
+			 SET @Promoter_Message = 'Self Utilization Group details are  added for the deal'
 			END
 			ELSE
 			BEGIN
-			SET @Promoter_Message = 'Promoter Group details are not added for the deal'
+			SET @Promoter_Message = 'Self Utilization Group details are not added for the deal'
 			END
 
 		END
@@ -79,6 +80,11 @@ BEGIN
 		@Agreement_No VARCHAR(MAX) = '', @Agreement_Date VARCHAR(MAX) = '', @Deal_Desc NVARCHAR(MAX) = '', 
 		@Primary_Licensor NVARCHAR(MAX) = '', @Titles NVARCHAR(MAX) = '', @Max_Titles_In_Approval_Mail INT = 0, @Title_Count INT = 0,@BU_Name VARCHAR(MAX) = ''
 
+		DECLARE @Created_By  VARCHAR(MAX) = '',
+				@Creation_Date  VARCHAR(MAX) = '',
+				@Last_Actioned_By  VARCHAR(MAX) = '',
+				@Last_Actioned_Date  VARCHAR(MAX) = ''
+
 		IF(@RecordCode > 0)
 		BEGIN
 			SELECT TOP 1 @Max_Titles_In_Approval_Mail = CAST(Parameter_Value AS INT) 
@@ -89,10 +95,16 @@ BEGIN
 				PRINT 'Acquisition Deal Module'
 				SELECT TOP 1 
 					@Agreement_No = Agreement_No, @Agreement_Date = CONVERT(VARCHAR(15), Agreement_Date, 106), 
-					@Deal_Desc = Deal_Desc, @Primary_Licensor = V.Vendor_Name,@BU_Name = BU.Business_Unit_Name
+					@Deal_Desc = Deal_Desc, @Primary_Licensor = V.Vendor_Name,@BU_Name = BU.Business_Unit_Name,
+					@Created_By = U1.Login_Name ,
+					@Creation_Date = CONVERT(VARCHAR(15), ad.Inserted_On, 106),
+					@Last_Actioned_By = U2.Login_Name,
+					@Last_Actioned_Date = CONVERT(VARCHAR(15), ad.Last_Updated_Time, 106)
 				FROM Acq_Deal AD
 					INNER JOIN Vendor V ON AD.Vendor_Code = V.Vendor_Code
 					INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = AD.Business_Unit_Code
+					LEFT JOIN Users U1 ON U1.Users_Code = AD.Inserted_By
+					LEFT JOIN Users U2 ON U2.Users_Code = AD.Last_Action_By
 				WHERE Acq_Deal_Code = @RecordCode
 			
 				SELECT @Title_Count =  COUNT(DISTINCT Title_Code) FROM Acq_Deal_Movie where Acq_Deal_Code = @RecordCode
@@ -115,10 +127,15 @@ BEGIN
 				PRINT 'Syndication Deal Module'
 				SELECT TOP 1 
 					@Agreement_No = Agreement_No, @Agreement_Date = CONVERT(VARCHAR(15), Agreement_Date, 106), 
-					@Deal_Desc = Deal_Description, @Primary_Licensor = V.Vendor_Name, @BU_Name = BU.Business_Unit_Name 
+					@Deal_Desc = Deal_Description, @Primary_Licensor = V.Vendor_Name, @BU_Name = BU.Business_Unit_Name,
+					@Creation_Date = CONVERT(VARCHAR(15), SD.Inserted_On, 106),
+					@Last_Actioned_By = U2.Login_Name,
+					@Last_Actioned_Date = CONVERT(VARCHAR(15), SD.Last_Updated_Time, 106)
 				FROM Syn_Deal SD
 					INNER JOIN Vendor V ON SD.Vendor_Code = V.Vendor_Code
 					INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = SD.Business_Unit_Code
+					LEFT JOIN Users U1 ON U1.Users_Code = SD.Inserted_By
+					LEFT JOIN Users U2 ON U2.Users_Code = SD.Last_Action_By
 				WHERE Syn_Deal_Code = @RecordCode
 
 				SELECT @Title_Count =  COUNT(DISTINCT Title_Code) FROM Syn_Deal_Movie where Syn_Deal_Code = @RecordCode
@@ -151,14 +168,19 @@ BEGIN
 		END
 	
 		/* SELECT SITE URL */
-		DECLARE @DefaultSiteUrlHold NVARCHAR(500)
+		DECLARE @DefaultSiteUrlHold NVARCHAR(500) ,  @Is_RU_Content_Category CHAR(1), @BU_CC NVARCHAR(MAX) = 'Business Unit'
 		SELECT @DefaultSiteUrl_Param = DefaultSiteUrl, @DefaultSiteUrlHold = DefaultSiteUrl FROM System_Param
 		SET @MailSubjectCr = @DealType + ' Deal - (' + @DealNo + ') is waiting for approval' 
 
-	
+		SELECT @Is_RU_Content_Category = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'Is_RU_Content_Category'
+
+		IF(@Is_RU_Content_Category = 'Y')
+			SET  @BU_CC= 'Content Category'
+
+		--@Primary_User_Code is nothing by group code 
 		/* TO SEND EMAIL TO INDIVIDUAL USER */
 		DECLARE @Primary_User_Code INT = 0
-		SELECT TOP 1 @Primary_User_Code = Primary_User_Code 
+		SELECT TOP 1 @Primary_User_Code = Group_Code  
 		FROM Module_Workflow_Detail 
 		WHERE Is_Done = 'N' AND Module_Code = @Module_code AND Record_Code = @RecordCode 
 		ORDER BY Module_Workflow_Detail_Code
@@ -171,7 +193,8 @@ BEGIN
 			INNER JOIN Users_Business_Unit UBU ON UBU.Business_Unit_Code IN (@BU_Code)
 			INNER JOIN Users U2 ON U1.Security_Group_Code = U2.Security_Group_Code AND UBU.Users_Code = U2.Users_Code
 			INNER JOIN Security_Group SG ON SG.Security_Group_Code = U1.Security_Group_Code
-		WHERE U1.Users_Code = @Primary_User_Code AND U1.Is_Active = 'Y' AND U2.Is_Active = 'Y'
+		WHERE U1.Security_Group_Code = @Primary_User_Code AND U1.Is_Active = 'Y' AND U2.Is_Active = 'Y'
+
 
 		OPEN Cur_On_Rejection
 		FETCH NEXT FROM Cur_On_Rejection INTO @Cur_email_id,@Cur_first_name,@Cur_security_group_name,@Cur_security_group_code,@Cur_user_code
@@ -179,40 +202,74 @@ BEGIN
 		BEGIN
 			IF (@@fetch_status <> -2)
 			BEGIN
-				--SELECT @DefaultSiteUrl = @DefaultSiteUrlHold
-				--SELECT @DefaultSiteUrl = @DefaultSiteUrl + '/Login.aspx?RedirectToApproval=Y&UserCode=' + CAST(@cur_user_code AS VARCHAR(500)) + 
-				--'&ModuleCode=' + CAST(@module_code AS VARCHAR(500))
-			
-				--print 'a'
-			     --SELECT @DefaultSiteUrl = @DefaultSiteUrl + '?@RedirectToApprovalList=Y' + @RecD:\UTOProjects\2015\RightsU\RightsU_MVC\RightsU_DB\dbo\Stored Procedures\USP_Acq_Termination_UDT.sqlordCode + CAST(@module_code AS VARCHAR(500))
+				
 				SELECT @DefaultSiteUrl = @DefaultSiteUrl_Param + '?Action=' + @RedirectToApprovalList + '&Code=' + cast(@RecordCode as varchar(50)) + '&Type=' + CAST(@module_code AS VARCHAR(500)) + '&Req=SA'
-				--Select * from System_Param
-				--print @DefaultSiteUrl 
-			SET @Email_Table =	'<table class="tblFormat" ><tr>
-			<th align="center" width="12%" class="tblHead">Agreement No.</th>      
-		    <th align="center" width="13%" class="tblHead">Agreement Date</th>      
-			<th align="center" width="20%" class="tblHead">Deal Description</th>      
-			<th align="center" width="12%" class="tblHead">Primary Licensor</th>      
-			<th align="center" width="28%" class="tblHead">Title(s)</th>
-			<th align="center" width="18%" class="tblHead">Business Unit</th>
-			' 
+				
+				IF(@module_code = 163 OR @Is_RU_Content_Category <> 'Y')
+				BEGIN
+					SET @Email_Table =	'<table class="tblFormat" >
+					<tr>
+						<td align="center" width="12%" class="tblHead">Agreement No.</td>      
+						<td align="center" width="12%" class="tblHead">Agreement Date</td>      
+						<td align="center" width="17%" class="tblHead">Deal Description</td>      
+						<td align="center" width="12%" class="tblHead">Primary Licensor</td>      
+						<td align="center" width="20%" class="tblHead">Title(s)</td>
+						<td align="center" width="12%"  class="tblHead">'+@BU_CC+'</td>
+					'
+				END
+				ELSE
+				BEGIN 
+					SET @Email_Table =	
+					'<table class="tblFormat" style="width:100%"> 
+						 <tr>
+							<td align="center" width="9%" class="tblHead">Agreement No.</td>    
+							<td align="center" width="9%" class="tblHead">Agreement Date</td> 
+							<td align="center" width="9%" class="tblHead">Created By</td> 
+							<td align="center" width="9%" class="tblHead">Creation Date</td> 
+							<td align="center" width="9%" class="tblHead">Deal Description</td> 
+							<td align="center" width="9%" class="tblHead">Primary Licensor</td>   
+							<td align="center" width="9%" class="tblHead">Title(s)</td>
+							<td align="center" width="9%" class="tblHead">'+@BU_CC+'</td>
+							<td align="center" width="9%" class="tblHead">Last Actioned By</td>
+							<td align="center" width="9%" class="tblHead">Last Actioned Date</td>
+					'
+				END
+
 
 			   IF(@DealType = 'Acquisition')
 			   BEGIN
-			   SET @Email_Table += '<th align="center" width="15%" class="tblHead">Promoter</th>'
+					SET @Email_Table += '<td align="center" width="10%" class="tblHead">Self Utilization</td>'
 			   END   
 
 			   SET @Email_Table += '</tr>'
 			   
-			 SET @Email_Table += '<tr>      
-			<td align="center" class="tblData">{Agreement_No}</td>     
-			<td align="center" class="tblData">{Agreement_Date}</td>     
-			<td align="center" class="tblData">{Deal_Desc}</td>     
-			<td align="center" class="tblData">{Primary_Licensor}</td>  
-			<td align="center" class="tblData">{Titles}</td>
-			<td align="center" class="tblData">{BU_Name}</td>
-			'
-			 IF(@DealType = 'Acquisition')
+			   IF(@module_code = 163 OR @Is_RU_Content_Category <> 'Y')
+				BEGIN
+				 SET @Email_Table += '<tr>      
+						<td align="center" class="tblData">{Agreement_No}</td>     
+						<td align="center" class="tblData">{Agreement_Date}</td>     
+						<td align="center" class="tblData">{Deal_Desc}</td>     
+						<td align="center" class="tblData">{Primary_Licensor}</td>  
+						<td align="center" class="tblData">{Titles}</td>
+						<td align="center" class="tblData">{BU_Name}</td>
+				'
+				END
+				ELSE
+				BEGIN
+					 SET @Email_Table += ' <tr>
+						<td align="center" class="tblData">{Agreement_No}</td>   
+						<td align="center" class="tblData">{Agreement_Date}</td>    
+						<td align="center" class="tblData">{Created_By}</td>    
+						<td align="center" class="tblData">{Creation_Date}</td>    
+						<td align="center" class="tblData">{Deal_Desc}</td>    
+						<td align="center" class="tblData">{Primary_Licensor}</td>   
+						<td align="center" class="tblData">{Titles}</td> 
+						<td align="center" class="tblData">{BU_Name}</td> 
+						<td align="center" class="tblData">{Last_Actioned_By}</td> 
+						<td align="center" class="tblData">{Last_Actioned_Date}</td> 
+					'
+				END
+			   IF(@DealType = 'Acquisition')
 			   BEGIN
 					SET @Email_Table += '<td align="center" class="tblData">{Promoter}</td>'
 				END   
@@ -234,10 +291,18 @@ BEGIN
 				SET @Email_Table = replace(@Email_Table,'{Primary_Licensor}',@Primary_Licensor)  
 				SET @Email_Table = replace(@Email_Table,'{Titles}',@Titles)  
 				SET @Email_Table = replace(@Email_Table,'{BU_Name}',@BU_Name)  
-				 IF(@DealType = 'Acquisition')
-			   BEGIN
+				IF(@DealType = 'Acquisition')
+				BEGIN
 					SET @Email_Table = replace(@Email_Table,'{Promoter}',@Promoter_Message)  
 				END   
+
+				IF(@module_code <> 163 AND @Is_RU_Content_Category = 'Y')
+				BEGIN
+					SET @Email_Table = REPLACE(@Email_Table,'{Created_By}',@Created_By)  
+					SET @Email_Table = REPLACE(@Email_Table,'{Creation_Date}',@Creation_Date)  
+					SET @Email_Table = replace(@Email_Table,'{Last_Actioned_By}', @Last_Actioned_By)
+					SET @Email_Table = replace(@Email_Table,'{Last_Actioned_Date}', @Last_Actioned_Date)
+				END
 
 				SET @CC = ''
 				--IF(@Is_Mail_Send_To_Group='Y')

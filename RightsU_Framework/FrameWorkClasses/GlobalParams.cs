@@ -269,6 +269,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int RightCodeForUserConfigurationTab = 165;
         public const int RightCodeForSendForArchive = 166;
         public const int RightCodeForAllRegionalGEC = 167;
+        public const int RightCodeForDownload = 168;
 
         //added by aditya
         public const int RightCodeForPaymentTermAdd = 159;

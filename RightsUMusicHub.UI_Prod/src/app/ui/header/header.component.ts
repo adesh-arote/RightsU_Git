@@ -47,14 +47,15 @@ export class HeaderComponent implements OnInit {
   public RemarkSpecialInstruction: any = [];
   public remarksLabel: any;
   public specialRemarks: any;
-
+  public requestID: any;
+  public requestdetails:any;
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private comparentchildservice: ComParentChildService, private _requisitionService: RequisitionService) {
   }
   public count = 0;
   ngOnInit() {
     debugger;
-   
+
     this.ChangePSW = sessionStorage.getItem('CHANGEPSW_STATUS');
     this.router.events.subscribe((res) => {
 
@@ -77,7 +78,6 @@ export class HeaderComponent implements OnInit {
       this.ImageUrl = "../../../assets/Images/" + this.userImage;
     }
     //this.ImageUrl = "../../../assets/Images/User_Img.png";
-    this.removeScroll();
   }
 
   Notification() {
@@ -90,8 +90,6 @@ export class HeaderComponent implements OnInit {
         console.log(response);
         this.notificationList = response.NotifiactionList;
         this.unreadCount = response.UnReadCount;
-        this.removeScroll();
-        $('.slimScrollDiv').css("height","42px !important");
         console.log(this.unreadCount)
       }, error => { this.handleResponseError(error) })
 
@@ -130,7 +128,7 @@ export class HeaderComponent implements OnInit {
     this.displayMessage = true;
     this.MHRequestCode = MHRequestCode;
     this.MHRequestTypeCode = MHRequestTypeCode;
-   
+
     var notificationDetail = {
       "MHNotificationLogCode": code
     }
@@ -140,6 +138,9 @@ export class HeaderComponent implements OnInit {
       console.log("Notification Details..!!!");
       console.log(response);
       this.alertHeader = response.NotificationDetail.Subject;
+      var header = this.alertHeader.split('-');
+      this.requestID = header[0] + "-" + header[1] + "-" + header[2] + "-" +  header[3] ;
+      this.requestdetails=header[4];
       var notifybody = response.NotificationDetail.Email_Body;
       console.log(notifybody);
       $("#NotifyMessage").html("" + notifybody + "");
@@ -154,15 +155,6 @@ export class HeaderComponent implements OnInit {
     //   'body': "Request is Approved....!!!!"
     // }
 
-  }
-
-  removeScroll(){
-    $(function () {
-      $('.slimScrollDiv').slimScroll({
-        height: '42px !important',
-
-      });
-    });
   }
 
   showRequsetDetails() {
@@ -336,4 +328,9 @@ export class HeaderComponent implements OnInit {
     }, error => { this.handleResponseError(error) });
   }
 
+  getUsageroutelink(url){
+    debugger;
+    this.router.navigate([url]);
+    localStorage.setItem('VIEW_ALL_REQUEST', 'false');
+  }
 }

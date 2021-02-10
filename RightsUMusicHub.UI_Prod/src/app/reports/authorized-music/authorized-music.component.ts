@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef ,Input} from '@angular/core';
 import { RequisitionService } from '../../requisition/requisition.service';
 import { MusicAssignmentService } from '../../music-assignment/music-assignment.service';
 import { Router, ActivatedRoute, ParamMap, NavigationEnd } from '@angular/router';
@@ -72,6 +72,18 @@ export class AuthorizedMusicComponent implements OnInit {
   public sortingDefault: boolean = false;
   public order: any;
   public sortBy: any;
+  public showMusicTrackList: boolean = false;
+  public showUsageList: boolean = false;
+  public requestMusicList: any;
+  public totalCountOfMusicTrack: number;
+  public requestAlbumList: any = [];
+  public totalCountofMovieAlbum: number;
+  public showMusicAlbumList: boolean = false;
+  public isFirstClickedusage: boolean = false;
+  public isFirstClickedmusictrack: boolean = false;
+  public isFirstClickedmusicalbum: boolean = false;
+  public showMusicassignmentList: boolean = false;
+  public recordCountmusic: boolean = false;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.Status = [
@@ -86,6 +98,9 @@ export class AuthorizedMusicComponent implements OnInit {
   ngOnInit() {
     this.load = true;
     this.sortingDefault = true;
+    this.showUsageList = true;
+    this.showMusicTrackList = false;
+    this.showMusicAlbumList = false;
     this.addBlockUI();
     this._requisitionService.getChannel().subscribe(response => {
 
@@ -192,7 +207,7 @@ export class AuthorizedMusicComponent implements OnInit {
     this.load = true;
     this.addBlockUI();
     this._requisitionService.getRequestList(consumtionListBody).subscribe(response => {
-
+      this.isFirstClickedusage = true;
       console.log("Request list");
       console.log(response);
       if (response.Return.IsSuccess) {
@@ -508,6 +523,70 @@ export class AuthorizedMusicComponent implements OnInit {
   Download(b) {
     debugger;
     window.location.href = (this._requisitionService.DownloadFile().toString() + b).toString();
+  }
+
+  checkRequest(data) {
+    debugger;
+    if (data == 'usage') {
+      this.showMusicTrackList = false;
+      this.showUsageList = true;
+      this.showMusicAlbumList = false;
+      this.showMusicassignmentList = false;
+      if (data == 'usage' && this.isFirstClickedusage == false) {
+        this.getRequestList(25, 1)
+      }
+    }
+    else if (data == 'musictrack') {
+      this.showMusicTrackList = true;
+      this.showUsageList = false;
+      this.showMusicAlbumList = false;
+      this.showMusicassignmentList = false;
+      if (data == 'musictrack' && this.isFirstClickedmusictrack == false) {
+        this.requestMusicListMethod();
+      }
+    }
+    else if (data == 'musicalbum') {
+      this.showMusicTrackList = false;
+      this.showUsageList = false;
+      this.showMusicAlbumList = true;
+      this.showMusicassignmentList = false;
+      if (data == 'musicalbum' && this.isFirstClickedmusicalbum == false) {
+        this.requestAlbumListMethod();
+      }
+    }
+    else if (data == 'cuesheet') {
+      this.showMusicTrackList = false;
+      this.showUsageList = false;
+      this.showMusicAlbumList = false;
+      this.showMusicassignmentList = true;
+    }
+  }
+
+  requestMusicListMethod() {
+    debugger;
+    this.load = true;
+    var requestMusicListBody = {
+      MHRequestTypeCode: '2'
+    }
+    this.load = true; this._requisitionService.GetMovieAlbumMusicList(requestMusicListBody).subscribe(response => {
+      this.load = false;
+      this.isFirstClickedmusictrack = true;
+      this.requestMusicList = response.RequestList;
+      this.totalCountOfMusicTrack = response.RequestList.length;
+    }, error => { this.handleResponseError(error) });
+  }
+
+  requestAlbumListMethod() {
+    this.load = true;
+    var requestAlbumListBody = {
+      MHRequestTypeCode: '3'
+    }
+    this._requisitionService.GetMovieAlbumMusicList(requestAlbumListBody).subscribe(response => {
+      this.load = false;
+      this.isFirstClickedmusicalbum = true;
+      this.requestAlbumList = response.RequestList;
+      this.totalCountofMovieAlbum = response.RequestList.length;
+    }, error => { this.handleResponseError(error) });
   }
 
   handleResponseError(errorCode) {

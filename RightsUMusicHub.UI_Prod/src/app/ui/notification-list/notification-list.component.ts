@@ -38,7 +38,12 @@ export class NotificationListComponent implements OnInit {
   public searchAlbumDetail:any;
   public HeaderContent:any;
   public requestCountSearch;
- 
+  public RemarkSpecialInstruction: any = [];
+  public remarksLabel: any;
+  public specialRemarks: any;
+  public requestID: any;
+  public requestdetails:any;
+
   constructor(private authenticationService: AuthenticationService, private router: Router, private comparentchildservice: ComParentChildService, private _requisitionService: RequisitionService) { }
 
   ngOnInit() {
@@ -94,6 +99,9 @@ export class NotificationListComponent implements OnInit {
       console.log(response);
 
       this.alertHeader = response.NotificationDetail.Subject;
+      var header = this.alertHeader.split('-');
+      this.requestID = header[0] + "-" + header[1] + "-" + header[2] + "-" +  header[3] ;
+      this.requestdetails=header[4];
       var notifybody = response.NotificationDetail.Email_Body;
       console.log(notifybody)
       $("#NotifyMessage1").html(notifybody);
@@ -120,6 +128,7 @@ export class NotificationListComponent implements OnInit {
   }
 
   showRequsetDetails() {
+    debugger;
     if (this.MHRequestTypeCode == 1) {
       this.displayMessage = false;
       this.showRequestCountDetails = true;
@@ -127,6 +136,9 @@ export class NotificationListComponent implements OnInit {
       this._requisitionService.getRequestCountDetails({ MHRequestCode: this.MHRequestCode, IsCueSheet: 'N' }).subscribe(response => {
         this.requestCountFilteredList = response.RequestDetails;
         this.totalCountOfNoOfSongsDetails = response.RequestDetails.length;
+        this.RemarkSpecialInstruction = response.RemarkSpecialInstruction;
+        this.remarksLabel = this.RemarkSpecialInstruction.Remarks;
+        this.specialRemarks = this.RemarkSpecialInstruction.SpecialInstructions;
       }, error => { this.handleResponseError(error) }
       );
       let obj = {
