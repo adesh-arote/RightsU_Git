@@ -5223,5 +5223,18 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Import_RCData_Result>("USP_Title_Import_RCData", keywordParameter, tabNameParameter, rolesParameter);
         }
+
+        public virtual ObjectResult<USP_Get_Title_Import_Utility_AdvSearch_Result> USP_Get_Title_Import_Utility_AdvSearch(Nullable<int> dM_Master_Import_Code, string callFor)
+        {
+            var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
+                new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
+                new ObjectParameter("DM_Master_Import_Code", typeof(int));
+
+            var callForParameter = callFor != null ?
+                new ObjectParameter("CallFor", callFor) :
+                new ObjectParameter("CallFor", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_Import_Utility_AdvSearch_Result>("USP_Get_Title_Import_Utility_AdvSearch", dM_Master_Import_CodeParameter, callForParameter);
+        }
     }
 }
