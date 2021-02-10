@@ -1450,6 +1450,7 @@
     <Build Include="dbo\Stored Procedures\USP_Title_Import_RCData.sql" />
     <Build Include="dbo\Stored Procedures\USPMHMovieAlbumMusicDetailsList.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_Schedule.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Get_Title_Import_Utility_AdvSearch.sql" />
     <None Include="Database Scripts\DBSchema_v5.0.3.2.sql" />
     <None Include="Database Scripts\DBSchema_AvailShow_v5.0.3.2.sql" />
     <None Include="Database Scripts\DBConfig_v5.0.3.2.sql" />
