@@ -3573,6 +3573,18 @@ namespace RightsU_DAL
             proc.Users_Code = Users_Code;
             return this.Database.ExecuteStoredProcedure<USP_DM_Title_PII>(proc);
         }
+
+        public IEnumerable<USP_Title_Import_Utility_PII> USP_Title_Import_Utility_PII(
+        List<DM_Import_UDT> lstDM_Import_UDT, int? DM_Master_Import_Code, int? Users_Code
+          )
+        {
+            var proc = new USP_Title_Import_Utility_PII();
+            proc.DM_Import_UDT = lstDM_Import_UDT;
+            proc.DM_Master_Import_Code = DM_Master_Import_Code;
+            proc.Users_Code = Users_Code;
+            return this.Database.ExecuteStoredProcedure<USP_Title_Import_Utility_PII>(proc);
+        }
+
         public IEnumerable<USP_DM_Title_PIII> USP_DM_Title_PIII(
         int? DM_Master_Import_Code
           )

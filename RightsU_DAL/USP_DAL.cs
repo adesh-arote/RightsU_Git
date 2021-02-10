@@ -1124,6 +1124,13 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_DM_Title_PII(lstDM_Import_UDT, DM_Master_Import_Code, Users_Code);
         }
+        public IEnumerable<USP_Title_Import_Utility_PII> USP_Title_Import_Utility_PII(
+       List<DM_Import_UDT> lstDM_Import_UDT, int? DM_Master_Import_Code, int? Users_Code
+         )
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Import_Utility_PII(lstDM_Import_UDT, DM_Master_Import_Code, Users_Code);
+        }
         public IEnumerable<USP_DM_Title_PIII> USP_DM_Title_PIII(
          int? DM_Master_Import_Code
            )
