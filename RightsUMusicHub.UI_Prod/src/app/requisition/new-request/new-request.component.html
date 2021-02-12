@@ -572,7 +572,7 @@
                 (ngModelChange)="calculateDuration(row,false,false)" [defaultDate]="defaultDate" appendTo="body"
                 required class="timePickerFromCss" [timeOnly]="true" [showSeconds]="true" id="timeFrom'{{index+1}}'"
                 name="timeFrom'{{index+1}}'" #timeFrom{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
-              <input type="number" min=0 max=23 value="" (ngModelChange)="calculateDuration(row,false,false)"
+              <input type="number" min=0 max=23 value="" (input)="calculateDuration(row,false,false)"
                 [disabled]="row.Selected" required maxlength="2"
                 oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value"
                 placeholder="" max="23" id="fromFrame'{{index+1}}'" name="fromFrame'{{index+1}}'"
@@ -594,7 +594,7 @@
                 (ngModelChange)="calculateDuration(row,false,false)" [defaultDate]="defaultDate" appendTo="body"
                 required class="timePickerToCss" [timeOnly]="true" [showSeconds]="true" id="timeTo'{{index+1}}'"
                 name="timeTo'{{index+1}}'" #timeTo{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
-              <input type="number" min=0 max=23 value="" (ngModelChange)="calculateDuration(row,false,false)" required
+              <input type="number" min=0 max=23 value="" (input)="calculateDuration(row,false,false)" required
                 maxlength="2" [disabled]="row.Selected"
                 oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value"
                 placeholder="" max="23" id="toFrame'{{index+1}}'" name="toFrame'{{index+1}}'"
@@ -612,10 +612,10 @@
             [style]=" {'overflow':'visible','width':'120px' }">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
               <p-calendar [(ngModel)]="row[col.field]" [disabled]="row.Selected"
-                (ngModelChange)="durationTimeChange(row)" required [defaultDate]="defaultDate" appendTo="body"
+                (ngModelChange)="calculateTo(row,false,false,'nodurationChange');calculateFrom(row,false,false,'nodurationChange')" required [defaultDate]="defaultDate" appendTo="body"
                 class="timePickerDurationCss" [timeOnly]="true" [showSeconds]="true" id="DurationTime'{{index+1}}'"
                 name="DurationTime'{{index+1}}'" #DurationTime{{index+1}}="ngModel"></p-calendar>&nbsp;&nbsp;
-              <input type="number" [disabled]="row.Selected" min=0 value="" required maxlength="2"
+              <input type="number" [disabled]="row.Selected" min=0 value="" required maxlength="2"  (input)="calculateTo(row,false,false,'durationChange');calculateFrom(row,false,false,'durationChange')"
                 oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? '23' : this.value"
                 placeholder="" max="23" id="durationFrame'{{index+1}}'" name="durationFrame'{{index+1}}'"
                 #durationFrame{{index+1}}="ngModel" [(ngModel)]="row.durationFrame" class="cueSheetFrame"
