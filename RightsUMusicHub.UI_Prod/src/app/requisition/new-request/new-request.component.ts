@@ -94,6 +94,7 @@ export class NewRequestComponent implements OnInit {
   public isViewallclicked: boolean = false;
   public isNewrequest: boolean = false;
   public isDateSame: any;
+  public setDuration: boolean = false;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.mindatevalue = new Date();
@@ -233,7 +234,7 @@ export class NewRequestComponent implements OnInit {
           console.log(JSON.parse(showdata));
           console.log(this.showNameList);
           //this.showNameList.unshift({ "Title_Name": "Please Select", "Title_Code": 0 });
-         // this.newMusicConsumptionRequest.TitleCode = ""JSON.parse(showdata)"";
+          // this.newMusicConsumptionRequest.TitleCode = ""JSON.parse(showdata)"";
           this.showChange();
           localStorage.setItem('quickSelreq', 'N');
 
@@ -301,7 +302,7 @@ export class NewRequestComponent implements OnInit {
       console.log(response);
       this.searchshowNameList = response.Show;
       // this.showNameList.unshift({ "Title_Name": "Please select", "Title_Code": 0 });
-     // this.searchshowName.TitleCode = this.searchshowNameList[0];
+      // this.searchshowName.TitleCode = this.searchshowNameList[0];
     },
       error => { this.handleResponseError(error) });
     // this.getRequestList();
@@ -672,8 +673,8 @@ export class NewRequestComponent implements OnInit {
       console.log(response);
       this.showNameList = response.Show;
       //this.showNameList.unshift({ "Title_Name": "Please Select", "Title_Code": 0 });
-      if(this.channelChange.length > 0){
-      this.newMusicConsumptionRequest.TitleCode = this.showNameList[0];
+      if (this.channelChange.length > 0) {
+        this.newMusicConsumptionRequest.TitleCode = this.showNameList[0];
       }
     }, error => { this.handleResponseError(error) }
     )
@@ -1143,7 +1144,7 @@ export class NewRequestComponent implements OnInit {
         this.cueSheetList[index].Selected = true;
       }
       // }
-      // this.cueSheetList.forEach(x=>x.MHRequestCode===rowdata.MHRequestCode?true:x.Selected)      
+      // this.cueSheetList.forEach(x=>x.MHRequestCode===rowdata.MHRequestCode?true:x.Selected)
     }
     console.log(this.requestedCueSheet);
     // console.log(this.cueSheetList);
@@ -1162,7 +1163,7 @@ export class NewRequestComponent implements OnInit {
       this.cueSheetList.forEach(x => x.Selected = true);
       this.cueSheetList.forEach(x => x.cuesheetListCheck = false);
       // for(let i=0;i<this.cueSheetList.length;i++){
-      //   this.requestedCueSheet.push({list:this.cueSheetList[i],index:i})  
+      //   this.requestedCueSheet.push({list:this.cueSheetList[i],index:i})
       // }
     }
 
@@ -1400,8 +1401,19 @@ export class NewRequestComponent implements OnInit {
     var returnVal = true;
     var frameLimitNew = 24;
 
-    var timeFrom = rowData.timeFrom.toTimeString().slice(0, 8);
-    var timeTo = rowData.timeTo.toTimeString().slice(0, 8);
+    //var timeFrom = rowData.timeFrom.toTimeString().slice(0, 8);
+    if (rowData.timeFrom.toString().includes("GMT")) {
+      var timeFrom = rowData.timeFrom.toTimeString().slice(0, 8);
+    }
+    else {
+      var timeFrom = rowData.timeFrom;
+    }
+    if (rowData.timeTo.toString().includes("GMT")) {
+      var timeTo = rowData.timeTo.toTimeString().slice(0, 8);
+    }
+    else {
+      var timeTo = rowData.timeTo;
+    }
 
     var fromFrame = rowData.fromFrame;
     var toFrame = rowData.toFrame;
@@ -1607,7 +1619,6 @@ export class NewRequestComponent implements OnInit {
   }
 
   ConvertToSeconds(time) {
-    debugger;
     var arr = time.split(':');
     var hr = parseInt(arr[0], 10) * 3600;
     var mm = parseInt(arr[1], 10) * 60;
@@ -1617,7 +1628,6 @@ export class NewRequestComponent implements OnInit {
   }
 
   GetTimeInFormat(sec) {
-    debugger;
     var val1;
     var val2;
     var hh = parseInt("00");
@@ -1638,7 +1648,6 @@ export class NewRequestComponent implements OnInit {
   }
 
   FormatNumberLength(num, length) {
-    debugger;
     var r = "" + num;
     while (r.length < length) {
       r = "0" + r;
@@ -1679,8 +1688,8 @@ export class NewRequestComponent implements OnInit {
           console.log(this.requestedCueSheet[j].list.MusicTitleCode)
           if (this.cueSheetList[i].MusicTitleCode.toString() == this.requestedCueSheet[j].list.MusicTitleCode.toString()) {
 
-            let tcInTime = this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : datePipe.transform(this.cueSheetList[i].timeFrom.toString(), 'HH:mm:ss');
-            let tcOutTime = this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : datePipe.transform(this.cueSheetList[i].timeTo.toString(), 'HH:mm:ss');
+            let tcInTime = this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : this.cueSheetList[i].timeFrom.toString();
+            let tcOutTime = this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : this.cueSheetList[i].timeTo.toString();
             let durationTime = this.cueSheetList[i].durationTime == "00:00:00" ? this.cueSheetList[i].durationTime : this.cueSheetList[i].durationTime.toString();//datePipe.transform(this.cueSheetList[i].durationTime.toString(), 'HH:mm:ss')
 
             if (this.cueSheetList[i].durationTime == "00:00:00" && (this.cueSheetList[i].fromFrame > this.cueSheetList[i].toFrame)) {
@@ -1729,9 +1738,9 @@ export class NewRequestComponent implements OnInit {
                         MusicTrackName: this.cueSheetList[i].RequestedMusicTitle,
                         MHMusicSongTypeCode: this.cueSheetList[i].songType.MHMusicSongTypeCode == null ? 0 : this.cueSheetList[i].songType.MHMusicSongTypeCode,
                         SongType: this.cueSheetList[i].songType.MHMusicSongTypeCode == null ? this.cueSheetList[i].songType : this.cueSheetList[i].songType.SongType,
-                        FromTime: this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : datePipe.transform(this.cueSheetList[i].timeFrom.toString(), 'HH:mm:ss'),
+                        FromTime: this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : (this.cueSheetList[i].timeFrom.toString()),
                         FromFrame: this.cueSheetList[i].fromFrame,
-                        ToTime: this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : datePipe.transform(this.cueSheetList[i].timeTo.toString(), 'HH:mm:ss'),
+                        ToTime: this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : (this.cueSheetList[i].timeTo.toString()),
                         ToFrame: this.cueSheetList[i].toFrame,
                         DurationTime: this.cueSheetList[i].durationTime == "00:00:00" ? this.cueSheetList[i].durationTime : this.cueSheetList[i].durationTime.toString(),//datePipe.transform(this.cueSheetList[i].durationTime.toString(), 'HH:mm:ss'),
                         DurationFrame: this.cueSheetList[i].durationFrame,
@@ -1772,9 +1781,9 @@ export class NewRequestComponent implements OnInit {
                           MusicTrackName: this.cueSheetList[i].RequestedMusicTitle,
                           MHMusicSongTypeCode: this.cueSheetList[i].songType.MHMusicSongTypeCode == null ? 0 : this.cueSheetList[i].songType.MHMusicSongTypeCode,
                           SongType: this.cueSheetList[i].songType.MHMusicSongTypeCode == null ? this.cueSheetList[i].songType : this.cueSheetList[i].songType.SongType,
-                          FromTime: this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : datePipe.transform(this.cueSheetList[i].timeFrom.toString(), 'HH:mm:ss'),
+                          FromTime: this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : (this.cueSheetList[i].timeFrom.toString()),
                           FromFrame: this.cueSheetList[i].fromFrame,
-                          ToTime: this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : datePipe.transform(this.cueSheetList[i].timeTo.toString(), 'HH:mm:ss'),
+                          ToTime: this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : (this.cueSheetList[i].timeTo.toString()),
                           ToFrame: this.cueSheetList[i].toFrame,
                           DurationTime: this.cueSheetList[i].durationTime == "00:00:00" ? this.cueSheetList[i].durationTime : this.cueSheetList[i].durationTime.toString(),//datePipe.transform(this.cueSheetList[i].durationTime.toString(), 'HH:mm:ss'),
                           DurationFrame: this.cueSheetList[i].durationFrame,
@@ -1817,9 +1826,9 @@ export class NewRequestComponent implements OnInit {
                       MusicTrackName: this.cueSheetList[i].RequestedMusicTitle,
                       MHMusicSongTypeCode: this.cueSheetList[i].songType.MHMusicSongTypeCode == null ? 0 : this.cueSheetList[i].songType.MHMusicSongTypeCode,
                       SongType: this.cueSheetList[i].songType.MHMusicSongTypeCode == null ? this.cueSheetList[i].songType : this.cueSheetList[i].songType.SongType,
-                      FromTime: this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : datePipe.transform(this.cueSheetList[i].timeFrom.toString(), 'HH:mm:ss'),
+                      FromTime: this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : (this.cueSheetList[i].timeFrom.toString()),
                       FromFrame: this.cueSheetList[i].fromFrame,
-                      ToTime: this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : datePipe.transform(this.cueSheetList[i].timeTo.toString(), 'HH:mm:ss'),
+                      ToTime: this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : (this.cueSheetList[i].timeTo.toString()),
                       ToFrame: this.cueSheetList[i].toFrame,
                       DurationTime: this.cueSheetList[i].durationTime == "00:00:00" ? this.cueSheetList[i].durationTime : this.cueSheetList[i].durationTime.toString(),//datePipe.transform(this.cueSheetList[i].durationTime.toString(), 'HH:mm:ss'),
                       DurationFrame: this.cueSheetList[i].durationFrame,
@@ -1859,9 +1868,9 @@ export class NewRequestComponent implements OnInit {
                         MusicTrackName: this.cueSheetList[i].RequestedMusicTitle,
                         MHMusicSongTypeCode: this.cueSheetList[i].songType.MHMusicSongTypeCode == null ? 0 : this.cueSheetList[i].songType.MHMusicSongTypeCode,
                         SongType: this.cueSheetList[i].songType.MHMusicSongTypeCode == null ? this.cueSheetList[i].songType : this.cueSheetList[i].songType.SongType,
-                        FromTime: this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : datePipe.transform(this.cueSheetList[i].timeFrom.toString(), 'HH:mm:ss'),
+                        FromTime: this.cueSheetList[i].timeFrom == "00:00:00" ? this.cueSheetList[i].timeFrom : (this.cueSheetList[i].timeFrom.toString()),
                         FromFrame: this.cueSheetList[i].fromFrame,
-                        ToTime: this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : datePipe.transform(this.cueSheetList[i].timeTo.toString(), 'HH:mm:ss'),
+                        ToTime: this.cueSheetList[i].timeTo == "00:00:00" ? this.cueSheetList[i].timeTo : (this.cueSheetList[i].timeTo.toString()),
                         ToFrame: this.cueSheetList[i].toFrame,
                         DurationTime: this.cueSheetList[i].durationTime == "00:00:00" ? this.cueSheetList[i].durationTime : this.cueSheetList[i].durationTime.toString(),//datePipe.transform(this.cueSheetList[i].durationTime.toString(), 'HH:mm:ss'),
                         DurationFrame: this.cueSheetList[i].durationFrame,
@@ -1937,15 +1946,436 @@ export class NewRequestComponent implements OnInit {
     console.log(filtered)
     return filtered;
   }
-  durationTimeChange(rowData) {
-    // alert("Maually call");
-    for (let i = 0; i < this.cueSheetList.length; i++) {
-      if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
-        this.cueSheetList[i].timeFrom = this.defaultDate;
-        this.cueSheetList[i].timeTo = this.defaultDate;
+  
+  calculateTo(rowData, showError, validateOnly, data) {
+    debugger;
+    var returnVal = true;
+    var frameLimitNew = 24;
+
+    if (rowData.timeFrom.toString().includes("GMT")) {
+      var timeFrom = rowData.timeFrom.toTimeString().slice(0, 8);
+    }
+    else {
+      var timeFrom = rowData.timeFrom;
+    }
+    if (rowData.durationTime.toString().includes("GMT")) {
+      var durationTime = rowData.durationTime.toTimeString().slice(0, 8);
+    }
+    else {
+      var durationTime = rowData.durationTime
+    }
+
+
+    var fromFrame = rowData.fromFrame;
+    var durationFrame = rowData.durationFrame;
+
+
+    var duration = rowData.timeTo;//.toTimeString().slice(0, 8);
+
+    if (rowData.timeTo.toString().includes("GMT")) {
+      var timeTo = rowData.timeTo.toTimeString().slice(0, 8);
+    }
+    else {
+      var timeTo = rowData.timeTo;
+    }
+
+    // var timeTo = rowData.timeTo.toTimeString().slice(0, 8);
+
+    if (duration == "00:00" || duration == "00:00:00") {
+      var arrFrom = timeFrom.split(":");
+      var arrTo = durationTime.split(":");
+      if (timeFrom == "00:00:00") {
+        returnVal = false;
+        if (showError)
+          $("#txtFrom_" + rowData).addClass('required');
+      }
+      if (arrFrom.length == 2)
+        timeFrom = arrFrom[0] + ":" + arrFrom[1] + ":00"
+
+      if (fromFrame == "") {
+        fromFrame = "00";
+      }
+
+
+      for (let i = 0; i < this.cueSheetList.length; i++) {
+        if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+          this.cueSheetList[i].fromFrame = this.FormatNumberLength(fromFrame, 2);
+        }
+      }
+
+      if (durationTime == "00:00:00") {
+        returnVal = false;
+        if (showError)
+          $("#txtTo_" + rowData).addClass('required');
+      }
+      if (arrTo.length == 2)
+        durationTime = arrTo[0] + ":" + arrTo[1] + ":00"
+
+      if (durationFrame == "") {
+        durationFrame = "00";
+      }
+
+
+      for (let i = 0; i < this.cueSheetList.length; i++) {
+        if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+          this.cueSheetList[i].durationFrame = this.FormatNumberLength(durationFrame, 2);
+        }
+      }
+
+      if (returnVal) {
+        var totalSec_From = this.ConvertToSeconds(timeFrom);
+        var totalSec_To = this.ConvertToSeconds(durationTime);
+        var diffSec = totalSec_To + totalSec_From;
+        if (diffSec < 0) {
+          returnVal = false;
+          if (showError) {
+            $("#txtTo_" + rowData).addClass('required');
+
+          }
+        }
+        if (returnVal && !validateOnly) {
+
+          var toFrame = 0;
+          if (parseInt(durationFrame) < parseInt(fromFrame)) {
+            diffSec = diffSec + 1;
+            toFrame = 24 + parseInt(fromFrame)
+            toFrame = toFrame + parseInt(durationFrame);
+          }
+          else
+            toFrame = parseInt(durationFrame) + parseInt(fromFrame)
+          var balDuration = this.GetTimeInFormat(diffSec);
+          //$("#lblDuration_" + rowData).val(balDuration);
+          for (let i = 0; i < this.cueSheetList.length; i++) {
+            if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+              if (diffSec >= 0) {
+                this.cueSheetList[i].timeTo = balDuration;
+              }
+
+              this.cueSheetList[i].toFrame = this.FormatNumberLength(toFrame, 2);
+            }
+          }
+
+
+        }
+      }
+      return returnVal;
+    }
+    else {
+      if ((timeFrom != "00:00:00" && timeFrom != "00:00") || (durationTime != "00:00:00" && durationTime != "00:00")) {
+        var arrFrom = timeFrom.split(":");
+        var arrTo = durationTime.split(":");
+
+        if (timeFrom == "00:00:00" || timeFrom == "00:00") {
+          returnVal = false;
+          if (showError)
+            $("#txtFrom_" + rowData).addClass('required');
+        }
+        if (arrFrom.length == 2)
+          timeFrom = arrFrom[0] + ":" + arrFrom[1] + ":00"
+
+        if (fromFrame == "") {
+          fromFrame = "00";
+        }
+
+
+        for (let i = 0; i < this.cueSheetList.length; i++) {
+          if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+            this.cueSheetList[i].fromFrame = this.FormatNumberLength(fromFrame, 2);
+          }
+        }
+
+        if (durationTime == "00:00:00" || durationTime == "00:00") {
+          returnVal = false;
+          if (showError)
+            $("#txtTo_" + rowData).addClass('required');
+        }
+        if (arrTo.length == 2)
+          durationTime = arrTo[0] + ":" + arrTo[1] + ":00"
+
+        if (durationFrame == "") {
+          durationFrame = "00";
+        }
+
+        for (let i = 0; i < this.cueSheetList.length; i++) {
+          if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+            this.cueSheetList[i].durationFrame = this.FormatNumberLength(durationFrame, 2);
+          }
+        }
+
+        if (returnVal) {
+          var totalSec_From = this.ConvertToSeconds(timeFrom);
+          var totalSec_To = this.ConvertToSeconds(durationTime);
+          var diffSec = totalSec_To + totalSec_From;
+          if (diffSec < 0) {
+            returnVal = false;
+            if (showError) {
+              $("#txtTo_" + rowData).addClass('required');
+
+            }
+          }
+          if (returnVal && !validateOnly) {
+            var toFrame = 0;
+            if (parseInt(durationFrame) < toFrame) {
+              toFrame = parseInt(durationFrame) + toFrame;
+            }
+            else if (data == 'durationChange') {
+              toFrame = parseInt(durationFrame) + parseInt(fromFrame);
+              this.setDuration = false;
+              if (this.setDuration == false) {
+                var totalSec_From = this.ConvertToSeconds(timeFrom);
+                var totalSec_To = this.ConvertToSeconds(timeTo);
+                var diffSec = totalSec_To - totalSec_From;
+                if (diffSec < 0) {
+                  returnVal = false;
+                  if (showError) {
+                    $("#txtTo_" + rowData).addClass('required');
+                  }
+                }
+                if (returnVal && !validateOnly) {
+                  if ((toFrame) < parseInt(fromFrame)) {
+                    diffSec = diffSec - 1;
+                  }
+                }
+                var balDurationset = this.GetTimeInFormat(diffSec);
+              }
+              if (toFrame > 23) {
+                this.setDuration = true;
+                toFrame = (parseInt(durationFrame) + parseInt(fromFrame) - 24);
+                var totalSec_From = this.ConvertToSeconds(timeFrom);
+                var totalSec_To = this.ConvertToSeconds(timeTo);
+                var diffSec = totalSec_To - totalSec_From;
+                if (diffSec < 0) {
+                  returnVal = false;
+                  if (showError) {
+                    $("#txtTo_" + rowData).addClass('required');
+                  }
+                }
+                if (returnVal && !validateOnly) {
+                  if ((toFrame) < parseInt(fromFrame)) {
+                    diffSec = diffSec - 1;
+                  }
+                }
+                var balDurationset = this.GetTimeInFormat(diffSec);
+              }
+            }
+            if (diffSec < 0)
+              diffSec = 0; // added by Rahul
+
+            var balDuration = this.GetTimeInFormat(diffSec);
+          }
+
+
+          for (let i = 0; i < this.cueSheetList.length; i++) {
+            if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+              if (diffSec >= 0) {
+                if (data == 'nodurationChange') {
+                  this.cueSheetList[i].timeTo = balDuration;
+                  this.cueSheetList[i].durationTime = durationTime;
+                }
+                else if (data == 'durationChange') {
+                  if (this.setDuration == true) {
+                    this.cueSheetList[i].durationTime = balDurationset;
+                  }
+                  else if (this.setDuration == false) {
+                    this.cueSheetList[i].durationTime = balDurationset;
+                  }
+                }
+              }
+              this.cueSheetList[i].toFrame = this.FormatNumberLength(toFrame, 2);
+
+            }
+
+          }
+        }
+        return returnVal;
+      }
+      else if ((timeTo != "00:00:00" && timeTo != "00:00") || (durationTime != "00:00:00" && durationTime != "00:00")) {
+        this.calculateFrom(rowData, false, false, data)
+      }
+
+      else {
+
+        if (fromFrame != "00" && durationFrame != "00") {
+
+          if (!validateOnly) {
+            var frameLimit = frameLimitNew; // $("#hdnFrameLimit").val();
+            var toFrame = 0;
+            if (parseInt(durationFrame) < toFrame) {
+              toFrame = parseInt(durationFrame) + toFrame;
+            }
+            else {
+              toFrame = parseInt(durationFrame) + parseInt(fromFrame);
+              if (toFrame > 23) {
+                toFrame = (parseInt(durationFrame) + parseInt(fromFrame) - 24);
+              }
+            }
+            // if (parseInt(durationFrame) < parseInt(fromFrame)) {
+            //   diffSec = diffSec + 1;
+            //   toFrame = 24 + parseInt(fromFrame)
+            //   toFrame = toFrame + parseInt(durationFrame);
+            // }
+            // else
+            //   toFrame = parseInt(durationFrame) + parseInt(fromFrame)
+
+            var balDuration = this.GetTimeInFormat(diffSec);
+
+
+            for (let i = 0; i < this.cueSheetList.length; i++) {
+              if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+                this.cueSheetList[i].toFrame = this.FormatNumberLength(toFrame, 2);
+              }
+            }
+
+          }
+        }
+
+        returnVal = true;
+        return returnVal;
       }
     }
   }
+
+  calculateFrom(rowData, showError, validateOnly, data) {
+    debugger;
+    var returnVal = true;
+    var frameLimitNew = 24;
+
+    if (rowData.durationTime.toString().includes("GMT")) {
+      var durationTime = rowData.durationTime.toTimeString().slice(0, 8);
+    }
+    else {
+      var durationTime = rowData.durationTime;
+    }
+    if (rowData.timeTo.toString().includes("GMT")) {
+      var timeTo = rowData.timeTo.toTimeString().slice(0, 8);
+    }
+    else {
+      var timeTo = rowData.timeTo;
+    }
+    // var durationTime = rowData.durationTime.toTimeString().slice(0, 8);
+    //  var timeTo =rowData.timeTo.toTimeString().slice(0, 8);
+
+    var toFrame = rowData.toFrame;
+    var durationFrame = rowData.durationFrame;
+    if ((timeTo != "00:00:00" && timeTo != "00:00") || (durationTime != "00:00:00" && durationTime != "00:00")) {
+      var arrFrom = timeTo.split(":");
+      var arrTo = durationTime.split(":");
+
+      if (timeTo == "00:00:00" || timeTo == "00:00") {
+        returnVal = false;
+        if (showError)
+          $("#txtFrom_" + rowData).addClass('required');
+      }
+      if (arrFrom.length == 2)
+        timeTo = arrFrom[0] + ":" + arrFrom[1] + ":00"
+
+      if (toFrame == "") {
+        toFrame = "00";
+      }
+      for (let i = 0; i < this.cueSheetList.length; i++) {
+        if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+          this.cueSheetList[i].toFrame = this.FormatNumberLength(toFrame, 2);
+        }
+      }
+      if (durationTime == "00:00:00" || durationTime == "00:00") {
+        returnVal = false;
+        if (showError)
+          $("#txtTo_" + rowData).addClass('required');
+      }
+      if (arrTo.length == 2)
+        durationTime = arrTo[0] + ":" + arrTo[1] + ":00"
+
+      if (durationFrame == "") {
+        durationFrame = "00";
+      }
+      for (let i = 0; i < this.cueSheetList.length; i++) {
+        if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+          this.cueSheetList[i].durationFrame = this.FormatNumberLength(durationFrame, 2);
+        }
+      }
+      if (returnVal) {
+        var totalSec_From = this.ConvertToSeconds(timeTo);
+        var totalSec_To = this.ConvertToSeconds(durationTime);
+        var diffSec = totalSec_From - totalSec_To;
+        if (diffSec < 0) {
+          returnVal = false;
+          if (showError) {
+            $("#txtTo_" + rowData).addClass('required');
+
+          }
+        }
+        if (returnVal && !validateOnly) {
+
+          var fromFrame = 0;
+          if (parseInt(durationFrame) < parseInt(toFrame)) {
+            diffSec = diffSec - 1;
+            fromFrame = 24 - parseInt(toFrame)
+            fromFrame = toFrame + parseInt(durationFrame);
+          }
+          else
+            fromFrame = parseInt(durationFrame) - parseInt(toFrame)
+
+          if (diffSec < 0)
+            diffSec = 0; // added by Rahul
+
+          var balDuration = this.GetTimeInFormat(diffSec);
+
+
+
+          for (let i = 0; i < this.cueSheetList.length; i++) {
+            if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+              if (diffSec >= 0) {
+                if (data == 'nodurationChange') {
+                  this.cueSheetList[i].timeFrom = balDuration;
+                }
+                // if (data == 'durationChange') {
+                //   this.cueSheetList[i].fromFrame = this.FormatNumberLength(fromFrame, 2);
+                // }
+              }
+            }
+          }
+
+        }
+        return returnVal;
+      }
+    }
+    // else {
+    //   if (toFrame != "00" || durationFrame != "00" && data == 'durationChange') {
+
+    //     if (!validateOnly) {
+    //       var frameLimit = frameLimitNew; // $("#hdnFrameLimit").val();
+    //       var fromFrame = 0;
+    //       if (parseInt(durationFrame) < toFrame) {
+    //         fromFrame = toFrame - parseInt(durationFrame) ;
+    //       }
+    //       else {
+    //         fromFrame = parseInt(durationFrame) + parseInt(toFrame);
+    //         if (fromFrame > 23) {
+    //           fromFrame = (parseInt(durationFrame) + parseInt(toFrame) - 24);
+    //         }
+    //       }
+    //       var balDuration = this.GetTimeInFormat(diffSec);
+
+
+    //       for (let i = 0; i < this.cueSheetList.length; i++) {
+    //         if (this.cueSheetList[i].MusicTitleCode == rowData.MusicTitleCode) {
+    //           if (data == 'durationChange') {
+    //           this.cueSheetList[i].fromFrame = this.FormatNumberLength(fromFrame, 2);
+    //           }
+    //         }
+    //       }
+
+    //     }
+    //   }
+    // }
+    // returnVal = true;
+    // return returnVal;
+
+
+
+
+  }
+
   submitMusicCueSheet() {
     // alert(this.termCondition)
     if (this.termCondition == true) {
