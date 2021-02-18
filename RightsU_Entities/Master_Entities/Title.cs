@@ -78,6 +78,7 @@ namespace RightsU_Entities
         public Nullable<int> Music_Label_Code { get; set; }
 
         public Nullable<int> Program_Code { get; set; }
+        public Nullable<int> Original_Title_Code { get; set; }
 
         public virtual Music_Label Music_Label { get; set; }
         public virtual ICollection<Acq_Deal_Ancillary_Title> Acq_Deal_Ancillary_Title { get; set; }
