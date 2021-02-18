@@ -186,7 +186,7 @@
                 $("#Title_Language_Code").addClass('required');
                 IsValidForTab= false;
             }
-           
+
             return IsValidForTab;
         }
         function Save() {
@@ -201,6 +201,7 @@
             var hdnStarCast = "";
             var hdnCountry = ""
             var Deal_Type_Code = "";
+            var hdnOriginalTitleCode = "";
             var hdnmode = "";
             var IsValid = true;
             hdnmode = "@ViewBag.CommandName";
@@ -210,6 +211,7 @@
                 IsValidForTab= false;
                 hideLoading();
             }
+            
             if ($.trim($('#txtTitle_Name').val()) == null || $.trim($('#txtTitle_Name').val()) == "") {
                 $('#txtTitle_Name').addClass('required');
                 IsValidForTab = false;
@@ -229,7 +231,7 @@
                     hideLoading();
                 }
             }
-            
+           
             if (hdnmode == "C") {
                 var hdnTitleCode = $('#Title_Code').val();
                 $('#Title_Code').val() == "0";
@@ -237,6 +239,7 @@
             }
             if (hdnmode == "E") {
                 var hdnTitleCode = $('#Title_Code').val();
+                hdnOriginalTitleCode =  $('#txtTitleSearch').val();
                 Deal_Type_Code = null;
             }
             if (Deal_Type_Code == 0) {
@@ -267,6 +270,7 @@
                 $("#hdnmode").val(hdnmode);
                 $("#hdnTitleCode").val(hdnTitleCode);
                 $("#hdnDealTypeCode").val(Deal_Type_Code);
+                $("#txtTitleSearch").val(hdnOriginalTitleCode);
                 $('#hdnAlternateTabName').val();
             }
             if (hdnmode == "C" || hdnmode == "E") {
@@ -541,8 +545,8 @@
         .pull-right-Head {
             float: left !important;
         }*/
-        .sumo_lbRoles{
-            width:279px !important;
+        .sumo_lbRoles {
+            width: 279px !important;
         }
     </style>
 </head>
@@ -680,7 +684,7 @@
                                 <ul class="form_fields_wrapper add_program_popup">
                                     <li>
                                         <label><b>@objMessageKey.Program</b></label>
-                                        <input class="form_input" id="Program_Name" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);"/>
+                                        <input class="form_input" id="Program_Name" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);" />
                                     </li>
                                 </ul>
                             </div>
