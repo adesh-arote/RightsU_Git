@@ -349,7 +349,7 @@
                                     <td>@objMessageKey.OriginalTitle</td>
                                     @if (ViewBag.Is_AcqSyn_Type_Of_Film == "Y")
                                     {
-                                        if (Model.Original_Title_Code == null)
+                                        if (Model.Original_Title_Code == null || Model.Original_Title_Code == 0)
                                         {
                                             Model.Original_Title = "";
                                         }
