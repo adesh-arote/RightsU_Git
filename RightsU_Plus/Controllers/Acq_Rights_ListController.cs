@@ -79,6 +79,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.Right_Type = "G";
             if (objDeal_Schema.Rights_View == null)
                 objDeal_Schema.Rights_View = "G";
+            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_Syn_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
+                objDeal_Schema.Rights_Exclusive = "Y";
+
             ViewBag.Acq_Deal_Code = objDeal_Schema.Deal_Code;
             Platform_Service objPservice = new Platform_Service(objLoginEntity.ConnectionStringName);
             objAcq_Deal = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).GetById(objDeal_Schema.Deal_Code);
@@ -153,12 +157,26 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_Mode = objAcq_Deal.Is_Auto_Push == "Y" ? "V" : objDeal_Schema.Mode;
 
             ViewBag.RightsFlag = "AR";
-            ViewBag.Exclusive_Rights = new SelectList(new[]
+            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_Syn_CoExclusive == "Y")
+            {
+                ViewBag.Exclusive_Rights = new SelectList(new[]
+                {
+                    new { Code = "Y", Name = "Exclusive" },
+                    new { Code = "N", Name = "Non-Exclusive" },
+                    new { Code = "C", Name = "Co-Exclusive" }
+                }, "Code", "Name");
+            }
+            else
+            {
+                ViewBag.Exclusive_Rights = new SelectList(new[]
                 {
                     new { Code = "B", Name = "Both" },
                     new { Code = "Y", Name = "Yes" },
                     new { Code = "N", Name = "No" }
                 }, "Code", "Name");
+            }
+
             ViewBag.FilterPageFrom = "AR";
 
             if (callFor == "")
@@ -266,12 +284,13 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal = null;
             objADS = null;
         }
-        private void Fill_Rights_Schema(string view_Type, string Title_Code_Search, int txtpageSize = 100, int pageNo = 0)
+        private void Fill_Rights_Schema(string view_Type, string Title_Code_Search, int txtpageSize = 100, int pageNo = 0, string ExclusiveRight = "Y")
         {
             objDeal_Schema.Rights_View = view_Type;
             objDeal_Schema.Rights_Titles = Title_Code_Search;
             objDeal_Schema.Rights_PageSize = txtpageSize;
             objDeal_Schema.Rights_PageNo = pageNo;
+            objDeal_Schema.Rights_Exclusive = ExclusiveRight;
         }
         public PartialViewResult BindGrid(string Selected_Title_Code, string view_Type, string RegionCode, string PlatformCode, string ExclusiveRight, int txtpageSize = 100, int page_index = 0, string IsCallFromPaging = "N")
         {
@@ -282,13 +301,13 @@ namespace RightsU_Plus.Controllers
             if (IsCallFromPaging == "N" || IsCallFromPaging == "C")            //Here C means Summary and Deatails)                
                 objDeal_Schema.List_Rights.Clear();
 
-            Fill_Rights_Schema(view_Type, Selected_Title_Code, txtpageSize, PageNo);
+            Fill_Rights_Schema(view_Type, Selected_Title_Code, txtpageSize, PageNo, ExclusiveRight);
 
             int totalRcord = 0;
             ObjectParameter objPageNo = new ObjectParameter("PageNo", PageNo);
             ObjectParameter objTotalRecord = new ObjectParameter("TotalRecord", totalRcord);
             List<USP_List_Rights_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Rights("AR", objDeal_Schema.Rights_View, objDeal_Schema.Deal_Code,
-                objDeal_Schema.Rights_Titles, RegionCode, PlatformCode, ExclusiveRight, objPageNo, txtpageSize, objTotalRecord, "").ToList();
+                objDeal_Schema.Rights_Titles, RegionCode, PlatformCode, objDeal_Schema.Rights_Exclusive, objPageNo, txtpageSize, objTotalRecord, "").ToList();
 
             ViewBag.RecordCount = Convert.ToInt32(objTotalRecord.Value);
             ViewBag.PageNo = Convert.ToInt32(objPageNo.Value);
@@ -297,6 +316,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_Mode = objAcq_Deal.Is_Auto_Push == "Y" ? "V" : objDeal_Schema.Mode;
             ViewBag.Page_View = objDeal_Schema.Rights_View;
             objDeal_Schema.Rights_Titles = Selected_Title_Code;
+            objDeal_Schema.Rights_Exclusive = ExclusiveRight;
 
             objDeal_Schema.Rights_Platform = PlatformCode;
             objDeal_Schema.Rights_Exclusive = ExclusiveRight;
@@ -383,7 +403,7 @@ namespace RightsU_Plus.Controllers
 
                    count = objR.Acq_Deal_Rights_Title.Where(t => lstTitlecodeWithoutYearWise.Contains(t.Title_Code.Value)).Count();*/
 
-                    var lstTitleCodeOfCurrentRight = objR.Acq_Deal_Rights_Title.Select(t => new { t.Title_Code , t.Episode_From, t.Episode_To}).ToList();
+                    var lstTitleCodeOfCurrentRight = objR.Acq_Deal_Rights_Title.Select(t => new { t.Title_Code, t.Episode_From, t.Episode_To }).ToList();
                     List<Current_Deal_Right1> lstDealRights = new List<Current_Deal_Right1>();
                     foreach (var item in lstTitleCodeOfCurrentRight)
                     {
@@ -404,7 +424,7 @@ namespace RightsU_Plus.Controllers
                     {
                         IsCableExistInOtherRightWithSameTitle = objAcq_Deal.Acq_Deal_Rights.Any(r =>
                              r.Acq_Deal_Rights_Code != objR.Acq_Deal_Rights_Code &&
-                             r.Acq_Deal_Rights_Title.Any(t => lstDealRights.Where(l=> l.TitleCode == t.Title_Code && l.EpsFrom == t.Episode_From && l.EpsTo == t.Episode_To).Count() > 0)    
+                             r.Acq_Deal_Rights_Title.Any(t => lstDealRights.Where(l => l.TitleCode == t.Title_Code && l.EpsFrom == t.Episode_From && l.EpsTo == t.Episode_To).Count() > 0)
                              && r.Acq_Deal_Rights_Platform.Any(p => lstPlatformCode.Contains(p.Platform_Code.ToString()))
                              );
                     }

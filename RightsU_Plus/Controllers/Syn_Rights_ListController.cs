@@ -105,6 +105,11 @@ namespace RightsU_Plus.Controllers
             ViewBag.Right_Type = "G";
             if (objDeal_Schema.Rights_View == null)
                 objDeal_Schema.Rights_View = "G";
+
+            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_Syn_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
+                objDeal_Schema.Rights_Exclusive = "Y";
+
             ViewBag.Acq_Deal_Code = objDeal_Schema.Deal_Code;
             Platform_Service objPservice = new Platform_Service(objLoginEntity.ConnectionStringName);
             objSyn_Deal = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).GetById(objDeal_Schema.Deal_Code);
@@ -128,7 +133,7 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindRightsFilterData(string callFor = "")
         {
-        //    ClearSession();
+            //    ClearSession();
             ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(GlobalParams.ModuleCodeForSynDeal, objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             bool srchaddRights = addRights.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForBulkUpdate) + "~");
             ViewBag.ButtonVisibility = srchaddRights;
@@ -137,7 +142,7 @@ namespace RightsU_Plus.Controllers
                             from sdr in objsd.Syn_Deal_Rights
                             from sdrt in sdr.Syn_Deal_Rights_Title
                             where sdm.Syn_Deal_Code == sdr.Syn_Deal_Code && sdr.Syn_Deal_Rights_Code == sdrt.Syn_Deal_Rights_Code && sdrt.Title_Code == sdm.Title_Code && sdr.Is_Pushback == "N"
-                            select new { Title_Code = sdm.Syn_Deal_Movie_Code , Title_Name = DBUtil.GetTitleNameInFormat(objDeal_Schema.Deal_Type_Condition, sdm.Title.Title_Name, sdm.Episode_From, sdm.Episode_End_To) };
+                            select new { Title_Code = sdm.Syn_Deal_Movie_Code, Title_Name = DBUtil.GetTitleNameInFormat(objDeal_Schema.Deal_Type_Condition, sdm.Title.Title_Name, sdm.Episode_From, sdm.Episode_End_To) };
             ViewBag.TitleList = new MultiSelectList(titleList.ToList().Distinct(), "Title_Code", "Title_Name");
             string[] regioncode = new string[] { "" };
             if (objDeal_Schema.Rights_Region != null)
@@ -148,10 +153,10 @@ namespace RightsU_Plus.Controllers
             string[] arrSelectedTerritoryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "G" && regioncode.Contains("T" + "" + x.Territory_Code.ToString() + "")).Select(s => "T" + "" + s.Territory_Code.ToString() + "").ToArray();
             int?[] countryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "I").Select(s => s.Country_Code).ToArray();
             int?[] territoryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "G").Select(s => s.Territory_Code).ToArray();
-            
-            List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + ""}).ToList();
+
+            List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + "" }).ToList();
             lsts.Where(s => s.GroupName == "Country" && arrSelectedCountryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
-            lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + ""}).ToList());
+            lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + "" }).ToList());
             lsts.Where(s => s.GroupName == "Territory" && arrSelectedTerritoryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
             string[] arrcountryCode = arrSelectedCountryCode.Select(x => x.Replace("C", "")).ToArray();
             string Country_Terr_Name = string.Join(",", new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrcountryCode.Contains(x.Country_Code.ToString())).Select(s => s.Country_Name).ToArray());
@@ -165,16 +170,30 @@ namespace RightsU_Plus.Controllers
                 ViewBag.RegionName = " " + regionname.Count() + " Selected";
             else
                 ViewBag.RegionName = Country_Terr_Name.TrimStart(',').TrimEnd(',');
-            
+
             ViewBag.Region = lsts;
             ViewBag.RegionId = "ddlRegionn";
             ViewBag.Deal_Mode = objDeal_Schema.Mode;
-            ViewBag.Exclusive_Rights = new SelectList(new[]
+            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_Syn_CoExclusive == "Y")
+            {
+                ViewBag.Exclusive_Rights = new SelectList(new[]
+                {
+                    new { Code = "Y", Name = "Exclusive" },
+                    new { Code = "N", Name = "Non-Exclusive" },
+                    new { Code = "C", Name = "Co-Exclusive" }
+                }, "Code", "Name");
+            }
+            else
+            {
+                ViewBag.Exclusive_Rights = new SelectList(new[]
                 {
                     new { Code = "B", Name = "Both" },
                     new { Code = "Y", Name = "Yes" },
                     new { Code = "N", Name = "No" }
                 }, "Code", "Name");
+            }
+
             ViewBag.FilterPageFrom = "SR";
 
             if (callFor == "")
@@ -192,9 +211,9 @@ namespace RightsU_Plus.Controllers
                 int?[] countryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "I").Select(s => s.Country_Code).ToArray();
                 int?[] territoryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "G").Select(s => s.Territory_Code).ToArray();
 
-            List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + ""}).ToList();
-            lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + ""}).ToList());
-            htmldata = CustomHtmlHelpers.getGroupHtml(lsts);
+                List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + "" }).ToList();
+                lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + "" }).ToList());
+                htmldata = CustomHtmlHelpers.getGroupHtml(lsts);
             }
             else
             {
@@ -204,8 +223,8 @@ namespace RightsU_Plus.Controllers
                 int?[] territoryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(s => rightsCode.Contains(s.Syn_Deal_Rights_Code) && s.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(w => w.Territory_Type == "G").Select(s => s.Territory_Code).ToArray();
                 int?[] countryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(s => rightsCode.Contains(s.Syn_Deal_Rights_Code) && s.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(w => w.Territory_Type == "I").Select(s => s.Country_Code).ToArray();
 
-                List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" +"" + s.Country_Code.ToString() + ""}).ToList();
-                lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" +"" + s.Territory_Code.ToString() + ""}).ToList());
+                List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + "" }).ToList();
+                lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + "" }).ToList());
                 htmldata = CustomHtmlHelpers.getGroupHtml(lsts);
                 string strPlatform = string.Join(",", new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Syn_Deal_Code == objDeal_Schema.Deal_Code && s.Is_Pushback == "N").SelectMany(x => x.Syn_Deal_Rights_Platform).Select(w => w.Platform_Code).ToArray());
                 hdntitleCode = string.Join(",", titlecode);
@@ -258,12 +277,13 @@ namespace RightsU_Plus.Controllers
             objSyn_Deal = null;
             objSDS = null;
         }
-        private void Fill_Rights_Schema(string view_Type, string Title_Code_Search, int txtpageSize = 100, int pageNo = 0)
+        private void Fill_Rights_Schema(string view_Type, string Title_Code_Search, int txtpageSize = 100, int pageNo = 0, string ExclusiveRight = "Y")
         {
             objDeal_Schema.Rights_View = view_Type;
             objDeal_Schema.Rights_Titles = Title_Code_Search;
             objDeal_Schema.Rights_PageSize = txtpageSize;
             objDeal_Schema.Rights_PageNo = pageNo;
+            objDeal_Schema.Rights_Exclusive = ExclusiveRight;
         }
         public PartialViewResult BindGrid(string Selected_Title_Code, string view_Type, string RegionCode, string PlatformCode, string ExclusiveRight, int txtpageSize = 100, int page_index = 0, string IsCallFromPaging = "N")
         {
@@ -273,13 +293,13 @@ namespace RightsU_Plus.Controllers
             int PageNo = page_index <= 0 ? 1 : page_index + 1;
             if (IsCallFromPaging == "N" || IsCallFromPaging == "C")            //Here C means Summary and Deatails)                
                 objDeal_Schema.List_Rights.Clear();
-            Fill_Rights_Schema(view_Type, Selected_Title_Code, txtpageSize, PageNo);
+            Fill_Rights_Schema(view_Type, Selected_Title_Code, txtpageSize, PageNo, ExclusiveRight);
 
             int totalRcord = 0;
             ObjectParameter objPageNo = new ObjectParameter("PageNo", PageNo);
             ObjectParameter objTotalRecord = new ObjectParameter("TotalRecord", totalRcord);
             List<USP_List_Rights_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Rights("SR", objDeal_Schema.Rights_View, objDeal_Schema.Deal_Code,
-                objDeal_Schema.Rights_Titles,RegionCode,PlatformCode,ExclusiveRight, objPageNo, txtpageSize, objTotalRecord, "").ToList();
+                objDeal_Schema.Rights_Titles, RegionCode, PlatformCode, objDeal_Schema.Rights_Exclusive, objPageNo, txtpageSize, objTotalRecord, "").ToList();
 
             ViewBag.RecordCount = Convert.ToInt32(objTotalRecord.Value);
             ViewBag.PageNo = Convert.ToInt32(objPageNo.Value);
@@ -290,16 +310,17 @@ namespace RightsU_Plus.Controllers
             objDeal_Schema.Rights_Region = RegionCode;
             objDeal_Schema.Rights_Platform = PlatformCode;
             objDeal_Schema.Rights_Exclusive = ExclusiveRight;
+
             string[] regioncode = RegionCode.Split(',');
             string[] arrSelectedCountryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "I" && regioncode.Contains(x.Country_Code.ToString())).Select(s => s.Country_Code.ToString()).ToArray();
             string[] arrSelectedTerritoryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "G" && regioncode.Contains(x.Country_Code.ToString())).Select(s => s.Country_Code.ToString()).ToArray();
             int?[] countryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "I").Select(s => s.Country_Code).ToArray();
             int?[] territoryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "G").Select(s => s.Territory_Code).ToArray();
 
-            List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + ""}).ToList();
+            List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + "" }).ToList();
             if (arrSelectedCountryCode.Count() > 0)
                 lsts.Where(s => s.GroupName == "Country" && arrSelectedCountryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
-            lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + ""}).ToList());
+            lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + "" }).ToList());
             if (arrSelectedTerritoryCode.Count() > 0)
                 lsts.Where(s => s.GroupName == "Territory" && arrSelectedTerritoryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
             ViewBag.Region = lsts;
@@ -411,7 +432,7 @@ namespace RightsU_Plus.Controllers
             }
             return "";
         }
-              public JsonResult DeleteRight(string RightCode, string DealCode, string TitleCode, string PlatformCode, string EpisodeFrom, string EpisodeTo, string ViewType)
+        public JsonResult DeleteRight(string RightCode, string DealCode, string TitleCode, string PlatformCode, string EpisodeFrom, string EpisodeTo, string ViewType)
         {
             DPlatformCode = "D";
             string Result = "", IS_Syn_Autopush = "", ShowErrorFlag = "";
@@ -823,7 +844,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult BulkSave(string SelectedRightCodes, string ChangeFor, string SelectedCodes = ",0", string SelectedStartDate = "", string RightsType = "",
             string IsTentative = "", string ActionFor = "", string SelectedEndDate = "", string IsExclusive = "", string IsTitleLanguage = "", string Term_MM = "",
-            string Term_YY = "",string Term_DD = ""
+            string Term_YY = "", string Term_DD = ""
             , string SelectedTitleCodes = "", string SelectedTitleNames = "", string Eps_Frm_To = "", string pageView = "")
         {
 
@@ -981,7 +1002,7 @@ namespace RightsU_Plus.Controllers
                                 objSyn_Deal_Rights_Title.EntityState = State.Added;
                                 objSyn_Deal_Rights_Title.Syn_Deal_Rights_Code = templst.ElementAt(0).New_RightsCode;
                                 dynamic resultSet2;
-                               // objSyn_Deal_Rights_Title_Service.Save(objSyn_Deal_Rights_Title, out resultSet2);
+                                // objSyn_Deal_Rights_Title_Service.Save(objSyn_Deal_Rights_Title, out resultSet2);
 
                                 item.RightsCode = templst.ElementAt(0).New_RightsCode.ToString();
 

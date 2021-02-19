@@ -569,7 +569,7 @@
         var hdnRegion_Code = $("#hdnRegion_Code");
         var hdnDub_Code = $("#hdnDub_Code");
         var hdnSub_Code = $("#hdnSub_Code");
-         
+
         //hdnTitle_Code.val('');
         hdnRegion_Code.val('');
         hdnDub_Code.val('');
@@ -1446,11 +1446,11 @@
                                                         <label>@objMessageKey.Tentative</label>
                                                         <br>
                                                         <label>@objMessageKey.StartDate</label>
-                                                        @Html.TextBox("Start_Date", "", new { @id = "Start_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
-                                                        @Html.TextBox("Term_YY", "", new { @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
-                                                        @Html.TextBox("Term_MM", "", new { @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
+                                                        @Html.TextBox("Start_Date", "", new { autocomplete = "off", @id = "Start_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                        @Html.TextBox("Term_YY", "", new { autocomplete = "off", @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
+                                                        @Html.TextBox("Term_MM", "", new { autocomplete = "off", @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
                                                         <label style="margin-left: 15px">@objMessageKey.EndDate</label>
-                                                        @Html.TextBox("End_Date", "", new { @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                        @Html.TextBox("End_Date", "", new { autocomplete = "off", @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
                                                     </div>
                                                     <div class="tab-pane scale_table_block" id="tabPerp">
                                                         @*<ul class="from_to clearfix">

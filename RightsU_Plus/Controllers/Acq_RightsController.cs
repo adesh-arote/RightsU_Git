@@ -403,6 +403,7 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Rights.End_Date = objAcq_Deal_Rights_Current.End_Date;
             objAcq_Deal_Rights.Existing_RightType = objAcq_Deal_Rights_Current.Existing_RightType;
             objAcq_Deal_Rights.Is_Exclusive = objAcq_Deal_Rights_Current.Is_Exclusive;
+            objAcq_Deal_Rights.Is_Under_Production = objAcq_Deal_Rights_Current.Is_Under_Production;
             objAcq_Deal_Rights.Is_ROFR = objAcq_Deal_Rights_Current.Is_ROFR;
             objAcq_Deal_Rights.Is_Sub_License = objAcq_Deal_Rights_Current.Is_Sub_License;
 
@@ -1878,6 +1879,7 @@ namespace RightsU_Plus.Controllers
                     objDRUDT.Deal_Rights_Code = objRights.Acq_Deal_Rights_Code;
                     objDRUDT.Deal_Code = objRights.Acq_Deal_Code;
                     objDRUDT.Is_Exclusive = objRights.Is_Exclusive;
+
                     objDRUDT.Is_Theatrical_Right = objRights.Is_Theatrical_Right;
                     objDRUDT.Is_Title_Language_Right = objRights.Is_Title_Language_Right;
                     objDRUDT.Sub_License_Code = objRights.Sub_License_Code;
@@ -2359,9 +2361,9 @@ namespace RightsU_Plus.Controllers
                         objAcq_Deal_Rights.EntityState = State.Added;
                     }
                     objAcq_Deal_Rights.Promoter_Flag = Convert.ToString(form["hdnPromoter"]);
+
                     objRights.Restriction_Remarks = objRights.Restriction_Remarks != null ? objRights.Restriction_Remarks.Replace("\r\n", "\n") : "";
                     objAcq_Deal_Rights = CreateRightObject(objAcq_Deal_Rights, objRights, form);
-
                     dynamic resultSet;
 
                     objADRS.Save(objAcq_Deal_Rights, out resultSet);
@@ -2609,6 +2611,7 @@ namespace RightsU_Plus.Controllers
 
             objSecondRight.Acq_Deal_Code = objExistingRight.Acq_Deal_Code;
             objSecondRight.Is_Exclusive = objExistingRight.Is_Exclusive;
+            objSecondRight.Is_Under_Production = objExistingRight.Is_Under_Production;
             objSecondRight.Is_Title_Language_Right = objExistingRight.Is_Title_Language_Right;
             objSecondRight.Is_Sub_License = objExistingRight.Is_Sub_License;
             objSecondRight.Sub_License_Code = objExistingRight.Sub_License_Code;
@@ -2703,7 +2706,9 @@ namespace RightsU_Plus.Controllers
             string Region_Codes = form["hdnRegion_Code"].Replace(" ", "");
             string Sub_Codes = form["hdnSub_Code"].Replace(" ", "");
             string Dub_Codes = form["hdnDub_Code"].Replace(" ", "");
-            bool IsExclusive = Convert.ToBoolean(form["hdnIs_Exclusive"]);
+            //bool IsExclusive = Convert.ToBoolean(form["hdnIs_Exclusive"]);
+            string IsExclusive = Convert.ToString(form["hdnIs_Exclusive"]);
+            string Is_Under_Production = Convert.ToString(form["Is_Under_Production"]) == "false" ? "N" : "Y";
             bool Is_Theatrical_Right = Convert.ToBoolean(form["hdnIs_Theatrical_Right"]);
             bool IsTitleLanguageRight = Convert.ToBoolean(form["hdnIs_Title_Language_Right"]);
 
@@ -2942,7 +2947,9 @@ namespace RightsU_Plus.Controllers
             //objDRUDT.Deal_Rights_Code = objPage_Properties.TCODE > 0 ? 0 : objPage_Properties.RCODE; //objExistingRights.Acq_Deal_Rights_Code;
             objDRUDT.Deal_Rights_Code = objPage_Properties.RCODE;
             objDRUDT.Deal_Code = objExistingRights.Acq_Deal_Code = objDeal_Schema.Deal_Code;
-            objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive ? "Y" : "N";
+            //objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive ? "Y" : "N";
+            objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive;
+            objExistingRights.Is_Under_Production = Is_Under_Production;
             objDRUDT.Is_Theatrical_Right = objExistingRights.Is_Theatrical_Right = Is_Theatrical_Right ? "Y" : "N";
 
             objDRUDT.Is_Title_Language_Right = objExistingRights.Is_Title_Language_Right = IsTitleLanguageRight ? "Y" : "N";

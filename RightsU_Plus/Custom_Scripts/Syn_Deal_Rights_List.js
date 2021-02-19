@@ -74,7 +74,7 @@ function ClearTitleValues() {
 }
 
 function BindGrid(obj) {
-    
+
     // showLoading();
     var ViewType = "";
     var regionCode = "";
@@ -100,6 +100,9 @@ function BindGrid(obj) {
 
         if (Rights_Titles_G != null && Rights_Titles_G != '')
             TitleCode = Rights_Titles_G;
+
+        if (rightsExclusive_G != null && rightsExclusive_G != '')
+            exclusiveRights = rightsExclusive_G;
 
         if (Rights_PageSize_G != null && Rights_PageSize_G != '0')
             $('#txtPageSize').val(Rights_PageSize_G);
@@ -133,7 +136,7 @@ function BindGrid(obj) {
                 txtpageSize: txtpageSize,
                 page_index: page_index,
                 IsCallFromPaging: 'N',
-                RegionCode:regionCode,
+                RegionCode: regionCode,
                 PlatformCode: platformcode,
                 ExclusiveRight: exclusiveRights
             }),
@@ -241,68 +244,68 @@ function BindGridNew(obj, IsCallFromPaging, ShowAll) {
     if (ShowAll == "N") {
         if ($("#ddlTitleCode").val() == null && $('#ddlRegionn').val() == null && $('#hdnTVCode').val() == "" && $('#lstReleaseUnit').val() == "B") {
             showAlert('E', ShowMessage.Pleaseselectatleastonecriteriatoview, "ddlTitleCode");
-             hideLoading();
-             isValid = false;
-             }
+            hideLoading();
+            isValid = false;
+        }
     }
-         if (isValid) {
-             if (ValidatePageSize()) {
-                 var ViewType = "";
-                 var TitleCode = "";
+    if (isValid) {
+        if (ValidatePageSize()) {
+            var ViewType = "";
+            var TitleCode = "";
 
-                 if ($("#ddlTitleCode").val() != undefined && $("#ddlTitleCode").val() != null)
-                     TitleCode = $("#ddlTitleCode").val().join(',');
-             else
-                     TitleCode = "";
-                 if (obj == null)
-                     ViewType = "G";
-                 else
-                     ViewType = $('input[name=optViewType]:checked').val();
+            if ($("#ddlTitleCode").val() != undefined && $("#ddlTitleCode").val() != null)
+                TitleCode = $("#ddlTitleCode").val().join(',');
+            else
+                TitleCode = "";
+            if (obj == null)
+                ViewType = "G";
+            else
+                ViewType = $('input[name=optViewType]:checked').val();
 
-                 var Rights_PageNo = 1;
-                 var page_Index = 0;
-                 var txtpageSize = $("#txtPageSize").val();
+            var Rights_PageNo = 1;
+            var page_Index = 0;
+            var txtpageSize = $("#txtPageSize").val();
 
-                 if ($('#hdnCurrentPageNo').val() != undefined && $('#hdnCurrentPageNo').val() != '')
-                     Rights_PageNo = $('#hdnCurrentPageNo').val();
+            if ($('#hdnCurrentPageNo').val() != undefined && $('#hdnCurrentPageNo').val() != '')
+                Rights_PageNo = $('#hdnCurrentPageNo').val();
 
-                 page_Index = parseInt(Rights_PageNo) - 1;
+            page_Index = parseInt(Rights_PageNo) - 1;
 
-                 $.ajax({
-                     type: "POST",
-                     url: URL_BindGrid,
-                     traditional: true,
-                     enctype: 'multipart/form-data',
-                     contentType: "application/json; charset=utf-8",
-                     data: JSON.stringify({
-                         Selected_Title_Code: TitleCode,
-                         view_Type: ViewType,
-                         txtpageSize: txtpageSize,
-                         page_index: page_Index,
-                         IsCallFromPaging: IsCallFromPaging,
-                         RegionCode: regionCode,
-                         PlatformCode: platformcode,
-                         ExclusiveRight: exclusiveRights
-                     }),
-                     success: function (result) {
-                         if (result == "true") {
-                             redirectToLogin();
-                         }
-                         $('.div_BindGrid').html(result);
-                         SetPaging($('#txtPageSize').val());
-                         hideLoading();
-                         CheckRightStatus();
-                         hideLoading();
-                     },
-                     error: function (result) {
-                         hideLoading();
-                     }
-                 });
-             }
-             }
-             else {
-                 if (Rights_View_G != null)
-            $('#' +Rights_View_G)[0].checked = true;
+            $.ajax({
+                type: "POST",
+                url: URL_BindGrid,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Selected_Title_Code: TitleCode,
+                    view_Type: ViewType,
+                    txtpageSize: txtpageSize,
+                    page_index: page_Index,
+                    IsCallFromPaging: IsCallFromPaging,
+                    RegionCode: regionCode,
+                    PlatformCode: platformcode,
+                    ExclusiveRight: exclusiveRights
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('.div_BindGrid').html(result);
+                    SetPaging($('#txtPageSize').val());
+                    hideLoading();
+                    CheckRightStatus();
+                    hideLoading();
+                },
+                error: function (result) {
+                    hideLoading();
+                }
+            });
+        }
+    }
+    else {
+        if (Rights_View_G != null)
+            $('#' + Rights_View_G)[0].checked = true;
     }
 }
 
@@ -346,7 +349,7 @@ function DeleteRight(obj) {
                 showAlert(result.ShowError, result.RightMsg);
                 BindGridNew($("#G")[0], 'Y');
                 BindRightsFilterData();
-             
+
             },
             error: function (result) {
                 alert('Error');
@@ -678,7 +681,7 @@ function Show_Restriction_Remark_popup(Counter) {
                 }
                 var strHTML = '';
                 strHTML = strHTML + '<tr>'
-                strHTML = strHTML + '<th style="width:15%;">'+ShowMessage.Title+'</th>'
+                strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.Title + '</th>'
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.Platform + '</th>'
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.Region + '</th>'
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.RestrictionRemark + '</th>'
@@ -687,7 +690,7 @@ function Show_Restriction_Remark_popup(Counter) {
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.Dubbing + '</th>'
                 strHTML = strHTML + '</tr>'
                 if (result != '') {
-                    for (var i = 0 ; i < result.length ; i++) {
+                    for (var i = 0; i < result.length; i++) {
                         strHTML = strHTML + '<tr>'
                         strHTML = strHTML + '<td>' + result[i].Title_Name + '</td>'
                         strHTML = strHTML + '<td>'
@@ -758,7 +761,7 @@ function CheckRightStatus() {
                             if (result == "true") {
                                 redirectToLogin();
                             }
-                           
+
                             if (result.RecordStatus == "E") {
                                 // Error
                                 btnShowError[0].style.display = '';
@@ -787,7 +790,7 @@ function CheckRightStatus() {
                                 $(this).find("input[id*='hdnRightStatus']").val("P");
                                 pendingRecord++;
                             }
-                            
+
                         },
                         error: function (result) {
                         }

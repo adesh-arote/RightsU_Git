@@ -1849,13 +1849,14 @@ function ValidateSave() {
     hdnSub_Code.val('');
 
     var Excl = $('.exc:checked').val();
-    var temp = $('#hdnIs_Exclusive').val(Excl);
-    if (Excl == "Y") {
-        $('#hdnIs_Exclusive').empty().val(true);
-    }
-    else {
-        $('#hdnIs_Exclusive').empty().val(false);
-    }
+    // var temp = $('#hdnIs_Exclusive').val(Excl);
+    $('#hdnIs_Exclusive').empty().val(Excl);
+    //if (Excl == "Y") {
+    //    $('#hdnIs_Exclusive').empty().val(true);
+    //}
+    //else {
+    //    $('#hdnIs_Exclusive').empty().val(false);
+    //}
     var selectedTitles = '';
     if ($("#lbTitles").val() != null)
         selectedTitles = $("#lbTitles").val().join(',');
