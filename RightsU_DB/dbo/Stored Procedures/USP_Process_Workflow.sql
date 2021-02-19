@@ -1,7 +1,4 @@
-﻿
-
-
-CREATE PROC [dbo].[USP_Process_Workflow]
+﻿CREATE PROC [dbo].[USP_Process_Workflow]
 (
 	@Module_Code Int,
 	@Record_Code Int,
@@ -58,9 +55,11 @@ BEGIN
 		IF(@User_Action = 'R')
 		BEGIN
 			IF(@Module_Code = 30)
-				UPDATE Acq_Deal SET Deal_Workflow_Status = @User_Action, Last_Updated_Time = GETDATE() WHERE Acq_Deal_Code = @Record_Code
+				UPDATE Acq_Deal SET Deal_Workflow_Status = @User_Action--, Last_Updated_Time = GETDATE() 
+				WHERE Acq_Deal_Code = @Record_Code
 			ELSE IF(@Module_Code = 35)
-				UPDATE Syn_Deal SET Deal_Workflow_Status = @User_Action, Last_Updated_Time = GETDATE() WHERE Syn_Deal_Code = @Record_Code
+				UPDATE Syn_Deal SET Deal_Workflow_Status = @User_Action--, Last_Updated_Time = GETDATE() 
+				WHERE Syn_Deal_Code = @Record_Code
 			ELSE IF(@Module_Code = 154)
 				UPDATE Music_Schedule_Transaction Set Workflow_Status = @User_Action WHERE Music_Schedule_Transaction_Code = @Record_Code
 			ELSE IF(@Module_Code = 163)
@@ -173,7 +172,8 @@ BEGIN
 			IF(@Module_Code = 30)
 			BEGIN
 			DECLARE @Version VARCHAR(15)
-				Update Acq_Deal Set Deal_Workflow_Status = @User_Action, Last_Updated_Time = GETDATE() Where Acq_Deal_Code = @Record_Code
+				Update Acq_Deal Set Deal_Workflow_Status = @User_Action--, Last_Updated_Time = GETDATE()
+				Where Acq_Deal_Code = @Record_Code
 				SELECT @Version=[Version] from Acq_Deal WHERE Acq_Deal_Code=@Record_Code
 				IF(@User_Action = 'A')
 				BEGIN
@@ -182,7 +182,8 @@ BEGIN
 				END
 			END
 			ELSE IF(@Module_Code = 35)
-				UPDATE Syn_Deal Set Deal_Workflow_Status = @User_Action, Last_Updated_Time = GETDATE() Where Syn_Deal_Code = @Record_Code
+				UPDATE Syn_Deal Set Deal_Workflow_Status = @User_Action--, Last_Updated_Time = GETDATE()
+				Where Syn_Deal_Code = @Record_Code
 			ELSE IF(@Module_Code = 154)
 				UPDATE Music_Schedule_Transaction Set Workflow_Status = @User_Action Where Music_Schedule_Transaction_Code = @Record_Code
 			ELSE IF(@Module_Code = 163)
