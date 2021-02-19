@@ -358,6 +358,12 @@ namespace RightsUMusic.DAL.Repository
     #region--------------------------MH Play List----------------
     public class MHPlayListRepositories : MainRepository<MHPlayList>
     {
+        public MHPlayList GetByID(int? Id)
+        {
+            var obj = new { MHPlayListCode = Id };
+
+            return base.GetById<MHPlayList, MHPlayListSong>(obj);
+        }
         public void Add(MHPlayList entity)
         {
             base.AddEntity(entity);
@@ -371,12 +377,23 @@ namespace RightsUMusic.DAL.Repository
         {
             return base.ExecuteSQLStmt<MHPlayList>(strSQL);
         }
+
+        public void Delete(MHPlayList entity)
+        {
+            base.DeleteEntity(entity);
+        }
     }
     #endregion
 
     #region--------------------------MH Play List Songs----------------
     public class MHPlayListSongRepositories : MainRepository<MHPlayListSong>
     {
+        public MHPlayListSong GetByID(int? Id)
+        {
+            var obj = new { MHPlayListSongCode = Id };
+
+            return base.GetById<MHPlayListSong>(obj);
+        }
         public void Add(MHPlayListSong entity)
         {
             base.AddEntity(entity);
@@ -385,6 +402,11 @@ namespace RightsUMusic.DAL.Repository
         public IEnumerable<MHPlayListSong> SearchFor(object param)
         {
             return base.SearchForEntity<MHPlayListSong>(param);
+        }
+
+        public void Delete(MHPlayListSong entity)
+        {
+            base.DeleteEntity(entity);
         }
     }
     #endregion

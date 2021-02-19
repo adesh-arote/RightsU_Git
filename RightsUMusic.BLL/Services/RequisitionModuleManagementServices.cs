@@ -130,9 +130,29 @@ namespace RightsUMusic.BLL.Services
             objMHPlayListRepositories.Add(objMHPlayList);
         }
 
+        public void DeletePlayList(MHPlayList objMHPlayList)
+        {
+            objMHPlayListRepositories.Delete(objMHPlayList);
+        }
+
+        public MHPlayList GetByID(int? id)
+        {
+            return objMHPlayListRepositories.GetByID(id);
+        }
+
         public void CreatePlayListSong(MHPlayListSong objMHPlayListSong)
         {
             objMHPlayListSongRepositories.Add(objMHPlayListSong);
+        }
+
+        public MHPlayListSong GetBySongID(int? id)
+        {
+            return objMHPlayListSongRepositories.GetByID(id);
+        }
+
+        public void DeletePlayListSong(MHPlayListSong objMHPlayListSong)
+        {
+            objMHPlayListSongRepositories.Delete(objMHPlayListSong);
         }
 
         public IEnumerable<MHPlayList> GetPlayList(string strSearch)

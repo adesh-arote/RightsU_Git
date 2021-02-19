@@ -196,6 +196,56 @@ namespace RightsUMusic.API.Controllers
 
         [AcceptVerbs("GET", "POST")]
         [HttpPost]
+        public HttpResponseMessage DeletePlayList(MHPlayList objMHPlayListInput)
+        {
+            Return _objRet = new Return();
+            int RecordCount = 0;
+            try
+            {
+
+                int? id = objMHPlayListInput.MHPlayListCode;
+                MHPlayList objMHPlayList = obj.GetByID(id);
+                obj.DeletePlayList(objMHPlayList);
+
+                _objRet.Message = "";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet}, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.Message.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage DeletePlayListSong(MHPlayList objMHPlayListInput)
+        {
+            Return _objRet = new Return();
+            int RecordCount = 0;
+            try
+            {
+
+                int? id = objMHPlayListInput.MHPlayListSong.Select(x => x.MHPlayListSongCode).First();
+                MHPlayListSong objMHPlayList = obj.GetBySongID(id);
+                obj.DeletePlayListSong(objMHPlayList);
+
+                _objRet.Message = "";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.Message.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
         public HttpResponseMessage MusicConsumptionRequest(MHRequest objMHRequest)
         {
             string UserCode = Convert.ToString(this.ActionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
