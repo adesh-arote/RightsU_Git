@@ -556,7 +556,8 @@ namespace RightsUMusic.API.Controllers
             Return _objRet = new Return();
             try
             {
-                string strSearch = "TitleCode = " + objMHPlayList.TitleCode + "AND VendorCode =" + objMHPlayList.VendorCode;
+                //string strSearch = "TitleCode = " + objMHPlayList.TitleCode + "AND VendorCode =" + objMHPlayList.VendorCode;
+                string strSearch = " VendorCode =" + objMHPlayList.VendorCode;
                 lstMHPlayList = obj.GetPlayList(strSearch);
                 var MHPlayList = lstMHPlayList.Select(x => new { MHPlayListCode = x.MHPlayListCode, PlaylistName = x.PlaylistName }).ToList();
                 _objRet.Message = "";
@@ -1293,7 +1294,7 @@ namespace RightsUMusic.API.Controllers
 
             var objParam = new
             {
-                TitleCode = objMHPlayList.TitleCode,
+                //TitleCode = objMHPlayList.TitleCode,
                 VendorCode = objUser.Vendor_Code
             };
            
