@@ -1,4 +1,5 @@
-﻿
+﻿ALTER TABLE DM_Master_Log ADD Music_Album_Code INT
+
 GO
 PRINT N'Altering [dbo].[USP_Get_ExcelSrNo]...';
 
