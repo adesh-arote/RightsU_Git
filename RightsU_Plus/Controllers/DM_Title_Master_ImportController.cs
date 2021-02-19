@@ -834,12 +834,15 @@ namespace RightsU_Plus.Controllers
             string CallFor = "";
             if (IsShowAll != "Y")
             {
-                CallFor = "TN~" + objPage_Properties.TitleName_Search + "|"
-                    + "TT~" + objPage_Properties.TitleType_Search + "|"
-                    + "TL~" + objPage_Properties.TitleLanguage_Search + "|"
-                    + "SC~" + objPage_Properties.KeyStarCast_Search + "|"
-                    + "DR~" + objPage_Properties.Director_Search + "|"
-                    + "EM~" + objPage_Properties.ErrorMsg_Search + "|";
+                if (objPage_Properties.TitleName_Search != "" || objPage_Properties.TitleType_Search != "" || objPage_Properties.TitleLanguage_Search != "" || objPage_Properties.KeyStarCast_Search != "" || objPage_Properties.Director_Search != "" || objPage_Properties.ErrorMsg_Search != "")
+                {
+                    CallFor = "TN~" + objPage_Properties.TitleName_Search + "|"
+                        + "TT~" + objPage_Properties.TitleType_Search + "|"
+                        + "TL~" + objPage_Properties.TitleLanguage_Search + "|"
+                        + "SC~" + objPage_Properties.KeyStarCast_Search + "|"
+                        + "DR~" + objPage_Properties.Director_Search + "|"
+                        + "EM~" + objPage_Properties.ErrorMsg_Search + "|";
+                }
             }
 
 
@@ -1009,7 +1012,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    noOfRecordSkip = recordPerPage * (pageNo - 1) + 1;
+                    noOfRecordSkip = recordPerPage * (pageNo) ;
                 }
                 if (recordCount < (noOfRecordSkip + recordPerPage))
                     noOfRecordTake = recordCount - noOfRecordSkip;
