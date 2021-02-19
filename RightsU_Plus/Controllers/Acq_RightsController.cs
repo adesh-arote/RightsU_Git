@@ -1998,53 +1998,34 @@ namespace RightsU_Plus.Controllers
                 message = "ERROR";
             else
             {
-                #region Check Linear Rights
-                Acq_Deal_Service objService = new Acq_Deal_Service(objLoginEntity.ConnectionStringName);
-                Acq_Deal objAcq_Deal = objService.GetById(objDeal_Schema.Deal_Code);
+                string Is_Acq_rights_delay_validation = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                   .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
+                   .FirstOrDefault().Parameter_Value;
 
-                /*List<int?> lstTRightsTitleCodeLR = new List<int?>();
-                foreach (var item in objAcq_Deal.Acq_Deal_Rights)
+                if (Is_Acq_rights_delay_validation != "Y")
                 {
-                    if (item.Acq_Deal_Rights_Platform.Where(x => x.Platform.Base_Platform_Code == 35).Count() > 0)
-                    {
-                        lstTRightsTitleCodeLR.Add(item.Acq_Deal_Rights_Title.Select(x => Convert.ToInt32(x.Title_Code)).Distinct().FirstOrDefault());
-                    }
+                    #region Check Linear Rights
+                    Acq_Deal_Service objService = new Acq_Deal_Service(objLoginEntity.ConnectionStringName);
+                    Acq_Deal objAcq_Deal = objService.GetById(objDeal_Schema.Deal_Code);
+                    string DealCompleteFlag = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Deal_Complete_Flag").Select(x => x.Parameter_Value).FirstOrDefault();
+                    List<USP_List_Acq_Linear_Title_Status_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName)
+                                                                      .USP_List_Acq_Linear_Title_Status(objDeal_Schema.Deal_Code).ToList();
+
+                    int RunPending = DealCompleteFlag.Replace(" ", "") == "R,R" || DealCompleteFlag.Replace(" ", "") == "R,R,C" ? lst.Where(x => x.Title_Added == "Yes~").Count() : 0;
+                    int RightsPending = lst.Where(x => x.Title_Added == "No").Count();
+
+                    if (RunPending > 0 && RightsPending > 0)
+                        objAcq_Deal.Deal_Workflow_Status = "RR";
+                    else if (RunPending > 0 && RightsPending == 0)
+                        objAcq_Deal.Deal_Workflow_Status = "RP";
+                    else
+                        objAcq_Deal.Deal_Workflow_Status = "N";
+
+                    objAcq_Deal.EntityState = State.Modified;
+                    dynamic resultSet;
+                    bool isValid = objService.Save(objAcq_Deal, out resultSet);
+                    #endregion
                 }
-
-                List<int?> lstRunDefTitleCode = objAcq_Deal.Acq_Deal_Run.
-                    Select(x => x.Acq_Deal_Run_Title.Select(y => y.Title_Code).FirstOrDefault()).ToList();
-
-                var result = lstTRightsTitleCodeLR.Distinct().Except(lstRunDefTitleCode).ToList();*/
-
-                string DealCompleteFlag = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Deal_Complete_Flag").Select(x => x.Parameter_Value).FirstOrDefault();
-
-                List<USP_List_Acq_Linear_Title_Status_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName)
-                                                                  .USP_List_Acq_Linear_Title_Status(objDeal_Schema.Deal_Code).ToList();
-
-                int RunPending = DealCompleteFlag.Replace(" ", "") == "R,R" || DealCompleteFlag.Replace(" ", "") == "R,R,C" ? lst.Where(x => x.Title_Added == "Yes~").Count() : 0;
-                int RightsPending = lst.Where(x => x.Title_Added == "No").Count();
-
-                if (RunPending > 0 && RightsPending > 0)
-                {
-                    objAcq_Deal.Deal_Workflow_Status = "RR";
-                }
-                else if (RunPending > 0 && RightsPending == 0)
-                {
-                    objAcq_Deal.Deal_Workflow_Status = "RP";
-                }
-                else
-                {
-                    objAcq_Deal.Deal_Workflow_Status = "N";
-                }
-
-                objAcq_Deal.EntityState = State.Modified;
-                dynamic resultSet;
-                bool isValid = objService.Save(objAcq_Deal, out resultSet);
-
-
-                #endregion
-
-
                 if (objPage_Properties.RMODE == GlobalParams.DEAL_MODE_EDIT)
                     message = "Right updated successfully";
                 else
@@ -2370,7 +2351,14 @@ namespace RightsU_Plus.Controllers
 
                     UpdateDealRightProcess(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
 
-                    return ShowValidationPopup(resultSet);
+                    string Is_Acq_rights_delay_validation = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                           .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
+                           .FirstOrDefault().Parameter_Value;
+
+                    if (Is_Acq_rights_delay_validation == "Y")
+                        return true;
+                    else
+                        return ShowValidationPopup(resultSet);
                 }
             }
             else
@@ -2656,6 +2644,13 @@ namespace RightsU_Plus.Controllers
             if (Lst_Acq_Deal_Rights_Promoter == null)
                 Lst_Acq_Deal_Rights_Promoter = new List<Acq_Deal_Rights_Promoter>();
 
+            string Is_Acq_rights_delay_validation = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
+                .FirstOrDefault().Parameter_Value;
+            if (Is_Acq_rights_delay_validation == "Y")
+            {
+
+            }
             if (objExistingRights.Acq_Deal_Rights_Code > 0)
             {
                 objExistingRights.Acq_Deal_Rights_Title.ToList().ForEach(i => i.EntityState = State.Deleted);
@@ -2668,7 +2663,7 @@ namespace RightsU_Plus.Controllers
                 objExistingRights.Acq_Deal_Rights_Promoter.ToList().ForEach(i => i.EntityState = State.Deleted);
                 objExistingRights.Last_Updated_Time = DateTime.Now;
                 objExistingRights.Last_Action_By = objLoginUser.Users_Code;
-                objExistingRights.Right_Status = "C";
+                objExistingRights.Right_Status = Is_Acq_rights_delay_validation == "Y" ? "P" : "C";
             }
             else if (objPage_Properties.RMODE == GlobalParams.DEAL_MODE_CLONE)
             {
@@ -2682,7 +2677,7 @@ namespace RightsU_Plus.Controllers
                 objExistingRights.Acq_Deal_Rights_Promoter.Clear();
                 objExistingRights.Inserted_On = DateTime.Now;
                 objExistingRights.Inserted_By = objLoginUser.Users_Code;
-                objExistingRights.Right_Status = "C";
+                objExistingRights.Right_Status = Is_Acq_rights_delay_validation == "Y" ? "P" : "C";
             }
             else
             {
@@ -2694,7 +2689,7 @@ namespace RightsU_Plus.Controllers
                 objExistingRights.Acq_Deal_Rights_Promoter.Clear();
                 objExistingRights.Inserted_On = DateTime.Now;
                 objExistingRights.Inserted_By = objLoginUser.Users_Code;
-                objExistingRights.Right_Status = "C";
+                objExistingRights.Right_Status = Is_Acq_rights_delay_validation == "Y" ? "P" : "C";
             }
 
             string Region_Type = form["hdnRegion_Type"];
