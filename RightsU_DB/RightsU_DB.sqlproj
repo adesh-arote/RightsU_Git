@@ -1464,5 +1464,6 @@
     <None Include="Database Scripts\DBConfig_v5.0.2.sql" />
     <None Include="Database Scripts\DBSchema_v5.0.2.sql" />
     <None Include="Database Scripts\DBSchema_v5.0.5.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.6.sql" />
   </ItemGroup>
 </Project>
