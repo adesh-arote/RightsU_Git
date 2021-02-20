@@ -590,7 +590,9 @@ namespace RightsUMusic.API.Controllers
                 PageNo = 1,
                 StatusCode = "",
                 FromDate = "",
-                ToDate = ""
+                ToDate = "",
+                SortBy = "RequestedDate",
+                Order = "DESC"
             };
 
             try
@@ -624,11 +626,6 @@ namespace RightsUMusic.API.Controllers
                 Users_Code = Convert.ToInt32(UserCode),
             };
             MHUsers objUser = objMHUsersServices.SearchFor(objU).FirstOrDefault();
-
-            foreach (MHCueSheetSong item in objMHCueSheet.MHCueSheetSong)
-            {
-                item.MusicTrackName = item.MusicTrackName.Split('(')[0].Trim().ToString();
-            }
 
             string RequestID = obj.GetRequestID(objUser.Vendor_Code, "CS");
 
