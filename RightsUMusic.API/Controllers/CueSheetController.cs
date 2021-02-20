@@ -619,6 +619,12 @@ namespace RightsUMusic.API.Controllers
             string UserCode = Convert.ToString(this.ActionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
             UserCode = UserCode.Replace("Bearer ", "").Trim();
 
+            foreach (MHCueSheetSong item in objMHCueSheet.MHCueSheetSong)
+            {
+                item.MusicTrackName = item.MusicTrackName.Split('(')[0].Trim().ToString();
+            }
+
+
             var objU = new
             {
                 Users_Code = Convert.ToInt32(UserCode),
