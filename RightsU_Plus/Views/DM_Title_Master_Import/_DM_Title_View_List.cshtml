@@ -83,7 +83,7 @@
         $('#ddlStarCast').SumoSelect();
         $('#ddlErrorMsg').SumoSelect();
         $('#ddlDirector').SumoSelect();
-        $('#ddlMusicLabel').SumoSelect();
+        //$('#ddlMusicLabel').SumoSelect();
         var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
         var File_Type = '@ViewBag.FileType';
         var SearchCriteria = $('#srchCommon').val();
@@ -156,8 +156,8 @@
         $("#ddlErrorMsg").val('')[0].sumo.reload();
         $("#ddlDirector").find("option").attr("selected", false);
         $("#ddlDirector").val('')[0].sumo.reload();
-        $("#ddlMusicLabel").find("option").attr("selected", false);
-        $("#ddlMusicLabel").val('')[0].sumo.reload();
+        //$("#ddlMusicLabel").find("option").attr("selected", false);
+        //$("#ddlMusicLabel").val('')[0].sumo.reload();
         $("#ddlDealTypeAd").find("option").attr("selected", false);
         $("#ddlDealTypeAd").val('').trigger("chosen:updated");
         $("#ddlStatus").find("option").attr("selected", false);
@@ -167,6 +167,7 @@
         BindTitleView(0, DM_Master_Import_Code, '', File_Type,'Y')
     }
     function validateSearch() {
+        debugger;
         var TitleName = "", TitleType = "", TitleLanguage = "", KeyStarCast = "", Status = "", Director = "", MusicLabel = "", ErrorMsg = "";
         var DM_Master_Import_Code = '@ViewBag.DM_Master_Import_Code';
         var File_Type = '@ViewBag.FileType';
@@ -178,8 +179,8 @@
             KeyStarCast = $('#ddlStarCast').val().join(',');
         if ($('#ddlDirector').val() != null)
             Director = $('#ddlDirector').val().join(',');
-        if ($('#ddlMusicLabel').val() != null)
-            MusicLabel = $('#ddlMusicLabel').val().join(',');
+        //if ($('#ddlMusicLabel').val() != null)
+        //    MusicLabel = $('#ddlMusicLabel').val().join(',');
         if ($('#ddlErrorMsg').val() != null)
             ErrorMsg = $('#ddlErrorMsg').val().join(',');
         Status = $('#ddlStatus').val();
@@ -204,8 +205,8 @@
             KeyStarCast = $('#ddlStarCast').val().join(',');
         if ($('#ddlDirector').val() != null)
             Director = $('#ddlDirector').val().join(',');
-        if ($('#ddlMusicLabel').val() != null)
-            MusicLabel = $('#ddlMusicLabel').val().join(',');
+        //if ($('#ddlMusicLabel').val() != null)
+        //    MusicLabel = $('#ddlMusicLabel').val().join(',');
         if ($('#ddlErrorMsg').val() != null)
             ErrorMsg = $('#ddlErrorMsg').val().join(',');
         Status = $('#ddlStatus').val();
@@ -222,7 +223,7 @@
                 TitleLanguage: TitleLanguage,
                 KeyStarCast: KeyStarCast,
                 Director: Director,
-                MusicLabel: MusicLabel,
+                //MusicLabel: MusicLabel,
                 Status: Status,
                 ErrorMsg: ErrorMsg
             }),
@@ -377,7 +378,7 @@
                     $("#ddlStarCast").empty();
                     $("#ddlErrorMsg").empty();
                     $('#ddlDirector').empty();
-                    $('#ddlMusicLabel').empty();
+                    //$('#ddlMusicLabel').empty();
                     debugger;
                     var obj_Search = $(result.objPage_Properties);
                     $("#txtTitleName").val(obj_Search[0].TitleName_Search);
@@ -392,10 +393,10 @@
                     });
                     $("#ddlDirector").val(obj_Search[0].Director_Search.split(',')).attr("selected", "true")[0].sumo.reload();
 
-                    $(result.lstTMusicLabel).each(function (index, item) {
-                        $("#ddlMusicLabel").append($("<option>").val(this.Value).text(this.Text));
-                    });
-                    $("#ddlMusicLabel").val(obj_Search[0].MusicLabel_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                    //$(result.lstTMusicLabel).each(function (index, item) {
+                    //    $("#ddlMusicLabel").append($("<option>").val(this.Value).text(this.Text));
+                    //});
+                    //$("#ddlMusicLabel").val(obj_Search[0].MusicLabel_Search.split(',')).attr("selected", "true")[0].sumo.reload();
 
                     $(result.lstTStarCast).each(function (index, item) {
                         $("#ddlStarCast").append($("<option>").val(this.Value).text(this.Text));
@@ -599,6 +600,9 @@
                     //this.value.push("");
                     $("#hdnTitleName")[0].value = value.join(", ");
                     return false;
+
+                   
+                    return false;
                 },
                 minLength: 2,
                 open: function (event, ui) {
@@ -671,7 +675,7 @@
                 <br>
                 <input type="text" placeholder="Title Name" id="txtTitleName" autocomplete="on" style="width:230px" value='@ViewBag.SrchTitle' onkeyup="populateTitle(event)" />
                 <input type="text" id="lbTitle_Code" style="display: none;" />
-                @Html.Hidden("TitleName")
+                @Html.Hidden("hdnTitleName")
             </li>
             <li class="AdSearch">
                 <label>Title Type:</label><br />
@@ -689,10 +693,10 @@
                 <label>Director:</label><br />
                 <select id="ddlDirector" multiple="multiple"></select>
             </li>
-            <li class="AdSearch">
+            @*<li class="AdSearch">
                 <label>Music Label:</label><br />
                 <select id="ddlMusicLabel" multiple="multiple"></select>
-            </li>
+            </li>*@
             <li class="AdSearch">
                 <label>@objMessageKey.Status:</label><br />
                 <select id="ddlStatus" class="form_input chosen-select"></select>

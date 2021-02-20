@@ -25,5 +25,7 @@ namespace RightsU_InterimDb.Models
     	    public string Roles { get; set; }
     	    public string Is_Ignore { get; set; }
     	    public string Mapped_By { get; set; }
+    	    public Nullable<int> Music_Album_Code { get; set; }
+    	    public string Music_Album { get; set; }
     }
 }

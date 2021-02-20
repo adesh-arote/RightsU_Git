@@ -818,6 +818,8 @@ namespace RightsU_Plus.Controllers
             string Status = "";
             if (IsShowAll == "Y")
                 ClearAllAdvanceSearchT();
+           
+  
             objPage_Properties.TitleName_Search = objPage_Properties.TitleName_Search.Replace('﹐', ',');
             ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
             if (Error == "Y" && objPage_Properties.Status_Search == "")
@@ -826,8 +828,25 @@ namespace RightsU_Plus.Controllers
                 Status = "C,P,R,N";
             else
                 Status = objPage_Properties.Status_Search;
+
             objPage_Properties.chkStatus_Search = Status;
-            var ExcelSrNo = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_ExcelSrNo(DM_Import_Master_Code, SearchCriteria, "").ToList();
+
+            string CallFor = "";
+            if (IsShowAll != "Y")
+            {
+                if (objPage_Properties.TitleName_Search != "" || objPage_Properties.TitleType_Search != "" || objPage_Properties.TitleLanguage_Search != "" || objPage_Properties.KeyStarCast_Search != "" || objPage_Properties.Director_Search != "" || objPage_Properties.ErrorMsg_Search != "")
+                {
+                    CallFor = "TN~" + objPage_Properties.TitleName_Search + "|"
+                        + "TT~" + objPage_Properties.TitleType_Search + "|"
+                        + "TL~" + objPage_Properties.TitleLanguage_Search + "|"
+                        + "SC~" + objPage_Properties.KeyStarCast_Search + "|"
+                        + "DR~" + objPage_Properties.Director_Search + "|"
+                        + "EM~" + objPage_Properties.ErrorMsg_Search + "|";
+                }
+            }
+
+
+            var ExcelSrNo = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_ExcelSrNo(DM_Import_Master_Code, SearchCriteria, CallFor).ToList();
             List<DM_Title_Import_Utility_Data> lstTitleBulkImport, lst = new List<DM_Title_Import_Utility_Data>();
             if (Status == "C,P,R,N")
             {
@@ -880,9 +899,12 @@ namespace RightsU_Plus.Controllers
             //Extract the term to be searched from the list
             string searchString = terms.LastOrDefault().ToString().Trim();
 
-            var result = new DM_Title_Service(objLoginEntity.ConnectionStringName)
-                          .SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code && x.Original_Title__Tanil_Telugu_.ToUpper().Contains(searchString.ToUpper()))
-                          .Select(R => new { Mapping_Name = R.Original_Title__Tanil_Telugu_, Mapping_Code = R.Original_Title__Tanil_Telugu_ }).Distinct().ToList();
+            List<USP_Get_Title_Import_Utility_AdvSearch_Result> lstTIUAdvSrc = new USP_Service(objLoginEntity.ConnectionStringName)
+                .USP_Get_Title_Import_Utility_AdvSearch(DM_Import_Master_Code, "").Where(x=>x.CallFor == "TN").ToList();
+
+            var result = lstTIUAdvSrc.Where(x=> x.DisplayText.ToUpper().Contains(searchString.ToUpper()))
+                        .Select(R => new { Mapping_Name = R.DisplayText, Mapping_Code = R.DisplayText })
+                        .Distinct().ToList();
 
             return Json(result);
         }
@@ -990,7 +1012,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    noOfRecordSkip = recordPerPage * (pageNo - 1) + 1;
+                    noOfRecordSkip = recordPerPage * (pageNo) ;
                 }
                 if (recordCount < (noOfRecordSkip + recordPerPage))
                     noOfRecordTake = recordCount - noOfRecordSkip;
@@ -1771,37 +1793,43 @@ namespace RightsU_Plus.Controllers
             if (TempData["DM_Import_Master_CodeT"] != null)
                 DM_Import_Master_Code = Convert.ToInt32(TempData["DM_Import_Master_CodeT"]);
             TempData.Keep("DM_Import_Master_CodeT");
-            List<RightsU_Entities.DM_Title> lstDMTitle = new DM_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code).ToList();
-            List<SelectListItem> lstDealType = new SelectList(lstDMTitle.Where(i => i.Title_Type != null && i.Title_Type != "").Select(i => new { Display_Value = i.Title_Type, Display_Text = i.Title_Type }).Distinct().ToList(), "Display_Value", "Display_Text").ToList();
+
+            List<USP_Get_Title_Import_Utility_AdvSearch_Result> lstTIUAdvSrc = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Title_Import_Utility_AdvSearch(DM_Import_Master_Code, "").ToList();
+
+            List<SelectListItem> lstDealType = new SelectList(lstTIUAdvSrc.Where(x=> x.CallFor == "TT").Select(i => new { Display_Value = i.DisplayText, Display_Text = i.DisplayText }).Distinct().ToList(), "Display_Value", "Display_Text").ToList();
             lstDealType.Insert(0, new SelectListItem() { Value = "", Text = "Please Select" });
-            MultiSelectList lstLanguage = new MultiSelectList(lstDMTitle.Where(x => x.Original_Language__Hindi_ != null && x.DM_Master_Import_Code == DM_Import_Master_Code && x.Original_Language__Hindi_ != "")
-               .Select(i => new { Display_Value = i.Original_Language__Hindi_, Display_Text = i.Original_Language__Hindi_ }).Distinct().ToList(), "Display_Value", "Display_Text");
-            var lstStarCast = lstDMTitle.Where(x => x.Key_Star_Cast != "" && x.Key_Star_Cast != null).Select(x => x.Key_Star_Cast).Distinct().ToArray();
+
+            MultiSelectList lstLanguage = new MultiSelectList(lstTIUAdvSrc.Where(x => x.CallFor == "TL").Select(i => new { Display_Value = i.DisplayText, Display_Text = i.DisplayText }).Distinct().ToList(), "Display_Value", "Display_Text");
+
+            var lstStarCast = lstTIUAdvSrc.Where(x => x.CallFor == "SC").Select(x => x.DisplayText).Distinct().ToArray();
             string StarCast = String.Join(",", lstStarCast);
             string[] lstTemp = StarCast.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             MultiSelectList lstTStarCast = new MultiSelectList(lstTemp.Select(i => new { Display_Value = i, Display_Text = i }).Distinct().ToList(), "Display_Value", "Display_Text");
-            var lstDirector = lstDMTitle.Where(x => x.Director_Name != null && x.Director_Name != "").Select(x => x.Director_Name).Distinct().ToArray();
+
+            var lstDirector = lstTIUAdvSrc.Where(x => x.CallFor == "DR").Select(x => x.DisplayText).Distinct().ToArray();
             string Director = String.Join(",", lstDirector);
             string[] lstTempDirector = Director.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             MultiSelectList lstTDirector = new MultiSelectList(lstTempDirector.Select(i => new { Display_Value = i, Display_Text = i }).Distinct().ToList(), "Display_Value", "Display_Text");
-            var lstMusicLabel = lstDMTitle.Where(x => x.Music_Label != null && x.Music_Label != "").Select(x => x.Music_Label).Distinct().ToArray();
-            string MusicLabel = String.Join(",", lstMusicLabel);
-            string[] lstTempMusicLabel = MusicLabel.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            MultiSelectList lstTMusicLabel = new MultiSelectList(lstTempMusicLabel.Select(i => new { Display_Value = i, Display_Text = i }).Distinct().ToList(), "Display_Value", "Display_Text");
-            List<string> lstErrorMsg1 = lstDMTitle.Where(x => x.Error_Message != "" && x.Error_Message != null).Select(x => x.Error_Message).Distinct().ToList();
+
+            //var lstMusicLabel = lstTIUAdvSrc.Where(x => x.CallFor == "ML").Select(x => x.DisplayText).Distinct().ToArray();
+            //string MusicLabel = String.Join(",", lstMusicLabel);
+            //string[] lstTempMusicLabel = MusicLabel.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            //MultiSelectList lstTMusicLabel = new MultiSelectList(lstTempMusicLabel.Select(i => new { Display_Value = i, Display_Text = i }).Distinct().ToList(), "Display_Value", "Display_Text");
+
+            List<string> lstErrorMsg1 = lstTIUAdvSrc.Where(x => x.CallFor == "EM").Select(x => x.DisplayText).Distinct().ToList();
             foreach (string Msg in lstErrorMsg1)
             {
                 ErrorMsg += Msg;
             }
+            ErrorMsg = ErrorMsg.Replace(',', '~');
             string[] lstErrMsg = ErrorMsg.Split(new char[] { '~' }, StringSplitOptions.RemoveEmptyEntries);
-            MultiSelectList lstErrorMsg = new MultiSelectList(lstErrMsg.Select(i => new { Display_Value = i, Display_Text = i }),
-                "Display_Value", "Display_Text");
+
+            MultiSelectList lstErrorMsg = new MultiSelectList(lstErrMsg.Select(i => new { Display_Value = i, Display_Text = i }).Distinct(),"Display_Value", "Display_Text");
+
             List<SelectListItem> lstStatus = new List<SelectListItem>();
             lstStatus.Add(new SelectListItem { Text = "Ignore", Value = "Y" });
             lstStatus.Add(new SelectListItem { Text = "Success", Value = "C" });
             lstStatus.Add(new SelectListItem { Text = "Error", Value = "E" });
-            lstStatus.Add(new SelectListItem { Text = "No Error", Value = "N" });
-            lstStatus.Add(new SelectListItem { Text = "Proceed", Value = "P" });
             lstStatus.Add(new SelectListItem { Text = "Resolve Conflict", Value = "R" });
             lstStatus.Insert(0, new SelectListItem() { Value = "", Text = "Please Select" });
 
@@ -1809,7 +1837,7 @@ namespace RightsU_Plus.Controllers
             objJson.Add("lstLanguage", lstLanguage);
             objJson.Add("lstDealType", lstDealType);
             objJson.Add("lstTDirector", lstTDirector);
-            objJson.Add("lstTMusicLabel", lstTMusicLabel);
+            //objJson.Add("lstTMusicLabel", lstTMusicLabel);
             objJson.Add("lstStatus", lstStatus);
             objJson.Add("lstErrorMsg", lstErrorMsg);
 

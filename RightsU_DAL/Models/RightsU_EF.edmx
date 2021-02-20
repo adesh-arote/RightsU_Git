@@ -2223,6 +2223,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a pri
           <Property Name="Roles" Type="varchar" MaxLength="500" />
           <Property Name="Is_Ignore" Type="char" MaxLength="1" />
           <Property Name="Mapped_By" Type="char" MaxLength="1" />
+          <Property Name="Music_Album_Code" Type="int" />
+          <Property Name="Music_Album" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="DM_Music_Title">
           <Key>
@@ -3925,7 +3927,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
             <PropertyRef Name="Promoter_Remarks_Code" />
           </Key>
           <Property Name="Promoter_Remarks_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Promoter_Remark_Desc" Type="nvarchar" MaxLength="400" />
+          <Property Name="Promoter_Remark_Desc" Type="nvarchar(max)" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Last_Updated_Time" Type="datetime" />
@@ -12544,6 +12546,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_GET_TITLE_FOR_SYN_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SYN_DEAL_CODE" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Title_Import_Utility_AdvSearch" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="DM_Master_Import_Code" Type="int" Mode="In" />
+          <Parameter Name="CallFor" Type="varchar(max)" Mode="In" />
+        </Function>
         <Function Name="USP_Get_Title_Language" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Title_Codes" Type="varchar(max)" Mode="In" />
         </Function>
@@ -20733,6 +20739,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Music_Title" EntitySet="Music_Title" />
             <End Role="Music_Title_Theme" EntitySet="Music_Title_Theme" />
           </AssociationSet>
+          <FunctionImport Name="USP_Get_Title_Import_Utility_AdvSearch" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_Import_Utility_AdvSearch_Result)">
+            <Parameter Name="DM_Master_Import_Code" Mode="In" Type="Int32" />
+            <Parameter Name="CallFor" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -32203,6 +32213,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Roles" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Is_Ignore" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Mapped_By" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Music_Album_Code" Type="Int32" />
+          <Property Name="Music_Album" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Report_Territory">
           <Key>
@@ -32916,7 +32928,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <PropertyRef Name="Promoter_Remarks_Code" />
           </Key>
           <Property Name="Promoter_Remarks_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Promoter_Remark_Desc" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="Promoter_Remark_Desc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Inserted_On" Type="DateTime" Precision="3" />
           <Property Name="Inserted_By" Type="Int32" />
           <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
@@ -35496,6 +35508,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="USP_Get_Title_Import_Utility_AdvSearch_Result">
+          <Property Type="String" Name="DisplayText" Nullable="true" />
+          <Property Type="String" Name="CallFor" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -42410,6 +42426,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="DM_Master_Log">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Master_Log">
               <MappingFragment StoreEntitySet="DM_Master_Log">
+                <ScalarProperty Name="Music_Album" ColumnName="Music_Album" />
+                <ScalarProperty Name="Music_Album_Code" ColumnName="Music_Album_Code" />
                 <ScalarProperty Name="Mapped_By" ColumnName="Mapped_By" />
                 <ScalarProperty Name="Is_Ignore" ColumnName="Is_Ignore" />
                 <ScalarProperty Name="Roles" ColumnName="Roles" />
@@ -44533,6 +44551,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Title_Import_Utility_AdvSearch" FunctionName="RightsU_NeoModel.Store.USP_Get_Title_Import_Utility_AdvSearch">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Title_Import_Utility_AdvSearch_Result">
+                <ScalarProperty Name="DisplayText" ColumnName="DisplayText" />
+                <ScalarProperty Name="CallFor" ColumnName="CallFor" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
