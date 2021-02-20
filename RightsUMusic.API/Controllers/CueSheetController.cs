@@ -625,6 +625,11 @@ namespace RightsUMusic.API.Controllers
             };
             MHUsers objUser = objMHUsersServices.SearchFor(objU).FirstOrDefault();
 
+            foreach (MHCueSheetSong item in objMHCueSheet.MHCueSheetSong)
+            {
+                item.MusicTrackName = item.MusicTrackName.Split('(')[0].Trim().ToString();
+            }
+
             string RequestID = obj.GetRequestID(objUser.Vendor_Code, "CS");
 
             objMHCueSheet.RequestID = RequestID;
