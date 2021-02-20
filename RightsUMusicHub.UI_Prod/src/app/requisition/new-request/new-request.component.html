@@ -532,7 +532,7 @@
           </p-column>
           <p-column field="RequestedMusicTitle" header="Music Title" [style]="{'width':'150px'}">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-              <span pTooltip="{{row.RequestedMusicTitle}}" tooltipPosition="top">{{row.RequestedMusicTitle}}</span>
+              <span pTooltip="{{row.RequestedMusicTitle}}" tooltipPosition="top">{{row.RequestedMusicTitle}} ({{row.SongUsedCount}})</span>
             </ng-template>
           </p-column>
           <p-column field="MusicMovieAlbum" header="Movie / Album" width="10" styleClass="text-center"

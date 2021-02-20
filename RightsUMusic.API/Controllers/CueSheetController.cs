@@ -590,7 +590,9 @@ namespace RightsUMusic.API.Controllers
                 PageNo = 1,
                 StatusCode = "",
                 FromDate = "",
-                ToDate = ""
+                ToDate = "",
+                SortBy = "RequestedDate",
+                Order = "DESC"
             };
 
             try

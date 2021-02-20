@@ -22,5 +22,6 @@ namespace RightsUMusic.Entity
         public int EpisodeTo { get; set; }
         public string SpecialInstruction { get; set; }
         public string ProductionHouseRemarks { get; set; }
+        public int SongUsedCount { get; set; }
     }
 }

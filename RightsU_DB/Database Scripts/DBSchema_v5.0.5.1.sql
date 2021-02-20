@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[USPMHGetRequestDetails]
+﻿ALTER PROCEDURE [dbo].[USPMHGetRequestDetails]
 @RequestCode NVARCHAR(MAX),
 @RequestTypeCode INT,
 @IsCueSheet CHAR = 'N'
