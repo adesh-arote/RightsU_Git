@@ -196,6 +196,56 @@ namespace RightsUMusic.API.Controllers
 
         [AcceptVerbs("GET", "POST")]
         [HttpPost]
+        public HttpResponseMessage DeletePlayList(MHPlayList objMHPlayListInput)
+        {
+            Return _objRet = new Return();
+            int RecordCount = 0;
+            try
+            {
+
+                int? id = objMHPlayListInput.MHPlayListCode;
+                MHPlayList objMHPlayList = obj.GetByID(id);
+                obj.DeletePlayList(objMHPlayList);
+
+                _objRet.Message = "";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet}, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.Message.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage DeletePlayListSong(MHPlayList objMHPlayListInput)
+        {
+            Return _objRet = new Return();
+            int RecordCount = 0;
+            try
+            {
+
+                int? id = objMHPlayListInput.MHPlayListSong.Select(x => x.MHPlayListSongCode).First();
+                MHPlayListSong objMHPlayList = obj.GetBySongID(id);
+                obj.DeletePlayListSong(objMHPlayList);
+
+                _objRet.Message = "";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.Message.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
         public HttpResponseMessage MusicConsumptionRequest(MHRequest objMHRequest)
         {
             string UserCode = Convert.ToString(this.ActionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
@@ -556,7 +606,8 @@ namespace RightsUMusic.API.Controllers
             Return _objRet = new Return();
             try
             {
-                string strSearch = "TitleCode = " + objMHPlayList.TitleCode + "AND VendorCode =" + objMHPlayList.VendorCode;
+                //string strSearch = "TitleCode = " + objMHPlayList.TitleCode + "AND VendorCode =" + objMHPlayList.VendorCode;
+                string strSearch = " VendorCode =" + objMHPlayList.VendorCode;
                 lstMHPlayList = obj.GetPlayList(strSearch);
                 var MHPlayList = lstMHPlayList.Select(x => new { MHPlayListCode = x.MHPlayListCode, PlaylistName = x.PlaylistName }).ToList();
                 _objRet.Message = "";
@@ -1293,7 +1344,7 @@ namespace RightsUMusic.API.Controllers
 
             var objParam = new
             {
-                TitleCode = objMHPlayList.TitleCode,
+                //TitleCode = objMHPlayList.TitleCode,
                 VendorCode = objUser.Vendor_Code
             };
            

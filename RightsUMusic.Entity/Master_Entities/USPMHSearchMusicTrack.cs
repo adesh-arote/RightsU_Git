@@ -20,7 +20,7 @@ namespace RightsUMusic.Entity
         public string Singers { get; set; }
         public string MusicComposer { get; set; }
         public string MusicLanguage { get; set; }
-
+        public int MHPlayListSongCode { get; set; }
     }
 
     public class MusicTrackInput
