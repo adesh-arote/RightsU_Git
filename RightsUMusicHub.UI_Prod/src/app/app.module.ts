@@ -32,6 +32,7 @@ import {TableModule} from 'primeng/table';
 import {TimeAgoPipe} from 'time-ago-pipe';
 import { ChangePasswordComponent } from './ui/change-password/change-password.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,

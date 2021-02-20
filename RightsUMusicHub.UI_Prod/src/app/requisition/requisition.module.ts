@@ -23,6 +23,8 @@ import {CheckboxModule} from 'primeng/checkbox';
 import {CommonUiModule} from '../shared/common-ui/common-ui.module';
 import {RequsitionRoutes} from './requisition.route';
 import { RouterModule } from '@angular/router';
+import {TabViewModule} from 'primeng/primeng';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
 // import { SlimScroll } from 'angular-io-slimscroll';
 @NgModule({
   imports: [
@@ -45,6 +47,8 @@ import { RouterModule } from '@angular/router';
     MultiSelectModule,
     TieredMenuModule,
     SidebarModule,
+    TabViewModule,
+    SlickCarouselModule,
     RouterModule.forChild(RequsitionRoutes)
   ],
   declarations: [NewMusicTrackComponent, NewRequestComponent,

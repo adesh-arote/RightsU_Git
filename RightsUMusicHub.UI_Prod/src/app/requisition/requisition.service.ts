@@ -140,4 +140,9 @@ export class RequisitionService extends BaseService {
     return super.post('RequisitionModule/ExportMovieAlbumMusicDetailsList',obj);
   }
 
+  public DeletePlayList(obj):Observable<any>{
+    let body=JSON.stringify(obj);
+    return super.post('RequisitionModule/DeletePlayList',obj);
+  }
+
 }

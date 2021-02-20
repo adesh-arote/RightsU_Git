@@ -18,9 +18,10 @@
             Primary Channel
           </div>
           <div class="box-body">
-            <p-dropdown [options]="getChannelList" [style]="{'width':'210px'}" [autoWidth]="false" [(ngModel)]="newMusicConsumptionRequest.ChannelCode"
-                        required name="channelname" [resetFilterOnHide]="true" placeholder="Select Channel Name" optionLabel="Channel_Name"
-                        filter="true"></p-dropdown>
+            <p-dropdown [options]="getChannelList" [style]="{'width':'210px'}" [autoWidth]="false"
+              [(ngModel)]="newMusicConsumptionRequest.ChannelCode" required name="channelname"
+              [resetFilterOnHide]="true" placeholder="Select Channel Name" optionLabel="Channel_Name" filter="true">
+            </p-dropdown>
           </div>
         </div>
       </div>
@@ -30,19 +31,24 @@
 
           <div class="box-header">
             <label>
-              <input type="radio" class="flat-red" name="radgroup1" id="btnRadio1" checked (click)="EpisodeNocheck('tentative')"> Episode No.
+              <input type="radio" class="flat-red" name="radgroup1" id="btnRadio1" checked
+                (click)="EpisodeNocheck('tentative')"> Episode No.
               <!-- <p-radioButton class="flat-red" name="groupname" value="val1" id="btnRadio1" checked (click)="EpisodeNocheck('tentative')" [(ngModel)]="selectedValue">Tentative Episode No.</p-radioButton> -->
             </label>
             <label>
-              <input type="radio" class="flat-red" name="radgroup1" id="btnRadio2" (click)="EpisodeNocheck('range')"> Episode Range
+              <input type="radio" class="flat-red" name="radgroup1" id="btnRadio2" (click)="EpisodeNocheck('range')">
+              Episode Range
             </label>
           </div>
           <div class="box-body">
             <div *ngIf="showrbtndiv">
               <span class="block" id="txtEpisodeNo">
                 Episode No. :
-                <input type="number" min="{{MinEpisode}}" value="" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value   < Number(this.min))  ? this.min : this.value" placeholder="" max="{{MaxEpisode}}" name="episodeNo" [(ngModel)]="episodeNo" (ngModelChange)="newMusicConsumptionRequest.EpisodeFrom=episodeNo;newMusicConsumptionRequest.EpisodeTo=episodeNo;"
-                       class="RequestNumber" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                <input type="number" min="{{MinEpisode}}" value="" maxlength="4"
+                  oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value   < Number(this.min))  ? this.min : this.value"
+                  placeholder="" max="{{MaxEpisode}}" name="episodeNo" [(ngModel)]="episodeNo"
+                  (ngModelChange)="newMusicConsumptionRequest.EpisodeFrom=episodeNo;newMusicConsumptionRequest.EpisodeTo=episodeNo;"
+                  class="RequestNumber" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
               </span>
 
             </div>
@@ -50,13 +56,18 @@
               <span id="txtFromEpide">
                 From:
                 <!-- (ngModelChange)="newMusicConsumptionRequest.EpisodeTo=newMusicConsumptionRequest.EpisodeFrom+1;episodeChange()" -->
-                <input type="number" min="{{MinEpisode}}" value="" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value < Number(this.min)) ? this.min : this.value" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="" max="{{MaxEpisode}}" name="episodeNoFrom" [(ngModel)]="newMusicConsumptionRequest.EpisodeFrom" class="RequestNumber">
+                <input type="number" min="{{MinEpisode}}" value="" maxlength="4"
+                  oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.value;this.value=(this.value < Number(this.min)) ? this.min : this.value"
+                  onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="" max="{{MaxEpisode}}"
+                  name="episodeNoFrom" [(ngModel)]="newMusicConsumptionRequest.EpisodeFrom" class="RequestNumber">
                 <!-- <input type="text" pInputText min="1" max=9999  /> -->
               </span>
               <span id="txtToEpide">
                 To:
-                <input type="number" max="{{MaxEpisode}}" min="{{MinEpisode}}" maxlength="4" oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.valuethis.value=(this.value < Number(this.min)) ? this.min : this.value" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                       placeholder="" name="episodeNoTo" [(ngModel)]="newMusicConsumptionRequest.EpisodeTo" class="RequestNumber">
+                <input type="number" max="{{MaxEpisode}}" min="{{MinEpisode}}" maxlength="4"
+                  oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);this.value=(this.value   > Number(this.max))  ? this.max : this.valuethis.value=(this.value < Number(this.min)) ? this.min : this.value"
+                  onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="" name="episodeNoTo"
+                  [(ngModel)]="newMusicConsumptionRequest.EpisodeTo" class="RequestNumber">
               </span>
             </div>
           </div>
@@ -71,7 +82,8 @@
             <div *ngIf="showrbtndiv">
               <span class="block" id="txtAiringNo">
                 Date:
-                <p-calendar [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiTelecastDate" [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" readonlyInput="true"></p-calendar>
+                <p-calendar [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiTelecastDate"
+                  [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" readonlyInput="true"></p-calendar>
 
                 <!-- <input type="date" value="" placeholder="" class="TextBox5" name="epiTelecastDate" [(ngModel)]="episodeDate" (ngModelChange)="newMusicConsumptionRequest.TelecastFrom=episodeDate;newMusicConsumptionRequest.TelecastTo=episodeDate"> -->
               </span>
@@ -82,7 +94,8 @@
                 <div>
                   From:
                   <!-- [maxDate]="newMusicConsumptionRequest.TelecastTo" (ngModelChange)="telcastFromDateChnge()" -->
-                  <p-calendar id="Telecastfrom" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiFromDate" [showIcon]="true" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+                  <p-calendar id="Telecastfrom" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom" name="epiFromDate"
+                  (ngModelChange)="telcastFromDateChnge()"  [showIcon]="true" readonlyInput="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
                 </div>
 
                 <!-- <input type="date" value="" placeholder="dd/mm/yyyy" class="TextBox5" name="epiFromDate" [(ngModel)]="newMusicConsumptionRequest.TelecastFrom"> -->
@@ -92,7 +105,10 @@
                 <div style="padding-top: 2%;padding-left:4.5%;">
                   To:
                   <!-- [minDate]="newMusicConsumptionRequest.TelecastFrom" [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null" -->
-                  <p-calendar id="Telecastto" [(ngModel)]="newMusicConsumptionRequest.TelecastTo" [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null" name="epiToDate" readonlyInput="true" [showIcon]="true" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"></p-calendar>
+                  <p-calendar id="Telecastto" [(ngModel)]="newMusicConsumptionRequest.TelecastTo"  (ngModelChange)="telcastFromDateChnge()"
+                    [disabled]="newMusicConsumptionRequest.TelecastFrom=='' || newMusicConsumptionRequest.TelecastFrom==null"
+                    name="epiToDate" readonlyInput="true" [showIcon]="true" dateFormat="dd/mm/yy"
+                    placeholder="dd/mm/yyyy"></p-calendar>
 
                   <!-- <input type="date" value="" placeholder="dd/mm/yyyy" class="TextBox5" name="epiToDate" [(ngModel)]="newMusicConsumptionRequest.TelecastTo"> -->
                 </div>
@@ -108,10 +124,28 @@
       <!-- </form> -->
     </div>
 
+    <div *ngIf="episodeType=='range'" class="box-body pull-right">
+      <button id="showDetails" class="btn btn-sm btn-primary btn-flat pull-left"
+        [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 || !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.EpisodeTo || !newMusicConsumptionRequest.TelecastFrom || !newMusicConsumptionRequest.TelecastTo || isDateSame=='Y'"
+        (click)="showRecommendations()">
+        Viacom18 Recommendations
+      </button>
+    </div>
+
+    <div *ngIf="episodeType=='tentative'" class="box-body pull-right">
+      <button id="showDetails" class="btn btn-sm btn-primary btn-flat pull-left"
+        [disabled]="newMusicConsumptionRequest.TitleCode.Title_Code == 0 || newMusicConsumptionRequest.ChannelCode.Channel_Code==0 ||  !newMusicConsumptionRequest.EpisodeFrom || !newMusicConsumptionRequest.TelecastFrom || isDateSame=='Y'"
+        (click)="showRecommendations()">
+        Viacom18 Recommendations
+      </button>
+    </div>
+
+
+
     <!-- </section> -->
 
 
-    <div class="row gutter" style="padding-left: 5% ;">
+    <!-- <div class="row gutter" style="padding-left: 5% ;">
       <div class="col-md-1 slick-prev" style="margin-top: 2%;"><i class="fa fa-chevron-left"></i></div>
       <div class="col-md-10  your-class" style="margin-left: -5%;">
 
@@ -123,20 +157,83 @@
 
             <div class="info-box-content">
               <span class="info-box-text" pTooltip="{{list.PlaylistName}}" tooltipPosition="left" style="white-space:initial !important;margin-left: -10%;text-transform: none !important;">{{list.PlaylistName}}</span>
-              <!-- <span class="info-box-number" ><a  id="btnFavourites">15</a><small></small></span> -->
+              
             </div>
           </div>
         </div>
       </div>
       <div class="col-md-1 slick-next" style="margin-top: 2%;"><i class="fa fa-chevron-right"></i></div>
-    </div>
+    </div> -->
 
 
 
   </section>
-  <div *ngIf="componentLoad">
+
+  <!------Playlist Start------->
+  <section class="content-subHeader" style="margin-top: 40px;">
+    <div *ngIf="showTabdata">
+      <p-tabView orientation="left"  (onChange)="onTabChange($event)">
+        <p-tabPanel [selected]="playList" leftIcon="fa fa-play" tooltip="PlayList" tooltipPosition="top">
+          <div  *ngIf="showPlayList">
+            <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig" style="margin-left: 40px;">
+              <div ngxSlickItem *ngFor="let slide of playListDetail" class="slide">
+                <div class="info-box info-Css">
+                  <div class="col-md-10">
+                    <div id="{{i}}" (click)="getMusictrackList(slide)">
+                      <span class="info-box-icon bg-aqua info-icon-style">
+                        <i class="fa fa-music icon-Css" aria-hidden="true"></i>
+                      </span>
+                      <div class="info-box-content">
+                        <span class="info-box-text tooltip-text" pTooltip="{{slide.PlaylistName}}"
+                          tooltipPosition="left">{{slide.PlaylistName}} <span (click)="deleteFullPlaylist()"><i
+                              class="fa fa-close close-playList"></i></span></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ngx-slick-carousel>
+        </div>
+        <div *ngIf="componentLoad">
+          <app-cart-grid [componentData]="componentData" [newMusicConsumptionRequest]="newMusicConsumptionRequest"
+            [componentType]="componentType" [gridvalue]="gridvalue"></app-cart-grid>
+        </div>
+        </p-tabPanel>
+        <p-tabPanel [selected]="playListsearch" leftIcon="fa fa-search" tooltip="PlayListsearch" tooltipPosition="top">
+          <div *ngIf="componentLoad">
+            <app-cart-grid [componentData]="componentData" [newMusicConsumptionRequest]="newMusicConsumptionRequest"
+              [componentType]="componentType" [gridvalue]="gridvalue"></app-cart-grid>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </section>
+
+  <!----Playlist End-->
+
+  <!-- <div *ngIf="componentLoad">
     <app-cart-grid [componentData]="componentData" [newMusicConsumptionRequest]="newMusicConsumptionRequest" [componentType]="componentType" [gridvalue]="gridvalue" (newList)="getNewList($event)"></app-cart-grid>
+  </div> -->
+  <div *ngIf="displayalertMessage">
+    <app-message-box [messageData]="messageData"></app-message-box>
   </div>
+
 </div>
 <div *ngIf="load" id="loadingDiv"></div>
 
+ <!----PlayList Delete-->
+ <p-dialog [(visible)]="showDeletedialog" [width]="350" [modal]="true" [responsive]="false" [closable]="false"
+ [resizable]="false">
+ <p-header>
+   Message
+ </p-header>
+ <div class="text-center">
+   Do you want to delete the entire Playlist?
+ </div>
+ <br><br>
+ <p-footer text-center>
+   <button type="button" class="buttonplayList btn-sm" (click)="deletePlaylist()">Yes</button>
+   <button style="margin-left: 10px;" type="button" class="buttonplayList btn-sm"
+     (click)="showDeletedialog=false;">No</button>
+ </p-footer>
+</p-dialog>

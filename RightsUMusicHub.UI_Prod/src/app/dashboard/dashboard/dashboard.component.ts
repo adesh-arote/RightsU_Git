@@ -222,6 +222,7 @@ debugger;
       else if (Response.Return.IsSuccess == false) {
         localStorage.setItem('quickChannelCode', Response.ChannelCode);
         localStorage.setItem('quickSelreq', 'Y');
+        localStorage.setItem('VIEW_ALL_REQUEST', 'false');
         this.router.navigate(['/app/requisition/new-request']);
         // this._confirmation.confirm({
         //   message: 'Play list not created for this Show, Would you like to add Usage Request or Play list for this Show ?',

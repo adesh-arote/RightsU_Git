@@ -156,3 +156,127 @@
 /* .dropdown-content:active {
   display: block;
 } */
+.close-playList {
+  font-size: 20px;
+  color: #dd3917f5;
+  float: right;
+  margin-top: 0px
+}
+
+.padding-Css{
+  padding-left: 5%
+}
+
+.margin-style{
+  margin-top: 2%;
+}
+
+.m-left{
+  margin-left: -5%;
+}
+
+.info-Css{
+  height: 70px;
+  margin-right: 10px;
+}
+
+.info-icon-style{
+  height: 70px;
+  width: 70px;
+  line-height: 65px !important;
+  margin-left: -14px
+}
+
+.icon-Css{
+  font-size:40px;
+  margin-left: -5px;
+}
+
+.tooltip-text{
+  white-space:initial !important;
+  margin-left: -25%;
+  text-transform: none !important;
+  width: 180%;
+}
+
+.info-box {
+  display: block;
+  min-height: 68px;
+  background: #f7f4f4;
+  width: 85%;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+  border-radius: 2px;
+  margin-bottom: 15px;
+}
+
+::ng-deep.slick-prev:before, .slick-next:before {
+  font-family: "slick";
+  font-size: 20px;
+  line-height: 1;
+  color: #000;
+  opacity: .75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::ng-deep.slick-next:before {
+  content: "→";
+  color: #000;
+  margin-left: -43px;
+}
+
+::ng-deep.slick-prev:before {
+  content: "←";
+  left: -23px;
+  margin-left: -16px;
+}
+
+::ng-deep.slick-slide {
+  outline: none !important;
+}
+::ng-deep.ui-tabview .ui-tabview-panel {
+	border-width: 0;
+	padding: 1em;
+	background: 0;
+	border: 10px solid #eee;
+	margin-left: -278px;
+	height: auto;
+}
+
+::ng-deep.ui-tabview.ui-tabview-left>.ui-tabview-nav li {
+    margin: 0 0 1px 0;
+    border-right: 0 none;
+	outline: none;
+	background: #dedede;
+}
+
+::ng-deep.ui-tabview .ui-tabview-nav > li.ui-state-active {
+    background-color: #eee;
+    color: white;
+}
+
+::ng-deep.ui-state-active a{
+	color: #2b64a5;
+}
+
+::ng-deep.ui-tabview-left>.ui-tabview-nav {
+    float: left;
+    width: 3%;
+    height: 300px;
+    background-image: none;
+    padding-top: 1px;
+}
+
+.buttonplayList {
+  display: inline-block;
+    padding: 5px 25px;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #3c8dbc;
+    border: none;
+    border-radius: 5px;
+}

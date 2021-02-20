@@ -119,3 +119,17 @@ input.ReqTextBox {
   font-weight: bold;
   font-size: 14px;
 }
+
+.buttonplayList {
+  display: inline-block;
+    padding: 5px 25px;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #3c8dbc;
+    border: none;
+    border-radius: 5px;
+}

@@ -9,6 +9,12 @@ import { parse } from 'querystring';
 import { debug } from 'util';
 // import { Timestamp } from 'rxjs/internal/operators/timestamp';
 declare var $: any;
+
+
+const IS_FROMNEWREQ = "IS_FROMNEWREQ";
+const TAB_NAME = "TAB_NAME";
+const MHPLAYLIST_CODE = "MHPLAYLIST_CODE";
+const MHPLAYLIST_NAME="MHPLAYLIST_NAME";
 @Component({
   selector: 'app-new-request',
   templateUrl: './new-request.component.html',
@@ -95,7 +101,16 @@ export class NewRequestComponent implements OnInit {
   public isNewrequest: boolean = false;
   public isDateSame: any;
   public setDuration: boolean = false;
-
+  public showPlayList: boolean = false;
+  public selected: string = "playList";
+  public setMHPlaylistCode: any;
+  public setMHPlaylistName:any;
+  public tabHeaders: string;
+  public showTabdata: boolean = false;
+  public checkTabheader: any;
+  public slideConfig: any;
+  public showDeletedialog: boolean = false;
+  
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router) {
     this.mindatevalue = new Date();
 
@@ -147,6 +162,7 @@ export class NewRequestComponent implements OnInit {
       this.isNewrequest = false;
       this.showSearch = true;
     }
+
     // alert(this.todaydate.getTime())
     // var a:Timestamp=new Timestamp();
 
@@ -177,6 +193,8 @@ export class NewRequestComponent implements OnInit {
       Tag: ""
     }
     this.load = true;
+    this.getPlayList();
+    this.slideConfig = { "slidesToShow": 3, "slidesToScroll": 3, "infinite": false };
     this.addBlockUI();
     var musicLabelBody = {
       "ChannelCode": '',
@@ -348,17 +366,20 @@ export class NewRequestComponent implements OnInit {
     if (val == 'tentative') {
       this.showrbtndiv = true;
       this.showdetail = false;
+      this.showPlayList = false;
+      this.showTabdata = false;
     }
     else {
       this.showrbtndiv = false;
       this.showdetail = false;
+      this.showPlayList = false;
+      this.showTabdata = false;
 
     }
 
   }
 
   showRecommendations() {
-
     debugger;
     if (this.episodeType == 'range') {
       let fromdate = this.newMusicConsumptionRequest.TelecastFrom
@@ -369,53 +390,74 @@ export class NewRequestComponent implements OnInit {
           'header': "Error",
           'body': "From Date should be Less Than To Date"
         }
-        //     // this.alertErrorMessage="From Date should Less Than To Date";
       }
-      // if (parseInt(this.newMusicConsumptionRequest.EpisodeFrom) >= parseInt(this.newMusicConsumptionRequest.EpisodeTo)) {
-      //   this.displayalertMessage = true;
-
-      //   this.messageData = {
-      //     'header': "Error",
-      //     'body': "Episode To should greater than Episode From"
-      //   }
-
-      //   // this.alertErrorMessage="Episode To should greater than Episode From";
-      // }
-      // else
-      //   if (fromdate >= todate) {
-      //     this.displayalertMessage = true;
-      //     this.messageData = {
-      //       'header': "Error",
-      //       'body': "From Date should be Less Than To Date"
-      //     }
-      //     // this.alertErrorMessage="From Date should Less Than To Date";
-      //   }
       else {
         // this.showName = this.newMusicConsumptionRequest.TitleCode.Title_Name;
-        this.componentData = {
-          'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
-          'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
-        }
+        // this.componentData = {
+        //   'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
+        //   'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
+        // }
         console.log(JSON.stringify(this.componentData));
         console.log(JSON.stringify(this.newMusicConsumptionRequest));
-        this.showdetail = true;
-
+        // this.showdetail = false;
+        // this.showPlayList = true;
       }
+      if (this.tabHeaders == "PlayList" || this.tabHeaders == undefined) {
+        this.showdetail = false;
+        this.showPlayList = true;
+        this.showTabdata = true;
+        
+      }
+      else {
+        this.showdetail = true;
+        this.showPlayList = false;
+        this.showTabdata = true;
+      }
+      // if(this.tabHeaders == "PlayList"){
+      // $(document).ready(function () {
+      //   $('#your-class').slick({
+      //     infinite: true,
+      //     slidesToShow: 3,
+      //     slidesToScroll: 3,
+      //     arrows: true,
+      //     prevArrow: $('.slick-prev'),
+      //     nextArrow: $('.slick-next'),
+      //   });
+      // });
+      //}
     }
     else {
       // this.showName = this.newMusicConsumptionRequest.TitleCode.Title_Name;
-      this.componentData = {
-        'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
-        'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
-      }
+      // this.componentData = {
+      //   'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
+      //   'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
+      // }
       console.log(JSON.stringify(this.componentData));
       console.log(JSON.stringify(this.newMusicConsumptionRequest));
-      this.showdetail = true;
-
+      if (this.tabHeaders == "PlayList" || this.tabHeaders == undefined) {
+        this.showdetail = false;
+        this.showPlayList = true;
+        this.showTabdata = true;
+      }
+      else {
+        this.showdetail = true;
+        this.showPlayList = false;
+        this.showTabdata = true;
+      }
+      // if(this.tabHeaders == "PlayList"){
+      // $(document).ready(function () {
+      //   $('#your-class').slick({
+      //     infinite: true,
+      //     slidesToShow: 3,
+      //     slidesToScroll: 3,
+      //     arrows: true,
+      //     prevArrow: $('.slick-prev'),
+      //     nextArrow: $('.slick-next'),
+      //   });
+      // });
     }
   }
   // public TotalRecords;
-
 
 
 
@@ -624,7 +666,7 @@ export class NewRequestComponent implements OnInit {
   getPlayList() {
     var playlistbody =
     {
-      "TitleCode": this.newMusicConsumptionRequest.TitleCode.Title_Code
+      "TitleCode": 0
     }
     this.load = true;
     this.addBlockUI();
@@ -634,6 +676,7 @@ export class NewRequestComponent implements OnInit {
 
       this.listdetail = response.MHPlayList;
       this.listDetail1 = response.MHPlayList;
+
 
 
       this.filterlist();
@@ -658,6 +701,8 @@ export class NewRequestComponent implements OnInit {
     debugger;
     if (this.showdetail == true) {
       this.showdetail = false;
+      this.showPlayList=false;
+      this.showTabdata=false;
       // this.cartList = [];
       // this.cartListCount = 0;
     }
@@ -682,15 +727,23 @@ export class NewRequestComponent implements OnInit {
   public MaxEpisode = 0;
   public MinEpisode = 0;
   showChange() {
-    this.getPlayList();
+    debugger;
+    // this.getPlayList();
     if (this.episodeType == 'tentative') {
       this.episodeNo = 0;
       this.newMusicConsumptionRequest.EpisodeFrom = 0;
       this.newMusicConsumptionRequest.EpisodeTo = 0;
+      this.showdetail = false;
+      this.showPlayList = false;
+      this.showTabdata=false;
     }
     else if (this.episodeType == 'range') {
       this.newMusicConsumptionRequest.EpisodeFrom = 0;
       this.newMusicConsumptionRequest.EpisodeTo = 0;
+      this.showdetail = false;
+      this.showPlayList = false;
+      this.showTabdata=false;
+      
     }
     if (this.showdetail == true) {
       this.showdetail = false;
@@ -1946,7 +1999,7 @@ export class NewRequestComponent implements OnInit {
     console.log(filtered)
     return filtered;
   }
-  
+
   calculateTo(rowData, showError, validateOnly, data) {
     debugger;
     var returnVal = true;
@@ -2494,6 +2547,71 @@ export class NewRequestComponent implements OnInit {
       this.Download(response.Return.Message)
     }, error => { this.handleResponseError(error) }
     );
+  }
+
+  getMusictrackList(data) {
+    debugger;
+    this.showdetail = true;
+    this.tabHeaders = "PlayList";
+    this.setMHPlaylistCode = data.MHPlayListCode;
+    this.setMHPlaylistName=data.PlaylistName;
+    sessionStorage.setItem(TAB_NAME, this.tabHeaders);
+    sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+    sessionStorage.setItem(MHPLAYLIST_NAME,this.setMHPlaylistName)
+    this.componentData = {
+      'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
+      'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
+    }
+  }
+
+  onTabChange(event) {
+    debugger;
+    if (event.index == 0 ) {
+      this.tabHeaders = 'PlayList';
+      this.showPlayList = true;
+      this.showdetail = true;
+      this.showTabdata = true;
+      sessionStorage.setItem(TAB_NAME, this.tabHeaders);
+      sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+    //  sessionStorage.setItem(MHPLAYLIST_NAME,this.setMHPlaylistName)
+      this.componentData = {
+        'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
+        'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
+      }
+    }
+    else if (event.index == 1) {
+      this.showdetail = true;
+      this.showTabdata = true;
+      this.showPlayList = false;
+      this.tabHeaders = 'PlayListSearch';
+      sessionStorage.setItem(TAB_NAME, this.tabHeaders);
+      sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+      this.componentData = {
+        'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
+        'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
+      }
+    }
+  }
+
+  deleteFullPlaylist() {
+    this.showDeletedialog = true;
+  }
+
+  deletePlaylist(){
+    let dataObj = {
+      "MHPlayListCode": this.setMHPlaylistCode,
+    }
+    this._requisitionService.DeletePlayList(dataObj).subscribe(response => {
+    let Return = response.Return
+    if(Return.IsSuccess == true){
+      this.showDeletedialog=false;
+      this.getPlayList();
+      this.componentData = {
+        'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
+        'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
+      }
+    }
+    }, error => { this.handleResponseError(error) });
   }
 
   handleResponseError(errorCode) {

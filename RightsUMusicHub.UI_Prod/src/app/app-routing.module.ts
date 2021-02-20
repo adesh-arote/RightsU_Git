@@ -28,6 +28,7 @@ const routes: Routes = [
      {path:'reports',loadChildren:'./reports/reports.module#ReportsModule', canActivate: [AuthGuardService]}   ,
      { path:'changepswd',component:ChangePasswordComponent, canActivate: [AuthGuardService]  },
     {path:'notification-list',component:NotificationListComponent, canActivate: [AuthGuardService]},
+    {path:'playlist-details',loadChildren:"./playlist-details/playlist-details.module#PlaylistDetailsModule", canActivate: [AuthGuardService]} ,
     ]
   },
 ];

@@ -1,130 +1,134 @@
-
-.requestgrid{
+.requestgrid {
   margin-top: 1%;
 }
-  input.SearchTextBox {
-    width:40% !important;
-    margin-right:2px !important;
-    border: 1px solid #bbb !important;
-    padding:2px 2px !important;
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
-    border-top-right-radius: 4px !important;
-    border-bottom-right-radius: 4px !important;
-    height: 30px;
-  }
-  input.RequestTextBox {
-    width:15% !important;
-    margin-right:2px !important;
-    border: 1px solid #bbb !important;
-    padding:2px 2px !important;
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
-    border-top-right-radius: 4px !important;
-    border-bottom-right-radius: 4px !important;
-    height: 30px;
-  }
-  input.RequestlistTextBox {
-    width:200px !important;
-    /* margin-right:2px !important; */
-    border: 1px solid #bbb !important;
-    padding:2px 2px !important;
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
-    border-top-right-radius: 4px !important;
-    border-bottom-right-radius: 4px !important;
-    height: 30px;
-  }
 
-  input.RequestNumber {
-    width:30% !important;
-    margin-right:2px !important;
-    border: 1px solid #bbb !important;
-    padding:2px 2px !important;
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
-    border-top-right-radius: 4px !important;
-    border-bottom-right-radius: 4px !important;
-    height: 30px;
-  }
-  input.ReqTextBox {
-    width:70% !important;
-    margin-right:2px !important;
-    border: 1px solid #bbb !important;
-    padding:2px 2px !important;
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
-    border-top-right-radius: 4px !important;
-    border-bottom-right-radius: 4px !important;
-    height: 30px;
-  }
-  
-  input.searchReqTextBox {
-    width:147px !important;
-    margin-right:2px !important;
-    border: 1px solid #bbb !important;
-    padding:2px 2px !important;
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
-    border-top-right-radius: 4px !important;
-    border-bottom-right-radius: 4px !important;
-    height: 30px;
-  }
-
-  label {
-    display: inline-block;
-    max-width: 100%;
-    margin-bottom: 5px;
-    font-weight: initial;
-}
-input.cueSheetFrame {
-  width:31% !important;
-  margin-right:2px !important;
+input.SearchTextBox {
+  width: 40% !important;
+  margin-right: 2px !important;
   border: 1px solid #bbb !important;
-  padding:2px 2px !important;
-  border-top-left-radius: 4px !important;
-  border-bottom-left-radius: 4px !important;
-  border-top-right-radius: 4px !important;
-  border-bottom-right-radius: 4px !important;
-  height: 26px;
-}
-input.requestSongType {
-  width:90% !important;
-  margin-right:2px !important;
-  border: 1px solid #bbb !important;
-  padding:2px 2px !important;
+  padding: 2px 2px !important;
   border-top-left-radius: 4px !important;
   border-bottom-left-radius: 4px !important;
   border-top-right-radius: 4px !important;
   border-bottom-right-radius: 4px !important;
   height: 30px;
 }
-.cueSheetRemark{
+
+input.RequestTextBox {
+  width: 15% !important;
+  margin-right: 2px !important;
+  border: 1px solid #bbb !important;
+  padding: 2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 30px;
+}
+
+input.RequestlistTextBox {
+  width: 200px !important;
+  /* margin-right:2px !important; */
+  border: 1px solid #bbb !important;
+  padding: 2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 30px;
+}
+
+input.RequestNumber {
+  width: 30% !important;
+  margin-right: 2px !important;
+  border: 1px solid #bbb !important;
+  padding: 2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 30px;
+}
+
+input.ReqTextBox {
+  width: 70% !important;
+  margin-right: 2px !important;
+  border: 1px solid #bbb !important;
+  padding: 2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 30px;
+}
+
+input.searchReqTextBox {
+  width: 147px !important;
+  margin-right: 2px !important;
+  border: 1px solid #bbb !important;
+  padding: 2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 30px;
+}
+
+label {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 5px;
+  font-weight: initial;
+}
+
+input.cueSheetFrame {
+  width: 31% !important;
+  margin-right: 2px !important;
+  border: 1px solid #bbb !important;
+  padding: 2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 26px;
+}
+
+input.requestSongType {
+  width: 90% !important;
+  margin-right: 2px !important;
+  border: 1px solid #bbb !important;
+  padding: 2px 2px !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  height: 30px;
+}
+
+.cueSheetRemark {
   width: 100%;
 }
+
 /* p-calendar>span>input{
   width: 10px !important;
 } */
-
 
 /* .dropdown-content:active {
   display: block;
 } */
 
-
-
-
-
-.dropdwnbody li{
+.dropdwnbody li {
   padding-left: 1%;
 }
-.dropdown-menu{
+
+.dropdown-menu {
   border: 1px solid #bbb !important;
-  width: 700px; 
+  width: 700px;
   z-index: 1003 !important;
   top: -137px !important;
   opacity: 1 !important;
 }
+
 .staticdropdown ul:after {
   position: absolute;
   left: 20%;
@@ -136,7 +140,8 @@ input.requestSongType {
   border-right: 9px solid transparent;
   border-bottom: 9px solid lightgray;
 }
-#tercondtndiv{
+
+#tercondtndiv {
   background-color: white;
   border: 1px solid gray;
 }
@@ -157,5 +162,99 @@ input.requestSongType {
 }
 
 ::ng-deep.ui-datepicker.ui-widget.ui-datepicker-timeonly .ui-timepicker {
-	display: none !important;
+  display: none !important;
+}
+
+.close-playList {
+  font-size: 20px;
+  color: #dd3917f5;
+  float: right;
+  margin-top: 0px;
+  padding-left: 50px;
+}
+
+.padding-Css{
+  padding-left: 5%
+}
+
+.margin-style{
+  margin-top: 2%;
+}
+
+.m-left{
+  margin-left: -5%;
+}
+
+.info-Css{
+  height: 70px;
+  margin-right: 10px;
+}
+
+.info-icon-style{
+  height: 70px;
+  width: 70px;
+  line-height: 65px !important;
+  margin-left: -14px
+}
+
+.icon-Css{
+  font-size:40px;
+  margin-left: -5px;
+}
+
+.tooltip-text{
+  white-space:initial !important;
+  margin-left: -25%;
+  text-transform: none !important;
+  width: 180%;
+}
+
+.info-box {
+  display: block;
+  min-height: 68px;
+  background: #f7f4f4;
+  width: 85%;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+  border-radius: 2px;
+  margin-bottom: 15px;
+}
+
+::ng-deep.slick-prev:before, .slick-next:before {
+  font-family: "slick";
+  font-size: 20px;
+  line-height: 1;
+  color: #000;
+  opacity: .75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::ng-deep.slick-next:before {
+  content: "→";
+  color: #000;
+  margin-left: -43px;
+}
+
+::ng-deep.slick-slide {
+  outline: none !important;
+}
+
+::ng-deep.slick-prev:before {
+  content: "←";
+  left: -23px;
+  margin-left: -16px;
+}
+
+.buttonplayList {
+  display: inline-block;
+    padding: 5px 25px;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #3c8dbc;
+    border: none;
+    border-radius: 5px;
 }

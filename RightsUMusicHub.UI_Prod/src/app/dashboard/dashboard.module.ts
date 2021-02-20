@@ -19,9 +19,10 @@ import {FilterPipe} from '../shared/pipes/filter.pipes';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import {TooltipModule} from 'primeng/tooltip';
 import {DataGridModule} from 'primeng/primeng';
-
+import {TabViewModule} from 'primeng/primeng';
 import {VarDirective} from '../shared/directives/variable-declartion';
 import{DashboardRoutes} from './dashboard.route';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
 @NgModule({
   imports: [
     CommonModule,
@@ -43,6 +44,8 @@ import{DashboardRoutes} from './dashboard.route';
     CalendarModule,
     FormsModule,
     DataGridModule,
+    TabViewModule,
+    SlickCarouselModule,
     RouterModule.forChild(DashboardRoutes)
   ],
   declarations: [DashboardComponent, QuickSelectionComponent,VarDirective

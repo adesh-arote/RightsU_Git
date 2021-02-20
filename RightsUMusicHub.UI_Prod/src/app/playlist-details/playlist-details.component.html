@@ -1,0 +1,32 @@
+<div class="content-wrapper">
+  <section class=" content-header">
+    <h1>Playlist Details
+    </h1>
+    <hr class="hrborder">
+  </section>
+  <section class="content-subHeader" style="margin-top: -1%;">
+    <label>Search :</label>&nbsp;
+    <input type="text" #gb class="SearchTextBox" pInputText size="50" placeholder="PlaylistName" autocomplete="off">
+    <br><br>
+    <p-dataTable [globalFilter]="gb" [value]="playList" [rowsPerPageOptions]="[10,25,50,100]" [paginator]="true" [rows]="10"
+      [responsive]="true" [alwaysShowPaginator]="true" #playlist>
+      <p-column field="PlaylistName" header="Playlist Name" styleClass="text-center" [style]=" {'width':'50px' }"
+        [sortable]="true"></p-column>
+      <p-column field="" header="Action" styleClass="text-center" [style]=" {'width':'50px' }">
+        <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+          <button (click)="viewRecords('Details',row,'A')" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
+            data-placement="top" title="View">
+            <i class="fa fa-eye"></i>
+          </button>
+          <button (click)="viewRecords('Details',row,'A')" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
+            data-placement="top" title="Delete">
+            <i class="fa fa-trash"></i>
+          </button>
+        </ng-template>
+      </p-column>
+      <p-footer>
+        Total Records: {{playlist.totalRecords}}
+      </p-footer>
+    </p-dataTable>
+  </section>
+</div>

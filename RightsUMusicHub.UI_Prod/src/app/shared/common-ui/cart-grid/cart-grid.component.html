@@ -1,84 +1,100 @@
-<section class="content-subHeader" id="RowShow" >
+<section id="RowShow">
   <div class="row">
     <div class="col-xs-12">
       <div class="box box-primary">
         <div class="box-header with-border" style="padding: 9px !important">
           <h3 class="box-title">
-              <div *ngIf="!requestType">
+            <div *ngIf="!requestType">
               <!-- <button type="button" class="btn btn-primary" id="btnFavouritesSearch"><i class="fa fa-music" aria-hidden="true" ></i> Devotional</button>  -->
-                <div>
-                  <span pTooltip="{{gridvalue.PlaylistName}}" tooltipPosition="top" ><i class="fa fa-music fa-lg" aria-hidden="true" ></i> {{(gridvalue.PlaylistName.length>50)? (gridvalue.PlaylistName | slice:0:49)+'..':(gridvalue.PlaylistName) }}</span>
-                </div>
-
-                </div>
-          <div *ngIf="requestType">            
-            <span style="color:black;">{{showName}}&nbsp;</span>
-            <span *ngIf="episodeType=='tentative'">
-              <small style="color:black;"> <b> - {{newMusicConsumptionRequest.EpisodeFrom}}</b></small>
-            </span>
-            <span *ngIf="episodeType=='range'">
-              <small style="color:black;"> <b>{{newMusicConsumptionRequest.EpisodeFrom}} - {{newMusicConsumptionRequest.EpisodeTo}}</b></small>
-            </span>
-            <span [hidden]="!isClick">
-              (<small style="color:black">   <span pTooltip="{{playListName}}" tooltipPosition="top" ><i class="fa fa-music fa-lg" aria-hidden="true" ></i>  <b>&nbsp;{{(playListName.length>50)? (playListName | slice:0:49)+'..':(playListName) }}</b> </span> </small>)
-            </span>
-          </div>
-          </h3>
-          
-          <div class="box-tools">
-              
-              <div class="btn-group" *ngIf="requestType">
-              <button type="button" class="btn btn-primary" id="btnFavouritesSearch" *ngIf="toplist.length>=1" (click)="listWiseGridSearch(toplist[0].MHPlayListCode,toplist[0].PlaylistName)" ><i class="fa fa-music" aria-hidden="true" data-toggle="tooltip" title="{{toplist[0].PlaylistName}}" ></i></button>
-              <button type="button" class="btn btn-info" id="btnSoundtrackSearch"  *ngIf="toplist.length>=2"(click)="listWiseGridSearch(toplist[1].MHPlayListCode,toplist[1].PlaylistName)"><i class="fa fa-music" aria-hidden="true"data-toggle="tooltip" title="{{toplist[1].PlaylistName}}" ></i></button>
-              <button type="button" class="btn btn-success" id="btnPopularSearch" *ngIf="toplist.length>=3" (click)="listWiseGridSearch(toplist[2].MHPlayListCode,toplist[2].PlaylistName)" ><i class="fa fa-music" aria-hidden="true" data-toggle="tooltip" title="{{toplist[2].PlaylistName}}" ></i></button>
-              <div class="btn-group" *ngIf="listDetail1.length>=1" >
-              
-                  <div  class="dropdown staticdropdown" >
-                        
-                  <button type="button" class="btn btncss dropdown-toggle" id="btnPopularSearch"  data-toggle="dropdown" ><i class="fa fa-list-ul" aria-hidden="true" data-toggle="tooltip" title="Play Lists"></i></button>
-              <!-- <div class=""></div> -->
-                  <!-- <div class=""> -->
-                          <ul class="dropdown-menu dropdown-menu-right filter-menu" >
-                            <li class="dropdown-header">Play Lists</li>
-                           
-                            <li class="searchbody">
-                              
-                                  <input [(ngModel)]="searchText1" class="listsearch" placeholder="Search List Here" autocomplete="off">
-                              
-                              </li>
-                            
-                            <div class="dropdwnbody1" >
-                              <li *ngFor="let c1 of listDetail1 | filter:searchText1" (click)="listWiseGridSearch(c1.MHPlayListCode,c1.PlaylistName)">
-                                  <a>
-                                    <span pTooltip="{{c1.PlaylistName}}" tooltipPosition="top">
-                                        {{(c1.PlaylistName.length>20)? (c1.PlaylistName | slice:0:20)+'..':(c1.PlaylistName) }}
-                                    </span>
-                                      
-                                    </a> 
-                              </li>
-                            
-                          </div>
-                            
-                          </ul>
-                        <!-- </div> -->
-                        </div>
-              
-              
-            </div>&nbsp;
+              <div>
+                <span pTooltip="{{gridvalue.PlaylistName}}" tooltipPosition="top"><i class="fa fa-music fa-lg"
+                    aria-hidden="true"></i> {{(gridvalue.PlaylistName.length>50)? (gridvalue.PlaylistName |
+                  slice:0:49)+'..':(gridvalue.PlaylistName) }}</span>
               </div>
-              
-              
-                  <!-- <button type="button" class="btn btn-success dropdown-toggle" id="btnPopularSearch"  data-toggle="dropdown" ><i class="fa fa-list-ul" aria-hidden="true" data-toggle="tooltip" title="Play List!"></i></button> -->
-
-                             <span style="margin-right: -5px;">   <button class="btn btn--with-icon btn-social btn-danger" [disabled]="!cartListCount" data-toggle="modal" (click)="cartModalShow()" >
-              <i class="fa fa-shopping-cart"></i> Cart(<span id="cartCount">{{cartListCount}}</span>)</button>
-              </span>
 
             </div>
+            <div *ngIf="requestType">
+              <span style="color:black;">{{showName}}&nbsp;</span>
+              <span *ngIf="episodeType=='tentative'">
+                <small style="color:black;"> <b> - {{newMusicConsumptionRequest.EpisodeFrom}}</b></small>
+              </span>
+              <span *ngIf="episodeType=='range'">
+                <small style="color:black;"> <b>{{newMusicConsumptionRequest.EpisodeFrom}} -
+                    {{newMusicConsumptionRequest.EpisodeTo}}</b></small>
+              </span>
+              <span [hidden]="!isClick">
+                (<small style="color:black"> <span pTooltip="{{playListName}}" tooltipPosition="top"><i
+                      class="fa fa-music fa-lg" aria-hidden="true"></i> <b>&nbsp;{{(playListName.length>50)?
+                      (playListName | slice:0:49)+'..':(playListName) }}</b> </span> </small>)
+              </span>
+            </div>
+          </h3>
+
+          <div class="box-tools">
+
+            <div class="btn-group" *ngIf="showSearchpanel">
+              <button type="button" class="btn btn-primary" id="btnFavouritesSearch" *ngIf="toplist.length>=1"
+                (click)="listWiseGridSearch(toplist[0].MHPlayListCode,toplist[0].PlaylistName)"><i class="fa fa-music"
+                  aria-hidden="true" data-toggle="tooltip" title="{{toplist[0].PlaylistName}}"></i></button>
+              <button type="button" class="btn btn-info" id="btnSoundtrackSearch" *ngIf="toplist.length>=2"
+                (click)="listWiseGridSearch(toplist[1].MHPlayListCode,toplist[1].PlaylistName)"><i class="fa fa-music"
+                  aria-hidden="true" data-toggle="tooltip" title="{{toplist[1].PlaylistName}}"></i></button>
+              <button type="button" class="btn btn-success" id="btnPopularSearch" *ngIf="toplist.length>=3"
+                (click)="listWiseGridSearch(toplist[2].MHPlayListCode,toplist[2].PlaylistName)"><i class="fa fa-music"
+                  aria-hidden="true" data-toggle="tooltip" title="{{toplist[2].PlaylistName}}"></i></button>
+              <div class="btn-group" *ngIf="listDetail1.length>=1">
+
+                <div class="dropdown staticdropdown">
+
+                  <button type="button" class="btn btncss dropdown-toggle" id="btnPopularSearch"
+                    data-toggle="dropdown"><i class="fa fa-list-ul" aria-hidden="true" data-toggle="tooltip"
+                      title="Play Lists"></i></button>
+                  <!-- <div class=""></div> -->
+                  <!-- <div class=""> -->
+                  <ul class="dropdown-menu dropdown-menu-right filter-menu">
+                    <li class="dropdown-header">Play Lists</li>
+
+                    <li class="searchbody">
+
+                      <input [(ngModel)]="searchText1" class="listsearch" placeholder="Search List Here"
+                        autocomplete="off">
+
+                    </li>
+
+                    <div class="dropdwnbody1">
+                      <li *ngFor="let c1 of listDetail1 | filter:searchText1"
+                        (click)="listWiseGridSearch(c1.MHPlayListCode,c1.PlaylistName)">
+                        <a>
+                          <span pTooltip="{{c1.PlaylistName}}" tooltipPosition="top">
+                            {{(c1.PlaylistName.length>20)? (c1.PlaylistName | slice:0:20)+'..':(c1.PlaylistName) }}
+                          </span>
+
+                        </a>
+                      </li>
+
+                    </div>
+
+                  </ul>
+                  <!-- </div> -->
+                </div>
+
+
+              </div>&nbsp;
+            </div>
+
+
+            <!-- <button type="button" class="btn btn-success dropdown-toggle" id="btnPopularSearch"  data-toggle="dropdown" ><i class="fa fa-list-ul" aria-hidden="true" data-toggle="tooltip" title="Play List!"></i></button> -->
+
+            <span style="margin-right: -5px;"> <button class="btn btn--with-icon btn-social btn-danger"
+                [disabled]="!cartListCount" data-toggle="modal"  (click)="cartModalShow()">
+                <i class="fa fa-shopping-cart"></i> Cart(<span id="cartCount">{{cartListCount}}</span>)</button>
+            </span>
+
+          </div>
 
         </div>
-        <div class="box-body" *ngIf="requestType">
-          <div class="block" >
+        <div class="box-body" *ngIf="showSearchpanel">
+          <div class="block">
             <form #searchForm="ngForm">
               <span style="width:5%">
                 <!-- <select name="ddlMusicLabel" id="ddlMusicLabel" class="chosen-select ddlwidth2" [(ngModel)]="newSearchRequest.MusicLabelCode">
@@ -87,14 +103,17 @@
         {{label.Music_Label_Name}}
       </option>
     </select> -->
-                <p-dropdown [options]="musicLabelList" [style]="{'width':'150px'}" [autoWidth]="false" [(ngModel)]="newSearchRequest.MusicLabelCode"
-                            name=labelname optionLabel="MusicLabelName" [resetFilterOnHide]="true" filter="true"></p-dropdown>
+                <p-dropdown [options]="musicLabelList" [style]="{'width':'150px'}" [autoWidth]="false"
+                  [(ngModel)]="newSearchRequest.MusicLabelCode" name=labelname optionLabel="MusicLabelName"
+                  [resetFilterOnHide]="true" filter="true"></p-dropdown>
               </span>&nbsp;
               <span style="width:10%">
-                <input type="text" style="width:130px !important" name="musicTrack" value="" placeholder="Music Track" class="RequestTextBox" name="musicTrack" [(ngModel)]="newSearchRequest.MusicTrack" autocomplete="off">
+                <input type="text" style="width:130px !important" name="musicTrack" value="" placeholder="Music Track"
+                  class="RequestTextBox" name="musicTrack" [(ngModel)]="newSearchRequest.MusicTrack" autocomplete="off">
               </span>&nbsp;
               <span>
-                <input style="width:130px !important" type="text" name="musicRequest" value="" placeholder="Movie" class="RequestTextBox" name="movieName" [(ngModel)]="newSearchRequest.MovieName" autocomplete="off">
+                <input style="width:130px !important" type="text" name="musicRequest" value="" placeholder="Movie"
+                  class="RequestTextBox" name="movieName" [(ngModel)]="newSearchRequest.MovieName" autocomplete="off">
               </span>&nbsp;
               <span style="width:10%">
                 <!-- <select name="ddlGenre" style="width:15%" id="ddlGenre" name="genreCode" class="chosen-select ddlwidth2" [(ngModel)]="newSearchRequest.GenreCode">
@@ -103,18 +122,22 @@
         {{label.Genres_Name}}
       </option>
     </select> -->
-                <p-dropdown [options]="getGenreList" [style]="{'width':'150px'}" [autoWidth]="false" [(ngModel)]="newSearchRequest.GenreCode"
-                            name=genrename optionLabel="Genres_Name" [resetFilterOnHide]="true" filter="true"></p-dropdown>
+                <p-dropdown [options]="getGenreList" [style]="{'width':'150px'}" [autoWidth]="false"
+                  [(ngModel)]="newSearchRequest.GenreCode" name=genrename optionLabel="Genres_Name"
+                  [resetFilterOnHide]="true" filter="true"></p-dropdown>
               </span>&nbsp;
               <span>
-                <input style="width:130px !important" type="text" value="" name="talentName" placeholder="Talent" class="RequestTextBox" name="talentName" [(ngModel)]="newSearchRequest.TalentName" autocomplete="off">
+                <input style="width:130px !important" type="text" value="" name="talentName" placeholder="Talent"
+                  class="RequestTextBox" name="talentName" [(ngModel)]="newSearchRequest.TalentName" autocomplete="off">
               </span>&nbsp;
               <span>
-                <input style="width:130px !important" type="text" value="" name="tag" placeholder="Tag" class="RequestTextBox" [(ngModel)]="newSearchRequest.Tag" autocomplete="off">
+                <input style="width:130px !important" type="text" value="" name="tag" placeholder="Tag"
+                  class="RequestTextBox" [(ngModel)]="newSearchRequest.Tag" autocomplete="off">
               </span>&nbsp;
               <span style="width:5%">
-                <p-dropdown [options]="languageList" [style]="{'width':'150px'}" [autoWidth]="false" [(ngModel)]="newSearchRequest.MusicLanguageCode"
-                name=languagename  optionLabel="Language_Name" [resetFilterOnHide]="true" filter="true"></p-dropdown>
+                <p-dropdown [options]="languageList" [style]="{'width':'150px'}" [autoWidth]="false"
+                  [(ngModel)]="newSearchRequest.MusicLanguageCode" name=languagename optionLabel="Language_Name"
+                  [resetFilterOnHide]="true" filter="true"></p-dropdown>
               </span>&nbsp;
               <span style="width:10%" (click)="searchTrack()">
                 <a id="Search_muiscLable" class="btn btn-social btn-sm btn-primary btn-flat" style="height: 30px;">
@@ -131,68 +154,73 @@
 
         </div>
         <div class="box-body">
-            <!-- <div class="Row"> -->
-                <!-- <div>
+          <!-- <div class="Row"> -->
+          <!-- <div>
                   <label>Search</label>&nbsp;
                   <input id="input" class="SearchTextBox" #trackSearch type="text" size="30" placeholder=""
                     pInputText [(ngModel)]="text">
           
                 </div> -->
-          
-              <!-- </div> -->
-              <!-- <br> -->
-              <div class="Row" *ngIf="searchShowGrid">
-                  <!-- selectionMode="single" -->
-                  <p-dataTable class="pcolumncursor" [value]="searchList"   (onRowDblclick)="addToCart($event)" [rowsPerPageOptions]="[25,50,75,100]" [globalFilter]="trackSearch" [paginator]="true" [rows]="25"  
-            [responsive]="true" [alwaysShowPaginator]="true" [totalRecords]="recordCount"  (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true"   [first]="first">
-            <!-- (onPage)="paginationchange($event)" -->
-            <p-column field="MusicTrack" header="Music Track" [sortable]="true" >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-                <span pTooltip="{{row.MusicTrack}}" tooltipPosition="top">{{row.MusicTrack}}</span> 
-               </ng-template>
-            </p-column>
-            <p-column field="Movie"  header="Movie" [sortable]="true" styleClass="text-center"  >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-               <span pTooltip="{{row.Movie}}" tooltipPosition="top">{{row.Movie}}</span> 
-              </ng-template>
-            </p-column>
-            <p-column field="Genre" header="Genre" [sortable]="true" width="10" styleClass="text-center" >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-                <span pTooltip="{{row.Genre}}" tooltipPosition="top">{{row.Genre}}</span> 
-               </ng-template>
-            </p-column>
-            <p-column field="StarCast" header="Star Cast" [sortable]="true" width="10"  >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-                <span pTooltip="{{row.StarCast}}" tooltipPosition="top">{{row.StarCast}}</span> 
-               </ng-template>
-            </p-column>
-            <p-column field="Singers" header="Singers" [sortable]="true" width="10"  >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-                <span pTooltip="{{row.Singers}}" tooltipPosition="top">{{row.Singers}}</span> 
-               </ng-template>
-            </p-column>
-            <p-column field="MusicComposer" header="Music Composer" [sortable]="true"[style]=" {'width':'145px'}"  >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-                <span pTooltip="{{row.MusicComposer}}" tooltipPosition="top">{{row.MusicComposer}}</span> 
-               </ng-template>
-            </p-column>            
-            <p-column field="Tag" header="Tag" [sortable]="true" width="10" styleClass="text-center" >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-                <span pTooltip="{{row.Tag}}" tooltipPosition="top">{{row.Tag}}</span> 
-               </ng-template>
-            </p-column>
-            <p-column field="MusicLabel" header="Music Label" [sortable]="true" width="10" styleClass="text-center" >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-                <span pTooltip="{{row.MusicLabel}}" tooltipPosition="top">{{row.MusicLabel}}</span> 
-               </ng-template>
-            </p-column>
-            <p-column field="MusicLanguage" header="Music Language" [sortable]="true" [style]=" {'width':'150px'}" styleClass="text-center" >
-              <ng-template pTemplate="body"  let-row="rowData" let-index="rowIndex" let-col>
-                <span pTooltip="{{row.MusicLanguage}}" tooltipPosition="top">{{row.MusicLanguage}}</span> 
-               </ng-template>
-            </p-column>
-            <p-column field="Action" header="Add to Playlist"   [editable]="true" [style]=" {'width':'80px'}" styleClass="text-center columnstyle" >
-              <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+
+          <!-- </div> -->
+          <!-- <br> -->
+          <div class="Row" *ngIf="searchShowGrid">
+            <!-- selectionMode="single" -->
+            <p-dataTable class="pcolumncursor" [value]="searchList" (onRowDblclick)="addToCart($event)"
+              [rowsPerPageOptions]="[25,50,75,100]" [globalFilter]="trackSearch"   [paginator]="true" [rows]="25"
+              [responsive]="true" [alwaysShowPaginator]="true" [totalRecords]="recordCount" [sortField]="sortF"
+             (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true"
+              [first]="first">
+              <!-- (onPage)="paginationchange($event)" -->
+              <p-column field="MusicTrack" header="Music Track" [sortable]="true">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.MusicTrack}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.MusicTrack}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="Movie" header="Movie" [sortable]="true" styleClass="text-center">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.Movie}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.Movie}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="Genre" header="Genre" [sortable]="true" width="10" styleClass="text-center">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.Genre}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.Genre}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="StarCast" header="Star Cast" [sortable]="true" width="10">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.StarCast}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.StarCast}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="Singers" header="Singers" [sortable]="true" width="10">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.Singers}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.Singers}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="MusicComposer" header="Music Composer" [sortable]="true" [style]=" {'width':'145px'}">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.MusicComposer}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.MusicComposer}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="Tag" header="Tag" [sortable]="true" width="10" styleClass="text-center">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.Tag}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.Tag}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="MusicLabel" header="Music Label" [sortable]="true" width="10" styleClass="text-center">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.MusicLabel}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.MusicLabel}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="MusicLanguage" header="Music Language" [sortable]="true" [style]=" {'width':'150px'}"
+                styleClass="text-center">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+                  <span pTooltip="{{row.MusicLanguage}}" tooltipPosition="top" (contextmenu)="onRowSelect(row)">{{row.MusicLanguage}}</span>
+                </ng-template>
+              </p-column>
+              <p-column field="Action" header="Add to Playlist" [editable]="true" [style]=" {'width':'80px'}"
+                styleClass="text-center columnstyle">
+                <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
                   <!-- <p-dropdown class="classcss" appendTo="body"  [options]="musicLabelList" [autoWidth]="false"   [(ngModel)]="row[col.field]" [style]=" {'width':'150px' }" required name="MusicLabelCode'{{i}}'" #MusicLabelCode{{i}}="ngModel"  placeholder="Select Music Label" optionLabel="Music_Label_Name" filter="true" [showClear]="true"></p-dropdown> -->
                   <!-- <p-multiSelect   [options]="playlist" appendTo="body" optionLabel="playlist_Name" [style]=" {'width':'100px' }" [(ngModel)]="row[col.field]" placeholder="Select Play List" [panelStyle]="{minWidth:'10px'}">
                     <p-footer>
@@ -201,58 +229,60 @@
                   </p-footer>
                   </p-multiSelect> -->
                   <!-- <p-tieredMenu #menu [model]="items" [popup]="true" appendTo="body" [style]="{'overflow-y':'auto','height':'80px' }"></p-tieredMenu> -->
-<!-- <button #btn type="button" pButton icon="fa fa-fw fa-plus"  (click)="menu.toggle($event)"><img  src="../../../assets/Images/viacom18_small.png" alt="Viacom18" /></button> -->
-<!-- <a class="btn  btn-with-icon  btn-primary" (click)="menu.toggle($event)"> -->
-<!-- <img  src="../../../assets/Images/playlist_small.png" (click)="menu.toggle($event)" alt="Viacom18" />  -->
-<!-- </a> -->
-<div  class="dropdown staticdropdown">
-<!-- <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Tutorials
+                  <!-- <button #btn type="button" pButton icon="fa fa-fw fa-plus"  (click)="menu.toggle($event)"><img  src="../../../assets/Images/viacom18_small.png" alt="Viacom18" /></button> -->
+                  <!-- <a class="btn  btn-with-icon  btn-primary" (click)="menu.toggle($event)"> -->
+                  <!-- <img  src="../../../assets/Images/playlist_small.png" (click)="menu.toggle($event)" alt="Viacom18" />  -->
+                  <!-- </a> -->
+                  <div class="dropdown staticdropdown">
+                    <!-- <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Tutorials
 <span class="caret"></span></button> -->
-<img  src="../../../assets/Images/playlist_small.png" class="dropdown-toggle" data-toggle="dropdown"  alt="Playlists" (click)="playListClick()"/>
+                    <img src="../../../assets/Images/playlist_small.png" class="dropdown-toggle" data-toggle="dropdown"
+                      alt="Playlists" (click)="playListClick()" />
 
-<ul class="dropdown-menu dropdown-menu-right grid-menu">
-<li class="dropdown-header">Play Lists</li>
+                    <ul class="dropdown-menu dropdown-menu-right grid-menu">
+                      <li class="dropdown-header">Play Lists</li>
 
-<li class="searchbody">
-  <!-- <div id="searchbody"> -->
-      <input [(ngModel)]="searchText" class="listsearch" placeholder="Search List Here" autocomplete="off">
-  <!-- </div> -->
-  </li>
-<!-- style="height:100px;overflow-y: auto;" -->
-<div class="dropdwnbody" >
-  <li *ngFor="let c of listdetail | filter:searchText" (click)="attachPlayList(row,c)">
-      <a>
-          <span pTooltip="{{c.PlaylistName}}" tooltipPosition="top">
-              {{(c.PlaylistName.length>20)? (c.PlaylistName | slice:0:20)+'..':(c.PlaylistName) }}
-          </span></a>
-          <!-- {{c.PlaylistName}}  -->
-  </li>
-<!-- <li (click)="devclick()"><a><i ></i>Devotional</a></li>
+                      <li class="searchbody">
+                        <!-- <div id="searchbody"> -->
+                        <input [(ngModel)]="searchText" class="listsearch" placeholder="Search List Here"
+                          autocomplete="off">
+                        <!-- </div> -->
+                      </li>
+                      <!-- style="height:100px;overflow-y: auto;" -->
+                      <div class="dropdwnbody">
+                        <li *ngFor="let c of listdetail | filter:searchText" (click)="attachPlayList(row,c)">
+                          <a>
+                            <span pTooltip="{{c.PlaylistName}}" tooltipPosition="top">
+                              {{(c.PlaylistName.length>20)? (c.PlaylistName | slice:0:20)+'..':(c.PlaylistName) }}
+                            </span></a>
+                          <!-- {{c.PlaylistName}}  -->
+                        </li>
+                        <!-- <li (click)="devclick()"><a><i ></i>Devotional</a></li>
 <li><a >Trditional</a></li>
 <li><a >Romentic</a></li>
 <li><a >Sad</a></li>
 <li><a >Happy</a></li>
 <li><a >Old</a></li> -->
-</div>
-<li class="divider"></li>
-<!-- <li class="dropdown-header">Dropdown header 2</li> -->
-<li>
-    <a (click)="addNewPlaylist(row)"><i class="fa fa-plus"></i>Add New</a>
-  <!-- <button type="button" class="btn btn-info btn-xs">
+                      </div>
+                      <li class="divider"></li>
+                      <!-- <li class="dropdown-header">Dropdown header 2</li> -->
+                      <li>
+                        <a (click)="addNewPlaylist(row)"><i class="fa fa-plus"></i>Add New</a>
+                        <!-- <button type="button" class="btn btn-info btn-xs">
   <i class="fa fa-plus" aria-hidden="true"></i> Add New</button> -->
-</li>
-</ul>
-</div>
+                      </li>
+                    </ul>
+                  </div>
 
-              </ng-template>
-            </p-column>
-            <p-footer>
+                </ng-template>
+              </p-column>
+              <p-footer>
                 Total Records: {{recordCount}}
               </p-footer>
-          </p-dataTable>
-              </div>
+            </p-dataTable>
+          </div>
 
-          
+
 
         </div>
       </div>
@@ -260,6 +290,13 @@
   </div>
 </section>
 
+<div class="modal right fade" id="Modal_Test" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <span>test modal</span>
+      </div>
+      </div>
+</div>
 <div class="modal right fade" id="Modal_MusicHub" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -299,7 +336,8 @@
                 <span class="pull-right">
                   <strong>Telecast Date range : </strong>
                   <!-- HH:mm a -->
-                  <small>{{newMusicConsumptionRequest.TelecastFrom | date:'dd-MMM-yyyy '}} - {{newMusicConsumptionRequest.TelecastTo
+                  <small>{{newMusicConsumptionRequest.TelecastFrom | date:'dd-MMM-yyyy '}} -
+                    {{newMusicConsumptionRequest.TelecastTo
                     | date:'dd-MMM-yyyy '}}</small>
                 </span>
 
@@ -310,7 +348,7 @@
 
 
           <div class="modal-body" id="tblPanel">
-              
+
             <div class="cart-div">
               <div *ngFor="let cartTrack of cartList" class="SidebarPanel " id="rowPanel1">
                 <!-- <div class="oneDiv">
@@ -319,23 +357,27 @@
                 <div class="twoDiv" style="padding: 10px;">
                   <div class="row">
                     <div class="col-md-7">
-                      <span class="info-box-text">Music Track :  <span class="boldFont">{{cartTrack.MusicTrack}}</span></span>
+                      <span class="info-box-text">Music Track : <span
+                          class="boldFont">{{cartTrack.MusicTrack}}</span></span>
                     </div>
                     <div class="col-md-5">
-                      <span class="info-box-text">Music Label : <span class="boldFont">{{cartTrack.MusicLabel}}</span></span>
+                      <span class="info-box-text">Music Label : <span
+                          class="boldFont">{{cartTrack.MusicLabel}}</span></span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-7">
-                      <span class="info-box-text">Movie Name :  <span class="boldFont">{{cartTrack.Movie}}</span></span>
+                      <span class="info-box-text">Movie Name : <span class="boldFont">{{cartTrack.Movie}}</span></span>
                     </div>
                     <div class="col-md-5">
-                      <span class="info-box-text">Music Language : <span class="boldFont">{{cartTrack.MusicLanguage}}</span></span>
+                      <span class="info-box-text">Music Language : <span
+                          class="boldFont">{{cartTrack.MusicLanguage}}</span></span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-7">
-                      <span class="info-box-text">Star Cast :  <span class="boldFont">{{cartTrack.StarCast}}</span></span>
+                      <span class="info-box-text">Star Cast : <span
+                          class="boldFont">{{cartTrack.StarCast}}</span></span>
                     </div>
                     <div class="col-md-5">
                       <span class="info-box-text">Genre : <span class="boldFont">{{cartTrack.Genre}}</span></span>
@@ -344,29 +386,32 @@
                   <br>
                   <span class="info-box-text">
                     <small style="float:right;">
-                      <a class="btn btn--with-icon btn-social btn-danger" id="CartDelete1" (click)="removeFromCart(cartTrack)">
+                      <a class="btn btn--with-icon btn-social btn-danger" id="CartDelete1"
+                        (click)="removeFromCart(cartTrack)">
                         <i class="fa fa-trash"></i> Remove</a>
                     </small>
                   </span>
                 </div>
               </div>
             </div>
-            
+
 
             <div class="SidebarPanel remarkDiv" style="margin-left:-13px;">
               <label for="comment">Remark </label> (
               <i>{{textRemarkCount}} / 4000 </i> )
               <span style="color:red">*</span>
-              <textarea style="resize:none" rows="3" id="remark" [(ngModel)]="newMusicConsumptionRequest.Remarks" (ngModelChange)="consumptionCartRemarkChange()"
-                required name="Remarks" maxlength=4000></textarea>
+              <textarea style="resize:none" rows="3" id="remark" [(ngModel)]="newMusicConsumptionRequest.Remarks"
+                (ngModelChange)="consumptionCartRemarkChange()" required name="Remarks" maxlength=4000></textarea>
 
             </div>
             <div class="box-footer clearfix" style="margin-left:-22px; ">
-              <button id="btnApproval" [disabled]="!newMusicConsumptionRequest.Remarks || !cartListCount ||validateCartRemark" class="btn btn-sm btn-social btn-primary btn-flat pull-left"
-                (click)="submitRequest()" style="margin-right: 5px;">
+              <button id="btnApproval"
+                [disabled]="!newMusicConsumptionRequest.Remarks || !cartListCount ||validateCartRemark"
+                class="btn btn-sm btn-social btn-primary btn-flat pull-left" (click)="submitRequest()"
+                style="margin-right: 5px;">
                 <i class="fa fa-check-square-o"></i>Submit for Viacom18 Approval</button>
             </div>
-            
+
           </div>
 
 
@@ -376,7 +421,7 @@
       <!-- modal-dialog -->
     </div>
     <!-- Control Sidebar -->
-   
+
     <!-- /.control-sidebar -->
     <!-- Add the sidebar's background. This div must be placed
          immediately after the control sidebar -->
@@ -385,9 +430,10 @@
   </div>
 
 </div>
-<p-dialog [(visible)]="displayAddNewPlayList" [blockScroll]="true"  [positionTop]="60" [modal]="true"  [width]="400" [draggable]="false">
-  <p-header >
-      Play List 
+<p-dialog [(visible)]="displayAddNewPlayList" [blockScroll]="true" [positionTop]="60" [modal]="true" [width]="400"
+  [draggable]="false">
+  <p-header>
+    Play List
   </p-header>
   <div class="row">
     <div class="col-md-12">
@@ -395,8 +441,11 @@
             
       </div> -->
       <!-- <div class="col-md-9"> -->
-         Play List Name:
-          <input id="input" class="ReqTextBox" type="text" placeholder="Play List" maxlength="50" [(ngModel)]="newPlayListName" autocomplete="off" (ngModelChange)="newPlayListName.trim()==''? newPlayListName='':newPlayListName=newPlayListName" pInputText [(ngModel)]="text"> 
+      Play List Name:
+      <input id="input" class="ReqTextBox" type="text" placeholder="Play List" maxlength="50"
+        [(ngModel)]="newPlayListName" autocomplete="off"
+        (ngModelChange)="newPlayListName.trim()==''? newPlayListName='':newPlayListName=newPlayListName" pInputText
+        [(ngModel)]="text">
       <!-- </div> -->
 
     </div>
@@ -404,24 +453,44 @@
   </div>
   <!-- {{alertErrorMessage}} -->
   <p-footer>
-      <button pButton type="button" (click)="createPlayList()" label="Create" [disabled]="!newPlayListName"  class="btn btn-info btn-xs"></button>
+    <button pButton type="button" (click)="createPlayList()" label="Create" [disabled]="!newPlayListName"
+      class="btn btn-info btn-xs"></button>
   </p-footer>
-  
+
 </p-dialog>
 <div *ngIf="displayalertMessage">
-  <app-message-box  [messageData]="messageData"></app-message-box>
+  <app-message-box [messageData]="messageData"></app-message-box>
 
 </div>
-<p-dialog [(visible)]="displaySubmitMessage" (click)="onMessageModalClick()" [blockScroll]="true" [modal]="true"  [positionTop]="60" [width]="500" [responsive]="false" [draggable]="false">
+<p-dialog [(visible)]="displaySubmitMessage" (click)="onMessageModalClick()" [blockScroll]="true" [modal]="true"
+  [positionTop]="60" [width]="500" [responsive]="false" [draggable]="false">
   <p-header>
-      {{alertHeader}}
+    {{alertHeader}}
   </p-header>
   {{alertMessage}}
   <p-footer>
-    <button type="button" pButton  label="Close"></button>
-    
+    <button type="button" pButton label="Close"></button>
+
   </p-footer>
 </p-dialog>
+<!----PlayList Delete-->
+<p-dialog  [(visible)]="showDeletedialog" [width]="400" [modal]="true" [responsive]="false"
+  [closable]="false" [resizable]="false">
+  <p-header>
+    Message
+  </p-header>
+  <div class="text-center">
+  Do you want to delete this Track from the Playlist?
+  </div>
+  <br><br>
+  <p-footer text-center>
+    <button type="button" class="buttonplayList btn-sm"
+      (click)="deletePlayListSong()">Yes</button>
+    <button style="margin-left: 10px;" type="button"  class="buttonplayList btn-sm"
+      (click)="showDeletedialog=false;">No</button>
+  </p-footer>
+</p-dialog>
+
 <!-- <div class="modal fade" id="messageModal" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -438,4 +507,4 @@
     </div>
   </div>
 </div> -->
-<div [hidden]="!load" id="loadingDiv"></div>
+<div *ngIf="load" id="loadingDiv"></div>
