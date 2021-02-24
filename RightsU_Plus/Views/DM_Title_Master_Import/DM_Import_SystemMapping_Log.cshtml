@@ -99,7 +99,7 @@
                                 <div id="divMapped_@item.DM_Master_Log_Code">
                                     <label id="lblMappedName_@item.DM_Master_Log_Code">@Mapped_Name </label>
                                     <label id="lblMappedCode_@item.DM_Master_Log_Code" style="display:none;">@code</label>
-                                    <a title="Edit" id="EditsystemMapped_@item.DM_Master_Log_Code" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="BindGridSystemMapping(@item.DM_Master_Log_Code,'@ViewBag.TabName')"></a>
+                                    <a title="Edit" id="EditsystemMapped_@item.DM_Master_Log_Code" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="BindGridSystemMapping(@item.DM_Master_Log_Code,'@ViewBag.TabName','@item.Roles')"></a>
                                 </div>
                                 <div id="divtxtMapped_@item.DM_Master_Log_Code" style="display:none;">
 
@@ -111,10 +111,10 @@
                                 <div id="divMapped_@item.DM_Master_Log_Code" style="display:none;">
                                     <label id="lblMappedName_@item.DM_Master_Log_Code">@Mapped_Name </label>
                                     <label id="lblMappedCode_@item.DM_Master_Log_Code" style="display:none;">@code</label>
-                                    <a title="Edit" id="EditsystemMapped_@item.DM_Master_Log_Code" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="BindGridSystemMapping(@item.DM_Master_Log_Code,'@ViewBag.TabName')"></a>
+                                    <a title="Edit" id="EditsystemMapped_@item.DM_Master_Log_Code" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="BindGridSystemMapping(@item.DM_Master_Log_Code,'@ViewBag.TabName','@item.Roles')"></a>
                                 </div>
                                 <div id="divtxtMapped_@item.DM_Master_Log_Code">
-                                    <input type="text" id="txtSystemMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoComplete(@item.DM_Master_Log_Code, '@ViewBag.TabName')" onblur="PopulateAutoComplete(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" />
+                                    <input type="text" id="txtSystemMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoComplete(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoComplete(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" />
                                     <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel(@item.DM_Master_Log_Code)"></a>
                                 </div>
 
@@ -138,10 +138,12 @@
 <script>
 
     var URL_PopulateAutoCompleteData = '@Url.Action("PopulateAutoCompleteData", "DM_Title_Master_Import")';
-    function BindGridSystemMapping(masterLogcode, tabname) {
+    function BindGridSystemMapping(masterLogcode, tabname, RoleName) {
         $('#divMapped_' + masterLogcode).hide();
         $('#divtxtMapped_' + masterLogcode).show();
-        $('#divtxtMapped_' + masterLogcode).append('<input type="text" id="txtSystemMappedName_' + masterLogcode + '"  name="MappedName" class="txtMapped" onkeyup="PopulateAutoComplete(' + masterLogcode + ',\'' + tabname + '\')" > <a title = "Cancel" class= "glyphicon glyphicon-remove-circle" onclick = "Cancel(' + masterLogcode + ')" ></a >');
+      //$('#divtxtMapped_' + masterLogcode).append('<input type="text" id="txtSystemMappedName_' + masterLogcode + '"  name="MappedName" class="txtMapped" onkeyup="PopulateAutoComplete(' + masterLogcode + ',\'' + tabname + '\')" > <a title = "Cancel" class= "glyphicon glyphicon-remove-circle" onclick = "Cancel(' + masterLogcode + ')" ></a >');
+        $('#divtxtMapped_' + masterLogcode).append('<input type="text" id="txtSystemMappedName_' + masterLogcode + '"  name="MappedName" class="txtMapped" onkeyup="PopulateAutoComplete(' + masterLogcode + ',\'' + tabname + '\',\'' + RoleName + '\')" > <a title = "Cancel" class= "glyphicon glyphicon-remove-circle" onclick = "Cancel(' + masterLogcode + ')" ></a >');
+
         initializeTooltip();
             //$('#divMapped_' + masterLogcode).empty();
             //$('#divMapped_' + masterLogcode).append('<input type="text" id="txtSystemMappedName_' + masterLogcode + '"  name="MappedName" class="txtMapped" onkeyup="PopulateAutoComplete(' + masterLogcode + ',\'' + tabname + '\')" > <a title = "Cancel" class= "glyphicon glyphicon-remove-circle" onclick = "Cancel(' + masterLogcode + ')" ></a >');
@@ -154,7 +156,7 @@
         $('#divMapped_' + masterLogcode).show();
 
     }
-    function PopulateAutoComplete(masterLogCode, tabName) {
+    function PopulateAutoComplete(masterLogCode, tabName, RoleName) {
         var keyword = $("#txtSystemMappedName_" + masterLogCode).val();
         $("#txtSystemMappedName_" + masterLogCode).autocomplete({
             focus: function () {
@@ -167,7 +169,8 @@
                 $("#hdnMappedCode_" + masterLogCode).val('');
                 var param = {
                     keyword: keyword,
-                    tabName: tabName
+                    tabName: tabName,
+                    RoleName: RoleName
                 };
                 $.ajax({
                     url: URL_PopulateAutoCompleteData,

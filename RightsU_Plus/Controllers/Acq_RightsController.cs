@@ -2349,16 +2349,33 @@ namespace RightsU_Plus.Controllers
 
                     objADRS.Save(objAcq_Deal_Rights, out resultSet);
 
-                    UpdateDealRightProcess(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
 
                     string Is_Acq_rights_delay_validation = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
                            .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
                            .FirstOrDefault().Parameter_Value;
 
                     if (Is_Acq_rights_delay_validation == "Y")
+                    {
+                        Deal_Rights_Process_Service DRPService = new Deal_Rights_Process_Service(objLoginEntity.ConnectionStringName);
+                        Deal_Rights_Process DRP = new Deal_Rights_Process();
+                        DRP.Deal_Code = objAcq_Deal_Rights.Acq_Deal_Code;
+                        DRP.Deal_Rights_Code = objAcq_Deal_Rights.Acq_Deal_Rights_Code;
+                        DRP.Module_Code = 30;
+                        DRP.Record_Status = "P";
+                        DRP.Inserted_On = System.DateTime.Now;
+                        DRP.User_Code = objLoginUser.Users_Code;
+                        DRP.EntityState = State.Added;
+
+                        dynamic resultSetDRP;
+                        DRPService.Save(DRP, out resultSetDRP);
+
                         return true;
+                    }
                     else
+                    {
+                        UpdateDealRightProcess(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
                         return ShowValidationPopup(resultSet);
+                    }
                 }
             }
             else
