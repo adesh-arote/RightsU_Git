@@ -1,11 +1,42 @@
 input.SearchTextBox {
-	width:40% !important;
-	margin-right:2px !important;
+	width: 40% !important;
+	margin-right: 2px !important;
 	border: 1px solid #bbb !important;
-	padding:2px 2px !important;
+	padding: 2px 2px !important;
 	border-top-left-radius: 4px !important;
 	border-bottom-left-radius: 4px !important;
 	border-top-right-radius: 4px !important;
 	border-bottom-right-radius: 4px !important;
 	height: 30px;
+}
+
+input.playListname {
+	width: 20% !important;
+	margin-right: 2px !important;
+	border: 1px solid #bbb !important;
+	padding: 2px 2px !important;
+	border-top-left-radius: 4px !important;
+	border-bottom-left-radius: 4px !important;
+	border-top-right-radius: 4px !important;
+	border-bottom-right-radius: 4px !important;
+	height: 30px;
+  }
+
+  
+.buttonplayList {
+	display: inline-block;
+	padding: 5px 25px;
+	font-size: 15px;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	outline: none;
+	color: #fff;
+	background-color: #3c8dbc;
+	border: none;
+	border-radius: 5px;
+}
+
+.btn-xs {
+	line-height: 0.5 !important;
 }

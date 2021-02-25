@@ -5,6 +5,7 @@ import { Router, ActivatedRoute, ParamMap, NavigationEnd } from '@angular/router
 import { ComParentChildService } from '../../services/comparentchild.service'
 import { BootstrapOptions } from '@angular/core/src/application_ref';
 declare var $: any;
+import { ContextMenu, MenuItem } from 'primeng/primeng';
 
 const CARTLIST_COUNT = "CARTLIST_COUNT";
 const CART_DATA = "CART_DATA";
@@ -65,6 +66,10 @@ export class CartGridComponent implements OnInit {
   public cartDataset: any;
   public MHPlayListSongCode: any;
   public iscartAdded: boolean = false;
+  public searchedGrid: boolean = false;
+  public newRequestDataset: any;
+  public items: any;
+  public rowData: any;
 
   constructor(private _CommonUiService: CommonUiService, private router: Router, private comparentchildservice: ComParentChildService) {
 
@@ -74,65 +79,83 @@ export class CartGridComponent implements OnInit {
     this.setMHPlaylistCode = JSON.parse(sessionStorage.getItem('MHPLAYLIST_CODE'));
     this.checkTabheader = sessionStorage.getItem('TAB_NAME');
     this.cartCountset = JSON.parse(sessionStorage.getItem('CARTLIST_COUNT'));
+    this.searchedGrid = JSON.parse(sessionStorage.getItem('SEARCHED_GRID'));
     // this.setMHPlaylistName=sessionStorage.getItem('MHPLAYLIST_NAME');
-    
 
     if (this.checkTabheader == 'PlayList') {
       this.showSearchpanel = false;
+      this.cartListCount = this.cartCountset;
+      if (this.cartListCount == null) {
+        this.cartListCount = 0;
+      }
+      this.items = [
+        { label: 'Do you want to delete this Track from the Playlist?', icon: 'fa fa-close' },
+        { label: 'Yes', icon: '', command: (event) => this.deleteRow(this.rowData) },
+        { label: 'No', icon: '' }
+      ];
     }
     else {
-      this.showSearchpanel = true;
       this.setMHPlaylistCode = 0;
       this.cartListCount = this.cartCountset;
-      if(this.cartListCount > 0){
-        this.cartDataset= JSON.parse(sessionStorage.getItem('CART_DATA'));
-        this.cartList=this.cartDataset
+      if (this.cartListCount > 0) {
+        this.cartDataset = JSON.parse(sessionStorage.getItem('CART_DATA'));
+        this.cartList = this.cartDataset
+      }
+      else {
+        this.cartListCount = 0;
       }
       //this.cartList=this.cartDataset;
     }
-
-    let log: string[] = [];
-    // console.log(changes);
-    for (let propName in changes) {
-      console.log(propName);
-      let changedProp = changes[propName];
-      console.log(changedProp);
-      //   let to = JSON.stringify(changedProp.currentValue);
-      if (changedProp.isFirstChange()) {
-        console.log("First Changes value.....! ");
-        console.log(changedProp.currentValue);
-      } else {
-        console.log("On Changes value.....! ");
-        console.log(changedProp.currentValue);
-        if (this.componentType == "consumption") {
-          //  this.quickSelectionGridData(changedProp.currentValue);
-          // this.showDetails = changedProp.currentValue;
-          // for (let i = 0; i < this.showDetails.listview.length; i++) {
-          //   this.showDetails.listview[i].MHPlayListCode;
-          //   changedProp.currentValue = this.showDetails.listview[i].MHPlayListCode;
-          this.quickSelectionGridData(this.setMHPlaylistCode);
-
-          // }
-          // else {
-          //   this.quickSelectionGridData(changedProp.currentValue)
-          // }
-          //}
-        }
-        if (this.componentType == "quickSelection") {
-          console.log(changedProp.currentValue.listview);
-          if (propName == "componentData") {
-            this.episodeType = changedProp.currentValue.episodeType;
+    if (this.searchedGrid == false) {
+      let log: string[] = [];
+      // console.log(changes);
+      for (let propName in changes) {
+        console.log(propName);
+        let changedProp = changes[propName];
+        console.log(changedProp);
+        //   let to = JSON.stringify(changedProp.currentValue);
+        if (changedProp.isFirstChange()) {
+          console.log("First Changes value.....! ");
+          console.log(changedProp.currentValue);
+        } else {
+          console.log("On Changes value.....! ");
+          console.log(changedProp.currentValue);
+          if (this.componentType == "consumption") {
+            //  this.quickSelectionGridData(changedProp.currentValue);
+            // this.showDetails = changedProp.currentValue;
+            // for (let i = 0; i < this.showDetails.listview.length; i++) {
+            //   this.showDetails.listview[i].MHPlayListCode;
+            //   changedProp.currentValue = this.showDetails.listview[i].MHPlayListCode;
             this.quickSelectionGridData(this.setMHPlaylistCode);
+
+
+            // }
+            // else {
+            //   this.quickSelectionGridData(changedProp.currentValue)
+            // }
+            //}
           }
-          else if (propName == "gridvalue") {
-            this.gridvalue = changedProp.currentValue;
-            this.quickSelectionGridData(this.setMHPlaylistCode);
+          if (this.componentType == "quickSelection") {
+            console.log(changedProp.currentValue.listview);
+            if (propName == "componentData") {
+              this.episodeType = changedProp.currentValue.episodeType;
+              this.quickSelectionGridData(this.setMHPlaylistCode);
+            }
+            else if (propName == "gridvalue") {
+              this.gridvalue = changedProp.currentValue;
+              this.quickSelectionGridData(this.setMHPlaylistCode);
 
+            }
           }
         }
       }
     }
-
+    else if (this.searchedGrid == true) {
+      this.searchShowGrid = true;
+      this.newRequestDataset = JSON.parse(sessionStorage.getItem('NEWREQ_DATA'));
+      this.newSearchRequest = this.newRequestDataset;
+      this.searchTrack();
+    }
   }
 
   ngOnInit() {
@@ -140,8 +163,15 @@ export class CartGridComponent implements OnInit {
     console.log(this.gridvalue);
     console.log(this.componentData)
     this.sortingDefault = true;
+    if (this.checkTabheader == 'PlayList') {
+      this.items = [
+        { label: 'Do you want to delete this Track from the Playlist?', icon: 'fa fa-close' },
+        { label: 'Yes', icon: '', command: (event) => this.deleteRow(this.rowData) },
+        { label: 'No', icon: '' }
+      ];
+    }
 
-    this.comparentchildservice.on('playlist-grid').subscribe(() => this.quickSelectionGridData(this.setMHPlaylistCode));
+    // this.comparentchildservice.on('playlist-grid').subscribe(() => this.quickSelectionGridData(this.setMHPlaylistCode));
     console.log("Consumption data");
     console.log(this.newMusicConsumptionRequest);
     this.setMHPlaylistCode = JSON.parse(sessionStorage.getItem('MHPLAYLIST_CODE'));
@@ -177,33 +207,34 @@ export class CartGridComponent implements OnInit {
       });
       this.requestType = true;
       this.searchShowGrid = true;
-      this.quickSelectionGridData(this.setMHPlaylistCode);
+      // this.quickSelectionGridData(this.setMHPlaylistCode);
       this.load = true;
       this.addBlockUI();
-      var musicLabelBody = {
-        "ChannelCode": this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
-        "TitleCode": this.newMusicConsumptionRequest.TitleCode.Title_Code
-      }
-      console.log(musicLabelBody);
-      this._CommonUiService.getMusicLabels(musicLabelBody).subscribe(response => {
-        this.load = false;
-        this.removeBlockUI();
-        console.log(response.Music);
-        this.musicLabelList = response.Music;
-        this.musicLabelList.unshift({ "MusicLabelName": "Music Label", "MusicLabelCode": 0 });
-        this.newSearchRequest.MusicLabelCode = this.musicLabelList[0];
-      }, error => { this.handleResponseError(error) });
+      // var musicLabelBody = {
+      //   "ChannelCode": this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
+      //   "TitleCode": this.newMusicConsumptionRequest.TitleCode.Title_Code
+      // }
+      // console.log(musicLabelBody);
+      // this._CommonUiService.getMusicLabels(musicLabelBody).subscribe(response => {
+      //   this.load = false;
+      //   this.removeBlockUI();
+      //   console.log(response.Music);
+      //   this.musicLabelList = response.Music;
+      //   this.musicLabelList.unshift({ "MusicLabelName": "Music Label", "MusicLabelCode": 0 });
+      //   this.newSearchRequest.MusicLabelCode = this.musicLabelList[0];
+      // }, error => { this.handleResponseError(error) });
       // this.load = true;
       // this.addBlockUI();
-      this._CommonUiService.getGenre().subscribe(response => {
-        // this.load = false;
-        // this.removeBlockUI();
-        this.getGenreList = response.Music;
-        this.getGenreList.unshift({ "Genres_Name": "Genres", "Genres_Code": 0 });
-        this.newSearchRequest.GenreCode = this.getGenreList[0];
-      }, error => { this.handleResponseError(error) });
+      // this._CommonUiService.getGenre().subscribe(response => {
+      //   // this.load = false;
+      //   // this.removeBlockUI();
+      //   this.getGenreList = response.Music;
+      //   this.getGenreList.unshift({ "Genres_Name": "Genres", "Genres_Code": 0 });
+      //   this.newSearchRequest.GenreCode = this.getGenreList[0];
+      // }, error => { this.handleResponseError(error) });
     }
     else if (this.componentType == "quickSelection") {
+      this.requestType = true;
       this.episodeType = this.componentData.episodeType;
       console.log("Episode Type");
       console.log(this.componentData);
@@ -213,22 +244,22 @@ export class CartGridComponent implements OnInit {
       this.listDetail1 = this.componentData.listview1;
       this.listdetail = this.componentData.listview;
       this.toplist = this.componentData.toplist;
-      var musicLabelBody = {
-        "ChannelCode": this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
-        "TitleCode": this.newMusicConsumptionRequest.TitleCode.Title_Code
-      }
-      console.log(musicLabelBody);
-      this._CommonUiService.getMusicLabels(musicLabelBody).subscribe(response => {
-        this.load = false;
-        this.musicLabelList = response.Music;
-        this.musicLabelList.unshift({ "MusicLabelName": "Music Label", "MusicLabelCode": 0 });
-        this.newSearchRequest.MusicLabelCode = this.musicLabelList[0];
-      }, error => { this.handleResponseError(error) });
-      this._CommonUiService.getGenre().subscribe(response => {
-        this.getGenreList = response.Music;
-        this.getGenreList.unshift({ "Genres_Name": "Genres", "Genres_Code": 0 });
-        this.newSearchRequest.GenreCode = this.getGenreList[0];
-      }, error => { this.handleResponseError(error) });
+      // var musicLabelBody = {
+      //   "ChannelCode": this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
+      //   "TitleCode": this.newMusicConsumptionRequest.TitleCode.Title_Code
+      // }
+      // console.log(musicLabelBody);
+      // this._CommonUiService.getMusicLabels(musicLabelBody).subscribe(response => {
+      //   this.load = false;
+      //   this.musicLabelList = response.Music;
+      //   this.musicLabelList.unshift({ "MusicLabelName": "Music Label", "MusicLabelCode": 0 });
+      //   this.newSearchRequest.MusicLabelCode = this.musicLabelList[0];
+      // }, error => { this.handleResponseError(error) });
+      // this._CommonUiService.getGenre().subscribe(response => {
+      //   this.getGenreList = response.Music;
+      //   this.getGenreList.unshift({ "Genres_Name": "Genres", "Genres_Code": 0 });
+      //   this.newSearchRequest.GenreCode = this.getGenreList[0];
+      // }, error => { this.handleResponseError(error) });
 
       $(function () {
         $('.dropdwnbody1').slimScroll({
@@ -238,7 +269,7 @@ export class CartGridComponent implements OnInit {
       });
       console.log("Quick Selection Grid Code");
       console.log(this.gridvalue);
-      this.quickSelectionGridData(this.setMHPlaylistCode);
+      //this.quickSelectionGridData(this.setMHPlaylistCode);
     }
 
     this.newSearchRequest = {
@@ -250,7 +281,7 @@ export class CartGridComponent implements OnInit {
       Tag: "",
       MusicLanguageCode: 0
     }
-    this.getMusicLanguage();
+    // this.getMusicLanguage();
   }
 
   getMusicLanguage() {
@@ -273,15 +304,7 @@ export class CartGridComponent implements OnInit {
       var playlistvalue = this.setMHPlaylistCode;
     }
     else {
-      this.newSearchRequest = {
-        MusicLabelCode: 0,
-        MusicTrack: "",
-        MovieName: "",
-        GenreCode: 0,
-        TalentName: "",
-        Tag: "",
-        MusicLanguageCode: 0
-      }
+      var playlistvalue = this.setMHPlaylistCode;
     }
     // console.log("Grid Call....")
     var body = {
@@ -345,12 +368,12 @@ export class CartGridComponent implements OnInit {
   }
   searchTrack() {
     debugger;
-    if (this.isClick == true) {
-      this.isClick = false;
-      this.playListName = '';
-    }
-    this.playListWiseClick = 'N';
-    if (this.sortingDefault == true) {
+    // if (this.isClick == true) {
+    //   this.isClick = false;
+    //   this.playListName = '';
+    // }
+    // this.playListWiseClick = 'N';
+    if (this.sortBy == undefined || this.order == undefined) {
       this.sortBy = "MusicTrack";
       this.order = "ASC";
     }
@@ -358,6 +381,7 @@ export class CartGridComponent implements OnInit {
       this.sortBy = this.sortBy;
       this.order = this.order;
     }
+    this.load = true;
     var body = {
       'MusicLabelCode': this.newSearchRequest.MusicLabelCode.MusicLabelCode == null ? 0 : this.newSearchRequest.MusicLabelCode.MusicLabelCode,
       'MusicTrack': this.newSearchRequest.MusicTrack,
@@ -407,7 +431,7 @@ export class CartGridComponent implements OnInit {
     }
 
     else {
-      this.load = true;
+
       this.addBlockUI();
       this.searchShowGrid = true;
       console.log(JSON.stringify(body));
@@ -433,7 +457,7 @@ export class CartGridComponent implements OnInit {
       }, error => { this.handleResponseError(error) });
     }
   }
-  public serchCriteria;
+  public searchCriteria;
   public playListWiseClick = 'N';
   public isClick: boolean = false;
   public playListName = '';
@@ -454,7 +478,7 @@ export class CartGridComponent implements OnInit {
     this.newSearchRequest.TalentName = '';
     this.newSearchRequest.Tag = '';
     this.newSearchRequest.MusicLanguageCode = this.languageList[0];
-    this.serchCriteria = playListCode;
+    this.searchCriteria = playListCode;
     var body = {
       'MusicLabelCode': '',
       'MusicTrack': '',
@@ -514,7 +538,7 @@ export class CartGridComponent implements OnInit {
     this.searchList = this.searchList.filter(x => x.Music_Title_Code != track.data.Music_Title_Code);
     sessionStorage.setItem(CARTLIST_COUNT, this.cartCountset);
     this.cartDataset = this.cartList;
-    sessionStorage.setItem(CART_DATA,JSON.stringify(this.cartDataset));
+    sessionStorage.setItem(CART_DATA, JSON.stringify(this.cartDataset));
     // this.recordCount=this.recordCount-1;
     // }
   }
@@ -1147,6 +1171,9 @@ export class CartGridComponent implements OnInit {
     alert("Pagination change");
     alert(JSON.stringify(pagval));
   }
+
+  
+
   loadDataOnPagination(event) {
     debugger;
     console.log("Lazy Loading.....");
@@ -1172,7 +1199,6 @@ export class CartGridComponent implements OnInit {
       this.sortBy = this.sortBy;
       this.order = this.order;
     }
-
     if (this.rowonpage != pageSize) {
       this.rowonpage = pageSize;
       if (event.first == 0) {
@@ -1203,36 +1229,79 @@ export class CartGridComponent implements OnInit {
     var body;
     if (this.componentType == "consumption") {
       if (this.checkTabheader == 'PlayList') {
-        this.serchCriteria = this.setMHPlaylistCode;
+        this.searchCriteria = this.setMHPlaylistCode;
       }
       else {
-        this.serchCriteria = this.setMHPlaylistCode;
+        this.searchCriteria = this.setMHPlaylistCode;
+        this.newRequestDataset = JSON.parse(sessionStorage.getItem('NEWREQ_DATA'));
+        this.newSearchRequest = this.newRequestDataset;
       }
-      body = {
-        'MusicLabelCode': this.newSearchRequest.MusicLabelCode.MusicLabelCode,
-        'MusicTrack': this.newSearchRequest.MusicTrack,
-        'MovieName': this.newSearchRequest.MovieName,
-        'GenreCode': this.newSearchRequest.GenreCode.Genres_Code == null ? 0 : this.newSearchRequest.GenreCode.Genres_Code,
-        'TalentName': this.newSearchRequest.TalentName,
-        'Tag': this.newSearchRequest.Tag,
-        'MHPlayListCode': this.setMHPlaylistCode,
-        'PaginRequired': 'N',
-        'PageSize': pageSize,
-        'PageNo': pageNo,
-        'ChannelCode': this.playListWiseClick == 'Y' ? '' : this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
-        'TitleCode': this.playListWiseClick == 'Y' ? '' : this.newMusicConsumptionRequest.TitleCode.Title_Code,
-        'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code == null ? 0 : this.newSearchRequest.MusicLanguageCode.Music_Language_Code,
-        "SortBy": this.sortBy,
-        "Order": this.order
+      if (this.searchedGrid == true) {
+        body = {
+          'MusicLabelCode': this.newSearchRequest.MusicLabelCode.MusicLabelCode,
+          'MusicTrack': this.newSearchRequest.MusicTrack,
+          'MovieName': this.newSearchRequest.MovieName,
+          'GenreCode': this.newSearchRequest.GenreCode.Genres_Code == null ? 0 : this.newSearchRequest.GenreCode.Genres_Code,
+          'TalentName': this.newSearchRequest.TalentName,
+          'Tag': this.newSearchRequest.Tag,
+          'MHPlayListCode': this.setMHPlaylistCode,
+          'PaginRequired': 'N',
+          'PageSize': pageSize,
+          'PageNo': pageNo,
+          'ChannelCode': this.playListWiseClick == 'Y' ? '' : this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
+          'TitleCode': this.playListWiseClick == 'Y' ? '' : this.newMusicConsumptionRequest.TitleCode.Title_Code,
+          'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code == null ? 0 : this.newSearchRequest.MusicLanguageCode.Music_Language_Code,
+          "SortBy": this.sortBy,
+          "Order": this.order
+        }
+      }
+      else {
+        body = {
+          'MusicLabelCode': '',
+          'MusicTrack': '',
+          'MovieName': '',
+          'GenreCode': 0,
+          'TalentName': '',
+          'Tag': '',
+          'MHPlayListCode': this.setMHPlaylistCode,
+          'PaginRequired': 'N',
+          'PageSize': pageSize,
+          'PageNo': pageNo,
+          'ChannelCode': '',
+          'TitleCode': '',
+          'MusicLanguageCode': '',
+          "SortBy": this.sortBy,
+          "Order": this.order
+        }
       }
     }
     else if (this.componentType == "quickSelection") {
       if (this.checkTabheader == 'PlayList') {
-        this.serchCriteria = this.setMHPlaylistCode;
+        this.searchCriteria = this.setMHPlaylistCode;
       }
       else {
-        this.serchCriteria = this.setMHPlaylistCode;
+        this.searchCriteria = this.setMHPlaylistCode;
       }
+      if (this.searchedGrid == true) {
+        body = {
+          'MusicLabelCode': this.newSearchRequest.MusicLabelCode.MusicLabelCode,
+          'MusicTrack': this.newSearchRequest.MusicTrack,
+          'MovieName': this.newSearchRequest.MovieName,
+          'GenreCode': this.newSearchRequest.GenreCode.Genres_Code == null ? 0 : this.newSearchRequest.GenreCode.Genres_Code,
+          'TalentName': this.newSearchRequest.TalentName,
+          'Tag': this.newSearchRequest.Tag,
+          'MHPlayListCode': this.setMHPlaylistCode,
+          'PaginRequired': 'N',
+          'PageSize': pageSize,
+          'PageNo': pageNo,
+          'ChannelCode':  this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
+          'TitleCode':  this.newMusicConsumptionRequest.TitleCode.Title_Code,
+          'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code == null ? 0 : this.newSearchRequest.MusicLanguageCode.Music_Language_Code,
+          "SortBy": this.sortBy,
+          "Order": this.order
+        }
+      }
+      else{
       body = {
         'MusicLabelCode': '',
         'MusicTrack': '',
@@ -1250,6 +1319,7 @@ export class CartGridComponent implements OnInit {
         "SortBy": this.sortBy,
         "Order": this.order
       }
+    }
       // this.quickSelectionGridData(this.gridvalue);
 
     }
@@ -1283,16 +1353,13 @@ export class CartGridComponent implements OnInit {
 
   onRowSelect(data) {
     debugger;
-    this.showDeletedialog = true;
-    this.MHPlayListSongCode = data.MHPlayListSongCode;
-    return false
+    if (this.checkTabheader == 'PlayList') {
+      this.showDeletedialog = true;
+      this.MHPlayListSongCode = data.MHPlayListSongCode;
+      return false
+    }
   }
 
-  getRowdata(event, data) {
-    debugger;
-    this.showDeletedialog = true;
-
-  }
 
   deletePlayListSong() {
     debugger;
@@ -1312,6 +1379,24 @@ export class CartGridComponent implements OnInit {
       }
     }, error => { this.handleResponseError(error) });
 
+  }
+
+  deleteRow(data) {
+    debugger;
+    let dataObj = {
+      "MHPlayListCode": this.setMHPlaylistCode,
+      "MHPlayListSong": [
+        {
+          "MHPlayListSongCode": data.MHPlayListSongCode
+        }
+      ]
+    }
+    this._CommonUiService.DeletePlayListSong(dataObj).subscribe(response => {
+      let Return = response.Return
+      if (Return.IsSuccess == true) {
+        this.quickSelectionGridData(this.setMHPlaylistCode);
+      }
+    }, error => { this.handleResponseError(error) });
   }
 
   handleResponseError(errorCode) {

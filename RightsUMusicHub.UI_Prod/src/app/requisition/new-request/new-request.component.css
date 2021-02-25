@@ -186,20 +186,15 @@ input.requestSongType {
 }
 
 .info-Css{
-  height: 70px;
+  height: 65px;
   margin-right: 10px;
 }
 
 .info-icon-style{
-  height: 70px;
+  height: 65px;
   width: 70px;
   line-height: 65px !important;
-  margin-left: -14px
-}
-
-.icon-Css{
-  font-size:40px;
-  margin-left: -5px;
+  margin-left: -15px
 }
 
 .tooltip-text{
@@ -211,12 +206,22 @@ input.requestSongType {
 
 .info-box {
   display: block;
-  min-height: 68px;
-  background: #f7f4f4;
+  min-height: 67px;
+  /* background: #f7f4f4; */
   width: 85%;
   box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
   border-radius: 2px;
   margin-bottom: 15px;
+  background-color: gainsboro;
+}
+
+.noborder-css{
+  border: none;
+}
+
+.border-css{
+  border: 1px solid black;
+  background-color: aliceblue;
 }
 
 ::ng-deep.slick-prev:before, .slick-next:before {
@@ -258,3 +263,4 @@ input.requestSongType {
     border: none;
     border-radius: 5px;
 }
+

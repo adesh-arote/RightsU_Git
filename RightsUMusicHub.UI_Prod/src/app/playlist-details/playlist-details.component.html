@@ -1,24 +1,27 @@
 <div class="content-wrapper">
   <section class=" content-header">
-    <h1>Playlist Details
+    <h1>Play List Details
     </h1>
     <hr class="hrborder">
   </section>
   <section class="content-subHeader" style="margin-top: -1%;">
     <label>Search :</label>&nbsp;
-    <input type="text" #gb class="SearchTextBox" pInputText size="50" placeholder="PlaylistName" autocomplete="off">
+    <input type="text" #gb class="SearchTextBox" pInputText size="50" placeholder="Play List" autocomplete="off">
     <br><br>
-    <p-dataTable [globalFilter]="gb" [value]="playList" [rowsPerPageOptions]="[10,25,50,100]" [paginator]="true" [rows]="10"
-      [responsive]="true" [alwaysShowPaginator]="true" #playlist>
-      <p-column field="PlaylistName" header="Playlist Name" styleClass="text-center" [style]=" {'width':'50px' }"
-        [sortable]="true"></p-column>
-      <p-column field="" header="Action" styleClass="text-center" [style]=" {'width':'50px' }">
+    <p-dataTable [globalFilter]="gb" [value]="playList" [rowsPerPageOptions]="[10,25,50,100]" [paginator]="true"
+      [rows]="10" [responsive]="true" [alwaysShowPaginator]="true" #playlist>
+      <p-column field="PlaylistName" header="Play List" [style]=" {'width':'80px' }" [sortable]="true"></p-column>
+      <p-column field="" header="Action" [style]=" {'width':'20px' }" styleClass="text-center">
         <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-          <button (click)="viewRecords('Details',row,'A')" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
+          <button (click)="viewPlaylist(row,'view',index)" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
             data-placement="top" title="View">
             <i class="fa fa-eye"></i>
           </button>
-          <button (click)="viewRecords('Details',row,'A')" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
+          <button (click)="viewPlaylist(row,'edit',index)" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
+            data-placement="top" title="Edit">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button (click)="deleteFullPlaylist(row)" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
             data-placement="top" title="Delete">
             <i class="fa fa-trash"></i>
           </button>
@@ -30,3 +33,111 @@
     </p-dataTable>
   </section>
 </div>
+
+<p-dialog [(visible)]="showplaylistDetails" [width]="1060" [modal]="true" [responsive]="false" [closable]="true"
+  [resizable]="false">
+  <p-header>
+    <span *ngIf="!showUpdatebutton">{{playListname}}</span>
+    <span *ngIf="showUpdatebutton">Play List Details</span>
+  </p-header>
+  <span *ngIf="showUpdatebutton">
+  <input type="text" style="width:120px !important" name="musicTrack" value=""
+    class="playListname" name="playListname" [(ngModel)]="playListname" autocomplete="off">
+  </span>&nbsp;
+  <input style="float: right" type="text" #gsearch class="SearchTextBox" pInputText size="50" placeholder="Search"
+    autocomplete="off">
+  <br><br>
+  <p-dataTable class="pcolumncursor" [value]="searchList" [rowsPerPageOptions]="[25,50,75,100]" [globalFilter]="gsearch"
+    [paginator]="true" [rows]="25" [responsive]="true" [alwaysShowPaginator]="true" (onRowClick)="onRowSelect($event)"
+    [sortField]="sortF" [sortOrder]="sortO" (onSort)="changeSort($event)" #detailList>
+    <p-column field="MusicTrack" header="Music Track" [sortable]="true" [style]=" {'width':'140px'}">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.MusicTrack}}" tooltipPosition="top">{{row.MusicTrack}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="Movie" header="Movie" [sortable]="true" styleClass="text-center">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.Movie}}" tooltipPosition="top">{{row.Movie}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="Genre" header="Genre" [sortable]="true" width="10" styleClass="text-center">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.Genre}}" tooltipPosition="top">{{row.Genre}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="StarCast" header="Star Cast" [sortable]="true" width="10">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.StarCast}}" tooltipPosition="top">{{row.StarCast}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="Singers" header="Singers" [sortable]="true" width="10">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.Singers}}" tooltipPosition="top">{{row.Singers}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="MusicComposer" header="Music Composer" [sortable]="true" [style]=" {'width':'145px'}">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.MusicComposer}}" tooltipPosition="top">{{row.MusicComposer}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="Tag" header="Tag" [sortable]="true" width="10" styleClass="text-center">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.Tag}}" tooltipPosition="top">{{row.Tag}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="MusicLabel" header="Music Label" [sortable]="true" [style]=" {'width':'120px'}"
+      styleClass="text-center">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.MusicLabel}}" tooltipPosition="top">{{row.MusicLabel}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="MusicLanguage" header="Music Language" [sortable]="true" [style]=" {'width':'150px'}"
+      styleClass="text-center">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span pTooltip="{{row.MusicLanguage}}" tooltipPosition="top">{{row.MusicLanguage}}</span>
+      </ng-template>
+    </p-column>
+    <p-footer>
+      Total Records:{{detailList.totalRecords}}
+    </p-footer>
+  </p-dataTable>
+  <p-footer text-center>
+    <button *ngIf="showUpdatebutton" type="button" class="buttonplayList btn-sm" (click)="updatePlaylist()">Update</button>&nbsp;
+    <button type="button" class="buttonplayList btn-sm" (click)="showplaylistDetails=false">Close</button>
+  </p-footer>
+</p-dialog>
+
+<!----PlayList Full Delete Dialog-->
+<p-dialog [(visible)]="showFullplaylistdialog" [width]="350" [modal]="true" [responsive]="false" [closable]="false"
+  [resizable]="false">
+  <p-header>
+    Message
+  </p-header>
+  <div class="text-center">
+    Do you want to delete the entire Playlist?
+  </div>
+  <br><br>
+  <p-footer text-center>
+    <button type="button" class="buttonplayList btn-sm" (click)="deletePlaylist()">Yes</button>
+    <button style="margin-left: 10px;" type="button" class="buttonplayList btn-sm"
+      (click)="showFullplaylistdialog=false;">No</button>
+  </p-footer>
+</p-dialog>
+
+<!----PlayList row Delete Dialog-->
+<p-dialog  [(visible)]="showDeletedialog" [width]="400" [modal]="true" [responsive]="false" 
+  [closable]="false" [resizable]="false">
+  <p-header>
+    Message
+  </p-header>
+  <div class="text-center">
+  Do you want to delete this Track from the Playlist?
+  </div>
+  <br><br>
+  <p-footer text-center>
+    <button type="button" class="buttonplayList btn-sm"
+      (click)="deletePlayListSong()">Yes</button>
+    <button style="margin-left: 10px;" type="button"  class="buttonplayList btn-sm"
+      (click)="showDeletedialog=false;">No</button>
+  </p-footer>
+</p-dialog>

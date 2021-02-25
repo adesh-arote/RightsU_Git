@@ -39,7 +39,6 @@ export class MusicAssignmentComponent implements OnInit {
   public messageData: any;
   public exportPageSize = 10;
   public exportPageNo = 1;
-  public timer;
   public termsTextFirst: string;
   public termsTextSecond: string;
   public productionHouseName;
@@ -55,14 +54,10 @@ export class MusicAssignmentComponent implements OnInit {
       { label: 'Data Error', value: 'D' },
       { label: 'Submit', value: 'S' }
     ];
-    this.timer = setInterval(() => { this.cueSheetStatusCheck() }, 2000);
+   
 
   }
-  ngOnDestroy() {
-    if (this.timer) {
-      clearInterval(this.timer)
-    }
-  }
+
   ngOnInit() {
     this.sortingDefault = true;
 
@@ -220,43 +215,7 @@ export class MusicAssignmentComponent implements OnInit {
   }
   // checkstatus(){
 
-  //for refreshing list
-  cueSheetStatusCheck() {
-    console.log("Status Check execution");
-    console.log(this.uploadedFilesList);
-    for (let i = 0; i < this.uploadedFilesList.length; i++) {
-
-      if (this.uploadedFilesList[i].RecordStatus == 'P') {
-        this._musicAssignmentService.getCueSheetStatus({ MHCueSheetCode: this.uploadedFilesList[i].MHCueSheetCode }).subscribe(response => {
-          this.load = false;
-          this.removeBlockUI();
-          console.log("response Status");
-          console.log(response.CueSheet.RecordStatus);
-          if (response.CueSheet.RecordStatus != 'P') {
-
-            this.uploadedFilesList[i].ErrorRecords = response.CueSheet.ErrorRecords;
-            this.uploadedFilesList[i].FileName = response.CueSheet.FileName;
-            this.uploadedFilesList[i].MHCueSheetCode = response.CueSheet.MHCueSheetCode;
-            this.uploadedFilesList[i].RecordStatus = response.CueSheet.RecordStatus;
-            this.uploadedFilesList[i].RequestID = response.CueSheet.RequestID;
-            this.uploadedFilesList[i].RequestedBy = response.CueSheet.RequestedBy;
-            this.uploadedFilesList[i].RequestedDate = response.CueSheet.RequestedDate;
-            this.uploadedFilesList[i].Status = response.CueSheet.Status;
-            this.uploadedFilesList[i].SuccessRecords = response.CueSheet.SuccessRecords;
-            this.uploadedFilesList[i].TotalRecords = response.TotalRecords;
-            this.uploadedFilesList[i].WarningRecords = response.CueSheet.WarningRecords;
-            this.uploadedFilesList[i].successPercent = response.CueSheet.SuccessRecords != 0 ? (response.CueSheet.SuccessRecords / response.CueSheet.TotalRecords) * 100 : 0;
-            this.uploadedFilesList[i].errorPercent = response.CueSheet.ErrorRecords != 0 ? (response.CueSheet.ErrorRecords / response.CueSheet.TotalRecords) * 100 : 0;
-            this.uploadedFilesList[i].warningPercent = response.CueSheet.WarningRecords != 0 ? (response.CueSheet.WarningRecords / response.CueSheet.TotalRecords) * 100 : 0;
-            this.uploadedFilesList[i].defaultPercent = response.CueSheet.SuccessRecords == 0 && response.CueSheet.ErrorRecords == 0 && response.CueSheet.WarningRecords == 0 ? 100 : 0;
-            this.uploadedFilesList[i].defaultRecord = response.CueSheet.SuccessRecords == 0 && response.CueSheet.ErrorRecords == 0 && response.CueSheet.WarningRecords == 0 ? 'NA' : '';
-          }
-
-        }, error => { this.handleResponseError(error) });
-      }
-    }
-  }
-
+ 
 
   addBlockUI() {
     $('body').addClass("overlay");

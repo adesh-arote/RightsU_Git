@@ -133,3 +133,32 @@ input.ReqTextBox {
     border: none;
     border-radius: 5px;
 }
+
+::ng-deep.ui-datatable tbody > tr.ui-widget-content.ui-state-highlight {
+  color: #000000;
+  background-color: #ffffff;
+}
+
+::ng-deep.ui-contextmenu {
+  width: 25.5em;
+  padding: .25em;
+  position: absolute;
+}
+
+/* :host ::ng-deep div.ui-contextmenu ui-widget ui-wi[style]{
+  visibility: visible;
+  display: block;
+  left: 524px;
+  top: 300px;
+  z-index: 1109;
+  opacity: 1.048
+ } 
+ 
+ :host ::ng-deep div.ui-contextmenu ui-widget ui-widget-content ui-corner-all ui-shadow[style]{
+  visibility: visible;
+  display: block;
+  left: 524px;
+  top: 300px;
+  z-index: 1109;
+  opacity: 1.048
+ } */

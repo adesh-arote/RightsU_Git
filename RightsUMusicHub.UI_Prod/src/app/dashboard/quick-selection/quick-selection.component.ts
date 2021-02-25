@@ -1,18 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,AfterContentChecked,ChangeDetectorRef} from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, NavigationEnd } from '@angular/router';
 import { RequisitionService } from '../../requisition/requisition.service';
-import { ComParentChildService } from '../../shared/services/comparentchild.service'
+import { ComParentChildService } from '../../shared/services/comparentchild.service';
+import { CommonUiService } from '../../shared/common-ui/common-ui.service';
 declare var $: any;
 
 
 const TAB_NAME = "TAB_NAME";
 const MHPLAYLIST_CODE = "MHPLAYLIST_CODE";
+const SEARCHED_GRID = "SEARCHED_GRID";
+const NEWREQ_DATA = "NEWREQ_DATA";
 
 @Component({
   selector: 'app-quick-selection',
   templateUrl: './quick-selection.component.html',
   styleUrls: ['./quick-selection.component.css'],
-  providers: [RequisitionService, ComParentChildService],
+  providers: [RequisitionService, ComParentChildService,CommonUiService],
 })
 export class QuickSelectionComponent implements OnInit {
   public newMusicConsumptionRequest;
@@ -41,8 +44,14 @@ export class QuickSelectionComponent implements OnInit {
   public isDateSame: any;
   public slideConfig:any;
   public showDeletedialog:boolean=false;
+  public musicLabelList:any;
+  public getGenreList:any;
+  public languageList:any=[];
+  public recordCount;
+  public  setMHPlaylistName:any;
+  public searchedTrack:boolean=false;
 
-  constructor(private _requisitionService: RequisitionService, private router: Router, private comparentchildservice: ComParentChildService) {
+  constructor(private _requisitionService: RequisitionService, private router: Router, private comparentchildservice: ComParentChildService,private _CommonUiService: CommonUiService,private cdref: ChangeDetectorRef) {
     this.mindatevalue = new Date();
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -83,8 +92,18 @@ export class QuickSelectionComponent implements OnInit {
       ChannelCode: '',
       MHRequestDetails: []
     }
+    this.newSearchRequest = {
+      MusicLabelCode: 0,
+      MusicTrack: "",
+      MovieName: "",
+      GenreCode: 0,
+      TalentName: "",
+      Tag: ""
+    }
     this.getPlayList();
-
+    this.getMusicLabel();
+    this.getGenres();
+    this.getMusicLanguage();
     // var playlistbody =
     // {
     //   "TitleCode": 0
@@ -105,7 +124,7 @@ export class QuickSelectionComponent implements OnInit {
         'episodeType': this.episodeType,
         "listview": this.playListDetail
       }
-      this.componentLoad = true;
+      //this.componentLoad = true;
       console.log("List body");
       console.log(this.componentData);
       // console.log(this.playListDetail.length);
@@ -124,6 +143,13 @@ export class QuickSelectionComponent implements OnInit {
 
     }, error => { this.handleResponseError(error) })
   }
+
+  ngAfterContentChecked() {
+
+    this.cdref.detectChanges();
+
+  }
+
   public episodeType = 'tentative';
   public episodeNo;
   public episodeDate;
@@ -159,6 +185,92 @@ export class QuickSelectionComponent implements OnInit {
 
   }
 
+  getMusicLabel() {
+    this.load = true;
+    var musicLabelBody = {
+      "ChannelCode": '',
+      "TitleCode": ''
+    }
+    this._requisitionService.getMusicLabels(musicLabelBody).subscribe(response => {
+      this.load = false;
+      this.musicLabelList = response.Music;
+      this.musicLabelList.unshift({ "MusicLabelName": "Music Label", "MusicLabelCode": 0 });
+      this.newSearchRequest.MusicLabelCode = this.musicLabelList[0];
+    }, error => { this.handleResponseError(error) }
+    );
+  }
+
+  getGenres(){
+    this.load = true;
+    this.addBlockUI();
+    this._requisitionService.getGenre().subscribe(response => {
+      this.load = false;
+      this.removeBlockUI();
+      this.getGenreList = response.Music;
+      this.getGenreList.unshift({ "Genres_Name": "Genres", "Genres_Code": 0 });
+      this.newSearchRequest.GenreCode = this.getGenreList[0];
+    }, error => { this.handleResponseError(error) }
+    );
+  }
+
+  getMusicLanguage() {
+    this.load = true;
+    var musicLanguage = {}
+    this._CommonUiService.getMusicLanguage(musicLanguage).subscribe(response => {
+      this.load = false;
+      this.languageList = response.MusicLanguage;
+      this.languageList.unshift({ "Language_Name": "Music Language", "Music_Language_Code": 0 });
+      this.newSearchRequest.MusicLanguageCode = this.languageList[0];
+    }, error => { this.handleResponseError(error) });
+  }
+
+  searchTrack() {
+    debugger;
+    this.tabHeaders = 'PlayListSearch';
+    this.setMHPlaylistCode = 0;
+    this.componentLoad=true;
+    this.searchedTrack=true;
+    sessionStorage.setItem(SEARCHED_GRID, 'true');
+    sessionStorage.setItem(TAB_NAME, this.tabHeaders);
+    sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+    sessionStorage.setItem(NEWREQ_DATA, JSON.stringify(this.newSearchRequest));
+    this.componentData = {
+      "showName": this.showlistdata.Title_Name,
+      "titleCode": this.showlistdata.Title_Code,
+      'episodeType': this.episodeType,
+      "listview": this.playListDetail,
+      'toplist': this.toplist,
+      'listview1': this.listDetail1,
+    }
+  }
+
+  clearSearch() {
+    debugger;
+    this.newSearchRequest.MusicTrack = '';
+    this.newSearchRequest.MovieName = '';
+    this.newSearchRequest.GenreCode = null;
+    this.newSearchRequest.TalentName = '';
+    this.newSearchRequest.Tag = '';
+    this.newSearchRequest.MusicLabelCode = 0;
+    this.newSearchRequest.GenreCode = 0;
+    this.newSearchRequest.MusicLanguageCode = 0;
+    this.recordCount = 0;
+    this.tabHeaders = 'PlayListSearch';
+    this.setMHPlaylistCode = 0;
+    sessionStorage.setItem(SEARCHED_GRID, 'false');
+    sessionStorage.setItem(TAB_NAME, this.tabHeaders);
+    sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+    sessionStorage.setItem(NEWREQ_DATA, JSON.stringify(this.newSearchRequest));
+    this.componentData = {
+      "showName": this.showlistdata.Title_Name,
+      "titleCode": this.showlistdata.Title_Code,
+      'episodeType': this.episodeType,
+      "listview": this.playListDetail,
+      'toplist': this.toplist,
+      'listview1': this.listDetail1,
+    }
+  }
+  
   EpisodeNocheck(val: string) {
     this.episodeType = val;
     this.newMusicConsumptionRequest.EpisodeFrom = '';
@@ -177,7 +289,7 @@ export class QuickSelectionComponent implements OnInit {
       }
       this.showPlayList = false;
       this.showTabdata = false;
-      // this.componentLoad = true;
+      this.componentLoad = false;
 
     }
     else {
@@ -190,7 +302,7 @@ export class QuickSelectionComponent implements OnInit {
       }
       this.showPlayList = false;
       this.showTabdata = false;
-      // this.componentLoad = true;
+      this.componentLoad = false;
 
     }
 
@@ -232,6 +344,7 @@ export class QuickSelectionComponent implements OnInit {
 
   showRecommendations() {
     debugger;
+    this.tabHeaders="PlayList";
     if (this.episodeType == 'range') {
       let fromdate = this.newMusicConsumptionRequest.TelecastFrom
       let todate = this.newMusicConsumptionRequest.TelecastTo
@@ -278,9 +391,19 @@ export class QuickSelectionComponent implements OnInit {
     debugger;
     this.tabHeaders = "PlayList";
     this.setMHPlaylistCode = data.MHPlayListCode;
+    this.setMHPlaylistName = data.PlaylistName;
     sessionStorage.setItem(TAB_NAME, this.tabHeaders);
     sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+    sessionStorage.setItem(SEARCHED_GRID, 'false');
     this.componentLoad = true;
+    for (let i = 0; i < this.playListDetail.length; i++) {
+      if(this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode){
+        this.playListDetail[i].showCss ='Y';
+      }
+      else {
+        this.playListDetail[i].showCss='N';
+      }
+    }
     this.componentData = {
       "showName": this.showlistdata.Title_Name,
       "titleCode": this.showlistdata.Title_Code,
@@ -295,9 +418,21 @@ export class QuickSelectionComponent implements OnInit {
       this.tabHeaders = 'PlayList';
       this.showPlayList = true;
       this.showTabdata = true;
-      this.componentLoad = false;
+      this.componentLoad = true;
+      var getMHPlaylistCode = this.playListDetail.filter(x => x.PlaylistName == this.setMHPlaylistName)[0];
+      this.setMHPlaylistCode = getMHPlaylistCode.MHPlayListCode;
+      for (let i = 0; i < this.playListDetail.length; i++) {
+        if(this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode){
+          this.playListDetail[i].showCss ='Y';
+        }
+        else {
+          this.playListDetail[i].showCss='N';
+        }
+      }
       sessionStorage.setItem(TAB_NAME, this.tabHeaders);
       sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+      sessionStorage.setItem(SEARCHED_GRID, 'false');
+      this.getPlayList();
       this.componentData = {
         "showName": this.showlistdata.Title_Name,
         "titleCode": this.showlistdata.Title_Code,
@@ -305,14 +440,14 @@ export class QuickSelectionComponent implements OnInit {
         "listview": this.playListDetail
       }
     }
-    else if (event.index == 1) {
+    else if (event.index == 1 && this.searchedTrack == false) {
       this.showPlayList = false;
       this.tabHeaders = 'PlayListSearch';
       this.showTabdata = true;
-      this.componentLoad = true;
-      this.setMHPlaylistCode = 0;
+      this.componentLoad = false;
       sessionStorage.setItem(TAB_NAME, this.tabHeaders);
       sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+      sessionStorage.setItem(SEARCHED_GRID, 'true');
       this.componentData = {
         "showName": this.showlistdata.Title_Name,
         "titleCode": this.showlistdata.Title_Code,
@@ -321,8 +456,23 @@ export class QuickSelectionComponent implements OnInit {
         'toplist': this.toplist,
         'listview1': this.listDetail1,
       }
-   
-
+    }
+    else if(event.index == 1 && this.searchedTrack == true){
+      this.showPlayList = false;
+      this.tabHeaders = 'PlayListSearch';
+      this.showTabdata = true;
+      this.componentLoad = true;
+      sessionStorage.setItem(TAB_NAME, this.tabHeaders);
+      sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+      sessionStorage.setItem(SEARCHED_GRID, 'true');
+      this.componentData = {
+        "showName": this.showlistdata.Title_Name,
+        "titleCode": this.showlistdata.Title_Code,
+        'episodeType': this.episodeType,
+        "listview": this.playListDetail,
+        'toplist': this.toplist,
+        'listview1': this.listDetail1,
+      }
     }
   }
 

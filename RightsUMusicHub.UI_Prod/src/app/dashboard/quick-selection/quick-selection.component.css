@@ -176,15 +176,15 @@
 }
 
 .info-Css{
-  height: 70px;
+  height: 65px;
   margin-right: 10px;
 }
 
 .info-icon-style{
-  height: 70px;
+  height: 65px;
   width: 70px;
   line-height: 65px !important;
-  margin-left: -14px
+  margin-left: -15px
 }
 
 .icon-Css{
@@ -202,11 +202,20 @@
 .info-box {
   display: block;
   min-height: 68px;
-  background: #f7f4f4;
+  background-color: gainsboro;
   width: 85%;
   box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
   border-radius: 2px;
   margin-bottom: 15px;
+}
+
+.noborder-css{
+  border: none;
+}
+
+.border-css{
+  border: 1px solid black;
+  background-color: aliceblue;
 }
 
 ::ng-deep.slick-prev:before, .slick-next:before {
@@ -234,7 +243,7 @@
 ::ng-deep.slick-slide {
   outline: none !important;
 }
-::ng-deep.ui-tabview .ui-tabview-panel {
+/* ::ng-deep.ui-tabview .ui-tabview-panel {
 	border-width: 0;
 	padding: 1em;
 	background: 0;
@@ -265,6 +274,52 @@
     height: 300px;
     background-image: none;
     padding-top: 1px;
+} */
+
+::ng-deep .ui-tabview .ui-tabview-panel {
+	border-width: 0;
+	padding: 1em;
+	background: 0;
+	border: 1px solid #ddd;
+	margin-left: -282px;
+	height: 101px;
+	margin-top: 1px;
+	border-left: none !important;
+  height: 100px;
+}
+
+::ng-deep.ui-tabview.ui-tabview-left>.ui-tabview-nav li {
+    margin: 0 0 1px 0;
+    border-right: 0 none;
+	outline: none;
+	background-color: #ddd;
+	height: 50px;
+}
+
+::ng-deep.ui-tabview .ui-tabview-nav > li.ui-state-active {
+	background: #fff;
+    color: white;
+	border:1px solid #ddd;
+	border-right: none !important;
+}
+
+::ng-deep.ui-state-active a{
+	color: #2b64a5;
+	height: 50px;
+}
+
+::ng-deep.ui-tabview-left>.ui-tabview-nav {
+    float: left;
+    width: 3%;
+    height: 0px;
+    background-image: none;
+    padding-top: 1px;
+}
+
+::ng-deep.ui-tabview .ui-tabview-nav li .ui-tabview-left-icon {
+  margin-right: .25em;
+  vertical-align: middle;
+  margin-top: 10px;
 }
 
 .buttonplayList {

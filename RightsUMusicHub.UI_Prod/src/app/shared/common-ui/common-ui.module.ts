@@ -16,7 +16,8 @@ import { MessagesModule } from 'primeng/messages';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CommonMusicTrackComponent } from './common-music-track/common-music-track.component';
 import { CommonMovieAlbumComponent } from './common-movie-album/common-movie-album.component';
-import { CommonMusicAssignmentComponent } from './common-music-assignment/common-music-assignment.component'
+import { CommonMusicAssignmentComponent } from './common-music-assignment/common-music-assignment.component';
+import {ContextMenuModule} from 'primeng/primeng';
 @NgModule({
   imports: [
     CommonModule,
@@ -29,7 +30,8 @@ import { CommonMusicAssignmentComponent } from './common-music-assignment/common
     TooltipModule,
     GoogleChartsModule,
     RadioButtonModule,
-    MessagesModule
+    MessagesModule,
+    ContextMenuModule
     
   ],
   declarations: [CartGridComponent, MessageBoxComponent,FilterPipe,FilterTitlePipe,PieChartComponent, ColumnChartComponent, CommonMusicTrackComponent, CommonMovieAlbumComponent, CommonMusicAssignmentComponent],

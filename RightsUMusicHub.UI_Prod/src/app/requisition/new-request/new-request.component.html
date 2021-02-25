@@ -318,20 +318,20 @@
 
 
         <!------Playlist Start------->
-        <section class="content-subHeader">
+        <section class="content-subHeader" style="margin-left: -18px;padding-left: 13px;padding-right: 2px">
           <div *ngIf="showTabdata">
             <p-tabView orientation="left" name="playListTab" (onChange)="onTabChange($event)">
-              <p-tabPanel [selected]="playList" leftIcon="fa fa-play" tooltip="PlayList">
+              <p-tabPanel [selected]="playList" leftIcon="fa fa-music" tooltip="PlayList">
                 <!-- <div class="row gutter" style="padding-left: 5% ;">
                   <div class="col-md-1 slick-prev" style="margin-top: 2%;"><i class="fa fa-chevron-left"></i></div>
                   <div id="your-class" class="col-md-10" style="margin-left: -5%;">
-            
+
                     <div class="info-box" style="height: 70px;margin-right: 10px;" *ngFor="let list of MHPlayListdummy ;let i=index">
                       <div id="{{i}}" (click)="getMusictrackList(list,i)">
                         <span class="info-box-icon bg-aqua" style="height: 70px;width: 70px;line-height: 65px !important;">
                           <i class="fa fa-music" aria-hidden="true" style="font-size:40px;margin-left: -5px;"></i>
                         </span>
-            
+
                         <div class="info-box-content">
                           <span class="info-box-text" pTooltip="{{list.PlaylistName}}" tooltipPosition="left" style="white-space:initial !important;margin-left: -10%;text-transform: none !important;">{{list.PlaylistName}}
                             <span><i class="fa fa-close close-playList"></i></span></span>
@@ -344,10 +344,10 @@
                 <div *ngIf="showPlayList">
                   <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig"
                     style="margin-left: 40px;">
-                    <div ngxSlickItem *ngFor="let slide of listdetail" class="slide">
-                      <div class="info-box info-Css">
+                    <div ngxSlickItem *ngFor="let slide of listdetail;let i=index" class="slide">
+                      <div  class="info-box info-Css" [ngClass]="{'border-css': slide.showCss == 'Y','noborder-css': slide.showCss == 'N'}">
                         <div class="col-md-10">
-                          <div  (click)="getMusictrackList(slide)">
+                          <div  (click)="getMusictrackList(slide,i)">
                             <span class="info-box-icon bg-aqua info-icon-style">
                               <i class="fa fa-music icon-Css" aria-hidden="true"></i>
                             </span>
@@ -362,38 +362,55 @@
                       </div>
                     </div>
                   </ngx-slick-carousel>
-                  <!-- <div class="row gutter padding-Css">
-                  <div class="col-md-1 slick-prev margin-style"><i class="fa fa-chevron-left"></i></div>
-                  <div id="your-class" class="col-md-10" style="margin-left: -5%;">
-                    <div class="info-box info-Css" *ngFor="let list of listdetail ;let i=index">
-                      <div id="{{i}}" (click)="getMusictrackList(list,i)">
-                        <span class="info-box-icon bg-aqua info-icon-style">
-                          <i class="fa fa-music icon-Css" aria-hidden="true"></i>
-                        </span>
-                        <div class="info-box-content">
-                          <span class="info-box-text tooltip-text" pTooltip="{{list.PlaylistName}}"
-                            tooltipPosition="left">{{list.PlaylistName}} <span><i
-                                class="fa fa-close close-playList"></i></span></span>
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-1 slick-next" style="margin-top: 2%;"><i class="fa fa-chevron-right"></i></div>
-                </div> -->
-                  <br>
-                  <div *ngIf="showdetail">
-                    <app-cart-grid [componentData]="componentData"
-                      [newMusicConsumptionRequest]="newMusicConsumptionRequest" [componentType]="componentType">
-                    </app-cart-grid>
-                  </div>
                 </div>
               </p-tabPanel>
               <p-tabPanel [selected]="playListsearch" leftIcon="fa fa-search" tooltip="PlayListsearch">
-                <div *ngIf="showdetail">
-                  <app-cart-grid [componentData]="componentData"
-                    [newMusicConsumptionRequest]="newMusicConsumptionRequest" [componentType]="componentType">
-                  </app-cart-grid>
+                <div class="box-body">
+                  <div class="block" style="margin-top: 15px;margin-left: 30px;">
+                    <form #searchForm="ngForm">
+                      <span style="width:5%">
+                        <p-dropdown [options]="musicLabelList" [style]="{'width':'150px'}" [autoWidth]="false"
+                          [(ngModel)]="newSearchRequest.MusicLabelCode" name=labelname optionLabel="MusicLabelName"
+                          [resetFilterOnHide]="true" filter="true"></p-dropdown>
+                      </span>&nbsp;
+                      <span style="width:10%">
+                        <input type="text" style="width:120px !important" name="musicTrack" value="" placeholder="Music Track"
+                          class="RequestTextBox" name="musicTrack" [(ngModel)]="newSearchRequest.MusicTrack" autocomplete="off">
+                      </span>&nbsp;
+                      <span>
+                        <input style="width:120px !important" type="text" name="musicRequest" value="" placeholder="Movie"
+                          class="RequestTextBox" name="movieName" [(ngModel)]="newSearchRequest.MovieName" autocomplete="off">
+                      </span>&nbsp;
+                      <span style="width:10%">
+                        <p-dropdown [options]="getGenreList" [style]="{'width':'150px'}" [autoWidth]="false"
+                          [(ngModel)]="newSearchRequest.GenreCode" name=genrename optionLabel="Genres_Name"
+                          [resetFilterOnHide]="true" filter="true"></p-dropdown>
+                      </span>&nbsp;
+                      <span>
+                        <input style="width:80px !important" type="text" value="" name="talentName" placeholder="Talent"
+                          class="RequestTextBox" name="talentName" [(ngModel)]="newSearchRequest.TalentName" autocomplete="off">
+                      </span>&nbsp;
+                      <span>
+                        <input style="width:130px !important" type="text" value="" name="tag" placeholder="Tag"
+                          class="RequestTextBox" [(ngModel)]="newSearchRequest.Tag" autocomplete="off">
+                      </span>&nbsp;
+                      <span style="width:5%">
+                        <p-dropdown [options]="languageList" [style]="{'width':'150px'}" [autoWidth]="false"
+                          [(ngModel)]="newSearchRequest.MusicLanguageCode" name=languagename optionLabel="Language_Name"
+                          [resetFilterOnHide]="true" filter="true"></p-dropdown>
+                      </span>&nbsp;
+                      <span style="width:8%" (click)="searchTrack()">
+                        <a id="Search_muiscLable" class="btn btn-social btn-sm btn-primary btn-flat" style="height: 30px;">
+                          <i class="fa fa-search"></i>Search
+                        </a>
+                      </span>&nbsp;
+                      <span style="width:8%" (click)="clearSearch()">
+                        <a id="Search_muiscLable" class="btn btn-social btn-sm btn-primary btn-flat" style="height: 30px;">
+                          <i class="fa fa-refresh"></i>Clear All
+                        </a>
+                      </span>
+                    </form>
+                  </div>
                 </div>
               </p-tabPanel>
             </p-tabView>
@@ -401,10 +418,12 @@
         </section>
 
         <!----Playlist End-->
-        <!-- <div *ngIf="showdetail">
-          <app-cart-grid [componentData]="componentData" [newMusicConsumptionRequest]="newMusicConsumptionRequest"
-            [componentType]="componentType"></app-cart-grid>
-        </div> -->
+
+        <div *ngIf="showdetail">
+          <app-cart-grid [componentData]="componentData"
+            [newMusicConsumptionRequest]="newMusicConsumptionRequest" [componentType]="componentType" [gridvalue]="gridvalue">
+          </app-cart-grid>
+        </div>
       </div>
       <div id="ReqList" [ngClass]="!isNewrequest ? 'tab-pane fade in active' : 'tab-pane fade'" class="tab-pane fade">
         <section class="content">
@@ -620,7 +639,7 @@
           </p-column>
           <p-column field="RequestedMusicTitle" header="Music Title" [style]="{'width':'150px'}">
             <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-              <span pTooltip="{{row.RequestedMusicTitle}}" tooltipPosition="top">{{row.RequestedMusicTitle}}</span>
+              <span pTooltip="{{row.RequestedMusicTitle}}" tooltipPosition="top">{{row.RequestedMusicTitle}} ({{row.SongUsedCount}})</span>
             </ng-template>
           </p-column>
           <p-column field="MusicMovieAlbum" header="Movie / Album" width="10" styleClass="text-center"
