@@ -22,14 +22,16 @@ BEGIN
 				INNER JOIN Music_Album ma ON ma.Music_Album_Code = mt.Music_Album_Code
 				GROUP BY TitleCode,MusicTitleCode, ma.Music_Album_Name
 
-				SELECT ISNULL(MRD.MusicTitleCode,'') AS MusicTitleCode,ISNULL(MT.Music_Title_Name,'') + ' ('+CAST(ISNULL(tcs.Cnt, 0) AS NVARCHAR) +')' AS RequestedMusicTitle, 
+				SELECT ISNULL(MRD.MusicTitleCode,'') AS MusicTitleCode,ISNULL(MT.Music_Title_Name,'') 
+				--+ ' ('+CAST(ISNULL(tcs.Cnt, 0) AS NVARCHAR) +')' 
+				AS RequestedMusicTitle, 
 				CASE WHEN MRD.IsValid = 'N' THEN 'Invalid' 
 					 WHEN MRD.IsValid = 'Y' THEN 'Valid'	
 					 ELSE 'Pending' END AS IsValid,
 					 ISNULL(ML.Music_Label_Name,'') AS LabelName,MA.Music_Album_Name AS MusicMovieAlbum,
 				CASE WHEN MRD.IsApprove = 'P' THEN 'Pending'
 					 WHEN MRD.IsApprove = 'Y' THEN 'Approve'
-					 ELSE 'Reject' END AS IsApprove,ISNULL(MRD.Remarks,'') AS Remarks,MR.MHRequestCode,MR.TitleCode,ISNULL(T.Title_Name,'') AS Title_Name,MR.EpisodeFrom,MR.EpisodeTo,ISNULL(MR.SpecialInstruction,'') AS SpecialInstruction, ISNULL(MR.Remarks,'') AS ProductionHouseRemarks
+					 ELSE 'Reject' END AS IsApprove,ISNULL(MRD.Remarks,'') AS Remarks,MR.MHRequestCode,MR.TitleCode,ISNULL(T.Title_Name,'') AS Title_Name,MR.EpisodeFrom,MR.EpisodeTo,ISNULL(MR.SpecialInstruction,'') AS SpecialInstruction, ISNULL(MR.Remarks,'') AS ProductionHouseRemarks,ISNULL(tcs.Cnt, 0) AS SongUsedCount
 				FROM MHRequestDetails MRD
 				INNER JOIN Music_Title MT ON MT.Music_Title_Code = MRD.MusicTitleCode
 				LEFT JOIN Music_Title_Label MTL ON MTL.Music_Title_Code = MRD.MusicTitleCode AND MTL.Effective_To IS NULL
@@ -97,5 +99,3 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#tempCueSheet') IS NOT NULL DROP TABLE #tempCueSheet
 END
-GO
-
