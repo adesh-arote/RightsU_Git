@@ -220,8 +220,8 @@ public partial class Reports_rptDealQuery : ParentPage
                         if (curVW.Contains("*"))
                             curVWList = curVWList + ",'" + curVW.Substring(0, curVW.IndexOf("*")) + "'";
                         string selectedCol = hdnCol.Value.ToString().Replace("~", ",").Trim(',');
-                        string strLCol = " select *  from Report_Column_setup where 1=1 and IsPartofSelectOnly !='N'  and view_Name in (" + curVWList + ") And  (Alternate_Config_Code is null or Alternate_Config_Code  in  (" + temp + ")) ",
-                            strRCol = " select *  from Report_Column_setup where 1=1 and IsPartofSelectOnly !='N'  and view_Name in (" + curVWList + ") ";
+                        string strLCol = " select *  from Report_Column_setup where 1=1 and Display_Type is null and IsPartofSelectOnly !='N'  and view_Name in (" + curVWList + ") And  (Alternate_Config_Code is null or Alternate_Config_Code  in  (" + temp + ")) ",
+                            strRCol = " select *  from Report_Column_setup where 1=1 and Display_Type is null and IsPartofSelectOnly !='N'  and view_Name in (" + curVWList + ") ";
                         strLCol += " AND Column_code NOT IN (" + (selectedCol == string.Empty ? "0" : selectedCol) + ")   ";
                         strRCol += " AND Column_code IN (" + (selectedCol == string.Empty ? "0" : selectedCol) + ")  ";
                         DataSet Ds = DatabaseBroker.ProcessSelectDirectly(strLCol);
