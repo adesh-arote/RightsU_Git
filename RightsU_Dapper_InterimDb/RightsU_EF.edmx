@@ -1,0 +1,602 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="RightsU_EF_PlusModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Music_Deal">
+          <Key>
+            <PropertyRef Name="Music_Deal_Code" />
+          </Key>
+          <Property Name="Music_Deal_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Agreement_No" Type="varchar" MaxLength="50" />
+          <Property Name="Version" Type="varchar" MaxLength="50" />
+          <Property Name="Agreement_Date" Type="datetime" />
+          <Property Name="Description" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Deal_Tag_Code" Type="int" />
+          <Property Name="Reference_No" Type="nvarchar" MaxLength="200" />
+          <Property Name="Entity_Code" Type="int" />
+          <Property Name="Primary_Vendor_Code" Type="int" />
+          <Property Name="Music_Label_Code" Type="int" />
+          <Property Name="Title_Type" Type="char" MaxLength="1" />
+          <Property Name="Duration_Restriction" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Rights_Start_Date" Type="datetime" />
+          <Property Name="Rights_End_Date" Type="datetime" />
+          <Property Name="Term" Type="varchar" MaxLength="12" />
+          <Property Name="Run_Type" Type="char" MaxLength="1" />
+          <Property Name="No_Of_Songs" Type="int" />
+          <Property Name="Channel_Type" Type="char" MaxLength="1" />
+          <Property Name="Channel_Or_Category" Type="char" MaxLength="1" />
+          <Property Name="Channel_Category_Code" Type="int" />
+          <Property Name="Right_Rule_Code" Type="int" />
+          <Property Name="Link_Show_Type" Type="char" MaxLength="2" />
+          <Property Name="Business_Unit_Code" Type="int" />
+          <Property Name="Deal_Type_Code" Type="int" />
+          <Property Name="Deal_Workflow_Status" Type="varchar" MaxLength="5" />
+          <Property Name="Work_Flow_Code" Type="int" />
+          <Property Name="Parent_Deal_Code" Type="int" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+          <Property Name="Remarks" Type="nvarchar(max)" />
+          <Property Name="Agreement_Cost" Type="decimal" Precision="38" Scale="3" />
+          <Property Name="Right_Rule_Type" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Channel">
+          <Key>
+            <PropertyRef Name="Music_Deal_Channel_Code" />
+          </Key>
+          <Property Name="Music_Deal_Channel_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Music_Deal_Code" Type="int" />
+          <Property Name="Channel_Code" Type="int" />
+          <Property Name="Defined_Runs" Type="int" />
+          <Property Name="Scheduled_Runs" Type="int" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Country">
+          <Key>
+            <PropertyRef Name="Music_Deal_Country_Code" />
+          </Key>
+          <Property Name="Music_Deal_Country_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Music_Deal_Code" Type="int" />
+          <Property Name="Country_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Music_Deal_DealType">
+          <Key>
+            <PropertyRef Name="Music_Deal_Type_Code" />
+          </Key>
+          <Property Name="Music_Deal_Type_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Music_Deal_Code" Type="int" Nullable="false" />
+          <Property Name="Deal_Type_Code" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Language">
+          <Key>
+            <PropertyRef Name="Music_Deal_Language_Code" />
+          </Key>
+          <Property Name="Music_Deal_Language_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Music_Deal_Code" Type="int" />
+          <Property Name="Music_Language_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Music_Deal_LinkShow">
+          <Key>
+            <PropertyRef Name="Music_Deal_LinkShow_Code" />
+          </Key>
+          <Property Name="Music_Deal_LinkShow_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Music_Deal_Code" Type="int" />
+          <Property Name="Title_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Platform">
+          <Key>
+            <PropertyRef Name="Music_Deal_Platform_Code" />
+          </Key>
+          <Property Name="Music_Deal_Platform_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Music_Deal_Code" Type="int" />
+          <Property Name="Music_Platform_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Vendor">
+          <Key>
+            <PropertyRef Name="Music_Deal_Vendor_Code" />
+          </Key>
+          <Property Name="Music_Deal_Vendor_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Music_Deal_Code" Type="int" />
+          <Property Name="Vendor_Code" Type="int" />
+        </EntityType>
+        <Association Name="FK__Music_Dea__Music__1CD2EB5D">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="1" />
+          <End Role="Music_Deal_DealType" Type="Self.Music_Deal_DealType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_DealType">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Music_Dea__Music__24740D25">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Platform" Type="Self.Music_Deal_Platform" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Platform">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_Channel_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Channel" Type="Self.Music_Deal_Channel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Channel">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_Country_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Country" Type="Self.Music_Deal_Country" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Country">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_Language_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Language" Type="Self.Music_Deal_Language" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Language">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_LinkShow_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_LinkShow" Type="Self.Music_Deal_LinkShow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_LinkShow">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_Vendor_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Vendor" Type="Self.Music_Deal_Vendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Vendor">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RightsU_EF_PlusModelStoreContainer">
+          <EntitySet Name="Music_Deal" EntityType="Self.Music_Deal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Music_Deal_Channel" EntityType="Self.Music_Deal_Channel" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Music_Deal_Country" EntityType="Self.Music_Deal_Country" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Music_Deal_DealType" EntityType="Self.Music_Deal_DealType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Music_Deal_Language" EntityType="Self.Music_Deal_Language" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Music_Deal_LinkShow" EntityType="Self.Music_Deal_LinkShow" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Music_Deal_Platform" EntityType="Self.Music_Deal_Platform" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Music_Deal_Vendor" EntityType="Self.Music_Deal_Vendor" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Music_Dea__Music__1CD2EB5D" Association="Self.FK__Music_Dea__Music__1CD2EB5D">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_DealType" EntitySet="Music_Deal_DealType" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Music_Dea__Music__24740D25" Association="Self.FK__Music_Dea__Music__24740D25">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Platform" EntitySet="Music_Deal_Platform" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_Channel_Music_Deal" Association="Self.FK_Music_Deal_Channel_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Channel" EntitySet="Music_Deal_Channel" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_Country_Music_Deal" Association="Self.FK_Music_Deal_Country_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Country" EntitySet="Music_Deal_Country" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_Language_Music_Deal" Association="Self.FK_Music_Deal_Language_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Language" EntitySet="Music_Deal_Language" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_LinkShow_Music_Deal" Association="Self.FK_Music_Deal_LinkShow_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_LinkShow" EntitySet="Music_Deal_LinkShow" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_Vendor_Music_Deal" Association="Self.FK_Music_Deal_Vendor_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Vendor" EntitySet="Music_Deal_Vendor" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RightsU_EF_PlusModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Music_Deal">
+          <Key>
+            <PropertyRef Name="Music_Deal_Code" />
+          </Key>
+          <Property Name="Music_Deal_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Agreement_No" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Version" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Agreement_Date" Type="DateTime" Precision="3" />
+          <Property Name="Description" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Deal_Tag_Code" Type="Int32" />
+          <Property Name="Reference_No" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Entity_Code" Type="Int32" />
+          <Property Name="Primary_Vendor_Code" Type="Int32" />
+          <Property Name="Music_Label_Code" Type="Int32" />
+          <Property Name="Title_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Duration_Restriction" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Rights_Start_Date" Type="DateTime" Precision="3" />
+          <Property Name="Rights_End_Date" Type="DateTime" Precision="3" />
+          <Property Name="Term" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Name="Run_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="No_Of_Songs" Type="Int32" />
+          <Property Name="Channel_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Channel_Or_Category" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Channel_Category_Code" Type="Int32" />
+          <Property Name="Right_Rule_Code" Type="Int32" />
+          <Property Name="Link_Show_Type" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="Business_Unit_Code" Type="Int32" />
+          <Property Name="Deal_Type_Code" Type="Int32" />
+          <Property Name="Deal_Workflow_Status" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Work_Flow_Code" Type="Int32" />
+          <Property Name="Parent_Deal_Code" Type="Int32" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Agreement_Cost" Type="Decimal" Precision="38" Scale="3" />
+          <Property Name="Right_Rule_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Music_Deal_DealType" Relationship="Self.FK__Music_Dea__Music__1CD2EB5D" FromRole="Music_Deal" ToRole="Music_Deal_DealType" />
+          <NavigationProperty Name="Music_Deal_Platform" Relationship="Self.FK__Music_Dea__Music__24740D25" FromRole="Music_Deal" ToRole="Music_Deal_Platform" />
+          <NavigationProperty Name="Music_Deal_Channel" Relationship="Self.FK_Music_Deal_Channel_Music_Deal" FromRole="Music_Deal" ToRole="Music_Deal_Channel" />
+          <NavigationProperty Name="Music_Deal_Country" Relationship="Self.FK_Music_Deal_Country_Music_Deal" FromRole="Music_Deal" ToRole="Music_Deal_Country" />
+          <NavigationProperty Name="Music_Deal_Language" Relationship="Self.FK_Music_Deal_Language_Music_Deal" FromRole="Music_Deal" ToRole="Music_Deal_Language" />
+          <NavigationProperty Name="Music_Deal_LinkShow" Relationship="Self.FK_Music_Deal_LinkShow_Music_Deal" FromRole="Music_Deal" ToRole="Music_Deal_LinkShow" />
+          <NavigationProperty Name="Music_Deal_Vendor" Relationship="Self.FK_Music_Deal_Vendor_Music_Deal" FromRole="Music_Deal" ToRole="Music_Deal_Vendor" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Channel">
+          <Key>
+            <PropertyRef Name="Music_Deal_Channel_Code" />
+          </Key>
+          <Property Name="Music_Deal_Channel_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Music_Deal_Code" Type="Int32" />
+          <Property Name="Channel_Code" Type="Int32" />
+          <Property Name="Defined_Runs" Type="Int32" />
+          <Property Name="Scheduled_Runs" Type="Int32" />
+          <NavigationProperty Name="Music_Deal" Relationship="Self.FK_Music_Deal_Channel_Music_Deal" FromRole="Music_Deal_Channel" ToRole="Music_Deal" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Country">
+          <Key>
+            <PropertyRef Name="Music_Deal_Country_Code" />
+          </Key>
+          <Property Name="Music_Deal_Country_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Music_Deal_Code" Type="Int32" />
+          <Property Name="Country_Code" Type="Int32" />
+          <NavigationProperty Name="Music_Deal" Relationship="Self.FK_Music_Deal_Country_Music_Deal" FromRole="Music_Deal_Country" ToRole="Music_Deal" />
+        </EntityType>
+        <EntityType Name="Music_Deal_DealType">
+          <Key>
+            <PropertyRef Name="Music_Deal_Type_Code" />
+          </Key>
+          <Property Name="Music_Deal_Type_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Music_Deal_Code" Type="Int32" Nullable="false" />
+          <Property Name="Deal_Type_Code" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Music_Deal" Relationship="Self.FK__Music_Dea__Music__1CD2EB5D" FromRole="Music_Deal_DealType" ToRole="Music_Deal" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Language">
+          <Key>
+            <PropertyRef Name="Music_Deal_Language_Code" />
+          </Key>
+          <Property Name="Music_Deal_Language_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Music_Deal_Code" Type="Int32" />
+          <Property Name="Music_Language_Code" Type="Int32" />
+          <NavigationProperty Name="Music_Deal" Relationship="Self.FK_Music_Deal_Language_Music_Deal" FromRole="Music_Deal_Language" ToRole="Music_Deal" />
+        </EntityType>
+        <EntityType Name="Music_Deal_LinkShow">
+          <Key>
+            <PropertyRef Name="Music_Deal_LinkShow_Code" />
+          </Key>
+          <Property Name="Music_Deal_LinkShow_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Music_Deal_Code" Type="Int32" />
+          <Property Name="Title_Code" Type="Int32" />
+          <NavigationProperty Name="Music_Deal" Relationship="Self.FK_Music_Deal_LinkShow_Music_Deal" FromRole="Music_Deal_LinkShow" ToRole="Music_Deal" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Platform">
+          <Key>
+            <PropertyRef Name="Music_Deal_Platform_Code" />
+          </Key>
+          <Property Name="Music_Deal_Platform_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Music_Deal_Code" Type="Int32" />
+          <Property Name="Music_Platform_Code" Type="Int32" />
+          <NavigationProperty Name="Music_Deal" Relationship="Self.FK__Music_Dea__Music__24740D25" FromRole="Music_Deal_Platform" ToRole="Music_Deal" />
+        </EntityType>
+        <EntityType Name="Music_Deal_Vendor">
+          <Key>
+            <PropertyRef Name="Music_Deal_Vendor_Code" />
+          </Key>
+          <Property Name="Music_Deal_Vendor_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Music_Deal_Code" Type="Int32" />
+          <Property Name="Vendor_Code" Type="Int32" />
+          <NavigationProperty Name="Music_Deal" Relationship="Self.FK_Music_Deal_Vendor_Music_Deal" FromRole="Music_Deal_Vendor" ToRole="Music_Deal" />
+        </EntityType>
+        <Association Name="FK__Music_Dea__Music__1CD2EB5D">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="1" />
+          <End Role="Music_Deal_DealType" Type="Self.Music_Deal_DealType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_DealType">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Music_Dea__Music__24740D25">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Platform" Type="Self.Music_Deal_Platform" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Platform">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_Channel_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Channel" Type="Self.Music_Deal_Channel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Channel">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_Country_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Country" Type="Self.Music_Deal_Country" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Country">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_Language_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Language" Type="Self.Music_Deal_Language" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Language">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_LinkShow_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_LinkShow" Type="Self.Music_Deal_LinkShow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_LinkShow">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Music_Deal_Vendor_Music_Deal">
+          <End Role="Music_Deal" Type="Self.Music_Deal" Multiplicity="0..1" />
+          <End Role="Music_Deal_Vendor" Type="Self.Music_Deal_Vendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Music_Deal">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Principal>
+            <Dependent Role="Music_Deal_Vendor">
+              <PropertyRef Name="Music_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RightsU_EF_PlusEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Music_Deal" EntityType="Self.Music_Deal" />
+          <EntitySet Name="Music_Deal_Channel" EntityType="Self.Music_Deal_Channel" />
+          <EntitySet Name="Music_Deal_Country" EntityType="Self.Music_Deal_Country" />
+          <EntitySet Name="Music_Deal_DealType" EntityType="Self.Music_Deal_DealType" />
+          <EntitySet Name="Music_Deal_Language" EntityType="Self.Music_Deal_Language" />
+          <EntitySet Name="Music_Deal_LinkShow" EntityType="Self.Music_Deal_LinkShow" />
+          <EntitySet Name="Music_Deal_Platform" EntityType="Self.Music_Deal_Platform" />
+          <EntitySet Name="Music_Deal_Vendor" EntityType="Self.Music_Deal_Vendor" />
+          <AssociationSet Name="FK__Music_Dea__Music__1CD2EB5D" Association="Self.FK__Music_Dea__Music__1CD2EB5D">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_DealType" EntitySet="Music_Deal_DealType" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Music_Dea__Music__24740D25" Association="Self.FK__Music_Dea__Music__24740D25">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Platform" EntitySet="Music_Deal_Platform" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_Channel_Music_Deal" Association="Self.FK_Music_Deal_Channel_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Channel" EntitySet="Music_Deal_Channel" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_Country_Music_Deal" Association="Self.FK_Music_Deal_Country_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Country" EntitySet="Music_Deal_Country" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_Language_Music_Deal" Association="Self.FK_Music_Deal_Language_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Language" EntitySet="Music_Deal_Language" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_LinkShow_Music_Deal" Association="Self.FK_Music_Deal_LinkShow_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_LinkShow" EntitySet="Music_Deal_LinkShow" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Music_Deal_Vendor_Music_Deal" Association="Self.FK_Music_Deal_Vendor_Music_Deal">
+            <End Role="Music_Deal" EntitySet="Music_Deal" />
+            <End Role="Music_Deal_Vendor" EntitySet="Music_Deal_Vendor" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RightsU_EF_PlusModelStoreContainer" CdmEntityContainer="RightsU_EF_PlusEntities">
+          <EntitySetMapping Name="Music_Deal">
+            <EntityTypeMapping TypeName="RightsU_EF_PlusModel.Music_Deal">
+              <MappingFragment StoreEntitySet="Music_Deal">
+                <ScalarProperty Name="Music_Deal_Code" ColumnName="Music_Deal_Code" />
+                <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Agreement_Date" ColumnName="Agreement_Date" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Deal_Tag_Code" ColumnName="Deal_Tag_Code" />
+                <ScalarProperty Name="Reference_No" ColumnName="Reference_No" />
+                <ScalarProperty Name="Entity_Code" ColumnName="Entity_Code" />
+                <ScalarProperty Name="Primary_Vendor_Code" ColumnName="Primary_Vendor_Code" />
+                <ScalarProperty Name="Music_Label_Code" ColumnName="Music_Label_Code" />
+                <ScalarProperty Name="Title_Type" ColumnName="Title_Type" />
+                <ScalarProperty Name="Duration_Restriction" ColumnName="Duration_Restriction" />
+                <ScalarProperty Name="Rights_Start_Date" ColumnName="Rights_Start_Date" />
+                <ScalarProperty Name="Rights_End_Date" ColumnName="Rights_End_Date" />
+                <ScalarProperty Name="Term" ColumnName="Term" />
+                <ScalarProperty Name="Run_Type" ColumnName="Run_Type" />
+                <ScalarProperty Name="No_Of_Songs" ColumnName="No_Of_Songs" />
+                <ScalarProperty Name="Channel_Type" ColumnName="Channel_Type" />
+                <ScalarProperty Name="Channel_Or_Category" ColumnName="Channel_Or_Category" />
+                <ScalarProperty Name="Channel_Category_Code" ColumnName="Channel_Category_Code" />
+                <ScalarProperty Name="Right_Rule_Code" ColumnName="Right_Rule_Code" />
+                <ScalarProperty Name="Link_Show_Type" ColumnName="Link_Show_Type" />
+                <ScalarProperty Name="Business_Unit_Code" ColumnName="Business_Unit_Code" />
+                <ScalarProperty Name="Deal_Type_Code" ColumnName="Deal_Type_Code" />
+                <ScalarProperty Name="Deal_Workflow_Status" ColumnName="Deal_Workflow_Status" />
+                <ScalarProperty Name="Work_Flow_Code" ColumnName="Work_Flow_Code" />
+                <ScalarProperty Name="Parent_Deal_Code" ColumnName="Parent_Deal_Code" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Agreement_Cost" ColumnName="Agreement_Cost" />
+                <ScalarProperty Name="Right_Rule_Type" ColumnName="Right_Rule_Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Music_Deal_Channel">
+            <EntityTypeMapping TypeName="RightsU_EF_PlusModel.Music_Deal_Channel">
+              <MappingFragment StoreEntitySet="Music_Deal_Channel">
+                <ScalarProperty Name="Music_Deal_Channel_Code" ColumnName="Music_Deal_Channel_Code" />
+                <ScalarProperty Name="Music_Deal_Code" ColumnName="Music_Deal_Code" />
+                <ScalarProperty Name="Channel_Code" ColumnName="Channel_Code" />
+                <ScalarProperty Name="Defined_Runs" ColumnName="Defined_Runs" />
+                <ScalarProperty Name="Scheduled_Runs" ColumnName="Scheduled_Runs" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Music_Deal_Country">
+            <EntityTypeMapping TypeName="RightsU_EF_PlusModel.Music_Deal_Country">
+              <MappingFragment StoreEntitySet="Music_Deal_Country">
+                <ScalarProperty Name="Music_Deal_Country_Code" ColumnName="Music_Deal_Country_Code" />
+                <ScalarProperty Name="Music_Deal_Code" ColumnName="Music_Deal_Code" />
+                <ScalarProperty Name="Country_Code" ColumnName="Country_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Music_Deal_DealType">
+            <EntityTypeMapping TypeName="RightsU_EF_PlusModel.Music_Deal_DealType">
+              <MappingFragment StoreEntitySet="Music_Deal_DealType">
+                <ScalarProperty Name="Music_Deal_Type_Code" ColumnName="Music_Deal_Type_Code" />
+                <ScalarProperty Name="Music_Deal_Code" ColumnName="Music_Deal_Code" />
+                <ScalarProperty Name="Deal_Type_Code" ColumnName="Deal_Type_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Music_Deal_Language">
+            <EntityTypeMapping TypeName="RightsU_EF_PlusModel.Music_Deal_Language">
+              <MappingFragment StoreEntitySet="Music_Deal_Language">
+                <ScalarProperty Name="Music_Deal_Language_Code" ColumnName="Music_Deal_Language_Code" />
+                <ScalarProperty Name="Music_Deal_Code" ColumnName="Music_Deal_Code" />
+                <ScalarProperty Name="Music_Language_Code" ColumnName="Music_Language_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Music_Deal_LinkShow">
+            <EntityTypeMapping TypeName="RightsU_EF_PlusModel.Music_Deal_LinkShow">
+              <MappingFragment StoreEntitySet="Music_Deal_LinkShow">
+                <ScalarProperty Name="Music_Deal_LinkShow_Code" ColumnName="Music_Deal_LinkShow_Code" />
+                <ScalarProperty Name="Music_Deal_Code" ColumnName="Music_Deal_Code" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Music_Deal_Platform">
+            <EntityTypeMapping TypeName="RightsU_EF_PlusModel.Music_Deal_Platform">
+              <MappingFragment StoreEntitySet="Music_Deal_Platform">
+                <ScalarProperty Name="Music_Deal_Platform_Code" ColumnName="Music_Deal_Platform_Code" />
+                <ScalarProperty Name="Music_Deal_Code" ColumnName="Music_Deal_Code" />
+                <ScalarProperty Name="Music_Platform_Code" ColumnName="Music_Platform_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Music_Deal_Vendor">
+            <EntityTypeMapping TypeName="RightsU_EF_PlusModel.Music_Deal_Vendor">
+              <MappingFragment StoreEntitySet="Music_Deal_Vendor">
+                <ScalarProperty Name="Music_Deal_Vendor_Code" ColumnName="Music_Deal_Vendor_Code" />
+                <ScalarProperty Name="Music_Deal_Code" ColumnName="Music_Deal_Code" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

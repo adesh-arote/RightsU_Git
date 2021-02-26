@@ -7,11 +7,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using UTOFrameWork.FrameworkClasses;
+using RightsU_Dapper.BLL.Services;
 
 namespace RightsU_Plus.Controllers
 {
+   
     public class Music_Deal_ListController : BaseController
     {
+        private readonly Music_Deal_Services objMusic_Deal_Services = new Music_Deal_Services();
         private Music_Deal_Search objMusicDealSearch
         {
             get
@@ -92,6 +95,14 @@ namespace RightsU_Plus.Controllers
                 SearchText, Agreement_No, StartDate, EndDate, strDeal_Type_Code, strStatus_Code, Business_Unit_Code,
                 0, Workflow_Status, Vendor_Codes, strShow_Type_Code, Title_Code, Music_Label_Codes, IsAdvance_Search,
                 objLoginUser.Users_Code, objPageNo, recordPerPage, objTotalRecord
+            ).ToList();
+
+
+
+            List<RightsU_Dapper.Entity.USP_List_Music_Deal_Result> lstMusicDeal1 = objMusic_Deal_Services.USP_List_Music_Deal(
+                SearchText, Agreement_No, StartDate, EndDate, strDeal_Type_Code, strStatus_Code, Business_Unit_Code,
+                0, Workflow_Status, Vendor_Codes, strShow_Type_Code, Title_Code, Music_Label_Codes, IsAdvance_Search,
+                objLoginUser.Users_Code, pageNo, recordPerPage, out recordCount
             ).ToList();
 
             recordCount = Convert.ToInt32(objTotalRecord.Value);

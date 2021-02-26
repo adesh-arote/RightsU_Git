@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="563ed4e329124769bb192c7469ee4a3a" Name="Diagram1">
+        <EntityTypeShape EntityType="RightsU_EF_PlusModel.Music_Deal" Width="1.5" PointX="0.75" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_EF_PlusModel.Music_Deal_Channel" Width="1.5" PointX="3" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_EF_PlusModel.Music_Deal_Country" Width="1.5" PointX="3" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_EF_PlusModel.Music_Deal_DealType" Width="1.5" PointX="3" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_EF_PlusModel.Music_Deal_Language" Width="1.5" PointX="3" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_EF_PlusModel.Music_Deal_LinkShow" Width="1.5" PointX="3" PointY="12.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_EF_PlusModel.Music_Deal_Platform" Width="1.5" PointX="3" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_EF_PlusModel.Music_Deal_Vendor" Width="1.5" PointX="3" PointY="17.25" IsExpanded="true" />
+        <AssociationConnector Association="RightsU_EF_PlusModel.FK__Music_Dea__Music__1CD2EB5D" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_EF_PlusModel.FK__Music_Dea__Music__24740D25" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_EF_PlusModel.FK_Music_Deal_Channel_Music_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_EF_PlusModel.FK_Music_Deal_Country_Music_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_EF_PlusModel.FK_Music_Deal_Language_Music_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_EF_PlusModel.FK_Music_Deal_LinkShow_Music_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_EF_PlusModel.FK_Music_Deal_Vendor_Music_Deal" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
