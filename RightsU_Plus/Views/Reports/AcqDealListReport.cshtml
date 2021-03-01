@@ -39,10 +39,22 @@
         var businessUnitcode = $('#ddlBusinessUnit').val();
         var DealNo = $('#txtDealNo').val();
         var AllowDealSegment = $('#AllowDealSegment').val();
+        var IsAllowTypeOfFilm = $('#IsAllowTypeOfFilm').val();
         if (AllowDealSegment == "Y")
             var DealSegment = $('#ddlDealSegment').val();
         else
             var DealSegment = "";
+
+        if (AllowDealSegment == "Y")
+            var DealSegment = $('#ddlDealSegment').val();
+        else
+            var DealSegment = "";
+
+        if (IsAllowTypeOfFilm == "Y")
+            var TypeOfFilm = $('#ddlTypeOfFilm').val();
+        else
+            var TypeOfFilm = "";
+
         var DealType = "";
         var Dealtag = $('#ddlStatus').val();
         if ($('#txtTitle').val() != '0')
@@ -94,7 +106,7 @@
         //    else
         //        IsPushBack = "Y";
         //}                                ------commented by sayali on 2aug2018  discussion with dheeraj sir implement this straight forward login checked then yes
-       
+
         if (DealNo == "0") {
             $('#txtDealNo').addClass('required');
             returnVal = false;
@@ -121,7 +133,8 @@
                     subDeal: subDeal,
                     masterDeal: masterDeal,
                     dateformat: $('#ddlDateFormat').val(),
-                    IsCheckRight: IsCheckRight
+                    IsCheckRight: IsCheckRight,
+                    TypeOfFilm: TypeOfFilm
                 }),
                 async: false,
                 success: function (result) {
@@ -316,7 +329,7 @@
                         </tr>
                         <tr style="width:100%">
                             <td style="width:11%"><b>@objMessageKey.BusinessUnit :</b></td>
-                            <td style="width:16%;">                               
+                            <td style="width:16%;">
                                 @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
                             </td>
                             <td style="width:7%"><b>@objMessageKey.Title :</b></td>
@@ -340,16 +353,30 @@
                         <tr style="width:100%">
                             <td style="width:8%"><b>@objMessageKey.DateFormat:</b></td>
                             <td style="width:17%">
+                                <input id="AllowDealSegment"
+                                       type="hidden"
+                                       value=@ViewBag.AllowDealSegment />
+                                <input id="IsAllowTypeOfFilm"
+                                       type="hidden"
+                                       value=@ViewBag.IsAllowTypeOfFilm />
                                 @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
                             </td>
-                            <input id="AllowDealSegment"
-                                   type="hidden"
-                                   value=@ViewBag.AllowDealSegment />
+                           
+
                             @if (ViewBag.AllowDealSegment == "Y")
                             {
                                 <td style="width:7%"><b>Deal Segment :</b></td>
                                 <td style="width:16%">
                                     @Html.DropDownList("DealSegment", ViewBag.Deal_Segment as SelectList, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select" })
+                                </td>
+                            }
+
+                          
+                            @if (ViewBag.IsAllowTypeOfFilm == "Y")
+                            {
+                                <td style="width:7%"><b>Type of Film :</b></td>
+                                <td style="width:16%">
+                                    @Html.DropDownList("TypeOfFilm", ViewBag.TypeOfFilm as SelectList, "Please Select", new { @id = "ddlTypeOfFilm", @class = "form_input chosen-select" })
                                 </td>
                             }
                             <td></td>

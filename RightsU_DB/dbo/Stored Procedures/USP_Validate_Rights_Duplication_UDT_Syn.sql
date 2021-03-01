@@ -1,13 +1,18 @@
-﻿
-CREATE PROC [dbo].[USP_Validate_Rights_Duplication_UDT_Syn]
+﻿CREATE PROC [dbo].[USP_Validate_Rights_Duplication_UDT_Syn]
 AS
 BEGIN 
 	IF((SELECT COUNT(*) From Syn_Deal_Rights_Process_Validation WHERE STATUS = 'W') = 0)
 	BEGIN
 		SET NOCOUNT ON;
+		DECLARE @Is_Acq_Syn_CoExclusive CHAR(1) = 'N', @Tentative VARCHAR(100) = 'N'
 		DECLARE @IS_PUSH_BACK_SAME_DEAL CHAR(1) ='N', @Is_Autopush CHAR(1) = 'N',@Sql NVARCHAR(1000),@DB_Name VARCHAR(1000),@Agreement_No VARCHAR(100);
 		SELECT @IS_PUSH_BACK_SAME_DEAL  = Parameter_Value from System_Parameter_New WHERE Parameter_Name = 'VALIDATE_PUSHBACK_SAME_DEAL'
 		
+		Select @Is_Acq_Syn_CoExclusive = Parameter_Value From System_Parameter_New Where Parameter_Name = 'Is_Acq_Syn_CoExclusive'
+		
+		IF(@Is_Acq_Syn_CoExclusive = 'Y')
+			SELECT @Tentative = 'N,Y'
+			
 
 		DECLARE @Syn_Deal_Rights_Code INT
 		Select Top 1 @Syn_Deal_Rights_Code = Syn_Deal_Rights_Code From Syn_Deal_Rights_Process_Validation Where Status = 'P' Order By Created_On ASC
@@ -560,7 +565,8 @@ BEGIN
 			Where 
 			ADR.Acq_Deal_Code Is Not Null
 			And ADR.Is_Sub_License='Y'
-			And ADR.Is_Tentative='N'
+			And ADR.Is_Tentative IN (SELECT number FROM dbo.fn_Split_withdelemiter(@Tentative,','))
+			--And ADR.Is_Tentative='N'
 			And
 			(
 				(

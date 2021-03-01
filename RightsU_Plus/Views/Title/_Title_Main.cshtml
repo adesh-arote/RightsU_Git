@@ -15,7 +15,8 @@
 <script>
     var URL_BindFieldNamedd = '@Url.Action("BindFieldNameddl", "Title")';
     var URL_TitleList_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code", Record_Locking_Code ="RL_Code"})';
-
+    var URL_Bind_Title_List = '@Url.Action("Bind_Title_List", "Title_List")';
+    var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_List")';
     $(document).ready(function () {
         $("#_hdnRecordLockingCode").val(recordLockingCode);
         initializeChosen();
@@ -66,6 +67,45 @@
         Dir_G = '@ViewBag.Direction';
 
     });
+
+    $("#Deal_Type_Code").change(function () {
+        debugger;
+        //$("#ddlSrchTitle").find("option").attr("selected", false);
+        //$("#ddlSrchTitle").val('')[0].sumo.reload();
+        $('#txtTitleSearch').val('');
+
+        var DealTypeCode = $('#Deal_Type_Code').val();
+        $.ajax({
+            type: "POST",
+            url: URL_OnChangeBindTitle,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DealTypeCode: DealTypeCode
+            }),
+            async: true,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#ddlSrchTitle").empty();
+                    $(result).each(function (index, item) {
+                        debugger;
+                        $("#ddlSrchTitle").append($("<option>").val(this.Value).text(this.Text));
+                        debugger;
+                    });
+                    //$("#ddlSrchTitle").val('')[0].sumo.reload();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    });
+
     function fileCheck(obj) {
         var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
 
@@ -91,6 +131,97 @@
         URL = URL.replace("RL_Code", $("#_hdnRecordLockingCode").val());
         URL = URL.replace(/amp;/g, "");
         window.location.href = URL;
+    }
+    function populateTitle(evt) {
+        debugger;
+        var DealTypeCode = $('#Deal_Type_Code').val();
+
+
+        var Selected_Title_Codes = "";
+        var selectedtxt = $('#txtTitleSearch').val();
+        var txt = selectedtxt.split('?');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $('#txtTitleSearch').autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (v, i) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    param = {
+                        Searched_Title: $('#txtTitleSearch').val(),
+                        DealTypeCode: DealTypeCode
+                    };
+                    $.ajax({
+                        url: URL_Bind_Title_List,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = "@objMessageKey.NoResultFound";
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+
+                },
+                select: function (event, i) {
+                    debugger;
+                    var text = this.value.split(/ \s*/);
+                   // var text = this.value;
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("");
+                    var value = $("#hdnTitleSearch").val().split("");
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnTitleSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "300px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
     }
 </script>
 <style>
@@ -216,9 +347,22 @@
                                         }
                                     </td>
                                     <td>@objMessageKey.OriginalTitle</td>
-                                    <td>
-                                        @Html.TextBoxFor(m => Model.Original_Title)
-                                    </td>
+                                    @if (ViewBag.Is_AcqSyn_Type_Of_Film == "Y")
+                                    {
+                                        if (Model.Original_Title_Code == null || Model.Original_Title_Code == 0)
+                                        {
+                                            Model.Original_Title = "";
+                                        }
+                                        <td>
+                                            <input type="text" id="txtTitleSearch" style="width:300px" value="@Model.Original_Title" name="hdnOriginalTitleCode" autocomplete="on" onkeyup="populateTitle(event)" /> @*value="@Model.Original_Title"*@
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @Html.TextBoxFor(m => Model.Original_Title)
+                                        </td>
+                                    }
                                 </tr>
                                 <tr>
                                     <td>@objMessageKey.DurationInMin&#x200E;</td>
@@ -304,11 +448,13 @@
                                     </td>
                                     @if (ViewBag.IsCalculatePublicDomain == "Y")
                                     {
-                                    <td>Public Domain</td>
-                                    if (ViewBag.PublicDomain != null)
-                                    {<td>Yes</td>}
-                                    else
-                                    {<td>No</td> }
+                                        <td>Public Domain</td>
+                                        if (ViewBag.PublicDomain != null)
+                                        {
+                                            <td>Yes</td>}
+                                        else
+                                        {
+                                            <td>No</td>}
                                     }
                                 </tr>
                                 <tr>

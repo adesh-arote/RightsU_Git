@@ -9,7 +9,8 @@ CREATE Procedure [dbo].[USP_Acquition_Deal_List_Report](
 	@Business_Unit_code VARCHAR(100), 
 	@Is_Pushback VARCHAR(100), 
 	@SysLanguageCode INT,
-	@DealSegment INT)
+	@DealSegment INT,
+	@TypeOfFilm INT)
 As
 -- =============================================
 -- Author:		Abhaysingh N. Rajpurohit
@@ -29,6 +30,7 @@ BEGIN
 	--, @Is_Pushback Varchar(100)= 'Y'
 	--, @SysLanguageCode INT= 1
 	--, @DealSegment INT= 0
+	--, @TypeOfFilm INT = 3
 
 	IF CHARINDEX(',',@Business_Unit_code) > 0 
 		set @Business_Unit_code = '0'
@@ -227,7 +229,8 @@ BEGIN
 			Due_Diligence VARCHAR(MAX),
 			Category_Name VARCHAR(MAX),
 			Deal_Segment NVARCHAR(MAX),
-			Revenue_Vertical NVARCHAR(MAX)
+			Revenue_Vertical NVARCHAR(MAX),
+			Columns_Value_Code INT
 		)
 		CREATE TABLE #TEMP_Acquition_Deal_List_Report_Pushback(
 			Acq_Deal_Pushback_Code VARCHAR(100),
@@ -284,13 +287,16 @@ BEGIN
 			Due_Diligence VARCHAR(MAX),
 			Category_Name VARCHAR(MAX),
 			Deal_Segment NVARCHAR(MAX),
-			Revenue_Vertical NVARCHAR(MAX)
+			Revenue_Vertical NVARCHAR(MAX),
+			Columns_Value_Code INT
 		)
 	END
 
-	DECLARE @IsDealSegment VARCHAR(MAX), @IsRevenueVertical VARCHAR(MAX)
+	DECLARE @IsDealSegment VARCHAR(MAX), @IsRevenueVertical VARCHAR(MAX), @IsTypeOfFilm VARCHAR(MAX), @Columns_Code INT
 	SELECT @IsDealSegment = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment' 
 	SELECT @IsRevenueVertical = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical' 
+	SELECT @IsTypeOfFilm = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Type_Of_Film' 
+	SELECT @Columns_Code = Columns_Code FROM Extended_Columns WHERE UPPER(Columns_Name) = 'TYPE OF FILM'
 
 	PRINT 'Insertion in #TEMP_Acquition_Deal_List_Report'
 	INSERT INTO #TEMP_Acquition_Deal_List_Report
@@ -325,6 +331,7 @@ BEGIN
 		,Promtoer_Remarks
 		,Due_Diligence
 		,Category_Name
+		,Columns_Value_Code
 	)
 	SELECT 
 		ADR.Acq_Deal_Rights_Code
@@ -400,7 +407,7 @@ BEGIN
 			WHEN 'Y' THEN 'Yes'
 			ELSE 'No' 
 		END AS Due_Diligence,
-		C.Category_Name AS Category_Name
+		C.Category_Name AS Category_Name,MEC.Columns_Value_Code
 	FROM Acq_Deal AD
 		INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = AD.Business_Unit_Code
 		INNER JOIN Acq_Deal_Rights ADR ON AD.Acq_Deal_Code = ADR.Acq_Deal_Code
@@ -414,6 +421,7 @@ BEGIN
 		LEFT JOIN Language L on T.Title_Language_Code = L.language_code
 		LEFT JOIN Acq_Deal_Movie ADM on ADRT.Title_Code = ADM.Title_Code AND ADRT.Episode_From = ADM.Episode_Starts_From AND ADRT.Episode_To = ADM.Episode_End_To AND ADM.Acq_Deal_Code = AD.Acq_Deal_Code
 		INNER JOIN Category C ON AD.Category_Code = C.Category_Code
+		LEFT JOIN Map_Extended_columns MEC ON MEC.Record_Code = T.Title_Code AND MEC.Columns_Code = @Columns_Code
 	WHERE  
 		AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND
 		(((ISNULL(CONVERT(date,ADR.Actual_Right_Start_Date ,103),'') >= CONVERT(date,@Start_Date,103)  OR @Start_Date = '' )AND (ISNULL(CONVERT(date,ADR.Actual_Right_Start_Date,103),'') <= CONVERT(date,@End_Date,103) OR @End_Date = '' ))
@@ -463,6 +471,12 @@ BEGIN
 			FROM #TEMP_Acquition_Deal_List_Report tadlr
 			INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = tadlr.Acq_Deal_Code
 			INNER JOIN Revenue_Vertical DS ON DS.Revenue_Vertical_Code = AD.Revenue_Vertical_Code
+		END
+
+		IF(@IsTypeOfFilm = 'Y' AND @TypeOfFilm > 0)
+		BEGIN
+			DELETE tadlr FROM #TEMP_Acquition_Deal_List_Report tadlr
+			WHERE (Columns_Value_Code <> @TypeOfFilm ) OR Columns_Value_Code IS NULL
 		END
 		
 
@@ -596,7 +610,8 @@ BEGIN
 			Right_Type, Right_Term,
 			Deal_Workflow_Status, Is_Pushback, Master_Deal_Movie_Code_ToLink, Run_Type,Is_Attachment,[Program_Name],
 			Due_Diligence,
-			Category_Name
+			Category_Name,
+			Columns_Value_Code
 		)
 		SELECT 
 			ADP.Acq_Deal_Pushback_Code
@@ -653,7 +668,7 @@ BEGIN
 				WHEN 'Y' THEN 'Yes'
 				ELSE 'No' 
 			END AS Due_Diligence,
-			C.Category_Name
+			C.Category_Name,MEC.Columns_Value_Code
 		FROM Acq_Deal AD
 			INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = AD.Business_Unit_Code
 			INNER JOIN Acq_Deal_Pushback ADP On AD.Acq_Deal_Code = ADP.Acq_Deal_Code
@@ -666,6 +681,7 @@ BEGIN
 			LEFT JOIN Language L on T.Title_Language_Code = L.language_code
 			LEFT JOIN Acq_Deal_Movie ADM on ADPT.Title_Code = ADM.Title_Code AND ADPT.Episode_From = ADM.Episode_Starts_From AND ADPT.Episode_To = ADM.Episode_End_To AND ADM.Acq_Deal_Code = AD.Acq_Deal_Code
 			INNER JOIN Category C ON AD.Category_Code = C.Category_Code
+			LEFT JOIN Map_Extended_columns MEC ON MEC.Record_Code = T.Title_Code AND MEC.Columns_Code = @Columns_Code
 		WHERE  
 			AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND
 			(((ISNULL(CONVERT(date,ADP.Right_Start_Date,103),'') >= CONVERT(date,@Start_Date,103)OR @Start_Date = ''  )AND (ISNULL(CONVERT(date,ADP.Right_Start_Date,103),'') <= CONVERT(date,@End_Date,103)OR @End_Date = ''))
@@ -716,6 +732,13 @@ BEGIN
 				INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = tadlr.Acq_Deal_Code
 				INNER JOIN Revenue_Vertical DS ON DS.Revenue_Vertical_Code = AD.Revenue_Vertical_Code
 			END
+
+			IF(@IsTypeOfFilm = 'Y' AND @TypeOfFilm > 0)
+			BEGIN
+				DELETE tadlr FROM #TEMP_Acquition_Deal_List_Report_Pushback tadlr
+				WHERE (Columns_Value_Code <> @TypeOfFilm ) OR Columns_Value_Code IS NULL
+			END
+
 
 			PRINT '		Director, StartCast Insert and update for Primary Rights (Pushback)'	
 
@@ -820,6 +843,7 @@ BEGIN
 			INNER JOIN #DealTitleTable DTT ON TADLR.Acq_Deal_code = DTT.Acq_Deal_Code AND TADLR.Episode_From = DTT.Eps_From AND TADLR.Episode_To = DTT.Eps_To
 
 		END
+
 
 		PRINT 'Merging with Pushback'
 		INSERT INTO #TEMP_Acquition_Deal_List_Report

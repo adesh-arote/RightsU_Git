@@ -110,10 +110,10 @@ namespace UTOFrameWork.FrameworkClasses
             string sql = "";
 
             if (rq.ViewName.Contains("*"))
-                sql = "SELECT * FROM Report_Column_setup where view_Name in ('" + rq.ViewName
+                sql = "SELECT * FROM Report_Column_setup where  Display_Type is null and view_Name in ('" + rq.ViewName
                     + "','" + rq.ViewName.Substring(0, rq.ViewName.IndexOf("*")) + "') order by display_order";
             else
-                sql = "SELECT * FROM Report_Column_setup where view_Name ='" + rq.ViewName + "' order by display_order";
+                sql = "SELECT * FROM Report_Column_setup where Display_Type is null and view_Name ='" + rq.ViewName + "' order by display_order";
             
             DataSet ds = base.ProcessSelect(sql);
 

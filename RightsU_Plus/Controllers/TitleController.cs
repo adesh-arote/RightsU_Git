@@ -606,7 +606,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult Save(RightsU_Entities.Title objTitleModel, FormCollection objForm, string Deal_Type_Code, string Title_Language_Code
             , string Original_Language_Code, string ddlCountry, string hdnProducer, string hdnDirector, string hdnGenres, string hdnStarCast, string hdnCountry,
-            string hdnmode, int? hdnTitleCode, string hdnDealTypeCode, string hdnAlternateTabName, string hdnAlternateConfigCode, string Music_Label_Code = "0")
+            string hdnmode, int? hdnTitleCode, string hdnDealTypeCode, string hdnAlternateTabName, string hdnAlternateConfigCode, string hdnOriginalTitle, string hdnOriginalTitleCode, string Music_Label_Code = "0")
         //public string Save(RightsU_Entities.Title objTitleModel, string Deal_Type_Code, string Title_Language_Code
         //    , string Original_Language_Code, string ddlCountry, string hdnProducer, string hdnDirector, string hdnGenres, string hdnStarCast, string hdnCountry)
         {
@@ -615,10 +615,15 @@ namespace RightsU_Plus.Controllers
             int TitleCode = 0;
 
             string message = "";
+            int OriginalTitle_Code = 0;
             if (hdnmode != "C")
             {
                 TitleCode = Convert.ToInt32(objTitleModel.Title_Code);
                 objTitle = objTitleS.GetById(objTitleModel.Title_Code);
+            }
+            if (hdnOriginalTitleCode != "" && hdnOriginalTitleCode != null)
+            {
+                OriginalTitle_Code = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name == hdnOriginalTitleCode).Select(x => x.Title_Code).First();
             }
             int contains = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == TitleCode).Count();
             objTitle = objTitleS.GetById(TitleCode);
@@ -636,6 +641,11 @@ namespace RightsU_Plus.Controllers
             objTitle.Title_Name = objTitleModel.Title_Name;
             objTitle.Original_Title = objTitleModel.Original_Title;
             objTitle.Year_Of_Production = objTitleModel.Year_Of_Production;
+            if (hdnOriginalTitleCode != null)
+            {
+                objTitle.Original_Title = hdnOriginalTitleCode;
+            }
+            objTitle.Original_Title_Code = OriginalTitle_Code;
             if (objTitleModel.Synopsis == null)
                 objTitle.Synopsis = "";
             else
@@ -1830,6 +1840,7 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.Direction = "LTR";
                 ViewBag.IsFirstTime = "N";
+                ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").First().Parameter_Value;
                 //return PartialView("~/Views/Title/Index.cshtml", objTitle);
                 return PartialView("~/Views/Title/_Title_Main.cshtml", objTitle);
             }

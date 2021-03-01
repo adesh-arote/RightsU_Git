@@ -61,6 +61,7 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public string Right_Status { get; set; }
+        public string Is_Under_Production { get; set; }
         public string Is_Verified { get; set; }
         public Nullable<int> ROFR_Code { get; set; }
         public string Original_Right_Type { get; set; }

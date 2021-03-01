@@ -849,7 +849,7 @@ namespace RightsU_Plus.Controllers
                     if (objSyn_Deal_Rights.Right_Start_Date != null && objSyn_Deal_Rights.Right_End_Date != null)
                         objSyn_Deal_Rights.Term = calculateTerm((DateTime)objSyn_Deal_Rights.Right_Start_Date, (DateTime)objSyn_Deal_Rights.Right_End_Date);
                 }
-                    string[] arr = objSyn_Deal_Rights.Term.Split('.');
+                string[] arr = objSyn_Deal_Rights.Term.Split('.');
                 objSyn_Deal_Rights.Term_YY = arr[0];
                 objSyn_Deal_Rights.Term_MM = arr[1];
                 objSyn_Deal_Rights.Term_DD = arr[2];
@@ -1189,7 +1189,7 @@ namespace RightsU_Plus.Controllers
                     {
                         foreach (Syn_Deal_Rights_Title objTL in objSyn_Deal_Rights.Syn_Deal_Rights_Title)
                         {
-                            
+
                             if (q.Where(x => x.Episode_From == objTL.Episode_From && x.Episode_To == objTL.Episode_To && x.Title_Code == objTL.Title_Code).Count() == 0)
                                 RemovedTitle_List.Add(objTL);
                         }
@@ -1447,7 +1447,8 @@ namespace RightsU_Plus.Controllers
                 {
                     Session["HB_Code"] = form["hdnHB_Code"] == null ? "" : form["hdnHB_Code"].Replace(" ", "");
                 }
-                Session["IsExclusive"] = Convert.ToBoolean(form["hdnIs_Exclusive"]);
+                //Session["IsExclusive"] = Convert.ToBoolean(form["hdnIs_Exclusive"]);
+                Session["IsExclusive"] = Convert.ToString(form["hdnIs_Exclusive"]);
                 Session["IsTitleLanguageRight"] = Convert.ToBoolean(form["hdnIs_Title_Language_Right"]);
                 if (Session["HB_Code"] == "")
                 {
@@ -1768,7 +1769,8 @@ namespace RightsU_Plus.Controllers
             string Region_Codes = form["hdnRegion_Code"].Replace(" ", "");
             string Sub_Codes = form["hdnSub_Code"].Replace(" ", "");
             string Dub_Codes = form["hdnDub_Code"].Replace(" ", "");
-            bool IsExclusive = Convert.ToBoolean(form["hdnIs_Exclusive"]);
+            //bool IsExclusive = Convert.ToBoolean(form["hdnIs_Exclusive"]);
+            string IsExclusive = Convert.ToString(form["hdnIs_Exclusive"]);
             bool IsTitleLanguageRight = Convert.ToBoolean(form["hdnIs_Title_Language_Right"]);
 
             objExistingRights.Region_Type = Region_Type;
@@ -1980,7 +1982,8 @@ namespace RightsU_Plus.Controllers
             objDRUDT.Platform_Code = objPage_Properties.PCODE;
             objDRUDT.Deal_Rights_Code = objPage_Properties.RCODE; //objExistingRights.Acq_Deal_Rights_Code;
             objDRUDT.Deal_Code = objExistingRights.Syn_Deal_Code = objDeal_Schema.Deal_Code;
-            objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive ? "Y" : "N";
+            //objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive ? "Y" : "N";
+            objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive;
             objDRUDT.Is_Title_Language_Right = objExistingRights.Is_Title_Language_Right = IsTitleLanguageRight ? "Y" : "N";
             objExistingRights.Is_Pushback = objMVCRights.Is_Pushback = "N";
 

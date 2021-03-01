@@ -86,6 +86,7 @@
           <Property Name="Is_Auto_Push" Type="char" MaxLength="1" />
           <Property Name="Deal_Segment_Code" Type="int" />
           <Property Name="Revenue_Vertical_Code" Type="int" />
+          <Property Name="Confirming_Party" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -491,6 +492,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Original_Right_Type" Type="char" MaxLength="1" />
           <Property Name="Promoter_Flag" Type="char" MaxLength="1" />
           <Property Name="Right_Status" Type="char" MaxLength="1" />
+          <Property Name="Is_Under_Production" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Acq_Deal_Rights_Blackout">
           <Key>
@@ -5207,6 +5209,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Title_Image" Type="varchar" MaxLength="2000" />
           <Property Name="Music_Label_Code" Type="int" />
           <Property Name="Program_Code" Type="int" />
+          <Property Name="Original_Title_Code" Type="int" />
         </EntityType>
         <EntityType Name="Title_Alternate">
           <Key>
@@ -12692,6 +12695,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Is_Auto_Push" Type="char" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
+          <Parameter Name="Confirming_Party" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_Insert_Acq_Deal_Pushback_Dubbing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Pushback_Code" Type="int" Mode="In" />
@@ -13570,6 +13574,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Is_Auto_Push" Type="char" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
+          <Parameter Name="Confirming_Party" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_Update_IPR_Opp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IPR_Opp_Code" Type="int" Mode="In" />
@@ -20832,6 +20837,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Deal_Segment" Relationship="RightsU_NeoModel.FK_Acq_Deal_Deal_Segment" FromRole="Acq_Deal" ToRole="Deal_Segment" />
           <Property Name="Revenue_Vertical_Code" Type="Int32" />
           <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical" FromRole="Acq_Deal" ToRole="Revenue_Vertical" />
+          <Property Name="Confirming_Party" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -20990,6 +20996,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Acq_Deal_Rights_Promoter" Relationship="RightsU_NeoModel.FK__Acq_Deal___Acq_D__4DE0370C" FromRole="Acq_Deal_Rights" ToRole="Acq_Deal_Rights_Promoter" />
           <Property Name="Promoter_Flag" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Right_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Under_Production" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Acq_Deal_Rights_Blackout">
           <Key>
@@ -23586,6 +23593,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="MHRequestDetails" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Title" FromRole="Title" ToRole="MHRequestDetail" />
           <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title" FromRole="Title" ToRole="MHCueSheetSong" />
           <NavigationProperty Name="Title_Milestone" Relationship="RightsU_NeoModel.FK__Title_Mil__Title__334C3C61" FromRole="Title" ToRole="Title_Milestone" />
+          <Property Name="Original_Title_Code" Type="Int32" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -35521,6 +35529,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <MappingFragment StoreEntitySet="Acq_Deal">
+                <ScalarProperty Name="Confirming_Party" ColumnName="Confirming_Party" />
                 <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
                 <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
                 <ScalarProperty Name="Is_Auto_Push" ColumnName="Is_Auto_Push" />
@@ -35578,6 +35587,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <ModificationFunctionMapping>
                 <InsertFunction FunctionName="RightsU_NeoModel.Store.USP_INSERT_ACQ_DEAL">
+                  <ScalarProperty Name="Confirming_Party" ParameterName="Confirming_Party" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" />
                   <ScalarProperty Name="Is_Auto_Push" ParameterName="Is_Auto_Push" />
@@ -35630,6 +35640,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                   <ResultBinding Name="Agreement_No" ColumnName="Agreement_No" />
                 </InsertFunction>
                 <UpdateFunction FunctionName="RightsU_NeoModel.Store.USP_UPDATE_ACQ_DEAL">
+                  <ScalarProperty Name="Confirming_Party" ParameterName="Confirming_Party" Version="Current" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" Version="Current" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" Version="Current" />
                   <ScalarProperty Name="Is_Auto_Push" ParameterName="Is_Auto_Push" Version="Current" />
@@ -35784,6 +35795,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal_Rights">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Rights">
               <MappingFragment StoreEntitySet="Acq_Deal_Rights">
+                <ScalarProperty Name="Is_Under_Production" ColumnName="Is_Under_Production" />
                 <ScalarProperty Name="Right_Status" ColumnName="Right_Status" />
                 <ScalarProperty Name="Promoter_Flag" ColumnName="Promoter_Flag" />
                 <ScalarProperty Name="Original_Right_Type" ColumnName="Original_Right_Type" />
@@ -38249,6 +38261,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Titles">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Title">
               <MappingFragment StoreEntitySet="Title">
+                <ScalarProperty Name="Original_Title_Code" ColumnName="Original_Title_Code" />
                 <ScalarProperty Name="Program_Code" ColumnName="Program_Code" />
                 <ScalarProperty Name="Music_Label_Code" ColumnName="Music_Label_Code" />
                 <ScalarProperty Name="Title_Image" ColumnName="Title_Image" />
