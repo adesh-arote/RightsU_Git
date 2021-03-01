@@ -20,7 +20,7 @@ namespace RightsU_BLL
         //}
         public Acq_Deal_Service(string Connection_Str)
         {
-           _Connection_Str = Connection_Str;
+            _Connection_Str = Connection_Str;
             this.objADR = new Acq_Deal_Repository(Connection_Str);
         }
         public IQueryable<Acq_Deal> SearchFor(Expression<Func<Acq_Deal, bool>> predicate)
@@ -59,7 +59,7 @@ namespace RightsU_BLL
                 {
                     if (objADP.LstDeal_Pushback_UDT.Count > 0)
                     {
-                        
+
                         objResult.AddRange(objValidateService.USP_Validate_Rights_Duplication_UDT(
                            objADP.LstDeal_Pushback_UDT,
                            objADP.LstDeal_Pushback_Title_UDT,
@@ -75,7 +75,7 @@ namespace RightsU_BLL
                 {
                     if (objADP.LstDeal_Rights_UDT.Count > 0)
                     {
-                    //List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
+                        //List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
                         objResult.AddRange(objValidateService.USP_Validate_Rights_Duplication_UDT(
                            objADP.LstDeal_Rights_UDT,
                            objADP.LstDeal_Rights_Title_UDT,
@@ -209,17 +209,25 @@ namespace RightsU_BLL
         {
             USP_Service objValidateService = new USP_Service(_Connection_Str);
             resultSet = "";
-            IEnumerable<USP_Validate_Rights_Duplication_UDT> objResult = objValidateService.USP_Validate_Rights_Duplication_UDT(
-               objToValidate.LstDeal_Rights_UDT,
-               objToValidate.LstDeal_Rights_Title_UDT,
-               objToValidate.LstDeal_Rights_Platform_UDT,
-               objToValidate.LstDeal_Rights_Territory_UDT,
-               objToValidate.LstDeal_Rights_Subtitling_UDT,
-               objToValidate.LstDeal_Rights_Dubbing_UDT
-               , "AR");
+            string Is_Acq_rights_delay_validation = new System_Parameter_New_Service(_Connection_Str)
+                .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
+                .FirstOrDefault().Parameter_Value;
 
-            resultSet = objResult;
-            return !(objResult.Count() > 0);
+            if (Is_Acq_rights_delay_validation != "Y")
+            {
+                IEnumerable<USP_Validate_Rights_Duplication_UDT> objResult = objValidateService.USP_Validate_Rights_Duplication_UDT(
+                   objToValidate.LstDeal_Rights_UDT,
+                   objToValidate.LstDeal_Rights_Title_UDT,
+                   objToValidate.LstDeal_Rights_Platform_UDT,
+                   objToValidate.LstDeal_Rights_Territory_UDT,
+                   objToValidate.LstDeal_Rights_Subtitling_UDT,
+                   objToValidate.LstDeal_Rights_Dubbing_UDT
+                   , "AR");
+                resultSet = objResult;
+                return !(objResult.Count() > 0);
+            }
+            else
+                return true;
         }
 
         public override bool ValidateUpdate(Acq_Deal_Rights objToValidate, out dynamic resultSet)
@@ -1324,7 +1332,7 @@ namespace RightsU_BLL
         {
             resultSet = "";
             return true;
-        }       
+        }
     }
 
     public class Acq_Deal_Tab_Version_Service : BusinessLogic<Acq_Deal_Tab_Version>

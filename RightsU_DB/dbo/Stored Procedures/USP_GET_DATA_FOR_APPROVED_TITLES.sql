@@ -35,9 +35,15 @@ Begin
 		)
 -- ============================================= -- ============================================= 
 	Declare @Selected_Deal_Type_Code Int ,@Deal_Type_Condition Varchar(MAX) = ''
+	DECLARE @Is_Acq_Syn_CoExclusive CHAR(1) = 'N', @Tentative VARCHAR(100) = 'N'
 	Declare @TitCnt Int = 0
 	Select Top 1 @Selected_Deal_Type_Code = Deal_Type_Code From Syn_Deal Where Syn_Deal_Code = @Syn_Deal_Code
 	Select @Deal_Type_Condition = dbo.UFN_GetDealTypeCondition(@Selected_Deal_Type_Code)
+
+	Select @Is_Acq_Syn_CoExclusive = Parameter_Value From System_Parameter_New Where Parameter_Name = 'Is_Acq_Syn_CoExclusive'
+		
+	IF(@Is_Acq_Syn_CoExclusive = 'Y')
+		SELECT @Tentative = 'N,Y'
 
 	If(@Deal_Type_Condition = 'DEAL_PROGRAM')
 	Begin
@@ -68,7 +74,9 @@ Begin
 			--And ADR.Is_Theatrical_Right = Case When @Region_Type = 'TPL' Then 'Y' Else 'N' End
 		Inner Join Acq_Deal ad ON adr.Acq_Deal_Code = ad.Acq_Deal_Code
 			And IsNull(AD.Deal_Workflow_Status,'')='A' And ADR.Is_Sub_License='Y'
-			And IsNull(ADR.Is_Tentative, 'N')='N' And ADR.Actual_Right_Start_Date IS NOT NULL
+			--And IsNull(ADR.Is_Tentative, 'N')='N'
+			AND  IsNull(ADR.Is_Tentative, 'N') IN (SELECT number FROM dbo.fn_Split_withdelemiter(@Tentative,','))
+			And ADR.Actual_Right_Start_Date IS NOT NULL
 		Inner Join @Deal_Rights_Title drt ON drt.Title_Code = adrt.Title_Code And 
 		(
 			drt.Episode_FROM Between adrt.Episode_FROM And adrt.Episode_To Or 
@@ -141,7 +149,9 @@ Begin
 		Inner Join Acq_Deal_Rights adr ON adrt.Acq_Deal_Rights_Code = adr.Acq_Deal_Rights_Code
 		Inner Join Acq_Deal ad ON adr.Acq_Deal_Code = ad.Acq_Deal_Code
 					And IsNull(AD.Deal_Workflow_Status,'')='A' And ADR.Is_Sub_License='Y'
-					And IsNull(ADR.Is_Tentative, 'N')='N' And ADR.Actual_Right_Start_Date IS NOT NULL
+					--And IsNull(ADR.Is_Tentative, 'N')='N' 
+					AND  IsNull(ADR.Is_Tentative, 'N') IN (SELECT number FROM dbo.fn_Split_withdelemiter(@Tentative,','))
+					And ADR.Actual_Right_Start_Date IS NOT NULL
 					And ((@Region_Type Not In ('THC', 'THT') And ADR.Is_Theatrical_Right = 'N') Or @Region_Type In ('THC', 'THT'))
 		Inner Join @Deal_Rights_Title drt ON drt.Title_Code = adrt.Title_Code And 
 		(

@@ -128,7 +128,7 @@
             else
                 $("#pnlSearch").removeClass("tinyADSearch")
         });
-       // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?TitleList');
+        // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?TitleList');
         var meesage = '@Message'
         if ('@ViewBag.Message' != '') {
             showAlert("M", '@ViewBag.Message');
@@ -769,6 +769,8 @@
         $("#ddlDealTypeAd").val('').trigger("chosen:updated");
         $("#ddlProgram").find("option").attr("selected", false);
         $("#ddlProgram").val('').trigger("chosen:updated");
+        $("#ddlTypeofFilm").find("option").attr("selected", false);
+        $("#ddlTypeofFilm").val('').trigger("chosen:updated");
         $('#srchCommon').val('');
         BindGrid(0, "Y", "N", "N");
     }
@@ -967,7 +969,7 @@
     }
     function AdvanceSearch() {
         debugger;
-        var tmpStarCast = '', tmpLanguage = '', tmpOrigLang = '', tmpDeal = '', tmpCountry = '', tmpDirector = '', tmpProgram = '';
+        var tmpStarCast = '', tmpLanguage = '', tmpOrigLang = '', tmpDeal = '', tmpCountry = '', tmpDirector = '', tmpProgram = '',tmpTypeOfFilm = '' ;
         if ($('#ddlStarCast').val())
             tmpStarCast = $('#ddlStarCast').val().join(',');
 
@@ -987,9 +989,13 @@
         if ($('#ddlDirector').val())
             tmpDirector = $('#ddlDirector').val().join(',');
 
+        if ($('#ddlTypeofFilm').val())
+            tmpTypeOfFilm = $('#ddlTypeofFilm').val();
+
         var txtYearOfRelease = $('#txtYearOfRelease').val();
 
         tmpProgram = $('#ddlProgram').val();
+        tmpTypeOfFilm = $('#ddlTypeofFilm').val();
 
 
         $.ajax({
@@ -1010,6 +1016,7 @@
                 srchProgram: tmpProgram,
                 SrchOrigLang: tmpOrigLang,
                 SrchOrigTitle: $('#txtOrigTitleSearch').val(),
+                sechTypeofFilm: tmpTypeOfFilm
             }),
             success: function (result) {
 
@@ -1060,6 +1067,8 @@
                         $("#ddlDirector").empty();
                         $("#ddlStarCast").empty();
                         $('#ddlProgram').empty();
+                        $('#ddlTypeofFilm').empty();
+
                         debugger;
                         var obj_Search = $(result.objPage_Properties);
 
@@ -1098,6 +1107,12 @@
                         });
 
                         $('#ddlProgram').val(obj_Search[0].ProgramCode_Search).trigger("chosen:updated");
+
+                        $(result.lstTypeOfFilm).each(function (index, item) {
+                            $("#ddlTypeofFilm").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                        $('#ddlTypeofFilm').val(obj_Search[0].Column_Name).trigger("chosen:updated");
                     }
                 },
                 error: function (result) {
@@ -1190,6 +1205,7 @@
         });
         return returnVal;
     }
+
 </script>
 
 <!DOCTYPE html>
@@ -1320,8 +1336,9 @@
             list-style-type: none;
             margin-right: 10px;
         }
-         .container {
-    min-height: 738px;
+
+        .container {
+            min-height: 738px;
         }
     </style>
 
@@ -1340,6 +1357,8 @@
                         <li class="AdSearch">
                             <label>@objMessageKey.TitleName:</label>
                             <br>
+                            <input type="hidden" value="@ViewBag.Is_AcqSyn_Type_Of_Film" id="hdnTypeof" />
+
                             <input type="text" placeholder="@objMessageKey.TitleName" id="txtTitleSearch" autocomplete="on" style="width:250px" value='@ViewBag.SrchTitle' onkeyup="populateTitle(event)" />
                             <input type="text" id="lbTitle_Code" style="display: none;" />
                             @Html.Hidden("hdnTitleSearch")
@@ -1364,6 +1383,17 @@
                             <label>@objMessageKey.KeyStarCast:</label><br />
                             <select id="ddlStarCast" multiple="multiple"></select>
                         </li>
+                       
+                        @if (ViewBag.Is_AcqSyn_Type_Of_Film == "Y")
+                        {
+                            <li class="AdSearch">
+                                <label>Type of Film:</label><br />
+                                <select id="ddlTypeofFilm" class="form_input chosen-select"></select> 
+                               
+                            </li>
+                        }
+
+
                         <li class="AdSearch">
                             <a onclick="ShowMore('pnlShowmore')" id="showMore">Show more...</a>
                         </li>
@@ -1423,7 +1453,7 @@
                         <ul>
                             <li>
                                 <input type="text" name="srchCommon" id="srchCommon" value='@ViewBag.genericSearch' class="search" style="width:450px !important;"
-                                       placeholder="@objMessageKey.TitleName, @objMessageKey.TitleType, @objMessageKey.TitleLanguage, @objMessageKey.OriginalTitle,  @objMessageKey.Program" />                                  
+                                       placeholder="@objMessageKey.TitleName, @objMessageKey.TitleType, @objMessageKey.TitleLanguage, @objMessageKey.OriginalTitle,  @objMessageKey.Program" autocomplete="off" />
                             </li>
                             <li>
                                 <input type="button" class="btn btn-primary" value="@objMessageKey.Search" onclick="return search();" />
@@ -1441,7 +1471,7 @@
                             <li>
                                 @if (ViewBag.buttonVisibility.Contains("~" + GlobalParams.RightCodeForExportToExcel + "~"))
                                 {
-                                    <label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save"  title="@objMessageKey.SaveToExcel">
+                                    <label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save" title="@objMessageKey.SaveToExcel">
                                         @using (Html.BeginForm("ExportToExcel", "Title_List"))
                                         {
                                             <input type="submit" style="display: none" id="btnExportToExcel" />

@@ -33,8 +33,8 @@
         z-index: auto;
     }
 
-    .sumo_ddlTitle{
-        width:189px;
+    .sumo_ddlTitle {
+        width: 189px;
     }
 </style>
 <script>
@@ -52,7 +52,7 @@
             SetMaxDt();
         });
         $('#ddlTitle').SumoSelect();
-     
+
         $("#ddlBusinessUnit").change(function () {
             $('#txtTitle').val('');
         });
@@ -77,6 +77,13 @@
             var DealSegment = $('#ddlDealSegment').val();
         else
             var DealSegment = "";
+
+        var IsAllowTypeOfFilm = $('#IsAllowTypeOfFilm').val();
+        if (IsAllowTypeOfFilm == "Y")
+            var TypeOfFilm = $('#ddlTypeOfFilm').val();
+        else
+            var TypeOfFilm = "";
+
         var expiredDeal = $('#chk_expiredDeals').is(":checked");
         var businessUnitcode = $('#ddlBusinessUnit').val();
         var DealNo = $('#txtDealNo').val();
@@ -91,7 +98,7 @@
         var IsPushBack = "";
         var returnVal = true;
 
-    
+
         if ($('#chkRight').is(':checked') == true) {
             IsCheckRight = "Y";
         }
@@ -151,7 +158,8 @@
                     isExpiredDeal: expiredDeal,
                     isTheatrical: isTheatrical,
                     dateformat: $('#ddlDateFormat').val(),
-                    IsCheckRight: IsCheckRight            
+                    IsCheckRight: IsCheckRight,
+                    TypeOfFilm: TypeOfFilm
                 }),
                 async: false,
                 success: function (result) {
@@ -382,7 +390,7 @@
                     <h2 dir='@objMessageKey.LayoutDirection'>@objMessageKey.SyndicationDealListReport</h2>
                 </div>
             }
-            else if(Convert.ToInt32(ViewBag.Code) == 165)
+            else if (Convert.ToInt32(ViewBag.Code) == 165)
             {
                 <div class="title_block dotted_border clearfix">
                     <h2 dir='@objMessageKey.LayoutDirection'>@objMessageKey.TheatricalSyndicationReport</h2>
@@ -414,7 +422,7 @@
                         <tr style="width:100%">
                             <td style="width:11%"><b>@objMessageKey.BusinessUnit :</b></td>
                             <td style="width:16%;">
-                                @Html.DropDownList("BusinessUnit",ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                                @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
                             </td>
                             <td style="width: 7%;"><b>@objMessageKey.Title :</b></td>
                             <td style="width:18%">
@@ -422,7 +430,7 @@
                                 <input type="text" id="txtTitle" class="search" maxlength="100" style="width:96%;" placeholder="@objMessageKey.Title" onkeyup="PopulateTitleNameForSynDeal(event)" autocomplete="on" />
                                 <input type="hidden" id="hdnTitleCode" value="0" />
                             </td>
-                          
+
 
                             <td style="width:5%"><b>@objMessageKey.EndDate : </b></td>
                             <td style="width:15%">
@@ -430,7 +438,7 @@
                                        title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
                             </td>
                             <td style="width:17%;">
-                                <input type="checkbox" id="chk_expiredDeals" style="cursor: pointer;"/>&nbsp; @objMessageKey.IncludeExpiredDeals
+                                <input type="checkbox" id="chk_expiredDeals" style="cursor: pointer;" />&nbsp; @objMessageKey.IncludeExpiredDeals
                             </td>
 
                             <td style="width:28%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
@@ -439,16 +447,26 @@
                         <tr>
                             <td style="width:8%"><b>@objMessageKey.DateFormat:</b></td>
                             <td style="width:17%">
+                                <input id="IsAllowTypeOfFilm"
+                                       type="hidden"
+                                       value=@ViewBag.IsAllowTypeOfFilm />
+                                <input id="AllowDealSegment"
+                                       type="hidden"
+                                       value=@ViewBag.AllowDealSegment />
                                 @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
-                            </td>
-                            <input id="AllowDealSegment"
-                                   type="hidden"
-                                   value=@ViewBag.AllowDealSegment />
+                            </td>  
                             @if (ViewBag.AllowDealSegment == "Y")
                             {
                                 <td style="width:7%"><b>Deal Segment :</b></td>
                                 <td style="width:16%">
                                     @Html.DropDownList("DealSegment", ViewBag.Deal_Segment as SelectList, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select" })
+                                </td>
+                            }
+                            @if (ViewBag.IsAllowTypeOfFilm == "Y")
+                            {
+                                <td style="width:7%"><b>Type of Film :</b></td>
+                                <td style="width:16%">
+                                    @Html.DropDownList("TypeOfFilm", ViewBag.TypeOfFilm as SelectList, "Please Select", new { @id = "ddlTypeOfFilm", @class = "form_input chosen-select" })
                                 </td>
                             }
                         </tr>

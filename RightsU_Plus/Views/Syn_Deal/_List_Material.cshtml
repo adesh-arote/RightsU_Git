@@ -10,8 +10,8 @@
     //$(document).ready(function () {
     //    $("#ancFileName").attr('href', '../Help/Masters/Layout.html?syn_Materials');
     //});
-    
-</script>   
+
+</script>
 <script>
 
     var IsCall = 'Y';
@@ -20,6 +20,8 @@
     $(document).ready(function () {
         $('#spanRecordCount').html('@objMessageKey.TotalRecords: @ViewBag.RecordCount');
         $('#spanRecordCount').css("float", "right");
+        $('#ddlTitle_Code').SumoSelect();
+        $('#ddlTitle_Code')[0].sumo.reload();
     });
      function SetPaging(txtPageSize) {
         debugger
@@ -57,7 +59,18 @@
             }
         }
     }
-</script>        
+</script>
+
+<style>
+    .SumoSelect, #divddlTitle_Code {
+        width: 100% !important;
+    }
+
+        #divddlTitle_Code > div {
+            width: 100% !important;
+        }
+</style>
+
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
@@ -148,9 +161,19 @@
             using (Html.BeginForm("Save", "Syn_Material", "", FormMethod.Post))
             {
                 <tr>
+                    <input type="hidden" id="hdnIsAcqSynMaterialMultiTitle" value="@ViewBag.Is_Acq_Syn_Material_MultiTitle" />
                     <td align="center">@objMessageKey.New</td>
                     <td>
-                        @Html.DropDownList("Title_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:250px;", @class = "form_input chosen-select" })
+                        @if (ViewBag.Is_Acq_Syn_Material_MultiTitle == "Y")
+                        {
+                            <div id="divddlTitle_Code">
+                                @Html.DropDownList("Title_Code", TempData["Title_Code"] as IEnumerable<SelectListItem>, new { style = "width:250px; ", @id = "ddlTitle_Code", multiple = "multiple" })
+                            </div>
+                        }
+                        else
+                        {
+                            @Html.DropDownList("Title_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:250px;", @class = "form_input chosen-select" })
+                        }
                         @Html.Hidden("hdnTitleName")
                     </td>
                     <td>
@@ -164,7 +187,7 @@
                     </td>
                     <td align="center">
                         @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Save" onclick="return checkForsave(0);" />*@
-                        <a title="@objMessageKey.Save" href="#" class="glyphicon glyphicon-ok-circle"  onclick="return checkForsave(0);"></a>
+                        <a title="@objMessageKey.Save" href="#" class="glyphicon glyphicon-ok-circle" onclick="return checkForsave(0);"></a>
                         <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelMaterial(0)"></a>
                     </td>
                 </tr>
@@ -177,7 +200,7 @@
             count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
             foreach (var item in Model)
             {
-      
+
                 if (ViewBag.Syn_Deal_Material_Code == item.Syn_Deal_Material_Code)
                 {
                     if (ViewBag.CommandName == "Edit")

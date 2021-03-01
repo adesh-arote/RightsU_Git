@@ -77,6 +77,7 @@ namespace RightsU_InterimDb.Models
     	    public string Title_Image { get; set; }
     	    public Nullable<int> Music_Label_Code { get; set; }
     	    public Nullable<int> Program_Code { get; set; }
+    	    public Nullable<int> Original_Title_Code { get; set; }
     
         public virtual ICollection<Acq_Deal_Ancillary_Title> Acq_Deal_Ancillary_Title { get; set; }
         public virtual ICollection<Acq_Deal_Movie> Acq_Deal_Movie { get; set; }

@@ -7,7 +7,7 @@ BEGIN
 
 	BEGIN TRY
 		DECLARE db_DRPcursor CURSOR FOR 
-		SELECT DISTINCT Deal_Code, User_Code, Rights_Bulk_Update_Code FROM Deal_Rights_Process WHERE Record_Status = 'P'
+		SELECT DISTINCT Deal_Code, User_Code, Rights_Bulk_Update_Code FROM Deal_Rights_Process WHERE Record_Status = 'P' AND ISNULL(Rights_Bulk_Update_Code , 0) > 0
 
 		OPEN db_DRPcursor  
 		FETCH NEXT FROM db_DRPcursor INTO @Deal_Code, @User_Code, @Rights_Bulk_Update_Code
