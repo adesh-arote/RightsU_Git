@@ -5,22 +5,22 @@ namespace RightsU_Dapper.Entity
     using System.Collections.Generic;
 
     [Table("Music_Deal")]
-    public partial class Music_Deal
+    public partial class Music_Deal_Dapper
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Music_Deal()
+       
+        public Music_Deal_Dapper()
         {
-            this.Music_Deal_DealType = new HashSet<Music_Deal_DealType>();
-            this.Music_Deal_Platform = new HashSet<Music_Deal_Platform>();
-            this.Music_Deal_Channel = new HashSet<Music_Deal_Channel>();
-            this.Music_Deal_Country = new HashSet<Music_Deal_Country>();
-            this.Music_Deal_Language = new HashSet<Music_Deal_Language>();
-            this.Music_Deal_LinkShow = new HashSet<Music_Deal_LinkShow>();
-            this.Music_Deal_Vendor = new HashSet<Music_Deal_Vendor>();
+            this.Music_Deal_DealType = new HashSet<Music_Deal_DealType_Dapper>();
+            this.Music_Deal_Platform = new HashSet<Music_Deal_Platform_Dapper>();
+            this.Music_Deal_Channel = new HashSet<Music_Deal_Channel_Dapper>();
+            this.Music_Deal_Country = new HashSet<Music_Deal_Country_Dapper>();
+            this.Music_Deal_Language = new HashSet<Music_Deal_Language_Dapper>();
+            this.Music_Deal_LinkShow = new HashSet<Music_Deal_LinkShow_Dapper>();
+            this.Music_Deal_Vendor = new HashSet<Music_Deal_Vendor_Dapper>();
         }
 
         [PrimaryKey]
-        public int Music_Deal_Code { get; set; }
+        public int? Music_Deal_Code { get; set; }
         public string Agreement_No { get; set; }
         public string Version { get; set; }
         public Nullable<System.DateTime> Agreement_Date { get; set; }
@@ -55,27 +55,27 @@ namespace RightsU_Dapper.Entity
         public string Remarks { get; set; }
         public Nullable<decimal> Agreement_Cost { get; set; }
         public string Right_Rule_Type { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+
+
         [OneToMany]
-        public virtual ICollection<Music_Deal_DealType> Music_Deal_DealType { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Music_Deal_DealType_Dapper> Music_Deal_DealType { get; set; }
+       
         [OneToMany]
-        public virtual ICollection<Music_Deal_Platform> Music_Deal_Platform { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Music_Deal_Platform_Dapper> Music_Deal_Platform { get; set; }
+       
         [OneToMany]
-        public virtual ICollection<Music_Deal_Channel> Music_Deal_Channel { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Music_Deal_Channel_Dapper> Music_Deal_Channel { get; set; }
+       
         [OneToMany]
-        public virtual ICollection<Music_Deal_Country> Music_Deal_Country { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Music_Deal_Country_Dapper> Music_Deal_Country { get; set; }
+       
         [OneToMany]
-        public virtual ICollection<Music_Deal_Language> Music_Deal_Language { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Music_Deal_Language_Dapper> Music_Deal_Language { get; set; }
+       
         [OneToMany]
-        public virtual ICollection<Music_Deal_LinkShow> Music_Deal_LinkShow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Music_Deal_LinkShow_Dapper> Music_Deal_LinkShow { get; set; }
+       
         [OneToMany]
-        public virtual ICollection<Music_Deal_Vendor> Music_Deal_Vendor { get; set; }
+        public ICollection<Music_Deal_Vendor_Dapper> Music_Deal_Vendor { get; set; }
     }
 }

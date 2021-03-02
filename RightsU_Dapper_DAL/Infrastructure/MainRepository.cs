@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
+using RightsU_Dapper.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,12 +44,21 @@ namespace RightsU_Dapper.DAL.Infrastructure
                 connection.Close();
             }
         }
+        public void DeleteAllEntity(IEnumerable<T> List)
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                connection.DeleteAll(List);
+                connection.Close();
+            }
+        }
         public  T1 GetById<T1>(object param)
         {
             using (var connection = dbConnection.Connection())
             {
                 connection.Open();
-                T1 obj = connection.AutoQuery<T1>(param).FirstOrDefault();
+                T1 obj = connection.AutoQuery<T1>(new Type[] {typeof(Music_Deal_Platform_Dapper), typeof(Music_Deal_Language_Dapper) },param).FirstOrDefault();
                 connection.Close();
                 return obj;
             }

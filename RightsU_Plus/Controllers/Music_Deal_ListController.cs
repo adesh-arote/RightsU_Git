@@ -1,5 +1,6 @@
-﻿using RightsU_BLL;
-using RightsU_Entities;
+﻿//using RightsU_BLL;
+//using RightsU_Entities;
+using RightsU_Dapper.Entity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
@@ -8,13 +9,17 @@ using System.Web;
 using System.Web.Mvc;
 using UTOFrameWork.FrameworkClasses;
 using RightsU_Dapper.BLL.Services;
+using RightsU_BLL;
 
 namespace RightsU_Plus.Controllers
 {
    
     public class Music_Deal_ListController : BaseController
     {
-        private readonly Music_Deal_Services objMusic_Deal_Services = new Music_Deal_Services();
+        private readonly Music_DealServices objMusic_Deal_Services = new Music_DealServices();
+        private readonly System_Parameter_NewService objSPNService = new System_Parameter_NewService();
+        
+
         private Music_Deal_Search objMusicDealSearch
         {
             get
@@ -67,7 +72,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.RecordPerPage = recordPerPage;
             ViewBag.UserModuleRights = GetUserModuleRights();
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusicDeal);
-            var MusicDealVersion = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Music_Platform_Visibility").Select(w => w.Parameter_Value).SingleOrDefault();
+
+            var MusicDealVersion =  objSPNService.GetList().Where(x=> x.Parameter_Name == "Music_Platform_Visibility").Select(w => w.Parameter_Value).FirstOrDefault();
             ViewBag.IsMuciVersionSPN = MusicDealVersion;
             return View();
         }
@@ -87,26 +93,25 @@ namespace RightsU_Plus.Controllers
             if (Show_Type_Code != null)
                 strShow_Type_Code = string.Join(",", Show_Type_Code);
 
-            USP_Service objService = new USP_Service(objLoginEntity.ConnectionStringName);
+            //USP_Service objService = new USP_Service(objLoginEntity.ConnectionStringName);
             int recordCount = 0;
-            ObjectParameter objPageNo = new ObjectParameter("PageNo", pageNo);
-            ObjectParameter objTotalRecord = new ObjectParameter("RecordCount", recordCount);
-            List<USP_List_Music_Deal_Result> lstMusicDeal = objService.USP_List_Music_Deal(
-                SearchText, Agreement_No, StartDate, EndDate, strDeal_Type_Code, strStatus_Code, Business_Unit_Code,
-                0, Workflow_Status, Vendor_Codes, strShow_Type_Code, Title_Code, Music_Label_Codes, IsAdvance_Search,
-                objLoginUser.Users_Code, objPageNo, recordPerPage, objTotalRecord
-            ).ToList();
+            //ObjectParameter objPageNo = new ObjectParameter("PageNo", pageNo);
+            //ObjectParameter objTotalRecord = new ObjectParameter("RecordCount", recordCount);
+            //List<USP_List_Music_Deal_Result> lstMusicDeal = objService.USP_List_Music_Deal(
+            //    SearchText, Agreement_No, StartDate, EndDate, strDeal_Type_Code, strStatus_Code, Business_Unit_Code,
+            //    0, Workflow_Status, Vendor_Codes, strShow_Type_Code, Title_Code, Music_Label_Codes, IsAdvance_Search,
+            //    objLoginUser.Users_Code, objPageNo, recordPerPage, objTotalRecord
+            //).ToList();
 
-
-
-            List<RightsU_Dapper.Entity.USP_List_Music_Deal_Result> lstMusicDeal1 = objMusic_Deal_Services.USP_List_Music_Deal(
+            List<USP_List_Music_Deal_Result> lstMusicDeal = objMusic_Deal_Services.USP_List_Music_Deal(
                 SearchText, Agreement_No, StartDate, EndDate, strDeal_Type_Code, strStatus_Code, Business_Unit_Code,
                 0, Workflow_Status, Vendor_Codes, strShow_Type_Code, Title_Code, Music_Label_Codes, IsAdvance_Search,
                 objLoginUser.Users_Code, pageNo, recordPerPage, out recordCount
             ).ToList();
 
-            recordCount = Convert.ToInt32(objTotalRecord.Value);
-            pageNo = Convert.ToInt32(objPageNo.Value);
+            //recordCount = Convert.ToInt32(objTotalRecord.Value);
+            //pageNo = Convert.ToInt32(objPageNo.Value);
+
             ViewBag.RecordCount = recordCount;
             ViewBag.PageNo = pageNo;
 
@@ -135,8 +140,8 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult BindAdvanceSearch(string CallFrom)
         {
-            string[] arrMDUBUCodes = new Users_Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Users_Code == objLoginUser.Users_Code).Select(x => x.Business_Unit_Code.ToString()).ToArray();
-            List<RightsU_Entities.Music_Deal> lstMusicDeal = new Music_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => (arrMDUBUCodes.Contains(x.Business_Unit_Code.ToString()))).ToList();
+            string[] arrMDUBUCodes = new RightsU_BLL.Users_Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Users_Code == objLoginUser.Users_Code).Select(x => x.Business_Unit_Code.ToString()).ToArray();
+            List<Music_Deal_Dapper> lstMusicDeal = objMusic_Deal_Services.GetMusic_DealList().Where(x => arrMDUBUCodes.Contains(x.Business_Unit_Code.ToString())).ToList();
             string[] arrStatusCodes = lstMusicDeal.Select(x=>x.Deal_Tag_Code.ToString()).Distinct().ToArray();
             string[] arrWorkFlowStatus = lstMusicDeal.Select(x => x.Deal_Workflow_Status).Distinct().ToArray();
             string[] arrVendorCodes = lstMusicDeal.Select(x => x.Primary_Vendor_Code.ToString()).Distinct().ToArray();
@@ -144,18 +149,22 @@ namespace RightsU_Plus.Controllers
             string[] arrLinkShowType = lstMusicDeal.Select(x => x.Link_Show_Type).Distinct().ToArray();              
             string[] arrMDCodes = lstMusicDeal.Select(x => x.Music_Deal_Code.ToString()).ToArray();
             string[] arrMDBUCodes = lstMusicDeal.Select(x=>x.Business_Unit_Code.ToString()).ToArray();
-          
-            System_Parameter_New_Service objSPNService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
+
+            //System_Parameter_New_Service objSPNService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
 
             #region --- Business Unit List ---
-            System_Parameter_New objSPN = objSPNService.SearchFor(s => s.Parameter_Name == "BusinessUnitCodesForMusicDeal" && s.IsActive == "Y").FirstOrDefault();
+            var obj = new
+            {
+                IsActive = "Y"
+            };
+            System_Parameter_New objSPN = objSPNService.GetList().Where(s => s.Parameter_Name == "BusinessUnitCodesForMusicDeal" && s.IsActive == "Y").FirstOrDefault();
             if (objSPN == null)
                 objSPN = new System_Parameter_New();
 
             string strBuCodes = (objSPN.Parameter_Value ?? "");
             string[] arrBUCodes = strBuCodes.Split(',');
 
-            List<SelectListItem> lstBusinessUnit = new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"
+            List<SelectListItem> lstBusinessUnit = new SelectList(new RightsU_BLL.Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"
                && (arrBUCodes.Contains(x.Business_Unit_Code.ToString()) || string.IsNullOrEmpty(strBuCodes))).
                 SelectMany(s => s.Users_Business_Unit).Where(w => w.Users_Code == objLoginUser.Users_Code && (arrMDBUCodes.Contains(w.Business_Unit_Code.ToString()))).
                 Select(s => s.Business_Unit).ToList(), "Business_Unit_Code", "Business_Unit_Name").OrderBy(o => o.Text).ToList();
@@ -163,26 +172,26 @@ namespace RightsU_Plus.Controllers
             #endregion --- Business Unit List ---
 
             #region --- Deal Tag List ---
-            objSPN = objSPNService.SearchFor(s => s.Parameter_Name == "DealTagCodesForMusicDeal" && s.IsActive == "Y").FirstOrDefault();
+            objSPN = objSPNService.SearchFor(obj).Where(s => s.Parameter_Name == "DealTagCodesForMusicDeal" && s.IsActive == "Y").FirstOrDefault();
             if (objSPN == null)
                 objSPN = new System_Parameter_New();
             string strDealTagCodes = (objSPN.Parameter_Value ?? "");
             string[] arrDealTagCodes = strDealTagCodes.Split(',');
 
-            List<SelectListItem> lstDealTag = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>
+            List<SelectListItem> lstDealTag = new SelectList(new RightsU_BLL.Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>
                 (arrDealTagCodes.Contains(x.Deal_Tag_Code.ToString()) || string.IsNullOrEmpty(strDealTagCodes))).ToList(),
               "Deal_Tag_Code", "Deal_Tag_Description").OrderBy(o => o.Text).ToList();
             lstDealTag.Insert(0, new SelectListItem() { Text = "Please Select", Value = "0" });
             #endregion --- Deal Tag List ---
 
             #region --- Deal Type List ---
-            objSPN = objSPNService.SearchFor(s => s.Parameter_Name == "DealTypeCodesForMusicDeal" && s.IsActive == "Y").FirstOrDefault();
+            objSPN = objSPNService.SearchFor(obj).Where(s => s.Parameter_Name == "DealTypeCodesForMusicDeal" && s.IsActive == "Y").FirstOrDefault();
             if (objSPN == null)
                 objSPN = new System_Parameter_New();
             string strDealTypeCodes = (objSPN.Parameter_Value ?? "");
             string[] arrDealTypeCodes = strDealTypeCodes.Split(',');
 
-            List<SelectListItem> lstDealType = new SelectList(new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>
+            List<SelectListItem> lstDealType = new SelectList(new RightsU_BLL.Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>
                 (arrDealTypeCodes.Contains(x.Deal_Type_Code.ToString()) || string.IsNullOrEmpty(strDealTypeCodes))).
                 SelectMany(s=>s.Music_Deal_DealType).Where( w=> (arrMDCodes.Contains(w.Music_Deal_Code.ToString()))).
                 Select(s=>s.Deal_Type).Distinct().ToList(), "Deal_Type_Code", "Deal_Type_Name").OrderBy(o => o.Text).ToList();
@@ -199,20 +208,21 @@ namespace RightsU_Plus.Controllers
             #endregion --- Deal Type List ---
             #region Statys Type list
 
-            List<SelectListItem> lstStatus = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => (arrStatusCodes.Contains(x.Deal_Tag_Code.ToString()))).OrderByDescending(o => o.Deal_Tag_Code).ToList(),
+            List<SelectListItem> lstStatus = new SelectList(new RightsU_BLL.Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => (arrStatusCodes.Contains(x.Deal_Tag_Code.ToString()))).OrderByDescending(o => o.Deal_Tag_Code).ToList(),
               "Deal_Tag_Code", "Deal_Tag_Description").OrderBy(o => o.Text).ToList();
             #endregion   
-            List<SelectListItem> lstWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type == "M" && (arrWorkFlowStatus.Contains(x.Deal_WorkflowFlag.ToUpper()))).ToList(),
+            List<SelectListItem> lstWorkFlowStatus = new SelectList(new RightsU_BLL.Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type == "M" && (arrWorkFlowStatus.Contains(x.Deal_WorkflowFlag.ToUpper()))).ToList(),
               "Deal_WorkflowFlag", "Deal_Workflow_Status_Name").OrderBy(o => o.Text).ToList();
             lstWorkFlowStatus.Insert(0, new SelectListItem() { Text = "All", Value = "0" });
 
-            List<SelectListItem> lstVendor = new SelectList(new Music_Deal_Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(s => (arrMDCodes.Contains(s.Music_Deal_Code.ToString())))
+            List<SelectListItem> lstVendor = new SelectList(new RightsU_BLL.Music_Deal_Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(s => (arrMDCodes.Contains(s.Music_Deal_Code.ToString())))
               .Select(s => new { Display_Value = s.Vendor_Code, Display_Text = s.Vendor.Vendor_Name.Trim() }).Distinct().ToList(),
               "Display_Value", "Display_Text").OrderBy(o => o.Text).ToList();
 
-            List<SelectListItem> lstMusicLabel = new SelectList(new Music_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => (arrMusicLabelCodes.Contains(s.Music_Label_Code.ToString())))
-                .Select(s => new { Display_Value = s.Music_Label_Code, Display_Text = s.Music_Label.Music_Label_Name.Trim() }).Distinct().ToList(),
-                "Display_Value", "Display_Text").OrderBy(o => o.Text).ToList();
+            List<SelectListItem> lstMusicLabel = new List<SelectListItem>();
+            //List<SelectListItem> lstMusicLabel = new SelectList(objMusic_Deal_Services.GetMusic_DealList().Where(s => (arrMusicLabelCodes.Contains(s.Music_Label_Code.ToString())))
+            //    .Select(s => new { Display_Value = s.Music_Label_Code, Display_Text = s.Music_Label.Music_Label_Name.Trim() }).Distinct().ToList(),
+            //    "Display_Value", "Display_Text").OrderBy(o => o.Text).ToList();
 
             Dictionary<string, object> objDictionary = new Dictionary<string, object>();
             objDictionary.Add("Deal_Type_List", lstDealType);
@@ -245,22 +255,23 @@ namespace RightsU_Plus.Controllers
                 {
                     if (CommandName == GlobalParams.DEAL_MODE_DELETE)
                     {
-                        Music_Deal_Service objService = new Music_Deal_Service(objLoginEntity.ConnectionStringName);
-                        Music_Deal objMusicDeal = objService.GetById(Music_Deal_Code);
-                        dynamic resultSet = "";
-                        if (!objService.Delete(objMusicDeal, out resultSet))
-                        {
-                            status = "E";
-                            message = resultSet;
-                        }
-                        else
+                        
+                        Music_Deal_Dapper objMusicDeal = objMusic_Deal_Services.GetMusic_DealByID(Music_Deal_Code);
+                        //dynamic resultSet = "";
+                        objMusic_Deal_Services.DeleteMusic_Deal(objMusicDeal);
+                        //if (!objService.Delete(objMusicDeal, out resultSet))
+                        //{
+                        //    status = "E";
+                        //    message = resultSet;
+                        //}
+                        //else
                             message = "Deal deleted successfully";
                     }
                     else if (CommandName == GlobalParams.DEAL_MODE_ROLLBACK)
                     {
-                        ObjectParameter objErrorMessage = new ObjectParameter("ErrorMessage", message);
-                        new USP_Service(objLoginEntity.ConnectionStringName).USP_RollBack_Music_Deal(Music_Deal_Code, objLoginUser.Users_Code, objErrorMessage);
-                        message = Convert.ToString(objErrorMessage.Value);
+                        //ObjectParameter objErrorMessage = new ObjectParameter("ErrorMessage", message);
+                       objMusic_Deal_Services.USP_RollBack_Music_Deal(Music_Deal_Code, objLoginUser.Users_Code, out message);
+                       // message = Convert.ToString(objErrorMessage.Value);
                         if (message != "")
                             status = "E";
                         else
@@ -368,7 +379,7 @@ namespace RightsU_Plus.Controllers
             string message = "";
             int RLCode = 0;
             bool isLocked = false;
-            int count = new Music_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Music_Deal_Code == Music_Deal_Code && (s.Deal_Workflow_Status == "A" || s.Deal_Workflow_Status == "W")).Count();
+            int count = objMusic_Deal_Services.GetMusic_DealList().Where(s => s.Music_Deal_Code == Music_Deal_Code && (s.Deal_Workflow_Status == "A" || s.Deal_Workflow_Status == "W")).Count();
             if (count > 0)
                 message = "The deal is already processed by another Approver";
             else if (Music_Deal_Code > 0)
