@@ -382,6 +382,13 @@ namespace RightsUMusic.DAL.Repository
         {
             base.DeleteEntity(entity);
         }
+
+        public MHPlayList Update(MHPlayList objMHPlayList)
+        {
+            MHPlayList oldObj = GetByID(Convert.ToInt32(objMHPlayList.MHPlayListCode));
+            base.UpdateEntity(oldObj, objMHPlayList);
+            return objMHPlayList;
+        }
     }
     #endregion
 

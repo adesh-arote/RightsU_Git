@@ -251,5 +251,11 @@ namespace RightsUMusic.BLL.Services
         {
             return objMHRequestRepositories.Get(Id);
         }
+
+        public MHPlayList UpdatePlaylist(MHPlayList objMHPlaylist)
+        {
+            objMHPlaylist = objMHPlayListRepositories.Update(objMHPlaylist);
+            return objMHPlaylist;
+        }
     }
 }

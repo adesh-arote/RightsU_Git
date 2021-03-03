@@ -209,7 +209,38 @@ namespace RightsUMusic.API.Controllers
 
                 _objRet.Message = "";
                 _objRet.IsSuccess = true;
-                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet}, Configuration.Formatters.JsonFormatter);
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = ex.Message.ToString();
+                _objRet.IsSuccess = false;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
+            }
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        [HttpPost]
+        public HttpResponseMessage UpdatePlayList(MHPlayList objMHPlayListInput)
+        {
+            Return _objRet = new Return();
+            MHPlayList oldObj = new MHPlayList();
+            int RecordCount = 0;
+            try
+            {
+                oldObj = obj.GetByID(objMHPlayListInput.MHPlayListCode);
+                objMHPlayListInput.IsActive = oldObj.IsActive;
+                objMHPlayListInput.TitleCode = oldObj.TitleCode;
+                objMHPlayListInput.VendorCode = oldObj.VendorCode;
+                objMHPlayListInput.MHPlayListSong = oldObj.MHPlayListSong;
+
+
+
+                objMHPlayListInput = obj.UpdatePlaylist(objMHPlayListInput);
+
+                _objRet.Message = "";
+                _objRet.IsSuccess = true;
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, MHPlayList = objMHPlayListInput }, Configuration.Formatters.JsonFormatter);
             }
             catch (Exception ex)
             {
@@ -257,7 +288,7 @@ namespace RightsUMusic.API.Controllers
             };
             MHUsers objUser = objMHUsersServices.SearchFor(objU).FirstOrDefault();
 
-            string RequestID = obj.GetRequestID(objUser.Vendor_Code,"MU");
+            string RequestID = obj.GetRequestID(objUser.Vendor_Code, "MU");
 
 
             objMHRequest.MHRequestTypeCode = 1;
@@ -273,7 +304,7 @@ namespace RightsUMusic.API.Controllers
                 //lstobjRequestetail.AddRange(objMHRequest.MHRequestDetail);
                 obj.SaveMusicConsumptionRequest(objMHRequest);
                 obj.ValidateConsumptionRequest(objMHRequest);
-                string str =  obj.SendForApproval(objMHRequest,Convert.ToInt32(UserCode));
+                string str = obj.SendForApproval(objMHRequest, Convert.ToInt32(UserCode));
                 obj.AutoApproveUsageRequest(objMHRequest, Convert.ToInt32(UserCode));
 
                 _objRet.Message = "";
@@ -301,7 +332,7 @@ namespace RightsUMusic.API.Controllers
                 Users_Code = Convert.ToInt32(UserCode),
             };
             MHUsers objUser = objMHUsersServices.SearchFor(objU).FirstOrDefault();
-            string RequestID = obj.GetRequestID(objUser.Vendor_Code,"MT");
+            string RequestID = obj.GetRequestID(objUser.Vendor_Code, "MT");
 
             objMHRequest.MHRequestTypeCode = 2;
             objMHRequest.RequestID = RequestID;
@@ -316,7 +347,7 @@ namespace RightsUMusic.API.Controllers
                 //lstobjRequestetail.AddRange(objMHRequest.MHRequestDetail);
                 obj.SaveMusicConsumptionRequest(objMHRequest);
                 obj.ValidateConsumptionRequest(objMHRequest);
-                obj.SendForApproval(objMHRequest,Convert.ToInt32(UserCode));
+                obj.SendForApproval(objMHRequest, Convert.ToInt32(UserCode));
                 _objRet.Message = "";
                 _objRet.IsSuccess = true;
                 return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, RequestID = objMHRequest.RequestID }, Configuration.Formatters.JsonFormatter);
@@ -342,7 +373,7 @@ namespace RightsUMusic.API.Controllers
                 Users_Code = Convert.ToInt32(UserCode),
             };
             MHUsers objUser = objMHUsersServices.SearchFor(objU).FirstOrDefault();
-            string RequestID = obj.GetRequestID(objUser.Vendor_Code,"MA");
+            string RequestID = obj.GetRequestID(objUser.Vendor_Code, "MA");
 
             objMHRequest.MHRequestTypeCode = 3;
             objMHRequest.RequestID = RequestID;
@@ -356,7 +387,7 @@ namespace RightsUMusic.API.Controllers
             {
                 obj.SaveMusicConsumptionRequest(objMHRequest);
                 obj.ValidateConsumptionRequest(objMHRequest);
-                obj.SendForApproval(objMHRequest,Convert.ToInt32(UserCode));
+                obj.SendForApproval(objMHRequest, Convert.ToInt32(UserCode));
                 _objRet.Message = "";
                 _objRet.IsSuccess = true;
                 return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, RequestID = objMHRequest.RequestID }, Configuration.Formatters.JsonFormatter);
@@ -435,7 +466,7 @@ namespace RightsUMusic.API.Controllers
             Return _objRet = new Return();
             try
             {
-                lstConsumptionRequestDetails = obj.GetConsumptionRequestDetails(objRequestDetailsInput.MHRequestCode, objRequestDetailsInput.MHRequestTypeCode,Convert.ToChar(objRequestDetailsInput.IsCueSheet));
+                lstConsumptionRequestDetails = obj.GetConsumptionRequestDetails(objRequestDetailsInput.MHRequestCode, objRequestDetailsInput.MHRequestTypeCode, Convert.ToChar(objRequestDetailsInput.IsCueSheet));
                 var objRemarkSpecialInstruction = lstConsumptionRequestDetails.Select(x => new
                 {
                     Remarks = x.ProductionHouseRemarks,
@@ -688,7 +719,7 @@ namespace RightsUMusic.API.Controllers
                 var excelPackage = new ExcelPackage(newFile, OldFile);
                 var sheet = excelPackage.Workbook.Worksheets["Sheet1"];
                 sheet.Name = "Studio";
-                if(objConsumptionRequestList.ExportFor == "A")
+                if (objConsumptionRequestList.ExportFor == "A")
                 {
                     sheet.Cells[1, 1].Value = "Request #";
                     sheet.Cells[1, 2].Value = "Channel";
@@ -713,7 +744,7 @@ namespace RightsUMusic.API.Controllers
                     sheet.Cells[1, 8].Value = "Requested By";
                     sheet.Cells[1, 9].Value = "Requested Date";
                 }
-                
+
 
                 for (int i = 1; i <= 10; i++)
                 {
@@ -744,7 +775,7 @@ namespace RightsUMusic.API.Controllers
                 col2.Width = 20;
                 col3.Width = 25;
                 col4.Width = 18;
-                col5.Width = objConsumptionRequestList.ExportFor == "A" ? 18: 12;
+                col5.Width = objConsumptionRequestList.ExportFor == "A" ? 18 : 12;
                 col6.Width = 25;
                 col7.Width = 15;
                 col8.Width = 18;
@@ -754,12 +785,12 @@ namespace RightsUMusic.API.Controllers
                 for (int i = 0; i < consumptionList.Count; i++)
                 {
                     //.Remove(10, 9);
-                    DateTime dtFrom = Convert.ToDateTime(consumptionList[i].TelecastFrom.ToString()); 
+                    DateTime dtFrom = Convert.ToDateTime(consumptionList[i].TelecastFrom.ToString());
                     string TelecastFrom = dtFrom.ToString("dd-MMM-yyyy");
 
                     DateTime dtTo = Convert.ToDateTime(consumptionList[i].TelecastTo.ToString());
                     string TelecastTo = dtTo.ToString("dd-MMM-yyyy");
-                    if(objConsumptionRequestList.ExportFor == "A")
+                    if (objConsumptionRequestList.ExportFor == "A")
                     {
                         sheet.Cells["A" + (i + 2)].Value = consumptionList[i].RequestID;
                         sheet.Cells["B" + (i + 2)].Value = consumptionList[i].ChannelName;
@@ -787,7 +818,7 @@ namespace RightsUMusic.API.Controllers
                         sheet.Cells["I" + (i + 2)].Value = consumptionList[i].RequestDate.ToString();
                     }
 
-                    
+
 
                     sheet.Cells["A" + (i + 2)].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
@@ -874,19 +905,19 @@ namespace RightsUMusic.API.Controllers
                 var excelPackage = new ExcelPackage(newFile, OldFile);
                 var sheet = excelPackage.Workbook.Worksheets["Sheet1"];
                 sheet.Name = "Sheet 1";
-                
-                    sheet.Cells[1, 1].Value = "Request #";
-                    sheet.Cells[1, 2].Value = "Channel";
-                    sheet.Cells[1, 3].Value = "Show";
-                    sheet.Cells[1, 4].Value = "Episode";
-                    sheet.Cells[1, 5].Value = "Telecast";
-                    sheet.Cells[1, 6].Value = "Music Title";
-                    sheet.Cells[1, 7].Value = "Movie / Album";
-                    sheet.Cells[1, 8].Value = "Music Label";
-                    sheet.Cells[1, 9].Value = "Status";
-                    sheet.Cells[1, 10].Value = "Requested By";
-                    sheet.Cells[1, 11].Value = "Requested Date";
-                    sheet.Cells[1, 12].Value = "Remarks";
+
+                sheet.Cells[1, 1].Value = "Request #";
+                sheet.Cells[1, 2].Value = "Channel";
+                sheet.Cells[1, 3].Value = "Show";
+                sheet.Cells[1, 4].Value = "Episode";
+                sheet.Cells[1, 5].Value = "Telecast";
+                sheet.Cells[1, 6].Value = "Music Title";
+                sheet.Cells[1, 7].Value = "Movie / Album";
+                sheet.Cells[1, 8].Value = "Music Label";
+                sheet.Cells[1, 9].Value = "Status";
+                sheet.Cells[1, 10].Value = "Requested By";
+                sheet.Cells[1, 11].Value = "Requested Date";
+                sheet.Cells[1, 12].Value = "Remarks";
 
                 for (int i = 1; i <= 12; i++)
                 {
@@ -937,7 +968,7 @@ namespace RightsUMusic.API.Controllers
                     DateTime dtTo = Convert.ToDateTime(consumptionList[i].TelecastTo.ToString());
                     string TelecastTo = dtTo.ToString("dd-MMM-yyyy");
 
-                    
+
                     sheet.Cells["A" + (i + 2)].Value = consumptionList[i].RequestID;
                     sheet.Cells["B" + (i + 2)].Value = consumptionList[i].ChannelName;
                     sheet.Cells["C" + (i + 2)].Value = consumptionList[i].Title_Name;
@@ -1143,7 +1174,7 @@ namespace RightsUMusic.API.Controllers
                 var sheet = excelPackage.Workbook.Worksheets["Sheet1"];
                 sheet.Name = "Studio";
 
-                if(objMHRequest.MHRequestTypeCode == 2)
+                if (objMHRequest.MHRequestTypeCode == 2)
                 {
                     sheet.Cells[1, 1].Value = "Request #";
                     sheet.Cells[1, 2].Value = "Req. Music";
@@ -1170,7 +1201,7 @@ namespace RightsUMusic.API.Controllers
                 }
                 int n = 9;
                 if (objMHRequest.MHRequestTypeCode == 2)
-                    n = 10;  
+                    n = 10;
 
                 for (int i = 1; i <= n; i++)
                 {
@@ -1238,7 +1269,7 @@ namespace RightsUMusic.API.Controllers
                         sheet.Cells["H" + (i + 2)].Value = RequestedDate;
                         sheet.Cells["I" + (i + 2)].Value = movieAlbumMusicList[i].Remarks; ;
                     }
-                    
+
                     sheet.Cells["A" + (i + 2)].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
                     sheet.Cells["A" + (i + 2)].Style.Font.Name = "Calibri";
@@ -1347,25 +1378,26 @@ namespace RightsUMusic.API.Controllers
                 //TitleCode = objMHPlayList.TitleCode,
                 VendorCode = objUser.Vendor_Code
             };
-           
+
             try
             {
                 lstPlayList = obj.SearchPlayList(objParam).ToList();
                 //int searchCount = lstPlayList.Count();
-                if (lstPlayList.Count() == 0) {
-                    string strSearch = "Select top 1 ChannelCode from MHRequest Where TitleCode = " + objMHPlayList.TitleCode + " AND VendorCode = "+objUser.Vendor_Code+" AND MHRequestTypeCode = 1 order by 1 desc";
-                    ChannelCode = obj.GetChannelCode(strSearch,objMHPlayList.TitleCode);
+                if (lstPlayList.Count() == 0)
+                {
+                    string strSearch = "Select top 1 ChannelCode from MHRequest Where TitleCode = " + objMHPlayList.TitleCode + " AND VendorCode = " + objUser.Vendor_Code + " AND MHRequestTypeCode = 1 order by 1 desc";
+                    ChannelCode = obj.GetChannelCode(strSearch, objMHPlayList.TitleCode);
                     _objRet.Message = "Play List not found.";
                     _objRet.IsSuccess = false;
                 }
                 else
                 {
-                  
+
                     _objRet.Message = "Play List found.";
                     _objRet.IsSuccess = true;
                 }
-                
-                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet,ChannelCode = ChannelCode}, Configuration.Formatters.JsonFormatter);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet, ChannelCode = ChannelCode }, Configuration.Formatters.JsonFormatter);
             }
             catch (Exception ex)
             {
@@ -1408,14 +1440,14 @@ namespace RightsUMusic.API.Controllers
             int RecordCount = 0;
             string Header = "";
 
-           
+
             objMHRequest.UsersCode = Convert.ToInt32(UsersCode);
             // objMHRequest.UsersCode = Convert.ToInt32(UserCode);
             IEnumerable<USPMHConsumptionRequestList> lstConsumptionRequest = new List<USPMHConsumptionRequestList>();
 
             try
             {
-                if(objMHRequest.MHRequestTypeCode == 1)
+                if (objMHRequest.MHRequestTypeCode == 1)
                 {
                     ConsumptionRequestListInput objConsumptionRequestList = new ConsumptionRequestListInput()
                     {
@@ -1430,8 +1462,8 @@ namespace RightsUMusic.API.Controllers
                         FromDate = "",
                         ToDate = "",
                         SortBy = "RequestDate",
-                        Order="DESC"
-                       
+                        Order = "DESC"
+
                     };
                     lstConsumptionRequest = obj.GetConsumptionRequestList(objMHRequest, objConsumptionRequestList, out RecordCount);
                     Header = lstConsumptionRequest.Where(x => x.RequestCode == objMHRequest.MHRequestCode).Select(x =>
@@ -1439,13 +1471,13 @@ namespace RightsUMusic.API.Controllers
                 }
                 else if (objMHRequest.MHRequestTypeCode == 2)
                 {
-                     Header = "Music Detail for : "+ obj.GetMHRequest(Convert.ToInt32(objMHRequest.MHRequestCode)).RequestID.ToString();
+                    Header = "Music Detail for : " + obj.GetMHRequest(Convert.ToInt32(objMHRequest.MHRequestCode)).RequestID.ToString();
                 }
                 else
                 {
                     Header = "Movie / Album Detail for : " + obj.GetMHRequest(Convert.ToInt32(objMHRequest.MHRequestCode)).RequestID.ToString();
                 }
-              
+
                 _objRet.Message = "";
                 _objRet.IsSuccess = true;
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -1502,5 +1534,5 @@ namespace RightsUMusic.API.Controllers
 
     //Committed by Rahul AND Aditya 
     //This is comment is purposely written
-    
+
 }
