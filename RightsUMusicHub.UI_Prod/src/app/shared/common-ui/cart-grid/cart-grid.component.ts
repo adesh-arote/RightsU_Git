@@ -70,6 +70,7 @@ export class CartGridComponent implements OnInit {
   public newRequestDataset: any;
   public items: any;
   public rowData: any;
+  public isShowlistsearched: boolean = false;
 
   constructor(private _CommonUiService: CommonUiService, private router: Router, private comparentchildservice: ComParentChildService) {
 
@@ -80,7 +81,7 @@ export class CartGridComponent implements OnInit {
     this.checkTabheader = sessionStorage.getItem('TAB_NAME');
     this.cartCountset = JSON.parse(sessionStorage.getItem('CARTLIST_COUNT'));
     this.searchedGrid = JSON.parse(sessionStorage.getItem('SEARCHED_GRID'));
-    // this.setMHPlaylistName=sessionStorage.getItem('MHPLAYLIST_NAME');
+   
 
     if (this.checkTabheader == 'PlayList') {
       this.showSearchpanel = false;
@@ -185,8 +186,6 @@ export class CartGridComponent implements OnInit {
     else {
       this.showSearchpanel = true;
       this.setMHPlaylistCode = 0;
-      this.cartListCount = this.cartCountset;
-      //this.cartList=this.cartDataset;
     }
 
 
@@ -296,6 +295,7 @@ export class CartGridComponent implements OnInit {
   }
 
   quickSelectionGridData(playlistvalue) {
+    this.isShowlistsearched = true;
     if (this.sortBy == undefined || this.order == undefined) {
       this.sortBy = "MusicTrack";
       this.order = "ASC";
@@ -335,6 +335,7 @@ export class CartGridComponent implements OnInit {
       this.recordCount = response.RecordCount;
       this.searchList = response.Show;
       this.sortingDefault = false;
+      this.isShowlistsearched = false;
       $(function () {
         $('.dropdwnbody').slimScroll({
           height: '100px',
@@ -368,6 +369,7 @@ export class CartGridComponent implements OnInit {
   }
   searchTrack() {
     debugger;
+    this.isShowlistsearched = true;
     // if (this.isClick == true) {
     //   this.isClick = false;
     //   this.playListName = '';
@@ -443,6 +445,7 @@ export class CartGridComponent implements OnInit {
         this.recordCount = response.RecordCount;
         this.searchList = response.Show;
         this.sortingDefault = false;
+        this.isShowlistsearched = false;
         // this.TotalRecords=this.searchList.length;
         // for(let i=0;i<this.searchList.length;i++){
         $(function () {
@@ -1172,8 +1175,6 @@ export class CartGridComponent implements OnInit {
     alert(JSON.stringify(pagval));
   }
 
-  
-
   loadDataOnPagination(event) {
     debugger;
     console.log("Lazy Loading.....");
@@ -1199,27 +1200,29 @@ export class CartGridComponent implements OnInit {
       this.sortBy = this.sortBy;
       this.order = this.order;
     }
-    if (this.rowonpage != pageSize) {
-      this.rowonpage = pageSize;
-      if (event.first == 0) {
-        this.onpagechange(pageSize, pageNo);
+    if (this.isShowlistsearched == false) {
+      if (this.rowonpage != pageSize) {
+        this.rowonpage = pageSize;
+        if (event.first == 0) {
+          this.onpagechange(pageSize, pageNo);
+        }
+        else {
+          this.first = 0;
+        }
+
       }
       else {
-        this.first = 0;
-      }
+        this.first = event.first;
+        if (event.first == 0) {
+          pageNo = event.first + 1;
+          this.onpagechange(pageSize, pageNo);
+        }
+        else {
+          pageNo = (event.first / event.rows) + 1;
+          this.onpagechange(pageSize, pageNo);
+        }
 
-    }
-    else {
-      this.first = event.first;
-      if (event.first == 0) {
-        pageNo = event.first + 1;
-        this.onpagechange(pageSize, pageNo);
       }
-      else {
-        pageNo = (event.first / event.rows) + 1;
-        this.onpagechange(pageSize, pageNo);
-      }
-
     }
 
   }
@@ -1294,32 +1297,32 @@ export class CartGridComponent implements OnInit {
           'PaginRequired': 'N',
           'PageSize': pageSize,
           'PageNo': pageNo,
-          'ChannelCode':  this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
-          'TitleCode':  this.newMusicConsumptionRequest.TitleCode.Title_Code,
+          'ChannelCode': this.newMusicConsumptionRequest.ChannelCode.Channel_Code,
+          'TitleCode': this.newMusicConsumptionRequest.TitleCode.Title_Code,
           'MusicLanguageCode': this.newSearchRequest.MusicLanguageCode.Music_Language_Code == null ? 0 : this.newSearchRequest.MusicLanguageCode.Music_Language_Code,
           "SortBy": this.sortBy,
           "Order": this.order
         }
       }
-      else{
-      body = {
-        'MusicLabelCode': '',
-        'MusicTrack': '',
-        'MovieName': '',
-        'GenreCode': 0,
-        'TalentName': '',
-        'Tag': '',
-        'MHPlayListCode': this.gridvalue == null ? '' : this.setMHPlaylistCode,
-        'PaginRequired': 'N',
-        'PageSize': pageSize,
-        'PageNo': pageNo,
-        'ChannelCode': '',
-        'TitleCode': '',
-        'MusicLanguageCode': '',
-        "SortBy": this.sortBy,
-        "Order": this.order
+      else {
+        body = {
+          'MusicLabelCode': '',
+          'MusicTrack': '',
+          'MovieName': '',
+          'GenreCode': 0,
+          'TalentName': '',
+          'Tag': '',
+          'MHPlayListCode': this.gridvalue == null ? '' : this.setMHPlaylistCode,
+          'PaginRequired': 'N',
+          'PageSize': pageSize,
+          'PageNo': pageNo,
+          'ChannelCode': '',
+          'TitleCode': '',
+          'MusicLanguageCode': '',
+          "SortBy": this.sortBy,
+          "Order": this.order
+        }
       }
-    }
       // this.quickSelectionGridData(this.gridvalue);
 
     }

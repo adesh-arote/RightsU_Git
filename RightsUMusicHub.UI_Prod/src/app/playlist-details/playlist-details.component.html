@@ -13,11 +13,11 @@
       <p-column field="PlaylistName" header="Play List" [style]=" {'width':'80px' }" [sortable]="true"></p-column>
       <p-column field="" header="Action" [style]=" {'width':'20px' }" styleClass="text-center">
         <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
-          <button (click)="viewPlaylist(row,'view',index)" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
+          <button (click)="vieweditPlaylist(row,'view',index)" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
             data-placement="top" title="View">
             <i class="fa fa-eye"></i>
           </button>
-          <button (click)="viewPlaylist(row,'edit',index)" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
+          <button (click)="vieweditPlaylist(row,'edit',index)" style="margin:2px" class="btn  btn-xs" data-toggle="tooltip"
             data-placement="top" title="Edit">
             <i class="fa fa-edit"></i>
           </button>
@@ -34,19 +34,19 @@
   </section>
 </div>
 
-<p-dialog [(visible)]="showplaylistDetails" [width]="1060" [modal]="true" [responsive]="false" [closable]="true"
-  [resizable]="false">
+<p-dialog [(visible)]="showplaylistDetails" [width]="1060"  [modal]="true" [responsive]="false" [closable]="true"
+  [resizable]="false"  [minY]="70" 	[contentStyle]="{'min-height':'300px', 'overflow':'auto'}">
   <p-header>
     <span *ngIf="!showUpdatebutton">{{playListname}}</span>
     <span *ngIf="showUpdatebutton">Play List Details</span>
   </p-header>
   <span *ngIf="showUpdatebutton">
-  <input type="text" style="width:120px !important" name="musicTrack" value=""
+  <input type="text" name="musicTrack" value=""
     class="playListname" name="playListname" [(ngModel)]="playListname" autocomplete="off">
   </span>&nbsp;
-  <input style="float: right" type="text" #gsearch class="SearchTextBox" pInputText size="50" placeholder="Search"
+  <input  [ngClass]="{'input-Style': showUpdatebutton,'text-Style': !showUpdatebutton}" style="float: right" type="text" #gsearch class="SearchTextBox" pInputText size="50" placeholder="Search"
     autocomplete="off">
-  <br><br>
+  <br><br><br>
   <p-dataTable class="pcolumncursor" [value]="searchList" [rowsPerPageOptions]="[25,50,75,100]" [globalFilter]="gsearch"
     [paginator]="true" [rows]="25" [responsive]="true" [alwaysShowPaginator]="true" (onRowClick)="onRowSelect($event)"
     [sortField]="sortF" [sortOrder]="sortO" (onSort)="changeSort($event)" #detailList>
@@ -105,6 +105,7 @@
     <button *ngIf="showUpdatebutton" type="button" class="buttonplayList btn-sm" (click)="updatePlaylist()">Update</button>&nbsp;
     <button type="button" class="buttonplayList btn-sm" (click)="showplaylistDetails=false">Close</button>
   </p-footer>
+  <div *ngIf="load" id="loadingDiv"></div>
 </p-dialog>
 
 <!----PlayList Full Delete Dialog-->
@@ -141,3 +142,5 @@
       (click)="showDeletedialog=false;">No</button>
   </p-footer>
 </p-dialog>
+
+<div *ngIf="load" id="loadingDiv"></div>

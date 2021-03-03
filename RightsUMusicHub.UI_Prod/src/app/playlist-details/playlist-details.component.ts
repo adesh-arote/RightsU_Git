@@ -45,19 +45,15 @@ export class PlaylistDetailsComponent implements OnInit {
     this.load = true;
     this._requisitionService.getPlayList(playlistbody).subscribe(response => {
       this.load = false;
-      if (this.showUpdatebutton == false) {
-        this.playList = response.MHPlayList;
-      }
-      else {
-        this.playList = this.playListupdated;
-      }
+      this.playList = response.MHPlayList;
     }, error => { this.handleResponseError(error) }
     )
   }
 
-  viewPlaylist(data, action, index) {
+  vieweditPlaylist(data, action, index) {
     debugger;
     this.showplaylistDetails = true;
+    this.searchList = [];
     this.sortBy = "MusicTrack";
     this.order = "ASC";
     this.sortO = "";
@@ -77,6 +73,7 @@ export class PlaylistDetailsComponent implements OnInit {
     else {
       this.showUpdatebutton = false;
     }
+    this.load = true;
     var body = {
       'MusicLabelCode': '',
       'MusicTrack': '',
@@ -95,19 +92,23 @@ export class PlaylistDetailsComponent implements OnInit {
       "Order": this.order
     }
     this._CommonUiService.getRecommendations(body).subscribe(response => {
+      this.load = false;
       this.searchList = response.Show;
     }, error => { this.handleResponseError(error) });
   }
 
-
-
   updatePlaylist() {
     debugger;
     this.playListname;
-    this.playList[this.indexValue].PlaylistName = this.playListname;
-    this.playListupdated = this.playList;
-    this.getPlayList();
-    this.showplaylistDetails = false;
+    let dataObj = {
+      "MHPlayListCode": this.setMHPlaylistCode,
+      "PlaylistName": this.playListname
+    }
+    this._requisitionService.UpdatePlaylist(dataObj).subscribe(response => {
+      this.showplaylistDetails = false;
+      this.getPlayList();
+    }, error => { this.handleResponseError(error) });
+
   }
 
   changeSort(event) {
@@ -160,13 +161,11 @@ export class PlaylistDetailsComponent implements OnInit {
       let Return = response.Return
       if (Return.IsSuccess == true) {
         this.showDeletedialog = false;
-        this.viewPlaylist(this.setMHPlaylistCode, 'edit', "");
+        this.vieweditPlaylist(this.setMHPlaylistCode, 'edit', "");
       }
     }, error => { this.handleResponseError(error) });
 
   }
-
-
 
   handleResponseError(errorCode) {
     this.load = false;

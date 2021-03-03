@@ -145,20 +145,12 @@ input.ReqTextBox {
   position: absolute;
 }
 
-/* :host ::ng-deep div.ui-contextmenu ui-widget ui-wi[style]{
-  visibility: visible;
-  display: block;
-  left: 524px;
-  top: 300px;
-  z-index: 1109;
-  opacity: 1.048
+:host ::ng-deep div.ui-contextmenu ui-widget ui-wi[style] {
+  visibility: visible !important;
+  display: block !important;
+  left: 524px !important;
+  top: 300px !important;
+  z-index: 1109 !important;
+  opacity: 1.048 !important
  } 
  
- :host ::ng-deep div.ui-contextmenu ui-widget ui-widget-content ui-corner-all ui-shadow[style]{
-  visibility: visible;
-  display: block;
-  left: 524px;
-  top: 300px;
-  z-index: 1109;
-  opacity: 1.048
- } */

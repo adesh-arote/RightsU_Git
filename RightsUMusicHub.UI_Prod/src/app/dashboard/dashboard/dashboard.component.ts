@@ -278,7 +278,7 @@ debugger;
   }
   onViewAllRequestClick() {
     localStorage.setItem('VIEW_ALL_REQUEST', 'true');
-    this.router.navigate(['app/requisition/new-request']);
+    this.router.navigate(['/app/requisition/new-request']);
   }
   addBlockUI() {
     $('body').addClass("overlay");

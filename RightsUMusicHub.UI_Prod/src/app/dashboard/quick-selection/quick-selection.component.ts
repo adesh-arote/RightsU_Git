@@ -1,4 +1,4 @@
-import { Component, OnInit ,AfterContentChecked,ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, AfterContentChecked, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, NavigationEnd } from '@angular/router';
 import { RequisitionService } from '../../requisition/requisition.service';
 import { ComParentChildService } from '../../shared/services/comparentchild.service';
@@ -15,7 +15,7 @@ const NEWREQ_DATA = "NEWREQ_DATA";
   selector: 'app-quick-selection',
   templateUrl: './quick-selection.component.html',
   styleUrls: ['./quick-selection.component.css'],
-  providers: [RequisitionService, ComParentChildService,CommonUiService],
+  providers: [RequisitionService, ComParentChildService, CommonUiService],
 })
 export class QuickSelectionComponent implements OnInit {
   public newMusicConsumptionRequest;
@@ -42,16 +42,16 @@ export class QuickSelectionComponent implements OnInit {
   public toplist: any[] = [];
   public newSearchRequest;
   public isDateSame: any;
-  public slideConfig:any;
-  public showDeletedialog:boolean=false;
-  public musicLabelList:any;
-  public getGenreList:any;
-  public languageList:any=[];
+  public slideConfig: any;
+  public showDeletedialog: boolean = false;
+  public musicLabelList: any;
+  public getGenreList: any;
+  public languageList: any = [];
   public recordCount;
-  public  setMHPlaylistName:any;
-  public searchedTrack:boolean=false;
+  public setMHPlaylistName: any;
+  public searchedTrack: boolean = false;
 
-  constructor(private _requisitionService: RequisitionService, private router: Router, private comparentchildservice: ComParentChildService,private _CommonUiService: CommonUiService,private cdref: ChangeDetectorRef) {
+  constructor(private _requisitionService: RequisitionService, private router: Router, private comparentchildservice: ComParentChildService, private _CommonUiService: CommonUiService, private cdref: ChangeDetectorRef) {
     this.mindatevalue = new Date();
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -117,20 +117,20 @@ export class QuickSelectionComponent implements OnInit {
     //   this.listDetail1 = response.MHPlayList;
 
     //   this.filterlist();
-      // $("`"+this.playlistdivid+"`").css("border","1px solid blue")
-      this.componentData = {
-        "showName": this.showlistdata.Title_Name,
-        "titleCode": this.showlistdata.Title_Code,
-        'episodeType': this.episodeType,
-        "listview": this.playListDetail
-      }
-      //this.componentLoad = true;
-      console.log("List body");
-      console.log(this.componentData);
-      // console.log(this.playListDetail.length);
-     
-  //  }, error => { this.handleResponseError(error) })
-    this.slideConfig = { "slidesToShow": 3, "slidesToScroll": 3 ,"infinite": false};
+    // $("`"+this.playlistdivid+"`").css("border","1px solid blue")
+    this.componentData = {
+      "showName": this.showlistdata.Title_Name,
+      "titleCode": this.showlistdata.Title_Code,
+      'episodeType': this.episodeType,
+      "listview": this.playListDetail
+    }
+    //this.componentLoad = true;
+    console.log("List body");
+    console.log(this.componentData);
+    // console.log(this.playListDetail.length);
+
+    //  }, error => { this.handleResponseError(error) })
+    this.slideConfig = { "slidesToShow": 3, "slidesToScroll": 3, "infinite": false };
     this.load = true;
     this.addBlockUI();
     this._requisitionService.getChannel().subscribe(response => {
@@ -167,6 +167,14 @@ export class QuickSelectionComponent implements OnInit {
       this.playListDetail = response.MHPlayList;
       this.listDetail1 = response.MHPlayList;
       this.gridvalue = this.playListDetail.length == 0 ? '' : this.playListDetail[0];
+      for (let i = 0; i < this.playListDetail.length; i++) {
+        if (this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode) {
+          this.playListDetail[i].showCss = 'Y';
+        }
+        else {
+          this.playListDetail[i].showCss = 'N';
+        }
+      }
       this.filterlist();
     }, error => { this.handleResponseError(error) }
     )
@@ -200,7 +208,7 @@ export class QuickSelectionComponent implements OnInit {
     );
   }
 
-  getGenres(){
+  getGenres() {
     this.load = true;
     this.addBlockUI();
     this._requisitionService.getGenre().subscribe(response => {
@@ -228,8 +236,8 @@ export class QuickSelectionComponent implements OnInit {
     debugger;
     this.tabHeaders = 'PlayListSearch';
     this.setMHPlaylistCode = 0;
-    this.componentLoad=true;
-    this.searchedTrack=true;
+    this.componentLoad = true;
+    this.searchedTrack = true;
     sessionStorage.setItem(SEARCHED_GRID, 'true');
     sessionStorage.setItem(TAB_NAME, this.tabHeaders);
     sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
@@ -270,7 +278,7 @@ export class QuickSelectionComponent implements OnInit {
       'listview1': this.listDetail1,
     }
   }
-  
+
   EpisodeNocheck(val: string) {
     this.episodeType = val;
     this.newMusicConsumptionRequest.EpisodeFrom = '';
@@ -344,7 +352,7 @@ export class QuickSelectionComponent implements OnInit {
 
   showRecommendations() {
     debugger;
-    this.tabHeaders="PlayList";
+    this.tabHeaders = "PlayList";
     if (this.episodeType == 'range') {
       let fromdate = this.newMusicConsumptionRequest.TelecastFrom
       let todate = this.newMusicConsumptionRequest.TelecastTo
@@ -359,28 +367,44 @@ export class QuickSelectionComponent implements OnInit {
         console.log(JSON.stringify(this.componentData));
         console.log(JSON.stringify(this.newMusicConsumptionRequest));
       }
-      if(this.tabHeaders == "PlayList" || this.tabHeaders == undefined){
-      this.showPlayList = true;
-      this.showTabdata = true;
-      this.componentLoad = false;
+      if ((this.tabHeaders == "PlayList" || this.tabHeaders == undefined) && this.componentLoad == false) {
+        this.showPlayList = true;
+        this.showTabdata = true;
+        this.componentLoad = false;
+        for (let i = 0; i < this.playListDetail.length; i++) {
+          if (this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode) {
+            this.playListDetail[i].showCss = 'N';
+          }
+          else {
+            this.playListDetail[i].showCss = 'N';
+          }
+        }
       }
-      else{
+      else {
         this.componentLoad = true;
-        this.showPlayList = false;
+        this.showPlayList = true;
         this.showTabdata = true;
       }
     }
     else {
       console.log(JSON.stringify(this.componentData));
       console.log(JSON.stringify(this.newMusicConsumptionRequest));
-      if(this.tabHeaders == "PlayList" || this.tabHeaders == undefined){
-      this.showPlayList = true;
-      this.showTabdata = true;
-      this.componentLoad = false;
+      if ((this.tabHeaders == "PlayList" || this.tabHeaders == undefined)  && this.componentLoad == false) {
+        this.showPlayList = true;
+        this.showTabdata = true;
+        this.componentLoad = false;
+        for (let i = 0; i < this.playListDetail.length; i++) {
+          if (this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode) {
+            this.playListDetail[i].showCss = 'N';
+          }
+          else {
+            this.playListDetail[i].showCss = 'N';
+          }
+        }
       }
-      else{
+      else {
         this.componentLoad = true;
-        this.showPlayList = false;
+        this.showPlayList = true;
         this.showTabdata = true;
       }
     }
@@ -397,11 +421,11 @@ export class QuickSelectionComponent implements OnInit {
     sessionStorage.setItem(SEARCHED_GRID, 'false');
     this.componentLoad = true;
     for (let i = 0; i < this.playListDetail.length; i++) {
-      if(this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode){
-        this.playListDetail[i].showCss ='Y';
+      if (this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode) {
+        this.playListDetail[i].showCss = 'Y';
       }
       else {
-        this.playListDetail[i].showCss='N';
+        this.playListDetail[i].showCss = 'N';
       }
     }
     this.componentData = {
@@ -421,18 +445,10 @@ export class QuickSelectionComponent implements OnInit {
       this.componentLoad = true;
       var getMHPlaylistCode = this.playListDetail.filter(x => x.PlaylistName == this.setMHPlaylistName)[0];
       this.setMHPlaylistCode = getMHPlaylistCode.MHPlayListCode;
-      for (let i = 0; i < this.playListDetail.length; i++) {
-        if(this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode){
-          this.playListDetail[i].showCss ='Y';
-        }
-        else {
-          this.playListDetail[i].showCss='N';
-        }
-      }
+      this.getPlayList();
       sessionStorage.setItem(TAB_NAME, this.tabHeaders);
       sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
       sessionStorage.setItem(SEARCHED_GRID, 'false');
-      this.getPlayList();
       this.componentData = {
         "showName": this.showlistdata.Title_Name,
         "titleCode": this.showlistdata.Title_Code,
@@ -457,7 +473,7 @@ export class QuickSelectionComponent implements OnInit {
         'listview1': this.listDetail1,
       }
     }
-    else if(event.index == 1 && this.searchedTrack == true){
+    else if (event.index == 1 && this.searchedTrack == true) {
       this.showPlayList = false;
       this.tabHeaders = 'PlayListSearch';
       this.showTabdata = true;
@@ -500,20 +516,20 @@ export class QuickSelectionComponent implements OnInit {
     this.showDeletedialog = true;
   }
 
-  deletePlaylist(){
+  deletePlaylist() {
     let dataObj = {
       "MHPlayListCode": this.setMHPlaylistCode,
     }
     this._requisitionService.DeletePlayList(dataObj).subscribe(response => {
-    let Return = response.Return
-    if(Return.IsSuccess == true){
-      this.showDeletedialog=false;
-      this.getPlayList();
-      // this.componentData = {
-      //   'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
-      //   'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
-      // }
-    }
+      let Return = response.Return
+      if (Return.IsSuccess == true) {
+        this.showDeletedialog = false;
+        this.getPlayList();
+        // this.componentData = {
+        //   'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
+        //   'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
+        // }
+      }
     }, error => { this.handleResponseError(error) });
   }
 

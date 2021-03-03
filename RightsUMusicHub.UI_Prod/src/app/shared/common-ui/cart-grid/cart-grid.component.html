@@ -145,8 +145,8 @@
             <p-dataTable class="pcolumncursor" [value]="searchList" (onRowDblclick)="addToCart($event)"
               [rowsPerPageOptions]="[25,50,75,100]" [globalFilter]="trackSearch"   [paginator]="true" [rows]="25"
               [responsive]="true" [alwaysShowPaginator]="true" [totalRecords]="recordCount" [contextMenu]="cm"
-             (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true" selectionMode="single"
-              [first]="first">
+             (onLazyLoad)="loadDataOnPagination($event)" [lazy]="true" selectionMode="single"  [(selection)]="rowData"
+              [first]="first" >
               <!-- (onPage)="paginationchange($event)" -->
               <p-column field="MusicTrack" header="Music Track" [sortable]="true">
                 <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
@@ -228,7 +228,7 @@
                       <div class="dropdwnbody">
                         <li *ngFor="let c of listdetail | filter:searchText" (click)="attachPlayList(row,c)">
                           <a>
-                            <span pTooltip="{{c.PlaylistName}}" tooltipPosition="top">
+                            <span style="color: black !important;" pTooltip="{{c.PlaylistName}}" tooltipPosition="top">
                               {{(c.PlaylistName.length>20)? (c.PlaylistName | slice:0:20)+'..':(c.PlaylistName) }}
                             </span></a>
                           <!-- {{c.PlaylistName}}  -->
@@ -569,7 +569,7 @@
   </p-footer>
 </p-dialog>
 <!----PlayList Delete-->
-<p-contextMenu #cm [model]="items"></p-contextMenu>
+<p-contextMenu #cm [model]="items"  [style]="{'top':'300px !important'}"></p-contextMenu>
 <p-dialog  [(visible)]="showDeletedialog" [width]="400" [modal]="true" [responsive]="false" 
   [closable]="false" [resizable]="false">
   <p-header>

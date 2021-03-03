@@ -116,7 +116,7 @@ export class NewRequestComponent implements OnInit {
   public languageList: any = [];
   public sortingDefault: boolean = false;
   public searchList: any = [];
-  public searchedTrack:boolean=false;
+  public searchedTrack: boolean = false;
 
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router, private _CommonUiService: CommonUiService) {
@@ -402,15 +402,23 @@ export class NewRequestComponent implements OnInit {
         // this.showdetail = false;
         // this.showPlayList = true;
       }
-      if (this.tabHeaders == "PlayList" || this.tabHeaders == undefined) {
+      if ((this.tabHeaders == "PlayList" || this.tabHeaders == undefined) && this.showdetail == false) {
         this.showdetail = false;
         this.showPlayList = true;
         this.showTabdata = true;
-
+        for (let i = 0; i < this.listdetail.length; i++) {
+          if (this.listdetail[i].MHPlayListCode == this.setMHPlaylistCode) {
+            this.listdetail[i].showCss = 'N';
+          }
+          else {
+            this.listdetail[i].showCss = 'N';
+          }
+        }
+        
       }
       else {
         this.showdetail = true;
-        this.showPlayList = false;
+        this.showPlayList = true;
         this.showTabdata = true;
       }
       // if(this.tabHeaders == "PlayList"){
@@ -434,14 +442,22 @@ export class NewRequestComponent implements OnInit {
       // }
       console.log(JSON.stringify(this.componentData));
       console.log(JSON.stringify(this.newMusicConsumptionRequest));
-      if (this.tabHeaders == "PlayList" || this.tabHeaders == undefined) {
+      if ((this.tabHeaders == "PlayList" || this.tabHeaders == undefined) && this.showdetail == false) {
         this.showdetail = false;
         this.showPlayList = true;
         this.showTabdata = true;
+        for (let i = 0; i < this.listdetail.length; i++) {
+          if (this.listdetail[i].MHPlayListCode == this.setMHPlaylistCode) {
+            this.listdetail[i].showCss = 'N';
+          }
+          else {
+            this.listdetail[i].showCss = 'N';
+          }
+        }
       }
       else {
         this.showdetail = true;
-        this.showPlayList = false;
+        this.showPlayList = true;
         this.showTabdata = true;
       }
       // if(this.tabHeaders == "PlayList"){
@@ -677,7 +693,14 @@ export class NewRequestComponent implements OnInit {
       this.listdetail = response.MHPlayList;
       this.listDetail1 = response.MHPlayList;
 
-
+      for (let i = 0; i < this.listdetail.length; i++) {
+        if (this.listdetail[i].MHPlayListCode == this.setMHPlaylistCode) {
+          this.listdetail[i].showCss = 'Y';
+        }
+        else {
+          this.listdetail[i].showCss = 'N';
+        }
+      }
 
       this.filterlist();
     }, error => { this.handleResponseError(error) }
@@ -2579,12 +2602,12 @@ export class NewRequestComponent implements OnInit {
     debugger;
     this.tabHeaders = 'PlayListSearch';
     this.setMHPlaylistCode = 0;
-    this.showdetail=true;
+    this.showdetail = true;
     sessionStorage.setItem(SEARCHED_GRID, 'true');
     sessionStorage.setItem(TAB_NAME, this.tabHeaders);
     sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
     sessionStorage.setItem(NEWREQ_DATA, JSON.stringify(this.newSearchRequest));
-    this.searchedTrack=true;
+    this.searchedTrack = true;
     this.componentData = {
       'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
       'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
@@ -2648,24 +2671,16 @@ export class NewRequestComponent implements OnInit {
       this.showTabdata = true;
       var getMHPlaylistCode = this.listdetail.filter(x => x.PlaylistName == this.setMHPlaylistName)[0];
       this.setMHPlaylistCode = getMHPlaylistCode.MHPlayListCode;
-      for (let i = 0; i < this.listdetail.length; i++) {
-        if (this.listdetail[i].MHPlayListCode == this.setMHPlaylistCode) {
-          this.listdetail[i].showCss = 'Y';
-        }
-        else {
-          this.listdetail[i].showCss = 'N';
-        }
-      }
+      this.getPlayList();
       sessionStorage.setItem(TAB_NAME, this.tabHeaders);
       sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
       sessionStorage.setItem(SEARCHED_GRID, 'false');
-      this.getPlayList();
       this.componentData = {
         'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
         'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
       }
     }
-    else if (event.index == 1  && this.searchedTrack == false) {
+    else if (event.index == 1 && this.searchedTrack == false) {
       this.showdetail = false;
       this.showTabdata = true;
       this.showPlayList = false;
@@ -2678,7 +2693,7 @@ export class NewRequestComponent implements OnInit {
         'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
       }
     }
-    else if(event.index==1 && this.searchedTrack == true){
+    else if (event.index == 1 && this.searchedTrack == true) {
       this.showdetail = true;
       this.showTabdata = true;
       this.showPlayList = false;

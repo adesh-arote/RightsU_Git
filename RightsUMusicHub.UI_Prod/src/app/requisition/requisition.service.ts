@@ -144,5 +144,9 @@ export class RequisitionService extends BaseService {
     let body=JSON.stringify(obj);
     return super.post('RequisitionModule/DeletePlayList',obj);
   }
+  public UpdatePlaylist(obj):Observable<any>{
+    let body=JSON.stringify(obj);
+    return super.post('RequisitionModule/UpdatePlaylist',obj);
+  }
 
 }
