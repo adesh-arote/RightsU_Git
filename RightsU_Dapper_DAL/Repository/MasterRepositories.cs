@@ -9,11 +9,10 @@ namespace RightsU_Dapper.DAL.Repository
 {
     public class Music_Deal_Repository : MainRepository<Music_Deal_Dapper>
     {
-        public Music_Deal_Dapper Get(int? Id)
+        public Music_Deal_Dapper Get(int? Id, Type[] RelationList = null)
         {
             var obj = new { Music_Deal_Code = Id };
-
-            return base.GetById<Music_Deal_Dapper>(obj);
+            return base.GetById<Music_Deal_Dapper>(obj, RelationList);
         }
         public void Add(Music_Deal_Dapper entity)
         {
@@ -63,7 +62,6 @@ namespace RightsU_Dapper.DAL.Repository
             recordCount = param.Get<int>("@RecordCount");
             return lstUSP_List_Music_Deal_Result;
         }
-
         public IEnumerable<USP_Music_Deal_Link_Show_Result> USP_Music_Deal_Link_Show(string channel_Code, string title_Name, string mode, Nullable<int> music_Deal_Code, string selectedTitleCodes)
         {
             var param = new DynamicParameters();
@@ -90,7 +88,6 @@ namespace RightsU_Dapper.DAL.Repository
 
             return base.ExecuteSQLProcedure<USP_Music_Deal_Schedule_Validation_Result>("USP_Music_Deal_Schedule_Validation", param);
         }
-
         public string USP_RollBack_Music_Deal(Nullable<int> music_Deal_Code, Nullable<int> user_Code, out string errorMessage)
         {
             var param = new DynamicParameters();

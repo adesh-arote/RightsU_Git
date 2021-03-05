@@ -94,7 +94,12 @@ namespace RightsU_Plus.Controllers
             lstMDC = null;
             objDeal_Schema = null;
             ViewBag.Status_History = null;
-            var MusicDealVersion = objSPNService.GetList().Where(s => s.Parameter_Name == "Music_Platform_Visibility").Select(w => w.Parameter_Value).SingleOrDefault();
+            
+            var MusicDealVersion = objSPNService.GetList()
+                    .Where(s => s.Parameter_Name == "Music_Platform_Visibility")
+                    .Select(w => w.Parameter_Value)
+                    .SingleOrDefault();
+
             ViewBag.IsMuciVersionSPN = MusicDealVersion;
             var lstDealTag = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Deal_Tag_Code).ToList(), "Deal_Tag_Code", "Deal_Tag_Description");
             ViewBag.DealTagList = lstDealTag;
@@ -110,10 +115,18 @@ namespace RightsU_Plus.Controllers
 
             if (MusicDealCode > 0)
             {
+                Type[] RelationList = new Type[] { typeof(Music_Deal_DealType_Dapper)
+                ,typeof(Music_Deal_Platform_Dapper)
+                ,typeof(Music_Deal_Channel_Dapper)
+                ,typeof(Music_Deal_Country_Dapper)
+                ,typeof(Music_Deal_Language_Dapper)
+                ,typeof(Music_Deal_LinkShow_Dapper)
+                ,typeof(Music_Deal_Vendor_Dapper)
+            };
 
                 lstMDC = null;
                 objMusicDeal = null;
-                objMusicDeal = objMusic_Deal_Service.GetMusic_DealByID(MusicDealCode);
+                objMusicDeal = objMusic_Deal_Service.GetMusic_DealByID(MusicDealCode, RelationList);
                 objDeal_Schema.Deal_Code = MusicDealCode;
                 objDeal_Schema.Deal_Workflow_Flag = objMusicDeal.Deal_Workflow_Status;
                 lstMDC.AddRange(objMusicDeal.Music_Deal_Channel);
@@ -381,8 +394,6 @@ namespace RightsU_Plus.Controllers
                     objMusicDeal.Deal_Workflow_Status = GlobalParams.dealWorkFlowStatus_Ammended;
                     objMusicDeal.Version = (Convert.ToInt32(Convert.ToDouble(objMusicDeal.Version)) + 1).ToString("0000");
                 }
-
-                //objMusicDeal.Music_Deal_Platform.Clear();
             }
             else
             {
@@ -405,13 +416,14 @@ namespace RightsU_Plus.Controllers
                         // obMDP.EntityState = State.Added;
                         obMDP.Music_Platform_Code = Convert.ToInt32(Music_Platform_Code);
                         MusicPlatformList.Add(obMDP);
-                        //objMusicDeal.Music_Deal_Platform.Add(obMDP);
+                       
                     }
                 }
-                Music_Deal_Platform_Dapper objnew = objMusicDeal.Music_Deal_Platform.Where(x => x.Music_Platform_Code == 68).FirstOrDefault();
-                objnew.Music_Platform_Code = 2;
+                //Music_Deal_Platform_Dapper objnew = objMusicDeal.Music_Deal_Platform.Where(x => x.Music_Platform_Code == 68).FirstOrDefault();
+                //objnew.Music_Platform_Code = 2;
 
-                IEqualityComparer<Music_Deal_Platform_Dapper> comparerMusicPlatformGroup = new LambdaComparer<Music_Deal_Platform_Dapper>((x, y) => x.Music_Platform_Code == y.Music_Platform_Code);//&& x.EntityState != State.Deleted)
+                IEqualityComparer<Music_Deal_Platform_Dapper> comparerMusicPlatformGroup = new LambdaComparer<Music_Deal_Platform_Dapper>
+                    ((x, y) => x.Music_Platform_Code == y.Music_Platform_Code);//&& x.EntityState != State.Deleted)
                 var Deleted_MusicPlatform = new List<Music_Deal_Platform_Dapper>();
                 var Updated_MusicPlatform = new List<Music_Deal_Platform_Dapper>();
                 var Added_MusicPlatform = CompareLists<Music_Deal_Platform_Dapper>(MusicPlatformList.ToList<Music_Deal_Platform_Dapper>(), objMusicDeal.Music_Deal_Platform.ToList<Music_Deal_Platform_Dapper>(), comparerMusicPlatformGroup, ref Deleted_MusicPlatform, ref Updated_MusicPlatform);
@@ -454,11 +466,11 @@ namespace RightsU_Plus.Controllers
             }
             else
                 objMusicDeal.Duration_Restriction = null;
-            //int totalSeconds = Convert.ToInt32(objMusicDeal.Duration_Restriction);
-            //int second = totalSeconds % 60;
-            //int minutes = totalSeconds / 60;
-            ////int m = Convert.ToInt32(minutes.ToString().Substring(0, 1));
-            //TimeSpan times = TimeSpan.Parse("00:" + minutes.ToString("00") + ":" + second.ToString("00") + "");
+            int totalSeconds = Convert.ToInt32(objMusicDeal.Duration_Restriction);
+            int second = totalSeconds % 60;
+            int minutes = totalSeconds / 60;
+            //int m = Convert.ToInt32(minutes.ToString().Substring(0, 1));
+            TimeSpan times = TimeSpan.Parse("00:" + minutes.ToString("00") + ":" + second.ToString("00") + "");
             //objMusicDeal.Duration = times;
             objMusicDeal.Agreement_Cost = objTempMusicDeal.Agreement_Cost;
             if (objForm["Agreement_Cost"] != "")
@@ -510,6 +522,7 @@ namespace RightsU_Plus.Controllers
             var Added_Music_Deal_Language = CompareLists<Music_Deal_Language_Dapper>(selectLanguageCode.ToList<Music_Deal_Language_Dapper>(), objMusicDeal.Music_Deal_Language.ToList<Music_Deal_Language_Dapper>(), comparerML, ref Deleted_Music_Deal_Language);
             Added_Music_Deal_Language.ToList<Music_Deal_Language_Dapper>().ForEach(t => objMusicDeal.Music_Deal_Language.Add(t));
             //Deleted_Music_Deal_Language.ToList<Music_Deal_Language>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Music_Deal_Language.ToList().ForEach(t => objMusicDeal.Music_Deal_Language.Remove(t));
             #endregion
 
             #region -- Channel --
@@ -523,6 +536,7 @@ namespace RightsU_Plus.Controllers
             var Added_Music_Deal_Channel = CompareLists<Music_Deal_Channel_Dapper>(lstMDC.ToList<Music_Deal_Channel_Dapper>(), objMusicDeal.Music_Deal_Channel.ToList<Music_Deal_Channel_Dapper>(), comparerC, ref Deleted_Music_Deal_Channel);
             Added_Music_Deal_Channel.ToList<Music_Deal_Channel_Dapper>().ForEach(t => objMusicDeal.Music_Deal_Channel.Add(t));
             //Deleted_Music_Deal_Channel.ToList<Music_Deal_Channel>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Music_Deal_Channel.ToList().ForEach(t => objMusicDeal.Music_Deal_Channel.Remove(t));
             #endregion
 
             #region -- Country --
@@ -545,6 +559,7 @@ namespace RightsU_Plus.Controllers
             var Added_Music_Deal_Country = CompareLists<Music_Deal_Country_Dapper>(selectCountryCode.ToList<Music_Deal_Country_Dapper>(), objMusicDeal.Music_Deal_Country.ToList<Music_Deal_Country_Dapper>(), comparerCo, ref Deleted_Music_Deal_Country);
             Added_Music_Deal_Country.ToList<Music_Deal_Country_Dapper>().ForEach(t => objMusicDeal.Music_Deal_Country.Add(t));
             // Deleted_Music_Deal_Country.ToList<Music_Deal_Country>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Music_Deal_Country.ToList().ForEach(t => objMusicDeal.Music_Deal_Country.Remove(t));
             #endregion
 
             #region --Deal Type--
@@ -566,6 +581,7 @@ namespace RightsU_Plus.Controllers
             var Added_Music_Deal_DealType = CompareLists<Music_Deal_DealType_Dapper>(selectDealTypeCode.ToList<Music_Deal_DealType_Dapper>(), objMusicDeal.Music_Deal_DealType.ToList<Music_Deal_DealType_Dapper>(), comparerDT, ref Deleted_Music_Deal_DealType);
             Added_Music_Deal_DealType.ToList<Music_Deal_DealType_Dapper>().ForEach(t => objMusicDeal.Music_Deal_DealType.Add(t));
             //Deleted_Music_Deal_DealType.ToList<Music_Deal_DealType>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Music_Deal_DealType.ToList().ForEach(t => objMusicDeal.Music_Deal_DealType.Remove(t));
 
 
 
@@ -590,6 +606,7 @@ namespace RightsU_Plus.Controllers
             var Added_Music_Deal_Vendor = CompareLists<Music_Deal_Vendor_Dapper>(selectVenodrCode.ToList<Music_Deal_Vendor_Dapper>(), objMusicDeal.Music_Deal_Vendor.ToList<Music_Deal_Vendor_Dapper>(), comparerV, ref Deleted_Music_Deal_Vendor);
             Added_Music_Deal_Vendor.ToList<Music_Deal_Vendor_Dapper>().ForEach(t => objMusicDeal.Music_Deal_Vendor.Add(t));
             //Deleted_Music_Deal_Vendor.ToList<Music_Deal_Vendor>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Music_Deal_Vendor.ToList().ForEach(t => objMusicDeal.Music_Deal_Vendor.Remove(t));
             #endregion
 
             #region -- Link Show--
@@ -607,10 +624,12 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            var Deleted_Music_Deal_LinkShow_Dapper = new List<Music_Deal_LinkShow_Dapper>();
-            var Added_Music_Deal_LinkShow_Dapper = CompareLists<Music_Deal_LinkShow_Dapper>(lstMusicDealLinkShow, objMusicDeal.Music_Deal_LinkShow.ToList(), comparerLS, ref Deleted_Music_Deal_LinkShow_Dapper);
-            Added_Music_Deal_LinkShow_Dapper.ToList<Music_Deal_LinkShow_Dapper>().ForEach(t => objMusicDeal.Music_Deal_LinkShow.Add(t));
+            var Deleted_Music_Deal_LinkShow = new List<Music_Deal_LinkShow_Dapper>();
+            var Added_Music_Deal_LinkShow = CompareLists<Music_Deal_LinkShow_Dapper>(lstMusicDealLinkShow, objMusicDeal.Music_Deal_LinkShow.ToList(), comparerLS, ref Deleted_Music_Deal_LinkShow);
+            Added_Music_Deal_LinkShow.ToList<Music_Deal_LinkShow_Dapper>().ForEach(t => objMusicDeal.Music_Deal_LinkShow.Add(t));
             // Deleted_Music_Deal_LinkShow_Dapper.ToList<Music_Deal_LinkShow_Dapper>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Music_Deal_LinkShow.ToList().ForEach(t => objMusicDeal.Music_Deal_LinkShow.Remove(t));
+
             #endregion
             int count = 0;
             dynamic resultset;

@@ -7,7 +7,7 @@ namespace RightsU_Dapper.Entity
     [Table("Music_Deal")]
     public partial class Music_Deal_Dapper
     {
-       
+
         public Music_Deal_Dapper()
         {
             this.Music_Deal_DealType = new HashSet<Music_Deal_DealType_Dapper>();
@@ -17,6 +17,7 @@ namespace RightsU_Dapper.Entity
             this.Music_Deal_Language = new HashSet<Music_Deal_Language_Dapper>();
             this.Music_Deal_LinkShow = new HashSet<Music_Deal_LinkShow_Dapper>();
             this.Music_Deal_Vendor = new HashSet<Music_Deal_Vendor_Dapper>();
+           
         }
 
         [PrimaryKey]
@@ -55,26 +56,29 @@ namespace RightsU_Dapper.Entity
         public string Remarks { get; set; }
         public Nullable<decimal> Agreement_Cost { get; set; }
         public string Right_Rule_Type { get; set; }
+        [SimpleSaveIgnore]
+        public System.TimeSpan Duration { get; set; }
+
 
 
         [OneToMany]
         public ICollection<Music_Deal_DealType_Dapper> Music_Deal_DealType { get; set; }
-       
+
         [OneToMany]
         public ICollection<Music_Deal_Platform_Dapper> Music_Deal_Platform { get; set; }
-       
+
         [OneToMany]
         public ICollection<Music_Deal_Channel_Dapper> Music_Deal_Channel { get; set; }
-       
+
         [OneToMany]
         public ICollection<Music_Deal_Country_Dapper> Music_Deal_Country { get; set; }
-       
+
         [OneToMany]
         public ICollection<Music_Deal_Language_Dapper> Music_Deal_Language { get; set; }
-       
+
         [OneToMany]
         public ICollection<Music_Deal_LinkShow_Dapper> Music_Deal_LinkShow { get; set; }
-       
+
         [OneToMany]
         public ICollection<Music_Deal_Vendor_Dapper> Music_Deal_Vendor { get; set; }
     }

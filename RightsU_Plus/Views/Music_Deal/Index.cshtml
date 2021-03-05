@@ -1055,7 +1055,7 @@
 
     function ValidateSave() {
         debugger
-       // var duration = $('#txtDuration').val();
+        var duration = $('#txtDuration').val();
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
         var returnVal = true;
@@ -1632,7 +1632,7 @@
                                                     <td>@objMessageKey.DurationRestrictionPerSong</td>
                                                     <td>
                                                         <input type="time" id="txtDuration" step ="1" min = "00:00:00" max = "00:59:59" />
-                                                       @* @Html.TextBoxFor(m => Model.Duration, "", new { @id = "txtDuration", @type = "time", @step = "1", @min = "00:00:00", @max = "00:59:59" }) (MM:SS)*@
+                                                        @*@Html.TextBoxFor(m => Model.Duration, "", new { @id = "txtDuration", @type = "time", @step = "1", @min = "00:00:00", @max = "00:59:59" }) (MM:SS)*@
                                                     </td>
                                                 </tr>
                                                 @*<tr>
@@ -1763,21 +1763,21 @@
                                                                         <div id="divChannelCategory" style="width:95%!important;display:none">
                                                                             @Html.DropDownListFor(m => Model.Channel_Category_Code, ViewBag.ChannelCategoryList as SelectList, "Please Select", new { @id = "ddlChannelCategory", @class = "form_input chosen-select", @onchange = "ChannelCategory_Changed();" })
                                                                             &nbsp;&nbsp;
-                                                                            @*@{
+                                                                            @{
                                                                                 string strChannelCode = "", strChannelNames = "";
-                                                                                if (Model.Channel_Category != null)
-                                                                                {
-                                                                                    strChannelCode = string.Join(",", Model.Channel_Category.Channel_Category_Details.Select(s => s.Channel_Code).ToArray());
-                                                                                    //.Channels.Select(s => s.Channel_Code).ToArray());
-                                                                                    strChannelNames = string.Join(", ", Model.Channel_Category.Channel_Category_Details.Select(s => s.Channel.Channel_Name).ToArray());
-                                                                                    //.Channels.Select(s => s.Channel_Name).ToArray());
-                                                                                }
-                                                                            }*@
+                                                                                //if (Model.Channel_Category != null)
+                                                                                //{
+                                                                                //    strChannelCode = string.Join(",", Model.Channel_Category.Channel_Category_Details.Select(s => s.Channel_Code).ToArray());
+                                                                                //    //.Channels.Select(s => s.Channel_Code).ToArray());
+                                                                                //    strChannelNames = string.Join(", ", Model.Channel_Category.Channel_Category_Details.Select(s => s.Channel.Channel_Name).ToArray());
+                                                                                //    //.Channels.Select(s => s.Channel_Name).ToArray());
+                                                                                //}
+                                                                            }
                                                                             <span id="categorychannelheader"><b>@objMessageKey.ViewCategoryChannels : </b></span>
                                                                             <a id="show_hide" class="glyphicon glyphicon-triangle-right show_hide"></a>
                                                                             <div id="extent" class="MoreActionDiv" style="display:none;">
-                                                                                <span id="lblChannelNames"></span>
-                                                                                <input type="hidden" id="hdnChannelCodes" value="" />
+                                                                                <span id="lblChannelNames">@strChannelNames</span>
+                                                                                <input type="hidden" id="hdnChannelCodes" value="@strChannelCode" />
                                                                             </div>
                                                                         </div>
                                                                     </td>

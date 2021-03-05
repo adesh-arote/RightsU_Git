@@ -53,12 +53,22 @@ namespace RightsU_Dapper.DAL.Infrastructure
                 connection.Close();
             }
         }
-        public  T1 GetById<T1>(object param)
+        public  T1 GetById<T1>(object param, Type[] additionalTypes = null)
         {
             using (var connection = dbConnection.Connection())
             {
                 connection.Open();
-                T1 obj = connection.AutoQuery<T1>(new Type[] {typeof(Music_Deal_Platform_Dapper), typeof(Music_Deal_Language_Dapper) },param).FirstOrDefault();
+
+                T1 obj = connection.AutoQuery<T1>(new Type[] { typeof(Music_Deal_Platform_Dapper)
+                    , typeof(Music_Deal_Language_Dapper)
+                    ,typeof(Music_Deal_DealType_Dapper)
+                    ,typeof(Music_Deal_Channel_Dapper)
+                    ,typeof(Music_Deal_Country_Dapper)
+                    ,typeof(Music_Deal_LinkShow_Dapper)
+                    ,typeof(Music_Deal_Vendor_Dapper)
+
+                }, param).FirstOrDefault();
+
                 connection.Close();
                 return obj;
             }

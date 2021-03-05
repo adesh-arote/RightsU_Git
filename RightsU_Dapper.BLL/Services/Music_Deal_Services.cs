@@ -15,9 +15,9 @@ namespace RightsU_Dapper.BLL.Services
         {
             this.objMusic_Deal_Repository = new Music_Deal_Repository();
         }
-        public Music_Deal_Dapper GetMusic_DealByID(int? ID)
+        public Music_Deal_Dapper GetMusic_DealByID(int? ID, Type[] RelationList = null)
         {
-            return objMusic_Deal_Repository.Get(ID);
+            return objMusic_Deal_Repository.Get(ID, RelationList);
         }
         public IEnumerable<Music_Deal_Dapper> GetMusic_DealList()
         {
