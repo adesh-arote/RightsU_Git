@@ -28,7 +28,7 @@ export class PlaylistDetailsComponent implements OnInit {
   public sortF: any;
   public sortO: any;
   public indexValue: any;
-  public playListupdated: any[];
+  public searchText: string;
 
 
   constructor(private _requisitionService: RequisitionService, private router: Router, private _CommonUiService: CommonUiService) { }
@@ -58,6 +58,7 @@ export class PlaylistDetailsComponent implements OnInit {
     this.order = "ASC";
     this.sortO = "";
     this.sortF = "";
+    this.searchText = "";
     this.indexValue = index;
     this.playListname = data.PlaylistName;
     this.setMHPlaylistCode = data.MHPlayListCode;

@@ -44,7 +44,7 @@
   <input type="text" name="musicTrack" value=""
     class="playListname" name="playListname" [(ngModel)]="playListname" autocomplete="off">
   </span>&nbsp;
-  <input  [ngClass]="{'input-Style': showUpdatebutton,'text-Style': !showUpdatebutton}" style="float: right" type="text" #gsearch class="SearchTextBox" pInputText size="50" placeholder="Search"
+  <input  [ngClass]="{'input-Style': showUpdatebutton,'text-Style': !showUpdatebutton}"  style="float: right" [(ngModel)]="searchText" type="text" #gsearch class="SearchTextBox" pInputText size="50" placeholder="Search"
     autocomplete="off">
   <br><br><br>
   <p-dataTable class="pcolumncursor" [value]="searchList" [rowsPerPageOptions]="[25,50,75,100]" [globalFilter]="gsearch"
