@@ -41,14 +41,13 @@
 
         $(document).ready(function () {
             if ('@objMessageKey.LayoutDirection' == 'RTL') {
-                    $('#AdSearch').css("padding-right", "11px");
+                $('#AdSearch').css("padding-right", "11px");
                 $('.glyphicon-search').css("transform", "rotate(-360deg)");
             }
-        else
-        {
+            else {
                 $('.glyphicon-search').css("transform", "rotate(-270deg)");
-        $('#AdSearch').css("padding-right", "0px");
-        }
+                $('#AdSearch').css("padding-right", "0px");
+            }
 
             $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
             $("td").bind("mousemove", function (event) {
@@ -62,9 +61,24 @@
 
             $('#ddlSrchDirector').SumoSelect();
             $('#ddlSrchLicensor').SumoSelect();
-            //$('#ddlSrchTitle').SumoSelect();
-            $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
-           // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?SyndicationDeals');
+            if ('@ViewBag.Is_AllowMultiBUsyndeal' == 'Y') {
+                $('#ddlGenBUMultiSelect').SumoSelect();
+                $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode')
+                $('#ddlGenBUMultiSelect')[0].sumo.reload();
+
+                @*var ddlGenBUCodes = '@ViewBag.BusineesUnitList';
+        $.each(ddlGenBUCodes, function () {
+            $("#ddlGenBUMultiSelect").append($("<option />").val(this.Value).text(this.Text));
+        });
+        $('#ddlGenBUMultiSelect')[0].sumo.reload();*@
+
+                // $('#ddlGenBUMultiSelect')[0].sumo.reload();
+
+                $('#ddlSrchBUMultiSelect').SumoSelect();
+            }
+            else {
+                $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
+            }
             initializeChosen();
             initializeSubMenu2();
             AllsubmenuHide();
@@ -119,9 +133,18 @@
             $('#sideNavi').show();
         }
         function togglePanelVisibility2(panelID) {
-            var ddlBusinessUnit = $('#ddlBUUnit').val();
-            if (ddlBusinessUnit != 0 || ddlBusinessUnit != null) {
-                $('#ddlSrchBU').val(ddlBusinessUnit).attr("selected", "true").trigger("chosen:updated");
+            debugger;
+            if (Is_AllowMultiBUsyndeal != 'Y') {
+                var ddlBusinessUnit = $('#ddlBUUnit').val();
+                if (ddlBusinessUnit != 0 || ddlBusinessUnit != null) {
+                    $('#ddlSrchBU').val(ddlBusinessUnit).attr("selected", "true").trigger("chosen:updated");
+                }
+            }
+            else {
+                var ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+                if (ddlBUMulti != 0 || ddlBUMulti != null) {
+                    $('#ddlSrchBUMultiSelect').val(ddlBUMulti);
+                }
             }
             document.getElementById("showMore").innerHTML = "Show more...";
             if ('@objMessageKey.LayoutDirection' == "RTL") {
@@ -208,128 +231,130 @@
 
     </script>
     <script>
-    var Command_Name, tmpSynDealCode, tmp_IsZeroWorkFlow, tmp_pageNo, tmp_IsAdvanced = '@ViewBag.isAdvanced';
-    var fullyLoaded = "Y";
-    var showLD = 'Y';
-    var pageNo_G = '@ViewBag.PageNo', MsgType_G = '@MsgType', msg_G = '@msg', RLCode_G = '@ViewBag.RLCode',
-    ReleaseRecord = '@ViewBag.ReleaseRecord', Mode_G = '@UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW';
-    var dealProgram_G = '@GlobalParams.Deal_Program', dealMovie_G = '@GlobalParams.Deal_Movie';
-    var URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Syn_List")';
-    var URL_Show_Error_Popup = '@Url.Action("Show_Error_Popup", "Syn_List")';
-    var URL_PartialDealList = '@Url.Action("PartialDealList", "Syn_List")';
-    var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Syn_List")';
-    var URL_Approve = '@Url.Action("Approve", "Syn_List")';
-    var URL_Index = '@Url.Action("Index", "Syn_General", new { Mode = "Mode_G", Syn_Deal_Code = "Syn_Deal_Code" })';
-    var URL_SendForAuthorisation = '@Url.Action("SendForAuthorisation", "Syn_List")';
-    var URL_Reprocess = '@Url.Action("Reprocess", "Syn_List")';
-    var URL_DeleteDeal = '@Url.Action("DeleteDeal", "Syn_List")';
-    var URL_Rollback = '@Url.Action("Rollback", "Syn_List")';
-    var URL_ValidateTermination = '@Url.Action("ValidateTermination", "Syn_List")';
-    var URL_OpenTerminationPopup = '@Url.Action("OpenTerminationPopup", "Syn_List")';
-    var URL_SaveTermination = '@Url.Action("SaveTermination", "Syn_List")';
-    var URL_PartialBindDealStatusPopup = '@Url.Action("PartialBindDealStatusPopup", "Syn_List")'
-    URL_Validate_Deal_Approve_List = '@Url.Action("Validate_Deal_Approve_List","Global")'
-    var URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Syn_List")'
-    , URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")'
-    , URL_Release_Lock = '@Url.Action("Release_Lock", "Global")'
-    , URL_BindAT = '@Url.Action("BindAT", "Syn_List")'
-    , URL_SessionTitleList = '@Url.Action("SessionTitleList", "Syn_List")'
-    , URL_GetSynAsyncStatus = '@Url.Action("GetSynAsyncStatus", "Syn_List")'
-    , URL_ActionButtons = '@Url.Action("ActionButtons", "Syn_List")';
+        var Command_Name, tmpSynDealCode, tmp_IsZeroWorkFlow, tmp_pageNo, tmp_IsAdvanced = '@ViewBag.isAdvanced';
+        var fullyLoaded = "Y";
+        var showLD = 'Y';
+        var pageNo_G = '@ViewBag.PageNo', MsgType_G = '@MsgType', msg_G = '@msg', RLCode_G = '@ViewBag.RLCode',
+        ReleaseRecord = '@ViewBag.ReleaseRecord', Mode_G = '@UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW';
+        var dealProgram_G = '@GlobalParams.Deal_Program', dealMovie_G = '@GlobalParams.Deal_Movie';
+        var URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Syn_List")';
+        var URL_Show_Error_Popup = '@Url.Action("Show_Error_Popup", "Syn_List")';
+        var URL_PartialDealList = '@Url.Action("PartialDealList", "Syn_List")';
+        var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Syn_List")';
+        var URL_Approve = '@Url.Action("Approve", "Syn_List")';
+        var URL_Index = '@Url.Action("Index", "Syn_General", new { Mode = "Mode_G", Syn_Deal_Code = "Syn_Deal_Code" })';
+        var URL_SendForAuthorisation = '@Url.Action("SendForAuthorisation", "Syn_List")';
+        var URL_Reprocess = '@Url.Action("Reprocess", "Syn_List")';
+        var URL_DeleteDeal = '@Url.Action("DeleteDeal", "Syn_List")';
+        var URL_Rollback = '@Url.Action("Rollback", "Syn_List")';
+        var URL_ValidateTermination = '@Url.Action("ValidateTermination", "Syn_List")';
+        var URL_OpenTerminationPopup = '@Url.Action("OpenTerminationPopup", "Syn_List")';
+        var URL_SaveTermination = '@Url.Action("SaveTermination", "Syn_List")';
+        var URL_PartialBindDealStatusPopup = '@Url.Action("PartialBindDealStatusPopup", "Syn_List")'
+        URL_Validate_Deal_Approve_List = '@Url.Action("Validate_Deal_Approve_List","Global")'
+        var URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Syn_List")'
+        , URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")'
+        , URL_Release_Lock = '@Url.Action("Release_Lock", "Global")'
+        , URL_BindAT = '@Url.Action("BindAT", "Syn_List")'
+        , URL_SessionTitleList = '@Url.Action("SessionTitleList", "Syn_List")'
+        , URL_GetSynAsyncStatus = '@Url.Action("GetSynAsyncStatus", "Syn_List")'
+        , URL_ActionButtons = '@Url.Action("ActionButtons", "Syn_List")';
         var BUCode = '@ViewBag.BUCode';
-         var URL_SendForArchive = '@Url.Action("SendForArchive", "Syn_List")'
-    , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Syn_List")'
-    , URL_Archive = '@Url.Action("Archive", "Syn_List")';
+        var URL_SendForArchive = '@Url.Action("SendForArchive", "Syn_List")'
+   , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Syn_List")'
+   , URL_Archive = '@Url.Action("Archive", "Syn_List")';
 
-    function Validate_Record(dealCode, dealType, recordID) {
-        var rid = recordID.id;
-        var valid = true;
-        var moduleCode = 30;
-        if (dealType == "S")
-            moduleCode = 35;
-        $.ajax({
-            type: "POST",
-            url: URL_Validate_Deal_Approve_List,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            data: JSON.stringify({
-                dealCode: dealCode,
-                moduleCode: moduleCode,
-                usersCode: UsersCode_G
-            }),
-            success: function (result) {
-                result = result.split('~');
-                var Record_Locking_Code = result[1];
-                if (Record_Locking_Code != 'undefined' && Record_Locking_Code > 0) {
-                    var New_href = $('#' + rid).attr('href').replace("RecordLockingCode", Record_Locking_Code);
-                    $('#' + rid).attr('href', New_href);
-                }
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                else {
-                    if (result[0] == 'S') {
-                        valid = true;
+        var Is_AllowMultiBUsyndeal = '@ViewBag.Is_AllowMultiBUsyndeal';
+
+        function Validate_Record(dealCode, dealType, recordID) {
+            var rid = recordID.id;
+            var valid = true;
+            var moduleCode = 30;
+            if (dealType == "S")
+                moduleCode = 35;
+            $.ajax({
+                type: "POST",
+                url: URL_Validate_Deal_Approve_List,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    dealCode: dealCode,
+                    moduleCode: moduleCode,
+                    usersCode: UsersCode_G
+                }),
+                success: function (result) {
+                    result = result.split('~');
+                    var Record_Locking_Code = result[1];
+                    if (Record_Locking_Code != 'undefined' && Record_Locking_Code > 0) {
+                        var New_href = $('#' + rid).attr('href').replace("RecordLockingCode", Record_Locking_Code);
+                        $('#' + rid).attr('href', New_href);
+                    }
+                    if (result == "true") {
+                        redirectToLogin();
                     }
                     else {
-                        if (result[0].indexOf('approved') != -1) {
-                            // bindApprovalList(result[0]);
-                            valid = false;
-                            showAlert("E", result[0]);
+                        if (result[0] == 'S') {
+                            valid = true;
                         }
                         else {
-                            showAlert("E", result[0]);
-                            valid = false;
+                            if (result[0].indexOf('approved') != -1) {
+                                // bindApprovalList(result[0]);
+                                valid = false;
+                                showAlert("E", result[0]);
+                            }
+                            else {
+                                showAlert("E", result[0]);
+                                valid = false;
+                            }
                         }
                     }
-                }
-            },
-            error: function (result) { }
-        });
-    }
+                },
+                error: function (result) { }
+            });
+        }
 
-    var objAcqListCode;
-    var commandName;
-    function ShowRemark(status, IntCode) {
-        debugger;
-        // $("#ddlStarCastAdd").attr('selectedIndex', '-1');
-        $("#pop_setRemark").modal();
-        $("#pop_setRemark").show();
-        $("#btnStatus").prop('value', status);
-        objAcqListCode = IntCode;
-        if (status == "Approve") {
-            commandName = "Approve";
+        var objAcqListCode;
+        var commandName;
+        function ShowRemark(status, IntCode) {
+            debugger;
+            // $("#ddlStarCastAdd").attr('selectedIndex', '-1');
+            $("#pop_setRemark").modal();
+            $("#pop_setRemark").show();
+            $("#btnStatus").prop('value', status);
+            objAcqListCode = IntCode;
+            if (status == "Approve") {
+                commandName = "Approve";
+            }
+            else if (status == "Send For Approval") {
+                commandName = "SendForAuth";
+            }
         }
-        else if (status == "Send For Approval") {
-            commandName = "SendForAuth";
+        function ApproveRemarkOk() {
+            debugger;
+            var remark = $("#txtArea").val();
+            if (remark == "") {
+                $('#txtArea').val('').attr('required', true);
+                return false
+            }
+            //Ask_Confirmation(commandName, objAcqListCode, 0);
+        };
+        var ShowMessage = {
+            "SorryitseemswehavesomeissuePleasetryagainlater": '@objMessageKey.SorryitseemswehavesomeissuePleasetryagainlater',
+            "Areyousureyouwanttodeletethisrecord": '@objMessageKey.Areyousureyouwanttodeletethisrecord',
+            "Areyousureyouwanttodrollbackthisrecord": '@objMessageKey.Areyousureyouwanttodrollbackthisrecord',
+            "Areyousureyouwanttodapprovethisdeal": '@objMessageKey.Areyousureyouwanttodapprovethisdeal',
+            "Areyousureyouwanttosendthisdealforapproval": '@objMessageKey.Areyousureyouwanttosendthisdealforapproval',
+            "To": '@objMessageKey.To',
+            "Pleaseselectepisodenobetween": '@objMessageKey.Pleaseselectepisodenobetween',
+            "Pleaseselectterminationdatebetween": '@objMessageKey.Pleaseselectterminationdatebetween',
+            "PleaseselecteitherEpisodeNoorTerminationDate": '@objMessageKey.PleaseselecteitherEpisodeNoorTerminationDate',
+            "PleaseselectTerminationDate": '@objMessageKey.PleaseselectTerminationDate',
+            "PleasewaitPageisloading": '@objMessageKey.PleasewaitPageisloading',
+            "Pleaseselectentersearchcriteria": '@objMessageKey.Pleaseselectentersearchcriteria',
+            "ErrorinProcessPleaseContactSystemAdmin": '@objMessageKey.ErrorinProcessPleaseContactSystemAdmin'
         }
-    }
-    function ApproveRemarkOk() {
-        debugger;
-        var remark = $("#txtArea").val();
-        if (remark == "") {
-            $('#txtArea').val('').attr('required', true);
-            return false
-        }
-        //Ask_Confirmation(commandName, objAcqListCode, 0);
-    };
-    var ShowMessage = {
-        "SorryitseemswehavesomeissuePleasetryagainlater": '@objMessageKey.SorryitseemswehavesomeissuePleasetryagainlater',
-        "Areyousureyouwanttodeletethisrecord": '@objMessageKey.Areyousureyouwanttodeletethisrecord',
-        "Areyousureyouwanttodrollbackthisrecord": '@objMessageKey.Areyousureyouwanttodrollbackthisrecord',
-        "Areyousureyouwanttodapprovethisdeal": '@objMessageKey.Areyousureyouwanttodapprovethisdeal',
-        "Areyousureyouwanttosendthisdealforapproval": '@objMessageKey.Areyousureyouwanttosendthisdealforapproval',
-        "To": '@objMessageKey.To',
-        "Pleaseselectepisodenobetween": '@objMessageKey.Pleaseselectepisodenobetween',
-        "Pleaseselectterminationdatebetween": '@objMessageKey.Pleaseselectterminationdatebetween',
-        "PleaseselecteitherEpisodeNoorTerminationDate": '@objMessageKey.PleaseselecteitherEpisodeNoorTerminationDate',
-        "PleaseselectTerminationDate": '@objMessageKey.PleaseselectTerminationDate',
-        "PleasewaitPageisloading": '@objMessageKey.PleasewaitPageisloading',
-        "Pleaseselectentersearchcriteria": '@objMessageKey.Pleaseselectentersearchcriteria',
-        "ErrorinProcessPleaseContactSystemAdmin" :'@objMessageKey.ErrorinProcessPleaseContactSystemAdmin'
-    }
         var URL_Bind_Title = '@Url.Action("Bind_Title", "Syn_List")';
         function populateTitle(evt) {
             debugger;
@@ -616,7 +641,14 @@
                         </li>
                         <li class="AdSearch">
                             <label>@objMessageKey.BusinessUnit:</label><br />
-                            <select id="ddlSrchBU" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 172px;"></select>
+                            @if (ViewBag.Is_AllowMultiBUsyndeal != "Y")
+                            {
+                                <select id="ddlSrchBU" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 172px;"></select>
+                            }
+                            else
+                            {
+                                <select id="ddlSrchBUMultiSelect" onchange="OnChangeBindTitle()" multiple="multiple" style="width: 174px;"></select>
+                            }
                         </li>
                         <li class="AdSearch">
                             <label>@objMessageKey.DealType:</label><br />
@@ -660,7 +692,7 @@
                             }
                             Include Archive Deal
                         </label>
-                       <br><br>
+                        <br><br>
                         @*<br />*@
                         <a class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
                         <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
@@ -689,11 +721,11 @@
                             <select id="ddlSrchDirector" multiple="multiple"></select>
                         </li>
                         @*<li class="AdSearch" id="spType">
-                            <label id="spType1">Sport Type:</label><br />
-                            <select id="ddlSrchSportType" style="width: 174px;">
-                                <option value="" selected>Please Select </option>
-                            </select>
-                        </li>*@
+                                <label id="spType1">Sport Type:</label><br />
+                                <select id="ddlSrchSportType" style="width: 174px;">
+                                    <option value="" selected>Please Select </option>
+                                </select>
+                            </li>*@
                     </ul>
                     <br />
 
@@ -736,7 +768,16 @@
                     <div class="right_nav pull-right">
                         <ul>
                             <li>
-                                @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "", style = "display: inline-block !important;" })
+
+                                @if (ViewBag.Is_AllowMultiBUsyndeal != "Y")
+                                {
+                                    @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "", style = "display: inline-block !important;" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                                    @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select>*@
+                                }
                                 <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search"
                                        placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" style="width:279px;" />
                             </li>

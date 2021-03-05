@@ -36,8 +36,14 @@
 function BindAdvanced_Search_Controls(callfrom) {
 
     //Here call from PGL - Pageload (document ready), BTC - Button(Search) Click
-    var SelectedBU = $("#ddlBUUnit").val();
-    $('#ddlSrchBU').val(SelectedBU);
+    if (Is_AllowMultiBUsyndeal != 'Y') {
+        var SelectedBU = $("#ddlBUUnit").val();
+        $('#ddlSrchBU').val(SelectedBU);
+    }
+    else {
+        var SelectedBUMulti = $("#ddlGenBUMultiSelect").val();
+        $('#ddlSrchBUMultiSelect').val(SelectedBUMulti);
+    }
     if (callfrom == 'BTC') {
         $('#divSearch').slideToggle(400);
         // OnChangeBindTitle('L');
@@ -67,7 +73,12 @@ function BindAdvanced_Search_Controls(callfrom) {
                         if (this.Data_For == 'DTG')
                             $("#ddlSrchDealTag").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'BUT')
-                            $("#ddlSrchBU").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            if (Is_AllowMultiBUsyndeal != 'Y') {
+                                $("#ddlSrchBU").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            }
+                            else {
+                                $("#ddlSrchBUMultiSelect").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            }
                         if (this.Data_For == 'DIR')
                             $("#ddlSrchDirector").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'LAV')
@@ -79,12 +90,28 @@ function BindAdvanced_Search_Controls(callfrom) {
                     var obj_Search = $(result.Obj_Acq_Syn_List_Search);
                     $("#ddlSrchDealType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlSrchDealTag").val(obj_Search[0].Status_Search).attr("selected", "true").trigger("chosen:updated");
-                    if ($('#ddlBUUnit').val() == obj_Search[0].BUCodes_Search) {
-                        $("#ddlSrchBU").val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
-                        $('#ddlBUUnit').val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+                    if (Is_AllowMultiBUsyndeal != 'Y') {
+                        if ($('#ddlBUUnit').val() == obj_Search[0].BUCodes_Search) {
+                            $("#ddlSrchBU").val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+                            $('#ddlBUUnit').val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+                        }
+
+
+                        else {
+                            $("#ddlSrchBU").val(SelectedBU).attr("selected", "true").trigger("chosen:updated");
+                        }
                     }
                     else {
-                        $("#ddlSrchBU").val(SelectedBU).attr("selected", "true").trigger("chosen:updated");
+                        if ($('#ddlGenBUMultiSelect').val() == obj_Search[0].BUCodes_Search) {
+                            debugger;
+                            $("#ddlSrchBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
+                            // $("#ddlSrchBUMultiSelect")[0].sumo.reload();
+                        }
+                        else {
+                            $('#ddlSrchBUMultiSelect').val(SelectedBUMulti);
+                            $("#ddlSrchBUMultiSelect")[0].sumo.reload();
+                        }
+
                     }
 
                     $("#ddlSrchDirector").val(obj_Search[0].DirectorCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
@@ -165,6 +192,13 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
         tmpLicensor = $('#ddlSrchLicensor').val().join(',');
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
+    if (Is_AllowMultiBUsyndeal != 'Y') {
+        var BUCode = $('#ddlBUUnit').val();
+    }
+    else {
+        if ($('#ddlGenBUMultiSelect').val())
+            BUCode = $('#ddlGenBUMultiSelect').val().join(',');
+    }
     $.ajax({
         type: "POST",
         url: URL_PartialDealList,
@@ -190,7 +224,7 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
             strShowAll: ShowAll,
             strIncludeArchiveDeal: tmpArchiveChecked,
             ClearSession: $('#hdnClearAll').val(),
-            strBUCode: $('#ddlBUUnit').val()
+            strBUCode: BUCode//$('#ddlBUUnit').val()
         }),
         success: function (result) {
             if (result == "true") {
@@ -246,7 +280,14 @@ function validateSearch() {
     var ddlTagStatus = $('#ddlSrchDealTag').val();
     var ddlBU = $('#ddlSrchBU').val();
     var ddlDealType = $('#ddlSrchDealType').val();
-
+    if (Is_AllowMultiBUsyndeal == 'Y') {
+        var ddlBUMulti = $('#ddlSrchBUMultiSelect').val();
+        if (ddlBUMulti.length == 0) {
+            showAlert('E', "Business Unit Cannot be Blank.");
+            return false;
+        }
+        $('#ddlGenBUMultiSelect').val(ddlBUMulti);
+    }
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
 
@@ -275,7 +316,8 @@ function ShowAll() {
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     OnChangeBindTitle();
-
+    $("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+    $("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
     $("#ddlSrchDirector").find("option").attr("selected", false);
     $("#ddlSrchDirector").val('')[0].sumo.reload();
     $("#ddlSrchLicensor").find("option").attr("selected", false);
@@ -299,9 +341,12 @@ function ClearAll() {
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     $("#chkArchiveDeal").prop("checked", false);
     $("#chkSubDeal").prop("checked", false);
-    
-    
+
+
     OnChangeBindTitle();
+
+    $("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+    $("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
 
     $("#ddlSrchDirector").find("option").attr("selected", false);
     $("#ddlSrchDirector").val('')[0].sumo.reload();
@@ -322,13 +367,26 @@ function SetMinDt() {
 
 function OnChangeBindTitle(callFrom) {
     var dealTypeVal = $('#ddlSrchDealType').val();
-    var ddlBU = $('#ddlSrchBU').val();
-    if (callFrom != 'L') {
-        $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
+    if (Is_AllowMultiBUsyndeal != 'Y') {
+        var ddlBU = $('#ddlSrchBU').val();
+        if (callFrom != 'L') {
+            $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
+        }
+        else {
+            dealTypeVal = '0';
+            ddlBU = $('#ddlBUUnit').val();
+        }
     }
     else {
-        dealTypeVal = '0';
-        ddlBU = $('#ddlBUUnit').val();
+        var ddlBUMulti = $('#ddlSrchBUMultiSelect').val();
+        if (callFrom != 'L') {
+            $('#ddlGenBUMultiSelect').val(ddlBUMulti);
+            $("#ddlGenBUMultiSelect")[0].sumo.reload();
+        }
+        else {
+            dealTypeVal = '0';
+            ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+        }
     }
 
     //$("#ddlSrchTitle").find("option").attr("selected", false);
