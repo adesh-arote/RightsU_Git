@@ -1,11 +1,11 @@
-﻿CREATE PROCEDURE [dbo].[USP_Title_Import_Utility_PIII]
+﻿ALTER PROCEDURE [dbo].[USP_Title_Import_Utility_PIII]
 (
 	@DM_Master_Import_Code INT
 )
 AS 
 BEGIN
 	SET NOCOUNT ON
-	--DECLARE @DM_Master_Import_Code INT = 82
+	--DECLARE @DM_Master_Import_Code INT = 115
 	DECLARE @ISError CHAR(1) = 'N', @Error_Message NVARCHAR(MAX) = '', @ExcelCnt INT = 0
 
 	IF(OBJECT_ID('tempdb..#TempTitle') IS NOT NULL) DROP TABLE #TempTitle
@@ -281,10 +281,29 @@ BEGIN
 
 		WHILE @@FETCH_STATUS = 0  
 		BEGIN  
-			UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') has duplicate data'
-			WHERE ExcelSrNo IN(
-				SELECT A.ExcelSrNo FROM ( SELECT excelSrNo, RANK() OVER(PARTITION BY TitleData ORDER BY excelSrNo) AS rank FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name ) AS A WHERE A.rank > 1
-			)	
+
+			IF (@Display_Name = 'Title Name')
+			BEGIN
+				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') has duplicate data'
+				WHERE ExcelSrNo IN(
+					SELECT C.ExcelSrNo FROM ( 
+						SELECT D.excelSrNo, RANK() OVER(PARTITION BY D.TitleData ORDER BY D.excelSrNo) AS rank 
+						FROM (
+							SELECT A.ExcelSrNo, ISNULL(A.TitleData,'')+'~'+ISNULL(B.TitleData,'') as 'TitleData' from 
+							( SELECT ExcelSrNo, TitleData FROM #TempTitleUnPivot WHERE ColumnHeader = 'Title Name' ) as A
+							LEFT JOIN 
+							( SELECT ExcelSrNo, TitleData FROM #TempTitleUnPivot WHERE ColumnHeader = 'Title Type' ) AS B 
+							ON A.ExcelSrNo = B.ExcelSrNo 
+						) AS D
+					) AS C WHERE C.rank > 1
+				)	
+			END
+			ELSE
+				UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') has duplicate data'
+				WHERE ExcelSrNo IN(
+					SELECT A.ExcelSrNo FROM ( SELECT excelSrNo, RANK() OVER(PARTITION BY TitleData ORDER BY excelSrNo) AS rank FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name ) AS A WHERE A.rank > 1
+				)
+				
 			--IF (@Display_Name = 'Title Name')
 			--BEGIN
 			--	UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Title Name is already existed'
