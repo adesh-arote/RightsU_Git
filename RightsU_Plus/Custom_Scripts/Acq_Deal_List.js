@@ -6,7 +6,7 @@
     else {
         if (msg_G != null && msg_G != '')
             showAlert('e', msg_G);
-    } 
+    }
     if (RLCode_G != '')
         Call_RefreshRecordReleaseTime(RLCode_G);
     if (IncludeSubDeal_Search_G != 'undefined' && IncludeSubDeal_Search_G == 'N')
@@ -58,6 +58,7 @@ function BindAdvanced_Search_Controls(callfrom) {
     else {
         var SelectedBUMulti = $("#ddlGenBUMultiSelect").val();
         $('#ddlSrchBUMultiSelect').val(SelectedBUMulti);
+        //$("#ddlSrchBUMultiSelect")[0].sumo.reload();
     }
     //Here call from PGL - Pageload (document ready), BTC - Button(Search) Click
     if (callfrom == 'BTC') {
@@ -69,7 +70,7 @@ function BindAdvanced_Search_Controls(callfrom) {
     var Is_async = true;
     if (tmp_IsAdvanced == 'Y')
         Is_async = false
-    if (parseInt($("#ddlSrchBU option").length) == 0) {
+    if (parseInt($("#ddlSrchBU option").length) == 0 || (parseInt($("#ddlSrchBUMultiSelect option").length) == 0)) {
         debugger;
         $.ajax({
             type: "POST",
@@ -129,12 +130,11 @@ function BindAdvanced_Search_Controls(callfrom) {
                         if ($('#ddlGenBUMultiSelect').val() == obj_Search[0].BUCodes_Search) {
                             debugger;
                             $("#ddlSrchBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
-                           // $("#ddlSrchBUMultiSelect")[0].sumo.reload();
+                            $("#ddlGenBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
                         }
                         else {
-                            $('#ddlSrchBUMultiSelect').val(SelectedBUMulti);
-                            $("#ddlSrchBUMultiSelect")[0].sumo.reload();
-                        }    
+                            $('#ddlSrchBUMultiSelect').val(SelectedBUMulti)[0].sumo.reload();
+                        }
                     }
                     $("#ddlSrchDirector").val(obj_Search[0].DirectorCodes_Search.split(','))[0].sumo.reload();
                     $("#ddlSrchLicensor").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
@@ -160,7 +160,7 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
     tmp_IsAdvanced = isAdvanced;
     if (isAdvanced == 'N')
         $('#divSearch').hide();
-    else if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+    else if (isAdvanced == 'Y' && (parseInt($("#ddlSrchBU option").length) == 0 || parseInt($("#ddlSrchBUMultiSelect option").length) == 0))
         BindAdvanced_Search_Controls('PGL');
     //if ($('#ddlSrchTitle').val())
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
@@ -180,14 +180,20 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
 
+    var BUCode = "";
     if (Is_AllowMultiBUacqdeal != 'Y') {
-        var BUCode = $('#ddlBUUnit').val();
+        BUCode = $('#ddlBUUnit').val();
     }
     else {
         if ($('#ddlGenBUMultiSelect').val())
             BUCode = $('#ddlGenBUMultiSelect').val().join(',');
     }
-
+    if (BUCode == "undefined" || BUCode == "" || BUCode == null) {
+        debugger;
+        showAlert('E', "Business Unit Cannot be Blank.");
+        hideLoading();
+        return false;
+    }
     $.ajax({
         type: "POST",
         url: URL_PartialDealList,
@@ -274,7 +280,7 @@ function validateSearch() {
 
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
-    
+
 
     var txtSDealNo = $('#txtSrchDealNo').val();
     var txtfrom = $('#txtfrom').val();
@@ -444,7 +450,7 @@ function handleOk() {
         CheckRecordCurrentStatus();
     }
     else if (Command_Name_G == "SendForArchive" || Command_Name_G == "Archive") //Command_Name_G == "Archive" ||
-    { 
+    {
         Chk_RecCrntStsForArchive();
     }
 }
@@ -1002,7 +1008,7 @@ function Ask_Confirmation(commandName, Acq_Deal_Code, IsZeroWorkFlow) {
                     else {
                         showAlert("E", "Cannot send deal for approval as rights are in processing state");
                         IsValid = "N";
-                        HideShow(ID, View_G,'N');
+                        HideShow(ID, View_G, 'N');
                         return false;
                     }
                 }

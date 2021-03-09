@@ -155,18 +155,10 @@
             $('.MoreActionDiv').css("left", "32px !important");
         }
         $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
-        if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {    
+        if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {
             $('#ddlGenBUMultiSelect').SumoSelect();
             $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode')
             $('#ddlGenBUMultiSelect')[0].sumo.reload();
-
-            @*var ddlGenBUCodes = '@ViewBag.BusineesUnitList';
-        $.each(ddlGenBUCodes, function () {
-            $("#ddlGenBUMultiSelect").append($("<option />").val(this.Value).text(this.Text));
-        });
-        $('#ddlGenBUMultiSelect')[0].sumo.reload();*@
-
-            // $('#ddlGenBUMultiSelect')[0].sumo.reload();
 
             $('#ddlSrchBUMultiSelect').SumoSelect();
         }
@@ -860,26 +852,31 @@
 
         <div class="container acq main_col" id="AllsubmenuHide">
             <div class="top_area">
-                <h2 class="pull-left">@objMessageKey.AcquisitionDeals</h2>
-
-
+                <h2 class="pull-left" style="margin-right:471px;">
+                    @objMessageKey.AcquisitionDeals
+                </h2>
+                <div style="margin-top:20px;float:left;margin-left:72px;">
+                    @if (ViewBag.Is_AllowMultiBUacqdeal == "Y")
+                    {
+                        @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                    }
+                </div>
                 <div class="right_nav pull-right">
                     <ul>
                         <li>
-
                             @if (ViewBag.Is_AllowMultiBUacqdeal != "Y")
                             {
                                 <span>
                                     @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "" })
                                 </span>
                             }
-                            else
+                            @*else
                             {
                                 <span>
                                     @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
                                 </span>
-                                @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select>*@
-                            }
+                                @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select> 
+                            }*@
 
                             <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:279px !important;"
                                    placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" />

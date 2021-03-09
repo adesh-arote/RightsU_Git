@@ -450,9 +450,9 @@
         }
     </script>
     <style>
-        .SumoSelect {
+        /*.SumoSelect {
             width: 300px !important;
-        }
+        }*/
 
         .tinyADSearch {
             top: 40px;
@@ -764,7 +764,12 @@
             <div class="container syn main_col" id="AllsubmenuHide">
                 <div class=" top_area">
                     <h2 class="pull-left">@objMessageKey.SyndicationDeals</h2>
-
+                    <div style="margin-top:20px;float:left;margin-left:535px;">
+                        @if (ViewBag.Is_AllowMultiBUsyndeal == "Y")
+                        {
+                            @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                        }
+                    </div>
                     <div class="right_nav pull-right">
                         <ul>
                             <li>
@@ -773,11 +778,11 @@
                                 {
                                     @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "", style = "display: inline-block !important;" })
                                 }
-                                else
+                                @*else
                                 {
                                     @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
-                                    @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select>*@
-                                }
+                                    @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select>
+                                }*@
                                 <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search"
                                        placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" style="width:279px;" />
                             </li>

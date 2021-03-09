@@ -192,12 +192,18 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
         tmpLicensor = $('#ddlSrchLicensor').val().join(',');
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
+    var BUCode = "";
     if (Is_AllowMultiBUsyndeal != 'Y') {
-        var BUCode = $('#ddlBUUnit').val();
+        BUCode = $('#ddlBUUnit').val();
     }
     else {
         if ($('#ddlGenBUMultiSelect').val())
             BUCode = $('#ddlGenBUMultiSelect').val().join(',');
+    }
+    if (BUCode == "undefined" || BUCode == "" || BUCode == null) {
+        debugger;
+        showAlert('E', "Business Unit Cannot be Blank.");
+        return false;
     }
     $.ajax({
         type: "POST",
