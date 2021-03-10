@@ -188,9 +188,14 @@ namespace RightsU_Plus.Controllers
 
             BindSchemaObject();
             string viewName = "~/Views/Acq_Deal/_Acq_General.cshtml";
-            ViewBag.Is_Acq_Confirming_Party = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Confirming_Party").Select(x => x.Parameter_Value).FirstOrDefault();
+            string IsConfirmingParty = ViewBag.Is_Acq_Confirming_Party = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Confirming_Party").Select(x => x.Parameter_Value).FirstOrDefault();
             string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.DealSegment = AllowDealSegment;
+
+            if(IsConfirmingParty.ToUpper() == "Y")
+            {
+                ViewBag.lstConfirmingParty = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active.ToUpper() == "Y").Select(x => new { Vendor_Code = x.Vendor_Code, Vendor_Name = x.Vendor_Name} ).ToList(), "Vendor_Code", "Vendor_Name").ToList();
+            }
 
             string AllowRevenueVertical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Revenue_Vertical").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.RevenueVertical = AllowRevenueVertical;
@@ -230,6 +235,12 @@ namespace RightsU_Plus.Controllers
 
                 if (objAD_Session.Master_Deal_Movie_Code_ToLink == null)
                     objAD_Session.Master_Deal_Movie_Code_ToLink = 0;
+
+                if(IsConfirmingParty.ToUpper() == "Y")
+                {
+                    int Confirming_Code = Convert.ToInt32(objAD_Session.Confirming_Party);
+                    objAD_Session.Confirming_Party = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Vendor_Code == Confirming_Code).Select(x => x.Vendor_Name).FirstOrDefault();
+                }
 
                 viewName = "~/Views/Acq_Deal/_Acq_General_View.cshtml";
             }

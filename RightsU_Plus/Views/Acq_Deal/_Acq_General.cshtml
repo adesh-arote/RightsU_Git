@@ -359,7 +359,8 @@
 
                                             <td>Confirming Party</td>
                                             <td>
-                                                <input type="text" id="txtConfirmingParty" name="Confirming_Party" value="@Model.Confirming_Party">
+                                                @*<input type="text" id="txtConfirmingParty" name="Confirming_Party" value="@Model.Confirming_Party">*@
+                                                @Html.DropDownListFor(m => Model.Confirming_Party, (List<SelectListItem>)ViewBag.lstConfirmingParty, "Please Select", new { @id = "txtConfirmingParty", @class = "form_input chosen-select" })
                                             </td>
                                         </tr>
 
