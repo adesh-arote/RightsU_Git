@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE USP_Validate_Delay_Rights_Duplication_Acq
+﻿CREATE PROCEDURE USP_Acq_Deal_Rights_Validate
 AS
 -- =============================================
 -- Author:		Akshay Rane
@@ -73,27 +73,27 @@ BEGIN
 			Term, Milestone_Type_Code, Milestone_No_Of_Unit, Milestone_Unit_Type, Is_ROFR, ROFR_Date, Restriction_Remarks, Right_Start_Date, Right_End_Date
 			)
 		SELECT 
-			0,Acq_Deal_Code,Is_Exclusive,Is_Title_Language_Right,Is_Sub_License,Sub_License_Code,Is_Theatrical_Right,Right_Type,Is_Tentative,
+			@Acq_Deal_Rights_Code,Acq_Deal_Code,Is_Exclusive,Is_Title_Language_Right,Is_Sub_License,Sub_License_Code,Is_Theatrical_Right,Right_Type,Is_Tentative,
 			Term,Milestone_Type_Code,Milestone_No_Of_Unit,Milestone_Unit_Type,Is_ROFR,ROFR_Date,Restriction_Remarks,Right_Start_Date, Right_End_Date
 		FROM Acq_Deal_Rights WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
 		------------------------------------
 		INSERT INTO @Deal_Rights_Title (Deal_Rights_Code,Title_Code,Episode_From,Episode_To )
-		SELECT 0,Title_Code,Episode_From,Episode_To
+		SELECT @Acq_Deal_Rights_Code,Title_Code,Episode_From,Episode_To
 		FROM Acq_Deal_Rights_Title WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
 		------------------------------------
 		INSERT INTO @Deal_Rights_Platform (Deal_Rights_Code, Platform_Code)
-		SELECT 0, Platform_Code FROM Acq_Deal_Rights_Platform WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+		SELECT @Acq_Deal_Rights_Code, Platform_Code FROM Acq_Deal_Rights_Platform WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
 		------------------------------------
 		INSERT INTO @Deal_Rights_Territory (Deal_Rights_Code, Territory_Type, Territory_Code, Country_Code)
-		SELECT 0, Territory_Type, Territory_Code, Country_Code
+		SELECT @Acq_Deal_Rights_Code, Territory_Type, Territory_Code, Country_Code
 		FROM Acq_Deal_Rights_Territory WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
 		------------------------------------
 		INSERT INTO @Deal_Rights_Subtitling (Deal_Rights_Code, Language_Type, Language_Group_Code, Subtitling_Code)
-		SELECT 0, Language_Type, Language_Group_Code, Language_Code
+		SELECT @Acq_Deal_Rights_Code, Language_Type, Language_Group_Code, Language_Code
 		FROM Acq_Deal_Rights_Subtitling WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
 		------------------------------------
 		INSERT INTO @Deal_Rights_Dubbing (Deal_Rights_Code, Language_Type, Language_Group_Code, Dubbing_Code)
-		SELECT 0, Language_Type, Language_Group_Code, Language_Code
+		SELECT @Acq_Deal_Rights_Code, Language_Type, Language_Group_Code, Language_Code
 		FROM Acq_Deal_Rights_Dubbing WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
 		------------------------------------
 		IF((SELECT COUNT(*) From Deal_Rights_Process WHERE ISNULL(Rights_Bulk_Update_Code , 0) = 0 AND Record_Status = 'W') = 0)

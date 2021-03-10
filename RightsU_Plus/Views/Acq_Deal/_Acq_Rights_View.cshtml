@@ -182,6 +182,18 @@
                                         @(Model.Sub_License_Code != null ? Model.Sub_License.Sub_License_Name : "No")
                                     </div>
                                     <br />
+                                    @{string Is_Acq_Under_Production = "";
+                                        Is_Acq_Under_Production = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Under_Production").FirstOrDefault().Parameter_Value;
+                                    }
+
+                                    @if (Is_Acq_Under_Production == "Y")
+                                    {
+                                        <label class="bold">Under Production</label>
+                                        <div>
+                                            @(Model.Is_Under_Production == "Y" ? "Yes" : "No")
+                                        </div>
+                                        <br />
+                                    }
                                     @if (ORightType == "Y")
                                     {
                                         <label class="bold">@objMessageKey.Yearbased</label>
