@@ -33,5 +33,7 @@ namespace RightsU_Entities
         public string System_Mapped_Name { get; set; }
         public Nullable<int> System_Mapped_Code { get; set; }
         public virtual DM_Master_Import DM_Master_Import { get; set; }
+        public Nullable<int> Music_Album_Code { get; set; }
+        public string Music_Album { get; set; }
     }
 }
