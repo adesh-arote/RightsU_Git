@@ -13,35 +13,38 @@
       <Query>
         <DataSourceName>DS_Reports</DataSourceName>
         <QueryParameters>
-          <QueryParameter Name="@Agreement_No">
+          <QueryParameter Name="@AGREEMENT_NO">
             <Value>=Parameters!Agreement_No.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@Is_Master_Deal">
+          <QueryParameter Name="@IS_MASTER_DEAL">
             <Value>=Parameters!Is_Master_Deal.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@Start_Date">
+          <QueryParameter Name="@START_DATE">
             <Value>=Parameters!Start_Date.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@End_Date">
+          <QueryParameter Name="@END_DATE">
             <Value>=Parameters!End_Date.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@Deal_Tag_Code">
+          <QueryParameter Name="@DEAL_TAG_CODE">
             <Value>=Parameters!Deal_Tag_Code.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@Title_Name">
+          <QueryParameter Name="@TITLE_NAME">
             <Value>=Parameters!Title_Name.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@Business_Unit_code">
+          <QueryParameter Name="@BUSINESS_UNIT_CODE">
             <Value>=Parameters!Business_Unit_code.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@Is_Pushback">
+          <QueryParameter Name="@IS_PUSHBACK">
             <Value>=Parameters!Is_Pushback.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@SysLanguageCode">
+          <QueryParameter Name="@SYSLANGUAGECODE">
             <Value>=Parameters!SysLanguageCode.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@DealSegment">
+          <QueryParameter Name="@DEALSEGMENT">
             <Value>=Parameters!DealSegment.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@TYPEOFFILM">
+            <Value>=Parameters!TYPEOFFILM.Value</Value>
           </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
@@ -11616,6 +11619,10 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
       </DefaultValue>
       <Prompt>Deal Segment</Prompt>
     </ReportParameter>
+    <ReportParameter Name="TYPEOFFILM">
+      <DataType>String</DataType>
+      <Prompt>TYPEOFFILM</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -11766,6 +11773,11 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
           <ColumnIndex>3</ColumnIndex>
           <RowIndex>9</RowIndex>
           <ParameterName>DealSegment</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>4</ColumnIndex>
+          <RowIndex>9</RowIndex>
+          <ParameterName>TYPEOFFILM</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>
