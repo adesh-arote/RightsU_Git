@@ -124,7 +124,9 @@
                 $('.sumo_Region  p .placeholder').removeAttr('class');
             }
         }
+   
         $('#hdnTVCode').val(rightsPlatform_G);
+        rightsExclusive_G = rightsExclusive_G == "" ? "B" : rightsExclusive_G;
         if (rightsExclusive_G != "")
          $("#lstReleaseUnit").val(rightsExclusive_G).trigger("chosen:updated");
 
@@ -326,7 +328,7 @@
                         });
 
                         if (!IsBothExists)
-                            $('#lstReleaseUnit').val('Y').trigger("chosen:updated");
+                            $('#lstReleaseUnit').val('B').trigger("chosen:updated");
                         else
                             $('#lstReleaseUnit').val('B').trigger("chosen:updated");
 
@@ -364,7 +366,7 @@
                 });
 
                 if (!IsBothExists)
-                    $('#lstReleaseUnit').val('Y').trigger("chosen:updated");
+                    $('#lstReleaseUnit').val('B').trigger("chosen:updated");
                 else
                     $('#lstReleaseUnit').val('B').trigger("chosen:updated");
 
@@ -531,7 +533,7 @@
             {
                 <td class="bold" style="width: 11%;">@objMessageKey.ExclusiveRights</td>
                 <td style="width:20%">
-                    @Html.DropDownList("lstReleaseUnit", ViewBag.Exclusive_Rights as MultiSelectList, new { @class = "form_input chosen-select", @width = "150px" })
+                    @Html.DropDownList("lstReleaseUnit", ViewBag.Exclusive_Rights as SelectList, new { @class = "form_input chosen-select", @width = "150px" })
                 </td>
             }
             @if (objSchema.Page_From == "PBK")

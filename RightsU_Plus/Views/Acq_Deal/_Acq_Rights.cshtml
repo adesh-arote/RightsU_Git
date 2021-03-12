@@ -238,7 +238,7 @@
 
 @using (Ajax.BeginForm("Save_Rights", "Acq_Rights", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @id = "frmRights" }))
 {
-    string ORightType = "", Promoter_Tab = "", Is_Acq_Syn_CoExclusive = "";
+    string ORightType = "", Promoter_Tab = "", Is_Acq_Syn_CoExclusive = "", Is_Acq_Under_Production = "";
     if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
     {
         ORightType = Model.Original_Right_Type;
@@ -249,6 +249,7 @@
     }
     Promoter_Tab = objSPNService.SearchFor(s => s.Parameter_Name == "Promoter_Tab").First().Parameter_Value;
     Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+    Is_Acq_Under_Production = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Under_Production").FirstOrDefault().Parameter_Value;
 
     @Html.Hidden("Is_Acq_Syn_CoExclusive", Is_Acq_Syn_CoExclusive);
     @Html.Hidden("IsPromoter", Promoter_Tab);
@@ -299,12 +300,12 @@
                                                                             </td>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN" value="N" checked="@(Model.Is_Exclusive == "N" ? true : false)" class="exc" />Non-Exlusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN" value="N" checked="@(Model.Is_Exclusive == "N" ? true : false)" class="exc" />Non-Exclusive
                                                                                 </label>
                                                                             </td>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" />Co-Exlusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" />Co-Exclusive
                                                                                 </label>
                                                                             </td>
                                                                         </tr>
@@ -496,10 +497,13 @@
                                                     <a data-toggle="tab" href="#tabPerp" role="tab">@objMessageKey.Perpetuity</a>
                                                 </li>
                                             </ul>
-                                            <span style="padding-left: 10%;">
-                                                @Html.CheckBox("Is_Under_Production", (Model.Is_Under_Production == "Y" ? true : false), null)
-                                                Under Production
-                                            </span>
+                                            @if (Is_Acq_Under_Production == "Y")
+                                            {
+                                                <span style="padding-left: 10%;">
+                                                    @Html.CheckBox("Is_Under_Production", (Model.Is_Under_Production == "Y" ? true : false), null)
+                                                    Under Production
+                                                </span>
+                                            }
 
                                             @Html.Hidden("Original_Right_Type", ORightType)
                                             @Html.Hidden("Right_Type", Model.Right_Type)

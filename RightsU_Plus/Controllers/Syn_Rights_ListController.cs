@@ -108,7 +108,7 @@ namespace RightsU_Plus.Controllers
 
             string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
             if (Is_Acq_Syn_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
-                objDeal_Schema.Rights_Exclusive = "Y";
+                objDeal_Schema.Rights_Exclusive = "B";
 
             ViewBag.Acq_Deal_Code = objDeal_Schema.Deal_Code;
             Platform_Service objPservice = new Platform_Service(objLoginEntity.ConnectionStringName);
@@ -179,6 +179,7 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.Exclusive_Rights = new SelectList(new[]
                 {
+                    new { Code = "B", Name = "Please Select" },
                     new { Code = "Y", Name = "Exclusive" },
                     new { Code = "N", Name = "Non-Exclusive" },
                     new { Code = "C", Name = "Co-Exclusive" }
@@ -277,7 +278,7 @@ namespace RightsU_Plus.Controllers
             objSyn_Deal = null;
             objSDS = null;
         }
-        private void Fill_Rights_Schema(string view_Type, string Title_Code_Search, int txtpageSize = 100, int pageNo = 0, string ExclusiveRight = "Y")
+        private void Fill_Rights_Schema(string view_Type, string Title_Code_Search, int txtpageSize = 100, int pageNo = 0, string ExclusiveRight = "B")
         {
             objDeal_Schema.Rights_View = view_Type;
             objDeal_Schema.Rights_Titles = Title_Code_Search;
