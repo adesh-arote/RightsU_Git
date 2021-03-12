@@ -9,6 +9,16 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    if (ViewBag.Is_AcqSyn_Type_Of_Film == null)
+    {
+        ViewBag.Is_AcqSyn_Type_Of_Film = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_AcqSyn_Type_Of_Film").Select(s => s.Parameter_Value).FirstOrDefault();
+    }
 }
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
