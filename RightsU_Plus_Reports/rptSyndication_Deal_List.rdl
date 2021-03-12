@@ -46,6 +46,9 @@
           <QueryParameter Name="@DealSegment">
             <Value>=Parameters!DealSegment.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@TypeOfFilm">
+            <Value>=Parameters!TypeOfFilm.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USP_Syndication_Deal_List_Report</CommandText>
@@ -11196,6 +11199,10 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
       </DefaultValue>
       <Prompt>Deal Segment</Prompt>
     </ReportParameter>
+    <ReportParameter Name="TypeOfFilm">
+      <DataType>String</DataType>
+      <Prompt>Type Of Film</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -11341,6 +11348,11 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>9</RowIndex>
           <ParameterName>DealSegment</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>9</RowIndex>
+          <ParameterName>TypeOfFilm</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

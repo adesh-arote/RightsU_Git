@@ -336,7 +336,7 @@ namespace RightsU_Plus.Controllers
 
             string title_names = TitleAutosuggest(Title);
             string Promoter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(t => true).Where(w => w.Parameter_Name == "Promoter_Tab").Select(s => s.Parameter_Value).FirstOrDefault();
-            ReportParameter[] parm = new ReportParameter[17];
+            ReportParameter[] parm = new ReportParameter[18];
 
             parm[0] = new ReportParameter("Agreement_No", DealNo);
             parm[1] = new ReportParameter("Is_Master_Deal", DealType);
@@ -549,7 +549,7 @@ namespace RightsU_Plus.Controllers
             {
                 ExpiredDeal = "N";
             }
-            ReportParameter[] parm = new ReportParameter[16];
+            ReportParameter[] parm = new ReportParameter[17];
 
             parm[0] = new ReportParameter("Agreement_No", DealNo);
             parm[1] = new ReportParameter("Title_Codes", title_names);
