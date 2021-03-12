@@ -587,13 +587,13 @@
             maxPreDecimalPlaces: 2,
             maxDecimalPlaces: 0
         });
-        //$("#txtDuration").numeric({
-        //    allowMinus: false,
-        //    allowThouSep: true,
-        //    allowDecSep: true,
-        //    maxDecimalPlaces: 2,
-        //    maxPreDecimalPlaces: 3
-        //});
+        $("#txtDuration").numeric({
+            allowMinus: false,
+            allowThouSep: true,
+            allowDecSep: true,
+            maxDecimalPlaces: 2,
+            maxPreDecimalPlaces: 3
+        });
         $("#txtNoOfSong").numeric({
             allowMinus: false,
             allowThouSep: false,
@@ -1631,8 +1631,8 @@
                                                     </td>
                                                     <td>@objMessageKey.DurationRestrictionPerSong</td>
                                                     <td>
-                                                        <input type="time" id="txtDuration" step ="1" min = "00:00:00" max = "00:59:59" />
-                                                        @*@Html.TextBoxFor(m => Model.Duration, "", new { @id = "txtDuration", @type = "time", @step = "1", @min = "00:00:00", @max = "00:59:59" }) (MM:SS)*@
+                                                      
+                                                        @Html.TextBoxFor(m => Model.Duration, "", new { @id = "txtDuration", @type = "time", @step = "1", @min = "00:00:00", @max = "00:59:59" }) (MM:SS)
                                                     </td>
                                                 </tr>
                                                 @*<tr>

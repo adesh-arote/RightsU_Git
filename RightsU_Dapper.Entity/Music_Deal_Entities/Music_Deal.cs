@@ -1,6 +1,7 @@
 namespace RightsU_Dapper.Entity
 {
     using Dapper.SimpleSave;
+    using Dapper.SimpleLoad;
     using System;
     using System.Collections.Generic;
 
@@ -56,7 +57,9 @@ namespace RightsU_Dapper.Entity
         public string Remarks { get; set; }
         public Nullable<decimal> Agreement_Cost { get; set; }
         public string Right_Rule_Type { get; set; }
+
         [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public System.TimeSpan Duration { get; set; }
 
 

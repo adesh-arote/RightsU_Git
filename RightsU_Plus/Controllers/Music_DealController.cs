@@ -219,7 +219,7 @@ namespace RightsU_Plus.Controllers
             int second = totalSeconds % 60;
             int minutes = totalSeconds / 60;
             TimeSpan times = TimeSpan.Parse("00:" + minutes.ToString("00") + ":" + second.ToString("00") + "");
-            //objMusicDeal.Duration = times;
+            objMusicDeal.Duration = times;
             string viewPath = "~/Views/Music_Deal/Index.cshtml";
             string selectedCode = string.Join(",", objMusicDeal.Music_Deal_LinkShow.Select(s => s.Title_Code).ToArray());
 
