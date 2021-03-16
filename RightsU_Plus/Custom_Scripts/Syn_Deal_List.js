@@ -51,7 +51,7 @@ function BindAdvanced_Search_Controls(callfrom) {
     var Is_async = true;
     if (tmp_IsAdvanced == 'Y')
         Is_async = false;
-    if (parseInt($("#ddlSrchBU option").length) == 0) {
+    if (parseInt($("#ddlSrchBU option").length) == 0 || (parseInt($("#ddlSrchBUMultiSelect option").length) == 0)) {
         $.ajax({
             type: "POST",
             url: URL_BindAdvanced_Search_Controls,
@@ -67,6 +67,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                     redirectToLogin();
                 }
                 else {
+                    $("#ddlSrchBUMultiSelect").empty();
                     $(result.USP_Result).each(function (index, item) {
                         if (this.Data_For == 'DTP' || this.Data_For == 'DTC')
                             $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
@@ -105,11 +106,10 @@ function BindAdvanced_Search_Controls(callfrom) {
                         if ($('#ddlGenBUMultiSelect').val() == obj_Search[0].BUCodes_Search) {
                             debugger;
                             $("#ddlSrchBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
-                            // $("#ddlSrchBUMultiSelect")[0].sumo.reload();
+                            $("#ddlGenBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
                         }
                         else {
-                            $('#ddlSrchBUMultiSelect').val(SelectedBUMulti);
-                            $("#ddlSrchBUMultiSelect")[0].sumo.reload();
+                            $('#ddlSrchBUMultiSelect').val(SelectedBUMulti)[0].sumo.reload();
                         }
 
                     }
@@ -200,6 +200,14 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
         if ($('#ddlGenBUMultiSelect').val())
             BUCode = $('#ddlGenBUMultiSelect').val().join(',');
     }
+    var strBU = "";
+    if (Is_AllowMultiBUsyndeal != 'Y') {
+        strBU = $('#ddlSrchBU').val();
+    }
+    else {
+        if ($('#ddlSrchBUMultiSelect').val())
+            strBU = $('#ddlSrchBUMultiSelect').val().join(',');
+    }
     if (BUCode == "undefined" || BUCode == "" || BUCode == null) {
         debugger;
         showAlert('E', "Business Unit Cannot be Blank.");
@@ -226,7 +234,7 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
             strTitles: tmpTitle,
             strDirector: tmpDirector,
             strLicensor: tmpLicensor,
-            strBU: $('#ddlSrchBU').val(),
+            strBU: strBU,
             strShowAll: ShowAll,
             strIncludeArchiveDeal: tmpArchiveChecked,
             ClearSession: $('#hdnClearAll').val(),

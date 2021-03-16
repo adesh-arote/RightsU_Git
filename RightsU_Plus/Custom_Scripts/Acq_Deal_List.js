@@ -89,6 +89,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                 }
                 else {
                     debugger;
+                    $("#ddlSrchBUMultiSelect").empty();
                     $(result.USP_Result).each(function (index, item) {
                         if (this.Data_For == 'DTP' || this.Data_For == 'DTC')
                             $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
@@ -188,6 +189,15 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
         if ($('#ddlGenBUMultiSelect').val())
             BUCode = $('#ddlGenBUMultiSelect').val().join(',');
     }
+    var strBU = "";
+    if (Is_AllowMultiBUacqdeal != 'Y') {
+        strBU = $('#ddlSrchBU').val();
+    }
+    else {
+        if ($('#ddlSrchBUMultiSelect').val())
+            strBU = $('#ddlSrchBUMultiSelect').val().join(',');
+    }
+    
     if (BUCode == "undefined" || BUCode == "" || BUCode == null) {
         debugger;
         showAlert('E', "Business Unit Cannot be Blank.");
@@ -215,7 +225,7 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
             strTitles: tmpTitle,
             strDirector: tmpDirector,
             strLicensor: tmpLicensor,
-            strBU: $('#ddlSrchBU').val(),
+            strBU: strBU,
             strShowAll: ShowAll,
             strIncludeSubDeal: tmpChecked,
             strIncludeArchiveDeal: tmpArchiveChecked,

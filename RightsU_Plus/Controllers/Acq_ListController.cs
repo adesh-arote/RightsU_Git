@@ -401,11 +401,22 @@ namespace RightsU_Plus.Controllers
                         else
                             sql += " and Deal_Workflow_Status not in ('A','W','R')";
                     }
+                    string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
+                    if (Is_AllowMultiBUsyndeal != "Y")
+                    {
+                        obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
 
+                    }
 
-                    obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
-                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0)
+                    //obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
+                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0 && Is_AllowMultiBUsyndeal != "Y")
+                    {
                         sql += " And Business_Unit_Code In (" + obj_Acq_Syn_List_Search.BUCodes_Search + ") "; // AND is_active='Y'
+                    }
+                    else
+                    {
+                        sql += " And Business_Unit_Code In (" + strBU + ") "; // AND is_active='Y'
+                    }
 
                     if (obj_Acq_Syn_List_Search.strIncludeArchiveDeal == "Y")
                         sql += " AND (is_active in ('Y') OR ( Deal_Workflow_Status = 'AR'))";
