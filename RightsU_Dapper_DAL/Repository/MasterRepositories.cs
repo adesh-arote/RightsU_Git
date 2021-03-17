@@ -16,7 +16,9 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public void Add(Music_Deal_Dapper entity)
         {
-            base.AddEntity(entity);
+            Music_Deal_Dapper oldObj = Get(entity.Music_Deal_Code);
+            base.UpdateEntity(oldObj, entity);
+            //base.AddEntity(entity);
         }
         public void Update(Music_Deal_Dapper entity)
         {
@@ -100,6 +102,43 @@ namespace RightsU_Dapper.DAL.Repository
             errorMessage = param.Get<string>("@ErrorMessage");
             return Result;
 
+        }
+        public IEnumerable<Deal_Creation> USP_Insert_Music_Deal(Music_Deal_Dapper entity)
+        {
+            var param = new DynamicParameters();
+
+            param.Add("@Version", entity.Version);
+            param.Add("@Agreement_Date", entity.Agreement_Date);
+            param.Add("@Description", entity.Description);
+            param.Add("@Deal_Tag_Code", entity.Deal_Tag_Code);
+            param.Add("@Reference_No", entity.Reference_No);
+            param.Add("@Entity_Code", entity.Entity_Code);
+            param.Add("@Primary_Vendor_Code", entity.Primary_Vendor_Code);
+            param.Add("@Music_Label_Code", entity.Music_Label_Code);
+            param.Add("@Title_Type", entity.Title_Type);
+            param.Add("@Duration_Restriction", entity.Duration_Restriction);
+            param.Add("@Rights_Start_Date", entity.Rights_Start_Date);
+            param.Add("@Rights_End_Date", entity.Rights_End_Date);
+            param.Add("@Term", entity.Term);
+            param.Add("@Run_Type", entity.Run_Type);
+            param.Add("@No_Of_Songs", entity.No_Of_Songs);
+            param.Add("@Channel_Type", entity.Channel_Type);
+            param.Add("@Right_Rule_Code", entity.Right_Rule_Code);
+            param.Add("@Link_Show_Type", entity.Link_Show_Type);
+            param.Add("@Business_Unit_Code", entity.Business_Unit_Code);
+            param.Add("@Deal_Type_Code", entity.Deal_Type_Code);
+            param.Add("@Deal_Workflow_Status", entity.Deal_Workflow_Status);
+            param.Add("@Parent_Deal_Code", entity.Parent_Deal_Code);
+            param.Add("@Work_Flow_Code", entity.Work_Flow_Code);
+            param.Add("@Inserted_By", entity.Inserted_By);
+            param.Add("@Last_Action_By", entity.Last_Action_By);
+            param.Add("@Remarks", entity.Remarks);
+            param.Add("@Agreement_Cost", entity.Agreement_Cost);
+            param.Add("@Channel_Or_Category", entity.Channel_Or_Category);
+            param.Add("@Channel_Category_Code", entity.Channel_Category_Code);
+            param.Add("@Right_Rule_Type", entity.Right_Rule_Type);
+
+            return base.ExecuteSQLProcedure<Deal_Creation>("USP_Insert_Music_Deal", param);
         }
     }
 

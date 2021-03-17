@@ -665,7 +665,11 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    objMusic_Deal_Service.AddEntity(objMusicDeal);
+                    Deal_Creation objDC = objMusic_Deal_Service.USP_Insert_Music_Deal(objMusicDeal).ToList().FirstOrDefault();
+                    objMusicDeal.Agreement_No = objDC.Agreement_No;
+                    objMusicDeal.Music_Deal_Code = objDC.Deal_Code;
+                    objMusic_Deal_Service.UpdateMusic_Deal(objMusicDeal);
+
                 }
                 //isValid = objService.Save(objMusicDeal, out resultset);
                 isValid = true;

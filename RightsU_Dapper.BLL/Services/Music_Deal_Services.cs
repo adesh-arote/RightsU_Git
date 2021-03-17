@@ -23,9 +23,12 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objMusic_Deal_Repository.GetAll();
         }
-        public void AddEntity(Music_Deal_Dapper param)
+        public void AddEntity(Music_Deal_Dapper obj)
         {
-            objMusic_Deal_Repository.Add(param);
+            Deal_Creation objDC = objMusic_Deal_Repository.USP_Insert_Music_Deal(obj).ToList().FirstOrDefault();
+            obj.Agreement_No = objDC.Agreement_No;
+            obj.Music_Deal_Code = objDC.Deal_Code;
+            objMusic_Deal_Repository.Add(obj);
         }
         public void UpdateMusic_Deal(Music_Deal_Dapper obj)
         {
@@ -45,7 +48,10 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objMusic_Deal_Repository.USP_List_Music_Deal(searchText, agreement_No, startDate, endDate, deal_Type_Code, status_Code, business_Unit_Code, deal_Tag_Code, workflow_Status, vendor_Codes, show_Type_Code, title_Code, music_Label_Codes, isAdvance_Search, user_Code, pageNo, pageSize, out recordCount);
         }
-
+        public IEnumerable<Deal_Creation> USP_Insert_Music_Deal(Music_Deal_Dapper entity)
+        {
+            return objMusic_Deal_Repository.USP_Insert_Music_Deal(entity);
+        }
         public IEnumerable<USP_Music_Deal_Link_Show_Result> USP_Music_Deal_Link_Show(string channel_Code, string title_Name, string mode, Nullable<int> music_Deal_Code, string selectedTitleCodes)
         {
             return objMusic_Deal_Repository.USP_Music_Deal_Link_Show(channel_Code, title_Name, mode, music_Deal_Code, selectedTitleCodes);

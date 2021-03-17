@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Deal\Deal_Creation.cs" />
     <Compile Include="Deal\Deal_Schema.cs" />
     <Compile Include="Music_Deal_Entities\USP_List_Music_Deal_Result.cs" />
     <Compile Include="Music_Deal_Entities\Music_Deal.cs" />

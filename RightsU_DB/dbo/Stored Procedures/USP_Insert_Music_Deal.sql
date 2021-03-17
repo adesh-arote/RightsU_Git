@@ -54,5 +54,5 @@ BEGIN
 		@Link_Show_Type, @Business_Unit_Code, @Deal_Type_Code, @Deal_Workflow_Status, @Work_Flow_Code, @Parent_Deal_Code,
 		@Inserted_By, GETDATE(), GETDATE(), @Last_Action_By, @Remarks, @Agreement_Cost, @Channel_Or_Category, @Channel_Category_Code, @Right_Rule_Type
 
-	SELECT Music_Deal_Code, Agreement_No FROM Music_Deal WHERE Music_Deal_Code = SCOPE_IDENTITY()
+	SELECT Music_Deal_Code as Deal_Code , Agreement_No FROM Music_Deal WHERE Music_Deal_Code = SCOPE_IDENTITY()
 END

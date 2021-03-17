@@ -49,5 +49,23 @@ namespace RightsU_Dapper.DAL.Infrastructure
             }
         }
 
+        //public string ExecuteSqlInlineFunction()
+        //{
+        //    using (var connection = dbConnection.Connection())
+        //    {
+        //        connection.Open();
+        //        int queryTimeoutInSeconds = 120;
+        //        var param = new DynamicParameters();
+        //        param.Add("@Prefix", "A");
+        //        param.Add("@date", System.DateTime.Now);
+        //        param.Add("@MasterDealCode", 0);
+        //        string query = "UFN_Auto_Genrate_Agreement_No";
+        //        var result = connection.Query<string>("Select [dbo].[UFN_Auto_Genrate_Agreement_No](@Prefix, @date, @MasterDealCode)"
+        //            , param, commandType: CommandType.Text).FirstOrDefault();
+        //        //var result = SqlMapper.ExecuteScalar(connection, query, param, commandTimeout: queryTimeoutInSeconds, commandType: CommandType.StoredProcedure);
+        //        connection.Close();
+        //        return result.ToString();
+        //    }
+        //}
     }
 }
