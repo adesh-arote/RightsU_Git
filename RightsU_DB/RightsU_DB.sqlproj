@@ -1453,6 +1453,7 @@
     <Build Include="dbo\Stored Procedures\USPMHMovieAlbumMusicDetailsList.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_Schedule.sql" />
     <Build Include="dbo\Stored Procedures\USP_Get_Title_Import_Utility_AdvSearch.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Indiacast_Report_Country.sql" />
     <Build Include="dbo\Stored Procedures\USP_Acq_Deal_Rights_Validate.sql" />
   </ItemGroup>
   <ItemGroup>
