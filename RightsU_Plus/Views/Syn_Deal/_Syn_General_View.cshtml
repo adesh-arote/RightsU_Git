@@ -226,7 +226,16 @@ var Dealmode_SG_G = '@objSchema.Mode'
                                     <tr>
                                         <td>@objMessageKey.LicenseeAssignee</td>
                                         <td>@Model.Vendor.Vendor_Name</td>
-                                        <td>@objMessageKey.SaleAgent</td>
+     
+                                        @if (ViewBag.Is_Syn_LicensorAssignor == "Y")
+                                        {
+                                            <td>Licensor / Assignor </td>
+                                        }
+                                        else
+                                        {
+                                            <td>@objMessageKey.SaleAgent</td>
+                                        }
+
                                         <td>@ViewBag.SalesAgentName</td>
                                     </tr>
                                     <tr>
