@@ -129,7 +129,7 @@
 
                                         if (Show_Acq_SubDeal_List == "Y")
                                         {
-                                            string DealToLink = Model.Is_Master_Deal.Trim() == "Y" ? "Master Deal To Link" : "Sub Deal To Link";
+                                            string DealToLink = Model.Is_Master_Deal.Trim() == "Y" ? "Sub Deal Linked" : "Master Deal To Link";
                                             <td>@DealToLink</td>
 
                                             if (Model.Is_Master_Deal.Trim() != "Y")
@@ -146,18 +146,18 @@
                                             {
                                                 var subDeal_List = new RightsU_BLL.Acq_Deal_Service(objLoginEntity.ConnectionStringName)
                                                     .SearchFor(x => x.Is_Master_Deal == "N" && x.Agreement_No.Contains(Model.Agreement_No))
-                                                    .Select(x => new { x.Agreement_No, x.Master_Deal_Movie_Code_ToLink }).ToList();
+                                                    .Select(x => new { x.Agreement_No, x.Acq_Deal_Code, x.Master_Deal_Movie_Code_ToLink }).ToList();
 
                                                 <td>
                                                     <a title="More Sub Deal" id="show_hide" href="#" class="glyphicon glyphicon-sd-video show_hide"></a>
-                                                    <div id="extent" class="MoreActionDiv" style="right: 425px !important;display: block;width: 20%;text-align: center;color: grey;" onmouseover="MoreActionDiv_onHover()">
+                                                    <div id="extent" class="MoreActionDiv" style="right: 160px !important;display: block;width: 20%;text-align: center;color: grey;" onmouseover="MoreActionDiv_onHover()">
                                                         <table>
                                                             @foreach (var item in subDeal_List)
                                                             {
                                                                 string strMasterDeal = @GlobalParams.msgNA;
                                                                 if (item.Master_Deal_Movie_Code_ToLink != null && item.Master_Deal_Movie_Code_ToLink > 0)
-                                                                    strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == item.Master_Deal_Movie_Code_ToLink).
-                                                                        Select(w => w.Title.Title_Name).FirstOrDefault();
+                                                                    strMasterDeal = String.Join(", ", new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == item.Acq_Deal_Code).
+                                                                        Select(w => w.Title.Title_Name).ToList());
                                                                 <tr>
                                                                     <td>@strMasterDeal - @item.Agreement_No</td>
                                                                 </tr>
