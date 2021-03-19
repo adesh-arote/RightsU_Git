@@ -366,7 +366,9 @@ font-family:'Glyphicons';
 .glyphicon-save-file:before {
     content: "\e202";
 }
-
+.glyphicon-sd-video:before {
+    content: "\e186";
+}
 
 /*td a.glyphicon { padding: 3px 1px; }*/
  .glyphicon_Music {
