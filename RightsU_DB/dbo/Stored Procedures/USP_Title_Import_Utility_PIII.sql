@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_Title_Import_Utility_PIII]
+﻿CREATE PROCEDURE [dbo].[USP_Title_Import_Utility_PIII]
 (
 	@DM_Master_Import_Code INT
 )
