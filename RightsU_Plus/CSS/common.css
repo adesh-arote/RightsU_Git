@@ -1485,6 +1485,37 @@ button.close {
 		 width:900px;
 	 }
  }
+@media (min-width:960px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 308px;
+    }
+}
+
+@media (min-width:960px) and (max-width:1440px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 208px;
+    }
+}
+
+@media (min-width:1440px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 385px;
+    }
+}
+
+@media (min-width:1990px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 170px;
+    }
+}
 .tooltip {
     position: absolute;
     z-index: 1070;
