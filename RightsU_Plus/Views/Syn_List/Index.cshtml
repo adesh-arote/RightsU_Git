@@ -764,7 +764,7 @@
             <div class="container syn main_col" id="AllsubmenuHide">
                 <div class=" top_area">
                     <h2 class="pull-left">@objMessageKey.SyndicationDeals</h2>
-                    <div style="margin-top:20px;float:left;margin-left:535px;">
+                    <div class="MuBUList" style="">
                         @if (ViewBag.Is_AllowMultiBUsyndeal == "Y")
                         {
                             @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })

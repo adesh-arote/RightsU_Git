@@ -300,7 +300,7 @@ function validateSearch() {
     var ddlDealType = $('#ddlSrchDealType').val();
     if (Is_AllowMultiBUacqdeal == 'Y') {
         var ddlBUMulti = $('#ddlSrchBUMultiSelect').val();
-        if (ddlBUMulti.length == 0) {
+        if (ddlBUMulti == null || ddlBUMulti == "") {
             showAlert('E', "Business Unit Cannot be Blank.");
             return false;
         }
