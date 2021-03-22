@@ -211,6 +211,7 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
     if (BUCode == "undefined" || BUCode == "" || BUCode == null) {
         debugger;
         showAlert('E', "Business Unit Cannot be Blank.");
+        hideLoading();
         return false;
     }
     $.ajax({

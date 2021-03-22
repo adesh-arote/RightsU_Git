@@ -1493,15 +1493,23 @@ button.close {
     }
 }
 
-@media (min-width:960px) and (max-width:1440px) {
+@media (min-width:960px) and (max-width:1300px) {
     .MuBUList {
         margin-top: 20px;
         float: left;
-        margin-left: 208px;
+        margin-left: 233px;
     }
 }
 
-@media (min-width:1440px) {
+@media (min-width:1300px) and (max-width:1440px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 308px;
+    }
+}
+
+@media (min-width:1440px) and (max-width:1500px) {
     .MuBUList {
         margin-top: 20px;
         float: left;
@@ -1509,11 +1517,11 @@ button.close {
     }
 }
 
-@media (min-width:1990px) {
+@media (min-width:1500px) {
     .MuBUList {
         margin-top: 20px;
         float: left;
-        margin-left: 170px;
+        margin-left: 470px;
     }
 }
 .tooltip {
