@@ -85,20 +85,7 @@
         "MsgForSelectTitle": '@objMessageKey.Pleaseselectatleastonetitle'
     }
     $(document).ready(function () {
-        //debugger;
-        // $("#ancFileName").attr('href','Help/Masters/Layout.html?@Session["FileName"]');
-        //$('#ddlTitle_Search_List').SumoSelect();
-        //$('#ddlTitle_Search_List')[0].sumo.reload();
-        //debugger;
-        @*if('@TempData["approval"]'=="approvallist")
-        {
-
-            $("#ancFileName").attr('href', '../Help/Masters/Layout.html?ApprovalListPage');
-        }
-        else{
-            $("#ancFileName").attr('href', '../Help/Masters/Layout.html?syn_General');
-        }*@
-
+        $("#show_hide").parent().find('.MoreActionDiv').slideToggle('fast');
     });
 </script>
 <script>
@@ -109,6 +96,15 @@
         collapseTimer: 0,
         userCollapseText: '<span>[^]</span>'
     });
+    function MoreActionDiv_onHover() {
+        debugger
+        // Get the current title
+        var title = $('#show_hide').attr("data-original-title");
+        // Store it in a temporary attribute
+        $('#show_hide').attr("tmp_title", title);
+        // Set the title to nothing so we don't see the tooltips
+        $('#show_hide').attr("data-original-title", "");
+    }
 </script>
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
@@ -127,15 +123,63 @@
                                         string strDealType = Model.Is_Master_Deal.Trim() == "Y" ? "Master Deal" : "Sub Deal";
                                         <td>@strDealType</td>
                                     }
-                                    <td>@objMessageKey.MasterDealToLink</td>
                                     @{
-                                        int? masterDealMovieCode = Model.Master_Deal_Movie_Code_ToLink;
-                                        string strMasterDeal = @GlobalParams.msgNA;
-                                        if (masterDealMovieCode != null && masterDealMovieCode > 0)
-                                            strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == masterDealMovieCode).
-                                                Select(w => w.Title.Title_Name + " - " + w.Acq_Deal.Agreement_No).First();
+                                        string Show_Acq_SubDeal_List = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                                                        .SearchFor(x => x.Parameter_Name == "Show_Acq_SubDeal_List").Select(x => x.Parameter_Value).FirstOrDefault();
 
-                                        <td>@strMasterDeal</td>
+                                        if (Show_Acq_SubDeal_List == "Y")
+                                        {
+                                            string DealToLink = Model.Is_Master_Deal.Trim() == "Y" ? "Sub Deal Linked" : "Master Deal To Link";
+                                            <td>@DealToLink</td>
+
+                                            if (Model.Is_Master_Deal.Trim() != "Y")
+                                            {
+                                                int? masterDealMovieCode = Model.Master_Deal_Movie_Code_ToLink;
+                                                string strMasterDeal = @GlobalParams.msgNA;
+                                                if (masterDealMovieCode != null && masterDealMovieCode > 0)
+                                                    strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == masterDealMovieCode).
+                                                        Select(w => w.Title.Title_Name + " - " + w.Acq_Deal.Agreement_No).First();
+
+                                                <td>@strMasterDeal</td>
+                                            }
+                                            else
+                                            {
+                                                var subDeal_List = new RightsU_BLL.Acq_Deal_Service(objLoginEntity.ConnectionStringName)
+                                                    .SearchFor(x => x.Is_Master_Deal == "N" && x.Agreement_No.Contains(Model.Agreement_No))
+                                                    .Select(x => new { x.Agreement_No, x.Acq_Deal_Code, x.Master_Deal_Movie_Code_ToLink }).ToList();
+
+                                                <td>
+                                                    <a title="More Sub Deal" id="show_hide" href="#" class="glyphicon glyphicon-sd-video show_hide"></a>
+                                                    <div id="extent" class="MoreActionDiv" style="right: 160px !important;display: block;width: 20%;text-align: center;color: grey;" onmouseover="MoreActionDiv_onHover()">
+                                                        <table>
+                                                            @foreach (var item in subDeal_List)
+                                                            {
+                                                                string strMasterDeal = @GlobalParams.msgNA;
+                                                                if (item.Master_Deal_Movie_Code_ToLink != null && item.Master_Deal_Movie_Code_ToLink > 0)
+                                                                    strMasterDeal = String.Join(", ", new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == item.Acq_Deal_Code).
+                                                                        Select(w => w.Title.Title_Name).ToList());
+                                                                <tr>
+                                                                    <td>@strMasterDeal - @item.Agreement_No</td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>@objMessageKey.MasterDealToLink</td>
+
+                                            int? masterDealMovieCode = Model.Master_Deal_Movie_Code_ToLink;
+                                            string strMasterDeal = @GlobalParams.msgNA;
+                                            if (masterDealMovieCode != null && masterDealMovieCode > 0)
+                                                strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == masterDealMovieCode).
+                                                    Select(w => w.Title.Title_Name + " - " + w.Acq_Deal.Agreement_No).First();
+
+                                            <td>@strMasterDeal</td>
+
+                                        }
                                     }
                                 </tr>
                                 <tr>
