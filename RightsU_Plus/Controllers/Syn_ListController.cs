@@ -136,6 +136,9 @@ namespace RightsU_Plus.Controllers
             //ViewBag.Workflow_List = BindWorkflowStatus();
             ViewBag.PageNo = obj_Acq_Syn_List_Search.PageNo - 1;
             ViewBag.ReleaseRecord = ReleaseRecord;
+            string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
+            ViewBag.Is_AllowMultiBUsyndeal = Is_AllowMultiBUsyndeal;
+
             ViewBag.BusineesUnitList = BindBUList();
             if (obj_Acq_Syn_List_Search.BUCode == null)
             {
@@ -209,10 +212,21 @@ namespace RightsU_Plus.Controllers
                         //        else
                         //            sql += " AND Deal_Workflow_Status NOT IN ('A','W','R')";
                     }
+                    string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
+                    if (Is_AllowMultiBUsyndeal != "Y")
+                    {
+                        obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
 
-                    obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
-                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0)
+                    }
+                    //obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
+                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0 && Is_AllowMultiBUsyndeal != "Y")
+                    {
                         sql += " And Business_Unit_Code In (" + obj_Acq_Syn_List_Search.BUCodes_Search + ") ";// AND is_active='Y' ";
+                    }
+                    else
+                    {
+                        sql += " And Business_Unit_Code In (" + strBU + ") ";// AND is_active='Y' ";
+                    }
 
                     if (obj_Acq_Syn_List_Search.strIncludeArchiveDeal == "Y")
                         sql += " AND (is_active in ('Y') OR ( Deal_Workflow_Status = 'AR'))";
@@ -223,7 +237,7 @@ namespace RightsU_Plus.Controllers
                 {
                     obj_Acq_Syn_List_Search.Common_Search = !string.IsNullOrEmpty(commonSearch.Trim()) ? commonSearch.Trim().Replace("'", "''") : "";
                     obj_Acq_Syn_List_Search.BUCode = strBUCode;
-                    sql += "AND Business_Unit_Code =" + obj_Acq_Syn_List_Search.BUCode;
+                    sql += "AND Business_Unit_Code IN (" + obj_Acq_Syn_List_Search.BUCode + ") ";
 
                     if (strIncludeArchiveDeal == "Y")
                         sql += " AND (is_active in ('Y') OR ( Deal_Workflow_Status = 'AR'))";
@@ -251,7 +265,7 @@ namespace RightsU_Plus.Controllers
                                     else
                                         sql += " AND Deal_Workflow_Status <> 'AR' AND is_active ='Y' ";
 
-                                    sql += " OR Business_Unit_Code =" + obj_Acq_Syn_List_Search.BUCode + " AND (agreement_no like '%" + commonStr[i - 1] + "%'"
+                                    sql += " OR Business_Unit_Code IN (" + obj_Acq_Syn_List_Search.BUCode + ") AND (agreement_no like '%" + commonStr[i - 1] + "%'"
                                           + " OR Entity_Code IN (SELECT Entity_Code FROM Entity WHERE Entity_Name LIKE N'%" + commonStr[i - 1] + "%')"
                                           + " OR Vendor_Code IN (SELECT Vendor_Code FROM Vendor WHERE Vendor_Name LIKE N'%" + commonStr[i - 1] + "%')"
                                           + " OR Syn_Deal_Code IN (SELECT Syn_Deal_Code FROM Syn_Deal_Movie WHERE Title_Code IN (SELECT Title_Code FROM Title WHERE Title_name  LIKE N'%" + commonStr[i - 1] + "%')))";
@@ -699,7 +713,7 @@ namespace RightsU_Plus.Controllers
 
             }
 
-            Archive:
+        Archive:
             if (CommandName == "SendForArchive" || CommandName == "Archive")
             {
                 count = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Syn_Deal_Code == Acq_Deal_Code && (s.Deal_Workflow_Status == "AR" || s.Deal_Workflow_Status == "WA")).Count();
@@ -719,7 +733,7 @@ namespace RightsU_Plus.Controllers
                     isLocked = objCommonUtil.Lock_Record(Acq_Deal_Code, GlobalParams.ModuleCodeForSynDeal, objLoginUser.Users_Code, out RLCode, out message, objLoginEntity.ConnectionStringName);
             }
 
-            End:
+        End:
             //if (message == "" && Key == "AR")
             //{
             //    List<int?> lstTitle_Code = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
@@ -1002,10 +1016,10 @@ namespace RightsU_Plus.Controllers
         {
             return new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type == "S"), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name");
         }
-        private SelectList BindBUList()
+        private MultiSelectList BindBUList()
         {
 
-            return new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)), "Business_Unit_Code", "Business_Unit_Name", obj_Acq_Syn_List_Search.BUCode);
+            return new MultiSelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)), "Business_Unit_Code", "Business_Unit_Name", obj_Acq_Syn_List_Search.BUCode);
         }
         #endregion
 

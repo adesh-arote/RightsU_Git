@@ -27,7 +27,7 @@ BEGIN
 	--, @End_Date Varchar(30)
 	--, @Deal_Tag_Code Int
 	--, @Title_Codes Varchar(100)
-	--, @Business_Unit_code INT
+	--, @Business_Unit_code VARCHAR(100)
 	--, @Is_Pushback Varchar(100)
 	--, @IS_Expired Varchar(100)
 	--, @IS_Theatrical varchar(100)
@@ -39,19 +39,19 @@ BEGIN
 	--SET @Start_Date= ''
 	--SET @End_Date = ''
 	--SET @Deal_Tag_Code = 0
-	--SET @Title_Codes = ''
-	--SET @Business_Unit_code = 1
+	--SET @Title_Codes = '703'
+	--SET @Business_Unit_code = '1,5'
 	--SET @Is_Pushback = 'N'
-	--SET @IS_Expired  = 'Y'
+	--SET @IS_Expired  = 'N'
 	--SET @IS_Theatrical='N'
 	--SET @SysLanguageCode = 1
-	--SET @DealSegment = 0
-	--SET @TypeOfFilm = 3
+	--SET @DealSegment = ''
+	--SET @TypeOfFilm = ''
 	
-	if CHARINDEX(',',@Business_Unit_code) > 0
-	begin
-	   set @Business_Unit_code = 0
-	end
+	--if CHARINDEX(',',@Business_Unit_code) > 0
+	--begin
+	--   set @Business_Unit_code = 0
+	--end
       
 	DECLARE
 	@Col_Head01 NVARCHAR(MAX) = '',  
@@ -366,7 +366,8 @@ BEGIN
 			AND (ISNULL(SDR.Is_Pushback, 'N') = @Is_Pushback OR @Is_Pushback = '')
 			AND (SD.Deal_Tag_Code = @Deal_Tag_Code OR @Deal_Tag_Code = 0) 
 			--AND(@Business_Unit_code = '' OR SD.Business_Unit_Code in(select number from fn_Split_withdelemiter(@Title_Codes,',')))
-			AND (SD.Business_Unit_Code = CAST(@Business_Unit_code AS INT) OR CAST(@Business_Unit_code AS INT) = 0)
+			--AND (SD.Business_Unit_Code = CAST(@Business_Unit_code AS INT) OR CAST(@Business_Unit_code AS INT) = 0)
+			AND (SD.Business_Unit_Code IN (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
 			AND (@Title_Codes = '' OR SDRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Codes,',')))
 			AND (SDR.Syn_Deal_Rights_Code In 
 			(SELECT SDRP.Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Platform SDRP 

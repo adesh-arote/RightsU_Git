@@ -273,6 +273,8 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.TypeOfFilm = new SelectList(new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == 2).Select(x => new { Columns_Value_Code = x.Columns_Value_Code, Columns_Value = x.Columns_Value }).ToList(), "Columns_Value_Code", "Columns_Value");
             }
+            var Is_AllowMultiBUacqdealreport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdealreport").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.Is_AllowMultiBUacqdealreport = Is_AllowMultiBUacqdealreport;
             return View();
         }
         public ActionResult AuditTrailReport()
@@ -390,16 +392,16 @@ namespace RightsU_Plus.Controllers
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }
-        public JsonResult PopulateTitleNameForAcqDeal(int BU_Code, string keyword = "")
+        public JsonResult PopulateTitleNameForAcqDeal(string BU_Code, string keyword = "")
         {
             List<string> arrBUCodes = new List<string>();
 
-            if (BU_Code == 0)
+            if (BU_Code == "0")
             {
                 arrBUCodes = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active != " " && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code))
                     .Select(s => s.Business_Unit_Code.ToString()).ToList();
             }
-            else if (BU_Code == -1)
+            else if (BU_Code == "-1")
             {
                 var listOfGEC = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
                 var templistOfGEC = listOfGEC.Split(',').ToList();
@@ -409,12 +411,13 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                arrBUCodes.Add(BU_Code.ToString());
+                arrBUCodes = BU_Code.Split(',').ToList();
             }
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
             {
                 List<string> terms = keyword.Split('﹐').ToList();
+               
                 terms = terms.Select(s => s.Trim()).ToList();
                 string searchString = terms.LastOrDefault().ToString().Trim();
 
@@ -488,17 +491,19 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.TypeOfFilm = new SelectList(new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == 2).Select(x => new { Columns_Value_Code = x.Columns_Value_Code, Columns_Value = x.Columns_Value }).ToList(), "Columns_Value_Code", "Columns_Value");
             }
+            var Is_AllowMultiBUsyndealreport = ViewBag.Is_AllowMultiBUsyndealreport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUsyndealreport").Select(x => x.Parameter_Value).FirstOrDefault();
+
             return View();
         }
-        public JsonResult BindSynTitleList(int BU_Code, string keyword = "")
+        public JsonResult BindSynTitleList(string BU_Code, string keyword = "")
         {
             List<string> arrBUCodes = new List<string>();
-            if (BU_Code == 0)
+            if (BU_Code == "0")
             {
                 arrBUCodes = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active != " " && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code))
                     .Select(s => s.Business_Unit_Code.ToString()).ToList();
             }
-            else if (BU_Code == -1)
+            else if (BU_Code == "-1")
             {
                 var listOfGEC = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
                 var templistOfGEC = listOfGEC.Split(',').ToList();
@@ -508,7 +513,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                arrBUCodes.Add(BU_Code.ToString());
+                arrBUCodes = BU_Code.Split(',').ToList();
             }
 
             dynamic result = "";
@@ -855,16 +860,20 @@ namespace RightsU_Plus.Controllers
           .Select(i => new { Display_Value = i.Business_Unit_Code, Display_Text = i.Business_Unit_Name }).ToList().Distinct(),
           "Display_Value", "Display_Text").ToList();
 
-            if (isRightForAllGEC)
-            {
-                list.Insert(0, new SelectListItem() { Selected = true, Text = "All Regional GEC", Value = "-1" });
-            }
+            var Is_AllowMultiBUacqdealreport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdealreport").Select(x => x.Parameter_Value).FirstOrDefault();
 
-            if (isRightForAllBusinessUnit)
+            if (Is_AllowMultiBUacqdealreport != "Y")
             {
-                list.Insert(0, new SelectListItem() { Selected = true, Text = "All Business Unit", Value = "0" });
-            }
+                if (isRightForAllGEC)
+                {
+                    list.Insert(0, new SelectListItem() { Selected = true, Text = "All Regional GEC", Value = "-1" });
+                }
 
+                if (isRightForAllBusinessUnit)
+                {
+                    list.Insert(0, new SelectListItem() { Selected = true, Text = "All Business Unit", Value = "0" });
+                }
+            }
             return new SelectList(list, "Value", "Text");
         }
         #region -------------- Platform Wise Syndication--------
