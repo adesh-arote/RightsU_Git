@@ -28,13 +28,13 @@ BEGIN
 	SELECT 'Is_Acq_rights_delay_validation' ,'Y','Y'
 END
 
-IF	EXISTS(SELECT TOP 1 * FROM  Extended_Columns WHERE Columns_Name = 'Creative Producer')
+IF	NOT EXISTS(SELECT TOP 1 * FROM  Extended_Columns WHERE Columns_Name = 'Creative Producer')
 BEGIN
 	INSERT INTO Extended_Columns (Columns_Name,Control_Type,Is_Ref,Is_Defined_Values,Is_Multiple_Select,Ref_Table,Ref_Display_Field,Ref_Value_Field,Additional_Condition)
 	VALUES ('Creative Producer', 'DDL', 'Y','N','Y','TALENT','Talent_Name',	'Talent_Code',	4)
 END
 
-IF	EXISTS(SELECT TOP 1 * FROM  Role WHERE Role_Name = 'Name of Broker/Purchase Agent')
+IF	NOT EXISTS(SELECT TOP 1 * FROM  Role WHERE Role_Name = 'Name of Broker/Purchase Agent')
 BEGIN
 	INSERT INTO Role(Role_Name,Role_Type,Is_Rate_Card,Last_Action_By,Lock_Time,Last_Updated_Time,Deal_Type_Code)
 	VALUES ('Name of Broker/Purchase Agent','V,S','N',NULL,NULL,NULL,NULL)
