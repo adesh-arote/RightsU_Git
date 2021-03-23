@@ -46,7 +46,7 @@ BEGIN
 		DECLARE @BU_Code Int = 0
 		DECLARE  @DefaultSiteUrl_Param NVARCHAR(500) = ''
 		DECLARE @DefaultSiteUrl VARCHAR(500) SET @DefaultSiteUrl = ''  
-		DECLARE @Is_AllowsendmailforV18 VARCHAR(10) = ''
+		DECLARE @Is_CustomUsers_WF_SendMail VARCHAR(10) = ''
 		DECLARE @Email_Config_Code INT
 		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='AIN'
 
@@ -238,10 +238,10 @@ BEGIN
 			WHERE MWD.Is_Done = 'Y' AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode 
 				  AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
 		END
-		SELECT @Is_AllowsendmailforV18 = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AllowsendmailforV18'
+		SELECT @Is_CustomUsers_WF_SendMail = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_CustomUsers_WF_SendMail'
 		DECLARE @Email_Config_Code_V18 VARCHAR(10)
-		SELECT @Email_Config_Code_V18 = Email_Config_Code from Email_Config where [Key] = 'ASV18'
-		IF(@Is_AllowsendmailforV18 = 'Y')
+		SELECT @Email_Config_Code_V18 = Email_Config_Code from Email_Config where [Key] = 'ASCM'
+		IF(@Is_CustomUsers_WF_SendMail = 'Y' AND @Is_Deal_Approved = 0)
 		BEGIN
 			INSERT INTO #TempCursorOnRej(Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code)
 			SELECT DISTINCT usr.Email_id,
@@ -249,16 +249,13 @@ BEGIN
 			+ ' ' + ISNULL(UPPER(LEFT(usr.Middle_Name,1))+LOWER(SUBSTRING(usr.Middle_Name,2,LEN(usr.Middle_Name))), '') 
 			+ ' ' + ISNULL(UPPER(LEFT(usr.Last_Name,1))+LOWER(SUBSTRING(usr.Last_Name,2,LEN(usr.Last_Name))), '') 
 			+ '   ('+ ISNULL(SG.Security_Group_Name,'') + ')',
-			SG.Security_Group_Name,  MWD.Next_Level_Group, usr.Security_Group_Code, usr.Users_Code 
+			SG.Security_Group_Name, '', usr.Security_Group_Code, usr.Users_Code 
 			FROM Email_Config ec
 			INNER JOIN Email_Config_Detail ecd ON ecd.Email_Config_Code = ec.Email_Config_Code
 			INNER JOIN Email_Config_Detail_User ecdu ON ecdu.Email_Config_Detail_Code = ecd.Email_Config_Detail_Code
 			INNER JOIN Users usr ON usr.Users_Code IN (select number from fn_Split_withdelemiter(ecdu.User_Codes,',')) AND usr.Is_Active = 'Y'
-			INNER JOIN Module_Workflow_Detail MWD ON usr.Security_Group_Code = MWD.Group_Code
-			INNER JOIN Users_Business_Unit UBU ON Usr.Users_Code = UBU.Users_Code AND UBU.Business_Unit_Code IN (@BU_Code)
 			INNER JOIN Security_Group SG ON SG.Security_Group_Code = Usr.Security_Group_Code
-			WHERE ec.email_config_code = @Email_Config_Code_V18 AND MWD.Is_Done = 'Y' AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode 
-				  AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
+			WHERE ec.email_config_code = @Email_Config_Code_V18 
 		END
 		--select * from #TempCursorOnRej
 		--return

@@ -164,12 +164,12 @@ BEGIN
 		INNER JOIN Module_Workflow_Detail MWD ON MWD.Primary_User_Code = U1.Users_Code AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode
 			AND Module_Workflow_Detail_Code < @module_workflow_detail_code
 
-		DECLARE @Is_AllowsendmailforV18 VARCHAR(10)
-		SELECT @Is_AllowsendmailforV18 = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AllowsendmailforV18'
+		DECLARE @Is_CustomUsers_WF_SendMail VARCHAR(10)
+		SELECT @Is_CustomUsers_WF_SendMail = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_CustomUsers_WF_SendMail'
 		DECLARE @Email_Config_Code_V18 VARCHAR(10)
-		SELECT @Email_Config_Code_V18 = Email_Config_Code from Email_Config where [Key] = 'ASV18'
+		SELECT @Email_Config_Code_V18 = Email_Config_Code from Email_Config where [Key] = 'ASCM'
 
-		IF(@Is_AllowsendmailforV18 = 'Y')
+		IF(@Is_CustomUsers_WF_SendMail = 'Y')
 		BEGIN
 			INSERT INTO #TempCursorOnRej(First_name, Security_group_name, Email_id, Security_group_code, User_code)
 			SELECT DISTINCT ISNULL(usr.First_Name,'') + ' ' + ISNULL(usr.Middle_Name,'') + ' ' + ISNULL(usr.Last_Name,'') + '   ('+ ISNULL(SG.Security_Group_Name,'') + ')',
@@ -178,11 +178,8 @@ BEGIN
 			INNER JOIN Email_Config_Detail ecd ON ecd.Email_Config_Code = ec.Email_Config_Code
 			INNER JOIN Email_Config_Detail_User ecdu ON ecdu.Email_Config_Detail_Code = ecd.Email_Config_Detail_Code
 			INNER JOIN Users usr ON usr.Users_Code IN (select number from fn_Split_withdelemiter(ecdu.User_Codes,',')) AND usr.Is_Active = 'Y'
-			INNER JOIN Module_Workflow_Detail MWD ON usr.Security_Group_Code = MWD.Group_Code
-			INNER JOIN Users_Business_Unit UBU ON Usr.Users_Code = UBU.Users_Code AND UBU.Business_Unit_Code IN (@BUCode)
 			INNER JOIN Security_Group SG ON SG.Security_Group_Code = Usr.Security_Group_Code
-			WHERE ec.email_config_code = @Email_Config_Code_V18 AND MWD.Is_Done = 'Y' AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode 
-				  AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
+			WHERE ec.email_config_code = @Email_Config_Code_V18 
 		END
 
 		/* CURSOR START */

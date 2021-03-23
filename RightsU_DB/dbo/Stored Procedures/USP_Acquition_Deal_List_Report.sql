@@ -10,7 +10,8 @@ CREATE Procedure [dbo].[USP_Acquition_Deal_List_Report](
 	@Is_Pushback VARCHAR(100), 
 	@SysLanguageCode INT,
 	@DealSegment INT,
-	@TypeOfFilm INT)
+	@TypeOfFilm INT
+)
 As
 -- =============================================
 -- Author:		Abhaysingh N. Rajpurohit
@@ -32,8 +33,8 @@ BEGIN
 	--, @DealSegment INT= 0
 	--, @TypeOfFilm INT = 3
 
-	IF CHARINDEX(',',@Business_Unit_code) > 0 
-		set @Business_Unit_code = '0'
+	--IF CHARINDEX(',',@Business_Unit_code) > 0 
+	--	set @Business_Unit_code = '0'
 
 	DECLARE 
 	@Col_Head01 NVARCHAR(MAX) = '',  
@@ -429,7 +430,8 @@ BEGIN
 		AND AD.Agreement_No like '%' + @Agreement_No + '%' 
 		AND (AD.Is_Master_Deal = @Is_Master_Deal Or @Is_Master_Deal = '')
 		AND (AD.Deal_Tag_Code = @Deal_Tag_Code OR @Deal_Tag_Code = 0) 
-		AND (AD.Business_Unit_Code = CAST(@Business_Unit_code AS INT) OR CAST(@Business_Unit_code AS INT) = 0)
+		--AND (AD.Business_Unit_Code = CAST(@Business_Unit_code AS INT) OR CAST(@Business_Unit_code AS INT) = 0)
+		AND (AD.Business_Unit_Code IN (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
 		AND (
 				@Title_Name = '' OR ADRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,','))
 				OR 
@@ -689,7 +691,8 @@ BEGIN
 			AND AD.Agreement_No like '%' + @Agreement_No + '%' 
 			AND (AD.Is_Master_Deal = @Is_Master_Deal Or @Is_Master_Deal = '')
 			AND (AD.Deal_Tag_Code = @Deal_Tag_Code OR @Deal_Tag_Code = 0) 
-			AND (AD.Business_Unit_Code = CAST(@Business_Unit_code AS INT)OR CAST(@Business_Unit_code AS INT) = 0)
+			--AND (AD.Business_Unit_Code = CAST(@Business_Unit_code AS INT)OR CAST(@Business_Unit_code AS INT) = 0)
+			AND (AD.Business_Unit_Code IN (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
 			AND (@Title_Name = '' OR ADPT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,',')))
 
 		PRINT 'Insertion in temp table In Pushback'
