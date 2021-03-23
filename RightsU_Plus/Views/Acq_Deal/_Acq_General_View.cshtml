@@ -58,6 +58,11 @@
     .SumoSelect {
         width: 94% !important;
     }
+
+    .subDealLabel:hover {
+        color: blue;
+        cursor: pointer !important;
+    }
 </style>
 <script>
 
@@ -148,23 +153,36 @@
                                                     .SearchFor(x => x.Is_Master_Deal == "N" && x.Agreement_No.Contains(Model.Agreement_No))
                                                     .Select(x => new { x.Agreement_No, x.Acq_Deal_Code, x.Master_Deal_Movie_Code_ToLink }).ToList();
 
-                                                <td>
-                                                    <a title="More Sub Deal" id="show_hide" href="#" class="glyphicon glyphicon-sd-video show_hide"></a>
-                                                    <div id="extent" class="MoreActionDiv" style="right: 160px !important;display: block;width: 20%;text-align: center;color: grey;" onmouseover="MoreActionDiv_onHover()">
-                                                        <table>
-                                                            @foreach (var item in subDeal_List)
-                                                            {
-                                                                string strMasterDeal = @GlobalParams.msgNA;
-                                                                if (item.Master_Deal_Movie_Code_ToLink != null && item.Master_Deal_Movie_Code_ToLink > 0)
-                                                                    strMasterDeal = String.Join(", ", new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == item.Acq_Deal_Code).
-                                                                        Select(w => w.Title.Title_Name).ToList());
-                                                                <tr>
-                                                                    <td>@strMasterDeal - @item.Agreement_No</td>
-                                                                </tr>
-                                                            }
-                                                        </table>
-                                                    </div>
-                                                </td>
+                                                if (subDeal_List.Count > 0)
+                                                {
+                                                    <td>
+                                                        <a title="More Sub Deal" id="show_hide" href="#" class="glyphicon glyphicon-sd-video show_hide"></a>
+                                                        <div id="extent" class="MoreActionDiv" style="right: 160px !important;display: block;width: 20%;text-align: center;color: grey;" onmouseover="MoreActionDiv_onHover()">
+                                                            <table>
+                                                                @foreach (var item in subDeal_List)
+                                                                {
+                                                                    string strMasterDeal = @GlobalParams.msgNA;
+                                                                    if (item.Master_Deal_Movie_Code_ToLink != null && item.Master_Deal_Movie_Code_ToLink > 0)
+                                                                        strMasterDeal = String.Join(", ", new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == item.Acq_Deal_Code).
+                                                                            Select(w => w.Title.Title_Name).ToList());
+                                                                    <tr>
+                                                                        <td>
+                                                                            <a href="#"
+                                                                               onclick="window.location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = item.Acq_Deal_Code, id = Model.Acq_Deal_Code }) '; showLoading(); ">
+                                                                                @Html.Label("id", strMasterDeal + "-" + item.Agreement_No, new { @class = "subDealLabel" })
+                                                                            </a>
+
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>NA</td>
+                                                }
                                             }
                                         }
                                         else
@@ -371,8 +389,18 @@
                         <div class="bottom_action" onclick="hideStarCast()">
                             <ul class="form_link_nav clearfix">
                                 <li>
-                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                           onclick="location.href='@Url.Action("Cancel", "Acq_General")    '">
+                                    @if (Show_Acq_SubDeal_List == "Y" && Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                    {
+                                        <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })    '">
+
+                                    }
+                                    else
+                                    {
+                                        <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="location.href='@Url.Action("Cancel", "Acq_General")    '">
+
+                                    }
                                 </li>
                             </ul>
                         </div>

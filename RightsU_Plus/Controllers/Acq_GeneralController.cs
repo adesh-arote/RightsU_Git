@@ -137,6 +137,7 @@ namespace RightsU_Plus.Controllers
         #region --- New Changes ---
         public PartialViewResult Index()
         {
+            int prevAcq_Deal = 0;
             Dictionary<string, string> obj_Dictionary = new Dictionary<string, string>();
             Dictionary<string, string> obj_Dictionary_Title = new Dictionary<string, string>();
             if (TempData["QueryString"] != null)
@@ -148,8 +149,11 @@ namespace RightsU_Plus.Controllers
                 Acq_Deal_Code = Convert.ToInt32(obj_Dictionary["Acq_Deal_Code"]);
                 objDeal_Schema.Mode = Convert.ToString(obj_Dictionary["Mode"]).Trim();
                 objDeal_Schema.Pushback_Text = obj_Dictionary["Pushback_Text"];
-
-
+                
+                if (obj_Dictionary.ContainsKey("prevAcqDeal"))
+                {
+                    prevAcq_Deal = Convert.ToInt32(obj_Dictionary["prevAcqDeal"]);
+                }
             }
             else
             {
@@ -191,8 +195,8 @@ namespace RightsU_Plus.Controllers
             string IsConfirmingParty = ViewBag.Is_Acq_Confirming_Party = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Confirming_Party").Select(x => x.Parameter_Value).FirstOrDefault();
             string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.DealSegment = AllowDealSegment;
-
-            if(IsConfirmingParty.ToUpper() == "Y")
+            
+            if (IsConfirmingParty.ToUpper() == "Y")
             {
                 ViewBag.lstConfirmingParty = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active.ToUpper() == "Y").Select(x => new { Vendor_Code = x.Vendor_Code, Vendor_Name = x.Vendor_Name} ).ToList(), "Vendor_Code", "Vendor_Name").ToList();
             }
@@ -241,7 +245,7 @@ namespace RightsU_Plus.Controllers
                     int Confirming_Code = Convert.ToInt32(objAD_Session.Confirming_Party);
                     objAD_Session.Confirming_Party = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Vendor_Code == Confirming_Code).Select(x => x.Vendor_Name).FirstOrDefault();
                 }
-
+                ViewBag.prevAcq_Deal = prevAcq_Deal;
                 viewName = "~/Views/Acq_Deal/_Acq_General_View.cshtml";
             }
             ViewBag.Record_Locking_Code = 0;
