@@ -171,7 +171,7 @@ function Show_Error_Popup(search_Titles, Page_Size, Page_No, Syn_Deal_Code) {
 }
 /*Bind the Grid*/
 function LoadDeals(pagenumber, isAdvanced, showAll) {
-
+    debugger;
     var BUCode = $('#ddlBUUnit').val();
     if (showLD == 'Y')
         showLoading();

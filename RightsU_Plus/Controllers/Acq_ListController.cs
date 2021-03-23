@@ -743,7 +743,8 @@ namespace RightsU_Plus.Controllers
                 obj.Add("RLCode", RLCode.ToString());
                 obj.Add("ClearSrchSession", "N");
                 obj.Add("Pushback_Text", Pushback_Text);
-
+                if (CommandName == "View" && id > 0)
+                    obj.Add("prevAcqDeal", Convert.ToString(id));
                 TempData["QueryString"] = obj;
                 TempData["QS_LayOut"] = null;
                 if (CommandName == "Content")
