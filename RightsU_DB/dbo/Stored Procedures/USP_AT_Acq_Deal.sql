@@ -73,13 +73,13 @@ BEGIN
 		Parent_Deal_Code, Work_Flow_Code, Amendment_Date, Is_Released, Release_On, Release_By, Is_Completed, Is_Active, Content_Type, 
 		Payment_Terms_Conditions, Status, Is_Auto_Generated, Is_Migrated, Cost_Center_Id, Master_Deal_Movie_Code_ToLink, BudgetWise_Costing_Applicable, 
 		Validate_CostWith_Budget, Deal_Tag_Code, Business_Unit_Code, Ref_BMS_Code, Remarks, Rights_Remarks, Payment_Remarks, Inserted_By, 
-		Inserted_On, Last_Updated_Time, Last_Action_By, Deal_Complete_Flag, All_Channel,Role_Code, Channel_Cluster_Code, Is_Auto_Push, Deal_Segment_Code, Revenue_Vertical_Code)
+		Inserted_On, Last_Updated_Time, Last_Action_By, Deal_Complete_Flag, All_Channel,Role_Code, Channel_Cluster_Code, Is_Auto_Push, Deal_Segment_Code, Revenue_Vertical_Code, Confirming_Party)
 	SELECT Acq_Deal_Code, Agreement_No, Version, Agreement_Date, Deal_Desc, Deal_Type_Code, Year_Type, Entity_Code, Is_Master_Deal,
 		Category_Code, Vendor_Code, Vendor_Contacts_Code, Currency_Code, Exchange_Rate, Ref_No, Attach_Workflow, Deal_Workflow_Status,
 		Parent_Deal_Code, Work_Flow_Code, Amendment_Date, Is_Released, Release_On, Release_By, Is_Completed, Is_Active, Content_Type,
 		Payment_Terms_Conditions, Status, Is_Auto_Generated, Is_Migrated, Cost_Center_Id, Master_Deal_Movie_Code_ToLink, BudgetWise_Costing_Applicable,
 		Validate_CostWith_Budget, Deal_Tag_Code, Business_Unit_Code, Ref_BMS_Code, Remarks, Rights_Remarks, Payment_Remarks, Inserted_By,
-		Inserted_On, Last_Updated_Time, Last_Action_By, Deal_Complete_Flag, All_Channel,Role_Code, Channel_Cluster_Code, Is_Auto_Push, Deal_Segment_Code, Revenue_Vertical_Code
+		Inserted_On, Last_Updated_Time, Last_Action_By, Deal_Complete_Flag, All_Channel,Role_Code, Channel_Cluster_Code, Is_Auto_Push, Deal_Segment_Code, Revenue_Vertical_Code, Confirming_Party
 	FROM Acq_Deal WHERE Deal_Workflow_Status NOT IN ('AR', 'WA') AND Acq_Deal_Code = @Acq_Deal_Code 
 			
 	/******************************** Holding identity of AT_Acq_Deal *****************************************/ 

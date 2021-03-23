@@ -1450,6 +1450,11 @@
     <Build Include="dbo\Stored Procedures\USP_Title_Import_RCData.sql" />
     <Build Include="dbo\Stored Procedures\USPMHMovieAlbumMusicDetailsList.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_Schedule.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Get_Title_Import_Utility_AdvSearch.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Indiacast_Report_Country.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Acq_Deal_Rights_Validate.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_Delay_Rights_Duplication_Acq.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Deal_WF_Pending_Automated_Email.sql" />
     <None Include="Database Scripts\DBConfig_v5.0.4.sql" />
     <None Include="Database Scripts\DBSchema_v5.0.4.sql" />
     <None Include="Database Scripts\DBSchema_ShowAvail_v5.0.4.sql" />

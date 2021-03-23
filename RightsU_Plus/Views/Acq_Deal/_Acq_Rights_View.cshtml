@@ -9,10 +9,16 @@
         objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
     }
 
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
     if (Session["Rights_Page_Properties"] != null)
     {
         objPage_Properties = (RightsU_Plus.Controllers.Rights_Page_Properties)Session["Rights_Page_Properties"];
     }
+    RightsU_BLL.System_Parameter_New_Service objSPNService = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -136,12 +142,24 @@
                                     <br />
                                     <label class="bold">@objMessageKey.RightsDefinition</label>
                                     <div class="platform_checkbox">
-                                        <label>@objMessageKey.ExclusiveRights : @(Model.Is_Exclusive == "Y" ? "Yes" : "No")</label>
+                                        @{
+                                            string Is_Acq_Syn_CoExclusive = "";
+                                            Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+                                        }
+                                        @if (Is_Acq_Syn_CoExclusive == "Y")
+                                        {
+                                            <label>Exclusivity : @(Model.Is_Exclusive == "Y" ? "Exclusive" : Model.Is_Exclusive == "C" ? "Co-Exclusive" : "Non-Exclusive")</label>
+                                        }
+                                        else
+                                        {
+                                            <label>@objMessageKey.ExclusiveRights : @(Model.Is_Exclusive == "Y" ? "Yes" : "No")</label>
+
+                                        }
                                         <br />
                                         @objMessageKey.TitleLanguage :
                                         <label id="Title_Language">@ViewBag.TitleLanguageName @(Model.Is_Title_Language_Right == "Y" ? "Yes" : "No")</label>
                                         <br />
-                                       
+
                                         @if (ViewBag.AcqSyn_Rights_Thetrical == "Y")
                                         {
                                             <label style="display:none">Domestic Theatrical : @(Model.Is_Theatrical_Right == "Y" ? "Yes" : "No")</label>
@@ -164,6 +182,18 @@
                                         @(Model.Sub_License_Code != null ? Model.Sub_License.Sub_License_Name : "No")
                                     </div>
                                     <br />
+                                    @{string Is_Acq_Under_Production = "";
+                                        Is_Acq_Under_Production = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Under_Production").FirstOrDefault().Parameter_Value;
+                                    }
+
+                                    @if (Is_Acq_Under_Production == "Y")
+                                    {
+                                        <label class="bold">Under Production</label>
+                                        <div>
+                                            @(Model.Is_Under_Production == "Y" ? "Yes" : "No")
+                                        </div>
+                                        <br />
+                                    }
                                     @if (ORightType == "Y")
                                     {
                                         <label class="bold">@objMessageKey.Yearbased</label>

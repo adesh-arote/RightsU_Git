@@ -52,6 +52,7 @@
     [Is_Auto_Push]                  CHAR (1)        DEFAULT ('N') NULL,
     [Deal_Segment_Code]             INT             NULL,
     [Revenue_Vertical_Code]         INT             NULL,
+    [Confirming_Party] NVARCHAR(MAX) NULL, 
     CONSTRAINT [PK_AT_Acq_Deal] PRIMARY KEY CLUSTERED ([AT_Acq_Deal_Code] ASC),
     CONSTRAINT [FK_AT_Acq_Deal_AT_Acq_Deal_Tag] FOREIGN KEY ([Deal_Tag_Code]) REFERENCES [dbo].[Deal_Tag] ([Deal_Tag_Code]),
     CONSTRAINT [FK_AT_Acq_Deal_AT_Acq_Deal_Type] FOREIGN KEY ([Deal_Type_Code]) REFERENCES [dbo].[Deal_Type] ([Deal_Type_Code]),

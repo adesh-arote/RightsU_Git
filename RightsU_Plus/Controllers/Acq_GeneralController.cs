@@ -188,8 +188,14 @@ namespace RightsU_Plus.Controllers
 
             BindSchemaObject();
             string viewName = "~/Views/Acq_Deal/_Acq_General.cshtml";
+            string IsConfirmingParty = ViewBag.Is_Acq_Confirming_Party = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Confirming_Party").Select(x => x.Parameter_Value).FirstOrDefault();
             string AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.DealSegment = AllowDealSegment;
+
+            if(IsConfirmingParty.ToUpper() == "Y")
+            {
+                ViewBag.lstConfirmingParty = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active.ToUpper() == "Y").Select(x => new { Vendor_Code = x.Vendor_Code, Vendor_Name = x.Vendor_Name} ).ToList(), "Vendor_Code", "Vendor_Name").ToList();
+            }
 
             string AllowRevenueVertical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Revenue_Vertical").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.RevenueVertical = AllowRevenueVertical;
@@ -230,6 +236,12 @@ namespace RightsU_Plus.Controllers
                 if (objAD_Session.Master_Deal_Movie_Code_ToLink == null)
                     objAD_Session.Master_Deal_Movie_Code_ToLink = 0;
 
+                if(IsConfirmingParty.ToUpper() == "Y")
+                {
+                    int Confirming_Code = Convert.ToInt32(objAD_Session.Confirming_Party);
+                    objAD_Session.Confirming_Party = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Vendor_Code == Confirming_Code).Select(x => x.Vendor_Name).FirstOrDefault();
+                }
+
                 viewName = "~/Views/Acq_Deal/_Acq_General_View.cshtml";
             }
             ViewBag.Record_Locking_Code = 0;
@@ -268,7 +280,7 @@ namespace RightsU_Plus.Controllers
                 Session["EditWOA"] = "N";
                 var controller = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.Acq_Run_ListController>();
                 controller.ControllerContext = new ControllerContext(Request.RequestContext, controller);
-                return controller.Index("",objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+                return controller.Index("", objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             }
             else
                 return PartialView(viewName, objAD_Session);
@@ -339,7 +351,7 @@ namespace RightsU_Plus.Controllers
                     if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_CLONE)
                     {
                         var lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").Select(x => new { x.Vendor_Code, x.Vendor_Name }).ToList();
-                        string currency_Name = new Currency_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Currency_Code == objAD_Session.Currency_Code).Select(x => x.Currency_Name).FirstOrDefault(); 
+                        string currency_Name = new Currency_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Currency_Code == objAD_Session.Currency_Code).Select(x => x.Currency_Name).FirstOrDefault();
                         string category_Name = new Category_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Category_Code == objAD_Session.Category_Code).Select(x => x.Category_Name).FirstOrDefault();
                         string Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Role_Code == objAD_Session.Role_Code).Select(x => x.Role_Name).FirstOrDefault();
                         string entity_Name = new Entity_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Entity_Code == objAD_Session.Entity_Code).Select(x => x.Entity_Name).FirstOrDefault();
@@ -759,6 +771,7 @@ namespace RightsU_Plus.Controllers
             objAD_Session.Deal_Segment_Code = objExisting_Acq_Deal.Deal_Segment_Code;
             objAD_Session.Deal_Segment = objExisting_Acq_Deal.Deal_Segment;
             objAD_Session.Revenue_Vertical_Code = objExisting_Acq_Deal.Revenue_Vertical_Code;
+            objAD_Session.Confirming_Party = objExisting_Acq_Deal.Confirming_Party;
 
 
             objExisting_Acq_Deal.Acq_Deal_Movie.ToList().ForEach(a =>
@@ -919,7 +932,7 @@ namespace RightsU_Plus.Controllers
             string dealTypeCode = objFormCollection["hdnDeal_Type_Code"];
             string vendorCodes = objFormCollection["hdnVendorCodes"];
             string primaryVendorCode = objFormCollection["hdnPrimaryVendorCode"];
-            if(primaryVendorCode == "0")
+            if (primaryVendorCode == "0")
             {
                 primaryVendorCode = objFormCollection["hdnVendorCodes"];
             }
@@ -955,8 +968,11 @@ namespace RightsU_Plus.Controllers
 
             objAD_Session.Category_Code = objAD_MVC.Category_Code;
 
-            if(objAD_MVC.Deal_Segment_Code != null && objAD_MVC.Deal_Segment_Code != 0)
+            if (objAD_MVC.Deal_Segment_Code != null && objAD_MVC.Deal_Segment_Code != 0)
                 objAD_Session.Deal_Segment_Code = objAD_MVC.Deal_Segment_Code;
+
+            if (objAD_MVC.Confirming_Party != null && objAD_MVC.Confirming_Party != "")
+                objAD_Session.Confirming_Party = objAD_MVC.Confirming_Party;
 
             if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_CLONE)
                 objAD_Session.Deal_Segment = null;
@@ -1585,8 +1601,8 @@ namespace RightsU_Plus.Controllers
             if (objADM.Acq_Deal_Movie_Code > 0)
             {
                 //int Flag = new USP_Service().USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").ElementAt(0).Value;
-                StatusMessage  objStatusMessage = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").FirstOrDefault();
-                if(objStatusMessage.Status == "E")
+                StatusMessage objStatusMessage = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").FirstOrDefault();
+                if (objStatusMessage.Status == "E")
                 {
                     status = objStatusMessage.Status;
                     errorMessage = objStatusMessage.Message;

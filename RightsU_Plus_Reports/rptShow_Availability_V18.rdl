@@ -5147,7 +5147,6 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -6917,6 +6916,9 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                       </Textbox>
                     </CellContents>
                   </TablixHeader>
+                  <Visibility>
+                    <Hidden>=IIF(Convert.ToString(Parameters!Dubbing_Subtitling.Value).Contains("D"), False, True)</Hidden>
+                  </Visibility>
                 </TablixMember>
                 <TablixMember>
                   <Group Name="Platform_Name">

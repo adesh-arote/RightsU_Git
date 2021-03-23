@@ -11,6 +11,13 @@
     {
         objPage_Properties = (RightsU_Plus.Controllers.Rights_Page_Properties)Session["Rights_Page_Properties"];
     }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_BLL.System_Parameter_New_Service objSPNService = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
+
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -138,7 +145,18 @@
                                     <br />
                                     <label class="bold">@objMessageKey.RightsDefinition</label>
                                     <div class="platform_checkbox">
-                                        <label>@objMessageKey.ExclusiveRights : @(Model.Is_Exclusive == "Y" ? objMessageKey.Yes : objMessageKey.NO)</label>
+                                        @{
+                                            string Is_Acq_Syn_CoExclusive = "";
+                                            Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+                                        }
+                                        @if (Is_Acq_Syn_CoExclusive == "Y")
+                                        {
+                                            <label>Exclusivity : @(Model.Is_Exclusive == "Y" ? "Exclusive" : Model.Is_Exclusive == "C" ? "Co-Exclusive" : "Non-Exclusive")</label>
+                                        }
+                                        else
+                                        {
+                                            <label>@objMessageKey.ExclusiveRights : @(Model.Is_Exclusive == "Y" ? objMessageKey.Yes : objMessageKey.NO)</label>
+                                        }
                                         <br />
                                         @objMessageKey.TitleLangauge :
                                         <input type="hidden" value="@Model.Is_Title_Language_Right" id="Is_Title_Language_Right" />

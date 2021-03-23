@@ -1143,6 +1143,7 @@ BEGIN
 			INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code
 			LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 			LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
+			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME))
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Country_Name COLLATE SQL_Latin1_General_CP1_CI_AS,  Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 
@@ -1188,6 +1189,7 @@ BEGIN
 		INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code
 		LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 		LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
+		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME))
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Country_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 
@@ -1262,4 +1264,3 @@ END
 --	@OthersRemarks='false',
 --	@BU_Code=0,
 --	@Is_Digital= 'false'
-

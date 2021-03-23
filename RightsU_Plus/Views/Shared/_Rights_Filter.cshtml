@@ -124,7 +124,9 @@
                 $('.sumo_Region  p .placeholder').removeAttr('class');
             }
         }
+   
         $('#hdnTVCode').val(rightsPlatform_G);
+        rightsExclusive_G = rightsExclusive_G == "" ? "B" : rightsExclusive_G;
         if (rightsExclusive_G != "")
          $("#lstReleaseUnit").val(rightsExclusive_G).trigger("chosen:updated");
 
@@ -240,7 +242,7 @@
             TitleCode = $('#ddlTitleCode').val().join(',');
         else
             TitleCode = "";
-       
+
         $.ajax({
             type: "POST",
 
@@ -260,7 +262,7 @@
                 else {
                     $("#ddlRegionn").empty();
                     $('#ddlRegionn').append(result.htmldata);
-                   
+
                     $("#ddlRegionn")[0].sumo.reload();
                     $('#hdnTitleCode').val(result.TitleCode);
                     $('#hdnTVCode').val('');
@@ -276,7 +278,7 @@
                 }
             }
         });
-       
+
     }
     function serachBindrights()
     {
@@ -318,7 +320,19 @@
                         //$("#ddlRegionn").find("option").attr("selected", false);
                         $("#ddlRegionn").val('');
                         $("#ddlRegionn")[0].sumo.reload();
-                        $('#lstReleaseUnit').val('B').trigger("chosen:updated");
+                        var IsBothExists = false;
+                        $('#lstReleaseUnit option').each(function () {
+                            if (this.value == 'B')
+                                IsBothExists = true;
+                            return IsBothExists;
+                        });
+
+                        if (!IsBothExists)
+                            $('#lstReleaseUnit').val('B').trigger("chosen:updated");
+                        else
+                            $('#lstReleaseUnit').val('B').trigger("chosen:updated");
+
+                       // $('#lstReleaseUnit').val('B').trigger("chosen:updated");
                         $('.sumo_Region > .optWrapper.multiple > .options li ul li.opt').removeClass('selected')
                         document.getElementById('TotalselectedPlatform').innerHTML = parseInt(0)
                         BindRegionList();
@@ -344,7 +358,18 @@
                // $("#ddlRegionn").find("option").attr("selected", false);
                 $("#ddlRegionn").val('');
                 $("#ddlRegionn")[0].sumo.reload();
-                $('#lstReleaseUnit').val('B').trigger("chosen:updated");
+                var IsBothExists = false;
+                $('#lstReleaseUnit option').each(function () {
+                    if (this.value == 'B')
+                        IsBothExists = true;
+                    return IsBothExists;
+                });
+
+                if (!IsBothExists)
+                    $('#lstReleaseUnit').val('B').trigger("chosen:updated");
+                else
+                    $('#lstReleaseUnit').val('B').trigger("chosen:updated");
+
                 $('#hdnTVCode').val('')
                 $("#G").prop("checked", true);
                 ClearTitleValues();
@@ -507,9 +532,9 @@
             @if (objSchema.Page_From != "PBK")
             {
                 <td class="bold" style="width: 11%;">@objMessageKey.ExclusiveRights</td>
-                    <td style="width:20%">
-                        @Html.DropDownList("lstReleaseUnit", ViewBag.Exclusive_Rights as MultiSelectList, new { @class = "form_input chosen-select", @width = "150px" })
-                    </td>
+                <td style="width:20%">
+                    @Html.DropDownList("lstReleaseUnit", ViewBag.Exclusive_Rights as SelectList, new { @class = "form_input chosen-select", @width = "150px" })
+                </td>
             }
             @if (objSchema.Page_From == "PBK")
             {
@@ -555,9 +580,10 @@
 </div>
 
 <style>
-    #popupFade1 .modal_header{
-        background:#c3c3c3;
+    #popupFade1 .modal_header {
+        background: #c3c3c3;
     }
+
     #Rights_Platform_Filter {
         max-height: 300px;
     }

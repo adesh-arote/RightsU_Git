@@ -236,6 +236,8 @@ namespace RightsU_Plus.Controllers
             Session["FileName"] = "";
             Session["FileName"] = "Acq_General";
             CommonUtil.WriteErrorLog("BindBUList() method is executing", Err_filename);
+            string Is_AllowMultiBUacqdeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUacqdeal").ToUpper();
+            ViewBag.Is_AllowMultiBUacqdeal = Is_AllowMultiBUacqdeal;
             ViewBag.BusineesUnitList = BindBUList();
             CommonUtil.WriteErrorLog("BindBUList() method has been executed", Err_filename);
             if (obj_Acq_Syn_List_Search.BUCode == null)
@@ -399,11 +401,22 @@ namespace RightsU_Plus.Controllers
                         else
                             sql += " and Deal_Workflow_Status not in ('A','W','R')";
                     }
+                    string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
+                    if (Is_AllowMultiBUsyndeal != "Y")
+                    {
+                        obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
 
+                    }
 
-                    obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
-                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0)
+                    //obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
+                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0 && Is_AllowMultiBUsyndeal != "Y")
+                    {
                         sql += " And Business_Unit_Code In (" + obj_Acq_Syn_List_Search.BUCodes_Search + ") "; // AND is_active='Y'
+                    }
+                    else
+                    {
+                        sql += " And Business_Unit_Code In (" + strBU + ") "; // AND is_active='Y'
+                    }
 
                     if (obj_Acq_Syn_List_Search.strIncludeArchiveDeal == "Y")
                         sql += " AND (is_active in ('Y') OR ( Deal_Workflow_Status = 'AR'))";
@@ -414,7 +427,7 @@ namespace RightsU_Plus.Controllers
                 {
                     obj_Acq_Syn_List_Search.Common_Search = !string.IsNullOrEmpty(commonSearch.Trim()) ? commonSearch.Trim().Replace("'", "''") : "";
                     obj_Acq_Syn_List_Search.BUCode = strBUCode;
-                    sql += " AND Business_Unit_Code =" + obj_Acq_Syn_List_Search.BUCode;
+                    sql += " AND Business_Unit_Code IN (" + obj_Acq_Syn_List_Search.BUCode + ")";
 
                     if (strIncludeArchiveDeal == "Y")
                         sql += " AND (is_active in ('Y') OR ( Deal_Workflow_Status = 'AR'))";
@@ -437,7 +450,7 @@ namespace RightsU_Plus.Controllers
                                 }
                                 else
                                 {
-                                    sql += " OR Business_Unit_Code =" + obj_Acq_Syn_List_Search.BUCode;
+                                    sql += " OR Business_Unit_Code IN (" + obj_Acq_Syn_List_Search.BUCode + ")";
 
                                     if (strIncludeArchiveDeal == "Y")
                                         sql += " AND is_active in ('Y') OR ( Deal_Workflow_Status = 'AR')";
@@ -1485,10 +1498,10 @@ namespace RightsU_Plus.Controllers
         {
             return new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type == "A" && x.Deal_WorkflowFlag != "AR"), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name", ViewBag.WorkFlowStatus);
         }
-        private SelectList BindBUList()
+        private MultiSelectList BindBUList()
         {
 
-            return new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)), "Business_Unit_Code", "Business_Unit_Name", obj_Acq_Syn_List_Search.BUCode);
+            return new MultiSelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)), "Business_Unit_Code", "Business_Unit_Name", obj_Acq_Syn_List_Search.BUCode);
         }
         #endregion
 

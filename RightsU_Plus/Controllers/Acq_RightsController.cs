@@ -403,6 +403,7 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Rights.End_Date = objAcq_Deal_Rights_Current.End_Date;
             objAcq_Deal_Rights.Existing_RightType = objAcq_Deal_Rights_Current.Existing_RightType;
             objAcq_Deal_Rights.Is_Exclusive = objAcq_Deal_Rights_Current.Is_Exclusive;
+            objAcq_Deal_Rights.Is_Under_Production = objAcq_Deal_Rights_Current.Is_Under_Production;
             objAcq_Deal_Rights.Is_ROFR = objAcq_Deal_Rights_Current.Is_ROFR;
             objAcq_Deal_Rights.Is_Sub_License = objAcq_Deal_Rights_Current.Is_Sub_License;
 
@@ -1878,6 +1879,7 @@ namespace RightsU_Plus.Controllers
                     objDRUDT.Deal_Rights_Code = objRights.Acq_Deal_Rights_Code;
                     objDRUDT.Deal_Code = objRights.Acq_Deal_Code;
                     objDRUDT.Is_Exclusive = objRights.Is_Exclusive;
+
                     objDRUDT.Is_Theatrical_Right = objRights.Is_Theatrical_Right;
                     objDRUDT.Is_Title_Language_Right = objRights.Is_Title_Language_Right;
                     objDRUDT.Sub_License_Code = objRights.Sub_License_Code;
@@ -1996,53 +1998,34 @@ namespace RightsU_Plus.Controllers
                 message = "ERROR";
             else
             {
-                #region Check Linear Rights
-                Acq_Deal_Service objService = new Acq_Deal_Service(objLoginEntity.ConnectionStringName);
-                Acq_Deal objAcq_Deal = objService.GetById(objDeal_Schema.Deal_Code);
+                string Is_Acq_rights_delay_validation = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                   .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
+                   .FirstOrDefault().Parameter_Value;
 
-                /*List<int?> lstTRightsTitleCodeLR = new List<int?>();
-                foreach (var item in objAcq_Deal.Acq_Deal_Rights)
+                if (Is_Acq_rights_delay_validation != "Y")
                 {
-                    if (item.Acq_Deal_Rights_Platform.Where(x => x.Platform.Base_Platform_Code == 35).Count() > 0)
-                    {
-                        lstTRightsTitleCodeLR.Add(item.Acq_Deal_Rights_Title.Select(x => Convert.ToInt32(x.Title_Code)).Distinct().FirstOrDefault());
-                    }
+                    #region Check Linear Rights
+                    Acq_Deal_Service objService = new Acq_Deal_Service(objLoginEntity.ConnectionStringName);
+                    Acq_Deal objAcq_Deal = objService.GetById(objDeal_Schema.Deal_Code);
+                    string DealCompleteFlag = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Deal_Complete_Flag").Select(x => x.Parameter_Value).FirstOrDefault();
+                    List<USP_List_Acq_Linear_Title_Status_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName)
+                                                                      .USP_List_Acq_Linear_Title_Status(objDeal_Schema.Deal_Code).ToList();
+
+                    int RunPending = DealCompleteFlag.Replace(" ", "") == "R,R" || DealCompleteFlag.Replace(" ", "") == "R,R,C" ? lst.Where(x => x.Title_Added == "Yes~").Count() : 0;
+                    int RightsPending = lst.Where(x => x.Title_Added == "No").Count();
+
+                    if (RunPending > 0 && RightsPending > 0)
+                        objAcq_Deal.Deal_Workflow_Status = "RR";
+                    else if (RunPending > 0 && RightsPending == 0)
+                        objAcq_Deal.Deal_Workflow_Status = "RP";
+                    else
+                        objAcq_Deal.Deal_Workflow_Status = "N";
+
+                    objAcq_Deal.EntityState = State.Modified;
+                    dynamic resultSet;
+                    bool isValid = objService.Save(objAcq_Deal, out resultSet);
+                    #endregion
                 }
-
-                List<int?> lstRunDefTitleCode = objAcq_Deal.Acq_Deal_Run.
-                    Select(x => x.Acq_Deal_Run_Title.Select(y => y.Title_Code).FirstOrDefault()).ToList();
-
-                var result = lstTRightsTitleCodeLR.Distinct().Except(lstRunDefTitleCode).ToList();*/
-
-                string DealCompleteFlag = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Deal_Complete_Flag").Select(x => x.Parameter_Value).FirstOrDefault();
-
-                List<USP_List_Acq_Linear_Title_Status_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName)
-                                                                  .USP_List_Acq_Linear_Title_Status(objDeal_Schema.Deal_Code).ToList();
-
-                int RunPending = DealCompleteFlag.Replace(" ", "") == "R,R" || DealCompleteFlag.Replace(" ", "") == "R,R,C" ? lst.Where(x => x.Title_Added == "Yes~").Count() : 0;
-                int RightsPending = lst.Where(x => x.Title_Added == "No").Count();
-
-                if (RunPending > 0 && RightsPending > 0)
-                {
-                    objAcq_Deal.Deal_Workflow_Status = "RR";
-                }
-                else if (RunPending > 0 && RightsPending == 0)
-                {
-                    objAcq_Deal.Deal_Workflow_Status = "RP";
-                }
-                else
-                {
-                    objAcq_Deal.Deal_Workflow_Status = "N";
-                }
-
-                objAcq_Deal.EntityState = State.Modified;
-                dynamic resultSet;
-                bool isValid = objService.Save(objAcq_Deal, out resultSet);
-
-
-                #endregion
-
-
                 if (objPage_Properties.RMODE == GlobalParams.DEAL_MODE_EDIT)
                     message = "Right updated successfully";
                 else
@@ -2359,16 +2342,40 @@ namespace RightsU_Plus.Controllers
                         objAcq_Deal_Rights.EntityState = State.Added;
                     }
                     objAcq_Deal_Rights.Promoter_Flag = Convert.ToString(form["hdnPromoter"]);
+
                     objRights.Restriction_Remarks = objRights.Restriction_Remarks != null ? objRights.Restriction_Remarks.Replace("\r\n", "\n") : "";
                     objAcq_Deal_Rights = CreateRightObject(objAcq_Deal_Rights, objRights, form);
-
                     dynamic resultSet;
 
                     objADRS.Save(objAcq_Deal_Rights, out resultSet);
 
-                    UpdateDealRightProcess(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
 
-                    return ShowValidationPopup(resultSet);
+                    string Is_Acq_rights_delay_validation = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                           .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
+                           .FirstOrDefault().Parameter_Value;
+
+                    if (Is_Acq_rights_delay_validation == "Y")
+                    {
+                        Deal_Rights_Process_Service DRPService = new Deal_Rights_Process_Service(objLoginEntity.ConnectionStringName);
+                        Deal_Rights_Process DRP = new Deal_Rights_Process();
+                        DRP.Deal_Code = objAcq_Deal_Rights.Acq_Deal_Code;
+                        DRP.Deal_Rights_Code = objAcq_Deal_Rights.Acq_Deal_Rights_Code;
+                        DRP.Module_Code = 30;
+                        DRP.Record_Status = "P";
+                        DRP.Inserted_On = System.DateTime.Now;
+                        DRP.User_Code = objLoginUser.Users_Code;
+                        DRP.EntityState = State.Added;
+
+                        dynamic resultSetDRP;
+                        DRPService.Save(DRP, out resultSetDRP);
+
+                        return true;
+                    }
+                    else
+                    {
+                        UpdateDealRightProcess(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
+                        return ShowValidationPopup(resultSet);
+                    }
                 }
             }
             else
@@ -2609,6 +2616,7 @@ namespace RightsU_Plus.Controllers
 
             objSecondRight.Acq_Deal_Code = objExistingRight.Acq_Deal_Code;
             objSecondRight.Is_Exclusive = objExistingRight.Is_Exclusive;
+            objSecondRight.Is_Under_Production = objExistingRight.Is_Under_Production;
             objSecondRight.Is_Title_Language_Right = objExistingRight.Is_Title_Language_Right;
             objSecondRight.Is_Sub_License = objExistingRight.Is_Sub_License;
             objSecondRight.Sub_License_Code = objExistingRight.Sub_License_Code;
@@ -2653,6 +2661,13 @@ namespace RightsU_Plus.Controllers
             if (Lst_Acq_Deal_Rights_Promoter == null)
                 Lst_Acq_Deal_Rights_Promoter = new List<Acq_Deal_Rights_Promoter>();
 
+            string Is_Acq_rights_delay_validation = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
+                .FirstOrDefault().Parameter_Value;
+            if (Is_Acq_rights_delay_validation == "Y")
+            {
+
+            }
             if (objExistingRights.Acq_Deal_Rights_Code > 0)
             {
                 objExistingRights.Acq_Deal_Rights_Title.ToList().ForEach(i => i.EntityState = State.Deleted);
@@ -2665,7 +2680,7 @@ namespace RightsU_Plus.Controllers
                 objExistingRights.Acq_Deal_Rights_Promoter.ToList().ForEach(i => i.EntityState = State.Deleted);
                 objExistingRights.Last_Updated_Time = DateTime.Now;
                 objExistingRights.Last_Action_By = objLoginUser.Users_Code;
-                objExistingRights.Right_Status = "C";
+                objExistingRights.Right_Status = Is_Acq_rights_delay_validation == "Y" ? "P" : "C";
             }
             else if (objPage_Properties.RMODE == GlobalParams.DEAL_MODE_CLONE)
             {
@@ -2679,7 +2694,7 @@ namespace RightsU_Plus.Controllers
                 objExistingRights.Acq_Deal_Rights_Promoter.Clear();
                 objExistingRights.Inserted_On = DateTime.Now;
                 objExistingRights.Inserted_By = objLoginUser.Users_Code;
-                objExistingRights.Right_Status = "C";
+                objExistingRights.Right_Status = Is_Acq_rights_delay_validation == "Y" ? "P" : "C";
             }
             else
             {
@@ -2691,7 +2706,7 @@ namespace RightsU_Plus.Controllers
                 objExistingRights.Acq_Deal_Rights_Promoter.Clear();
                 objExistingRights.Inserted_On = DateTime.Now;
                 objExistingRights.Inserted_By = objLoginUser.Users_Code;
-                objExistingRights.Right_Status = "C";
+                objExistingRights.Right_Status = Is_Acq_rights_delay_validation == "Y" ? "P" : "C";
             }
 
             string Region_Type = form["hdnRegion_Type"];
@@ -2703,7 +2718,9 @@ namespace RightsU_Plus.Controllers
             string Region_Codes = form["hdnRegion_Code"].Replace(" ", "");
             string Sub_Codes = form["hdnSub_Code"].Replace(" ", "");
             string Dub_Codes = form["hdnDub_Code"].Replace(" ", "");
-            bool IsExclusive = Convert.ToBoolean(form["hdnIs_Exclusive"]);
+            //bool IsExclusive = Convert.ToBoolean(form["hdnIs_Exclusive"]);
+            string IsExclusive = Convert.ToString(form["hdnIs_Exclusive"]);
+            string Is_Under_Production = Convert.ToString(form["Is_Under_Production"]) == "false" ? "N" : "Y";
             bool Is_Theatrical_Right = Convert.ToBoolean(form["hdnIs_Theatrical_Right"]);
             bool IsTitleLanguageRight = Convert.ToBoolean(form["hdnIs_Title_Language_Right"]);
 
@@ -2942,7 +2959,9 @@ namespace RightsU_Plus.Controllers
             //objDRUDT.Deal_Rights_Code = objPage_Properties.TCODE > 0 ? 0 : objPage_Properties.RCODE; //objExistingRights.Acq_Deal_Rights_Code;
             objDRUDT.Deal_Rights_Code = objPage_Properties.RCODE;
             objDRUDT.Deal_Code = objExistingRights.Acq_Deal_Code = objDeal_Schema.Deal_Code;
-            objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive ? "Y" : "N";
+            //objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive ? "Y" : "N";
+            objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive;
+            objExistingRights.Is_Under_Production = Is_Under_Production;
             objDRUDT.Is_Theatrical_Right = objExistingRights.Is_Theatrical_Right = Is_Theatrical_Right ? "Y" : "N";
 
             objDRUDT.Is_Title_Language_Right = objExistingRights.Is_Title_Language_Right = IsTitleLanguageRight ? "Y" : "N";

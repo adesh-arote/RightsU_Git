@@ -78,6 +78,8 @@ function BindGrid(obj) {
         }
         if (rightsTitles_G != null && rightsTitles_G != '')
             TitleCode = rightsTitles_G;
+        if (rightsExclusive_G != null && rightsExclusive_G != '')
+            exclusiveRights = rightsExclusive_G;
         if (rightsPageSize_G != null && rightsPageSize_G != '0')
             $('#txtPageSize').val(rightsPageSize_G);
         if (rightsPageNo_G != null && rightsPageNo_G != '0')
@@ -451,7 +453,7 @@ function CheckRightStatus() {
         var refCloseTitle = $(this).find("input[id*='hdnRefCloseTitle']").val();
         if (refCloseTitle != 'Y') {
             var rightStatus = $(this).find("input[id*='hdnRightStatus']").val();
-            if (rightStatus == "P" || rightStatus == 'E' ) {
+            if (rightStatus == "P" || rightStatus == 'E') {
                 var rightCode = $(this).find("input[id*='hdnRightCode']").val();
                 if (isNaN(rightCode))
                     rightCode = 0;
@@ -520,7 +522,7 @@ function CheckRightStatus() {
         }
     });
     //if (pendingRecord > 0) {
-        setTimeout(CheckRightStatus, 5000);
+    setTimeout(CheckRightStatus, 5000);
     //}
 
 }

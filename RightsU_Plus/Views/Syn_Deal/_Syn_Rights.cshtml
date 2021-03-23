@@ -59,7 +59,7 @@
     var URL_DeleteExistingPromoter = '@Url.Action("DeleteExistingPromoter", "Syn_Rights")';
 
 
-    
+
     var Record_Locking_Code_G = '@ViewBag.Record_Locking_Code'
 , MODE_G = '@ViewBag.MODE'
 , Is_Theatrical_Right_G = '@Model.Is_Theatrical_Right'
@@ -157,12 +157,13 @@
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
 <style>
-    #Tree_Filter_Rights_Platform {   
-        width:546px;
-        position:relative!important;
+    #Tree_Filter_Rights_Platform {
+        width: 546px;
+        position: relative !important;
     }
-    #Rights_Platform{
-        margin:0px 0px 0px 0px!important;
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
     }
 
     .modal-open {
@@ -207,7 +208,7 @@
         <div class="container syn main_col" onclick="$('.leftPanel').css('left', panelHideCss);">*@
 @using (Ajax.BeginForm("Save_Rights", "Syn_Rights", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @id = "frmRights" }))
 {
-    string ORightType = "", Promoter_Tab = "";
+    string ORightType = "", Promoter_Tab = "", Is_Acq_Syn_CoExclusive = "";
     if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
     {
         ORightType = Model.Original_Right_Type;
@@ -217,6 +218,10 @@
         ORightType = Model.Right_Type;
     }
     Promoter_Tab = objSPNService.SearchFor(s => s.Parameter_Name == "Promoter_Tab_Syn").Select(x => x.Parameter_Value).FirstOrDefault();
+    Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+
+    @Html.Hidden("Is_Acq_Syn_CoExclusive", Is_Acq_Syn_CoExclusive);
+
     @Html.Hidden("IsPromoter", Promoter_Tab);
     @Html.Hidden("hdnPromoter", Model.Promoter_Flag);
     <div class="grid_area" onclick="hideRegion(); hideSubTitle(); hideDubbing();">
@@ -243,53 +248,82 @@
                                             <input type="hidden" value="@ViewBag.MODE" id="Mode" />
                                             <input type="hidden" value="" id="hdnIs_Exclusive" name="hdnIs_Exclusive">
                                             <table>
-                                                <tr style="margin-bottom: 4px;">
-                                                    <td id="tdExclusiveRight" style="width: 102px;"><label>@objMessageKey.ExclusiveRights</label></td>
-                                                    <td id="tdExclusiveDiv" style="padding-right: 343px;">
-                                                        <div style="width: 83%; float: right;">
-                                                            <div id="divExclusiveRights" style="width:90px">
-                                                                @{ string displayStyle = "none"; }
-                                                                @if (Model.Is_Exclusive == "Y")
-                                                                {
-                                                                    displayStyle = "";
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" />@objMessageKey.Yes
-
-                                                                    </label>
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" />@objMessageKey.NO
-                                                                    </label>
-                                                                }
-                                                                else if (Model.Is_Exclusive == "N")
-                                                                {
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" />@objMessageKey.Yes
-                                                                    </label>
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" />@objMessageKey.NO
-                                                                    </label>
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" />@objMessageKey.Yes
-                                                                    </label>
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" />@objMessageKey.NO
-                                                                    </label>
-                                                                }
-
-
-                                                                @*<label class="checkbox-inline">
-                                                                        @Html.CheckBox("Is_Exclusive", (Model.Is_Exclusive == "Y" ? true : false), new { @onclick = "chkIsExclusive(this);" })
-                                                                        Exclusive Rights
-                                                                        @Html.Hidden("hdnIs_Exclusive", (Model.Is_Exclusive == "Y" ? true : false))
-                                                                    </label>*@
+                                                @if (Is_Acq_Syn_CoExclusive == "Y")
+                                                {
+                                                    <tr>
+                                                        <td style="width: 102px;"><label>Exclusivity</label></td>
+                                                        <td style="padding-right: 338px;">
+                                                            <div style="width: 83%; float: right;">
+                                                                <div id="divExclusiveRights" style="width:90px; height:23px">
+                                                                    <table style="width: 300px;">
+                                                                        <tr>
+                                                                            <td>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY" value="Y" checked="@(Model.Is_Exclusive == "Y" ? true : false)" class="exc" />Exclusive
+                                                                                </label>
+                                                                            </td>
+                                                                            <td>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN" value="N" checked="@(Model.Is_Exclusive == "N" ? true : false)" class="exc" />Non-Exclusive
+                                                                                </label>
+                                                                            </td>
+                                                                            <td>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" />Co-Exclusive
+                                                                                </label>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    <tr style="margin-bottom: 4px;">
+                                                        <td id="tdExclusiveRight" style="width: 102px;"><label>@objMessageKey.ExclusiveRights</label></td>
+                                                        <td id="tdExclusiveDiv" style="padding-right: 343px;">
+                                                            <div style="width: 83%; float: right;">
+                                                                <div id="divExclusiveRights" style="width:90px">
+                                                                    @{ string displayStyle = "none"; }
+                                                                    @if (Model.Is_Exclusive == "Y")
+                                                                    {
+                                                                        displayStyle = "";
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" />@objMessageKey.Yes
+
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" />@objMessageKey.NO
+                                                                        </label>
+                                                                    }
+                                                                    else if (Model.Is_Exclusive == "N")
+                                                                    {
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" />@objMessageKey.Yes
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" />@objMessageKey.NO
+                                                                        </label>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" />@objMessageKey.Yes
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" />@objMessageKey.NO
+                                                                        </label>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+
                                                 <tr style="margin-bottom: 4px;">
                                                     <td colspan="2">
                                                         <label class="checkbox-inline">
@@ -302,25 +336,25 @@
                                                 </tr>
                                                 @if (ViewBag.AcqSyn_Rights_Thetrical == "Y")
                                                 {
-                                                <tr style="margin-bottom: 4px;display:none">
-                                                    <td colspan="2">
-                                                        <label class="checkbox-inline">
-                                                            @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
-                                                            @objMessageKey.DomesticTheatrical
-                                                        </label>
-                                                    </td>
-                                                </tr>
+                                                    <tr style="margin-bottom: 4px;display:none">
+                                                        <td colspan="2">
+                                                            <label class="checkbox-inline">
+                                                                @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                                @objMessageKey.DomesticTheatrical
+                                                            </label>
+                                                        </td>
+                                                    </tr>
                                                 }
                                                 else
                                                 {
-                                                <tr style="margin-bottom: 4px;">
-                                                    <td colspan="2">
-                                                        <label class="checkbox-inline">
-                                                            @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
-                                                            @objMessageKey.DomesticTheatrical
-                                                        </label>
-                                                    </td>
-                                                </tr>
+                                                    <tr style="margin-bottom: 4px;">
+                                                        <td colspan="2">
+                                                            <label class="checkbox-inline">
+                                                                @Html.CheckBox("Is_Theatrical_Right", (Model.Is_Theatrical_Right == "Y" ? true : false))
+                                                                @objMessageKey.DomesticTheatrical
+                                                            </label>
+                                                        </td>
+                                                    </tr>
                                                 }
                                             </table>
                                         </div>
@@ -420,12 +454,12 @@
                                                     <label>@objMessageKey.Tentative</label>
                                                     <br>
                                                     <label>@objMessageKey.StartDate</label>
-                                                    @Html.TextBox("Start_Date", Model.Start_Date, new { @id = "Start_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
-                                                    @Html.TextBox("Term_YY", Model.Term_YY, new { @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
-                                                    @Html.TextBox("Term_MM", Model.Term_MM, new { @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
-                                                    @Html.TextBox("Term_DD", Model.Term_DD, new { @class = "smallTextBox", @placeholder = "DD", @maxlength = 2 })
+                                                    @Html.TextBox("Start_Date", Model.Start_Date, new { autocomplete = "off", @id = "Start_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                    @Html.TextBox("Term_YY", Model.Term_YY, new { autocomplete = "off", @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
+                                                    @Html.TextBox("Term_MM", Model.Term_MM, new { autocomplete = "off", @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
+                                                    @Html.TextBox("Term_DD", Model.Term_DD, new { autocomplete = "off", @class = "smallTextBox", @placeholder = "DD", @maxlength = 2 })
                                                     <label style="margin-left: 15px">@objMessageKey.EndDate</label>
-                                                    @Html.TextBox("End_Date", Model.End_Date, new { @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                    @Html.TextBox("End_Date", Model.End_Date, new { autocomplete = "off", @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
                                                 </div>
                                                 <div class="@(ORightType == "U" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabPerp">
                                                     <ul style="height: 54px;">

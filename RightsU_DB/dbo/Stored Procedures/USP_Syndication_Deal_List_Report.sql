@@ -10,7 +10,8 @@
 	@IS_Expired Varchar(100),
 	@IS_Theatrical varchar(100),
 	@SysLanguageCode INT,
-	@DealSegment INT
+	@DealSegment INT,
+	@TypeOfFilm INT
 )
 AS
 -- =============================================
@@ -26,24 +27,26 @@ BEGIN
 	--, @End_Date Varchar(30)
 	--, @Deal_Tag_Code Int
 	--, @Title_Codes Varchar(100)
-	--, @Business_Unit_code INT
+	--, @Business_Unit_code VARCHAR(100)
 	--, @Is_Pushback Varchar(100)
 	--, @IS_Expired Varchar(100)
 	--, @IS_Theatrical varchar(100)
 	--, @SysLanguageCode INT
 	--, @DealSegment INT
+	--,@TypeOfFilm INT 
 	
 	--SET @Agreement_No = ''
 	--SET @Start_Date= ''
 	--SET @End_Date = ''
 	--SET @Deal_Tag_Code = 0
-	--SET @Title_Codes = ''
-	--SET @Business_Unit_code = 5
+	--SET @Title_Codes = '703'
+	--SET @Business_Unit_code = '1,5'
 	--SET @Is_Pushback = 'N'
 	--SET @IS_Expired  = 'N'
 	--SET @IS_Theatrical='N'
 	--SET @SysLanguageCode = 1
-	--SET @DealSegment = 0
+	--SET @DealSegment = ''
+	--SET @TypeOfFilm = ''
 	
 	--if CHARINDEX(',',@Business_Unit_code) > 0
 	--begin
@@ -234,14 +237,17 @@ BEGIN
 			Promtoer_Remarks NVARCHAR(MAX),
 			Deal_Segment NVARCHAR(MAX),
 			Revenue_Vertical NVARCHAR(MAX),
-			Category_Name VARCHAR(MAX)
+			Category_Name VARCHAR(MAX),
+			Columns_Value_Code INT
 			
 		)
 	END
 
-	DECLARE @IsDealSegment VARCHAR(100), @IsRevenueVertical VARCHAR(100)
+	DECLARE @IsDealSegment VARCHAR(100), @IsRevenueVertical VARCHAR(100), @IsTypeOfFilm VARCHAR(MAX), @Columns_Code INT
 	SELECT @IsDealSegment = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment' 
 	SELECT @IsRevenueVertical = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical' 
+	SELECT @IsTypeOfFilm = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Type_Of_Film' 
+	SELECT @Columns_Code = Columns_Code FROM Extended_Columns WHERE UPPER(Columns_Name) = 'TYPE OF FILM'
 
 	BEGIN
 		INSERT INTO #TEMP_Syndication_Deal_List_Report
@@ -274,6 +280,7 @@ BEGIN
 			,Promtoer_Group
 			,Promtoer_Remarks
 			,Category_Name
+			,Columns_Value_Code
 		)
 		SELECT 
 			SDR.Syn_Deal_Rights_Code
@@ -335,7 +342,7 @@ BEGIN
 			, P.Program_Name as Program_Name
 			, dBO.UFN_Get_Rights_Promoter_Group_Remarks(SDR.Syn_Deal_Rights_Code,'P','S') as Promoter_Group_Name
 			, dBO.UFN_Get_Rights_Promoter_Group_Remarks(SDR.Syn_Deal_Rights_Code,'R','S') as Promoter_Remarks_Name
-			, C.Category_Name AS Category_Name
+			, C.Category_Name AS Category_Name,MEC.Columns_Value_Code
 		FROM Syn_Deal SD
 			INNER JOIN Business_Unit BU ON BU.Business_Unit_Code = SD.Business_Unit_Code
 			INNER JOIN Syn_Deal_Rights SDR ON SD.Syn_Deal_Code = SDR.Syn_Deal_Code AND ISNULL(SDR.Right_Status, '') = 'C'
@@ -349,6 +356,7 @@ BEGIN
 			LEFT JOIN Program P on T.Program_Code = P.Program_Code
 			LEFT JOIN Language L on T.Title_Language_Code = L.language_code
 			INNER JOIN Category C ON SD.Category_Code = C.Category_Code
+			LEFT JOIN Map_Extended_columns MEC ON MEC.Record_Code = T.Title_Code AND MEC.Columns_Code = @Columns_Code
 		WHERE  
 			((@IS_Theatrical = 'Y' AND @IS_Theatrical = SDR.Is_Theatrical_Right) OR (@IS_Theatrical <> 'Y')) AND 
 			--sdr.Is_Theatrical_Right = @IS_Theatrical  And
@@ -357,8 +365,9 @@ BEGIN
 			AND SD.Agreement_No like '%' + @Agreement_No + '%' 
 			AND (ISNULL(SDR.Is_Pushback, 'N') = @Is_Pushback OR @Is_Pushback = '')
 			AND (SD.Deal_Tag_Code = @Deal_Tag_Code OR @Deal_Tag_Code = 0) 
-			AND(@Business_Unit_code = '' OR SD.Business_Unit_Code in(select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
+			--AND(@Business_Unit_code = '' OR SD.Business_Unit_Code in(select number from fn_Split_withdelemiter(@Title_Codes,',')))
 			--AND (SD.Business_Unit_Code = CAST(@Business_Unit_code AS INT) OR CAST(@Business_Unit_code AS INT) = 0)
+			AND (SD.Business_Unit_Code IN (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
 			AND (@Title_Codes = '' OR SDRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Codes,',')))
 			AND (SDR.Syn_Deal_Rights_Code In 
 			(SELECT SDRP.Syn_Deal_Rights_Code FROM Syn_Deal_Rights_Platform SDRP 
@@ -404,8 +413,13 @@ BEGIN
 			INNER JOIN Syn_Deal AD ON AD.Syn_Deal_Code = tadlr.Syn_Deal_Code
 			INNER JOIN Revenue_Vertical DS ON DS.Revenue_Vertical_Code = AD.Revenue_Vertical_Code
 		END
-		
 
+		IF(@IsTypeOfFilm = 'Y' AND @TypeOfFilm > 0)
+		BEGIN
+			DELETE FROM #TEMP_Syndication_Deal_List_Report
+			WHERE (Columns_Value_Code <> @TypeOfFilm ) OR Columns_Value_Code IS NULL
+		END
+		
 		
 		PRINT 'Director, StartCast Insert and update for Primary Rights'
 			

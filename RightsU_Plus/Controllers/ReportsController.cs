@@ -255,18 +255,26 @@ namespace RightsU_Plus.Controllers
             }
             else if (rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllRegionalGEC + "~"))
             {
-                ViewBag.BusinessUnitList = GetBusinessUnitList(false,true);
+                ViewBag.BusinessUnitList = GetBusinessUnitList(false, true);
             }
             else
             {
                 ViewBag.BusinessUnitList = GetBusinessUnitList();
             }
             var AllowDealSegment = ViewBag.AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            var IsAllowTypeOfFilm = ViewBag.IsAllowTypeOfFilm = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").Select(x => x.Parameter_Value).FirstOrDefault();
 
             if (AllowDealSegment == "Y")
             {
                 ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList(), "Deal_Segment_Code", "Deal_Segment_Name");
             }
+
+            if (IsAllowTypeOfFilm == "Y")
+            {
+                ViewBag.TypeOfFilm = new SelectList(new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == 2).Select(x => new { Columns_Value_Code = x.Columns_Value_Code, Columns_Value = x.Columns_Value }).ToList(), "Columns_Value_Code", "Columns_Value");
+            }
+            var Is_AllowMultiBUacqdealreport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdealreport").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.Is_AllowMultiBUacqdealreport = Is_AllowMultiBUacqdealreport;
             return View();
         }
         public ActionResult AuditTrailReport()
@@ -302,7 +310,7 @@ namespace RightsU_Plus.Controllers
             Deal_Type_Service objDTS = new Deal_Type_Service(objLoginEntity.ConnectionStringName);
             Title_Service objTS = new Title_Service(objLoginEntity.ConnectionStringName);
 
-            
+
             ViewBag.TitleList = new SelectList(new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Reference_Flag != "T" && x.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code == BU_Code)).OrderBy(t => t.Title_Name), "Title_Code", "Title_Name").ToList();
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
@@ -311,7 +319,7 @@ namespace RightsU_Plus.Controllers
 
         }
         public PartialViewResult BindAcqDealListReport(string businessUnitcode, string DealNo, string DealType, string Dealtag, string startDate, string endDate, string Title,
-            string IsPushBack, string subDeal, string DealSegment, string masterDeal, string dateformat, string IsCheckRight)
+            string IsPushBack, string subDeal, string DealSegment, string masterDeal, string dateformat, string IsCheckRight, string TypeOfFilm)
         {
             if (businessUnitcode == "0")
             {
@@ -320,17 +328,17 @@ namespace RightsU_Plus.Controllers
                 //businessUnitcode = string.Join(",", new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code))
                 //     .Select(s => s.Business_Unit_Code.ToString()).ToArray());
             }
-            else if(businessUnitcode == "-1")
+            else if (businessUnitcode == "-1")
             {
                 var BUforRegGEC = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
                 var arrayBUforRegGEC = BUforRegGEC.Split(',');
                 businessUnitcode = String.Join(",", new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code) && arrayBUforRegGEC.Contains(x.Business_Unit_Code.ToString())).Select(x => x.Business_Unit_Code).ToList());
             }
 
-            
+
             string title_names = TitleAutosuggest(Title);
             string Promoter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(t => true).Where(w => w.Parameter_Name == "Promoter_Tab").Select(s => s.Parameter_Value).FirstOrDefault();
-            ReportParameter[] parm = new ReportParameter[17];
+            ReportParameter[] parm = new ReportParameter[18];
 
             parm[0] = new ReportParameter("Agreement_No", DealNo);
             parm[1] = new ReportParameter("Is_Master_Deal", DealType);
@@ -349,6 +357,7 @@ namespace RightsU_Plus.Controllers
             parm[14] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
             parm[15] = new ReportParameter("IsCheckRight", IsCheckRight);
             parm[16] = new ReportParameter("DealSegment", DealSegment);
+            parm[17] = new ReportParameter("TypeOfFilm", TypeOfFilm);
             ReportViewer rptViewer = BindReport(parm, "ACQUITION_DEAL_LIST_REPORT");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
@@ -383,41 +392,42 @@ namespace RightsU_Plus.Controllers
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }
-        public JsonResult PopulateTitleNameForAcqDeal(int BU_Code, string keyword = "")
+        public JsonResult PopulateTitleNameForAcqDeal(string BU_Code, string keyword = "")
         {
             List<string> arrBUCodes = new List<string>();
 
-            if (BU_Code == 0)
+            if (BU_Code == "0")
             {
                 arrBUCodes = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active != " " && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code))
                     .Select(s => s.Business_Unit_Code.ToString()).ToList();
             }
-            else if(BU_Code == -1)
+            else if (BU_Code == "-1")
             {
                 var listOfGEC = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
                 var templistOfGEC = listOfGEC.Split(',').ToList();
                 arrBUCodes = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active != " " && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code) && templistOfGEC.Contains(x.Business_Unit_Code.ToString()))
                     .Select(s => s.Business_Unit_Code.ToString()).ToList();
-                
+
             }
             else
             {
-                arrBUCodes.Add(BU_Code.ToString());
+                arrBUCodes = BU_Code.Split(',').ToList();
             }
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
             {
                 List<string> terms = keyword.Split('﹐').ToList();
+               
                 terms = terms.Select(s => s.Trim()).ToList();
                 string searchString = terms.LastOrDefault().ToString().Trim();
 
-                    result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Name.ToUpper()
-                .Contains(searchString.ToUpper())
-                && s.Is_Active == "Y"
-                && s.Reference_Flag != "T"
-                && s.Acq_Deal_Movie.Any(AM => arrBUCodes.Contains(AM.Acq_Deal.Business_Unit_Code.ToString())))
-                .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).Distinct().ToList();
-                
+                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Name.ToUpper()
+            .Contains(searchString.ToUpper())
+            && s.Is_Active == "Y"
+            && s.Reference_Flag != "T"
+            && s.Acq_Deal_Movie.Any(AM => arrBUCodes.Contains(AM.Acq_Deal.Business_Unit_Code.ToString())))
+            .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).Distinct().ToList();
+
             }
 
             return Json(result);
@@ -470,22 +480,30 @@ namespace RightsU_Plus.Controllers
                 ViewBag.BusinessUnitList = GetBusinessUnitList();
             }
             var AllowDealSegment = ViewBag.AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            var IsAllowTypeOfFilm = ViewBag.IsAllowTypeOfFilm = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").Select(x => x.Parameter_Value).FirstOrDefault();
 
             if (AllowDealSegment == "Y")
             {
                 ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList(), "Deal_Segment_Code", "Deal_Segment_Name");
             }
+
+            if (IsAllowTypeOfFilm == "Y")
+            {
+                ViewBag.TypeOfFilm = new SelectList(new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == 2).Select(x => new { Columns_Value_Code = x.Columns_Value_Code, Columns_Value = x.Columns_Value }).ToList(), "Columns_Value_Code", "Columns_Value");
+            }
+            var Is_AllowMultiBUsyndealreport = ViewBag.Is_AllowMultiBUsyndealreport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUsyndealreport").Select(x => x.Parameter_Value).FirstOrDefault();
+
             return View();
         }
-        public JsonResult BindSynTitleList(int BU_Code, string keyword = "")
+        public JsonResult BindSynTitleList(string BU_Code, string keyword = "")
         {
             List<string> arrBUCodes = new List<string>();
-            if (BU_Code == 0)
+            if (BU_Code == "0")
             {
                 arrBUCodes = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active != " " && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code))
                     .Select(s => s.Business_Unit_Code.ToString()).ToList();
             }
-            else if (BU_Code == -1)
+            else if (BU_Code == "-1")
             {
                 var listOfGEC = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
                 var templistOfGEC = listOfGEC.Split(',').ToList();
@@ -495,9 +513,9 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                arrBUCodes.Add(BU_Code.ToString());
+                arrBUCodes = BU_Code.Split(',').ToList();
             }
-            
+
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -509,7 +527,7 @@ namespace RightsU_Plus.Controllers
             return Json(result);
         }
         public PartialViewResult BindSynDealListReport(string businessUnitcode, string DealNo, string status, string startDate, string endDate, string TitleCode, string DealSegment,
-            string IsPushBack, string isTheatrical, bool isExpiredDeal, string dateformat, string IsCheckRight )
+            string IsPushBack, string isTheatrical, bool isExpiredDeal, string dateformat, string IsCheckRight, string TypeOfFilm)
         {
             if (businessUnitcode == "0")
             {
@@ -536,7 +554,7 @@ namespace RightsU_Plus.Controllers
             {
                 ExpiredDeal = "N";
             }
-            ReportParameter[] parm = new ReportParameter[16];
+            ReportParameter[] parm = new ReportParameter[17];
 
             parm[0] = new ReportParameter("Agreement_No", DealNo);
             parm[1] = new ReportParameter("Title_Codes", title_names);
@@ -554,6 +572,7 @@ namespace RightsU_Plus.Controllers
             parm[13] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
             parm[14] = new ReportParameter("IsCheckRight", IsCheckRight);
             parm[15] = new ReportParameter("DealSegment", DealSegment);
+            parm[16] = new ReportParameter("TypeOfFilm", TypeOfFilm);
             ReportViewer rptViewer = BindReport(parm, "SYNDICATION_DEAL_LIST_REPORT");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
@@ -671,21 +690,21 @@ namespace RightsU_Plus.Controllers
             return View();
         }
         public JsonResult BindTitleForPlAcq(int BU_Code, string keyword = "")
-     {
+        {
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
             {
                 List<string> terms = keyword.Split('﹐').ToList();
                 terms = terms.Select(s => s.Trim()).ToList();
                 string searchString = terms.LastOrDefault().ToString().Trim();
-                if(BU_Code == 0)
+                if (BU_Code == 0)
                 {
                     var listOfBU = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)).Select(x => x.Business_Unit_Code).ToList();
 
                     result = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title.Title_Name.ToUpper().Contains(searchString.ToUpper()) && listOfBU.Any(x => x.ToString() == s.Acq_Deal.Business_Unit_Code.ToString()) && (s.Acq_Deal.Is_Master_Deal == "Y" ||
                     s.Acq_Deal.Deal_Type_Code == GlobalParams.Deal_Type_Music)).Select(x => new { Title_Name = x.Title.Title_Name, Title_Code = x.Title.Title_Code }).Distinct().ToList();
                 }
-                else if(BU_Code == -1)
+                else if (BU_Code == -1)
                 {
                     var listOfGEC = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "BUCodes_All_Regional_GEC").Select(x => x.Parameter_Value).First();
                     var strListOfGEC = listOfGEC.Split(',');
@@ -698,7 +717,7 @@ namespace RightsU_Plus.Controllers
                     result = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title.Title_Name.ToUpper().Contains(searchString.ToUpper()) && s.Acq_Deal.Business_Unit_Code == BU_Code && (s.Acq_Deal.Is_Master_Deal == "Y" ||
                     s.Acq_Deal.Deal_Type_Code == GlobalParams.Deal_Type_Music)).Select(x => new { Title_Name = x.Title.Title_Name, Title_Code = x.Title.Title_Code }).Distinct().ToList();
                 }
-                
+
             }
             return Json(result);
         }
@@ -744,7 +763,7 @@ namespace RightsU_Plus.Controllers
                 }
 
             }
-            
+
             string strShowExpiredDeals = (isExpiredDeal == true) ? "Y" : "N";
             string strShowSubDeals = (isSubDeal == true) ? "Y" : "N";
             string strRestRmk = (isRestRmk == true) ? "Y" : "N";
@@ -841,16 +860,20 @@ namespace RightsU_Plus.Controllers
           .Select(i => new { Display_Value = i.Business_Unit_Code, Display_Text = i.Business_Unit_Name }).ToList().Distinct(),
           "Display_Value", "Display_Text").ToList();
 
-            if (isRightForAllGEC)
-            {
-                list.Insert(0, new SelectListItem() { Selected = true, Text = "All Regional GEC", Value = "-1" });
-            }
+            var Is_AllowMultiBUacqdealreport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdealreport").Select(x => x.Parameter_Value).FirstOrDefault();
 
-            if (isRightForAllBusinessUnit)
+            if (Is_AllowMultiBUacqdealreport != "Y")
             {
-                list.Insert(0, new SelectListItem() { Selected = true, Text = "All Business Unit", Value = "0" });
-            }
+                if (isRightForAllGEC)
+                {
+                    list.Insert(0, new SelectListItem() { Selected = true, Text = "All Regional GEC", Value = "-1" });
+                }
 
+                if (isRightForAllBusinessUnit)
+                {
+                    list.Insert(0, new SelectListItem() { Selected = true, Text = "All Business Unit", Value = "0" });
+                }
+            }
             return new SelectList(list, "Value", "Text");
         }
         #region -------------- Platform Wise Syndication--------
@@ -888,7 +911,7 @@ namespace RightsU_Plus.Controllers
                   "Display_Value", "Display_Text");
         }
         public JsonResult BindTitleForPlSyn(int BU_Code, string keyword = "")
-       {
+        {
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -898,7 +921,7 @@ namespace RightsU_Plus.Controllers
                 if (BU_Code == 0)
                 {
                     var listOfBU = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)).Select(x => x.Business_Unit_Code).ToList();
-                    
+
                     result = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title.Title_Name.ToUpper().Contains(searchString.ToUpper()) && listOfBU.Any(s => s.ToString() == x.Syn_Deal.Business_Unit_Code.ToString())).Select(x => new { Title_Name = x.Title.Title_Name, Title_Code = x.Title.Title_Code }).Distinct().ToList();
                 }
                 else if (BU_Code == -1)
@@ -912,7 +935,7 @@ namespace RightsU_Plus.Controllers
                 {
                     result = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Syn_Deal.Business_Unit_Code == BU_Code).Select(x => new { Title_Name = x.Title.Title_Name, Title_Code = x.Title.Title_Code }).Distinct().ToList();
                 }
-                
+
                 //result = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Syn_Deal.Business_Unit_Code == BU_Code).Select(x => x.Title).Distinct().ToList();
             }
             return Json(result);
@@ -1670,16 +1693,16 @@ namespace RightsU_Plus.Controllers
             string strTitle = string.Join(",", arrOfTitle);
 
             ViewBag.BusinessUnit = Get_Business_Unit(Convert.ToInt32(objPAR.Business_Unit_Code));
-           // ViewBag.AncillaryType = Get_Ancillary_Type(Convert.ToInt32(objPAR.Ancillary_Type_Codes));
+            // ViewBag.AncillaryType = Get_Ancillary_Type(Convert.ToInt32(objPAR.Ancillary_Type_Codes));
             //ViewBag.Title = Get_Title(objMUR.Title_Codes);
             // var ArrTitleCodes = objMUR.Title_Codes.Trim('﹐');
             var lstPlatformNames = new List<string>();
             if (objPAR.Platform_Codes != "")
             {
                 var tempPlatformcode = objPAR.Platform_Codes.Split(',').Select(int.Parse).Distinct().ToList();
-                var lstPlatform =new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+                var lstPlatform = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
                 lstPlatformNames = lstPlatform.FindAll(x => tempPlatformcode.Any(y => y == x.Platform_Code)).Select(s => s.Platform_Name).ToList();
-                ViewBag.PlatForm = string.Join(",",lstPlatformNames);
+                ViewBag.PlatForm = string.Join(",", lstPlatformNames);
             }
             else
             {
@@ -1703,7 +1726,7 @@ namespace RightsU_Plus.Controllers
                 var tempAncillarycode = objPAR.Ancillary_Type_Codes.Split(',').Select(int.Parse).Distinct().ToList();
                 var lstAncillary = new Ancillary_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
                 lstAncillaryNames = lstAncillary.FindAll(x => tempAncillarycode.Any(y => y == x.Ancillary_Type_Code)).Select(s => s.Ancillary_Type_Name).ToList();
-                ViewBag.AncillaryType = string.Join(",",lstAncillaryNames);
+                ViewBag.AncillaryType = string.Join(",", lstAncillaryNames);
             }
             else
             {
@@ -1717,7 +1740,7 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.AgreementNo = "NA";
             }
-           
+
             if (objPAR.IncludeExpired == "Y")
             {
                 ViewBag.IncludeExpired = "Yes";
@@ -1746,7 +1769,7 @@ namespace RightsU_Plus.Controllers
             string fullPath = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "P&ARightsReport").Select(s => s.Parameter_Value).FirstOrDefault();
 
             //fullPath = fullPath + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx";
-             fullPath = (Server.MapPath("~") + fullPath + "\\"  +"Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx");
+            fullPath = (Server.MapPath("~") + fullPath + "\\" + "Adv_Ancillary_Report_Sheet_" + MURCode + ".xlsx");
             //string path = fullPath + fileName;
 
 
@@ -1824,7 +1847,7 @@ namespace RightsU_Plus.Controllers
             return BU_names;
 
         }
-        
+
         public JsonResult BindPATitleList(int BU_Code, string keyword = "")
         {
             dynamic result = "";
@@ -1842,7 +1865,7 @@ namespace RightsU_Plus.Controllers
 
         }
 
-        public JsonResult BindPARightsReport(string txtCriteriaName, string AccessibilityType,string agreementNo, string businessUnitcode, string titleCodes, string AncillaryTypeCode = "", string platformCodes = "", string IncludeExpired = "N") // string txtfrom , string txtto, string dateformat, string datetimeformat, string txtCriteriaName, string AccessibilityType,
+        public JsonResult BindPARightsReport(string txtCriteriaName, string AccessibilityType, string agreementNo, string businessUnitcode, string titleCodes, string AncillaryTypeCode = "", string platformCodes = "", string IncludeExpired = "N") // string txtfrom , string txtto, string dateformat, string datetimeformat, string txtCriteriaName, string AccessibilityType,
         {
 
             string title_names = TitleAutosuggest(titleCodes);
@@ -1864,7 +1887,7 @@ namespace RightsU_Plus.Controllers
             Acq_Adv_Ancillary_Report_Service objService = new Acq_Adv_Ancillary_Report_Service(objLoginEntity.ConnectionStringName);
             Acq_Adv_Ancillary_Report objPAR = new RightsU_Entities.Acq_Adv_Ancillary_Report();
             objPAR.EntityState = State.Added;
-            
+
             objPAR.Title_Codes = title_names;
             objPAR.Agreement_No = agreementNo;
             objPAR.Business_Unit_Code = Convert.ToInt32(businessUnitcode);
@@ -2526,7 +2549,7 @@ namespace RightsU_Plus.Controllers
         }
         #endregion-----------------------------------------------------------------------------------
 
-        private ReportViewer BindReport(ReportParameter[] parm, string ReportName,  string ErrorMessage = "")
+        private ReportViewer BindReport(ReportParameter[] parm, string ReportName, string ErrorMessage = "")
         {
             ReportViewer rptViewer = new ReportViewer();
             try

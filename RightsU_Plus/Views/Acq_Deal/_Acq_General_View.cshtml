@@ -85,20 +85,7 @@
         "MsgForSelectTitle": '@objMessageKey.Pleaseselectatleastonetitle'
     }
     $(document).ready(function () {
-        //debugger;
-        // $("#ancFileName").attr('href','Help/Masters/Layout.html?@Session["FileName"]');
-        //$('#ddlTitle_Search_List').SumoSelect();
-        //$('#ddlTitle_Search_List')[0].sumo.reload();
-        //debugger;
-        @*if('@TempData["approval"]'=="approvallist")
-        {
-
-            $("#ancFileName").attr('href', '../Help/Masters/Layout.html?ApprovalListPage');
-        }
-        else{
-            $("#ancFileName").attr('href', '../Help/Masters/Layout.html?syn_General');
-        }*@
-
+        $("#show_hide").parent().find('.MoreActionDiv').slideToggle('fast');
     });
 </script>
 <script>
@@ -109,6 +96,15 @@
         collapseTimer: 0,
         userCollapseText: '<span>[^]</span>'
     });
+    function MoreActionDiv_onHover() {
+        debugger
+        // Get the current title
+        var title = $('#show_hide').attr("data-original-title");
+        // Store it in a temporary attribute
+        $('#show_hide').attr("tmp_title", title);
+        // Set the title to nothing so we don't see the tooltips
+        $('#show_hide').attr("data-original-title", "");
+    }
 </script>
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
@@ -127,15 +123,63 @@
                                         string strDealType = Model.Is_Master_Deal.Trim() == "Y" ? "Master Deal" : "Sub Deal";
                                         <td>@strDealType</td>
                                     }
-                                    <td>@objMessageKey.MasterDealToLink</td>
                                     @{
-                                        int? masterDealMovieCode = Model.Master_Deal_Movie_Code_ToLink;
-                                        string strMasterDeal = @GlobalParams.msgNA;
-                                        if (masterDealMovieCode != null && masterDealMovieCode > 0)
-                                            strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == masterDealMovieCode).
-                                                Select(w => w.Title.Title_Name + " - " + w.Acq_Deal.Agreement_No).First();
+                                        string Show_Acq_SubDeal_List = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                                                        .SearchFor(x => x.Parameter_Name == "Show_Acq_SubDeal_List").Select(x => x.Parameter_Value).FirstOrDefault();
 
-                                        <td>@strMasterDeal</td>
+                                        if (Show_Acq_SubDeal_List == "Y")
+                                        {
+                                            string DealToLink = Model.Is_Master_Deal.Trim() == "Y" ? "Sub Deal Linked" : "Master Deal To Link";
+                                            <td>@DealToLink</td>
+
+                                            if (Model.Is_Master_Deal.Trim() != "Y")
+                                            {
+                                                int? masterDealMovieCode = Model.Master_Deal_Movie_Code_ToLink;
+                                                string strMasterDeal = @GlobalParams.msgNA;
+                                                if (masterDealMovieCode != null && masterDealMovieCode > 0)
+                                                    strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == masterDealMovieCode).
+                                                        Select(w => w.Title.Title_Name + " - " + w.Acq_Deal.Agreement_No).First();
+
+                                                <td>@strMasterDeal</td>
+                                            }
+                                            else
+                                            {
+                                                var subDeal_List = new RightsU_BLL.Acq_Deal_Service(objLoginEntity.ConnectionStringName)
+                                                    .SearchFor(x => x.Is_Master_Deal == "N" && x.Agreement_No.Contains(Model.Agreement_No))
+                                                    .Select(x => new { x.Agreement_No, x.Acq_Deal_Code, x.Master_Deal_Movie_Code_ToLink }).ToList();
+
+                                                <td>
+                                                    <a title="More Sub Deal" id="show_hide" href="#" class="glyphicon glyphicon-sd-video show_hide"></a>
+                                                    <div id="extent" class="MoreActionDiv" style="right: 160px !important;display: block;width: 20%;text-align: center;color: grey;" onmouseover="MoreActionDiv_onHover()">
+                                                        <table>
+                                                            @foreach (var item in subDeal_List)
+                                                            {
+                                                                string strMasterDeal = @GlobalParams.msgNA;
+                                                                if (item.Master_Deal_Movie_Code_ToLink != null && item.Master_Deal_Movie_Code_ToLink > 0)
+                                                                    strMasterDeal = String.Join(", ", new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == item.Acq_Deal_Code).
+                                                                        Select(w => w.Title.Title_Name).ToList());
+                                                                <tr>
+                                                                    <td>@strMasterDeal - @item.Agreement_No</td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>@objMessageKey.MasterDealToLink</td>
+
+                                            int? masterDealMovieCode = Model.Master_Deal_Movie_Code_ToLink;
+                                            string strMasterDeal = @GlobalParams.msgNA;
+                                            if (masterDealMovieCode != null && masterDealMovieCode > 0)
+                                                strMasterDeal = new RightsU_BLL.Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == masterDealMovieCode).
+                                                    Select(w => w.Title.Title_Name + " - " + w.Acq_Deal.Agreement_No).First();
+
+                                            <td>@strMasterDeal</td>
+
+                                        }
                                     }
                                 </tr>
                                 <tr>
@@ -205,109 +249,135 @@
                                     <td>@Model.Ref_No</td>
                                 </tr>
                                 <tr>
-                                    <td>@objMessageKey.Phone</td>
-                                    <td>@vendorPhone</td>
-                                    <td>@objMessageKey.Email</td>
-                                    <td>@vendorEmail</td>
-                                </tr>
+                                    @if (ViewBag.Is_Acq_Confirming_Party == "Y")
+                                    {
+                                    <tr>
+                                        <td>@objMessageKey.Phone</td>
+                                        <td>@vendorPhone</td>
 
-                                @if (ViewBag.DealSegment == "Y" || ViewBag.RevenueVertical == "Y")
+                                        <td>Confirming Party</td>
+                                        <td>
+                                            @Model.Confirming_Party
+                                        </td>
+                                    </tr>
+
+                                }
+                                else
                                 {
                                     <tr>
-                                        @if (ViewBag.DealSegment == "Y")
-                                        {
-                                            <td>@objMessageKey.DealSegment</td>
-                                            if (Model.Deal_Segment != null)
-                                            {
-                                                <td>
-                                                    @Model.Deal_Segment.Deal_Segment_Name
-                                                </td>
-                                            }
-                                        }
-                                        @if (ViewBag.RevenueVertical == "Y")
-                                        {
-                                            <td>Revenue Vertical</td>
-                                            if (Model.Revenue_Vertical != null)
-                                            {
-                                                <td>
-                                                    @Model.Revenue_Vertical.Revenue_Vertical_Name
-                                                </td>
-                                            }
-                                        }
+                                        <td>@objMessageKey.Phone</td>
+                                        <td>@vendorPhone</td>
+                                        <td>@objMessageKey.Email</td>
+                                        <td>@vendorEmail</td>
                                     </tr>
                                 }
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="scale_table_block" id="movieSearchBand" onclick="hideStarCast()">
-                        <table class="table style_table">
-                            <tr>
-                                <td class="bold" style="width: 15%;"><span id="lblTitleLabel"></span><span id="lblTitleCount"></span></td>
-                                <td class="bold" style="width: 10%; text-align: right;">@objMessageKey.Titles:</td>
-                                <td style="width: 50%;">
-                                    @if (ViewBag.Title_Search_List != null)
+                                    </tr>
+
+                                    @if (ViewBag.DealSegment == "Y" || ViewBag.RevenueVertical == "Y")
                                     {
-                                        @Html.DropDownList("Title_Search_List", (List<SelectListItem>)ViewBag.Title_Search_List, new { @id = "ddlTitle_Search_List", @multiple = "multiple", @onchange = "ddlTitle_Search_List_OnChange()" });
+                                        <tr>
+                                            @if (ViewBag.DealSegment == "Y")
+                                            {
+                                                <td>@objMessageKey.DealSegment</td>
+                                                if (Model.Deal_Segment != null)
+                                                {
+                                                    <td>
+                                                        @Model.Deal_Segment.Deal_Segment_Name
+                                                    </td>
+                                                }
+                                            }
+                                            @if (ViewBag.RevenueVertical == "Y")
+                                            {
+                                                <td>Revenue Vertical</td>
+                                                if (Model.Revenue_Vertical != null)
+                                                {
+                                                    <td>
+                                                        @Model.Revenue_Vertical.Revenue_Vertical_Name
+                                                    </td>
+                                                }
+                                            }
+                                        </tr>
                                     }
 
-                                </td>
-                                <td style="width: 10%;">
-                                    <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearchTitle_Click()">
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="paging_area clearfix" onclick="hideStarCast()">
-                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
-                        <span class="pull-left" id="lblTitleSearchCount"></span>
-                        @Html.Hidden("hdnPageNo", 1)
-                        @Html.Hidden("hdnPagePerBatch", 5)
-                        @Html.Hidden("hdnRecordCount", 0)
-                        <input type="hidden" id="hdnTabName" name="hdnTabName" />
-
-                        <div id="Pagination" class="pagination">
+                                    @if (ViewBag.Is_Acq_Confirming_Party == "Y")
+                                    {
+                                        <tr>
+                                            <td>@objMessageKey.Email</td>
+                                            <td>@vendorEmail</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
-                        <span class="pull-right">
-                            @objMessageKey.PageSize:
-                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()">
-                        </span>
-                    </div>
-                    <div class="scale_table_block" id="subDealMovie">
-                    </div>
-                    <div class="scale_table_block" onclick="hideStarCast()">
-                        <div class="divBlock">
-                            <div class="bold" style="padding-right: 100%;">@objMessageKey.Remarks</div>
-                            <div class="remarks_General">
-                                @{
-                                    if (!string.IsNullOrEmpty(Model.Remarks))
-                                    {
-                                        @Html.Raw(Model.Remarks.Replace("\n", "<br/>"))
+                        <div class="scale_table_block" id="movieSearchBand" onclick="hideStarCast()">
+                            <table class="table style_table">
+                                <tr>
+                                    <td class="bold" style="width: 15%;"><span id="lblTitleLabel"></span><span id="lblTitleCount"></span></td>
+                                    <td class="bold" style="width: 10%; text-align: right;">@objMessageKey.Titles:</td>
+                                    <td style="width: 50%;">
+                                        @if (ViewBag.Title_Search_List != null)
+                                        {
+                                            @Html.DropDownList("Title_Search_List", (List<SelectListItem>)ViewBag.Title_Search_List, new { @id = "ddlTitle_Search_List", @multiple = "multiple", @onchange = "ddlTitle_Search_List_OnChange()" });
+                                        }
+
+                                    </td>
+                                    <td style="width: 10%;">
+                                        <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearchTitle_Click()">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="paging_area clearfix" onclick="hideStarCast()">
+                            <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                            <span class="pull-left" id="lblTitleSearchCount"></span>
+                            @Html.Hidden("hdnPageNo", 1)
+                            @Html.Hidden("hdnPagePerBatch", 5)
+                            @Html.Hidden("hdnRecordCount", 0)
+                            <input type="hidden" id="hdnTabName" name="hdnTabName" />
+
+                            <div id="Pagination" class="pagination">
+                            </div>
+                            <span class="pull-right">
+                                @objMessageKey.PageSize:
+                                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()">
+                            </span>
+                        </div>
+                        <div class="scale_table_block" id="subDealMovie">
+                        </div>
+                        <div class="scale_table_block" onclick="hideStarCast()">
+                            <div class="divBlock">
+                                <div class="bold" style="padding-right: 100%;">@objMessageKey.Remarks</div>
+                                <div class="remarks_General">
+                                    @{
+                                        if (!string.IsNullOrEmpty(Model.Remarks))
+                                        {
+                                            @Html.Raw(Model.Remarks.Replace("\n", "<br/>"))
+                                        }
                                     }
-                                }
+                                </div>
                             </div>
                         </div>
                     </div>
+                    @if (objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+                        @Html.Partial("_Edit_Without_Approval")
+                    }
+                    @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        @Html.Partial("_Approved_List")
+                    }
+                    else if (objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+                        <div class="bottom_action" onclick="hideStarCast()">
+                            <ul class="form_link_nav clearfix">
+                                <li>
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("Cancel", "Acq_General")    '">
+                                </li>
+                            </ul>
+                        </div>
+                    }
                 </div>
-                @if (objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
-                {
-                    @Html.Partial("_Edit_Without_Approval")
-                }
-                @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
-                {
-                    @Html.Partial("_Approved_List")
-                }
-                else if (objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
-                {
-                    <div class="bottom_action" onclick="hideStarCast()">
-                        <ul class="form_link_nav clearfix">
-                            <li>
-                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                       onclick="location.href='@Url.Action("Cancel", "Acq_General")    '">
-                            </li>
-                        </ul>
-                    </div>
-                }
             </div>
         </div>
     </div>
-</div>
