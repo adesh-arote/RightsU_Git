@@ -657,6 +657,7 @@ namespace RightsU_Plus.Controllers
             CommonUtil.WriteErrorLog("Called ButtonEvents method of Acq_ListController for CommandName = '" + CommandName + "'", Err_filename);
             Session["EditWOA"] = "N";
             TempData["TitleData"] = null;
+            TempData["prevAcqDeal"] = null;
             string strMessage, strViewBagMsg = "", Mode = "";
             // bool isLocked = true;
             Dictionary<string, string> obj = new Dictionary<string, string>();
@@ -743,8 +744,10 @@ namespace RightsU_Plus.Controllers
                 obj.Add("RLCode", RLCode.ToString());
                 obj.Add("ClearSrchSession", "N");
                 obj.Add("Pushback_Text", Pushback_Text);
+
                 if (CommandName == "View" && id > 0)
-                    obj.Add("prevAcqDeal", Convert.ToString(id));
+                    TempData["prevAcqDeal"] = Convert.ToString(id);
+
                 TempData["QueryString"] = obj;
                 TempData["QS_LayOut"] = null;
                 if (CommandName == "Content")
