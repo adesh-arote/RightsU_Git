@@ -54,6 +54,14 @@ namespace RightsU_Plus.Controllers
             Session["FileName"] = "";
            // TempData.Remove("FileName");
             Session["FileName"] = "acq_StatusHistory";
+
+            int prevAcq_Deal = 0;
+            if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_VIEW && TempData["prevAcqDeal"] != null)
+            {
+                prevAcq_Deal = Convert.ToInt32(TempData["prevAcqDeal"]);
+                TempData.Keep("prevAcqDeal");
+            }
+            ViewBag.prevAcq_Deal = prevAcq_Deal;
             return PartialView("~/Views/Acq_Deal/_Acq_Status_History.cshtml", Obj_USP_List_Status_History.ToList());
         }
 
