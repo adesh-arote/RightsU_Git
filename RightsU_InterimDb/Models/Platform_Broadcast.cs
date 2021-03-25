@@ -12,14 +12,10 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Users_Detail
+    public partial class Platform_Broadcast
     {
-    	public State EntityState { get; set; }    public int Users_Detail_Code { get; set; }
-    	    public Nullable<int> Users_Code { get; set; }
-    	    public Nullable<int> Attrib_Group_Code { get; set; }
-    	    public string Attrib_Type { get; set; }
-    
-        public virtual Attrib_Group Attrib_Group { get; set; }
-        public virtual User User { get; set; }
+    	public State EntityState { get; set; }    public int Platform_Broadcast_Code { get; set; }
+    	    public Nullable<int> Platform_Code { get; set; }
+    	    public Nullable<int> Broadcast_Mode_Code { get; set; }
     }
 }

@@ -6674,6 +6674,26 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+    public class Platform_Broadcast_Service
+    {
+        private readonly Platform_Broadcast_Repository obj_Repository;
+
+        public Platform_Broadcast_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Platform_Broadcast_Repository(Connection_Str);
+        }
+
+        public IQueryable<Platform_Broadcast> SearchFor(Expression<Func<Platform_Broadcast, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Platform_Broadcast GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
     public class Revenue_Vertical_Service
     {
         private readonly Revenue_Vertical_Repository obj_Repository;

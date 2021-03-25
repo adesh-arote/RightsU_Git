@@ -58,10 +58,10 @@ namespace RightsU_BLL
             return objUSPDAL.USP_Get_Territory_ForDDL(IsThetrical);
         }
 
-        public ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
+        public ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name,string IS_Sport_Right)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Get_Platform_Tree_Hierarchy(platformCodes, search_Platform_Name);
+            return objUSPDAL.USP_Get_Platform_Tree_Hierarchy(platformCodes, search_Platform_Name, IS_Sport_Right);
         }
         public ObjectResult<USP_Get_Promoter_Group_Tree_Hierarchy_Result> USP_Get_Promoter_Group_Tree_Hierarchy(string promoter_GroupCodes, string search_Promoter_Group_Name)
         {
