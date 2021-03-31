@@ -1,6 +1,4 @@
-﻿
-
-CREATE PROCEDURE [dbo].[USP_List_Approval_Acq_Syn]
+﻿CREATE PROCEDURE [dbo].[USP_List_Approval_Acq_Syn]
 (
 	@StrSearch NVARCHAR(MAX),
 	@PageNo Int,
@@ -61,7 +59,7 @@ BEGIN
 		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = AD.Vendor_Code
 		INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = ADM.Title_Code
 		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = AD.Business_Unit_Code AND UBU.Users_Code = @User_Code
-		WHERE AD.Is_Active = 'Y' AND AD.Deal_Workflow_Status = 'W'
+		WHERE AD.Is_Active = 'Y' AND AD.Deal_Workflow_Status like 'W%'
 		AND (
 			AD.Agreement_No LIKE '%' + @StrSearch + '%' OR
 			V.Vendor_Name LIKE '%' + @StrSearch + '%' OR
@@ -76,7 +74,7 @@ BEGIN
 		SELECT DISTINCT AD.Acq_Deal_Code, AD.Agreement_No, V.Vendor_Name, AD.Last_Updated_Time, 'A' AS [Type] FROM Acq_Deal AD WITH(NOLOCK)
 		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = AD.Business_Unit_Code AND UBU.Users_Code = @User_Code
 		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = AD.Vendor_Code
-		WHERE AD.Is_Active = 'Y' AND AD.Deal_Workflow_Status = 'W' 
+		WHERE AD.Is_Active = 'Y' AND AD.Deal_Workflow_Status like 'W%'
 		ORDER BY AD.Last_Updated_Time DESC
 	END
 
@@ -112,7 +110,7 @@ BEGIN
 		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = SD.Vendor_Code
 		INNER JOIN Title T WITH(NOLOCK) ON T.Title_Code = SDM.Title_Code
 		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = SD.Business_Unit_Code AND UBU.Users_Code = @User_Code
-		WHERE SD.Is_Active = 'Y' AND SD.Deal_Workflow_Status = 'W'
+		WHERE SD.Is_Active = 'Y' AND SD.Deal_Workflow_Status like 'W%'
 		AND (
 			SD.Agreement_No LIKE '%' + @StrSearch + '%' OR
 			V.Vendor_Name LIKE '%' + @StrSearch + '%' OR
@@ -127,7 +125,7 @@ BEGIN
 		SELECT DISTINCT SD.Syn_Deal_Code, SD.Agreement_No, V.Vendor_Name, SD.Last_Updated_Time, 'S' AS [Type] FROM Syn_Deal SD WITH(NOLOCK)
 		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = SD.Business_Unit_Code AND UBU.Users_Code = @User_Code
 		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = SD.Vendor_Code
-		WHERE SD.Is_Active = 'Y' AND SD.Deal_Workflow_Status = 'W' 
+		WHERE SD.Is_Active = 'Y' AND SD.Deal_Workflow_Status like 'W%'
 		ORDER BY SD.Last_Updated_Time DESC
 	END
 
@@ -162,7 +160,7 @@ BEGIN
 		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = MD.Primary_Vendor_Code
 		INNER JOIN Music_Label ML WITH(NOLOCK) ON ML.Music_Label_Code = MD.Music_Label_Code
 		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = MD.Business_Unit_Code AND UBU.Users_Code = @User_Code
-		WHERE MD.Deal_Workflow_Status = 'W'
+		WHERE MD.Deal_Workflow_Status like 'W%'
 		AND (
 			MD.Agreement_No LIKE '%' + @StrSearch + '%' OR
 			V.Vendor_Name LIKE '%' + @StrSearch + '%' OR
@@ -178,7 +176,7 @@ BEGIN
 		INNER JOIN Vendor V WITH(NOLOCK) ON V.Vendor_Code = MD.Primary_Vendor_Code
 		INNER JOIN Music_Label ML WITH(NOLOCK) ON ML.Music_Label_Code = MD.Music_Label_Code
 		INNER JOIN Users_Business_Unit UBU WITH(NOLOCK) ON UBU.Business_Unit_Code = MD.Business_Unit_Code AND UBU.Users_Code = @User_Code
-		WHERE MD.Deal_Workflow_Status = 'W'
+		WHERE MD.Deal_Workflow_Status like 'W%'
 		ORDER BY MD.Last_Updated_Time DESC
 	END
 
