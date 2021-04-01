@@ -161,8 +161,16 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
     tmp_IsAdvanced = isAdvanced;
     if (isAdvanced == 'N')
         $('#divSearch').hide();
-    else if (isAdvanced == 'Y' && (parseInt($("#ddlSrchBU option").length) == 0 || parseInt($("#ddlSrchBUMultiSelect option").length) == 0))
-        BindAdvanced_Search_Controls('PGL');
+    else {
+         if (Is_AllowMultiBUacqdeal != 'Y') {
+             if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+                 BindAdvanced_Search_Controls('PGL');
+         }
+         else {
+             if (isAdvanced == 'Y' && parseInt($("#ddlSrchBUMultiSelect option").length) == 0)
+                 BindAdvanced_Search_Controls('PGL');
+         }
+    }
     //if ($('#ddlSrchTitle').val())
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
 
