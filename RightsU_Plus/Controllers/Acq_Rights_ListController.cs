@@ -99,6 +99,13 @@ namespace RightsU_Plus.Controllers
             else
                 ViewBag.Record_Locking_Code = 0;
 
+            int prevAcq_Deal = 0;
+            if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_VIEW && TempData["prevAcqDeal"] != null)
+            {
+                prevAcq_Deal = Convert.ToInt32(TempData["prevAcqDeal"]);
+                TempData.Keep("prevAcqDeal");
+            }
+            ViewBag.prevAcq_Deal = prevAcq_Deal;
             ViewBag.Deal_Mode = objDeal_Schema.Mode;
             Session["FileName"] = "";
             Session["FileName"] = "acq_Rights";
@@ -703,6 +710,7 @@ namespace RightsU_Plus.Controllers
             obj_Dic.Add("Page_No", pageNo.ToString());
             obj_Dic.Add("ReleaseRecord", "Y");
             TempData[GlobalParams.Cancel_From_Deal] = obj_Dic;
+         
             if (TempData["TitleData"] != null)
             {
                 return RedirectToAction("View", "Title");
