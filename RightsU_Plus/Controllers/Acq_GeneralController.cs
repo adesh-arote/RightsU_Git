@@ -149,10 +149,11 @@ namespace RightsU_Plus.Controllers
                 Acq_Deal_Code = Convert.ToInt32(obj_Dictionary["Acq_Deal_Code"]);
                 objDeal_Schema.Mode = Convert.ToString(obj_Dictionary["Mode"]).Trim();
                 objDeal_Schema.Pushback_Text = obj_Dictionary["Pushback_Text"];
-                
-                if (obj_Dictionary.ContainsKey("prevAcqDeal"))
+
+                if (TempData["prevAcqDeal"] != null)
                 {
-                    prevAcq_Deal = Convert.ToInt32(obj_Dictionary["prevAcqDeal"]);
+                    prevAcq_Deal = Convert.ToInt32(TempData["prevAcqDeal"]);
+                    TempData.Keep("prevAcqDeal");
                 }
             }
             else
