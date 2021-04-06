@@ -981,7 +981,7 @@ namespace RightsU_Plus.Controllers
             string searchString = terms.LastOrDefault().ToString().Trim();
             //string[] arrsearchString = searchString.ToUpper().Split(',');
 
-            var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code.ToString() == BUCode && AM.Title_Code == x.Title_Code) && (x.Deal_Type_Code.ToString() == dealTypeCode || dealTypeCode == "0")).Where(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()))
+            var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie.Any(AM => BUCode.Contains(AM.Acq_Deal.Business_Unit_Code.ToString()) && AM.Title_Code == x.Title_Code) && (x.Deal_Type_Code.ToString() == dealTypeCode || dealTypeCode == "0")).Where(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()))
                .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
             return Json(result);
         }

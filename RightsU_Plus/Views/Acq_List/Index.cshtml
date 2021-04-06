@@ -393,8 +393,13 @@
         //$("#ddlSrchTitle").find("option").attr("selected", false);
         //$("#ddlSrchTitle").val('')[0].sumo.reload();
         var dealTypeVal = $('#ddlSrchDealType').val();
-        var ddlBU = $('#ddlBUUnit').val();
-
+        var ddlBU = "";
+        if (Is_AllowMultiBUacqdeal != 'Y') {
+            ddlBU = $('#ddlBUUnit').val();
+        }
+        else {
+            ddlBU = $('#ddlSrchBUMultiSelect').val().join(',');
+        }
 
         var Selected_Title_Codes = "";
         var selectedtxt = $('#txtTitleSearch').val();
