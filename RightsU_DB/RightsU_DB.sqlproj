@@ -1459,6 +1459,7 @@
     <None Include="Database Scripts\DBConfig_v5.0.3.2.sql" />
     <None Include="Database Scripts\DBSchema_v5.0.4.1.sql" />
     <Build Include="dbo\Stored Procedures\USP_Deal_WF_Pending_Automated_Email.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_Delay_Rights_Duplication_Acq.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
