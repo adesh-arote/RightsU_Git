@@ -2735,6 +2735,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Ref_Display_Field" Type="varchar" MaxLength="100" />
           <Property Name="Ref_Value_Field" Type="varchar" MaxLength="100" />
           <Property Name="Additional_Condition" Type="varchar" MaxLength="1000" />
+          <Property Name="Is_Add_OnScreen" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Extended_Columns_Value">
           <Key>
@@ -22333,6 +22334,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Additional_Condition" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
           <NavigationProperty Name="Extended_Columns_Value" Relationship="RightsU_NeoModel.FK_Extended_Columns_Value_Extended_Columns" FromRole="Extended_Columns" ToRole="Extended_Columns_Value" />
           <NavigationProperty Name="Map_Extended_Columns" Relationship="RightsU_NeoModel.FK_Map_Extended_Columns_Extended_Columns" FromRole="Extended_Columns" ToRole="Map_Extended_Columns" />
+          <Property Name="Is_Add_OnScreen" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Extended_Columns_Value">
           <Key>
@@ -37122,6 +37124,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Extended_Columns">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Columns">
               <MappingFragment StoreEntitySet="Extended_Columns">
+                <ScalarProperty Name="Is_Add_OnScreen" ColumnName="Is_Add_OnScreen" />
                 <ScalarProperty Name="Columns_Code" ColumnName="Columns_Code" />
                 <ScalarProperty Name="Columns_Name" ColumnName="Columns_Name" />
                 <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
