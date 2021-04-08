@@ -1,4 +1,5 @@
 ﻿@model List<RightsU_Entities.USP_Bind_Extend_Column_Grid_Result>
+@using UTOFrameWork.FrameworkClasses;
            @{
                MessageKey objMessageKey = new MessageKey();
                if (Session["objMessageKey"] != null)
@@ -7,6 +8,7 @@
                }     
            }
 <script type="text/javascript">
+    var ExtendedColumnCode = "";
     //function Cancel(Type,RowNum)
     //{
     //    alert(Type + RowNum);
@@ -233,7 +235,7 @@
         var value = id.substring(id.length - 1);
         var Control = id.substring(id.length - 1, 0);
         var test = id.substring(id.length - 2, id.length);
-        var validate = "";  
+        var validate = "";
         if (!test.indexOf("_") > 0)
             value = id.substring(id.length - 1);
         else
@@ -481,6 +483,7 @@
                 async: false,
                 success: function (result) {
                     debugger;
+                    document.getElementById("btnExtendedColumn").style.visibility = "hidden";
                     if (result.Error == "") {
                         var id = $("#hdnRowNum").val();
                         var trId = "trGrid_" + id;
@@ -974,6 +977,21 @@
         }
     }
 
+    function AddAction() {
+    debugger;
+    if (ExtendedColumnCode == "TALENT") {
+        AddTalent(SelectedColumnName);
+        //ExtendedColumnCode = "";
+    }
+    else if (ExtendedColumnCode == "Extended_Columns_Value" || ExtendedColumnCode == "CBFC") {
+        AddExtendedColumn();
+       // ExtendedColumnCode = "";
+    }
+    else if (ExtendedColumnCode == "") {
+        showAlert("E", "Please Select Field Name");
+    }
+    }
+
     function ControlType(columnValueCode, ddlFieldNameValue) {
         debugger;
         var count = ($('#tbl_Additional_Fileds tr').length - 1);
@@ -996,8 +1014,9 @@
             else {
                 select = $("#" + count + "_ddlControlType");
             }
-
+            
             var lstFieldProp = document.getElementById(ddlFieldNameList).value.split('~');
+
             var CallFor = "T";
             var Control_Type = lstFieldProp[0];
             var Columns_Code = lstFieldProp[1];
@@ -1005,9 +1024,14 @@
             var Is_Defined_Values = lstFieldProp[3];
             var Is_Multiple_Select = lstFieldProp[4];
             var Ref_Table = lstFieldProp[5];
+            ExtendedColumnCode = Ref_Table;
             var Ref_Display_Field = lstFieldProp[6];
             var Ref_Value_Field = lstFieldProp[7];
             var Additional_Condition = lstFieldProp[8];
+            Additional_Conditions = Additional_Condition;
+            var Is_Add_OnScreen = lstFieldProp[9];
+            var ColumnName = lstFieldProp[10];
+            SelectedColumnName = Additional_Condition;
             var MethodName = "";
             var isCBFC = "";
 
@@ -1069,8 +1093,12 @@
                     async: false,
                     success: function (result) {
                         debugger;
-
-
+                        if (Is_Add_OnScreen == "Y") {
+                            document.getElementById("btnExtendedColumn").style.visibility = "visible";
+                        }
+                        else if (Is_Add_OnScreen == "N" || Is_Add_OnScreen == "") {
+                            document.getElementById("btnExtendedColumn").style.visibility = "hidden";
+                        }
                         if ($("#hdnIsRowEdit").val() != "") {
                             select = $("#" + $("#hdnRowNum").val() + '_ddlControlType');
                         }
@@ -1124,6 +1152,7 @@
                                 if (employeeArray[x] != "" && employeeArray[x] != " ")
                                     //$('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').val(employeeArray[x]).trigger('chosen:updated');
                                     $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select option[value=' + employeeArray[x] + ']').attr('selected', 'selected');
+                                        
 
                             }
                             $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').trigger("chosen:updated");
@@ -1156,6 +1185,7 @@
             }
             else {
                 debugger;
+                document.getElementById("btnExtendedColumn").style.visibility = "hidden";
                 $('select#' + $("#hdnRowNum").val() + '_ddlControlType option').remove();
                 //$('select#' + $("#hdnRowNum").val() + '_ddlControlType_chosen.form_input.chosen-select').trigger("chosen:updated");
                 $('#' + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
@@ -1251,6 +1281,7 @@
         //});
     });
     function btnAddExtendedData() {
+        debugger;
         if ($("#hdnRowNum").val() != "") {
             showAlert("e", "Please complete add/edit operation.", "");
             return false;
@@ -1281,18 +1312,21 @@
                 success: function (result) {
                     ddl_first_col = result;
                     var ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList");
+                    $('#your-input').val(result.Columns_Value_Code);
                     //$('.chosen-select').chosen();
 
                 },
                 error: function (result) {
                 }
             });
-
-            html += "<td>" + ddl_first_col + "</td>";
-            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select></td>";
+           
+            html += "<td>" + ddl_first_col + " </td>";
+            @*html += "<td><input type='text' id=" + count + "_txtControlType style='display:none' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' class='red_icon glyphicon glyphicon-plus' onclick='AddTalent(@GlobalParams.Role_code_Producer);' /></td> />";*@
+            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none;' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' id='btnExtendedColumn' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;visibility: hidden;' onclick='AddAction();' /></td> />";
 
             html += "<td><a type='button' title='Save' class='glyphicon glyphicon-ok-circle'   id='btnSave_gvExtended_" + count + "' onclick='SaveExtended(this);' /><a type='button' class='glyphicon glyphicon-remove-circle' title='Cancel' id='btnCancel_gvExtended_" + count + "'  onclick='handleECancel(\"A\"," + count + ")' />   </td>";
             html += "</tr>"
+            //document.getElementById("btnExtendedColumn").style.visibility = "hidden";
 
             $("#tbl_Additional_Fileds").append(html)
 
@@ -1312,14 +1346,14 @@
         }
     }
 
-	 $('.expandable').expander({
-            slicePoint: 100,
-            expandPrefix: '...',
-            expandText: '<span>read more</span>',
-            userCollapseText: '<span>[^]</span>',
-            //collapseTimer: 0,  // re-collapses after 5 seconds; default is 0, so no re-collapsing
-        });
-	
+    $('.expandable').expander({
+        slicePoint: 100,
+        expandPrefix: '...',
+        expandText: '<span>read more</span>',
+        userCollapseText: '<span>[^]</span>',
+        //collapseTimer: 0,  // re-collapses after 5 seconds; default is 0, so no re-collapsing
+    });
+
 </script>
 <style>
     .title_custom_fields {
@@ -1389,13 +1423,14 @@
                     @Html.Hidden("hdnType")
                     @Html.Hidden("hdnColumnCode")
                     @Html.Hidden("hdnRowNum")
+                    @Html.Hidden("hdnIsOnScreen")
 
 
-        int counter = 0;
+                    int counter = 0;
 
-        foreach (var item in Model)
-        {
-            counter += 1;
+                    foreach (var item in Model)
+                    {
+                        counter += 1;
             <tr id="@("trGrid_"+counter)">
                 @*<td id="@counter"+"_tdFirst">*@
                 <td id="@("tdFirst_"+counter)">
@@ -1415,6 +1450,8 @@
                     @Html.Hidden("_hdnColumnValueCode", new { id = counter + "_hdnColumnValueCode" })
                     @Html.Hidden("hdnExtendedColumnValue", item.Column_Value, new { id = counter + "_hdnExtendedColumnValue" })
                     @Html.Hidden("hdnIsDelete", item.IsDelete, new { id = counter + "_hdnIsDelete" })
+                    @*@Html.Hidden("hdnIsOnScreen", item., new { id = counter + "_hdnIsDelete" })
+                    hdnIsOnScreen*@
 
 
                     @* @Html.DropDownList("FieldNameList", (List<SelectListItem>)ViewBag.FieldNameList, new { @id = "ddlFieldNameList", @class = "form_input chosen-select", @onchange="ControlType()" })*@

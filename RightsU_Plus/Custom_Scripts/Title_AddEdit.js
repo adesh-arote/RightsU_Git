@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
     $('#ddlProducer').SumoSelect();
     $('#ddlDirector').SumoSelect();
     $('#ddlCountry').SumoSelect();
@@ -284,6 +285,7 @@ function Save() {
 }
 
 function AddTalent(Type) {
+    debugger;
     $("#talent_name").val('');
     SelectRole(Type);
     $("#popAddTalent").modal();
@@ -294,12 +296,75 @@ function AddTalent(Type) {
 
     }
 }
-
 function SelectRole(roleType) {
     $('#lbRoles').val(roleType.toString())
     $('#lbRoles')[0].sumo.reload();
     $('#lbRoles').siblings('div.optWrapper').find('li.selected').addClass('disabled');
 }
+function AddExtendedColumn() {
+    debugger;
+    $("#Extended_Metadata").val('');
+   // SelectRole(Type);
+    $("#popAddExtendedMetadata").modal();
+    if (Dir_G == 'RTL') {
+        $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px")
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
+
+    }
+}
+
+//function SelectRole(roleType) {
+//    $('#lbRoles').val(roleType.toString())
+//    $('#lbRoles')[0].sumo.reload();
+//    $('#lbRoles').siblings('div.optWrapper').find('li.selected').addClass('disabled');
+//}
+
+function SaveExtendedMetadata(IsValidate) {
+    debugger
+    //var count = ($('#tbl_Additional_Fileds tr').length - 1);
+    //count = $("#hdnRowNum").val();
+    var Error = "", str = "";
+    var ExtendedMetadata = "";
+    var cmnURL = '';
+    if (IsValidate == 'ExtendedMetadata')
+        cmnURL = URL_SaveExtendedMetadata;
+    if ($.trim($("#Extended_Metadata").val()) != "")
+        ExtendedMetadata = $("#Extended_Metadata").val();
+    else {
+        $("#Extended_Metadata").addClass("required");
+       // showAlert("E", "Please Enter Extended Metadata Value Name", "");
+        Error = "E";
+        return false;
+    }
+       // showLoading();
+        $.ajax({
+            type: "POST",
+            url: cmnURL,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ExtendedColumnValue: ExtendedMetadata
+            }),
+            success: function (result) {
+                debugger;
+                $("#popAddExtendedMetadata").modal('hide');
+                if (typeof result.ExtendedColumnError !== "undefined" && result.ExtendedColumnError != "") {
+                    showAlert('E', result.ExtendedColumnError, '');
+                    $("#popAddExtendedMetadata").modal();
+                }
+                $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                $("#" + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+                
+                //AppendExtendedMetadata(selMulti, result);
+                
+            }
+        });
+}
+
+
+
 function ValidateSave(IsValidate) {
     debugger
     var Error = "", str = "";
@@ -348,6 +413,8 @@ function ValidateSave(IsValidate) {
                 Gender: Gender
             }),
             success: function (result) {
+                $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                $("#" + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
                 if (typeof result.TalentError !== "undefined" && result.TalentError != "") {
                     showAlert('E', result.TalentError, '');
                     $("#popAddTalent").modal();
@@ -426,6 +493,19 @@ function AppendTalent(ddl, result) {
         $(ddl)[0].sumo.reload();
     }
 }
+//function AppendExtendedMetadata(ddl, result) {
+//    var count = 0;
+//    $(ddl + " :selected").each(function (i, sel) {
+//        // alert($(sel).text());
+//        if ($(sel).text().toLowerCase() == result.Text.toLowerCase()) {
+//            count++;
+//        }
+//    });
+//    if (count == 0) {
+//        $(ddl).append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+//        $(ddl)[0].sumo.reload();
+//    }
+//}
 
 function OnSuccess(message) {
     showAlert('S', message, 'OK');
@@ -456,6 +536,7 @@ function handleCancel() {
     else {
         $("#hdnRowNum").val('');
         $("#popAddTalent").modal('hide');
+        $("#popAddExtendedMetadata").modal('hide'); 
     }
 }
 
@@ -482,10 +563,10 @@ function BindRoles() {
     });
 }
 
+
 //function WriteName(id, lblid) {
 //    //document.getElementById('<% = Test.ClientID %>').value = document.getElementById('<% = txtT.ClientID %>').value;
 //    //document.getElementById(lblid).value = document.getElementById(id).value;
 //    //$("#lblTitleHead").val($("#" + id).val());
 //    $("#lblTitleHead").text( $("#" + id).val() );
 //}
-

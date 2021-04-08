@@ -80,6 +80,17 @@ namespace RightsU_Plus.Controllers
             set { Session["Message"] = value; }
         }
 
+        public int? ExtendedColumnsCode
+        {
+            get
+            {
+                if (Session["ExtendedColumnCode"] == null)
+                    Session["ExtendedColumnCode"] = 0;
+                return (int)Session["ExtendedColumnCode"];
+            }
+            set { Session["ExtendedColumnCode"] = value; }
+        }
+
         public List<Map_Extended_Columns> lstAddedExtendedColumns
         {
             get
@@ -1111,6 +1122,11 @@ namespace RightsU_Plus.Controllers
                     lstDBExtendedColumns = objMapExtCol_Service.SearchFor(y => y.Record_Code == TitleCode).ToList();
                 }
             }
+            if (ExtendedColumnsCode != 0)
+            {
+                ViewBag.Data = new List<ExtendedMethod>();
+                ViewBag.Data = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == ExtendedColumnsCode).Select(y => new { ColumnCode = y.Columns_Code, Is_Add_OnScreen = y.Is_Add_OnScreen }).ToList();
+            }
 
             //List<SelectListItem> lstGetTitleType = new List<SelectListItem>();
             //lstGetTitleType = new SelectList(new Extended_Columns_Service().SearchFor(x => 1 == 1), "Control_Type", "Columns_Name").ToList();
@@ -1222,9 +1238,9 @@ namespace RightsU_Plus.Controllers
             for (int i = 0; i < lstextCol.Count; i++)
             {
                 if (lstextCol[i].Columns_Code == Column_Code)
-                    FieldNameDDL += " <option value='" + lstextCol[i].Control_Type + "~" + lstextCol[i].Columns_Code + "~" + lstextCol[i].Is_Ref + "~" + lstextCol[i].Is_Defined_Values + "~" + lstextCol[i].Is_Multiple_Select + "~" + lstextCol[i].Ref_Table + "~" + lstextCol[i].Ref_Display_Field + "~" + lstextCol[i].Ref_Value_Field + "~" + lstextCol[i].Additional_Condition + "' selected>" + lstextCol[i].Columns_Name + "</option> ";
+                    FieldNameDDL += " <option value='" + lstextCol[i].Control_Type + "~" + lstextCol[i].Columns_Code + "~" + lstextCol[i].Is_Ref + "~" + lstextCol[i].Is_Defined_Values + "~" + lstextCol[i].Is_Multiple_Select + "~" + lstextCol[i].Ref_Table + "~" + lstextCol[i].Ref_Display_Field + "~" + lstextCol[i].Ref_Value_Field + "~" + lstextCol[i].Additional_Condition + "~" + lstextCol[i].Is_Add_OnScreen + "~" + lstextCol[i].Columns_Name + "' selected>" + lstextCol[i].Columns_Name + "</option> ";
                 else
-                    FieldNameDDL += " <option value='" + lstextCol[i].Control_Type + "~" + lstextCol[i].Columns_Code + "~" + lstextCol[i].Is_Ref + "~" + lstextCol[i].Is_Defined_Values + "~" + lstextCol[i].Is_Multiple_Select + "~" + lstextCol[i].Ref_Table + "~" + lstextCol[i].Ref_Display_Field + "~" + lstextCol[i].Ref_Value_Field + "~" + lstextCol[i].Additional_Condition + "'>" + lstextCol[i].Columns_Name + "</option> ";
+                    FieldNameDDL += " <option value='" + lstextCol[i].Control_Type + "~" + lstextCol[i].Columns_Code + "~" + lstextCol[i].Is_Ref + "~" + lstextCol[i].Is_Defined_Values + "~" + lstextCol[i].Is_Multiple_Select + "~" + lstextCol[i].Ref_Table + "~" + lstextCol[i].Ref_Display_Field + "~" + lstextCol[i].Ref_Value_Field + "~" + lstextCol[i].Additional_Condition + "~" + lstextCol[i].Is_Add_OnScreen + "~" + lstextCol[i].Columns_Name + "'>" + lstextCol[i].Columns_Name + "</option> ";
             }
             //return Json(lstextCol, JsonRequestBehavior.AllowGet);
             if (RowNum != 0)
@@ -1254,7 +1270,8 @@ namespace RightsU_Plus.Controllers
         {
             int Column_Code = Convert.ToInt32(ColumnsCode);
             var lstextCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y => new { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
-
+            ExtendedColumnsCode = Column_Code;
+            //var ValueType = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y =>y.Ref_Table).ToList();
             //try
             //{
             //    Objddl.Attributes.Remove("multiple");
@@ -1351,6 +1368,48 @@ namespace RightsU_Plus.Controllers
             {
                 objJson.Add("TalentError", "Error");
             }
+
+            return Json(objJson);
+        }
+        public JsonResult SaveExtendedMetadata(string ExtendedColumnValue)
+        {
+            int ccount = 0;
+           // ExtendedColumnCode ;
+            string msgType = "";
+            Dictionary<string, object> objJson = new Dictionary<string, object>();
+            try
+            {
+                int count = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Value == ExtendedColumnValue).ToList().Count();
+                if (count >= 1)
+                {
+                    msgType = "R";
+                    throw new DuplicateRecordException("Record Already Exist");
+                }
+
+                RightsU_Entities.Extended_Columns_Value objTalent = new RightsU_Entities.Extended_Columns_Value();
+                dynamic resultSet;
+
+                objTalent.Columns_Code = ExtendedColumnsCode;
+                objTalent.Columns_Value = ExtendedColumnValue;
+                ExtendedColumnsCode = 0;
+                new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).Save(objTalent, out resultSet);
+                objJson.Add("Value", objTalent.Columns_Code);
+                objJson.Add("Text", objTalent.Columns_Value);
+            }
+            catch (DuplicateRecordException)
+            {
+                //resposeText = "duplicate";
+                if (msgType == "R")
+                    objJson.Add("ExtendedColumnError", objMessageKey.RecordAlreadyExists);
+                //else
+                //    objJson.Add("ExtendedColumnConfirmation", "Extended Column Already Exists, Do You want to add more roles with this talent");
+            }
+            catch (Exception)
+            {
+                objJson.Add("ExtendedColumnError", "Error");
+            }
+            //objTalent = null;
+
 
             return Json(objJson);
         }
@@ -2835,4 +2894,9 @@ namespace RightsU_Plus.Controllers
         }
         #endregion
     }
+}
+class ExtendedMethod
+{
+    public int Id { get; set; }
+    public string Is_Add_OnScreen { get; set; }
 }
