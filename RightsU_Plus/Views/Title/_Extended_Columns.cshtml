@@ -46,7 +46,8 @@
         $("input[id][name$='_ddlFieldNameList']").trigger("chosen:updated");
 
         var trId = "trGrid_" + RowNum;
-
+        //$('#btnExtendedColumn_' + $("#hdnRowNum").val()).css("visibility", false)
+        $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
         if (Type == "A")
             $("#" + trId).remove();
         else {
@@ -144,6 +145,9 @@
                 async: false,
                 success: function (result) {
                     debugger;
+                    //$('#' + $("#hdnRowNum").val() + "_btnExtendedColumn").show();
+                    //$('#btnExtendedColumn_' + $("#hdnRowNum").val()).show();
+                    $('#btnExtendedColumn_' + $("#hdnRowNum").val()).css("visibility", "")
                     ddl_first_col = result;
                     var trId = "trGrid_" + obj;
 
@@ -483,7 +487,9 @@
                 async: false,
                 success: function (result) {
                     debugger;
-                    document.getElementById("btnExtendedColumn").style.visibility = "hidden";
+                    //document.getElementById("btnExtendedColumn").style.visibility = "hidden";
+                    //$('#' + $("#hdnRowNum").val() + "_btnExtendedColumn").hide();
+                    $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
                     if (result.Error == "") {
                         var id = $("#hdnRowNum").val();
                         var trId = "trGrid_" + id;
@@ -978,12 +984,15 @@
     }
 
     function AddAction() {
-    debugger;
-    if (ExtendedColumnCode == "TALENT") {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        //$("#btnExtendedColumn_" + $("#hdnRowNum").val()).hide();
+        if (ExtendedColumnCode == "TALENT") {
         AddTalent(SelectedColumnName);
         //ExtendedColumnCode = "";
     }
-    else if (ExtendedColumnCode == "Extended_Columns_Value" || ExtendedColumnCode == "CBFC") {
+        else if (ExtendedColumnCode == "Extended_Columns_Value") {
         AddExtendedColumn();
        // ExtendedColumnCode = "";
     }
@@ -1093,12 +1102,7 @@
                     async: false,
                     success: function (result) {
                         debugger;
-                        if (Is_Add_OnScreen == "Y") {
-                            document.getElementById("btnExtendedColumn").style.visibility = "visible";
-                        }
-                        else if (Is_Add_OnScreen == "N" || Is_Add_OnScreen == "") {
-                            document.getElementById("btnExtendedColumn").style.visibility = "hidden";
-                        }
+                        
                         if ($("#hdnIsRowEdit").val() != "") {
                             select = $("#" + $("#hdnRowNum").val() + '_ddlControlType');
                         }
@@ -1156,7 +1160,18 @@
 
                             }
                             $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').trigger("chosen:updated");
-
+                            if (Is_Add_OnScreen == "Y") {
+                                //document.getElementById("btnExtendedColumn").style.visibility = "visible";
+                                //$('#' + $("#hdnRowNum").val() + "_btnExtendedColumn").show();
+                                $('#btnExtendedColumn_' + $("#hdnRowNum").val()).css("visibility", "")
+                                $('#btnExtendedColumn_' + $("#hdnRowNum").val()).show();
+                                //document.getElementById(count + "_btnExtendedColumn").style.visibility = "visible";
+                            }
+                            else if (Is_Add_OnScreen == "N" || Is_Add_OnScreen == "") {
+                                //document.getElementById(count + "_btnExtendedColumn").style.visibility = "hidden";
+                                //$('#' + $("#hdnRowNum").val() + "_btnExtendedColumn").hide();
+                                $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
+                            }
                             var table = document.getElementById('tbl_Additional_Fileds');
 
                             var rowLength = table.rows.length;
@@ -1185,7 +1200,8 @@
             }
             else {
                 debugger;
-                document.getElementById("btnExtendedColumn").style.visibility = "hidden";
+                $("#btnExtendedColumn_" + $("#hdnRowNum").val()).hide();
+               // document.getElementById("btnExtendedColumn").style.visibility = "hidden";
                 $('select#' + $("#hdnRowNum").val() + '_ddlControlType option').remove();
                 //$('select#' + $("#hdnRowNum").val() + '_ddlControlType_chosen.form_input.chosen-select').trigger("chosen:updated");
                 $('#' + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
@@ -1310,6 +1326,7 @@
                 contentType: "application/json; charset=utf-8",
                 async: false,
                 success: function (result) {
+                    $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
                     ddl_first_col = result;
                     var ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList");
                     $('#your-input').val(result.Columns_Value_Code);
@@ -1319,15 +1336,15 @@
                 error: function (result) {
                 }
             });
-           
+            $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
             html += "<td>" + ddl_first_col + " </td>";
             @*html += "<td><input type='text' id=" + count + "_txtControlType style='display:none' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' class='red_icon glyphicon glyphicon-plus' onclick='AddTalent(@GlobalParams.Role_code_Producer);' /></td> />";*@
-            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none;' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' id='btnExtendedColumn' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;visibility: hidden;' onclick='AddAction();' /></td> />";
+            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none;' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' id='btnExtendedColumn_" + count + "' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' /></td> />";
 
             html += "<td><a type='button' title='Save' class='glyphicon glyphicon-ok-circle'   id='btnSave_gvExtended_" + count + "' onclick='SaveExtended(this);' /><a type='button' class='glyphicon glyphicon-remove-circle' title='Cancel' id='btnCancel_gvExtended_" + count + "'  onclick='handleECancel(\"A\"," + count + ")' />   </td>";
             html += "</tr>"
             //document.getElementById("btnExtendedColumn").style.visibility = "hidden";
-
+            $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
             $("#tbl_Additional_Fileds").append(html)
 
 
@@ -1459,7 +1476,9 @@
                 </td>
                 <td id="@("tdSecond_"+counter)">
                     @Html.Label("Name", item.Name, new { id = counter + "_lblName",@class= "expandable" })
-                    <div id="ddlControlTypeValue">
+                    @*<a type='button' title='Add' id='btnExtendedColumn' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;visibility: hidden;' onclick='AddAction();' />*@
+                    <a  title='Add' id="@("btnExtendedColumn_" + counter)" class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' />
+                     <div id="ddlControlTypeValue">
                     </div>
                     @*@Html.TextBox("txtControlType","",new {@id= counter + "_txtControlType"})*@
                 </td>
