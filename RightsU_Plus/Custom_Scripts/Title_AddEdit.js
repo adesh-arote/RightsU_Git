@@ -413,8 +413,7 @@ function ValidateSave(IsValidate) {
                 Gender: Gender
             }),
             success: function (result) {
-                $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
-                $("#" + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+               
                 if (typeof result.TalentError !== "undefined" && result.TalentError != "") {
                     showAlert('E', result.TalentError, '');
                     $("#popAddTalent").modal();
@@ -426,6 +425,8 @@ function ValidateSave(IsValidate) {
                     $("#popAddTalent").modal();
                 }
                 else {
+                     $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                     $("#" + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
                     $('#hdnMainConfirmationtype').val('');
                     $("#hdnConfirmationtype").val('');
                     var alternatetabname = $('#hdnAlternateTalenttab').val();
