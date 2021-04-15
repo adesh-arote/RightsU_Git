@@ -9,7 +9,7 @@
 AS
 BEGIN	
 	--declare
-	--@RecordCode Int=21617
+	--@RecordCode Int=2118
 	--,@Module_code Int=30
 	--,@RedirectToApprovalList Varchar(100)='N'
 	--,@AutoLoginUser Varchar(100)=143
@@ -44,6 +44,8 @@ BEGIN
 		DECLARE @Acq_Deal_Rights_Code varchar(max)=''
 		DECLARE @Promoter_Count int
 		DECLARE @Promoter_Message varchar(max) =''
+		DECLARE @Approved_by NVARCHAR(MAX) = ''
+
 		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='SFA'
 
 		SELECT @Is_Mail_Send_To_Group=ISNULL(Is_Mail_Send_To_Group,'N') FROM System_Param	--// FLAG FOR SEND MAIL TO INDIVIDUAL PERSON ON GROUP //--
@@ -245,7 +247,7 @@ BEGIN
 				END
 
 
-			   IF(@DealType = 'Acquisition')
+			   IF(@DealType = 'Acquisition'  AND @Is_RU_Content_Category = 'N')
 			   BEGIN
 					SET @Email_Table += '<td align="center" width="10%" class="tblHead">Self Utilization</td>'
 			   END   
@@ -278,7 +280,7 @@ BEGIN
 						<td align="center" class="tblData">{Last_Actioned_Date}</td> 
 					'
 				END
-			   IF(@DealType = 'Acquisition')
+			   IF(@DealType = 'Acquisition' AND @Is_RU_Content_Category = 'N')
 			   BEGIN
 					SET @Email_Table += '<td align="center" class="tblData">{Promoter}</td>'
 				END   
@@ -288,11 +290,14 @@ BEGIN
 				
 				--REPLACE ALL THE PARAMETER VALUE
 				SELECT @body1 = template_desc FROM Email_Template WHERE Template_For='A' 
+				SELECT @Approved_by = dbo.UFN_Get_UsernName_Last_Approved(@RecordCode, @Module_code, 'A')
+
 				SET @body1 = replace(@body1,'{login_name}',@Cur_first_name)
 				SET @body1 = replace(@body1,'{deal_no}',@DealNo)
 				SET @body1 = replace(@body1,'{deal_type}',@DealType)
 				set @body1 = replace(@body1,'{click here}',@DefaultSiteUrl)
 				SET @body1 = replace(@body1,'{link}',@DefaultSiteUrl)
+				SET @body1 = replace(@body1,'{approved_by}',@Approved_by)
 
 				SET @Email_Table = replace(@Email_Table,'{Agreement_No}',@Agreement_No)  
 				SET @Email_Table = REPLACE(@Email_Table,'{Agreement_Date}',@Agreement_Date)  
@@ -300,7 +305,7 @@ BEGIN
 				SET @Email_Table = replace(@Email_Table,'{Primary_Licensor}',@Primary_Licensor)  
 				SET @Email_Table = replace(@Email_Table,'{Titles}',@Titles)  
 				SET @Email_Table = replace(@Email_Table,'{BU_Name}',@BU_Name)  
-				IF(@DealType = 'Acquisition')
+				IF(@DealType = 'Acquisition' AND @Is_RU_Content_Category = 'N')
 				BEGIN
 					SET @Email_Table = replace(@Email_Table,'{Promoter}',@Promoter_Message)  
 				END   
@@ -328,14 +333,16 @@ BEGIN
 				DECLARE @DatabaseEmail_Profile varchar(200)	
 				SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
 				
-				EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile,
-				@Recipients =  @Cur_email_id,
-				@Copy_recipients = @CC,
-				@subject = @MailSubjectCr,
-				@body = @body1,@body_format = 'HTML';  
+				select @body1
 
-				INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-				SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Send for Approval', @Cur_email_id
+				--EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile,
+				--@Recipients =  @Cur_email_id,
+				--@Copy_recipients = @CC,
+				--@subject = @MailSubjectCr,
+				--@body = @body1,@body_format = 'HTML';  
+
+				--INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
+				--SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Send for Approval', @Cur_email_id
 
 				--select @body1
 
