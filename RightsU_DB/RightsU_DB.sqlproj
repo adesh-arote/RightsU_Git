@@ -1460,6 +1460,7 @@
     <None Include="Database Scripts\DBSchema_v5.0.4.1.sql" />
     <Build Include="dbo\Stored Procedures\USP_Deal_WF_Pending_Automated_Email.sql" />
     <Build Include="dbo\Stored Procedures\USP_Validate_Delay_Rights_Duplication_Acq.sql" />
+    <Build Include="dbo\Functions\UFN_Get_UsernName_Last_Approved.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

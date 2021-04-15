@@ -33,7 +33,7 @@ BEGIN
 	SELECT DISTINCT MWD.Record_Code, DEE.Users_Email_id + ';' +
 		STUFF(( SELECT DISTINCT  ';' + U.Email_Id FROM Users U
 		INNER JOIN Users_Business_Unit ubu on ubu.Users_Code = u.Users_Code and ubu.Business_Unit_Code = bu.Business_Unit_Code
-		WHERE  U.Security_Group_Code = MWD.Group_Code
+		WHERE  U.Security_Group_Code = MWD.Group_Code AND U.Is_Active = 'Y'
 		FOR XML PATH('')), 1, 1, '') AS Email_Id,
 		DATEDIFF(d,MSH.Status_Changed_On,GETDATE()) AS [Days], BU.Business_Unit_Name--, msh.Status_Changed_On, DEE.Mail_alert_days, DATEADD(d, DEE.Mail_alert_days, MSH.Status_Changed_On)
 		INTO #TempA
@@ -76,7 +76,7 @@ BEGIN
 	SELECT DISTINCT MWD.Record_Code, DEE.Users_Email_id + ';' +
 	   STUFF(( SELECT DISTINCT  ';' + U.Email_Id FROM Users U
 		INNER JOIN Users_Business_Unit ubu on ubu.Users_Code = u.Users_Code and ubu.Business_Unit_Code = bu.Business_Unit_Code
-		WHERE  U.Security_Group_Code = MWD.Group_Code
+		WHERE  U.Security_Group_Code = MWD.Group_Code AND U.Is_Active = 'Y'
         FOR XML PATH('') ), 1, 1, '')  AS Email_Id,
 		DATEDIFF(d,MSH.Status_Changed_On,GETDATE()) AS [Days], BU.Business_Unit_Name
 	INTO #TempS
@@ -212,19 +212,26 @@ BEGIN
 						<Font FACE="verdana" SIZE="2" COLOR="Black">Hello User,<br /><br />
 						The following Acquisition deals have not been approved:<br /><br />
 						</Font>'
-
+						select @Email_Id
 			DECLARE @EmailDetails NVarchar(max)
 			if(@EmailBody!='')
 			SET @EmailBody=@EmailBody +'</table>'
 			SET @EmailDetails = @EmailHeader + @EmailBody  + @EmailFooter
 			--select @EmailDetails,@Email_Id
 			IF(@EmailDetails!='')
-			EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
-				@recipients =  @Email_Id,
-				@subject = @MailSubject,
-				@body = @EmailDetails, 
-				--@blind_copy_recipients = 'adesh@uto.in;vishal.onkar@uto.in',
-				@body_format = 'HTML';
+			BEGIN
+				SELECT @Email_Id = STUFF(
+					(SELECT distinct ',' + number FROM fn_Split_withdelemiter(@Email_Id,';')
+					 FOR XML PATH (''))
+					, 1, 1, '') 
+
+				EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
+					@recipients =  @Email_Id,
+					@subject = @MailSubject,
+					@body = @EmailDetails, 
+					--@blind_copy_recipients = 'adesh@uto.in;vishal.onkar@uto.in',
+					@body_format = 'HTML';
+			END
 			SEt @EmailDetails='' 	
 			SET @EmailBody=''
 			SET @EmailBody2=''
@@ -349,11 +356,19 @@ BEGIN
 		SET @EmailDetails = @EmailHeader + @EmailBody  + @EmailFooter
 		--select @EmailDetails,@Email_Id
 		IF(@EmailDetails!='')
-		EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
-			@recipients = @Email_Id,
-			@subject = @MailSubject,
-			@body = @EmailDetails, 
-			@body_format = 'HTML';
+		BEGIN
+			
+			SELECT @Email_Id = STUFF(
+						 (SELECT distinct ',' + number FROM fn_Split_withdelemiter(@Email_Id,';')
+						  FOR XML PATH (''))
+						 , 1, 1, '') 
+
+			EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
+				@recipients = @Email_Id,
+				@subject = @MailSubject,
+				@body = @EmailDetails, 
+				@body_format = 'HTML';
+		END
 		SEt @EmailDetails='' 	
 		SET @EmailBody=''
 		SET @EmailBody1=''
@@ -365,3 +380,12 @@ BEGIN
 	DEALLOCATE CurMail1;
 	END
 END
+
+
+
+
+
+
+
+
+

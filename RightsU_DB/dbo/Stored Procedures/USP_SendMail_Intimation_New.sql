@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_SendMail_Intimation_New]
+﻿CREATE PROCEDURE [dbo].[USP_SendMail_Intimation_New]
 	@RecordCode INT,
 	@module_workflow_detail_code INT,
 	@module_code INT,
@@ -16,11 +15,11 @@ AS
 BEGIN  
 
 	--DECLARE 
-	--@RecordCode INT =22663,
-	--@module_workflow_detail_code INT = 37327,
+	--@RecordCode INT =2058,
+	--@module_workflow_detail_code INT = 6547,
 	--@module_code INT = 30,
 	--@RedirectToApprovalList VARCHAR(100)='',
-	--@AutoLoginUser VARCHAR(100) = 151,
+	--@AutoLoginUser VARCHAR(100) = 143,
 	--@Is_Error CHAR(1) = 'N'
 
 	SET NOCOUNT ON; 
@@ -29,7 +28,7 @@ BEGIN
 	IF OBJECT_ID('tempdb..#TempCursorOnRej') IS NOT NULL DROP TABLE #TempCursorOnRej
 
 	BEGIN TRY
-		DECLARE @Approved_by VARCHAR(MAX) SET @Approved_by=''
+		DECLARE @Approved_by VARCHAR(MAX) = ''
 		DECLARE @cur_first_name NVARCHAR(500)
 		DECLARE @cur_security_group_name NVARCHAR(500)
 		DECLARE @cur_email_id VARCHAR(500)
@@ -48,6 +47,8 @@ BEGIN
 		DECLARE @DefaultSiteUrl VARCHAR(500) SET @DefaultSiteUrl = ''  
 		DECLARE @Is_CustomUsers_WF_SendMail VARCHAR(10) = ''
 		DECLARE @Email_Config_Code INT
+		DECLARE @Appr_by NVARCHAR(MAX) = ''
+
 		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='AIN'
 
 		SELECT @Approved_by = --ISNULL(U.First_Name,'') + ' ' + ISNULL(U.Middle_Name,'') + ' ' + ISNULL(U.Last_Name,'') 
@@ -304,16 +305,17 @@ BEGIN
 
 					IF(@Is_Deal_Approved > 0)  /* IF DEAL IS NOT APPROVED BY ALL WORKFLOW */
 					BEGIN  
-						print '1'
-						--SELECT @DefaultSiteUrl = @DefaultSiteUrl + '/Login.aspx?RedirectToApproval=Y&UserCode=' + CAST(@cur_user_code AS VARCHAR(500)) + 
-						--'&ModuleCode=' + CAST(@module_code AS VARCHAR(500))
+
 						select @body1 = template_desc FROM Email_template WHERE Template_For='I'
+						SELECT @Appr_by = dbo.UFN_Get_UsernName_Last_Approved(@RecordCode, @module_code, 'I')
+
 						SET @body1 = replace(@body1,'{login_name}',@cur_first_name)  
 						set @body1 = REPLACE(@body1,'{deal_no}',@DealNo)  
 						set @body1 = REPLACE(@body1,'{deal_type}',@DealType)  
 						set @body1 = replace(@body1,'{click here}',@DefaultSiteUrl)  
 						set @body1 = replace(@body1,'{link}',@DefaultSiteUrl)  
-						SET @body1 = REPLACE(@body1, '{next_approval}',@NextApprovalName) 		
+						SET @body1 = REPLACE(@body1, '{next_approval}',@NextApprovalName) 	
+						SET @body1 = REPLACE(@body1, '{approved_by}',@Appr_by) 	
 						SET @MailSubjectCr = @DealType + ' Deal - (' + @DealNo + ') is sent for approve to next approval'   
 					END  
 					ELSE IF(@Is_Deal_Approved = 0) /* IF DEAL APPROVED BY ALL WORKFLOW */
