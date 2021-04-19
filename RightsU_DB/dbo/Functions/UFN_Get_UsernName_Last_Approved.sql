@@ -32,7 +32,7 @@ BEGIN
 
 		IF(@MWD_SG_Name = @MSH_SG_Name)
 		BEGIN
-			SELECT @return_value ='approved by ' + @User_Name + ' (' + @MWD_SG_Name + ') ' 
+			SELECT @return_value =' approved by ' + @User_Name + ' (' + @MWD_SG_Name + ') ' 
 			IF @Template_For = 'I'
 				SET @return_value = @return_value + 'and '
 		END
