@@ -918,7 +918,7 @@
                                         newhidden = "<input type='hidden' id='" + $("#hdnRowNum").val() + "_hdnColumnValueCode' name='' value =" + hdnColumnValueCode + ">";
                                     LastTD = "<a title='Edit' href='#' class='glyphicon glyphicon-pencil' id='imgEdit_" + id + "'  + onclick=EditClick(" + id + "); ></a> <a title='Delete' href='#' id='imgDelete_" + id + "'  onclick='ValidateDelete(" + id + ");' class='glyphicon glyphicon-trash'></a> " + newhidden;
                                 }
-
+                                
                                 $("#" + $("#hdnRowNum").val() + "_lblColumnName").remove();
                                 $("#" + $("#hdnRowNum").val() + "_lblName").remove();
 
@@ -1004,6 +1004,8 @@
     function ControlType(columnValueCode, ddlFieldNameValue) {
         debugger;
         var count = ($('#tbl_Additional_Fileds tr').length - 1);
+        if (($('#tbl_Additional_Fileds tr').length - 1) > 1)
+            count = parseInt($('#tbl_Additional_Fileds tr:last').attr('id').slice(7));
         var ddlFieldNameList = count + "_ddlFieldNameList";
         var select;
         var labelName = "";
@@ -1298,6 +1300,7 @@
     });
     function btnAddExtendedData() {
         debugger;
+        
         if ($("#hdnRowNum").val() != "") {
             showAlert("e", "Please complete add/edit operation.", "");
             return false;
@@ -1305,6 +1308,8 @@
         else {
             var ddl_first_col = "";
             var count = ($('#tbl_Additional_Fileds tr').length - 1) + 1;
+            if (($('#tbl_Additional_Fileds tr').length - 1) > 0)
+                count = parseInt($('#tbl_Additional_Fileds tr:last').attr('id').slice(7)) + 1;
             $("#hdnIsRowEdit").val('');
             $("#hdnRowNum").val(count);
             var html = "<tr id=trGrid_" + count + ">";
@@ -1339,7 +1344,7 @@
             $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
             html += "<td>" + ddl_first_col + " </td>";
             @*html += "<td><input type='text' id=" + count + "_txtControlType style='display:none' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' class='red_icon glyphicon glyphicon-plus' onclick='AddTalent(@GlobalParams.Role_code_Producer);' /></td> />";*@
-            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none;' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' id='btnExtendedColumn_" + count + "' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' /></td> />";
+            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none;' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' id='btnExtendedColumn_" + count + "' class='red_icon glyphicon glyphicon-plus' style='margin-left:1%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' /></td> />";
 
             html += "<td><a type='button' title='Save' class='glyphicon glyphicon-ok-circle'   id='btnSave_gvExtended_" + count + "' onclick='SaveExtended(this);' /><a type='button' class='glyphicon glyphicon-remove-circle' title='Cancel' id='btnCancel_gvExtended_" + count + "'  onclick='handleECancel(\"A\"," + count + ")' />   </td>";
             html += "</tr>"
@@ -1477,7 +1482,7 @@
                 <td id="@("tdSecond_"+counter)">
                     @Html.Label("Name", item.Name, new { id = counter + "_lblName",@class= "expandable" })
                     @*<a type='button' title='Add' id='btnExtendedColumn' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;visibility: hidden;' onclick='AddAction();' />*@
-                    <a  title='Add' id="@("btnExtendedColumn_" + counter)" class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' />
+                    <a  title='Add' id="@("btnExtendedColumn_" + counter)" class='red_icon glyphicon glyphicon-plus' style='margin-left:1%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' />
                      <div id="ddlControlTypeValue">
                     </div>
                     @*@Html.TextBox("txtControlType","",new {@id= counter + "_txtControlType"})*@
