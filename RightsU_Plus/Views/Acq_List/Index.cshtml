@@ -157,7 +157,7 @@
         $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
         if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {
             $('#ddlGenBUMultiSelect').SumoSelect();
-            $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode')
+            $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode'.split(','))
             $('#ddlGenBUMultiSelect')[0].sumo.reload();
 
             $('#ddlSrchBUMultiSelect').SumoSelect();
@@ -273,6 +273,7 @@
             var ddlBUMulti = $('#ddlGenBUMultiSelect').val();
             if (ddlBUMulti != 0 || ddlBUMulti != null) {
                 $('#ddlSrchBUMultiSelect').val(ddlBUMulti);
+                OnChangeBindTitle('TP');
             }
         }
         document.getElementById("showMore").innerHTML = "Show more...";
