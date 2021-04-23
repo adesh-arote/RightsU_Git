@@ -157,7 +157,7 @@ function Save() {
 
     var Isvalid = true;
     if ($("#hdnRowNum").val() != "" && $("#hdnRowNum").val() != null) {
-        showAlert("e", "Please complete add/edit operation.", "");
+        showAlert("e", "Please complete add/edit operation.");
         hideLoading();
         return false;
     }
@@ -181,7 +181,7 @@ function Save() {
         //alert($.trim($('#Year_Of_Production').val()))
         var YOP = parseInt($.trim($('#Year_Of_Production').val()))
         if (YOP < 1900) {
-            showAlert("E", "Year of Release should be greater than 1900", "");
+            showAlert("E", "Year of Release should be greater than 1900");
             hideLoading();
             return false;
         }
@@ -191,7 +191,7 @@ function Save() {
         //showAlert("e", "Please select atleast one title language", "");
         if (!isValidTime($("#Duration_In_Min").val())) {
             hideLoading();
-            showAlert("E", "Invalid Duration(Min)", "");
+            showAlert("E", "Invalid Duration(Min)");
             //   $("#Duration_In_Min").addClass("required");
 
             return false;
@@ -243,7 +243,7 @@ function Save() {
         async: false,
         success: function (result) {
             if (typeof result.Error !== "undefined" && result.Error != "") {
-                showAlert('E', result.Error, '');
+                showAlert('E', result.Error);
                 Isvalid = false;
             }
             else {
@@ -351,7 +351,7 @@ function SaveExtendedMetadata(IsValidate) {
                 debugger;
                 $("#popAddExtendedMetadata").modal('hide');
                 if (typeof result.ExtendedColumnError !== "undefined" && result.ExtendedColumnError != "") {
-                    showAlert('E', result.ExtendedColumnError, '');
+                    showAlert('E', result.ExtendedColumnError);
                     $("#popAddExtendedMetadata").modal();
                 }
                 $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
@@ -381,7 +381,7 @@ function ValidateSave(IsValidate) {
         TalentName = $("#talent_name").val();
     else {
         $("#talent_name").addClass("required");
-        showAlert("E", "Please Enter Talent Name", "");
+        showAlert("E", "Please Enter Talent Name");
         Error = "E";
     }
     sList = $('#lbRoles').val();
@@ -415,7 +415,7 @@ function ValidateSave(IsValidate) {
             success: function (result) {
                
                 if (typeof result.TalentError !== "undefined" && result.TalentError != "") {
-                    showAlert('E', result.TalentError, '');
+                    showAlert('E', result.TalentError);
                     $("#popAddTalent").modal();
                 }
                 else if (typeof result.TalentConfirmation !== "undefined" && result.TalentConfirmation !== "") {
