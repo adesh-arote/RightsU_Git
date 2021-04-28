@@ -59,15 +59,7 @@ namespace RightsU_Dapper.DAL.Infrastructure
             {
                 connection.Open();
 
-                T1 obj = connection.AutoQuery<T1>(new Type[] { typeof(Music_Deal_Platform_Dapper)
-                    , typeof(Music_Deal_Language_Dapper)
-                    ,typeof(Music_Deal_DealType_Dapper)
-                    ,typeof(Music_Deal_Channel_Dapper)
-                    ,typeof(Music_Deal_Country_Dapper)
-                    ,typeof(Music_Deal_LinkShow_Dapper)
-                    ,typeof(Music_Deal_Vendor_Dapper)
-
-                }, param).FirstOrDefault();
+                T1 obj = connection.AutoQuery<T1>(additionalTypes, param).FirstOrDefault();
 
                 connection.Close();
                 return obj;
