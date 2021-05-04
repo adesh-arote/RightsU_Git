@@ -229,9 +229,10 @@
                         <li *ngFor="let c of listdetail | filter:searchText" (click)="attachPlayList(row,c)">
                           <a>
                             <span style="color: black !important;" pTooltip="{{c.PlaylistName}}" tooltipPosition="top">
-                              {{(c.PlaylistName.length>20)? (c.PlaylistName | slice:0:20)+'..':(c.PlaylistName) }}
-                            </span></a>
-                          <!-- {{c.PlaylistName}}  -->
+                              {{(c.PlaylistName ? c.PlaylistName : '') | slice:0:20 }} {{(c.PlaylistName ? c.PlaylistName : '').length < 20 ? '' : '...'}}
+                              <!-- {{(c.PlaylistName.length>20)? (c.PlaylistName | slice:0:20)+'..':(c.PlaylistName) }} -->
+                            </span></a> 
+                           <!-- {{c.PlaylistName}}  -->
                         </li>
                         <!-- <li (click)="devclick()"><a><i ></i>Devotional</a></li>
 <li><a >Trditional</a></li>
@@ -347,9 +348,9 @@
                         <li *ngFor="let c of listdetail | filter:searchText" (click)="attachPlayList(row,c)">
                           <a>
                             <span pTooltip="{{c.PlaylistName}}" tooltipPosition="top">
-                              {{(c.PlaylistName.length>20)? (c.PlaylistName | slice:0:20)+'..':(c.PlaylistName) }}
-                            </span></a>
-                          <!-- {{c.PlaylistName}}  -->
+                              {{(c.PlaylistName ? c.PlaylistName : '') | slice:0:20 }} {{(c.PlaylistName ? c.PlaylistName : '').length < 20 ? '' : '...'}}
+                            </span></a> 
+                          <!-- {{c.PlaylistName}} 
                         </li>
                         <!-- <li (click)="devclick()"><a><i ></i>Devotional</a></li>
 <li><a >Trditional</a></li>

@@ -402,7 +402,7 @@ export class CartGridComponent implements OnInit {
       "Order": this.order
     }
     debugger;
-    var count = 0
+    var count = 0;
     for (var property in body) {
       console.log(property);
       console.log(body);
@@ -1204,6 +1204,10 @@ export class CartGridComponent implements OnInit {
       if (this.rowonpage != pageSize) {
         this.rowonpage = pageSize;
         if (event.first == 0) {
+          this.onpagechange(pageSize, pageNo);
+        }
+        if (event.first == 25) {
+          pageNo = (event.first / event.rows) + 1;
           this.onpagechange(pageSize, pageNo);
         }
         else {

@@ -117,7 +117,7 @@ export class NewRequestComponent implements OnInit {
   public sortingDefault: boolean = false;
   public searchList: any = [];
   public searchedTrack: boolean = false;
-
+  public isPlaylistClicked:boolean=false;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef, private _requisitionService: RequisitionService, private router: Router, private _CommonUiService: CommonUiService) {
     this.mindatevalue = new Date();
@@ -684,10 +684,8 @@ export class NewRequestComponent implements OnInit {
     {
       "TitleCode": 0
     }
-    this.load = true;
     this.addBlockUI();
     this._requisitionService.getPlayList(playlistbody).subscribe(response => {
-      this.load = false;
       this.removeBlockUI();
 
       this.listdetail = response.MHPlayList;
@@ -2643,6 +2641,7 @@ export class NewRequestComponent implements OnInit {
     debugger;
     this.showdetail = true;
     this.tabHeaders = "PlayList";
+    this.isPlaylistClicked=true;
     this.setMHPlaylistCode = data.MHPlayListCode;
     this.setMHPlaylistName = data.PlaylistName;
     for (let i = 0; i < this.listdetail.length; i++) {
@@ -2667,8 +2666,10 @@ export class NewRequestComponent implements OnInit {
     if (event.index == 0) {
       this.tabHeaders = 'PlayList';
       this.showPlayList = true;
-      this.showdetail = true;
       this.showTabdata = true;
+      this.showdetail = false;
+      if(this.isPlaylistClicked == true){
+      this.showdetail = true;
       var getMHPlaylistCode = this.listdetail.filter(x => x.PlaylistName == this.setMHPlaylistName)[0];
       this.setMHPlaylistCode = getMHPlaylistCode.MHPlayListCode;
       this.getPlayList();
@@ -2679,8 +2680,10 @@ export class NewRequestComponent implements OnInit {
         'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
         'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
       }
+      }
     }
     else if (event.index == 1 && this.searchedTrack == false) {
+      this.isPlaylistClicked = false;
       this.showdetail = false;
       this.showTabdata = true;
       this.showPlayList = false;
@@ -2727,6 +2730,10 @@ export class NewRequestComponent implements OnInit {
         }
       }
     }, error => { this.handleResponseError(error) });
+  }
+
+  afterChange(){
+   this.getPlayList();
   }
 
   handleResponseError(errorCode) {

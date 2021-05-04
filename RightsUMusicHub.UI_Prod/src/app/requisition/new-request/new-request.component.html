@@ -321,7 +321,7 @@
         <section class="content-subHeader" style="margin-left: -18px;padding-left: 13px;padding-right: 2px">
           <div *ngIf="showTabdata">
             <p-tabView orientation="left" name="playListTab" (onChange)="onTabChange($event)">
-              <p-tabPanel [selected]="playList" leftIcon="fa fa-music" tooltip="PlayList">
+              <p-tabPanel [selected]="playList" leftIcon="fa fa-music" tooltip="Add from Playlist">
                 <!-- <div class="row gutter" style="padding-left: 5% ;">
                   <div class="col-md-1 slick-prev" style="margin-top: 2%;"><i class="fa fa-chevron-left"></i></div>
                   <div id="your-class" class="col-md-10" style="margin-left: -5%;">
@@ -342,7 +342,7 @@
                   <div class="col-md-1 slick-next" style="margin-top: 2%;"><i class="fa fa-chevron-right"></i></div>
                 </div> -->
                 <div *ngIf="showPlayList">
-                  <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig"
+                  <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig" (afterChange)="afterChange($event)"
                     style="margin-left: 40px;">
                     <div ngxSlickItem *ngFor="let slide of listdetail;let i=index" class="slide">
                       <div  class="info-box info-Css" [ngClass]="{'border-css': slide.showCss == 'Y','noborder-css': slide.showCss == 'N'}">
@@ -364,7 +364,7 @@
                   </ngx-slick-carousel>
                 </div>
               </p-tabPanel>
-              <p-tabPanel [selected]="playListsearch" leftIcon="fa fa-search" tooltip="PlayListsearch">
+              <p-tabPanel [selected]="playListsearch" leftIcon="fa fa-search" tooltip="Add from Library">
                 <div class="box-body">
                   <div class="block" style="margin-top: 15px;margin-left: 30px;">
                     <form #searchForm="ngForm">
