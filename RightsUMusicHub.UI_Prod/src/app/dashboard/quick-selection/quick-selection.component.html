@@ -175,7 +175,7 @@
       <p-tabView orientation="left"  (onChange)="onTabChange($event)">
         <p-tabPanel [selected]="playList" leftIcon="fa fa-music" tooltip="PlayList" tooltipPosition="top">
           <div  *ngIf="showPlayList">
-            <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig" style="margin-left: 40px;">
+            <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig" (afterChange)="afterChange($event)" style="margin-left: 40px;">
               <div ngxSlickItem *ngFor="let slide of playListDetail" class="slide">
                 <div class="info-box info-Css" [ngClass]="{'border-css': slide.showCss == 'Y','noborder-css': slide.showCss == 'N'}">
                   <div class="col-md-10">

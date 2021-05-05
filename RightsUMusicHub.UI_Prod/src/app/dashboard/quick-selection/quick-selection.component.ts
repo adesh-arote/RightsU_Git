@@ -160,10 +160,8 @@ export class QuickSelectionComponent implements OnInit {
     {
       "TitleCode": 0
     }
-    this.load = true;
     this.addBlockUI();
     this._requisitionService.getPlayList(playlistbody).subscribe(response => {
-      this.load = false;
       this.removeBlockUI();
       this.playListDetail = response.MHPlayList;
       this.listDetail1 = response.MHPlayList;
@@ -430,6 +428,9 @@ export class QuickSelectionComponent implements OnInit {
         this.playListDetail[i].showCss = 'N';
       }
     }
+    sessionStorage.setItem(TAB_NAME, this.tabHeaders);
+    sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+    sessionStorage.setItem(SEARCHED_GRID, 'false');
     this.componentData = {
       "showName": this.showlistdata.Title_Name,
       "titleCode": this.showlistdata.Title_Code,
@@ -538,6 +539,10 @@ export class QuickSelectionComponent implements OnInit {
       }
     }, error => { this.handleResponseError(error) });
   }
+
+  afterChange(){
+    this.getPlayList();
+   }
 
   addBlockUI() {
     $('body').addClass("overlay");
