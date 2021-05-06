@@ -268,6 +268,7 @@ export class QuickSelectionComponent implements OnInit {
     sessionStorage.setItem(TAB_NAME, this.tabHeaders);
     sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
     sessionStorage.setItem(NEWREQ_DATA, JSON.stringify(this.newSearchRequest));
+    sessionStorage.setItem('CLICKED_PLAYLIST', 'true');
     this.componentData = {
       "showName": this.showlistdata.Title_Name,
       "titleCode": this.showlistdata.Title_Code,
@@ -418,6 +419,7 @@ export class QuickSelectionComponent implements OnInit {
     this.setMHPlaylistName = data.PlaylistName;
     sessionStorage.setItem(TAB_NAME, this.tabHeaders);
     sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
+    sessionStorage.setItem('CLICKED_PLAYLIST', 'true');
     sessionStorage.setItem(SEARCHED_GRID, 'false');
     this.componentLoad = true;
     for (let i = 0; i < this.playListDetail.length; i++) {
@@ -428,9 +430,6 @@ export class QuickSelectionComponent implements OnInit {
         this.playListDetail[i].showCss = 'N';
       }
     }
-    sessionStorage.setItem(TAB_NAME, this.tabHeaders);
-    sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
-    sessionStorage.setItem(SEARCHED_GRID, 'false');
     this.componentData = {
       "showName": this.showlistdata.Title_Name,
       "titleCode": this.showlistdata.Title_Code,
@@ -541,7 +540,9 @@ export class QuickSelectionComponent implements OnInit {
   }
 
   afterChange(){
-    this.getPlayList();
+    debugger;
+    sessionStorage.setItem('CLICKED_PLAYLIST', 'false');
+   this.getPlayList();
    }
 
   addBlockUI() {

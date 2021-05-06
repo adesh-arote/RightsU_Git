@@ -71,6 +71,7 @@ export class CartGridComponent implements OnInit {
   public items: any;
   public rowData: any;
   public isShowlistsearched: boolean = false;
+  public isPlaylistClicked = true;
 
   constructor(private _CommonUiService: CommonUiService, private router: Router, private comparentchildservice: ComParentChildService) {
 
@@ -81,7 +82,7 @@ export class CartGridComponent implements OnInit {
     this.checkTabheader = sessionStorage.getItem('TAB_NAME');
     this.cartCountset = JSON.parse(sessionStorage.getItem('CARTLIST_COUNT'));
     this.searchedGrid = JSON.parse(sessionStorage.getItem('SEARCHED_GRID'));
-   
+
 
     if (this.checkTabheader == 'PlayList') {
       this.showSearchpanel = false;
@@ -271,15 +272,15 @@ export class CartGridComponent implements OnInit {
       //this.quickSelectionGridData(this.setMHPlaylistCode);
     }
 
-    this.newSearchRequest = {
-      MusicLabelCode: 0,
-      MusicTrack: "",
-      MovieName: "",
-      GenreCode: 0,
-      TalentName: "",
-      Tag: "",
-      MusicLanguageCode: 0
-    }
+    // this.newSearchRequest = {
+    //   MusicLabelCode: 0,
+    //   MusicTrack: "",
+    //   MovieName: "",
+    //   GenreCode: 0,
+    //   TalentName: "",
+    //   Tag: "",
+    //   MusicLanguageCode: 0
+    // }
     // this.getMusicLanguage();
   }
 
@@ -295,6 +296,7 @@ export class CartGridComponent implements OnInit {
   }
 
   quickSelectionGridData(playlistvalue) {
+    debugger;
     this.isShowlistsearched = true;
     if (this.sortBy == undefined || this.order == undefined) {
       this.sortBy = "MusicTrack";
@@ -307,42 +309,45 @@ export class CartGridComponent implements OnInit {
       var playlistvalue = this.setMHPlaylistCode;
     }
     // console.log("Grid Call....")
-    var body = {
-      'MusicLabelCode': '',
-      'MusicTrack': '',
-      'MovieName': '',
-      'GenreCode': 0,
-      'TalentName': '',
-      'Tag': '',
-      'MHPlayListCode': playlistvalue == null ? '' : playlistvalue,
-      'PaginRequired': 'N',
-      'PageSize': '25',
-      'PageNo': '1',
-      'ChannelCode': '',
-      'TitleCode': '',
-      'MusicLanguageCode': '',
-      "SortBy": this.sortBy,
-      "Order": this.order
-    }
-    console.log(JSON.stringify(body));
-    this.load = true;
-    this.addBlockUI();
-    this._CommonUiService.getRecommendations(body).subscribe(response => {
-      this.load = false;
-      this.removeBlockUI();
-      console.log("Song List");
-      console.log(response);
-      this.recordCount = response.RecordCount;
-      this.searchList = response.Show;
-      this.sortingDefault = false;
-      this.isShowlistsearched = false;
-      $(function () {
-        $('.dropdwnbody').slimScroll({
-          height: '100px',
+    this.isPlaylistClicked = JSON.parse(sessionStorage.getItem('CLICKED_PLAYLIST'));
+    if (this.isPlaylistClicked == true) {
+      var body = {
+        'MusicLabelCode': '',
+        'MusicTrack': '',
+        'MovieName': '',
+        'GenreCode': 0,
+        'TalentName': '',
+        'Tag': '',
+        'MHPlayListCode': playlistvalue == null ? '' : playlistvalue,
+        'PaginRequired': 'N',
+        'PageSize': '25',
+        'PageNo': '1',
+        'ChannelCode': '',
+        'TitleCode': '',
+        'MusicLanguageCode': '',
+        "SortBy": this.sortBy,
+        "Order": this.order
+      }
+      console.log(JSON.stringify(body));
+      this.load = true;
+      this.addBlockUI();
+      this._CommonUiService.getRecommendations(body).subscribe(response => {
+        this.load = false;
+        this.removeBlockUI();
+        console.log("Song List");
+        console.log(response);
+        this.recordCount = response.RecordCount;
+        this.searchList = response.Show;
+        this.sortingDefault = false;
+        this.isShowlistsearched = false;
+        $(function () {
+          $('.dropdwnbody').slimScroll({
+            height: '100px',
 
+          });
         });
-      });
-    }, error => { this.handleResponseError(error) });
+      }, error => { this.handleResponseError(error) });
+    }
   }
   addBlockUI() {
     $('body').addClass("overlay");
@@ -1204,10 +1209,6 @@ export class CartGridComponent implements OnInit {
       if (this.rowonpage != pageSize) {
         this.rowonpage = pageSize;
         if (event.first == 0) {
-          this.onpagechange(pageSize, pageNo);
-        }
-        if (event.first == 25) {
-          pageNo = (event.first / event.rows) + 1;
           this.onpagechange(pageSize, pageNo);
         }
         else {

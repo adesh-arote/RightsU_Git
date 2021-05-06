@@ -2630,6 +2630,7 @@ export class NewRequestComponent implements OnInit {
     sessionStorage.setItem(TAB_NAME, this.tabHeaders);
     sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
     sessionStorage.setItem(NEWREQ_DATA, JSON.stringify(this.newSearchRequest));
+    sessionStorage.setItem('CLICKED_PLAYLIST', 'true');
     this.componentData = {
       'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
       'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
@@ -2655,6 +2656,7 @@ export class NewRequestComponent implements OnInit {
     sessionStorage.setItem(TAB_NAME, this.tabHeaders);
     sessionStorage.setItem(MHPLAYLIST_CODE, this.setMHPlaylistCode);
     sessionStorage.setItem(SEARCHED_GRID, 'false');
+    sessionStorage.setItem('CLICKED_PLAYLIST', 'true');
     this.componentData = {
       'showName': this.newMusicConsumptionRequest.TitleCode.Title_Name, 'episodeType': this.episodeType,
       'listview': this.listdetail, 'listview1': this.listDetail1, 'toplist': this.toplist
@@ -2733,6 +2735,7 @@ export class NewRequestComponent implements OnInit {
   }
 
   afterChange(){
+    sessionStorage.setItem('CLICKED_PLAYLIST', 'false');
    this.getPlayList();
   }
 
