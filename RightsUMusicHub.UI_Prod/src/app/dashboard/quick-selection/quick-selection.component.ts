@@ -463,7 +463,6 @@ export class QuickSelectionComponent implements OnInit {
     }
     else if (event.index == 1 && this.searchedTrack == false) {
       this.showPlayList = false;
-      this.isPlaylistClicked = false;
       this.tabHeaders = 'PlayListSearch';
       this.showTabdata = true;
       this.componentLoad = false;

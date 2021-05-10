@@ -2685,7 +2685,6 @@ export class NewRequestComponent implements OnInit {
       }
     }
     else if (event.index == 1 && this.searchedTrack == false) {
-      this.isPlaylistClicked = false;
       this.showdetail = false;
       this.showTabdata = true;
       this.showPlayList = false;
