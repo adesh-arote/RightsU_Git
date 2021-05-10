@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[Usp_Avail_Show_Cache]
+﻿
+CREATE PROCEDURE [dbo].[Usp_Avail_Show_Cache]
 	@RecORd_Code INT = 0,
 	@RecORd_Type Char(1) = 'A'
 AS
@@ -10,7 +11,10 @@ Begin
 -- =============================================
 
 	--BEGIN TRY
-		
+	--DECLARE
+	--	@RecORd_Code INT = 21661,
+	--	@RecORd_Type Char(1) = 'A'
+
 	Create Table #Process_Rights(
 		Acq_Deal_Code Int,
 		Acq_Deal_Rights_Code Int,
@@ -746,12 +750,12 @@ Begin
 				--Update #Temp_Session_Raw_Lang Set Language_Codes = ',' + Language_Codes + ',' Where IsNull(Language_Codes, '') <> ''
 
 				Insert InTo Avail_Languages(Language_Codes)
-				Select Distinct Language_Codes From #Temp_Session_Raw_Lang Where Language_Codes Not In (
-					Select a.Language_Codes From Avail_Languages a
+				Select Distinct Language_Codes From #Temp_Session_Raw_Lang Where Language_Codes COLLATE SQL_Latin1_General_CP1_CI_AS Not In (
+					Select a.Language_Codes COLLATE SQL_Latin1_General_CP1_CI_AS From Avail_Languages a
 				) AND Language_Codes <> ''
 
 				Update temp set temp.Avail_Languages_Code = al.Avail_Languages_Code From #Temp_Session_Raw_Lang temp 
-				Inner Join Avail_Languages al On temp.Language_Codes = al.Language_Codes
+				Inner Join Avail_Languages al On temp.Language_Codes COLLATE SQL_Latin1_General_CP1_CI_AS = al.Language_Codes COLLATE SQL_Latin1_General_CP1_CI_AS
 
 				Print 'AD 25.3 ' + Cast(@Acq_Deal_Rights_Code As VARCHAR(10)) + ' - ' + Convert(VARCHAR(100), Getdate(), 109)
 
@@ -1350,6 +1354,9 @@ Begin
 		IF OBJECT_ID('tempdb..#TMP_Acq_DUBBING') IS NOT NULL Drop Table #TMP_Acq_DUBBING
 		IF OBJECT_ID('tempdb..#Syn_Rights') IS NOT NULL Drop Table #Syn_Rights
 		--Drop Table #Eps_Nos
+		--DROP TABLE #Temp_Session_Raw
+		--DROP Table #Process_Rights
+		--DROP Table #Temp_Session_Raw_Lang
 
 		Truncate Table #Temp_Session_Raw
 		Truncate Table #Temp_Session_Raw_Lang

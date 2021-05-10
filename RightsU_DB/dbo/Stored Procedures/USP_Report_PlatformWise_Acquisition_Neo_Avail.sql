@@ -652,6 +652,8 @@ BEGIN
 	AND hb.Holdback_Release_Date > GETDATE()) Or hb.Holdback_Type = 'R')
 	LEFT JOIN Acq_Deal_Rights_Holdback_Platform hbp On hb.Acq_Deal_Rights_Holdback_Code = hbp.Acq_Deal_Rights_Holdback_Code and AA.Platform_Code = hbp.Platform_Code
 	LEFT JOIN Acq_Deal_Rights_Holdback_Territory hbt On hb.Acq_Deal_Rights_Holdback_Code = hbt.Acq_Deal_Rights_Holdback_Code AND AA.Country_Code = hbt.Country_Code
+	Where ((hb.Holdback_Type = 'D' And CAST(ISNULL(TD.Rights_End_Date, '31Dec9999') AS DATE) >= CAST(hb.Holdback_Release_Date as DATE) AND CAST(hb.Holdback_Release_Date as DATE) >= GETDATE()) Or hb.Holdback_Type = 'R')
+	OR ISNULL(hb.Holdback_Release_Date,'') = ''
 	--Where (hb.Holdback_Type = 'D' And CAST(ISNULL(TD.Rights_End_Date, '31Dec9999') AS DATETIME) > hb.Holdback_Release_Date AND hb.Holdback_Release_Date > GETDATE()) Or hb.Holdback_Type = 'R'
 	
 	Select Distinct Title_Code InTo #MainTit_AP From #TMP_MAIN_AP
@@ -1101,7 +1103,8 @@ BEGIN
 			LEFT JOIN Sub_License sl ON tm.Sub_License_Code = sl.Sub_License_Code
 			LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 			LEFT JOIN #MainAH_AP hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
-			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME))
+			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME)) OR
+			ISNULL(tm.Holdback_Release_Date,'') = ''
 		DROP TABLE #Temp_Right_Remarks_AP
 	END
 	ELSE
@@ -1137,7 +1140,8 @@ BEGIN
 		LEFT JOIN Sub_License sl ON ISNULL(tm.Sub_License_Code, 0) = ISNULL(sl.Sub_License_Code, 0)
 		LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 		LEFT JOIN #MainAH_AP hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
-		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME))
+		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME)) OR
+		ISNULL(tm.Holdback_Release_Date,'') = ''
 	END
 	------------------ END
 	
