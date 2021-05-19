@@ -163,7 +163,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.ChannelList = new MultiSelectList(new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Channel_Name).ToList(), "Channel_Code", "Channel_Name", channelCodes.Split(','));
 
             string countryCodes = string.Join(",", objMusicDeal.Music_Deal_Country.Select(x => x.Country_Code.ToString()).ToArray());
-            ViewBag.Country = new MultiSelectList(new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Country_Name).ToList(), "Country_Code", "Country_Name", countryCodes.Split(','));
+            ViewBag.Country = new MultiSelectList(new RightsU_BLL.Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Country_Name).ToList(), "Country_Code", "Country_Name", countryCodes.Split(','));
 
             //string DealTypeCodes = string.Join(",", objMusicDeal.Music_Deal_DealType.Select(x => x.Deal_Type_Code.ToString()).ToArray());
             //ViewBag.DealTypeList = new MultiSelectList(new Deal_Type_Service(objLoginEntity.ConnectionStringName))
@@ -195,7 +195,7 @@ namespace RightsU_Plus.Controllers
             string[] arrDealTypeCodes = strDealTypeCodes.Split(',');
             string dealTypeCodes = string.Join(",", objMusicDeal.Music_Deal_DealType.Select(x => x.Deal_Type_Code.ToString()).ToArray());
 
-            ViewBag.DealTypeList = new MultiSelectList(new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>
+            ViewBag.DealTypeList = new MultiSelectList(new RightsU_BLL.Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>
                 (arrDealTypeCodes.Contains(x.Deal_Type_Code.ToString()) || string.IsNullOrEmpty(strDealTypeCodes))).ToList(),
                 "Deal_Type_Code", "Deal_Type_Name", dealTypeCodes.Split(','));
 
@@ -207,14 +207,14 @@ namespace RightsU_Plus.Controllers
 
             #endregion --- Deal Type List ---
 
-            string Defaul_Right_Rule_Code = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Defaul_Right_Rule_Code" && x.IsActive == "Y").Select(x => x.Parameter_Value).FirstOrDefault();
+            string Defaul_Right_Rule_Code = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Defaul_Right_Rule_Code" && x.IsActive == "Y").Select(x => x.Parameter_Value).FirstOrDefault();
 
             if (string.IsNullOrEmpty(Defaul_Right_Rule_Code))
-                ViewBag.RightRule = new SelectList(new Right_Rule_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Right_Rule_Name).ToList(), "Right_Rule_Code", "Right_Rule_Name");
+                ViewBag.RightRule = new SelectList(new RightsU_BLL.Right_Rule_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Right_Rule_Name).ToList(), "Right_Rule_Code", "Right_Rule_Name");
             else
-                ViewBag.RightRule = new SelectList(new Right_Rule_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Right_Rule_Name).ToList(), "Right_Rule_Code", "Right_Rule_Name", Convert.ToInt32(Defaul_Right_Rule_Code));
+                ViewBag.RightRule = new SelectList(new RightsU_BLL.Right_Rule_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Right_Rule_Name).ToList(), "Right_Rule_Code", "Right_Rule_Name", Convert.ToInt32(Defaul_Right_Rule_Code));
 
-            ViewBag.Status_History = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Status_History(MusicDealCode, GlobalParams.ModuleCodeForMusicDeal).ToList();
+            ViewBag.Status_History = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_List_Status_History(MusicDealCode, GlobalParams.ModuleCodeForMusicDeal).ToList();
             int totalSeconds = Convert.ToInt32(objMusicDeal.Duration_Restriction);
             int second = totalSeconds % 60;
             int minutes = totalSeconds / 60;
@@ -257,7 +257,7 @@ namespace RightsU_Plus.Controllers
             if (rightRuleCode != "")
             {
                 int RightRuleCode = Convert.ToInt32(rightRuleCode);
-                objRightRule = new Right_Rule_Service(objLoginEntity.ConnectionStringName).GetById(RightRuleCode);
+                objRightRule = new RightsU_BLL.Right_Rule_Service(objLoginEntity.ConnectionStringName).GetById(RightRuleCode);
                 if (objRightRule.IS_First_Air == true)
                     objRightRule.Start_Time = "From First Air";
 
@@ -343,7 +343,7 @@ namespace RightsU_Plus.Controllers
         {
             bool checkPFCodes = false;
             string[] PFCode = PlatformCodes.Split(',');
-            string ConfigCodes = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Music_Deal_Platform_Codes").Select(s => s.Parameter_Value).FirstOrDefault();
+            string ConfigCodes = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Music_Deal_Platform_Codes").Select(s => s.Parameter_Value).FirstOrDefault();
             string[] ConfigPFCodes = ConfigCodes.Split(',');
 
             if (PFCode.Contains(ConfigPFCodes.ElementAt(0)) && PFCode.Contains(ConfigPFCodes.ElementAt(1)))
@@ -381,7 +381,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult Save(Music_Deal_Dapper objTempMusicDeal, FormCollection objForm)
         {
             string message = "";
-            var MusicDealVersion = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "RU_Build").Select(w => w.Parameter_Value).SingleOrDefault();
+            var MusicDealVersion = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "RU_Build").Select(w => w.Parameter_Value).SingleOrDefault();
             //ViewBag.IsMuciVersionSPN = MusicDealVersion;
             Music_Deal_Service objService = new Music_Deal_Service(objLoginEntity.ConnectionStringName);
             Music_Deal_Dapper objMusicDeal = new Music_Deal_Dapper();
