@@ -1,5 +1,8 @@
-﻿using RightsU_BLL;
-using RightsU_Entities;
+﻿//using RightsU_BLL;
+//using RightsU_Entities;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.BLL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +14,12 @@ namespace RightsU_Plus.Controllers
 {
     public class Platform_GroupController : BaseController
     {
+
+        private readonly Platform_Group_Service objPlatform_GroupService = new Platform_Group_Service();
+        private readonly Platform_Group_Details_Service objPlatform_Group_DetailsService = new Platform_Group_Details_Service();
+        
+        private readonly Platform_Service objPlatformService = new Platform_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         protected List<T> CompareLists<T>(List<T> FirstList, List<T> SecondList, IEqualityComparer<T> comparer, ref List<T> DelResult, ref List<T> UPResult) where T : class
         {
             var AddResult = FirstList.Except(SecondList, comparer);
@@ -24,57 +33,57 @@ namespace RightsU_Plus.Controllers
             return AddResult.ToList<T>();
         }
 
-        private List<RightsU_Entities.Platform_Group> lstPlatform_Group
+        private List<RightsU_Dapper.Entity.Platform_Group> lstPlatform_Group
         {
             get
             {
                 if (Session["lstPlatform_Group"] == null)
-                    Session["lstPlatform_Group"] = new List<RightsU_Entities.Platform_Group>();
-                return (List<RightsU_Entities.Platform_Group>)Session["lstPlatform_Group"];
+                    Session["lstPlatform_Group"] = new List<RightsU_Dapper.Entity.Platform_Group>();
+                return (List<RightsU_Dapper.Entity.Platform_Group>)Session["lstPlatform_Group"];
             }
             set { Session["lstPlatform_Group"] = value; }
         }
 
-        private List<RightsU_Entities.Platform_Group> lstPlatform_Group_Searched
+        private List<RightsU_Dapper.Entity.Platform_Group> lstPlatform_Group_Searched
         {
             get
             {
                 if (Session["lstPlatform_Group_Searched"] == null)
-                    Session["lstPlatform_Group_Searched"] = new List<RightsU_Entities.Platform_Group>();
-                return (List<RightsU_Entities.Platform_Group>)Session["lstPlatform_Group_Searched"];
+                    Session["lstPlatform_Group_Searched"] = new List<RightsU_Dapper.Entity.Platform_Group>();
+                return (List<RightsU_Dapper.Entity.Platform_Group>)Session["lstPlatform_Group_Searched"];
             }
             set { Session["lstPlatform_Group_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.Platform> lstPlatform
+        private List<RightsU_Dapper.Entity.Platform> lstPlatform
         {
             get
             {
                 if (Session["lstPlatform"] == null)
-                    Session["lstPlatform"] = new List<RightsU_Entities.Platform>();
-                return (List<RightsU_Entities.Platform>)Session["lstPlatform"];
+                    Session["lstPlatform"] = new List<RightsU_Dapper.Entity.Platform>();
+                return (List<RightsU_Dapper.Entity.Platform>)Session["lstPlatform"];
             }
             set { Session["lstPlatform"] = value; }
         }
 
-        private List<RightsU_Entities.Platform> lstPlatform_Searched
+        private List<RightsU_Dapper.Entity.Platform> lstPlatform_Searched
         {
             get
             {
                 if (Session["lstPlatform_Searched"] == null)
-                    Session["lstPlatform_Searched"] = new List<RightsU_Entities.Platform>();
-                return (List<RightsU_Entities.Platform>)Session["lstPlatform_Searched"];
+                    Session["lstPlatform_Searched"] = new List<RightsU_Dapper.Entity.Platform>();
+                return (List<RightsU_Dapper.Entity.Platform>)Session["lstPlatform_Searched"];
             }
             set { Session["lstPlatform_Searched"] = value; }
         }
 
-        private RightsU_Entities.Platform_Group objPlatform_Group
+        private RightsU_Dapper.Entity.Platform_Group objPlatform_Group
         {
             get
             {
                 if (Session["objPlatform_Group"] == null)
-                    Session["objPlatform_Group"] = new RightsU_Entities.Platform_Group();
-                return (RightsU_Entities.Platform_Group)Session["objPlatform_Group"];
+                    Session["objPlatform_Group"] = new RightsU_Dapper.Entity.Platform_Group();
+                return (RightsU_Dapper.Entity.Platform_Group)Session["objPlatform_Group"];
             }
             set { Session["objPlatform_Group"] = value; }
         }
@@ -84,22 +93,22 @@ namespace RightsU_Plus.Controllers
             get
             {
                 if (Session["objPlatform_Group_Service"] == null)
-                    Session["objPlatform_Group_Service"] = new Platform_Group_Service(objLoginEntity.ConnectionStringName);
+                    Session["objPlatform_Group_Service"] = new Platform_Group_Service();
                 return (Platform_Group_Service)Session["objPlatform_Group_Service"];
             }
             set { Session["objPlatform_Group_Service"] = value; }
         }
 
-        public PartialViewResult BindPlatform_GroupList(int pageNo, int recordPerPage, int Platform_Group_Code, string commandName ,string sortType)
+        public PartialViewResult BindPlatform_GroupList(int pageNo, int recordPerPage, int Platform_Group_Code, string commandName, string sortType)
         {
 
             ViewBag.Platform_Group_Code = Platform_Group_Code;
             ViewBag.CommandName = commandName;
-            Platform_Group_Service objService = new Platform_Group_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Platform_Group objLanguage_Group = objService.GetById(Platform_Group_Code);
+            //Platform_Group_Service objService = new Platform_Group_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Platform_Group objLanguage_Group = objPlatform_GroupService.GetPlatformGroupByID(Platform_Group_Code);
             if (commandName == "EDIT" || commandName == "ADD")
             {
-                List<RightsU_Entities.Platform> lstPlatform = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).OrderBy(o => o.Platform_Name).ToList();
+                List<RightsU_Dapper.Entity.Platform> lstPlatform = objPlatformService.GetList().OrderBy(o => o.Platform_Name).ToList();
                 if (commandName == "EDIT")
                 {
                     var platformCode = objLanguage_Group.Platform_Group_Details.Select(s => s.Platform_Code).ToArray();
@@ -110,7 +119,7 @@ namespace RightsU_Plus.Controllers
                     ViewBag.LanguageList = new MultiSelectList(lstPlatform, "Platform_Code", "Platform_Name");
                 }
             }
-            List<RightsU_Entities.Platform_Group> lst = new List<RightsU_Entities.Platform_Group>();
+            List<RightsU_Dapper.Entity.Platform_Group> lst = new List<RightsU_Dapper.Entity.Platform_Group>();
             int RecordCount = 0;
             RecordCount = lstPlatform_Group_Searched.Count;
 
@@ -131,7 +140,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult BindPlatformTreeView(string strPlatform)
         {
-            Platform_Tree_View objPTV = new Platform_Tree_View(objLoginEntity.ConnectionStringName);
+            RightsU_BLL.Platform_Tree_View objPTV = new RightsU_BLL.Platform_Tree_View(objLoginEntity.ConnectionStringName);
             objPTV.PlatformCodes_Selected = strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             //objPTV.PlatformCodes_Display = strPlatform;
             ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
@@ -141,8 +150,8 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindPlatformTreePopup(int platformGroupCode)
         {
-            RightsU_Entities.Platform_Group objPG = new Platform_Group_Service(objLoginEntity.ConnectionStringName).GetById(platformGroupCode);
-            Platform_Tree_View objPTV = new Platform_Tree_View(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Platform_Group objPG = objPlatform_GroupService.GetPlatformGroupByID(platformGroupCode);
+            RightsU_BLL.Platform_Tree_View objPTV = new RightsU_BLL.Platform_Tree_View(objLoginEntity.ConnectionStringName);
             string strPlatform = string.Join(",", objPG.Platform_Group_Details.Select(s => s.Platform_Code).ToArray());
             objPTV.PlatformCodes_Display = strPlatform;
             objPTV.PlatformCodes_Selected = strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
@@ -160,16 +169,16 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult AddEditPlatform_Group(int Platform_Group_Code)
         {
-            objPlatform_Group = new RightsU_Entities.Platform_Group(); ;
+            objPlatform_Group = new RightsU_Dapper.Entity.Platform_Group(); ;
             objPlatform_Group_Service = null;
 
             if (Platform_Group_Code > 0)
-                objPlatform_Group = objPlatform_Group_Service.GetById(Platform_Group_Code);
+                objPlatform_Group = objPlatform_Group_Service.GetPlatformGroupByID(Platform_Group_Code);
 
-            string strPlatform_Code = string.Join(",", new Platform_Group_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Platform_Group_Code == Platform_Group_Code).ToList().Select(x => Convert.ToString(x.Platform_Code)));
+            string strPlatform_Code = string.Join(",", objPlatform_Group_DetailsService.GetList().Where(x => x.Platform_Group_Code == Platform_Group_Code).ToList().Select(x => Convert.ToString(x.Platform_Code)));
 
             //   objPlatform_Group.Is_Thetrical = (objPlatform_Group.Is_Thetrical ?? "N");
-            List<RightsU_Entities.Platform> lstPlatforms = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Active == "Y").OrderBy(o => o.Platform_Code).ToList();
+            List<RightsU_Dapper.Entity.Platform> lstPlatforms = objPlatformService.GetList().OrderBy(o => o.Platform_Code).ToList();
             var platformCode = objPlatform_Group.Platform_Group_Details.Select(s => s.Platform_Code).ToArray();
             ViewBag.PlatformList = new MultiSelectList(lstPlatforms, "Platform_Code", "Platform_Name", platformCode);
 
@@ -205,12 +214,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(Platform_Group_Code, GlobalParams.ModuleCodeForPlatformGroup, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Platform_Group_Service objService = new Platform_Group_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Platform_Group objPlatform_Group = objService.GetById(Platform_Group_Code);
+                //Platform_Group_Service objService = new Platform_Group_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Platform_Group objPlatform_Group = objPlatform_GroupService.GetPlatformGroupByID(Platform_Group_Code);
                 objPlatform_Group.Is_Active = doActive;
-                objPlatform_Group.EntityState = State.Modified;
+                //objPlatform_Group.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objPlatform_Group, out resultSet);
+                //bool isValid = objService.Save(objPlatform_Group, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstPlatform_Group.Where(w => w.Platform_Group_Code == Platform_Group_Code).First().Is_Active = doActive;
@@ -302,7 +312,7 @@ namespace RightsU_Plus.Controllers
 
         private void FetchData()
         {
-            lstPlatform_Group_Searched = lstPlatform_Group = new Platform_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstPlatform_Group_Searched = lstPlatform_Group = objPlatform_GroupService.GetList().OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
 
         public ActionResult SavePlatform_Group(FormCollection objFormCollection)
@@ -313,17 +323,17 @@ namespace RightsU_Plus.Controllers
             int platformGroupCode = Convert.ToInt32(objFormCollection["hdnPlatformCode"]);
             string PlatformGroupName = objFormCollection["txtPlatformGroupName"].ToString().Trim();
 
-            Platform_Group_Service objService = new Platform_Group_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Platform_Group objPlatformGroup = null;
+            //Platform_Group_Service objService = new Platform_Group_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Platform_Group objPlatformGroup = null;
             if (platformGroupCode > 0)
             {
-                objPlatformGroup = objService.GetById(platformGroupCode);
-                objPlatformGroup.EntityState = State.Modified;
+                objPlatformGroup = objPlatform_GroupService.GetPlatformGroupByID(platformGroupCode);
+                //objPlatformGroup.EntityState = State.Modified;
             }
             else
             {
-                objPlatformGroup = new RightsU_Entities.Platform_Group();
-                objPlatformGroup.EntityState = State.Added;
+                objPlatformGroup = new RightsU_Dapper.Entity.Platform_Group();
+                //objPlatformGroup.EntityState = State.Added;
                 objPlatformGroup.Inserted_On = DateTime.Now;
                 objPlatformGroup.Inserted_By = objLoginUser.Users_Code;
             }
@@ -333,7 +343,7 @@ namespace RightsU_Plus.Controllers
 
             dynamic resultSet;
             string status = "S", message = "Record {ACTION} successfully";
-            ICollection<RightsU_Entities.Platform_Group_Details> BuisnessUnitList = new HashSet<RightsU_Entities.Platform_Group_Details>();
+            ICollection<RightsU_Dapper.Entity.Platform_Group_Details> BuisnessUnitList = new HashSet<RightsU_Dapper.Entity.Platform_Group_Details>();
             if (PlatformCodes != null)
             {
                 var split = PlatformCodes.Split(',');
@@ -342,29 +352,30 @@ namespace RightsU_Plus.Controllers
                 {
                     if (strPlatformCode != "0")
                     {
-                        RightsU_Entities.Platform_Group_Details objTR = new Platform_Group_Details();
-                        objTR.EntityState = State.Added;
+                        RightsU_Dapper.Entity.Platform_Group_Details objTR = new Platform_Group_Details();
+                        //objTR.EntityState = State.Added;
                         objTR.Platform_Code = Convert.ToInt32(strPlatformCode);
                         objTR.Platform_Group_Code = platformGroupCode;
                         BuisnessUnitList.Add(objTR);
                     }
                 }
             }
-            RightsU_Entities.Platform_Group_Details objTR1 = new Platform_Group_Details();
+            RightsU_Dapper.Entity.Platform_Group_Details objTR1 = new Platform_Group_Details();
 
 
             #region --- SecurityGroupRel List ---
 
-            IEqualityComparer<Platform_Group_Details> comparerTalentRole = new LambdaComparer<Platform_Group_Details>((x, y) => x.Platform_Code == y.Platform_Code && x.EntityState != State.Deleted);
+            IEqualityComparer<Platform_Group_Details> comparerTalentRole = new LambdaComparer<Platform_Group_Details>((x, y) => x.Platform_Code == y.Platform_Code); //&& x.EntityState != State.Deleted);
             var Deleted_SecurityGroupRel = new List<Platform_Group_Details>();
             var Updated_SecurityGroupRel = new List<Platform_Group_Details>();
             var Added_SecurityGroupRel = CompareLists<Platform_Group_Details>(BuisnessUnitList.ToList<Platform_Group_Details>(), objPlatformGroup.Platform_Group_Details.ToList<Platform_Group_Details>(), comparerTalentRole, ref Deleted_SecurityGroupRel, ref Updated_SecurityGroupRel);
             Added_SecurityGroupRel.ToList<Platform_Group_Details>().ForEach(t => objPlatformGroup.Platform_Group_Details.Add(t));
-            Deleted_SecurityGroupRel.ToList<Platform_Group_Details>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_SecurityGroupRel.ToList<Platform_Group_Details>().ForEach(t => objPlatformGroup.Platform_Group_Details.Remove(t));
             #endregion
 
 
-            bool isValid = objService.Save(objPlatformGroup, out resultSet);
+            //bool isValid = objService.Save(objPlatformGroup, out resultSet);
+            bool isValid = true;
             if (isValid)
             {
                 status = "S";
@@ -381,7 +392,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
 
             var obj = new
@@ -395,10 +406,10 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForPlatformGroup), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForPlatformGroup), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
             return rights;
         }
         public ActionResult Index()
@@ -413,7 +424,7 @@ namespace RightsU_Plus.Controllers
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameDesc, Value = "ND" });
             ViewBag.SortType = lstSort;
-            lstPlatform_Group_Searched = lstPlatform_Group = new Platform_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstPlatform_Group_Searched = lstPlatform_Group = objPlatform_GroupService.GetList(new Type[] { typeof(Platform_Group_Details) }).OrderByDescending(o => o.Last_Updated_Time).ToList();
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View(lstPlatform_Group_Searched);
 

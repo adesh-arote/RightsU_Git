@@ -1,5 +1,7 @@
-﻿using RightsU_BLL;
-using RightsU_Entities;
+﻿//using RightsU_BLL;
+//using RightsU_Entities;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,9 @@ namespace RightsU_Plus.Controllers
 {
     public class LanguageGroupController : BaseController
     {
+        private readonly USP_Service objProcedureService = new USP_Service();
+        private readonly RightsU_Dapper.BLL.Services.Language_Group_Service objLanguageGroupService = new RightsU_Dapper.BLL.Services.Language_Group_Service();
+        private readonly RightsU_Dapper.BLL.Services.Language_Service objLanguageService = new RightsU_Dapper.BLL.Services.Language_Service();
         protected List<T> CompareLists<T>(List<T> FirstList, List<T> SecondList, IEqualityComparer<T> comparer, ref List<T> DelResult, ref List<T> UPResult) where T : class
         {
             var AddResult = FirstList.Except(SecondList, comparer);
@@ -24,24 +29,24 @@ namespace RightsU_Plus.Controllers
             return AddResult.ToList<T>();
         }
 
-        private List<RightsU_Entities.Language_Group> lstLanguage_Group
+        private List<RightsU_Dapper.Entity.Language_Group> lstLanguage_Group
         {
             get
             {
                 if (Session["lstLanguage_Group"] == null)
-                    Session["lstLanguage_Group"] = new List<RightsU_Entities.Language_Group>();
-                return (List<RightsU_Entities.Language_Group>)Session["lstLanguage_Group"];
+                    Session["lstLanguage_Group"] = new List<RightsU_Dapper.Entity.Language_Group>();
+                return (List<RightsU_Dapper.Entity.Language_Group>)Session["lstLanguage_Group"];
             }
             set { Session["lstLanguage_Group"] = value; }
         }
 
-        private List<RightsU_Entities.Language_Group> lstLanguage_Group_Searched
+        private List<RightsU_Dapper.Entity.Language_Group> lstLanguage_Group_Searched
         {
             get
             {
                 if (Session["lstLanguage_Group_Searched"] == null)
-                    Session["lstLanguage_Group_Searched"] = new List<RightsU_Entities.Language_Group>();
-                return (List<RightsU_Entities.Language_Group>)Session["lstLanguage_Group_Searched"];
+                    Session["lstLanguage_Group_Searched"] = new List<RightsU_Dapper.Entity.Language_Group>();
+                return (List<RightsU_Dapper.Entity.Language_Group>)Session["lstLanguage_Group_Searched"];
             }
             set { Session["lstLanguage_Group_Searched"] = value; }
         }
@@ -67,13 +72,14 @@ namespace RightsU_Plus.Controllers
 
             ViewBag.Language_Group_Code = Language_Group_Code;
             ViewBag.CommandName = commandName;
-            Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Language_Group objLanguage_Group = objService.GetById(Language_Group_Code);
+            //Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Language_Group objLanguage_Group = objLanguageGroupService.GetLanguageGroupByID(Language_Group_Code, new Type[] { typeof(Language_Group_Details) });
 
             if (commandName == "EDIT" || commandName == "ADD")
             {
                 dynamic languageCode = null;
-                List<RightsU_Entities.Language> lstLanguage = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).OrderBy(o => o.Language_Name).ToList();
+                List<RightsU_Dapper.Entity.Language> lstLanguage = objLanguageService.GetList().OrderBy(o => o.Language_Name).ToList();
+             
                 if (commandName == "EDIT")
                 {
                     languageCode = objLanguage_Group.Language_Group_Details.Select(s => s.Language_Code).ToArray();
@@ -86,7 +92,7 @@ namespace RightsU_Plus.Controllers
             //    //var languageCode = objLanguage_Group.Language_Group_Details.Select(s => s.Language_Code).ToArray();
             //    ViewBag.LanguageList = new MultiSelectList(lstLanguage, "Language_Code", "Language_Name");
             //}
-            List<RightsU_Entities.Language_Group> lst = new List<RightsU_Entities.Language_Group>();
+            List<RightsU_Dapper.Entity.Language_Group> lst = new List<RightsU_Dapper.Entity.Language_Group>();
             int RecordCount = 0;
             RecordCount = lstLanguage_Group_Searched.Count;
 
@@ -137,12 +143,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(Language_Group_Code, GlobalParams.ModuleCodeForLanguageGroup, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Language_Group objLanguage = objService.GetById(Language_Group_Code);
+                //Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Language_Group objLanguage = objLanguageGroupService.GetLanguageGroupByID(Language_Group_Code);
                 objLanguage.Is_Active = doActive;
-                objLanguage.EntityState = State.Modified;
+                //objLanguage.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objLanguage, out resultSet);
+                //bool isValid = objService.Save(objLanguage, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstLanguage_Group.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
@@ -179,47 +186,52 @@ namespace RightsU_Plus.Controllers
         public JsonResult SaveLanguage_Group(int Language_Group_Code, string Language_Group_Name, string[] LanguageCodes, int Record_Code)
         {
             string status = "S", message = "Record {ACTION} successfully";
-            Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Language_Group objL = new RightsU_Entities.Language_Group();
+            //Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Language_Group objL = new RightsU_Dapper.Entity.Language_Group();
+            RightsU_Dapper.Entity.Language objLG = new RightsU_Dapper.Entity.Language();
             if (Language_Group_Code > 0)
             {
-                objL = objService.GetById(Language_Group_Code);
-                objL.EntityState = State.Modified;
+                objL = objLanguageGroupService.GetLanguageGroupByID(Language_Group_Code);
+                //objL.EntityState = State.Modified;
+                //objLanguageGroupService.UpdateMusic_Deal(objL);
             }
             else
             {
-                objL = new RightsU_Entities.Language_Group();
-                objL.EntityState = State.Added;
+                objL = new RightsU_Dapper.Entity.Language_Group();
+                //objLanguageGroupService.AddEntity(objL);
+                //objL.EntityState = State.Added;
                 objL.Inserted_On = DateTime.Now;
                 objL.Inserted_By = objLoginUser.Users_Code;
             }
             objL.Last_Updated_Time = System.DateTime.Now;
 
-            ICollection<RightsU_Entities.Language_Group_Details> BuisnessUnitList = new HashSet<RightsU_Entities.Language_Group_Details>();
+            ICollection<RightsU_Dapper.Entity.Language_Group_Details> BuisnessUnitList = new HashSet<RightsU_Dapper.Entity.Language_Group_Details>();
             if (LanguageCodes != null)
             {
                 // string[] arrBuisnessCode = LanguageCodes[0].s
                 foreach (string BuisnessUnitCode in LanguageCodes)
                 {
-                    RightsU_Entities.Language_Group_Details objTR = new Language_Group_Details();
-                    objTR.EntityState = State.Added;
+                    RightsU_Dapper.Entity.Language_Group_Details objTR = new Language_Group_Details();
+                    //objLanguageGroupService.AddEntity(objTR);
+
+                    //objTR.EntityState = State.Added;
                     objTR.Language_Code = Convert.ToInt32(BuisnessUnitCode);
                     BuisnessUnitList.Add(objTR);
                 }
             }
 
-            IEqualityComparer<RightsU_Entities.Language_Group_Details> comparerBuisness_Unit = new LambdaComparer<RightsU_Entities.Language_Group_Details>((x, y) => x.Language_Code == y.Language_Code && x.EntityState != State.Deleted);
-            var Deleted_Users_Business_Unit = new List<RightsU_Entities.Language_Group_Details>();
-            var Updated_Users_Business_Unit = new List<RightsU_Entities.Language_Group_Details>();
+            IEqualityComparer<RightsU_Dapper.Entity.Language_Group_Details> comparerBuisness_Unit = new RightsU_Dapper.BLL.LambdaComparer<RightsU_Dapper.Entity.Language_Group_Details>((x, y) => x.Language_Code == y.Language_Code); //&& x.EntityState != State.Deleted);
+            var Deleted_Language_Group_Details = new List<RightsU_Dapper.Entity.Language_Group_Details>();
+            var Updated_Language_Group_Details = new List<RightsU_Dapper.Entity.Language_Group_Details>();
 
-            var Added_Users_Business_Unit = CompareLists<RightsU_Entities.Language_Group_Details>(BuisnessUnitList.ToList<RightsU_Entities.Language_Group_Details>(), objL.Language_Group_Details.ToList<RightsU_Entities.Language_Group_Details>(), comparerBuisness_Unit, ref Deleted_Users_Business_Unit, ref Updated_Users_Business_Unit);
-            Added_Users_Business_Unit.ToList<RightsU_Entities.Language_Group_Details>().ForEach(t => objL.Language_Group_Details.Add(t));
-            Deleted_Users_Business_Unit.ToList<RightsU_Entities.Language_Group_Details>().ForEach(t => t.EntityState = State.Deleted);
+            var Added_Language_Group_Details = CompareLists<RightsU_Dapper.Entity.Language_Group_Details>(BuisnessUnitList.ToList<RightsU_Dapper.Entity.Language_Group_Details>(), objL.Language_Group_Details.ToList<RightsU_Dapper.Entity.Language_Group_Details>(), comparerBuisness_Unit, ref Deleted_Language_Group_Details, ref Updated_Language_Group_Details);
+            Added_Language_Group_Details.ToList<RightsU_Dapper.Entity.Language_Group_Details>().ForEach(t => objL.Language_Group_Details.Add(t));
+            Deleted_Language_Group_Details.ToList<RightsU_Dapper.Entity.Language_Group_Details>().ForEach(t => objL.Language_Group_Details.Remove(t));
             if (Language_Group_Code > 0)
             {
                 if (objL.Acq_Deal_Rights_Dubbing.Count > 0 || objL.Acq_Deal_Rights_Subtitling.Count > 0 || objL.Syn_Deal_Rights_Dubbing.Count > 0 || objL.Syn_Deal_Rights_Subtitling.Count > 0)
                 {
-                    if (Deleted_Users_Business_Unit.Count > 0)
+                    if (Deleted_Language_Group_Details.Count > 0)
                     {
                         status = "E";
                         message = objMessageKey.LanguageGroupisalreadyusedYoucannotremoveexistingLanguages;
@@ -230,21 +242,33 @@ namespace RightsU_Plus.Controllers
             objL.Last_Action_By = objLoginUser.Users_Code;
             objL.Is_Active = "Y";
             objL.Language_Group_Name = Language_Group_Name;
-
+            
+            
             if (status != "E")
             {
-                dynamic resultSet;
-                bool isValid = objService.Save(objL, out resultSet);
+                try
+                {
+                    if (Language_Group_Code == 0)
+                        objLanguageGroupService.AddEntity(objL);
+                    else
+                        objLanguageGroupService.UpdateMusic_Deal(objL);
 
-                if (isValid)
-                {
-                     lstLanguage_Group_Searched = lstLanguage_Group = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                    dynamic resultSet;
+                    // bool isValid = objService.Save(objL, out resultSet);
+                    bool isValid = true;
+                    if (isValid)
+                    {
+                        lstLanguage_Group_Searched = lstLanguage_Group = objLanguageGroupService.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
+                    }
                 }
-                else
+                catch (Exception e)
                 {
+                    string a = e.Message;
+
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
+                    
                 int recordLockingCode = Convert.ToInt32(Record_Code);
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
@@ -296,10 +320,10 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -310,7 +334,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForLanguageGroup.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstLanguage_Group_Searched = lstLanguage_Group = new Language_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstLanguage_Group_Searched = lstLanguage_Group = (List<RightsU_Dapper.Entity.Language_Group>)objLanguageGroupService.GetList(new Type[] { typeof(Language_Group_Details) });
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });

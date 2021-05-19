@@ -3,44 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+//using RightsU_Entities;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class CurrencyController : BaseController
     {
+        private readonly USP_Service objProcedureService = new USP_Service();
+        private readonly Currency_Service objCurrencyService = new Currency_Service();
+
         #region --- Properties ---
-        private List<RightsU_Entities.Currency> lstCurrency
+        private List<RightsU_Dapper.Entity.Currency> lstCurrency
         {
             get
             {
                 if (Session["lstCurrency"] == null)
-                    Session["lstCurrency"] = new List<RightsU_Entities.Currency>();
-                return (List<RightsU_Entities.Currency>)Session["lstCurrency"];
+                    Session["lstCurrency"] = new List<RightsU_Dapper.Entity.Currency>();
+                return (List<RightsU_Dapper.Entity.Currency>)Session["lstCurrency"];
             }
             set { Session["lstCurrency"] = value; }
         }
 
-        private List<RightsU_Entities.Currency> lstCurrency_Searched
+        private List<RightsU_Dapper.Entity.Currency> lstCurrency_Searched
         {
             get
             {
                 if (Session["lstCurrency_Searched"] == null)
-                    Session["lstCurrency_Searched"] = new List<RightsU_Entities.Currency>();
-                return (List<RightsU_Entities.Currency>)Session["lstCurrency_Searched"];
+                    Session["lstCurrency_Searched"] = new List<RightsU_Dapper.Entity.Currency>();
+                return (List<RightsU_Dapper.Entity.Currency>)Session["lstCurrency_Searched"];
             }
             set { Session["lstCurrency_Searched"] = value; }
         }
 
-        private RightsU_Entities.Currency objCurrency
+        private RightsU_Dapper.Entity.Currency objCurrency
         {
             get
             {
                 if (Session["objCurrency"] == null)
-                    Session["objCurrency"] = new RightsU_Entities.Currency();
-                return (RightsU_Entities.Currency)Session["objCurrency"];
+                    Session["objCurrency"] = new RightsU_Dapper.Entity.Currency();
+                return (RightsU_Dapper.Entity.Currency)Session["objCurrency"];
             }
             set { Session["objCurrency"] = value; }
         }
@@ -50,7 +55,7 @@ namespace RightsU_Plus.Controllers
             get
             {
                 if (Session["objCurrency_Service"] == null)
-                    Session["objCurrency_Service"] = new Currency_Service(objLoginEntity.ConnectionStringName);
+                    Session["objCurrency_Service"] = new Currency_Service();
                 return (Currency_Service)Session["objCurrency_Service"];
             }
             set { Session["objCurrency_Service"] = value; }
@@ -79,7 +84,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult BindCurrencyList(int pageNo, int recordPerPage, string sortType)
         {
-            List<RightsU_Entities.Currency> lst = new List<RightsU_Entities.Currency>();
+            List<RightsU_Dapper.Entity.Currency> lst = new List<RightsU_Dapper.Entity.Currency>();
             int RecordCount = 0;
             RecordCount = lstCurrency_Searched.Count;
 
@@ -124,15 +129,15 @@ namespace RightsU_Plus.Controllers
 
         private void FetchData()
         {
-            lstCurrency_Searched = lstCurrency = objCurrency_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstCurrency_Searched = lstCurrency = objCurrencyService.GetList().OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForCurrency), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForCurrency), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -165,12 +170,14 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(currencyCode, GlobalParams.ModuleCodeForCurrency, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Currency_Service objService = new Currency_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Currency objCurrency = objService.GetById(currencyCode);
+                //Currency_Service objService = new Currency_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Currency objCurrency = objCurrencyService.GetTalentByID(currencyCode);
                 objCurrency.Is_Active = doActive;
-                objCurrency.EntityState = State.Modified;
+                //objCurrency.EntityState = State.Modified;
+                objCurrencyService.UpdateMusic_Deal(objCurrency);
                 dynamic resultSet;
-                bool isValid = objService.Save(objCurrency, out resultSet);
+                // bool isValid = objService.Save(objCurrency, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstCurrency.Where(w => w.Currency_Code == currencyCode).First().Is_Active = doActive;
@@ -222,7 +229,7 @@ namespace RightsU_Plus.Controllers
             }
 
             if (currencyCode > 0)
-                objCurrency = objCurrency_Service.GetById(currencyCode);
+                objCurrency = objCurrencyService.GetTalentByID(currencyCode);
 
             ViewBag.CommandName = commandName;
             ViewBag.EnableBaseCurrency = enableBaseCurrency;
@@ -254,11 +261,12 @@ namespace RightsU_Plus.Controllers
             string status = "S", message = "";
 
             if (currencyCode > 0)
-                objCurrency.EntityState = State.Modified;
+                status = "Test";
+            //objCurrency.EntityState = State.Modified;
             else
             {
                 objCurrency_Service = null;
-                objCurrency.EntityState = State.Added;
+                // objCurrency.EntityState = State.Added;
                 objCurrency.Inserted_On = DateTime.Now;
                 objCurrency.Inserted_By = objLoginUser.Users_Code;
             }
@@ -271,10 +279,11 @@ namespace RightsU_Plus.Controllers
             objCurrency.Is_Active = "Y";
 
             dynamic resultSet;
-            if (!objCurrency_Service.Save(objCurrency, out resultSet))
+            //if (!objCurrency_Service.Save(objCurrency, out resultSet))
+            if(1 == 2)
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             else
             {
@@ -302,8 +311,8 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult BindExchangeRateList(string commandName, string dummyGuid)
         {
             string maxDate = "";
-            if (objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).Count() > 0)
-                maxDate = objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).Select(s => s.Effective_Start_Date).Max().ToString(GlobalParams.DateFormat);
+            //if (objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).Count() > 0)
+            //    maxDate = objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).Select(s => s.Effective_Start_Date).Max().ToString(GlobalParams.DateFormat);
 
             string canEdit = "Y", canDelete = "Y";
 
@@ -318,8 +327,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.CanEdit = canEdit;
             ViewBag.CanDelete = canDelete;
             ViewBag.MaxDate = maxDate;
-            List<Currency_Exchange_Rate> lst = objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).OrderBy(x=>x.Effective_Start_Date).ToList();
-            return PartialView("~/Views/Currency/_CurrencyExchangeRateList.cshtml", lst);
+            // List<Currency_Exchange_Rate> lst = objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).OrderBy(x=>x.Effective_Start_Date).ToList();
+            return PartialView("~/Views/Currency/_CurrencyExchangeRateList.cshtml");//, lst);
         }
 
         public JsonResult SaveExchangeRate(string dummyGuid, DateTime effectiveDate, decimal exchangeRate)
@@ -330,13 +339,16 @@ namespace RightsU_Plus.Controllers
             if (objCER == null)
             {
                 objCER = new Currency_Exchange_Rate();
-                objCER.EntityState = State.Added;
+                //objCER.EntityState = State.Added;
                 objCurrency.Currency_Exchange_Rate.Add(objCER);
             }
             else
             {
                 if (objCER.Currency_Exchange_Rate_Code > 0)
-                    objCER.EntityState = State.Modified;
+                    status = "Test";
+               // objCurrency.Currency_Exchange_Rate.up
+                //objCurrencyService.UpdateMusic_Deal()
+                    //objCER.EntityState = State.Modified;
             }
 
             objCER.Effective_Start_Date = effectiveDate;
@@ -358,7 +370,8 @@ namespace RightsU_Plus.Controllers
             if (objCER != null)
             {
                 if (objCER.Currency_Exchange_Rate_Code > 0)
-                    objCER.EntityState = State.Deleted;
+                    status = "Test";
+                //objCER.EntityState = State.Deleted;
                 else
                     objCurrency.Currency_Exchange_Rate.Remove(objCER);
             }

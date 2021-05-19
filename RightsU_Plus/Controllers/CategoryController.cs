@@ -1,36 +1,40 @@
-﻿using RightsU_Entities;
+﻿//using RightsU_Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using System.Web.Mvc;
-using RightsU_BLL;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class CategoryController : BaseController
     {
+        private readonly USP_Service objProcedureService = new USP_Service();
+        private readonly Category_Service objCategoryService = new Category_Service();
 
         #region --Properties--
-        private List<RightsU_Entities.Category> lstCategory
+        private List<RightsU_Dapper.Entity.Category> lstCategory
         {
             get
             {
                 if (Session["lstCategory"] == null)
-                    Session["lstCategory"] = new List<RightsU_Entities.Category>();
-                return (List<RightsU_Entities.Category>)Session["lstCategory"];
+                    Session["lstCategory"] = new List<RightsU_Dapper.Entity.Category>();
+                return (List<RightsU_Dapper.Entity.Category>)Session["lstCategory"];
             }
             set { Session["lstCategory"] = value; }
         }
 
-        private List<RightsU_Entities.Category> lstCategory_Searched
+        private List<RightsU_Dapper.Entity.Category> lstCategory_Searched
         {
             get
             {
                 if (Session["lstCategory_Searched"] == null)
-                    Session["lstCategory_Searched"] = new List<RightsU_Entities.Category>();
-                return (List<RightsU_Entities.Category>)Session["lstCategory_Searched"];
+                    Session["lstCategory_Searched"] = new List<RightsU_Dapper.Entity.Category>();
+                return (List<RightsU_Dapper.Entity.Category>)Session["lstCategory_Searched"];
             }
             set { Session["lstCategory_Searched"] = value; }
         }
@@ -41,7 +45,7 @@ namespace RightsU_Plus.Controllers
             string modulecode = GlobalParams.ModuleCodeForCategory.ToString();
             ViewBag.Code = modulecode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstCategory_Searched = lstCategory = new Category_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstCategory_Searched = lstCategory = (List<RightsU_Dapper.Entity.Category>)objCategoryService.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -54,7 +58,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.CategoryCode = categoryCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Category> lst = new List<RightsU_Entities.Category>();
+            List<RightsU_Dapper.Entity.Category> lst = new List<RightsU_Dapper.Entity.Category>();
             int RecordCount = 0;
             RecordCount = lstCategory_Searched.Count;
             if (RecordCount > 0)
@@ -131,10 +135,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForCategory), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForCategory), objLoginUser.Security_Group_Code,objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -146,12 +150,14 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(categoryCode, GlobalParams.ModuleCodeForCategory, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Category_Service objService = new Category_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Category objCategory = objService.GetById(categoryCode);
+                //Category_Service objService = new Category_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Category objCategory = objCategoryService.GetCategoryByID(categoryCode);
                 objCategory.Is_Active = doActive;
-                objCategory.EntityState = State.Modified;
-                dynamic resultSet;
-                bool isValid = objService.Save(objCategory, out resultSet);
+                // objCategory.EntityState = State.Modified;
+                objCategoryService.UpdateCategory(objCategory);
+                 dynamic resultSet;
+                //bool isValid = objService.Save(objCategory, out resultSet);
+                bool isValid =  true;
 
                 if (isValid)
                 {
@@ -165,7 +171,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -189,18 +195,18 @@ namespace RightsU_Plus.Controllers
             if (categoryCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Category_Service objService = new Category_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Category objCategory = null;
+            //Category_Service objService = new Category_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Category objCategory = null;
 
             if (categoryCode > 0)
             {
-                objCategory = objService.GetById(categoryCode);
-                objCategory.EntityState = State.Modified;
+                objCategory = objCategoryService.GetCategoryByID(categoryCode);
+                //objCategory.EntityState = State.Modified;
             }
             else
             {
-                objCategory = new RightsU_Entities.Category();
-                objCategory.EntityState = State.Added;
+                objCategory = new RightsU_Dapper.Entity.Category();
+                //objCategory.EntityState = State.Added;
                 objCategory.Inserted_On = DateTime.Now;
                 objCategory.Inserted_By = objLoginUser.Users_Code;
             }
@@ -211,15 +217,24 @@ namespace RightsU_Plus.Controllers
             objCategory.Category_Name = categoryName;
 
             dynamic resultSet;
-            bool isValid = objService.Save(objCategory, out resultSet);
+            if (categoryCode > 0)
+            {
+                objCategoryService.UpdateCategory(objCategory);
+            }
+            else
+            {
+                objCategoryService.AddEntity(objCategory);
+            }
+                //bool isValid = objService.Save(objCategory, out resultSet);
+                bool isValid = true;
             if(isValid)
             {
-                lstCategory_Searched = lstCategory = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstCategory_Searched = lstCategory = objCategoryService.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

@@ -516,9 +516,9 @@ namespace RightsU_Plus.Controllers
         }
         #endregion
         #region --- Paging ---
-        private List<USP_List_Acq_Ancillary_Result> Get_Paging_List(int txtpageSize, int PageNo)
+        private List<RightsU_Entities.USP_List_Acq_Ancillary_Result> Get_Paging_List(int txtpageSize, int PageNo)
         {
-            List<USP_List_Acq_Ancillary_Result> lst = objDeal_Schema.List_Ancillary.SkipWhile(r => r.PageNo <= (PageNo - 1) * txtpageSize).ToList();
+            List<RightsU_Entities.USP_List_Acq_Ancillary_Result> lst = objDeal_Schema.List_Ancillary.SkipWhile(r => r.PageNo <= (PageNo - 1) * txtpageSize).ToList();
             var Count_Take = lst.GroupBy(i => i.Acq_Deal_Ancillary_Code).Select(Group => new { Count = Group.Count() });
             int[] arr = Count_Take.Select(i => i.Count).ToArray();
             int Count_Acq_Ancillary_Code = 0;

@@ -1,35 +1,39 @@
-﻿using RightsU_BLL;
-using RightsU_Entities;
+﻿//using RightsU_BLL;
+//using RightsU_Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class Promoter_RemarksController : BaseController
     {
+        private readonly Promoter_Remarks_Service objPromoter_Remarks_Service = new Promoter_Remarks_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         #region --Properties--
-        private List<RightsU_Entities.Promoter_Remarks> lstPromoter_Remarks
+        private List<RightsU_Dapper.Entity.Promoter_Remarks> lstPromoter_Remarks
         {
             get
             {
                 if (Session["lstPromoter_Remarks"] == null)
-                    Session["lstPromoter_Remarks"] = new List<RightsU_Entities.Promoter_Remarks>();
-                return (List<RightsU_Entities.Promoter_Remarks>)Session["lstPromoter_Remarks"];
+                    Session["lstPromoter_Remarks"] = new List<RightsU_Dapper.Entity.Promoter_Remarks>();
+                return (List<RightsU_Dapper.Entity.Promoter_Remarks>)Session["lstPromoter_Remarks"];
             }
             set { Session["lstPromoter_Remarks"] = value; }
         }
 
-        private List<RightsU_Entities.Promoter_Remarks> lstPromoter_Remarks_Searched
+        private List<RightsU_Dapper.Entity.Promoter_Remarks> lstPromoter_Remarks_Searched
         {
             get
             {
                 if (Session["lstPromoter_Remarks_Searched"] == null)
-                    Session["lstPromoter_Remarks_Searched"] = new List<RightsU_Entities.Promoter_Remarks>();
-                return (List<RightsU_Entities.Promoter_Remarks>)Session["lstPromoter_Remarks_Searched"];
+                    Session["lstPromoter_Remarks_Searched"] = new List<RightsU_Dapper.Entity.Promoter_Remarks>();
+                return (List<RightsU_Dapper.Entity.Promoter_Remarks>)Session["lstPromoter_Remarks_Searched"];
             }
             set { Session["lstPromoter_Remarks_Searched"] = value; }
         }
@@ -40,7 +44,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForPromoterRemarks.ToString();
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
             ViewBag.Code = moduleCode;
-            lstPromoter_Remarks_Searched = lstPromoter_Remarks = new Promoter_Remarks_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstPromoter_Remarks_Searched = lstPromoter_Remarks = (List<RightsU_Dapper.Entity.Promoter_Remarks>)objPromoter_Remarks_Service.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -53,7 +57,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Promoter_Remarks_Code = Promoter_Remarks_Code;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Promoter_Remarks> lst = new List<RightsU_Entities.Promoter_Remarks>();
+            List<RightsU_Dapper.Entity.Promoter_Remarks> lst = new List<RightsU_Dapper.Entity.Promoter_Remarks>();
             int RecordCount = 0;
             RecordCount = lstPromoter_Remarks_Searched.Count;
             if (RecordCount > 0)
@@ -72,7 +76,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SearchPromoter_Remarks(string searchText)
         {
-            Promoter_Remarks_Service objService = new Promoter_Remarks_Service(objLoginEntity.ConnectionStringName);
+            //Promoter_Remarks_Service objService = new Promoter_Remarks_Service(objLoginEntity.ConnectionStringName);
             if (!string.IsNullOrEmpty(searchText))
             {
                 lstPromoter_Remarks_Searched = lstPromoter_Remarks.Where(w => w.Promoter_Remark_Desc.ToUpper().Contains(searchText.ToUpper())).ToList();
@@ -112,10 +116,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPromoterRemarks), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPromoterRemarks), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -146,13 +150,15 @@ namespace RightsU_Plus.Controllers
             bool isLocked = DBUtil.Lock_Record(Promoter_Remarks_Code, GlobalParams.ModuleCodeForPromoterRemarks, objLoginUser.Users_Code, out RLCode, out strMessage);
             if (isLocked)
             {
-                Promoter_Remarks_Service objService = new Promoter_Remarks_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Promoter_Remarks objPR = objService.GetById(Promoter_Remarks_Code);
+                //Promoter_Remarks_Service objService = new Promoter_Remarks_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Promoter_Remarks objPR = objPromoter_Remarks_Service.GetPromoterRemarkByID(Promoter_Remarks_Code);
                 objPR.Is_Active = doActive;
-                objPR.EntityState = State.Modified;
+                //objPR.EntityState = State.Modified;
                 dynamic resultSet;
 
-                bool isValid = objService.Save(objPR, out resultSet);
+                //bool isValid = objService.Save(objPR, out resultSet);
+
+                bool isValid = true;
                 if (isValid)
                 {
                     lstPromoter_Remarks.Where(w => w.Promoter_Remarks_Code == Promoter_Remarks_Code).First().Is_Active = doActive;
@@ -165,7 +171,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 DBUtil.Release_Record(RLCode);
             }
@@ -187,18 +193,18 @@ namespace RightsU_Plus.Controllers
             if (Promoter_Remarks_Code > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Promoter_Remarks_Service objService = new Promoter_Remarks_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Promoter_Remarks objPR = null;
+            //Promoter_Remarks_Service objService = new Promoter_Remarks_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Promoter_Remarks objPR = null;
 
             if (Promoter_Remarks_Code > 0)
             {
-                objPR = objService.GetById(Promoter_Remarks_Code);
-                objPR.EntityState = State.Modified;
+                objPR = objPromoter_Remarks_Service.GetPromoterRemarkByID(Promoter_Remarks_Code);
+                //objPR.EntityState = State.Modified;
             }
             else
             {
-                objPR = new RightsU_Entities.Promoter_Remarks();
-                objPR.EntityState = State.Added;
+                objPR = new RightsU_Dapper.Entity.Promoter_Remarks();
+               // objPR.EntityState = State.Added;
                 objPR.Inserted_On = DateTime.Now;
                 objPR.Inserted_By = objLoginUser.Users_Code;
             }
@@ -208,16 +214,22 @@ namespace RightsU_Plus.Controllers
             objPR.Is_Active = "Y";
             objPR.Promoter_Remark_Desc = Promoter_Remarks;
             dynamic resultSet;
-            bool isValid = objService.Save(objPR, out resultSet);
+            //bool isValid = objService.Save(objPR, out resultSet);
+            if (Promoter_Remarks_Code == 0)
+                objPromoter_Remarks_Service.AddEntity(objPR);
+            else
+                objPromoter_Remarks_Service.UpdateMusic_Deal(objPR);
+
+            bool isValid = true;
 
             if (isValid)
             {
-                lstPromoter_Remarks_Searched = lstPromoter_Remarks = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstPromoter_Remarks_Searched = lstPromoter_Remarks = objPromoter_Remarks_Service.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             DBUtil.Release_Record(recordLockingCode);

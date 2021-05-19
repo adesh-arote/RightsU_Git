@@ -1,6 +1,5 @@
-﻿@using RightsU_BLL;
-@model List<RightsU_Entities.Platform_Group>
-
+﻿@using RightsU_Dapper.BLL;
+@model List<RightsU_Dapper.Entity.Platform_Group>
 
 @using UTOFrameWork.FrameworkClasses
 @{
@@ -9,12 +8,13 @@
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
     }
-    var j = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+   // var Platform_Name = Model.Where(m=>m.Platform_Group_Details.FirstOrDefault().Platform_Code)
+    var j = new RightsU_Dapper.BLL.Services.Platform_Service().GetList();/*  SearchFor(x => true).ToList();*/
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
-    }     
+    }
 }
 <style>
      

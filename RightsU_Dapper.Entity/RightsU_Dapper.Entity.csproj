@@ -64,6 +64,86 @@
   <ItemGroup>
     <Compile Include="Deal\Deal_Creation.cs" />
     <Compile Include="Deal\Deal_Schema.cs" />
+    <Compile Include="Master_Entities\User.cs" />
+    <Compile Include="Master_Entities\System_Language_Message.cs" />
+    <Compile Include="Master_Entities\System_Language.cs" />
+    <Compile Include="Master_Entities\Deal_Type.cs" />
+    <Compile Include="Master_Entities\Platform.cs" />
+    <Compile Include="Master_Entities\Platform_Group_Details.cs" />
+    <Compile Include="Master_Entities\Platform_Group.cs" />
+    <Compile Include="Master_Entities\Category.cs" />
+    <Compile Include="Master_Entities\Material_Type.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Material .cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Material.cs" />
+    <Compile Include="Master_Entities\Material_Medium.cs" />
+    <Compile Include="Master_Entities\USP_List_Country_Result.cs" />
+    <Compile Include="Master_Entities\Country.cs" />
+    <Compile Include="Master_Entities\Provisional_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Music_Deal.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Right_Rule.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Attachment .cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Attachment.cs" />
+    <Compile Include="Master_Entities\Document_Type.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Revenue_Costtype.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Revenue_Commission.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Payment_Terms.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Cost_Costtype.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Cost_Commision.cs" />
+    <Compile Include="Master_Entities\Syndication_Deal_Payment_Terms.cs" />
+    <Compile Include="Master_Entities\Cost_Type.cs" />
+    <Compile Include="Master_Entities\Title_Alternate_Genres.cs" />
+    <Compile Include="Master_Entities\Channel.cs" />
+    <Compile Include="Master_Entities\Program.cs" />
+    <Compile Include="Master_Entities\Title_Genres.cs" />
+    <Compile Include="Master_Entities\Genres.cs" />
+    <Compile Include="Master_Entities\Acq_Deal.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Cost.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Pushback_Dubbing.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Pushback_Subtitling.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Dubbing.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Promoter.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Promoter_Group.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Promoter_Remarks.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Subtitling.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Sport_Language.cs" />
+    <Compile Include="Master_Entities\Country_Language.cs" />
+    <Compile Include="Master_Entities\Currency.cs" />
+    <Compile Include="Master_Entities\Currency_Exchange_Rate.cs" />
+    <Compile Include="Master_Entities\Grade_Master.cs" />
+    <Compile Include="Master_Entities\Language.cs" />
+    <Compile Include="Master_Entities\Language_Group.cs" />
+    <Compile Include="Master_Entities\Language_Group_Details.cs" />
+    <Compile Include="Master_Entities\Material_Order_Details.cs" />
+    <Compile Include="Master_Entities\Milestone_Nature.cs" />
+    <Compile Include="Master_Entities\Music_Album_Talent.cs" />
+    <Compile Include="Master_Entities\Music_Title_Talent.cs" />
+    <Compile Include="Master_Entities\ProjectMilestone.cs" />
+    <Compile Include="Master_Entities\ProjectMilestoneDetail.cs" />
+    <Compile Include="Master_Entities\ProjectMilestoneTitle.cs" />
+    <Compile Include="Master_Entities\Promoter_Group.cs" />
+    <Compile Include="Master_Entities\Promoter_Remarks.cs" />
+    <Compile Include="Master_Entities\Role.cs" />
+    <Compile Include="Master_Entities\Syn_Deal.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Revenue.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Dubbing.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Promoter.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Promoter_Group.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Promoter_Remarks.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Subtitling.cs" />
+    <Compile Include="Master_Entities\Talent.cs" />
+    <Compile Include="Master_Entities\Talent_Role.cs" />
+    <Compile Include="Master_Entities\Title.cs" />
+    <Compile Include="Master_Entities\Title_Alternate.cs" />
+    <Compile Include="Master_Entities\Title_Alternate_Talent.cs" />
+    <Compile Include="Master_Entities\Title_Audio_Details_Singers.cs" />
+    <Compile Include="Master_Entities\Title_Milestone.cs" />
+    <Compile Include="Master_Entities\Title_Talent.cs" />
+    <Compile Include="Master_Entities\Vendor_Role.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Album.cs" />
     <Compile Include="Music_Deal_Entities\USP_List_Music_Deal_Result.cs" />
     <Compile Include="Music_Deal_Entities\Music_Deal.cs" />
     <Compile Include="Music_Deal_Entities\Music_Deal_Channel.cs" />
@@ -80,12 +160,18 @@
     <Compile Include="Deal\RightsU_Session.cs" />
     <Compile Include="System_Setting_Entities\System_Parameter_New.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\RightsU_Entities\RightsU_Entities.csproj">
+      <Project>{D8A4885D-9A36-4724-B464-6CB122E081F7}</Project>
+      <Name>RightsU_Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

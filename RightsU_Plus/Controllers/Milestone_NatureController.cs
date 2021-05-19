@@ -1,35 +1,39 @@
-﻿using RightsU_BLL;
+﻿//using RightsU_BLL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using System.Web.Mvc;
-using RightsU_Entities;
+//using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class Milestone_NatureController : BaseController
     {
+        private readonly Milestone_Nature_Service objMileStoneNatureService = new Milestone_Nature_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         #region --Properties--
-        private List<RightsU_Entities.Milestone_Nature> lstMilestoneNature
+        private List<RightsU_Dapper.Entity.Milestone_Nature> lstMilestoneNature
         {
             get
             {
                 if (Session["lstMilestoneNature"] == null)
-                    Session["lstMilestoneNature"] = new List<RightsU_Entities.Milestone_Nature>();
-                return (List<RightsU_Entities.Milestone_Nature>)Session["lstMilestoneNature"];
+                    Session["lstMilestoneNature"] = new List<RightsU_Dapper.Entity.Milestone_Nature>();
+                return (List<RightsU_Dapper.Entity.Milestone_Nature>)Session["lstMilestoneNature"];
             }
             set { Session["lstMilestoneNature"] = value; }
         }
 
-        private List<RightsU_Entities.Milestone_Nature> lstMilestoneNature_Searched
+        private List<RightsU_Dapper.Entity.Milestone_Nature> lstMilestoneNature_Searched
         {
             get
             {
                 if (Session["lstMilestoneNature_Searched"] == null)
-                    Session["lstMilestoneNature_Searched"] = new List<RightsU_Entities.Milestone_Nature>();
-                return (List<RightsU_Entities.Milestone_Nature>)Session["lstMilestoneNature_Searched"];
+                    Session["lstMilestoneNature_Searched"] = new List<RightsU_Dapper.Entity.Milestone_Nature>();
+                return (List<RightsU_Dapper.Entity.Milestone_Nature>)Session["lstMilestoneNature_Searched"];
             }
             set { Session["lstMilestoneNature_Searched"] = value; }
         }
@@ -41,7 +45,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForMilestoneNature.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstMilestoneNature_Searched = lstMilestoneNature= new Milestone_Nature_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstMilestoneNature_Searched = lstMilestoneNature = (List<RightsU_Dapper.Entity.Milestone_Nature>)objMileStoneNatureService.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -55,7 +59,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Milestone_Nature_Code = MilestoneNatureCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Milestone_Nature> lst = new List<RightsU_Entities.Milestone_Nature>();
+            List<RightsU_Dapper.Entity.Milestone_Nature> lst = new List<RightsU_Dapper.Entity.Milestone_Nature>();
             int RecordCount = 0;
             RecordCount = lstMilestoneNature_Searched.Count;
             if (RecordCount > 0)
@@ -97,10 +101,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMilestoneNature), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMilestoneNature), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -125,7 +129,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SearchMilestoneNature(string searchText)
         {
-           Milestone_Nature_Service objService = new Milestone_Nature_Service(objLoginEntity.ConnectionStringName);
+           //Milestone_Nature_Service objService = new Milestone_Nature_Service(objLoginEntity.ConnectionStringName);
             if (!string.IsNullOrEmpty(searchText))
             {
                 lstMilestoneNature_Searched = lstMilestoneNature.Where(w => w.Milestone_Nature_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
@@ -148,13 +152,15 @@ namespace RightsU_Plus.Controllers
             bool isLocked = DBUtil.Lock_Record(Milestone_Nature_Code, GlobalParams.ModuleCodeForMilestoneNature, objLoginUser.Users_Code, out RLCode, out strMessage);
             if (isLocked)
             {
-                Milestone_Nature_Service objService = new Milestone_Nature_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Milestone_Nature objMilestoneNature = objService.GetById(Milestone_Nature_Code);
+                //Milestone_Nature_Service objService = new Milestone_Nature_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Milestone_Nature objMilestoneNature = objMileStoneNatureService.GetMilestone_NatureGroupByID(Milestone_Nature_Code);
                 objMilestoneNature.Is_Active = doActive;
-                objMilestoneNature.EntityState = State.Modified;
+                //objMilestoneNature.EntityState = State.Modified;
+                objMileStoneNatureService.UpdateCategory(objMilestoneNature);
                 dynamic resultSet;
 
-                bool isValid = objService.Save(objMilestoneNature, out resultSet);
+                //bool isValid = objService.Save(objMilestoneNature, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstMilestoneNature.Where(w => w.Milestone_Nature_Code == Milestone_Nature_Code).First().Is_Active = doActive;
@@ -167,7 +173,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 DBUtil.Release_Record(RLCode);
             }
@@ -189,18 +195,18 @@ namespace RightsU_Plus.Controllers
             if (MilestoneNatureCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Milestone_Nature_Service objService = new Milestone_Nature_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Milestone_Nature objMilestoneNature = null;
+            //Milestone_Nature_Service objService = new Milestone_Nature_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Milestone_Nature objMilestoneNature = null;
 
             if (MilestoneNatureCode > 0)
             {
-                objMilestoneNature = objService.GetById(MilestoneNatureCode);
-                objMilestoneNature.EntityState = State.Modified;
+                objMilestoneNature = objMileStoneNatureService.GetMilestone_NatureGroupByID(MilestoneNatureCode);
+                //objMilestoneNature.EntityState = State.Modified;
             }
             else
             {
-                objMilestoneNature = new RightsU_Entities.Milestone_Nature();
-                objMilestoneNature.EntityState = State.Added;
+                objMilestoneNature = new RightsU_Dapper.Entity.Milestone_Nature();
+                //objMilestoneNature.EntityState = State.Added;
                 objMilestoneNature.Inserted_On = DateTime.Now;
                 objMilestoneNature.Inserted_by= objLoginUser.Users_Code;
             }
@@ -210,16 +216,24 @@ namespace RightsU_Plus.Controllers
             objMilestoneNature.Is_Active = "Y";
             objMilestoneNature.Milestone_Nature_Name= MilestoneNatureName;
             dynamic resultSet;
-            bool isValid = objService.Save(objMilestoneNature, out resultSet);
-
+            if (MilestoneNatureCode > 0)
+            {
+                objMileStoneNatureService.UpdateCategory(objMilestoneNature);
+            }
+            else
+            {
+                objMileStoneNatureService.AddEntity(objMilestoneNature);
+            }
+                //bool isValid = objMileStoneNatureService.Save(objMilestoneNature, out resultSet);
+                bool isValid = true;
             if (isValid)
             {
-                lstMilestoneNature_Searched = lstMilestoneNature = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstMilestoneNature_Searched = lstMilestoneNature = objMileStoneNatureService.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             DBUtil.Release_Record(recordLockingCode);

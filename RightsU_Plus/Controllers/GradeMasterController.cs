@@ -1,34 +1,39 @@
-﻿using RightsU_BLL;
+﻿//using RightsU_BLL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+//using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
 namespace RightsU_Plus.Controllers
 {
     public class GradeMastersController : BaseController
     {
+        private readonly Grade_Master_Service objGradeMaster_Service = new Grade_Master_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
+
         #region --Properties--
-        private List<RightsU_Entities.Grade_Master> lstGrade_Master
+        private List<RightsU_Dapper.Entity.Grade_Master> lstGrade_Master
         {
             get
             {
                 if (Session["lstGrade_Master"] == null)
-                    Session["lstGrade_Master"] = new List<RightsU_Entities.Grade_Master>();
-                return (List<RightsU_Entities.Grade_Master>)Session["lstGrade_Master"];
+                    Session["lstGrade_Master"] = new List<RightsU_Dapper.Entity.Grade_Master>();
+                return (List<RightsU_Dapper.Entity.Grade_Master>)Session["lstGrade_Master"];
             }
             set { Session["lstGrade_Master"] = value; }
         }
 
-        private List<RightsU_Entities.Grade_Master> lstGrade_Master_Searched
+        private List<RightsU_Dapper.Entity.Grade_Master> lstGrade_Master_Searched
         {
             get
             {
                 if (Session["lstGrade_Master_Searched"] == null)
-                    Session["lstGrade_Master_Searched"] = new List<RightsU_Entities.Grade_Master>();
-                return (List<RightsU_Entities.Grade_Master>)Session["lstGrade_Master_Searched"];
+                    Session["lstGrade_Master_Searched"] = new List<RightsU_Dapper.Entity.Grade_Master>();
+                return (List<RightsU_Dapper.Entity.Grade_Master>)Session["lstGrade_Master_Searched"];
             }
             set { Session["lstGrade_Master_Searched"] = value; }
         }
@@ -40,7 +45,7 @@ namespace RightsU_Plus.Controllers
             string modulecode = GlobalParams.ModuleCodeForGradeMaster.ToString();
             ViewBag.Code = modulecode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstGrade_Master_Searched = lstGrade_Master = new Grade_Master_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstGrade_Master_Searched = lstGrade_Master = (List<RightsU_Dapper.Entity.Grade_Master>)objGradeMaster_Service.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -53,7 +58,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.gradeCode = gradeCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Grade_Master> lst = new List<RightsU_Entities.Grade_Master>();
+            List<RightsU_Dapper.Entity.Grade_Master> lst = new List<RightsU_Dapper.Entity.Grade_Master>();
             int RecordCount = 0;
             RecordCount = lstGrade_Master_Searched.Count;
 
@@ -116,10 +121,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGradeMaster), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGradeMaster), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -146,12 +151,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(gradeCode, GlobalParams.ModuleCodeForGradeMaster, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Grade_Master_Service objService = new Grade_Master_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Grade_Master objGradeMaster = objService.GetById(gradeCode);
+                //Grade_Master_Service objService = new Grade_Master_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Grade_Master objGradeMaster = objGradeMaster_Service.GetGrade_MasterByID(gradeCode);
                 objGradeMaster.Is_Active = doActive;
-                objGradeMaster.EntityState = State.Modified;
+                //objGradeMaster.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objGradeMaster, out resultSet);
+                //bool isValid = objService.Save(objGradeMaster, out resultSet);
+                bool isValid = true;
 
                 if (isValid)
                 {
@@ -165,7 +171,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -187,18 +193,18 @@ namespace RightsU_Plus.Controllers
             if (gradeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Grade_Master_Service objService = new Grade_Master_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Grade_Master objGradeMaster = null;
+            //Grade_Master_Service objService = new Grade_Master_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Grade_Master objGradeMaster = null;
 
             if (gradeCode > 0)
             {
-                objGradeMaster = objService.GetById(gradeCode);
-                objGradeMaster.EntityState = State.Modified;
+                objGradeMaster = objGradeMaster_Service.GetGrade_MasterByID(gradeCode);
+                //objGradeMaster.EntityState = State.Modified;
             }
             else
             {
-                objGradeMaster = new RightsU_Entities.Grade_Master();
-                objGradeMaster.EntityState = State.Added;
+                objGradeMaster = new RightsU_Dapper.Entity.Grade_Master();
+                //objGradeMaster.EntityState = State.Added;
                 objGradeMaster.Inserted_On = DateTime.Now;
                 objGradeMaster.Inserted_By = objLoginUser.Users_Code;
             }
@@ -208,16 +214,25 @@ namespace RightsU_Plus.Controllers
             objGradeMaster.Is_Active = "Y";
             objGradeMaster.Grade_Name = gradeName;
             dynamic resultSet;
-            bool isValid = objService.Save(objGradeMaster, out resultSet);
+            //bool isValid = objService.Save(objGradeMaster, out resultSet);
+            if (gradeCode > 0)
+            {
+                objGradeMaster_Service.UpdateMusic_Deal(objGradeMaster);   
+            }
+            else
+            {
+                objGradeMaster_Service.AddEntity(objGradeMaster);
+            }
+            bool isValid = true;
 
             if (isValid)
             {
-                lstGrade_Master_Searched = lstGrade_Master = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstGrade_Master_Searched = lstGrade_Master = objGradeMaster_Service.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

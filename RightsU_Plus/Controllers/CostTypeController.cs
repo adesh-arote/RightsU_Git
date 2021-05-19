@@ -3,33 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+//using RightsU_Entities;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class CostTypeController : BaseController
     {
+        private readonly USP_Service objProcedureService = new USP_Service();
+        private readonly Cost_Type_Service objCostType_Service = new Cost_Type_Service();
         #region --Properties--
-        private List<RightsU_Entities.Cost_Type> lstCostType
+        private List<RightsU_Dapper.Entity.Cost_Type> lstCostType
         {
             get
             {
                 if (Session["lstCostType"] == null)
-                    Session["lstCostType"] = new List<RightsU_Entities.Cost_Type>();
-                return (List<RightsU_Entities.Cost_Type>)Session["lstCostType"];
+                    Session["lstCostType"] = new List<RightsU_Dapper.Entity.Cost_Type>();
+                return (List<RightsU_Dapper.Entity.Cost_Type>)Session["lstCostType"];
             }
             set { Session["lstCostType"] = value; }
         }
 
-        private List<RightsU_Entities.Cost_Type> lstCostType_Searched
+        private List<RightsU_Dapper.Entity.Cost_Type> lstCostType_Searched
         {
             get
             {
                 if (Session["lstCostType_Searched"] == null)
-                    Session["lstCostType_Searched"] = new List<RightsU_Entities.Cost_Type>();
-                return (List<RightsU_Entities.Cost_Type>)Session["lstCostType_Searched"];
+                    Session["lstCostType_Searched"] = new List<RightsU_Dapper.Entity.Cost_Type>();
+                return (List<RightsU_Dapper.Entity.Cost_Type>)Session["lstCostType_Searched"];
             }
             set { Session["lstCostType_Searched"] = value; }
         }
@@ -41,7 +45,7 @@ namespace RightsU_Plus.Controllers
             string modulecode = GlobalParams.ModuleCodeForCostType.ToString();
             ViewBag.Code = modulecode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstCostType_Searched = lstCostType = new Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstCostType_Searched = lstCostType = (List<RightsU_Dapper.Entity.Cost_Type>)objCostType_Service.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -54,7 +58,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.CostTypeCode = costTypeCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Cost_Type> lst = new List<RightsU_Entities.Cost_Type>();
+            List<RightsU_Dapper.Entity.Cost_Type> lst = new List<RightsU_Dapper.Entity.Cost_Type>();
             int RecordCount = 0;
             RecordCount = lstCostType_Searched.Count;
             if (RecordCount > 0)
@@ -116,10 +120,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForCostType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForCostType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -146,12 +150,14 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(costTypeCode, GlobalParams.ModuleCodeForCostType, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Cost_Type_Service objService = new Cost_Type_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Cost_Type objCostType = objService.GetById(costTypeCode);
+                //Cost_Type_Service objService = new Cost_Type_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Cost_Type objCostType = objCostType_Service.GetGenresByID(costTypeCode);
                 objCostType.Is_Active = doActive;
-                objCostType.EntityState = State.Modified;
+                objCostType_Service.UpdateGenres(objCostType);
+                //objCostType.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objCostType, out resultSet);
+                //bool isValid = objService.Save(objCostType, out resultSet);
+                bool isValid = true;
 
                 if (isValid)
                 {
@@ -165,7 +171,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -187,18 +193,19 @@ namespace RightsU_Plus.Controllers
             if (costTypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Cost_Type_Service objService = new Cost_Type_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Cost_Type objCostType = null;
+            //Cost_Type_Service objService = new Cost_Type_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Cost_Type objCostType = null;
 
             if (costTypeCode > 0)
             {
-                objCostType = objService.GetById(costTypeCode);
-                objCostType.EntityState = State.Modified;
+                objCostType = objCostType_Service.GetGenresByID(costTypeCode);
+               
+                //objCostType.EntityState = State.Modified;
             }
             else
             {
-                objCostType = new RightsU_Entities.Cost_Type();
-                objCostType.EntityState = State.Added;
+                objCostType = new RightsU_Dapper.Entity.Cost_Type();
+                //objCostType.EntityState = State.Added;
                 objCostType.Inserted_On = DateTime.Now;
                 objCostType.Inserted_By = objLoginUser.Users_Code;
             }
@@ -209,15 +216,25 @@ namespace RightsU_Plus.Controllers
             objCostType.Cost_Type_Name = costTypeName;
 
             dynamic resultSet;
-            bool isValid = objService.Save(objCostType, out resultSet);
+            if (costTypeCode > 0)
+            {
+                objCostType_Service.UpdateGenres(objCostType);
+            }
+            else
+            {
+                objCostType_Service.AddEntity(objCostType);
+            }
+                //bool isValid = objService.Save(objCostType, out resultSet);
+
+                bool isValid = true;
             if (isValid)
             {
-                lstCostType_Searched = lstCostType = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstCostType_Searched = lstCostType = objCostType_Service.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

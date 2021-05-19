@@ -279,7 +279,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (CommandName == GlobalParams.DEAL_MODE_SEND_FOR_APPROVAL || CommandName == GlobalParams.DEAL_MODE_APPROVE)
                     {
-                        string uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName).USP_Assign_Workflow(Music_Deal_Code, GlobalParams.ModuleCodeForMusicDeal, objLoginUser.Users_Code, ApprovalRemark).ElementAt(0));
+                        string uspResult = Convert.ToString(new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_Assign_Workflow(Music_Deal_Code, GlobalParams.ModuleCodeForMusicDeal, objLoginUser.Users_Code, ApprovalRemark).ElementAt(0));
                         string[] arrUspResult = uspResult.Split('~');
 
                         if (arrUspResult.Length == 2)
@@ -399,7 +399,7 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusicDeal), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
+            List<string> lstRights = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusicDeal), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
             string rights = "";
             if (lstRights.FirstOrDefault() != null)
                 rights = lstRights.FirstOrDefault();
@@ -438,14 +438,14 @@ namespace RightsU_Plus.Controllers
 
                     if (Deal_Type_Short_Name != "AS" && Deal_Type_Short_Name != "SP")
                     {
-                        lst = new Deal_Type_Service(objLoginEntity.ConnectionStringName)
+                        lst = new RightsU_BLL.Deal_Type_Service(objLoginEntity.ConnectionStringName)
                                        .SearchFor(x => x.Deal_Type_Name.ToUpper() == Deal_Type_Name)
                                        .Select(x => x.Deal_Type_Code.ToString())
                                        .ToList();
                     }
                     else if (Deal_Type_Short_Name == "AS")
                     {
-                        lst = new Deal_Type_Service(objLoginEntity.ConnectionStringName)
+                        lst = new RightsU_BLL.Deal_Type_Service(objLoginEntity.ConnectionStringName)
                                  .SearchFor(x => x.Deal_Type_Name.ToUpper() == "FICTION" || x.Deal_Type_Name.ToUpper() == "NON-FICTION" || x.Deal_Type_Name.ToUpper() == "EVENT")
                                  .Select(x => x.Deal_Type_Code.ToString()).ToList();
                     }
@@ -464,7 +464,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                lst = new Deal_Type_Service(objLoginEntity.ConnectionStringName)
+                lst = new RightsU_BLL.Deal_Type_Service(objLoginEntity.ConnectionStringName)
                                  .SearchFor(x => x.Deal_Type_Name.ToUpper() == "FICTION" || x.Deal_Type_Name.ToUpper() == "NON-FICTION" || x.Deal_Type_Name.ToUpper() == "EVENT")
                                  .Select(x => x.Deal_Type_Code.ToString()).ToList();
 

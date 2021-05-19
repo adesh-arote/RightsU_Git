@@ -1,5 +1,7 @@
-﻿using RightsU_BLL;
-using RightsU_Entities;
+﻿//using RightsU_BLL;
+//using RightsU_Entities;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,29 +14,34 @@ namespace RightsU_Plus.Controllers
 {
     public class ProgramController : BaseController
     {
+        private readonly Program_Service objProgramService = new Program_Service();
+        private readonly Deal_Type_Service objDeal_TypeService = new Deal_Type_Service();
+        private readonly Genres_Service objGenresService = new Genres_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         #region  --Properties--
-        private List<RightsU_Entities.Program> lstProgram
+        private List<RightsU_Dapper.Entity.Program> lstProgram
         {
             get
             {
                 if (Session["lstProgram"] == null)
-                    Session["lstProgram"] = new List<RightsU_Entities.Program>();
-                return (List<RightsU_Entities.Program>)Session["lstProgram"];
+                    Session["lstProgram"] = new List<RightsU_Dapper.Entity.Program>();
+                return (List<RightsU_Dapper.Entity.Program>)Session["lstProgram"];
             }
             set { Session["lstProgram"] = value; }
         }
-        private List<RightsU_Entities.Program> lstProgram_Searched
+        private List<RightsU_Dapper.Entity.Program> lstProgram_Searched
         {
             get
             {
                 if(Session["lstProgram_Searched"] == null)
-                    Session["lstProgram_Searched"] = new List<RightsU_Entities.Program>();
-                return (List<RightsU_Entities.Program>)Session["lstProgram_Searched"];
+                    Session["lstProgram_Searched"] = new List<RightsU_Dapper.Entity.Program>();
+                return (List<RightsU_Dapper.Entity.Program>)Session["lstProgram_Searched"];
             }
             set { Session["lstProgram_Searched"] = value; }
         }
         #endregion
-
+        Type[] RelationList = new Type[] { typeof(Deal_Type)
+                    ,typeof(RightsU_Dapper.Entity.Genres) };
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForProgram);
@@ -42,7 +49,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForProgram.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstProgram_Searched = lstProgram = new Program_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstProgram_Searched = lstProgram = (List<RightsU_Dapper.Entity.Program>)objProgramService.GetList(RelationList);
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -56,11 +63,11 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Program_Code = programCode;
             ViewBag.CommandName = commandName;
-            var DealTypeCode = new Program_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Program_Code == programCode).Select(x => x.Deal_Type_Code).FirstOrDefault();
-            var GenreCode = new Program_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Program_Code == programCode).Select(x => x.Genres_Code).FirstOrDefault();
-            ViewBag.DealType = new SelectList(new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList(), "Deal_Type_Code", "Deal_Type_Name", DealTypeCode);
-            ViewBag.Genre = new SelectList(new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList(), "Genres_Code", "Genres_Name", GenreCode);
-            List<RightsU_Entities.Program> lst = new List<RightsU_Entities.Program>();
+            var DealTypeCode = objProgramService.GetList(RelationList).Where(x => x.Program_Code == programCode).Select(x => x.Deal_Type_Code).FirstOrDefault();
+            var GenreCode = objProgramService.GetList(RelationList).Where(x => x.Program_Code == programCode).Select(x => x.Genres_Code).FirstOrDefault();
+            ViewBag.DealType = new SelectList(objDeal_TypeService.GetList(RelationList).Where(x => x.Is_Active == "Y").ToList(), "Deal_Type_Code", "Deal_Type_Name", DealTypeCode);
+            ViewBag.Genre = new SelectList(objGenresService.GetList(RelationList).Where(x => x.Is_Active == "Y").ToList(), "Genres_Code", "Genres_Name", GenreCode);
+            List<RightsU_Dapper.Entity.Program> lst = new List<RightsU_Dapper.Entity.Program>();
             int RecordCount = 0;
             RecordCount = lstProgram_Searched.Count;
             if (RecordCount > 0)
@@ -103,10 +110,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
     {
-        List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForProgram), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
+        string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForProgram), objLoginUser.Security_Group_Code,objLoginUser.Users_Code);
         string rights = "";
-        if (lstRights.FirstOrDefault() != null)
-            rights = lstRights.FirstOrDefault();
+        if (lstRights != null)
+            rights = lstRights;
 
         return rights;
     }
@@ -133,7 +140,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult Searchprogram(string searchText)
          {
-            Program_Service objService = new Program_Service(objLoginEntity.ConnectionStringName);
+           // Program_Service objService = new Program_Service(objLoginEntity.ConnectionStringName);
              if (!string.IsNullOrEmpty(searchText))
              {
                  lstProgram_Searched = lstProgram.Where(w => w.Program_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
@@ -157,13 +164,14 @@ namespace RightsU_Plus.Controllers
             bool isLocked = DBUtil.Lock_Record(Program_Code, GlobalParams.ModuleCodeForProgram, objLoginUser.Users_Code, out RLCode, out strMessage);
             if (isLocked)
             {
-                Program_Service objService = new Program_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Program objProgram = objService.GetById(Program_Code);
+                //Program_Service objService = new Program_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Program objProgram = objProgramService.GetProgramGroupByID(Program_Code);
                 objProgram.Is_Active = doActive;
-                objProgram.EntityState = State.Modified;
+                //objProgram.EntityState = State.Modified;
                 dynamic resultSet;
-
-                bool isValid = objService.Save(objProgram, out resultSet);
+                objProgramService.UpdateCategory(objProgram);
+                //bool isValid = objService.Save(objProgram, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstProgram.Where(w => w.Program_Code == Program_Code).First().Is_Active = doActive;
@@ -176,7 +184,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 DBUtil.Release_Record(RLCode);
             }
@@ -199,18 +207,18 @@ namespace RightsU_Plus.Controllers
              if (programCode > 0)
                  message = objMessageKey.Recordupdatedsuccessfully;
 
-             Program_Service objService = new Program_Service(objLoginEntity.ConnectionStringName);
-             RightsU_Entities.Program objProgram = null;
+             //Program_Service objService = new Program_Service(objLoginEntity.ConnectionStringName);
+             RightsU_Dapper.Entity.Program objProgram = null;
 
              if (programCode > 0)
              {
-                 objProgram = objService.GetById(programCode);
-                 objProgram.EntityState = State.Modified;
+                 objProgram = objProgramService.GetProgramGroupByID(programCode);
+                 //objProgram.EntityState = State.Modified;
              }
              else
              {
-                 objProgram = new RightsU_Entities.Program();
-                 objProgram.EntityState = State.Added;
+                 objProgram = new RightsU_Dapper.Entity.Program();
+                 //objProgram.EntityState = State.Added;
                  objProgram.Inserted_On = DateTime.Now;
                  objProgram.Inserted_By = objLoginUser.Users_Code;
              }
@@ -235,17 +243,25 @@ namespace RightsU_Plus.Controllers
              objProgram.Is_Active = "Y";
              objProgram.Program_Name = programName;
              dynamic resultSet;
-             bool isValid = objService.Save(objProgram, out resultSet);
-
+            if (programCode > 0)
+            {
+                objProgramService.UpdateCategory(objProgram);
+            }
+            else
+            {
+                objProgramService.AddEntity(objProgram);
+            }
+                // bool isValid = objService.Save(objProgram, out resultSet);
+                bool isValid = true;
              if (isValid)
              {
-                 objService = new Program_Service(objLoginEntity.ConnectionStringName);
-                 lstProgram_Searched = lstProgram = objService.SearchFor(s => true).OrderByDescending(x => x.Last_UpDated_Time).ToList();
+                 //objService = new Program_Service(objLoginEntity.ConnectionStringName);
+                 lstProgram_Searched = lstProgram = objProgramService.GetList().OrderByDescending(x => x.Last_UpDated_Time).ToList();
              }
              else
              {
                  status = "E";
-                 message = resultSet;
+                 message = "";
              }
              int recordLockingCode = Convert.ToInt32(Record_Code);
              DBUtil.Release_Record(recordLockingCode);

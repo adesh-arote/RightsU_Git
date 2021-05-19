@@ -3,33 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+//using RightsU_Entities;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class MaterialMediumController : BaseController
     {
+        private readonly USP_Service objProcedureService = new USP_Service();
+        private readonly Material_Medium_Service objMaterial_Medium_Service = new Material_Medium_Service();
         #region --- Properties ---
-        private List<RightsU_Entities.Material_Medium> lstMaterialMedium
+        private List<RightsU_Dapper.Entity.Material_Medium> lstMaterialMedium
         {
             get
             {
                 if (Session["lstMaterialMedium"] == null)
-                    Session["lstMaterialMedium"] = new List<RightsU_Entities.Material_Medium>();
-                return (List<RightsU_Entities.Material_Medium>)Session["lstMaterialMedium"];
+                    Session["lstMaterialMedium"] = new List<RightsU_Dapper.Entity.Material_Medium>();
+                return (List<RightsU_Dapper.Entity.Material_Medium>)Session["lstMaterialMedium"];
             }
             set { Session["lstMaterialMedium"] = value; }
         }
 
-        private List<RightsU_Entities.Material_Medium> lstMaterialMedium_Searched
+        private List<RightsU_Dapper.Entity.Material_Medium> lstMaterialMedium_Searched
         {
             get
             {
                 if (Session["lstMaterialMedium_Searched"] == null)
-                    Session["lstMaterialMedium_Searched"] = new List<RightsU_Entities.Material_Medium>();
-                return (List<RightsU_Entities.Material_Medium>)Session["lstMaterialMedium_Searched"];
+                    Session["lstMaterialMedium_Searched"] = new List<RightsU_Dapper.Entity.Material_Medium>();
+                return (List<RightsU_Dapper.Entity.Material_Medium>)Session["lstMaterialMedium_Searched"];
             }
             set { Session["lstMaterialMedium_Searched"] = value; }
         }
@@ -48,14 +52,14 @@ namespace RightsU_Plus.Controllers
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameDesc, Value = "ND" });
             ViewBag.SortType = lstSort;
-            lstMaterialMedium_Searched = lstMaterialMedium = new Material_Medium_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o=>o.Last_Updated_Time).ToList();
+            lstMaterialMedium_Searched = lstMaterialMedium = objMaterial_Medium_Service.GetList().OrderByDescending(o=>o.Last_Updated_Time).ToList();
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/MaterialMedium/Index.cshtml");
         }
  
         public PartialViewResult BindMaterialMediumList(int pageNo, int recordPerPage ,string sortType)
         {
-            List<RightsU_Entities.Material_Medium> lst = new List<RightsU_Entities.Material_Medium>();
+            List<RightsU_Dapper.Entity.Material_Medium> lst = new List<RightsU_Dapper.Entity.Material_Medium>();
             int RecordCount = 0;
             RecordCount = lstMaterialMedium_Searched.Count;
 
@@ -121,10 +125,10 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialMedium), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialMedium), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -157,13 +161,15 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(MaterialMediumCode, GlobalParams.ModuleCodeForMaterialMedium, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-            //string status = "S", message = "Record {ACTION} successfully";
-            Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Material_Medium objMaterialMedium = objService.GetById(MaterialMediumCode);
+                //string status = "S", message = "Record {ACTION} successfully";
+                //Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
+             RightsU_Dapper.Entity.Material_Medium objMaterialMedium = objMaterial_Medium_Service.GetRightRuleByID(MaterialMediumCode);
             objMaterialMedium.Is_Active = doActive;
-            objMaterialMedium.EntityState = State.Modified;
+                objMaterial_Medium_Service.UpdateGenres(objMaterialMedium);
+            //objMaterialMedium.EntityState = State.Modified;
             dynamic resultSet;
-            bool isValid = objService.Save(objMaterialMedium, out resultSet);
+                //  bool isValid = objService.Save(objMaterialMedium, out resultSet);
+                bool isValid = true;
             if (isValid)
             {
                 lstMaterialMedium.Where(w => w.Material_Medium_Code == MaterialMediumCode).First().Is_Active = doActive;
@@ -204,8 +210,8 @@ namespace RightsU_Plus.Controllers
             }
             else if (commandName == "EDIT")
             {
-                Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Material_Medium objMaterialMedium = objService.GetById(MaterialMediumCode);
+                //Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Material_Medium objMaterialMedium = objMaterial_Medium_Service.GetRightRuleByID(MaterialMediumCode);
                 TempData["Action"] = "EditMaterialMedium";
                 TempData["idMaterialMedium"] = objMaterialMedium.Material_Medium_Code;
             }         
@@ -223,8 +229,8 @@ namespace RightsU_Plus.Controllers
             string status = "S", message = "Record {ACTION} successfully";
             int int_Duration = 0;
             int MaterialMediumCode = Convert.ToInt32(objFormCollection["MaterialMediumCode"]);
-            Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Material_Medium objMaterialMedium = new RightsU_Entities.Material_Medium();
+            //Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Material_Medium objMaterialMedium = new RightsU_Dapper.Entity.Material_Medium();
             if (MaterialMediumCode != 0)
             {
                 string str_Material_Medium_Name = objFormCollection["Material_Medium_Name"].ToString().Trim();
@@ -234,7 +240,7 @@ namespace RightsU_Plus.Controllers
                 }
                 string str_Type = objFormCollection["Type"].ToString();
                 string str_QC = objFormCollection["QC"].ToString();
-                objMaterialMedium = objService.GetById(MaterialMediumCode);
+                objMaterialMedium = objMaterial_Medium_Service.GetRightRuleByID(MaterialMediumCode);
                 objMaterialMedium.Material_Medium_Name = str_Material_Medium_Name;
                 if (str_Type == "NA" || str_Type == "")
                 {
@@ -248,7 +254,8 @@ namespace RightsU_Plus.Controllers
                 }
                 objMaterialMedium.Is_Qc_Required = str_QC;
                 objMaterialMedium.Last_Action_By = objLoginUser.Users_Code;
-                objMaterialMedium.EntityState = State.Modified;
+                objMaterial_Medium_Service.UpdateGenres(objMaterialMedium);
+                //objMaterialMedium.EntityState = State.Modified;
             }
             else
             {
@@ -260,7 +267,7 @@ namespace RightsU_Plus.Controllers
                 string str_Type = objFormCollection["Type"].ToString();
                 string chr_QC = objFormCollection["QC"].ToString();
 
-                objMaterialMedium = new RightsU_Entities.Material_Medium();
+                objMaterialMedium = new RightsU_Dapper.Entity.Material_Medium();
                 objMaterialMedium.Is_Active = "Y";
                 objMaterialMedium.Material_Medium_Name = str_Material_Medium_Name;
                 if (str_Type == "NA")
@@ -276,17 +283,21 @@ namespace RightsU_Plus.Controllers
                 objMaterialMedium.Is_Qc_Required = chr_QC;
                 objMaterialMedium.Inserted_By = objLoginUser.Users_Code;
                 objMaterialMedium.Inserted_On = System.DateTime.Now;
-                objMaterialMedium.EntityState = State.Added;
+                objMaterial_Medium_Service.AddEntity(objMaterialMedium);
+               // objMaterialMedium.EntityState = State.Added;
             }
             objMaterialMedium.Last_Updated_Time = System.DateTime.Now;
             dynamic resultSet;
-            bool isDuplicate = objService.Validate(objMaterialMedium, out resultSet);
+            //bool isDuplicate = objService.Validate(objMaterialMedium, out resultSet);
+            //bool isDuplicate = objMaterial_Medium_Service.Validate(objMaterialMedium);
+            bool isDuplicate = true;
             if (isDuplicate)
             {
-                bool isValid = objService.Save(objMaterialMedium, out resultSet);
+                //bool isValid = objService.Save(objMaterialMedium, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
-                    lstMaterialMedium_Searched = lstMaterialMedium = new Material_Medium_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o=>o.Last_Updated_Time).ToList();
+                    lstMaterialMedium_Searched = lstMaterialMedium = objMaterial_Medium_Service.GetList().OrderByDescending(o=>o.Last_Updated_Time).ToList();
 
                     int recordLockingCode = Convert.ToInt32(objFormCollection["Record_Code"]);
                     DBUtil.Release_Record(recordLockingCode);
@@ -301,13 +312,13 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             var obj = new
             {

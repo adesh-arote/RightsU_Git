@@ -3,33 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Entities;
+//using RightsU_BLL;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class Document_TypeController : BaseController
     {
+        private readonly USP_Service objProcedureService = new USP_Service();
+        private readonly Document_Type_Service objDocumentType_Service = new Document_Type_Service();
         #region --Properties--
-        private List<RightsU_Entities.Document_Type> lstDocument_Type
+        private List<RightsU_Dapper.Entity.Document_Type> lstDocument_Type
         {
             get
             {
                 if (Session["lstDocument_Type"] == null)
-                    Session["lstDocument_Type"] = new List<RightsU_Entities.Document_Type>();
-                return (List<RightsU_Entities.Document_Type>)Session["lstDocument_Type"];
+                    Session["lstDocument_Type"] = new List<RightsU_Dapper.Entity.Document_Type>();
+                return (List<RightsU_Dapper.Entity.Document_Type>)Session["lstDocument_Type"];
             }
             set { Session["lstDocument_Type"] = value; }
         }
 
-        private List<RightsU_Entities.Document_Type> lstDocument_Type_Searched
+        private List<RightsU_Dapper.Entity.Document_Type> lstDocument_Type_Searched
         {
             get
             {
                 if (Session["lstDocument_Type_Searched"] == null)
-                    Session["lstDocument_Type_Searched"] = new List<RightsU_Entities.Document_Type>();
-                return (List<RightsU_Entities.Document_Type>)Session["lstDocument_Type_Searched"];
+                    Session["lstDocument_Type_Searched"] = new List<RightsU_Dapper.Entity.Document_Type>();
+                return (List<RightsU_Dapper.Entity.Document_Type>)Session["lstDocument_Type_Searched"];
             }
             set { Session["lstDocument_Type_Searched"] = value; }
         }
@@ -47,7 +51,7 @@ namespace RightsU_Plus.Controllers
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameDesc, Value = "ND" });
             ViewBag.SortType = lstSort;
-            lstDocument_Type_Searched = lstDocument_Type = new Document_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstDocument_Type_Searched = lstDocument_Type = (List<RightsU_Dapper.Entity.Document_Type>)objDocumentType_Service.GetList();
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/Document_Type/Index.cshtml");
         }
@@ -55,7 +59,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.DocumentTypeCode = documentTypeCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Document_Type> lst = new List<RightsU_Entities.Document_Type>();
+            List<RightsU_Dapper.Entity.Document_Type> lst = new List<RightsU_Dapper.Entity.Document_Type>();
             int RecordCount = 0;
             RecordCount = lstDocument_Type_Searched.Count;
 
@@ -133,10 +137,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForDocumentType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForDocumentType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -148,12 +152,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(documentTypeCode, GlobalParams.ModuleCodeForDocumentType, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Document_Type_Service objService = new Document_Type_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Document_Type objDocumentType = objService.GetById(documentTypeCode);
+                //Document_Type_Service objService = new Document_Type_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Document_Type objDocumentType = objDocumentType_Service.GetGenresByID(documentTypeCode);
                 objDocumentType.Is_Active = doActive;
-                objDocumentType.EntityState = State.Modified;
+                //objDocumentType.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objDocumentType, out resultSet);
+                //bool isValid = objService.Save(objDocumentType, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstDocument_Type.Where(w => w.Document_Type_Code == documentTypeCode).First().Is_Active = doActive;
@@ -166,7 +171,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -188,18 +193,16 @@ namespace RightsU_Plus.Controllers
             if (documentTypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Document_Type_Service objService = new Document_Type_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Document_Type objDocumentType = null;
+           // Document_Type_Service objService = new Document_Type_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Document_Type objDocumentType = null;
 
             if (documentTypeCode > 0)
             {
-                objDocumentType = objService.GetById(documentTypeCode);
-                objDocumentType.EntityState = State.Modified;
+                objDocumentType = objDocumentType_Service.GetGenresByID(documentTypeCode);
             }
             else
             {
-                objDocumentType = new RightsU_Entities.Document_Type();
-                objDocumentType.EntityState = State.Added;
+                objDocumentType = new RightsU_Dapper.Entity.Document_Type();
                 objDocumentType.Inserted_On = DateTime.Now;
                 objDocumentType.Inserted_By = objLoginUser.Users_Code;
             }
@@ -208,16 +211,24 @@ namespace RightsU_Plus.Controllers
             objDocumentType.Is_Active = "Y";
             objDocumentType.Document_Type_Name = documentTypeName.Trim();
             dynamic resultSet;
-            bool isValid = objService.Save(objDocumentType, out resultSet);
-
+            // bool isValid = objService.Save(objDocumentType, out resultSet);
+            if (documentTypeCode > 0)
+            {
+                objDocumentType_Service.UpdateGenres(objDocumentType);
+            }
+            else
+            {
+                objDocumentType_Service.UpdateGenres(objDocumentType);
+            }
+                bool isValid = true;
             if (isValid)
             {
-                lstDocument_Type_Searched = lstDocument_Type = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstDocument_Type_Searched = lstDocument_Type = objDocumentType_Service.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

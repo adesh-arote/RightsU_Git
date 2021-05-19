@@ -68,6 +68,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\MasterRepositories.cs" />
     <Compile Include="Repository\System_Setting_Repositories.cs" />
+    <Compile Include="Repository\USP_Repositories.cs" />
+    <Compile Include="USP_DAL.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RightsU_Dapper.Entity\RightsU_Dapper.Entity.csproj">

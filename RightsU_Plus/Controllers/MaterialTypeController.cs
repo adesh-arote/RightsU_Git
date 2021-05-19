@@ -4,33 +4,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+//using RightsU_Entities;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
+    
     public class MaterialTypeController : BaseController
     {
+        private readonly Material_Type_Service objMaterialTypeService = new Material_Type_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         #region --- Properties ---
-        private List<RightsU_Entities.Material_Type> lstMaterialType
+        private List<RightsU_Dapper.Entity.Material_Type> lstMaterialType
         {
             get
             {
                 if (Session["lstMaterialType"] == null)
-                    Session["lstMaterialType"] = new List<RightsU_Entities.Material_Type>();
-                return (List<RightsU_Entities.Material_Type>)Session["lstMaterialType"];
+                    Session["lstMaterialType"] = new List<RightsU_Dapper.Entity.Material_Type>();
+                return (List<RightsU_Dapper.Entity.Material_Type>)Session["lstMaterialType"];
             }
             set { Session["lstMaterialType"] = value; }
         }
 
-        private List<RightsU_Entities.Material_Type> lstMaterialType_Searched
+        private List<RightsU_Dapper.Entity.Material_Type> lstMaterialType_Searched
         {
             get
             {
                 if (Session["lstMaterialType_Searched"] == null)
-                    Session["lstMaterialType_Searched"] = new List<RightsU_Entities.Material_Type>();
-                return (List<RightsU_Entities.Material_Type>)Session["lstMaterialType_Searched"];
+                    Session["lstMaterialType_Searched"] = new List<RightsU_Dapper.Entity.Material_Type>();
+                return (List<RightsU_Dapper.Entity.Material_Type>)Session["lstMaterialType_Searched"];
             }
             set { Session["lstMaterialType_Searched"] = value; }
         }
@@ -45,7 +50,7 @@ namespace RightsU_Plus.Controllers
             string modulecode = GlobalParams.ModuleCodeForMaterialType.ToString();
             ViewBag.Code = modulecode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstMaterialType_Searched = lstMaterialType = new Material_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o=>o.Last_Updated_Time).ToList();
+            lstMaterialType_Searched = lstMaterialType = objMaterialTypeService.GetList().OrderByDescending(o=>o.Last_Updated_Time).ToList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -57,7 +62,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult BindMaterialTypeList(int pageNo, int recordPerPage, string sortType)
         {
-            List<RightsU_Entities.Material_Type> lst = new List<RightsU_Entities.Material_Type>();
+            List<RightsU_Dapper.Entity.Material_Type> lst = new List<RightsU_Dapper.Entity.Material_Type>();
             int RecordCount = 0;
             RecordCount = lstMaterialType_Searched.Count;
             if (RecordCount > 0)
@@ -120,10 +125,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights!= null)
+                rights = lstRights;
 
             return rights;
         }
@@ -156,12 +161,14 @@ namespace RightsU_Plus.Controllers
             if (isLocked)
             {
            // string status = "S", message = "Record {ACTION} successfully";
-            Material_Type_Service objService = new Material_Type_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Material_Type objMaterialType = objService.GetById(materialTypeCode);
+            //Material_Type_Service objService = new Material_Type_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Material_Type objMaterialType = objMaterialTypeService.GetMaterial_TypeByID(materialTypeCode);
             objMaterialType.Is_Active = doActive;
-            objMaterialType.EntityState = State.Modified;
-            dynamic resultSet;
-            bool isValid = objService.Save(objMaterialType, out resultSet);
+                //objMaterialType.EntityState = State.Modified;
+                objMaterialTypeService.UpdateGenres(objMaterialType);
+                dynamic resultSet;
+                //  bool isValid = objService.Save(objMaterialType, out resultSet);
+                bool isValid = true;
             if (isValid)
             {
                 lstMaterialType.Where(w => w.Material_Type_Code == materialTypeCode).First().Is_Active = doActive;
@@ -202,8 +209,8 @@ namespace RightsU_Plus.Controllers
             }
             else if (commandName == "EDIT")
             {
-                Material_Type_Service objService = new Material_Type_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Material_Type objMaterialType = objService.GetById(materialTypeCode);
+                //Material_Type_Service objService = new Material_Type_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Material_Type objMaterialType = objMaterialTypeService.GetMaterial_TypeByID(materialTypeCode);
                 TempData["Action"] = "EditMaterialType";
                 TempData["idMaterialType"] = objMaterialType.Material_Type_Code;
             }
@@ -220,35 +227,45 @@ namespace RightsU_Plus.Controllers
             int recordCount = 0;
             int materialTypeCode = Convert.ToInt32(objFormCollection["materialTypeCode"]);
             string status = "S", message = "Record {ACTION} successfully";
-            Material_Type_Service objService = new Material_Type_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Material_Type objMaterialType = new RightsU_Entities.Material_Type();
+            //Material_Type_Service objService = new Material_Type_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Material_Type objMaterialType = new RightsU_Dapper.Entity.Material_Type();
             if (materialTypeCode != 0)
             {
                 string str_Material_Type_Name = objFormCollection["Material_Type_Name"].ToString().Trim();
-                objMaterialType = objService.GetById(materialTypeCode);
+                objMaterialType = objMaterialTypeService.GetMaterial_TypeByID(materialTypeCode);
                 objMaterialType.Material_Type_Name = str_Material_Type_Name;
                 objMaterialType.Last_Action_By = objLoginUser.Users_Code;
-                objMaterialType.EntityState = State.Modified;      
+                //objMaterialType.EntityState = State.Modified;      
             }
             else
             {
                 string str_Material_Type_Name = objFormCollection["Material_Type_Name"].ToString().Trim();   
-                objMaterialType = new RightsU_Entities.Material_Type();
+                objMaterialType = new RightsU_Dapper.Entity.Material_Type();
                 objMaterialType.Is_Active = "Y";
                 objMaterialType.Material_Type_Name = str_Material_Type_Name;
                 objMaterialType.Inserted_By = objLoginUser.Users_Code;
                 objMaterialType.Inserted_On = System.DateTime.Now;
-                objMaterialType.EntityState = State.Added;         
+                //objMaterialType.EntityState = State.Added;         
             }
             objMaterialType.Last_Updated_Time = System.DateTime.Now;
             dynamic resultSet;
-            bool isDuplicate = objService.Validate(objMaterialType, out resultSet);
+            if (materialTypeCode != 0)
+            {
+                objMaterialTypeService.UpdateGenres(objMaterialType);
+            }
+            else
+            {
+                objMaterialTypeService.AddEntity(objMaterialType);
+            }
+                //bool isDuplicate = objService.Validate(objMaterialType, out resultSet);
+                bool isDuplicate = true;
             if (isDuplicate)
             {
-                bool isValid = objService.Save(objMaterialType, out resultSet);
+                //bool isValid = objService.Save(objMaterialType, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
-                    lstMaterialType_Searched = lstMaterialType = new Material_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o=>o.Last_Updated_Time).ToList();
+                    lstMaterialType_Searched = lstMaterialType = objMaterialTypeService.GetList().OrderByDescending(o=>o.Last_Updated_Time).ToList();
 
                     int recordLockingCode = Convert.ToInt32(objFormCollection["Record_Code"]);
                     DBUtil.Release_Record(recordLockingCode);
@@ -263,14 +280,14 @@ namespace RightsU_Plus.Controllers
                 {
                     
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
             }
             else
             {
                 
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             var obj = new
             {

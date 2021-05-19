@@ -3,32 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_BLL;
-using RightsU_Entities;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+//using RightsU_BLL;
+//using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
 namespace RightsU_Plus.Controllers
 {
     public class System_ParameterController : BaseController
     {
+        private readonly System_Parameter_New_Service objSystem_Parameter_New_Service = new System_Parameter_New_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         #region --Properties--
-        private List<RightsU_Entities.System_Parameter_New> lstSystem_Parameter
+        private List<RightsU_Dapper.Entity.System_Parameter_New> lstSystem_Parameter
         {
             get
             {
                 if (Session["lstSystem_Parameter"] == null)
-                    Session["lstSystem_Parameter"] = new List<RightsU_Entities.System_Parameter_New>();
-                return (List<RightsU_Entities.System_Parameter_New>)Session["lstSystem_Parameter"];
+                    Session["lstSystem_Parameter"] = new List<RightsU_Dapper.Entity.System_Parameter_New>();
+                return (List<RightsU_Dapper.Entity.System_Parameter_New>)Session["lstSystem_Parameter"];
             }
             set { Session["lstSystem_Parameter"] = value; }
         }
 
-        private List<RightsU_Entities.System_Parameter_New> lstSystem_Parameter_Searched
+        private List<RightsU_Dapper.Entity.System_Parameter_New> lstSystem_Parameter_Searched
         {
             get
             {
                 if (Session["lstSystem_Parameter_Searched"] == null)
-                    Session["lstSystem_Parameter_Searched"] = new List<RightsU_Entities.System_Parameter_New>();
-                return (List<RightsU_Entities.System_Parameter_New>)Session["lstSystem_Parameter_Searched"];
+                    Session["lstSystem_Parameter_Searched"] = new List<RightsU_Dapper.Entity.System_Parameter_New>();
+                return (List<RightsU_Dapper.Entity.System_Parameter_New>)Session["lstSystem_Parameter_Searched"];
             }
             set { Session["lstSystem_Parameter_Searched"] = value; }
         }
@@ -39,7 +43,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
             string moduleCode = GlobalParams.ModuleCodeForSystemParameter.ToString();
             ViewBag.Code = moduleCode;
-            lstSystem_Parameter_Searched = lstSystem_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstSystem_Parameter_Searched = lstSystem_Parameter = (List<RightsU_Dapper.Entity.System_Parameter_New>)objSystem_Parameter_New_Service.GetList();
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/System_Parameter/Index.cshtml");
         }
@@ -47,7 +51,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Id = id;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.System_Parameter_New> lst = new List<RightsU_Entities.System_Parameter_New>();
+            List<RightsU_Dapper.Entity.System_Parameter_New> lst = new List<RightsU_Dapper.Entity.System_Parameter_New>();
             int RecordCount = 0;
             RecordCount = lstSystem_Parameter_Searched.Count;
 
@@ -124,18 +128,18 @@ namespace RightsU_Plus.Controllers
             if (id > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            System_Parameter_New_Service objService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.System_Parameter_New objSystemParameter = null;
+           // System_Parameter_New_Service objService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.System_Parameter_New objSystemParameter = null;
 
             if (id > 0)
             {
-                objSystemParameter = objService.GetById(id);
-                objSystemParameter.EntityState = State.Modified;
+                objSystemParameter = objSystem_Parameter_New_Service.GetCategoryByID(id);
+                //objSystemParameter.EntityState = State.Modified;
             }
             else
             {
-                objSystemParameter = new RightsU_Entities.System_Parameter_New();
-                objSystemParameter.EntityState = State.Added;
+                objSystemParameter = new RightsU_Dapper.Entity.System_Parameter_New();
+                //objSystemParameter.EntityState = State.Added;
                 objSystemParameter.Inserted_On = DateTime.Now;
                 objSystemParameter.Inserted_By = objLoginUser.Users_Code;
             }
@@ -143,16 +147,25 @@ namespace RightsU_Plus.Controllers
             objSystemParameter.Last_Action_By = objLoginUser.Users_Code;
             objSystemParameter.Parameter_Value = paramValue.Trim();
             dynamic resultSet;
-            bool isValid = objService.Save(objSystemParameter, out resultSet);
+            if (id > 0)
+            {
+                objSystem_Parameter_New_Service.UpdateCategory(objSystemParameter);
+            }
+            //else
+            //{
+
+            //}
+            // bool isValid = objService.Save(objSystemParameter, out resultSet);
+            bool isValid = true;
 
             if (isValid)
             {
-                lstSystem_Parameter_Searched = lstSystem_Parameter = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstSystem_Parameter_Searched = lstSystem_Parameter = objSystem_Parameter_New_Service.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();
@@ -166,10 +179,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForSystemParameter), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForSystemParameter), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
             return rights;
         }
     }

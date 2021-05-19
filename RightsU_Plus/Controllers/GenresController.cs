@@ -1,35 +1,39 @@
-﻿using RightsU_BLL;
+﻿//using RightsU_BLL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using System.Web.Mvc;
-using RightsU_Entities;
+//using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class GenresController : BaseController
     {
+        private readonly Genres_Service objGenres_Service = new Genres_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         #region --Properties--
-        private List<RightsU_Entities.Genre> lstGenre
+        private List<RightsU_Dapper.Entity.Genres> lstGenre
         {
             get
             {
                 if (Session["lstGenre"] == null)
-                    Session["lstGenre"] = new List<RightsU_Entities.Genre>();
-                return (List<RightsU_Entities.Genre>)Session["lstGenre"];
+                    Session["lstGenre"] = new List<RightsU_Dapper.Entity.Genres>();
+                return (List<RightsU_Dapper.Entity.Genres>)Session["lstGenre"];
             }
             set { Session["lstGenre"] = value; }
         }
 
-        private List<RightsU_Entities.Genre> lstGenre_Searched
+        private List<RightsU_Dapper.Entity.Genres> lstGenre_Searched
         {
             get
             {
                 if (Session["lstGenre_Searched"] == null)
-                    Session["lstGenre_Searched"] = new List<RightsU_Entities.Genre>();
-                return (List<RightsU_Entities.Genre>)Session["lstGenre_Searched"];
+                    Session["lstGenre_Searched"] = new List<RightsU_Dapper.Entity.Genres>();
+                return (List<RightsU_Dapper.Entity.Genres>)Session["lstGenre_Searched"];
             }
             set { Session["lstGenre_Searched"] = value; }
         }
@@ -41,7 +45,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForGenres.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstGenre_Searched = lstGenre = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstGenre_Searched = lstGenre = (List<RightsU_Dapper.Entity.Genres>)objGenres_Service.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -55,7 +59,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Genres_Code = genresCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Genre> lst = new List<RightsU_Entities.Genre>();
+            List<RightsU_Dapper.Entity.Genres> lst = new List<RightsU_Dapper.Entity.Genres>();
             int RecordCount = 0;
             RecordCount = lstGenre_Searched.Count;
             if (RecordCount > 0)
@@ -97,10 +101,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGenres), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGenres), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -125,7 +129,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SearchGenre(string searchText)
         {
-            Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
+            //Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
             if (!string.IsNullOrEmpty(searchText))
             {
                 lstGenre_Searched = lstGenre.Where(w => w.Genres_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
@@ -148,13 +152,15 @@ namespace RightsU_Plus.Controllers
             bool isLocked = DBUtil.Lock_Record(genres_Code, GlobalParams.ModuleCodeForGenres, objLoginUser.Users_Code, out RLCode, out strMessage);
             if (isLocked)
             {
-                Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Genre objGenre = objService.GetById(genres_Code);
+                //Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Genres objGenre = objGenres_Service.GetGenresByID(genres_Code);
                 objGenre.Is_Active = doActive;
-                objGenre.EntityState = State.Modified;
+                objGenres_Service.UpdateGenres(objGenre);
+               // objGenre.EntityState = State.Modified;
                 dynamic resultSet;
 
-                bool isValid = objService.Save(objGenre, out resultSet);
+                //bool isValid = objService.Save(objGenre, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstGenre.Where(w => w.Genres_Code == genres_Code).First().Is_Active = doActive;
@@ -167,7 +173,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 DBUtil.Release_Record(RLCode);
             }
@@ -189,18 +195,20 @@ namespace RightsU_Plus.Controllers
             if (genresCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Genre objGenre = null;
+            //Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Genres objGenre = null;
 
             if (genresCode > 0)
             {
-                objGenre = objService.GetById(genresCode);
-                objGenre.EntityState = State.Modified;
+                objGenre =objGenres_Service.GetGenresByID(genresCode);
+               // objGenres_Service.UpdateGenres(objGenre);
+                //objGenre.EntityState = State.Modified;
             }
             else
             {
-                objGenre = new RightsU_Entities.Genre();
-                objGenre.EntityState = State.Added;
+                objGenre = new RightsU_Dapper.Entity.Genres();
+               // objGenres_Service.AddEntity(objGenre);
+                //objGenre.EntityState = State.Added;
                 objGenre.Inserted_On = DateTime.Now;
                 objGenre.Inserted_By = objLoginUser.Users_Code;
             }
@@ -210,16 +218,25 @@ namespace RightsU_Plus.Controllers
             objGenre.Is_Active = "Y";
             objGenre.Genres_Name = genresName;
             dynamic resultSet;
-            bool isValid = objService.Save(objGenre, out resultSet);
+            if (genresCode > 0)
+            {
+                objGenres_Service.UpdateGenres(objGenre);
+            }
+            else
+            {
+                objGenres_Service.AddEntity(objGenre);
+            }
+                //bool isValid = objService.Save(objGenre, out resultSet);
+                bool isValid = true;
 
             if (isValid)
             {                
-                    lstGenre_Searched = lstGenre = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                    lstGenre_Searched = lstGenre = objGenres_Service.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             DBUtil.Release_Record(recordLockingCode);

@@ -17,7 +17,7 @@ namespace RightsU_Dapper.Entity
     public partial class System_Parameter_New
     {
         [PrimaryKey]
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Parameter_Name { get; set; }
         public string Parameter_Value { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }

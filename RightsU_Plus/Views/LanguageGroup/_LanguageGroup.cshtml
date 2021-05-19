@@ -1,6 +1,6 @@
-﻿@using RightsU_BLL;
+﻿@using RightsU_Dapper.BLL.Services;
 
-@model List<RightsU_Entities.Language_Group>
+@model List<RightsU_Dapper.Entity.Language_Group>
 @using UTOFrameWork.FrameworkClasses
 @{
     LoginEntity objLoginEntity = new LoginEntity();
@@ -8,7 +8,9 @@
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
     }
-    var j = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+    Language_Service objlanguage = new Language_Service();
+    var j = objlanguage.GetList();
+    //var j = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
