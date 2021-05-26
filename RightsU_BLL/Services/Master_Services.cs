@@ -2421,7 +2421,7 @@ namespace RightsU_BLL
             return objExtCol.GetById(id);
         }
     }
-    public class Extended_Columns_Value_Service
+    public class Extended_Columns_Value_Service : BusinessLogic<Extended_Columns_Value>
     {
         private readonly Extended_Columns_Value_Repository objExtCol;
 
@@ -2437,6 +2437,32 @@ namespace RightsU_BLL
         public Extended_Columns_Value GetById(int id)
         {
             return objExtCol.GetById(id);
+        }
+        public bool Save(Extended_Columns_Value objUPD, out dynamic resultSet)
+        {
+            return base.Save(objUPD, objExtCol, out resultSet);
+        }
+        public bool Delete(Extended_Columns_Value objUPD, out dynamic resultSet)
+        {
+            return base.Delete(objUPD, objExtCol, out resultSet);
+        }
+
+        public override bool Validate(Extended_Columns_Value objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(Extended_Columns_Value objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(Extended_Columns_Value objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
         }
     }
     public class Map_Extended_Columns_Service : BusinessLogic<Map_Extended_Columns>

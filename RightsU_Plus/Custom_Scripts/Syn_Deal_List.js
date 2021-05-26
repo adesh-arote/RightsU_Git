@@ -171,17 +171,30 @@ function Show_Error_Popup(search_Titles, Page_Size, Page_No, Syn_Deal_Code) {
 }
 /*Bind the Grid*/
 function LoadDeals(pagenumber, isAdvanced, showAll) {
-
+    debugger;
     var BUCode = $('#ddlBUUnit').val();
     if (showLD == 'Y')
         showLoading();
     var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N';
     tmp_pageNo = pagenumber;
     tmp_IsAdvanced = isAdvanced;
+    //if (isAdvanced == 'N')
+    //    $('#divSearch').hide();
+    //else if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+    //    BindAdvanced_Search_Controls('PGL');
+
     if (isAdvanced == 'N')
         $('#divSearch').hide();
-    else if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
-        BindAdvanced_Search_Controls('PGL');
+    else {
+        if (Is_AllowMultiBUsyndeal != 'Y') {
+            if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+                BindAdvanced_Search_Controls('PGL');
+        }
+        else {
+            if (isAdvanced == 'Y' && parseInt($("#ddlSrchBUMultiSelect option").length) == 0)
+                BindAdvanced_Search_Controls('PGL');
+        }
+    }
     //if ($('#ddlSrchTitle').val())
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
     if ($('#txtTitleSearch').val())
@@ -284,7 +297,7 @@ function validateSearch() {
     //if ($('#ddlSrchTitle').val())
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
     if ($("#txtTitleSearch").val())
-        tmpTitle = $('#txtTitleSearch').val()
+        tmpTitle = $('#txtTitleSearch').val();
     if ($('#ddlSrchDirector').val())
         tmpDirector = $('#ddlSrchDirector').val().join(',');
     if ($('#ddlSrchLicensor').val())
@@ -330,9 +343,13 @@ function ShowAll() {
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
-    OnChangeBindTitle();
-    $("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
-    $("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
+    $('#ddlGenBUMultiSelect').val('1');
+    $("#ddlGenBUMultiSelect")[0].sumo.reload();
+    $('#ddlSrchBUMultiSelect').val('1');
+    $("#ddlSrchBUMultiSelect")[0].sumo.reload();
+    OnChangeBindTitle('ShowAll');
+    //$("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+    //$("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
     $("#ddlSrchDirector").find("option").attr("selected", false);
     $("#ddlSrchDirector").val('')[0].sumo.reload();
     $("#ddlSrchLicensor").find("option").attr("selected", false);
@@ -394,7 +411,15 @@ function OnChangeBindTitle(callFrom) {
     }
     else {
         var ddlBUMulti = $('#ddlSrchBUMultiSelect').val();
-        if (callFrom != 'L') {
+        if (callFrom == 'ShowAll') {
+            ddlBUMulti = ["1"];
+            $('#ddlGenBUMultiSelect').val('1');
+            $("#ddlGenBUMultiSelect")[0].sumo.reload();
+        }
+        else if (callFrom == 'TP' && ddlBUMulti == null) {
+            ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+        }
+        else if (callFrom != 'L') {
             $('#ddlGenBUMultiSelect').val(ddlBUMulti);
             $("#ddlGenBUMultiSelect")[0].sumo.reload();
         }
@@ -415,7 +440,9 @@ function OnChangeBindTitle(callFrom) {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
             dealTypeCode: dealTypeVal,
-            BUCode: ddlBU
+            BUCode: ddlBU,
+            ddlBUMulti: ddlBUMulti,
+            TitleSearch: $('#txtTitleSearch').val()
         }),
         async: true,
         success: function (result) {
@@ -423,8 +450,13 @@ function OnChangeBindTitle(callFrom) {
                 redirectToLogin();
             }
             else {
-
-                $("#txtTitleSearch").val('');
+                if (Is_AllowMultiBUsyndeal === 'Y') {
+                    $('#txtTitleSearch').val(result.Title_Name);
+                    $('#hdnTitleSearch').val(result.Title_Code);
+                }
+                else {
+                    $("#txtTitleSearch").val('');
+                }
             }
         },
         error: function (result) {

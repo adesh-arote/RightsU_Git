@@ -49,6 +49,7 @@
     var URL_ValidateIsDuplicate = '@Url.Action("ValidateIsDuplicate", "Title")';
     var URL_SaveTalent = '@Url.Action("SaveTalent", "Title")';
     var URLSave = '@Url.Action("Save_Talent", "Title")';
+    var URL_SaveExtendedMetadata = '@Url.Action("SaveExtendedMetadata", "Title")';
     var URL_Index = '@Url.Action("Index", "Title_List", new { CallFrom = "T" })';
     var URL_AddProgram = '@Url.Action("Save_Program", "Title")';
     var URL_BindAlternateTab = '@Url.Action("BindAlternateTab", "Title")';
@@ -247,7 +248,7 @@
                 return false;
             }
             if ($("#hdnRowNum").val() != "") {
-                showAlert("e", "complete add/edit operation.", "");
+                showAlert("E", "Complete add/edit operation.");
                 hideLoading();
                 return false;
             }
@@ -653,6 +654,49 @@
                                         <li class="poptalent">
                                             <a class="btn btn-primary"
                                                href="#" onclick="ValidateSave('')">@objMessageKey.Save</a>
+                                        </li>
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddExtendedMetadata" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="talent_popup">
+                    <div>
+                        <div class="form_fields" id="TalentHeader">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#" style="float:right">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>Add Extended Metadata Column</h2>
+                            </div>
+                            <div class="modal_block" style="height:46px;">
+                                <ul class="add_title_popup">
+                                    <li>
+                                        <label><b>Extended Metadata</b></label>
+                                        <input class="form_input" id="Extended_Metadata" name="title" type="text" value="" maxlength="100" ondrop="return false;" style="width:50%;" />
+                                        <input id="hdnConfirmationtype" type="hidden" />
+                                        <input type="hidden" id="hdnAlternateTalenttab" />
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full" dir="rtl">
+                                <div class="form_links" dir="rtl">
+                                    <ul class="modal_block clearfix" dir="rtl">
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary"
+                                               href="#" onclick="SaveExtendedMetadata('ExtendedMetadata')">@objMessageKey.Save</a>
                                         </li>
                                         <li class="poptalent">
                                             <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>

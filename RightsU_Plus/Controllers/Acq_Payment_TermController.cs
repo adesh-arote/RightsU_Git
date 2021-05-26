@@ -91,6 +91,14 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Record_Locking_Code = 0;
             Session["FileName"] = "";
             Session["FileName"] = "Acq_Payment_Term";
+
+            int prevAcq_Deal = 0;
+            if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_VIEW && TempData["prevAcqDeal"] != null)
+            {
+                prevAcq_Deal = Convert.ToInt32(TempData["prevAcqDeal"]);
+                TempData.Keep("prevAcqDeal");
+            }
+            ViewBag.prevAcq_Deal = prevAcq_Deal;
             return PartialView("~/Views/Acq_Deal/_Acq_Payment_Term_List.cshtml", objDeal.Acq_Deal_Payment_Terms.ToList());
         }
 

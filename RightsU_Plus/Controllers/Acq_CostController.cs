@@ -147,6 +147,13 @@ namespace RightsU_Plus.Controllers
             else
                 ViewBag.Record_Locking_Code = 0;
 
+            int prevAcq_Deal = 0;
+            if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_VIEW && TempData["prevAcqDeal"] != null)
+            {
+                prevAcq_Deal = Convert.ToInt32(TempData["prevAcqDeal"]);
+                TempData.Keep("prevAcqDeal");
+            }
+            ViewBag.prevAcq_Deal = prevAcq_Deal;
             return PartialView("~/Views/Acq_Deal/_Acq_Cost_List.cshtml");
         }
         [HttpPost]

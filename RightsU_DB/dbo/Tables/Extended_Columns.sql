@@ -9,6 +9,7 @@
     [Ref_Display_Field]    VARCHAR (100)  NULL,
     [Ref_Value_Field]      VARCHAR (100)  NULL,
     [Additional_Condition] VARCHAR (1000) NULL,
+    [Is_Add_OnScreen] CHAR NULL, 
     CONSTRAINT [PK_Extended_Columns] PRIMARY KEY CLUSTERED ([Columns_Code] ASC)
 );
 

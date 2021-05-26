@@ -157,7 +157,7 @@
         $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
         if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {
             $('#ddlGenBUMultiSelect').SumoSelect();
-            $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode')
+            $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode'.split(','))
             $('#ddlGenBUMultiSelect')[0].sumo.reload();
 
             $('#ddlSrchBUMultiSelect').SumoSelect();
@@ -273,6 +273,7 @@
             var ddlBUMulti = $('#ddlGenBUMultiSelect').val();
             if (ddlBUMulti != 0 || ddlBUMulti != null) {
                 $('#ddlSrchBUMultiSelect').val(ddlBUMulti);
+                OnChangeBindTitle('TP');
             }
         }
         document.getElementById("showMore").innerHTML = "Show more...";
@@ -393,8 +394,13 @@
         //$("#ddlSrchTitle").find("option").attr("selected", false);
         //$("#ddlSrchTitle").val('')[0].sumo.reload();
         var dealTypeVal = $('#ddlSrchDealType').val();
-        var ddlBU = $('#ddlBUUnit').val();
-
+        var ddlBU = "";
+        if (Is_AllowMultiBUacqdeal != 'Y') {
+            ddlBU = $('#ddlBUUnit').val();
+        }
+        else {
+            ddlBU = $('#ddlSrchBUMultiSelect').val().join(',');
+        }
 
         var Selected_Title_Codes = "";
         var selectedtxt = $('#txtTitleSearch').val();

@@ -248,9 +248,17 @@ namespace RightsU_Plus.Controllers
             }
             if (obj_Acq_Syn_List_Search.isAdvanced == "Y")
             {
-                CommonUtil.WriteErrorLog("Condition 5 executing", Err_filename);
-                ViewBag.BUCode = obj_Acq_Syn_List_Search.BUCodes_Search;
-                CommonUtil.WriteErrorLog("Condition 5 executed", Err_filename);
+                if (Is_AllowMultiBUacqdeal == "Y")
+                {
+                    ViewBag.BUCode = obj_Acq_Syn_List_Search.BUCode;
+                }
+                else
+                {
+                    CommonUtil.WriteErrorLog("Condition 5 executing", Err_filename);
+                    ViewBag.BUCode = obj_Acq_Syn_List_Search.BUCodes_Search;
+                    CommonUtil.WriteErrorLog("Condition 5 executed", Err_filename);
+                }
+
             }
 
             CommonUtil.WriteErrorLog("Index method of Acq_ListController has been executed", Err_filename);
@@ -286,7 +294,7 @@ namespace RightsU_Plus.Controllers
 
         public IEnumerable<RightsU_Entities.USP_List_Acq_Result> BindGridView(string commonSearch = "", string isTAdvanced = "N", string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", int Page = 0, string ClearSession = "N", string strBUCode = "1")
         {
-             string sql = "";
+            string sql = "";
             if (ClearSession == "Y")
                 Reset_Srch_Criteria();
             if (!string.IsNullOrEmpty(isTAdvanced.Trim()))
@@ -471,7 +479,7 @@ namespace RightsU_Plus.Controllers
                         //    + " or Acq_Deal_Code in (Select Acq_Deal_Code from Acq_Deal_Movie where Title_Code in (Select Title_Code from Title where Title_name  like N'%" + obj_Acq_Syn_List_Search.Common_Search + "%')))";
 
                         sql += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=" + objLoginUser.Users_Code + ")";//AND is_active='Y';
-              
+
                     }
 
 
@@ -554,7 +562,7 @@ namespace RightsU_Plus.Controllers
             if (obj_Acq_Syn_List_Search.isAdvanced != "Y")
             {
                 obj_Acq_Syn_List_Search.BUCodes_Search = obj_USP_Get_PreReq_Result.Where(i => i.Data_For == "BUT").Select(i => i.Display_Value ?? 0).FirstOrDefault();
-                
+
                 obj_Acq_Syn_List_Search.WorkFlowStatus_Search = "0";
             }
             string[] arrTitleName = obj_Acq_Syn_List_Search.TitleCodes_Search.Split(',');
@@ -657,6 +665,7 @@ namespace RightsU_Plus.Controllers
             CommonUtil.WriteErrorLog("Called ButtonEvents method of Acq_ListController for CommandName = '" + CommandName + "'", Err_filename);
             Session["EditWOA"] = "N";
             TempData["TitleData"] = null;
+            TempData["prevAcqDeal"] = null;
             string strMessage, strViewBagMsg = "", Mode = "";
             // bool isLocked = true;
             Dictionary<string, string> obj = new Dictionary<string, string>();
@@ -743,6 +752,9 @@ namespace RightsU_Plus.Controllers
                 obj.Add("RLCode", RLCode.ToString());
                 obj.Add("ClearSrchSession", "N");
                 obj.Add("Pushback_Text", Pushback_Text);
+
+                if (CommandName == "View" && id > 0)
+                    TempData["prevAcqDeal"] = Convert.ToString(id);
 
                 TempData["QueryString"] = obj;
                 TempData["QS_LayOut"] = null;
@@ -980,7 +992,7 @@ namespace RightsU_Plus.Controllers
             string searchString = terms.LastOrDefault().ToString().Trim();
             //string[] arrsearchString = searchString.ToUpper().Split(',');
 
-            var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code.ToString() == BUCode && AM.Title_Code == x.Title_Code) && (x.Deal_Type_Code.ToString() == dealTypeCode || dealTypeCode == "0")).Where(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()))
+            var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie.Any(AM => BUCode.Contains(AM.Acq_Deal.Business_Unit_Code.ToString()) && AM.Title_Code == x.Title_Code) && (x.Deal_Type_Code.ToString() == dealTypeCode || dealTypeCode == "0")).Where(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()))
                .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
             return Json(result);
         }
@@ -1480,9 +1492,50 @@ namespace RightsU_Plus.Controllers
             List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("DTG,DTP,DTC,BUT,VEN,DIR,TIT,WFL", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
             return obj_USP_Get_PreReq_Result;
         }
-        public JsonResult OnChangeBindTitle(int? dealTypeCode, int? BUCode)
+        public JsonResult OnChangeBindTitle(int? dealTypeCode, int? BUCode, string TitleSearch, params int?[] ddlBUMulti)
         {
-            return Json(BindTitle(dealTypeCode, BUCode), JsonRequestBehavior.AllowGet);
+
+            Title_Service objTS = new Title_Service(objLoginEntity.ConnectionStringName);
+            string Is_AllowMultiBUacqdeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUacqdeal").ToUpper();
+            if (Is_AllowMultiBUacqdeal == "Y")
+            {
+                var arrTitleSearch = TitleSearch.Split('﹐').Where(x => x != "").ToList();
+
+                if (ddlBUMulti != null)
+                {
+
+
+                    var result = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(
+                      x => ddlBUMulti.Contains(x.Acq_Deal.Business_Unit_Code)
+                           && (x.Title.Deal_Type_Code == dealTypeCode || dealTypeCode == 0)
+                      ).Where(x => arrTitleSearch.Contains(x.Title.Title_Name))
+                      .Select(x => new { Title_Name = x.Title.Title_Name, Title_Code = x.Title.Title_Code }).Distinct().ToList();
+
+                    obj_Acq_Syn_List_Search.TitleCodes_Search = String.Join(",", result.Select(x => x.Title_Code).ToList());
+                    obj_Acq_Syn_List_Search.BUCode = String.Join(",", ddlBUMulti.Select(x=>x.ToString()).ToArray());
+                    string comma = result.Count > 0 ? "﹐" : "";
+                    var obj = new
+                    {
+                        Title_Name = String.Join("﹐", result.Select(x => x.Title_Name).ToList()) + comma,
+                        Title_Code = String.Join(",", result.Select(x => x.Title_Code).ToList())
+                    };
+
+                    return Json(obj, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var obj = new
+                    {
+                        Title_Name = "",
+                        Title_Code = ""
+                    };
+
+                    return Json(obj, JsonRequestBehavior.AllowGet);
+                }
+            }
+            else
+
+                return Json(BindTitle(dealTypeCode, BUCode), JsonRequestBehavior.AllowGet);
         }
         private MultiSelectList BindTitle(int? Deal_Type_Code, int? BUCode)
         {

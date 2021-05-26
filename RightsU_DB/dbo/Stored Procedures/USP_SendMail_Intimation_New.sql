@@ -15,11 +15,11 @@ AS
 BEGIN  
 
 	--DECLARE 
-	--@RecordCode INT =21617,
-	--@module_workflow_detail_code INT = 37243,
+	--@RecordCode INT =2058,
+	--@module_workflow_detail_code INT = 6547,
 	--@module_code INT = 30,
 	--@RedirectToApprovalList VARCHAR(100)='',
-	--@AutoLoginUser VARCHAR(100) = 203,
+	--@AutoLoginUser VARCHAR(100) = 143,
 	--@Is_Error CHAR(1) = 'N'
 
 	SET NOCOUNT ON; 
@@ -28,7 +28,7 @@ BEGIN
 	IF OBJECT_ID('tempdb..#TempCursorOnRej') IS NOT NULL DROP TABLE #TempCursorOnRej
 
 	BEGIN TRY
-		DECLARE @Approved_by VARCHAR(MAX) SET @Approved_by=''
+		DECLARE @Approved_by VARCHAR(MAX) = ''
 		DECLARE @cur_first_name NVARCHAR(500)
 		DECLARE @cur_security_group_name NVARCHAR(500)
 		DECLARE @cur_email_id VARCHAR(500)
@@ -45,7 +45,10 @@ BEGIN
 		DECLARE @BU_Code Int = 0
 		DECLARE  @DefaultSiteUrl_Param NVARCHAR(500) = ''
 		DECLARE @DefaultSiteUrl VARCHAR(500) SET @DefaultSiteUrl = ''  
+		DECLARE @Is_CustomUsers_WF_SendMail VARCHAR(10) = ''
 		DECLARE @Email_Config_Code INT
+		DECLARE @Appr_by NVARCHAR(MAX) = ''
+
 		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='AIN'
 
 		SELECT @Approved_by = --ISNULL(U.First_Name,'') + ' ' + ISNULL(U.Middle_Name,'') + ' ' + ISNULL(U.Last_Name,'') 
@@ -95,13 +98,9 @@ BEGIN
 				SELECT TOP 1 
 					@Agreement_No = Agreement_No, @Agreement_Date = CONVERT(VARCHAR(15), Agreement_Date, 106),
 					@Deal_Desc = Deal_Desc, @Primary_Licensor = V.Vendor_Name, @BU_Name = BU.Business_Unit_Name,
-					@Created_By = ISNULL(UPPER(LEFT(U1.First_Name,1))+LOWER(SUBSTRING(U1.First_Name,2,LEN(U1.First_Name))), '') 
-								+ ' ' + ISNULL(UPPER(LEFT(U1.Middle_Name,1))+LOWER(SUBSTRING(U1.Middle_Name,2,LEN(U1.Middle_Name))), '') 
-								+ ' ' + ISNULL(UPPER(LEFT(U1.Last_Name,1))+LOWER(SUBSTRING(U1.Last_Name,2,LEN(U1.Last_Name))), '') ,-- U1.Login_Name ,
+					@Created_By = U1.Login_Name ,
 					@Creation_Date = CONVERT(VARCHAR(15), ad.Inserted_On, 106),
-					@Last_Actioned_By =ISNULL(UPPER(LEFT(U2.First_Name,1))+LOWER(SUBSTRING(U2.First_Name,2,LEN(U2.First_Name))), '') 
-								+ ' ' + ISNULL(UPPER(LEFT(U2.Middle_Name,1))+LOWER(SUBSTRING(U2.Middle_Name,2,LEN(U2.Middle_Name))), '') 
-								+ ' ' + ISNULL(UPPER(LEFT(U2.Last_Name,1))+LOWER(SUBSTRING(U2.Last_Name,2,LEN(U2.Last_Name))), '') ,-- U2.Login_Name ,
+					@Last_Actioned_By = U2.Login_Name,
 					@Last_Actioned_Date = CONVERT(VARCHAR(15), ad.Last_Updated_Time, 106)
 				FROM Acq_Deal AD
 					INNER JOIN Vendor V ON AD.Vendor_Code = V.Vendor_Code
@@ -132,13 +131,9 @@ BEGIN
 				SELECT TOP 1 
 					@Agreement_No = Agreement_No, @Agreement_Date = CONVERT(VARCHAR(15), Agreement_Date, 106), 
 					@Deal_Desc = Deal_Description, @Primary_Licensor = V.Vendor_Name,@BU_Name = BU.Business_Unit_Name,
-					@Created_By =  ISNULL(UPPER(LEFT(U1.First_Name,1))+LOWER(SUBSTRING(U1.First_Name,2,LEN(U1.First_Name))), '') 
-								+ ' ' + ISNULL(UPPER(LEFT(U1.Middle_Name,1))+LOWER(SUBSTRING(U1.Middle_Name,2,LEN(U1.Middle_Name))), '') 
-								+ ' ' + ISNULL(UPPER(LEFT(U1.Last_Name,1))+LOWER(SUBSTRING(U1.Last_Name,2,LEN(U1.Last_Name))), '') ,
+					@Created_By = U1.Login_Name ,
 					@Creation_Date = CONVERT(VARCHAR(15), SD.Inserted_On, 106),
-					@Last_Actioned_By = ISNULL(UPPER(LEFT(U2.First_Name,1))+LOWER(SUBSTRING(U2.First_Name,2,LEN(U2.First_Name))), '') 
-								+ ' ' + ISNULL(UPPER(LEFT(U2.Middle_Name,1))+LOWER(SUBSTRING(U2.Middle_Name,2,LEN(U2.Middle_Name))), '') 
-								+ ' ' + ISNULL(UPPER(LEFT(U2.Last_Name,1))+LOWER(SUBSTRING(U2.Last_Name,2,LEN(U2.Last_Name))), '') ,
+					@Last_Actioned_By = U2.Login_Name,
 					@Last_Actioned_Date = CONVERT(VARCHAR(15), SD.Last_Updated_Time, 106)
 				FROM Syn_Deal SD
 					INNER JOIN Vendor V ON SD.Vendor_Code = V.Vendor_Code
@@ -244,7 +239,27 @@ BEGIN
 			WHERE MWD.Is_Done = 'Y' AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode 
 				  AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
 		END
-
+		SELECT @Is_CustomUsers_WF_SendMail = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_CustomUsers_WF_SendMail'
+		DECLARE @Email_Config_Code_V18 VARCHAR(10)
+		SELECT @Email_Config_Code_V18 = Email_Config_Code from Email_Config where [Key] = 'ASCM'
+		IF(@Is_CustomUsers_WF_SendMail = 'Y' AND @Is_Deal_Approved = 0)
+		BEGIN
+			INSERT INTO #TempCursorOnRej(Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code)
+			SELECT DISTINCT usr.Email_id,
+			ISNULL(UPPER(LEFT(usr.First_Name,1))+LOWER(SUBSTRING(usr.First_Name,2,LEN(usr.First_Name))), '') 
+			+ ' ' + ISNULL(UPPER(LEFT(usr.Middle_Name,1))+LOWER(SUBSTRING(usr.Middle_Name,2,LEN(usr.Middle_Name))), '') 
+			+ ' ' + ISNULL(UPPER(LEFT(usr.Last_Name,1))+LOWER(SUBSTRING(usr.Last_Name,2,LEN(usr.Last_Name))), '') 
+			+ '   ('+ ISNULL(SG.Security_Group_Name,'') + ')',
+			SG.Security_Group_Name, '', usr.Security_Group_Code, usr.Users_Code 
+			FROM Email_Config ec
+			INNER JOIN Email_Config_Detail ecd ON ecd.Email_Config_Code = ec.Email_Config_Code
+			INNER JOIN Email_Config_Detail_User ecdu ON ecdu.Email_Config_Detail_Code = ecd.Email_Config_Detail_Code
+			INNER JOIN Users usr ON usr.Users_Code IN (select number from fn_Split_withdelemiter(ecdu.User_Codes,',')) AND usr.Is_Active = 'Y'
+			INNER JOIN Security_Group SG ON SG.Security_Group_Code = Usr.Security_Group_Code
+			WHERE ec.email_config_code = @Email_Config_Code_V18 
+		END
+		--select * from #TempCursorOnRej
+		--return
 		/* CURSOR START */
 		DECLARE cur_on_rejection CURSOR KEYSET FOR 
 		SELECT Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code FROM #TempCursorOnRej
@@ -290,16 +305,17 @@ BEGIN
 
 					IF(@Is_Deal_Approved > 0)  /* IF DEAL IS NOT APPROVED BY ALL WORKFLOW */
 					BEGIN  
-						print '1'
-						--SELECT @DefaultSiteUrl = @DefaultSiteUrl + '/Login.aspx?RedirectToApproval=Y&UserCode=' + CAST(@cur_user_code AS VARCHAR(500)) + 
-						--'&ModuleCode=' + CAST(@module_code AS VARCHAR(500))
+
 						select @body1 = template_desc FROM Email_template WHERE Template_For='I'
+						SELECT @Appr_by = dbo.UFN_Get_UsernName_Last_Approved(@RecordCode, @module_code, 'I')
+
 						SET @body1 = replace(@body1,'{login_name}',@cur_first_name)  
 						set @body1 = REPLACE(@body1,'{deal_no}',@DealNo)  
 						set @body1 = REPLACE(@body1,'{deal_type}',@DealType)  
 						set @body1 = replace(@body1,'{click here}',@DefaultSiteUrl)  
 						set @body1 = replace(@body1,'{link}',@DefaultSiteUrl)  
-						SET @body1 = REPLACE(@body1, '{next_approval}',@NextApprovalName) 		
+						SET @body1 = REPLACE(@body1, '{next_approval}',@NextApprovalName) 	
+						SET @body1 = REPLACE(@body1, '{approved_by}',@Appr_by) 	
 						SET @MailSubjectCr = @DealType + ' Deal - (' + @DealNo + ') is sent for approve to next approval'   
 					END  
 					ELSE IF(@Is_Deal_Approved = 0) /* IF DEAL APPROVED BY ALL WORKFLOW */

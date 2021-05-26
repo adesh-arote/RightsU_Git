@@ -38,7 +38,7 @@
 
         var LeftpanelHideCsss = '0px';
         var LeftpanelShowCsss = '350px';
-
+        @*var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';*@
         $(document).ready(function () {
             if ('@objMessageKey.LayoutDirection' == 'RTL') {
                 $('#AdSearch').css("padding-right", "11px");
@@ -63,7 +63,7 @@
             $('#ddlSrchLicensor').SumoSelect();
             if ('@ViewBag.Is_AllowMultiBUsyndeal' == 'Y') {
                 $('#ddlGenBUMultiSelect').SumoSelect();
-                $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode')
+                $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode'.split(','));
                 $('#ddlGenBUMultiSelect')[0].sumo.reload();
 
                 @*var ddlGenBUCodes = '@ViewBag.BusineesUnitList';
@@ -144,6 +144,7 @@
                 var ddlBUMulti = $('#ddlGenBUMultiSelect').val();
                 if (ddlBUMulti != 0 || ddlBUMulti != null) {
                     $('#ddlSrchBUMultiSelect').val(ddlBUMulti);
+                    OnChangeBindTitle('TP');
                 }
             }
             document.getElementById("showMore").innerHTML = "Show more...";
@@ -359,9 +360,13 @@
         function populateTitle(evt) {
             debugger;
             var dealTypeVal = $('#ddlSrchDealType').val();
-            var ddlBU = $('#ddlBUUnit').val();
-
-
+            var ddlBU = "";
+            if (Is_AllowMultiBUsyndeal != 'Y') {
+                ddlBU = $('#ddlBUUnit').val();
+            }
+            else {
+                ddlBU = $('#ddlSrchBUMultiSelect').val().join(',');
+            }
             var Selected_Title_Codes = "";
             var selectedtxt = $('#txtTitleSearch').val();
             var txt = selectedtxt.split('?');
