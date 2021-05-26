@@ -64,6 +64,23 @@
   <ItemGroup>
     <Compile Include="Deal\Deal_Creation.cs" />
     <Compile Include="Deal\Deal_Schema.cs" />
+    <Compile Include="Master_Entities\Security_Group.cs" />
+    <Compile Include="Master_Entities\Users_Business_Unit.cs" />
+    <Compile Include="Master_Entities\Business_Unit.cs" />
+    <Compile Include="Master_Entities\Email_Config.cs" />
+    <Compile Include="Master_Entities\Email_Config_Detail_User.cs" />
+    <Compile Include="Master_Entities\Email_Config_Detail_Alert.cs" />
+    <Compile Include="Master_Entities\Email_Config_Detail.cs" />
+    <Compile Include="Master_Entities\USP_UpdateContentHouseID_Result.cs" />
+    <Compile Include="Master_Entities\USP_Validate_Episode_Result.cs" />
+    <Compile Include="Master_Entities\Title_Content.cs" />
+    <Compile Include="Master_Entities\USP_GET_TITLE_DATA_Result.cs" />
+    <Compile Include="Master_Entities\Title_Content_Mapping.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Movie.cs" />
+    <Compile Include="Master_Entities\BV_HouseId_Data.cs" />
+    <Compile Include="Master_Entities\USP_Uploaded_File_Error_List_Result.cs" />
+    <Compile Include="Master_Entities\USP_Uploaded_File_List_Result.cs" />
+    <Compile Include="Master_Entities\Party_Category.cs" />
     <Compile Include="Master_Entities\User.cs" />
     <Compile Include="Master_Entities\System_Language_Message.cs" />
     <Compile Include="Master_Entities\System_Language.cs" />

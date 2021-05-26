@@ -15,7 +15,7 @@ namespace RightsU_Dapper.Entity
             //this.Users_Channel = new HashSet<Users_Channel>();
             //this.Users_Entity = new HashSet<Users_Entity>();
             //this.Users_Password_Detail = new HashSet<Users_Password_Detail>();
-            //this.Users_Business_Unit = new HashSet<Users_Business_Unit>();
+            this.Users_Business_Unit = new HashSet<Users_Business_Unit>();
             //this.Glossary_AskExpert = new HashSet<Glossary_AskExpert>();
             //this.MHUsers = new HashSet<MHUser>();
             //this.Users_Configuration = new HashSet<Users_Configuration>();
@@ -67,7 +67,7 @@ namespace RightsU_Dapper.Entity
         //public virtual ICollection<Users_Channel> Users_Channel { get; set; }
         //public virtual ICollection<Users_Entity> Users_Entity { get; set; }
         //public virtual ICollection<Users_Password_Detail> Users_Password_Detail { get; set; }
-        //public virtual ICollection<Users_Business_Unit> Users_Business_Unit { get; set; }
+        public virtual ICollection<Users_Business_Unit> Users_Business_Unit { get; set; }
         //public virtual ICollection<Glossary_AskExpert> Glossary_AskExpert { get; set; }
         //public virtual System_Language System_Language { get; set; }
         //public string DefaultEntityName { get; set; }

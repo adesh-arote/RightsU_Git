@@ -8,7 +8,8 @@ namespace RightsU_Dapper.Entity
     [Table("Country")]
     public partial class USP_List_Country_Result
     {
-        public int Country_Code { get; set; }
+        [PrimaryKey]
+        public int? Country_Code { get; set; }
         public string Country_Name { get; set; }
         public string Theatrical_Territory { get; set; }
         public string Language_Names { get; set; }

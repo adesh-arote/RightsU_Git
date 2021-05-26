@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Entities;
+//using RightsU_BLL;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using UTOFrameWork.FrameworkClasses;
 using System.Web.Mail;
 using System.Net;
@@ -16,6 +18,11 @@ namespace RightsU_Plus.Controllers
 {
     public class BV_Title_Mapping_ShowsController : BaseController
     {
+        private readonly System_Parameter_New_Service objSystem_Parameter_New_Service = new System_Parameter_New_Service();
+        private readonly Acq_Deal_Movie_Service objAcq_Deal_Movie_Service = new Acq_Deal_Movie_Service();
+        private readonly Title_Content_Mapping_Service objTitle_Content_Mapping_Service = new Title_Content_Mapping_Service();
+        private readonly BV_HouseId_Data_Service objBV_HouseId_DataService = new BV_HouseId_Data_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         string Program_Category = "";
         public string BV_HouseID_Data
         {
@@ -48,41 +55,40 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["EpisodeNo"] = value; }
         }
-        
-        private List<RightsU_Entities.BV_HouseId_Data> lstBVHouseIDData
+
+        private List<RightsU_Dapper.Entity.BV_HouseId_Data> lstBVHouseIDData
         {
             get
             {
                 if (Session["lstBVHouseIDData"] == null)
-                    Session["lstBVHouseIDData"] = new List<RightsU_Entities.BV_HouseId_Data>();
-                return (List<RightsU_Entities.BV_HouseId_Data>)Session["lstBVHouseIDData"];
+                    Session["lstBVHouseIDData"] = new List<RightsU_Dapper.Entity.BV_HouseId_Data>();
+                return (List<RightsU_Dapper.Entity.BV_HouseId_Data>)Session["lstBVHouseIDData"];
             }
             set { Session["lstBVHouseIDData"] = value; }
         }
-        private List<RightsU_Entities.BV_HouseId_Data> lstBVHouseIDDataSearch
+        private List<RightsU_Dapper.Entity.BV_HouseId_Data> lstBVHouseIDDataSearch
         {
             get
             {
                 if (Session["lstBVHouseIDDataSearch"] == null)
-                    Session["lstBVHouseIDDataSearch"] = new List<RightsU_Entities.BV_HouseId_Data>();
-                return (List<RightsU_Entities.BV_HouseId_Data>)Session["lstBVHouseIDDataSearch"];
+                    Session["lstBVHouseIDDataSearch"] = new List<RightsU_Dapper.Entity.BV_HouseId_Data>();
+                return (List<RightsU_Dapper.Entity.BV_HouseId_Data>)Session["lstBVHouseIDDataSearch"];
             }
             set { Session["lstBVHouseIDDataSearch"] = value; }
         }
         public ActionResult Index()
         {
             FetchData();
-            Program_Category = Convert.ToString(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name.ToUpper() == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
-            lstBVHouseIDDataSearch =  new BV_HouseId_Data_Service(objLoginEntity.ConnectionStringName)
-                                .SearchFor(w => w.Is_Mapped == "N" && (w.IsIgnore == "N" || w.IsIgnore== null) && Program_Category.Contains(w.Program_Category))
-                                .OrderByDescending(o=>o.InsertedOn).Distinct().ToList();
+            Program_Category = Convert.ToString(objSystem_Parameter_New_Service.GetList().Where(x => x.Parameter_Name == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
+            lstBVHouseIDDataSearch = objBV_HouseId_DataService.GetList().Where(w => w.Is_Mapped == "N" && (w.IsIgnore == "N" || w.IsIgnore == null) &&(w.Program_Category != null) && Program_Category.Contains(w.Program_Category))
+                                .OrderByDescending(o => o.InsertedOn).Distinct().ToList();
 
             BindDDL();
             return View("~/Views/BV_Title_Mapping_Shows/Index.cshtml");
         }
         public PartialViewResult BindTitleMappingShows(int pageNo, int recordPerPage)
         {
-            List<RightsU_Entities.BV_HouseId_Data> lst = new List<RightsU_Entities.BV_HouseId_Data>();
+            List<RightsU_Dapper.Entity.BV_HouseId_Data> lst = new List<RightsU_Dapper.Entity.BV_HouseId_Data>();
             int RecordCount = 0;
             RecordCount = lstBVHouseIDDataSearch.Count;
             ViewBag.RecordCount = lstBVHouseIDDataSearch.Count;
@@ -138,14 +144,15 @@ namespace RightsU_Plus.Controllers
         }
         public void FetchData()
         {
-            string program_category = Convert.ToString(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name.ToUpper() == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
-            lstBVHouseIDDataSearch = lstBVHouseIDData = new BV_HouseId_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Mapped == "N" && (w.IsIgnore == null || w.IsIgnore == "N") && program_category.Contains(w.Program_Category)).OrderByDescending(x=>x.InsertedOn).ToList();
+            string program_category = Convert.ToString(objSystem_Parameter_New_Service.GetList().Where(x => x.Parameter_Name == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
+            lstBVHouseIDDataSearch = lstBVHouseIDData = objBV_HouseId_DataService.GetList().Where(w => w.Is_Mapped == "N" && (w.IsIgnore == null || w.IsIgnore == "N")).ToList();
+            //lstBVHouseIDDataSearch = lstBVHouseIDData = objBV_HouseId_DataService.GetList().Where(w => w.Is_Mapped == "N" && (w.IsIgnore == null || w.IsIgnore == "N") && program_category.Contains(w.Program_Category)).OrderByDescending(x => x.InsertedOn).ToList();
         }
         private MultiSelectList BindBVTitle()
         {
-            string Program_Category = Convert.ToString(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name.ToUpper() == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
+            string Program_Category = Convert.ToString(objSystem_Parameter_New_Service.GetList().Where(x => x.Parameter_Name == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
 
-            MultiSelectList lst = new MultiSelectList(new BV_HouseId_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Mapped == "N" && (x.IsIgnore == "N" || x.IsIgnore == null) && Program_Category.Contains(x.Program_Category)).OrderBy(o => o.BV_Title).Select(i => new { BV_Title = i.BV_Title }).Distinct().ToList(), "BV_Title", "BV_Title", "Select some options");
+            MultiSelectList lst = new MultiSelectList(objBV_HouseId_DataService.GetList().Where(x => x.Is_Mapped == "N" && (x.IsIgnore == "N" || x.IsIgnore == null)).OrderBy(o => o.BV_Title).Select(i => new { BV_Title = i.BV_Title }).Distinct().ToList(), "BV_Title", "BV_Title", "Select some options");  // && Program_Category.Contains(x.Program_Category)
             return lst;
         }
         public JsonResult BindDDL()
@@ -171,8 +178,8 @@ namespace RightsU_Plus.Controllers
         public ActionResult GetDealTitles1(string keyword, string scheduleDate_Time)
         {
             DateTime dtSchedule = Convert.ToDateTime(scheduleDate_Time);
-            USP_Service objUS = new USP_Service(objLoginEntity.ConnectionStringName);
-            List<USP_GET_TITLE_DATA_Result> arrDealTitlesEPS = objUS.USP_GET_TITLE_DATA(keyword, 0).ToList();
+            //USP_Service objUS = new USP_Service(objLoginEntity.ConnectionStringName);
+            List<USP_GET_TITLE_DATA_Result> arrDealTitlesEPS = objProcedureService.USP_GET_TITLE_DATA(keyword, 0).ToList();
             List<string> LstDealTitles = new List<string>();
             var result = (from USP_GET_TITLE_DATA_Result UGT in arrDealTitlesEPS
                           where UGT.Title_Name.ToUpper().Contains(keyword.ToUpper())
@@ -181,7 +188,7 @@ namespace RightsU_Plus.Controllers
 
             return Json(result);
         }
-        public JsonResult validateEpisode(string episodeNo,int mappedDealCode,string mappedDealName,int code)
+        public JsonResult validateEpisode(string episodeNo, int mappedDealCode, string mappedDealName, int code)
         {
             bool valid = true;
             string Message = "";
@@ -189,8 +196,8 @@ namespace RightsU_Plus.Controllers
             try
             {
                 int BVEpisodeNo = Convert.ToInt32(episodeNo);
-                int? Title_Code = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == mappedDealCode).Select(x => x.Title_Code).FirstOrDefault();
-                count = new Title_Content_Mapping_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Content.Episode_No == BVEpisodeNo &&
+                int? Title_Code = objAcq_Deal_Movie_Service.GetList().Where(x => x.Acq_Deal_Movie_Code == mappedDealCode).Select(x => x.Title_Code).FirstOrDefault();
+                count = objTitle_Content_Mapping_Service.GetList().Where(x => x.Title_Content.Episode_No == BVEpisodeNo &&
                     (x.Title_Content.Title_Code == Title_Code || x.Acq_Deal_Movie_Code == mappedDealCode)).Count();
                 //count = new Title_Content_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Episode_No == BVEpisodeNo &&
                 //    x.Title_Code == mappedDealCode).Count();
@@ -200,7 +207,7 @@ namespace RightsU_Plus.Controllers
             if (count == 0)
             {
                 valid = false;
-                Message = "Content has not been released for this title "+ mappedDealName + " for Episode "+ episodeNo + "";
+                Message = "Content has not been released for this title " + mappedDealName + " for Episode " + episodeNo + "";
             }
             else
             {
@@ -217,23 +224,23 @@ namespace RightsU_Plus.Controllers
               };
             return Json(obj);
         }
-        public ActionResult MapData(List<RightsU_Entities.BV_HouseId_Data> lst)
+        public ActionResult MapData(List<RightsU_Dapper.Entity.BV_HouseId_Data> lst)
         {
-            List<RightsU_Entities.BV_HouseId_Data> lstBV = new List<BV_HouseId_Data>();
+            List<RightsU_Dapper.Entity.BV_HouseId_Data> lstBV = new List<BV_HouseId_Data>();
             string Message = "", status = "";
             string TITLE_Episode_No = "";
             bool valid = true;
-            int BV_Code = 0;
+            int? BV_Code = 0;
             if (lst != null)
             {
-                foreach (RightsU_Entities.BV_HouseId_Data objBVHouseIDTemp in lst)
+                foreach (RightsU_Dapper.Entity.BV_HouseId_Data objBVHouseIDTemp in lst)
                 {
                     if (objBVHouseIDTemp.BV_Title != null)
                     {
-                        BV_HouseId_Data_Service objBVHouse_Service = new BV_HouseId_Data_Service(objLoginEntity.ConnectionStringName);
+                        // BV_HouseId_Data_Service objBVHouse_Service = new BV_HouseId_Data_Service(objLoginEntity.ConnectionStringName);
                         BV_HouseId_Data objBVHouseID = new BV_HouseId_Data();
-                        objBVHouseID = objBVHouse_Service.GetById(objBVHouseIDTemp.BV_HouseId_Data_Code);
-                        objBVHouseID.EntityState = State.Modified;
+                        objBVHouseID = objBV_HouseId_DataService.GetBV_HouseId_DataByID(objBVHouseIDTemp.BV_HouseId_Data_Code);
+                        //objBVHouseID.EntityState = State.Modified; Commented
                         var MappedDealName = objBVHouseIDTemp.BV_Title;
                         var DealTitleCode = objBVHouseIDTemp.Title_Code;
                         var EpisodeNo = objBVHouseIDTemp.Episode_No;
@@ -243,8 +250,8 @@ namespace RightsU_Plus.Controllers
                         }
                         TITLE_Episode_No = TITLE_Episode_No.Trim(',');
                         USP_Service objUS = null;
-                        objUS = new USP_Service(objLoginEntity.ConnectionStringName);
-                        List<USP_Validate_Episode_Result> objTitleCnt = objUS.USP_Validate_Episode(TITLE_Episode_No,"S").ToList();
+                        //objUS = new USP_Service(objLoginEntity.ConnectionStringName);
+                        List<USP_Validate_Episode_Result> objTitleCnt = objProcedureService.USP_Validate_Episode(TITLE_Episode_No, "S").ToList();
                         int result_count = objTitleCnt.Count;
                         if (result_count > 0)
                         {
@@ -283,10 +290,10 @@ namespace RightsU_Plus.Controllers
                             }
                             else
                             {
-                                objBVHouse_Service.Save(objBVHouseID);
-                                new USP_Service(objLoginEntity.ConnectionStringName).USP_UpdateContentHouseID(objBVHouseID.BV_HouseId_Data_Code, objBVHouseID.Title_Code);
+                                //objBVHouse_Service.Save(objBVHouseID); commented
+                               // objProcedureService.USP_UpdateContentHouseID(objBVHouseID.BV_HouseId_Data_Code, objBVHouseID.Title_Code); Commented
                                 int before = lstBVHouseIDDataSearch.Count();
-                                RightsU_Entities.BV_HouseId_Data objRemove = lstBVHouseIDDataSearch.Where(i => i.BV_HouseId_Data_Code == objBVHouseID.BV_HouseId_Data_Code).FirstOrDefault();
+                                RightsU_Dapper.Entity.BV_HouseId_Data objRemove = lstBVHouseIDDataSearch.Where(i => i.BV_HouseId_Data_Code == objBVHouseID.BV_HouseId_Data_Code).FirstOrDefault();
                                 if (objRemove != null)
                                 {
                                     lstBVHouseIDDataSearch.Remove(objRemove);
@@ -299,8 +306,8 @@ namespace RightsU_Plus.Controllers
                     }
                 }
             }
-           // BV_HouseID_Data = BV_HouseID_Data.Split(',');
-            new USP_Service(objLoginEntity.ConnectionStringName).USP_BV_Title_Mapping_Shows(BV_HouseID_Data);
+            // BV_HouseID_Data = BV_HouseID_Data.Split(',');
+            //objProcedureService.USP_BV_Title_Mapping_Shows(BV_HouseID_Data); Commented
             if (BV_Title != null)
             {
                 string[] BVTitle = BV_Title.Split(',');
@@ -312,11 +319,11 @@ namespace RightsU_Plus.Controllers
             }
             int a = lstBVHouseIDDataSearch.Count();
             // lstRemove = lstBVHouseIDDataSearch.Where(i => BVTitle.Contains(i.BV_Title) && i.Is_Mapped == "Y").ToList();
-            string program_category = Convert.ToString(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name.ToUpper() == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
-            lstBVHouseIDDataSearch = lstBVHouseIDData = new BV_HouseId_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Mapped == "N" && (w.IsIgnore == null || w.IsIgnore == "N") && program_category.Contains(w.Program_Category)).ToList();
+            string program_category = Convert.ToString(objSystem_Parameter_New_Service.GetList().Where(x => x.Parameter_Name == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
+            lstBVHouseIDDataSearch = lstBVHouseIDData = objBV_HouseId_DataService.GetList().Where(w => w.Is_Mapped == "N" && (w.IsIgnore == null || w.IsIgnore == "N")).ToList();  // && program_category.Contains(w.Program_Category)
             BindTitleMappingShows(1, 10);
             ViewBag.RecordCount = lstBVHouseIDDataSearch.Count();
-            
+
             var obj =
              new
              {

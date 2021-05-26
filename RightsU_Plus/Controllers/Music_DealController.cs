@@ -160,7 +160,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.TrackLanguageList = new MultiSelectList(new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Language_Name).ToList(), "Music_Language_Code", "Language_Name", musicLangugaeCodes.Split(','));
 
             string channelCodes = string.Join(",", objMusicDeal.Music_Deal_Channel.Select(x => x.Channel_Code.ToString()).ToArray());
-            ViewBag.ChannelList = new MultiSelectList(new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Channel_Name).ToList(), "Channel_Code", "Channel_Name", channelCodes.Split(','));
+            ViewBag.ChannelList = new MultiSelectList(new RightsU_BLL.Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Channel_Name).ToList(), "Channel_Code", "Channel_Name", channelCodes.Split(','));
 
             string countryCodes = string.Join(",", objMusicDeal.Music_Deal_Country.Select(x => x.Country_Code.ToString()).ToArray());
             ViewBag.Country = new MultiSelectList(new RightsU_BLL.Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Country_Name).ToList(), "Country_Code", "Country_Name", countryCodes.Split(','));
@@ -180,7 +180,7 @@ namespace RightsU_Plus.Controllers
             string strBuCodes = (objSPN.Parameter_Value ?? "");
             string[] arrBUCodes = strBuCodes.Split(',');
 
-            ViewBag.BusinessUnitList = new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"
+            ViewBag.BusinessUnitList = new SelectList(new RightsU_BLL.Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"
                && (arrBUCodes.Contains(x.Business_Unit_Code.ToString()) || string.IsNullOrEmpty(strBuCodes))).
                 SelectMany(s => s.Users_Business_Unit).Where(w => w.Users_Code == objLoginUser.Users_Code).
                 Select(s => s.Business_Unit).ToList(), "Business_Unit_Code", "Business_Unit_Name");

@@ -8,8 +8,13 @@
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
     }
-   // var Platform_Name = Model.Where(m=>m.Platform_Group_Details.FirstOrDefault().Platform_Code)
+    //var Platform_Name = 
+    /*Model.Where(m=>m.Platform_Group_Details.FirstOrDefault().Platform_Code)*/
     var j = new RightsU_Dapper.BLL.Services.Platform_Service().GetList();/*  SearchFor(x => true).ToList();*/
+    RightsU_Dapper.BLL.Services.Platform_Service objPlatfromService = new RightsU_Dapper.BLL.Services.Platform_Service();
+
+    List<RightsU_Dapper.Entity.Platform> lstPlatform = objPlatfromService.GetList().ToList();
+
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -80,7 +85,11 @@
                         @Html.Hidden("hdnPlatform_Group_Code", item.Platform_Group_Code, new { id = item.Platform_Group_Code + "_hdnPlatform_Group_Code" })
                     </td>
                     <td>
-                        @Html.Raw(item.Platform_Group_Details.First().Platform.Platform_Name)
+                        @{
+                            int? PlatformCode = @item.Platform_Group_Details.First().Platform_Code;
+                            string Platform_Name = string.Join(",", lstPlatform.Where(w => w.Platform_Code == PlatformCode).Select(c => c.Platform_Name).ToList());
+                         }
+                           @Html.Raw(Platform_Name)
                         <a id="@(item.Platform_Group_Code)_aViewPlatform" title="@objMessageKey.ViewPlatforms" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>
                     </td>
                     <td style="text-align:center">

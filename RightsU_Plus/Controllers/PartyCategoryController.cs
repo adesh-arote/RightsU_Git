@@ -1,5 +1,7 @@
-﻿using RightsU_BLL;
-using RightsU_Entities;
+﻿//using RightsU_BLL;
+//using RightsU_Entities;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,23 +14,25 @@ namespace RightsU_Plus.Controllers
 {
     public class PartyCategoryController : BaseController
     {
-        private List<RightsU_Entities.Party_Category> lstPartyCategory
+        private readonly USP_Service objProcedureService = new USP_Service();
+        private readonly Party_Category_Service objParty_CategoryService = new Party_Category_Service();
+        private List<RightsU_Dapper.Entity.Party_Category> lstPartyCategory
         {
             get
             {
                 if (Session["lstPartyCategory"] == null)
-                    Session["lstPartyCategory"] = new List<RightsU_Entities.Party_Category>();
-                return (List<RightsU_Entities.Party_Category>)Session["lstPartyCategory"];
+                    Session["lstPartyCategory"] = new List<RightsU_Dapper.Entity.Party_Category>();
+                return (List<RightsU_Dapper.Entity.Party_Category>)Session["lstPartyCategory"];
             }
             set { Session["lstPartyCategory"] = value; }
         }
-        private List<RightsU_Entities.Party_Category> lstPartyCategory_Searched
+        private List<RightsU_Dapper.Entity.Party_Category> lstPartyCategory_Searched
         {
             get
             {
                 if (Session["lstPartyCategory_Searched"] == null)
-                    Session["lstPartyCategory_Searched"] = new List<RightsU_Entities.Party_Category>();
-                return (List<RightsU_Entities.Party_Category>)Session["lstPartyCategory_Searched"];
+                    Session["lstPartyCategory_Searched"] = new List<RightsU_Dapper.Entity.Party_Category>();
+                return (List<RightsU_Dapper.Entity.Party_Category>)Session["lstPartyCategory_Searched"];
             }
             set { Session["lstPartyCategory_Searched"] = value; }
         }
@@ -38,7 +42,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForPartyCategory.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstPartyCategory_Searched = lstPartyCategory = new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstPartyCategory_Searched = lstPartyCategory = (List<RightsU_Dapper.Entity.Party_Category>)objParty_CategoryService.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -51,7 +55,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.PartyCategoryCode = partyCategoryCode;
             ViewBag.CommandName = CommandName;
-            List<RightsU_Entities.Party_Category> lst = new List<RightsU_Entities.Party_Category>();
+            List<RightsU_Dapper.Entity.Party_Category> lst = new List<RightsU_Dapper.Entity.Party_Category>();
             int RecordCount = 0;
             RecordCount = lstPartyCategory_Searched.Count;
             if (RecordCount > 0)
@@ -70,10 +74,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPartyCategory), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPartyCategory), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -119,7 +123,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SearchPartyCategory(string searchText)
         {
-            Party_Category_Service objService = new Party_Category_Service(objLoginEntity.ConnectionStringName);
+           // Party_Category_Service objService = new Party_Category_Service(objLoginEntity.ConnectionStringName);
             if (!string.IsNullOrEmpty(searchText))
             {
                 lstPartyCategory_Searched = lstPartyCategory.Where(w => w.Party_Category_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
@@ -142,13 +146,15 @@ namespace RightsU_Plus.Controllers
             bool isLocked = DBUtil.Lock_Record(partyCategoryCode, GlobalParams.ModuleCodeForPartyCategory, objLoginUser.Users_Code, out RLCode, out strMessage);
             if (isLocked)
             {
-                Party_Category_Service objService = new Party_Category_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Party_Category objPartyCategory = objService.GetById(partyCategoryCode);
+                //Party_Category_Service objService = new Party_Category_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Party_Category objPartyCategory = objParty_CategoryService.GetParty_CategoryByID(partyCategoryCode);
                 objPartyCategory.Is_Active = doActive;
-                objPartyCategory.EntityState = State.Modified;
+                //objPartyCategory.EntityState = State.Modified;
+                objParty_CategoryService.UpdateCategory(objPartyCategory);
                 dynamic resultSet;
 
-                bool isValid = objService.Save(objPartyCategory, out resultSet);
+                //bool isValid = objService.Save(objPartyCategory, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstPartyCategory.Where(w => w.Party_Category_Code == partyCategoryCode).First().Is_Active = doActive;
@@ -161,7 +167,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 DBUtil.Release_Record(RLCode);
             }
@@ -184,18 +190,18 @@ namespace RightsU_Plus.Controllers
             {
                 message = objMessageKey.Recordupdatedsuccessfully;
             }
-            Party_Category_Service objService = new Party_Category_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Party_Category objPartyCategory = null;
+            //Party_Category_Service objService = new Party_Category_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Party_Category objPartyCategory = null;
 
             if (PartyCategoryCode > 0)
             {
-                objPartyCategory = objService.GetById(PartyCategoryCode);
-                objPartyCategory.EntityState = State.Modified;
+                objPartyCategory = objParty_CategoryService.GetParty_CategoryByID(PartyCategoryCode);
+                //objPartyCategory.EntityState = State.Modified;
             }
             else
             {
-                objPartyCategory = new RightsU_Entities.Party_Category();              
-                objPartyCategory.EntityState = State.Added;
+                objPartyCategory = new RightsU_Dapper.Entity.Party_Category();              
+                //objPartyCategory.EntityState = State.Added;
                 objPartyCategory.Inserted_By = objLoginUser.Users_Code;
                 objPartyCategory.Inserted_On = DateTime.Now;
             }
@@ -203,17 +209,26 @@ namespace RightsU_Plus.Controllers
             objPartyCategory.Is_Active = "Y";
             objPartyCategory.Last_Updated_On = DateTime.Now;
             objPartyCategory.Last_Updated_By = objLoginUser.Users_Code;
-            dynamic resultSet;
+            if (PartyCategoryCode > 0)
+            {
+                objParty_CategoryService.UpdateCategory(objPartyCategory);
+            }
+            else
+            {
+                objParty_CategoryService.AddEntity(objPartyCategory);
+            }
+                dynamic resultSet;
 
-            bool isValid = objService.Save(objPartyCategory, out resultSet);
+            //bool isValid = objService.Save(objPartyCategory, out resultSet);
+            bool isValid = true;
             if (isValid)
             {
-                lstPartyCategory_Searched = lstPartyCategory = objService.SearchFor(w => true).OrderByDescending(x => x.Last_Updated_On).ToList();
+                lstPartyCategory_Searched = lstPartyCategory = objParty_CategoryService.GetList().OrderByDescending(x => x.Last_Updated_On).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }   
                     
             int recordLockingCode = Convert.ToInt32(Record_Code);

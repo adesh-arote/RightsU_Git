@@ -372,10 +372,17 @@ namespace RightsU_Plus.Controllers
             Added_SecurityGroupRel.ToList<Platform_Group_Details>().ForEach(t => objPlatformGroup.Platform_Group_Details.Add(t));
             Deleted_SecurityGroupRel.ToList<Platform_Group_Details>().ForEach(t => objPlatformGroup.Platform_Group_Details.Remove(t));
             #endregion
+            if (platformGroupCode > 0)
+            {
+                objPlatform_GroupService.UpdateCategory(objPlatformGroup);
+            }
+            else
+            {
+                objPlatform_GroupService.AddEntity(objPlatformGroup);
+            }
 
-
-            //bool isValid = objService.Save(objPlatformGroup, out resultSet);
-            bool isValid = true;
+                //bool isValid = objService.Save(objPlatformGroup, out resultSet);
+                bool isValid = true;
             if (isValid)
             {
                 status = "S";

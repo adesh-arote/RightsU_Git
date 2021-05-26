@@ -2,6 +2,7 @@
 namespace RightsU_Dapper.Entity
 {
     using Dapper.SimpleSave;
+    using Dapper.SimpleLoad;
     using System;
     using System.Collections.Generic;
 
@@ -44,6 +45,8 @@ namespace RightsU_Dapper.Entity
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public int Base_Country_Count { get; set; }
 
         //public virtual ICollection<Acq_Deal_Rights_Blackout_Territory> Acq_Deal_Rights_Blackout_Territory { get; set; }

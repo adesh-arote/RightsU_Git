@@ -255,7 +255,7 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public IEnumerable<Language> GetAll(Type[] additionalTypes = null)
         {
-            return base.GetAll<Language>();
+            return base.GetAll<Language>(additionalTypes);
         }
         public IEnumerable<Language> SearchFor(object param)
         {
@@ -883,6 +883,369 @@ namespace RightsU_Dapper.DAL.Repository
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Deal_Type entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Party_Category_Repository : MainRepository<Party_Category>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Party_Category> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Party_Category>();
+        }
+        public IEnumerable<Party_Category> SearchFor(object param)
+        {
+            return base.SearchForEntity<Party_Category>(param);
+        }
+        public Party_Category Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Party_Category_Code = Id };
+            return base.GetTalentById<Party_Category>(obj, RelationList);
+        }
+        public void Add(Party_Category entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Party_Category entity)
+        {
+            Party_Category oldObj = Get(entity.Party_Category_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Party_Category entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class BV_HouseId_Data_Repository : MainRepository<BV_HouseId_Data>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<BV_HouseId_Data> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<BV_HouseId_Data>();
+        }
+        public IEnumerable<BV_HouseId_Data> SearchFor(object param)
+        {
+            return base.SearchForEntity<BV_HouseId_Data>(param);
+        }
+        public BV_HouseId_Data Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { BV_HouseId_Data_Code = Id };
+            return base.GetTalentById<BV_HouseId_Data>(obj, RelationList);
+        }
+        public void Add(BV_HouseId_Data entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(BV_HouseId_Data entity)
+        {
+            BV_HouseId_Data oldObj = Get(entity.BV_HouseId_Data_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(BV_HouseId_Data entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Acq_Deal_Movie_Repository : MainRepository<Acq_Deal_Movie>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Acq_Deal_Movie> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Acq_Deal_Movie>();
+        }
+        public IEnumerable<Acq_Deal_Movie> SearchFor(object param)
+        {
+            return base.SearchForEntity<Acq_Deal_Movie>(param);
+        }
+        public Acq_Deal_Movie Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Acq_Deal_Movie_Code = Id };
+            return base.GetTalentById<Acq_Deal_Movie>(obj, RelationList);
+        }
+        public void Add(Acq_Deal_Movie entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Acq_Deal_Movie entity)
+        {
+            Acq_Deal_Movie oldObj = Get(entity.Acq_Deal_Movie_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Acq_Deal_Movie entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Title_Content_Mapping_Repository : MainRepository<Title_Content_Mapping>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Title_Content_Mapping> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Title_Content_Mapping>();
+        }
+        public IEnumerable<Title_Content_Mapping> SearchFor(object param)
+        {
+            return base.SearchForEntity<Title_Content_Mapping>(param);
+        }
+        public Title_Content_Mapping Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Title_Content_Mapping_Code = Id };
+            return base.GetTalentById<Title_Content_Mapping>(obj, RelationList);
+        }
+        public void Add(Title_Content_Mapping entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Title_Content_Mapping entity)
+        {
+            Title_Content_Mapping oldObj = Get(entity.Title_Content_Mapping_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Title_Content_Mapping entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Email_Config_Detail_Repository : MainRepository<Email_Config_Detail>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Email_Config_Detail> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Email_Config_Detail>();
+        }
+        public IEnumerable<Email_Config_Detail> SearchFor(object param)
+        {
+            return base.SearchForEntity<Email_Config_Detail>(param);
+        }
+        public Email_Config_Detail Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Email_Config_Detail_Code = Id };
+            return base.GetTalentById<Email_Config_Detail>(obj, RelationList);
+        }
+        public void Add(Email_Config_Detail entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Email_Config_Detail entity)
+        {
+            Email_Config_Detail oldObj = Get(entity.Email_Config_Detail_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Email_Config_Detail entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Email_Config_Repository : MainRepository<Email_Config>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Email_Config> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Email_Config>();
+        }
+        public IEnumerable<Email_Config> SearchFor(object param)
+        {
+            return base.SearchForEntity<Email_Config>(param);
+        }
+        public Email_Config Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Email_Config_Code = Id };
+            return base.GetTalentById<Email_Config>(obj, RelationList);
+        }
+        public void Add(Email_Config entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Email_Config entity)
+        {
+            Email_Config oldObj = Get(entity.Email_Config_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Email_Config entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Business_Unit_Repository : MainRepository<Business_Unit>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Business_Unit> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Business_Unit>();
+        }
+        public IEnumerable<Business_Unit> SearchFor(object param)
+        {
+            return base.SearchForEntity<Business_Unit>(param);
+        }
+        public Business_Unit Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Business_Unit_Code = Id };
+            return base.GetTalentById<Business_Unit>(obj, RelationList);
+        }
+        public void Add(Business_Unit entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Business_Unit entity)
+        {
+            Business_Unit oldObj = Get(entity.Business_Unit_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Business_Unit entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Channel_Repository : MainRepository<Channel>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Channel> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Channel>();
+        }
+        public IEnumerable<Channel> SearchFor(object param)
+        {
+            return base.SearchForEntity<Channel>(param);
+        }
+        public Channel Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Channel_Code = Id };
+            return base.GetTalentById<Channel>(obj, RelationList);
+        }
+        public void Add(Channel entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Channel entity)
+        {
+            Channel oldObj = Get(entity.Channel_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Channel entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class User_Repository : MainRepository<User>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<User> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<User>();
+        }
+        public IEnumerable<User> SearchFor(object param)
+        {
+            return base.SearchForEntity<User>(param);
+        }
+        public User Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { User_Code = Id };
+            return base.GetTalentById<User>(obj, RelationList);
+        }
+        public void Add(User entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(User entity)
+        {
+            User oldObj = Get(entity.Users_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(User entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Users_Business_Unit_Repository : MainRepository<Users_Business_Unit>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Users_Business_Unit> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Users_Business_Unit>();
+        }
+        public IEnumerable<Users_Business_Unit> SearchFor(object param)
+        {
+            return base.SearchForEntity<Users_Business_Unit>(param);
+        }
+        public Users_Business_Unit Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Users_Business_Unit_Code = Id };
+            return base.GetTalentById<Users_Business_Unit>(obj, RelationList);
+        }
+        public void Add(Users_Business_Unit entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Users_Business_Unit entity)
+        {
+            Users_Business_Unit oldObj = Get(entity.Users_Business_Unit_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Users_Business_Unit entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Security_Group_Repository : MainRepository<Security_Group>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Security_Group> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Security_Group>();
+        }
+        public IEnumerable<Security_Group> SearchFor(object param)
+        {
+            return base.SearchForEntity<Security_Group>(param);
+        }
+        public Security_Group Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Security_Group_Code = Id };
+            return base.GetTalentById<Security_Group>(obj, RelationList);
+        }
+        public void Add(Security_Group entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Security_Group entity)
+        {
+            Security_Group oldObj = Get(entity.Security_Group_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Security_Group entity)
         {
             base.DeleteEntity(entity);
         }

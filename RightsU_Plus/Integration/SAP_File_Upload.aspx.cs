@@ -5,12 +5,16 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using RightsU_BLL;
-using RightsU_Entities;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+//using RightsU_BLL;
+//using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
 
 public partial class SAP_File_Upload : ParentPage
 {
+    private readonly USP_Service objProcedureService = new USP_Service();
+
     public int PageNo
     {
         get
@@ -98,7 +102,7 @@ public partial class SAP_File_Upload : ParentPage
 
             if (Upload_Detail_Code > 0 && Is_Error.Equals("Y"))
             {
-                gvErrorPopup.DataSource = new USP_Service(ObjLoginEntity.ConnectionStringName).USP_Uploaded_File_Error_List(File_Code).ToList();
+                gvErrorPopup.DataSource = objProcedureService.USP_Uploaded_File_Error_List(File_Code).ToList();
                 gvErrorPopup.DataBind();
                 DBUtil.AddDummyRowIfDataSourceEmpty(gvErrorPopup, new USP_Uploaded_File_Error_List_Result());
                 upErrorPopup.Update();
