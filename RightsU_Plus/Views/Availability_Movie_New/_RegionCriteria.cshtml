@@ -1,0 +1,624 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@using RightsU_BLL;
+@model RightsU_Entities.Platform_Group
+@{
+    var a = (string)ViewBag.strListLanguageCodes;
+    var ifta = ViewBag.IFTA;
+    var CountryLevel = ViewBag.CountryLevel;
+    var TabName = "";
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    string AvailabilityIftaCluster = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "AvailabilityIftaCluster").ToList().FirstOrDefault().Parameter_Value;
+
+
+}
+
+
+<script src="~/JS_Core/common.concat.js"></script>
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+
+<script>
+    var URL_BindCountryTreeView = '@Url.Action("BindCountryTreeView", "Availability_Movie_New")';
+
+    function BindCountry() {
+        debugger;
+        //var codes = $("#hdnTVCodes_C").val('@a');
+        var codes = $("#hdnTVCodes_Country").val('@a');
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindCountryTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strListCountryCodes: codes
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                initializeChosen();
+                initializeTooltip();
+                $('#treeDown_Country').empty();
+                $('#treeDown_Country').html(result);
+                initializeChosen();
+                initializeTooltip();
+            },
+            error: function (result) { }
+        });
+    }
+
+</script>
+<script>
+
+
+    $(document).ready(function () {
+        debugger
+        $('#show_hide_Region').click(function () {
+            $('.MoreOptionRegionDiv').slideUp();
+            $(this).parent().find('.MoreOptionRegionDiv').slideToggle('fast');
+            return false;
+        });
+        TabName = IscallfromSaveQuery;
+        if (TabName == "IF")
+        {
+            $('#IsCountry').removeClass('active')
+            $('#IsTerritory').addClass('active')
+        }
+        else if(TabName == "CO") {
+            $('#IsCountry').addClass('active')
+            $('#IsTerritory').removeClass('active')
+        }
+        initializeTooltip();
+        //$('#ddlTerritoryList').SumoSelect();
+        //$('#ddlTerritoryList').val(TerritoryCodess)[0].sumo.reload();
+
+        IsCheckRights = '@ViewBag.CheckRight';
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-weight", 100)
+        $('.SumoSelect .select-all.partial > span i').css("display", "none");
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-size", 12)
+        $(".plusminus").text('-');
+        if (document.getElementById('chkCountryLevel') != null) {
+            if (document.getElementById('chkCountryLevel').checked) {
+                $('#chkIFTACluster').attr("disabled", true);
+                $(".spnTerritory").css("pointer-events", "none");
+                //$('.spnTerritory').hide();
+                //$('.spnCountry').hide();
+                $('#ddlTerritoryList').attr("disabled", true);
+                $('.sumo_TerritoryList').css("cursor", "not-allowed");
+                $('.SumoSelect > .CaptionCont > span').css("cursor", "not-allowed");
+            }
+        }
+        //if (document.getElementById('chkIFTACluster') != null) {
+        //    if (document.getElementById('chkIFTACluster').checked) {
+        //        $('#chkCountryLevel').hide();
+        //        $('.spnContryLevel').hide();
+        //    }
+        //}
+
+        $('#RegionTab').click(function () {
+            debugger;
+            $('.MoreOptionDubbingDiv').hide('slow');
+            $('.MoreOptionSubtitleDiv').hide('slow');
+            $('.MoreOptionPlatformDiv').hide('slow');
+
+            $("#accordianTerritory").click();
+            $('#hdnCountryType').val('LG');
+            var isFlag = $('#hdnIsFlag_Region').val();
+            $('.scale_table_container').css("display", 'Block');
+            if (isFlag == "N") {
+                var selectedCodes = $("#hdnTVCodes_Country").val();
+                AddEditRegion(selectedCodes);
+                $('#hdnIsFlag_Region').val('Y');
+            }
+            else {
+            }
+        })
+        $('#accordianCountry').click(function () {
+            debugger;
+            var pt = $('#hdnCountryType').val();
+
+            var platformCodes = "";
+            if (pt == "P")
+                platformCodes = $("#hdnTVCodes_SubLang").val();
+            if (pt == "LG")
+                platformCodes = $("#hdnTVCodes_Country").val();
+
+            var accRegion = $('#hdnAccordianRegion').val();
+
+            if (accRegion == "N") {
+                BindTerritoryDetails(platformCodes);
+                $('#hdnAccordianRegion').val('Y');
+            }
+            else {
+
+            }
+
+
+
+            //$('#ddlListLanguageGroup').empty();
+            //$("#ddlListLanguageGroup").prop('disabled', true)[0].sumo.reload();
+        })
+
+
+
+        $("#ddlMustHaveCountry").attr('disabled', 'disabled');
+
+        $("input:checkbox").on('click', function () {
+            debugger;
+            // in the handler, 'this' refers to the box clicked on
+            var $box = $(this);
+            if ($box.is(":checked")) {
+
+                // the name of the box is retrieved using the .attr() method
+                // as it is assumed and expected to be immutable
+                var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                // the checked state of the group/box on the other hand will change
+                // and the current value is retrieved using .prop() method
+                $(group).prop("checked", false);
+                $box.prop("checked", true);
+            } else {
+                $box.prop("checked", false);
+
+            }
+        });
+
+
+        $('input[type=checkbox][name=CheckRegion]').change(function () {
+            debugger
+            if ($("#chkMustHave").prop('checked') == true) {
+                var platformCodes = "";
+                platformCodes = $("#hdnTVCodes_Country").val();
+                $("#ddlMustHaveCountry").prop('disabled', false)[0].sumo.reload();
+                var accRegion = $('#hdnAccordianRegion').val();
+
+                if (accRegion == "N") {
+                    BindTerritoryDetails(platformCodes);
+                    $('#hdnAccordianRegion').val('Y');
+                }
+            }
+
+            else if ($("#chkExactMatch").prop('checked') == true) {
+                $("#ddlMustHaveCountry").prop('disabled', true)[0].sumo.reload();
+                var obj = [];
+                $('option:selected').each(function () {
+                    obj.push($(this).index());
+                });
+
+                for (var i = 0; i < obj.length; i++) {
+                    $('#ddlMustHaveCountry')[0].sumo.unSelectItem(obj[i]);
+                }
+            }
+            else if ($("#chkMustHave").prop('checked') == false && $("#chkExactMatch").prop('checked') == false) {
+                $("#ddlMustHaveCountry").prop('disabled', true)[0].sumo.reload();
+                var obj = [];
+                $('option:selected').each(function () {
+                    obj.push($(this).index());
+                });
+
+                for (var i = 0; i < obj.length; i++) {
+                    $('#ddlMustHaveCountry')[0].sumo.unSelectItem(obj[i]);
+                }
+            }
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css('text-align', 'left');
+
+        });
+
+
+
+        //$('#ddlListCountry').SumoSelect();
+
+        $('#ddlMustHaveCountry').SumoSelect();
+        $('#ddlCountryList').SumoSelect();
+
+
+        $(".accordion_head").click(function () {
+            debugger;
+            if ('@ViewBag.CheckRight' == "CO") {
+                $('#accordianTerritory').next(".accordion_body").slideDown(300);
+                $('#accordianCountry').next(".accordion_body").slideDown(300);
+            }
+            @*else if ('@ViewBag.CheckRight' == "IF") {
+                $('#accordianTerritory').next(".accordion_body").slideDown(300);
+            }*@
+            else {
+                if ($('.accordion_body').is(':visible')) {
+                    $(".accordion_body").slideUp(300);
+                    //$(".plusminus").text('+');
+                }
+
+                if ($(this).next(".accordion_body").is(':visible')) {
+                    $(this).next(".accordion_body").slideUp(300);
+                    //$(this).children(".plusminus").text('+');
+                } else {
+                    $(this).next(".accordion_body").slideDown(300);
+                    //$(this).children(".plusminus").text('-');
+                }
+            }
+
+        });
+
+
+        $("#chkIFTACluster").change(function () {
+            debugger;
+
+
+        })
+
+        $('#ddlTerritoryList').on('change', function (evt, params) {
+            //$('#ddlCountryList').val('')[0].sumo.reload();
+            $('#chkMustHave').prop('checked', false);
+            //$('#ddlListCountry').empty();
+            //$('#ddlListCountry').prop('disabled', false)[0].sumo.reload();
+            $('#ddlMustHaveCountry').empty();
+            if ($('#ddlMustHaveCountry').val() != undefined) {
+                 $('#ddlMustHaveCountry').val('')[0].sumo.reload();
+                 $('#ddlMustHaveCountry').prop('disabled', true)[0].sumo.reload();
+            }
+
+        })
+
+
+
+        var ojTerr = [];
+        $('#ddlListCountry').on('change', function (evt, params) {
+
+            debugger;
+            ojTerr = [];
+            var strHTML = '';
+            var exclusionRegionCode = '';
+            var mustHaveRegionCode = '';
+            var a = "";
+
+            var x = $('#hdnSelectedValues').val($('#ddlMustHaveCountry').val());
+
+            $('#ddlMustHaveCountry').empty();
+            $('#ddlListCountry option').each(function () {
+                var s = $(this);
+                strHTML = strHTML + s[0].outerHTML;
+            });
+
+            $("#ddlMustHaveCountry").html(strHTML);
+
+            $('#ddlListCountry option:selected').each(function () {
+                if (exclusionRegionCode == '')
+                    exclusionRegionCode = this.value;
+                else
+                    exclusionRegionCode = exclusionRegionCode + ',' + this.value;
+
+                $('#ddlMustHaveCountry option[value="' + this.value + '"]').remove();
+
+
+            });
+
+            var j = x.val().split(',');
+            for (var i = 0; i < j.length; i++) {
+                if (j[i] != exclusionRegionCode) {
+                    ojTerr.push(j[i]);
+                }
+            }
+
+            $('#ddlMustHaveCountry').val(exclusionRegionCode);
+            $('#hdnExclusionRegionCode').val(exclusionRegionCode);
+            debugger;
+            if (exclusionRegionCode != '')
+                $('#spExclusionCountryCount').html(" (" + exclusionRegionCode.split(',').length + ")");
+            else
+                $('#spExclusionCountryCount').html(' (0)');
+
+            if ($("#ddlMustHaveCountry").val() != null) {
+                mustHaveRegionCode = $("#ddlMustHaveCountry").val();
+                $('#spMustExactHaveCountryCount').html("(" + mustHaveRegionCode.length + ")");
+            }
+            else
+                $('#spMustExactHaveCountryCount').html('(0)');
+
+            $('#hdnExclusionRegionCode').val(exclusionRegionCode);
+            $('#hdnMustHaveRegionCode').val(mustHaveRegionCode);
+            $('#hdnIsCriteriaChange').val('Y');
+            debugger;
+            var obj = [];
+            $('#ddlMustHaveCountry').siblings('div').find('ul.options > li.opt.selected').each(function () {
+                obj.push(parseInt($.trim($(this)[0].innerText)));
+            });
+
+            $('#hdnMustHaveRegionCode').val(obj.join(','));
+            $("#ddlMustHaveCountry").val(ojTerr)[0].sumo.reload();
+        });
+
+
+        var ojCountry = [];
+        $('#ddlCountryList').on('change', function (evt, params) {
+            debugger;
+            ojCountry = [];
+            $('#ddlTerritoryList').val('').trigger('chosen:updated');
+            //$('#ddlListCountry').empty();
+            //$("#ddlListCountry").prop('disabled', true)[0].sumo.reload();
+            $('#result').text('');
+
+            var strHTML = '';
+            var regionCode = '';
+
+            var x = $('#hdnSelectedValues').val($('#ddlMustHaveCountry').val());
+
+            $('#hdnRegionCodes').val('');
+
+            $('#ddlCountryList option:selected').each(function () {
+                debugger;
+                var s = $(this);
+                strHTML = strHTML + s[0].outerHTML;
+                if (regionCode == '')
+                    regionCode = s[0].value;
+                else
+                    regionCode = regionCode + ',' + s[0].value;
+            });
+
+            var j = x.val().split(',');
+            for (var i = 0; i < j.length; i++) {
+                if (j[i] != regionCode) {
+                    ojCountry.push(j[i]);
+                }
+            }
+
+            $('#hdnRegionCodes').val(regionCode);
+            $("#ddlMustHaveCountry").html(strHTML);
+
+            if ($('#hdnMustHaveRegionCode').val() != '') {
+                $("#ddlMustHaveCountry").val($('#hdnMustHaveRegionCode').val().split(','))[0].sumo.reload();
+
+                if ($("#ddlMustHaveCountry").val() != null) {
+                    $('#hdnMustHaveRegionCode').val($("#ddlMustHaveCountry").val().join(','));
+                    $('#spMustExactHaveCountryCount').html('(' + $('#hdnMustHaveRegionCode').val().split(',').length + ')');
+                }
+                else {
+                    $('#hdnMustHaveRegionCode').val('');
+                    $('#spMustExactHaveCountryCount').html('(0)');
+                }
+            }
+            else {
+                $("#hdnMustHaveRegionCode,#ddlMustHaveCountry").val('')[0].sumo.reload();
+                $('#spMustExactHaveCountryCount').html('(0)');
+            }
+
+            if (regionCode != '')
+                $('#spCountryCount').html("(" + regionCode.split(',').length + ")");
+            else
+                $('#spCountryCount').html("(0)");
+            var obj = [];
+            $('#ddlMustHaveCountry').siblings('div').find('ul.options > li.opt.selected').each(function () {
+                obj.push(parseInt($.trim($(this)[0].innerText)));
+            });
+            $('#hdnMustHaveRegionCode').val(obj.join(','));
+            $("#ddlMustHaveCountry").val(ojCountry)[0].sumo.reload();
+
+        });
+
+        $('#spanTempRegion').on('click', function (event) {
+            debugger;
+            event.stopImmediatePropagation();
+        });
+    });
+
+    function CheckIFTA() {
+        debugger;
+        if (this.checked) {
+            BindRegion("check");
+            //  AddEditRegion(selectedCodes);
+
+        }
+        else {
+            BindRegion("UnCheck");
+            //AddEditRegion();
+        }
+    }
+    function CheckCountryLevel() {
+        debugger;
+        if (document.getElementById('chkCountryLevel').checked) {
+            BindRegion("check");
+        }
+        else {
+            BindRegion("check");
+
+        }
+    }
+    function CloseRegionPopup() {
+        $('.MoreOptionRegionDiv').hide('slow');
+    }
+    function LoadMoreOptionRegionPopup() {
+        debugger;
+        $('#chkExactMatch').prop('checked', false);
+        $('#chkMustHave').prop('checked', false);
+        $('#ddlMustHaveCountry').SumoSelect();
+        if ($('#ddlMustHaveCountry').val() != undefined) {
+            $('#ddlMustHaveCountry').val('')[0].sumo.reload();
+            $('#ddlMustHaveCountry').prop('disabled', true)[0].sumo.reload();
+        }
+    }
+</script>
+<script>
+
+</script>
+<style>
+    /*.fancytree-icon{
+        display:none!important;
+    }*/
+    #Tree_Filter_Rights_Platform_Country {
+        width: 429px;
+    }
+
+    #Rights_Platform_Country {
+        overflow-y: auto;
+        max-height: 300px !important;
+    }
+
+    #ddlTerritoryList_chosen {
+        width: 70% !important;
+    }
+
+    #pupupHtml, #pupupHtml1_Country, #divMustHave {
+        /*max-height: 300px !important;*/
+        text-align: left !important;
+    }
+
+    #pupupHtml1_Country {
+        word-wrap: break-word;
+        overflow: hidden;
+        width: 430px;
+        /*max-height: 300px;*/
+        /*overflow-y: auto;*/
+    }
+
+    select#ddlTerritoryList {
+        width: 100%;
+        max-width: 400px;
+        top: 167px;
+        left: 656px;
+        max-height: 180px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 2147483647;
+    }
+
+    /*.accordion_container {
+        width: 500px;
+    }*/
+
+    .accordion_head_1 {
+        background-color: #DEDEDE;
+        color: black;
+        cursor: pointer;
+        font-family: arial;
+        font-size: 14px;
+        margin: 0 0 1px 0;
+        padding: 7px 11px;
+        font-weight: bold;
+        width: 441px;
+        text-align: left;
+    }
+
+    .accordion_body {
+        width: 429px;
+        padding: 5px;
+        border: 1px dotted black;
+        border-top: 0px;
+    }
+
+        .accordion_body p {
+            padding: 5px 5px !important;
+            margin: 0px;
+        }
+
+    .plusminus {
+        float: right;
+    }
+
+    #divTerritoryDetails {
+        word-wrap: break-word;
+        overflow: hidden;
+        max-height: 100px;
+        overflow-y: auto;
+    }
+
+
+    .morecontent span {
+        display: none;
+    }
+
+    .morelink {
+        display: block;
+    }
+
+    .sumo_TerritoryList {
+        width: 300px !important;
+    }
+
+    .SumoSelect > .CaptionCont > span {
+        margin-top: 4px;
+        padding-left: 5px;
+    }
+</style>
+
+<div class="accordion_container">
+    <div class="accordion_head_1" id="accordianTerritory">
+
+        @if (ViewBag.CheckRight == "IF" || ViewBag.CheckRight == "check" || ViewBag.CheckRight == "UnCheck" || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForTheatricalAvailabilityReport || ViewBag.TabName == "IF" || AvailabilityIftaCluster == "Y")
+        {
+            if (Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForMovieAvailabilityReport || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForProgramAvailabilityReport || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+            {
+                if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForIFTA.ToString() + "~"))
+                {
+                    if (ViewBag.IFTACLuster == true)
+                    {
+                        <input type="checkbox" id="chkIFTACluster" checked="@ifta" onchange="CheckIFTA()" title="IFTA" />
+                    }
+                    <span class="spnTerritory">Territory</span>
+                }
+                else
+                {
+                    <span class="spnTerritory">Territory</span>
+                }
+            }
+            else
+            {
+                <span class="spnCountry"> Country </span>
+            }
+
+            <span id="spanTempRegion">
+                @Html.ListBox("TerritoryList", ViewBag.TerritoryList as MultiSelectList, new { @id = "ddlTerritoryList", @onchange = "AddEditRegion()", @class = "" })
+            </span>
+        }
+
+        @if (Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport)
+        {
+            <span class="spnCountry"> Country </span>
+        }
+    </div>
+    <div style="width:429px;padding:5px;">
+
+        <div id="divTerritoryDetails">
+            <span id="result" class="more"></span>
+        </div>
+
+        <div id="pupupHtml1_Country">
+            <div id="divTree" class="platform_wrapper">
+                <div id="treeDown_Country" class="treeClass">
+                </div>
+                <span id="lblTheatrical" style="display: none;">Theatrical</span>
+                <input type="hidden" id="hdnTVCodes_Country_G" name="hdnTVCodes" />
+            </div>
+        </div>
+    </div>
+    @*<div class="accordion_head" id="accordianCountry">
+            More Options
+        </div>
+        <div class="accordion_body" style="display: none;">
+            <table>
+                <tr>
+                    <td>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="CheckRegion" id="chkExactMatch" value="EM" text="Exact Match" />
+                            <b>Exact Match</b>
+                        </label>
+                        &nbsp;
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="CheckRegion" id="chkMustHave" value="MH" text="Must Have">
+                            <b>Must Have</b>
+                        </label>
+                        <br />
+                        <select id="ddlMustHaveCountry" multiple></select>
+                    </td>
+                </tr>
+            </table>
+        </div>*@
+</div>
+
+<input type="hidden" id="hdnRegionCodes" />
+<input type="hidden" id="hdnExclusionRegionCode" />
+<input type="hidden" id="hdnMustHaveRegionCode" />
+<input type="hidden" id="hdnSelectedValues" />

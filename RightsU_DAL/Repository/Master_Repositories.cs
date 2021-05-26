@@ -2870,6 +2870,11 @@ namespace RightsU_DAL
         public Deal_Segment_Repository(string conStr) : base(conStr) { }
     }
 
+    public class Platform_Broadcast_Repository : RightsU_Repository<Platform_Broadcast>
+    {
+        public Platform_Broadcast_Repository(string conStr) : base(conStr) { }
+    }
+
     public class Revenue_Vertical_Repository : RightsU_Repository<Revenue_Vertical>
     {
         public Revenue_Vertical_Repository(string conStr) : base(conStr) { }

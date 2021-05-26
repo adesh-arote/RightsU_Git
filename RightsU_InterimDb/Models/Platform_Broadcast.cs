@@ -12,14 +12,10 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class RunData
+    public partial class Platform_Broadcast
     {
-    	public State EntityState { get; set; }    public int Id { get; set; }
-    	    public int ChannelCode { get; set; }
-    	    public string ChannelName { get; set; }
-    	    public string ParameterName { get; set; }
-    	    public string ParameterValue { get; set; }
-    
-        public virtual Channel Channel { get; set; }
+    	public State EntityState { get; set; }    public int Platform_Broadcast_Code { get; set; }
+    	    public Nullable<int> Platform_Code { get; set; }
+    	    public Nullable<int> Broadcast_Mode_Code { get; set; }
     }
 }

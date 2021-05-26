@@ -1,0 +1,150 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    var AvailabilityIncludeAncillary = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "AvailabilityIncludeAncillary").Select(s => s.Parameter_Value).FirstOrDefault();
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    $(document).ready(function () {
+
+        $("#langList").SumoSelect();
+        $("#ddlExclusive").SumoSelect();
+        $("#ddlExclusive")[0].sumo.selectAll();
+        $('#sublicList').SumoSelect();
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css('text-align', 'left');
+
+    })
+</script>
+<style>
+    /*#ddlExclusive_chosen {
+        width: 76% !important;
+    }*/
+</style>
+<table>
+    <tr>
+
+        <td>
+            <label class="checkbox-inline">
+                @if (ViewBag.ModuleCode != GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
+                {
+                    <input type="checkbox" id="chkIsOriginalLanguage" checked="checked">
+                }
+                <b>Title Language</b>
+            </label>
+        </td>
+
+        <td>
+            @Html.DropDownList("langList", ViewBag.langList as MultiSelectList, new { @id = "langList", @multiple = "multiple" })
+        </td>
+    </tr>
+    @if (ViewBag.ModuleCode != GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString() && ViewBag.ModuleCode != GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
+    {
+        <tr>
+            <td>
+                Exclusivity
+            </td>
+            <td>
+                @Html.DropDownList("ddlExclusive", ViewBag.ddlExclusive as MultiSelectList, new { @id = "ddlExclusive", @multiple = "multiple" })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td>
+            Sub Licensing
+        </td>
+        <td>
+            @Html.DropDownList("sublicList", ViewBag.sublicList as MultiSelectList, new { @id = "sublicList", @multiple = "multiple" })
+        </td>
+    </tr>
+    <tr style="text-align:left">
+        <td></td>
+        @if (ViewBag.Is_Restriction_Remarks == "Y")
+        {
+            <td>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="chkRestRemarks" value="option2" checked="true" disabled style="padding-left: 41px!important;">
+                    <b>Restriction Remarks</b>
+                </label>
+            </td>
+        }
+        else
+        {
+            <td>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="chkRestRemarks" value="option2" style="padding-left: 41px;">
+                    <b>Restriction Remarks</b>
+                </label>
+            </td>
+        }
+
+
+    </tr>
+    <tr style="text-align:left">
+        <td></td>
+        @if ((ViewBag.ModuleCode == GlobalParams.ModuleCodeForMovieAvailabilityNewReport.ToString() || ViewBag.ModuleCode == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString()) && ViewBag.Is_Other_Remarks == true)
+        {
+            <td>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="chkOtherRemarks" value="option2" checked="true" disabled style="padding-left: 41px;">
+                    <b>Other Remarks</b>
+                </label>
+            </td>
+        }
+        else
+        {
+            <td>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="chkOtherRemarks" value="option2" style="padding-left: 41px;">
+                    <b>Other Remarks</b>
+                </label>
+            </td>
+        }
+    </tr>
+    @if (ViewBag.ModuleCode != GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString() && ViewBag.Is_Self_Consumption == "Y")
+    {
+        <tr style="text-align:left">
+            <td></td>
+            <td>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="chkDigital" checked="@ViewBag.chkDigital" style="padding-left: 41px;">
+                    <b>Self Consumption</b>
+                </label>
+            </td>
+
+        </tr>
+    }
+    <tr style="text-align:left">
+        <td></td>
+        <td>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="chkMetaData" checked="@ViewBag.chkIncludeMetadata" value="option2" style="padding-left:41px;">
+                <b>Include Metadata</b>
+            </label>
+        </td>
+
+    </tr>
+    @if (ViewBag.ModuleCode != GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString() && AvailabilityIncludeAncillary == "Y")
+    {
+        <tr style="text-align:left">
+            <td></td>
+            <td>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="chkIncludeAncillary" checked="true" style="padding-left: 41px;">
+                    <b>Include Ancillary</b>
+                </label>
+            </td>
+
+        </tr>
+    }
+</table>
+
+<style>
+    .SumoSelect > .CaptionCont {
+        min-height: 29px !important;
+    }
+</style>

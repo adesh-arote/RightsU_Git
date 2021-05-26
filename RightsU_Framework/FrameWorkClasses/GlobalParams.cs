@@ -138,6 +138,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForAcqDealListReport = 108;
         public const int ModuleCodeForSynDealListReport = 109;
         public const int ModuleCodeForMovieAvailabilityReport = 127;
+        public const int ModuleCodeForMovieAvailabilityNewReport = 247;
         public const int ModuleCodeForProgramAvailabilityReport = 134;
         public const int ModuleCodeForTheatricalAvailabilityReport = 121;
         public const int ModuleCodeForIndiacastMovieAvailabilityReport = 184;

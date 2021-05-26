@@ -62,6 +62,10 @@
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="AvailEntity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\AvailEntity.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -111,6 +115,10 @@
       <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.314.76\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MongoDB.Bson.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -118,6 +126,14 @@
     <Reference Include="ReportViewerForMvc, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ReportViewerForMvc.1.0.1\lib\net45\ReportViewerForMvc.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="RightsUAvailsProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\RightsUAvailsProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="RightsUAvailsProviderContract, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\RightsUAvailsProviderContract.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -196,14 +212,27 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="UTO.Framework.Shared, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\UTO.Framework.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="UTO.Framework.SharedInfrastructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\UTO.Framework.SharedInfrastructure.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="ZeroFormatter.Interfaces, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\ZeroFormatter.Interfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
+    <Compile Include="Controllers\Availability_Movie_NewController.cs" />
     <Compile Include="Controllers\DM_Master_ImportController.cs" />
     <Compile Include="Controllers\DM_Title_Master_ImportController.cs" />
     <Compile Include="Controllers\PartyCategoryController.cs" />
@@ -327,6 +356,8 @@
     <Compile Include="Integration\SAP_File_Upload_Details.aspx.designer.cs">
       <DependentUpon>SAP_File_Upload_Details.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\DownloadingFileActionResult.cs" />
+    <Compile Include="Models\Criteria_Filters.cs" />
     <Compile Include="Models\Custom_Error.cs" />
     <Compile Include="Reports\Show_Availability_Report.aspx.cs">
       <DependentUpon>Show_Availability_Report.aspx</DependentUpon>
@@ -1227,6 +1258,19 @@
     <Content Include="Views\DM_Master_Import\_Music_View_List.cshtml" />
     <Content Include="Views\DM_Master_Import\_Title_Validate.cshtml" />
     <Content Include="Views\DM_Master_Import\_Title_View_List.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_Dubbing_LanguageCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_OtherCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_PeriodCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_PlatformCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_QueryList.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_RegionCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_RegionRightsData.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_SelectedCriteriaList.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_SelfUtilizationCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_Subtitle_LanguageCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_TitlesCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\Index.cshtml" />
+    <Content Include="Views\Shared\ReportViewerAvails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
