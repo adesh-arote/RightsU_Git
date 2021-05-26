@@ -10,9 +10,40 @@ BEGIN
 
 	DECLARE @EmailBody NVARCHAR(MAX)='',@EmailBody1 NVARCHAR(MAX)='',@EmailBody2 NVARCHAR(MAX)='',@MailSubject NVARCHAR(MAX), @DatabaseEmailProfile NVARCHAR(25),
 	@EmailHeader NVARCHAR(MAX)='', @EmailFooter NVARCHAR(MAX)='', @users NVARCHAR(MAX), @UsersEmailId NVARCHAR(MAX),@Users_Email_id NVARCHAR(MAX),
-	@Business_Unit_Code INT, @Title_Name NVARCHAR(MAX), @Platform NVARCHAR(MAX), @Agreement_No NVARCHAR(100), @PeriodFrom VARCHAR(100), @PeriodTo VARCHAR(100), 
+	@Title_Name NVARCHAR(MAX), @Platform NVARCHAR(MAX), @Agreement_No NVARCHAR(100), @PeriodFrom VARCHAR(100), @PeriodTo VARCHAR(100), 
 	@Region NVARCHAR(max), @Title_Language NVARCHAR(MAX), @Subtitling NVARCHAR(MAX), @Dubbing NVARCHAR(MAX), @Exists_In NVARCHAR(MAX), @ErrorMsg NVARCHAR(MAX), 
 	@CAgreement_No NVARCHAR(100), @Users_Code INT, @Email_Config_Code INT, @Vendor_Name NVARCHAR(MAX)
+
+	---------------
+	DECLARE @Business_Unit_Code INT,
+	@To_Users_Code NVARCHAR(MAX),
+	@To_User_Mail_Id  NVARCHAR(MAX),
+	@CC_Users_Code  NVARCHAR(MAX),
+	@CC_User_Mail_Id  NVARCHAR(MAX),
+	@BCC_Users_Code  NVARCHAR(MAX),
+	@BCC_User_Mail_Id  NVARCHAR(MAX),
+	@Channel_Codes NVARCHAR(MAX)
+	
+	DECLARE @Tbl2 TABLE (
+		Id INT,
+		BuCode INT,
+		To_Users_Code NVARCHAR(MAX),
+		To_User_Mail_Id  NVARCHAR(MAX),
+		CC_Users_Code  NVARCHAR(MAX),
+		CC_User_Mail_Id  NVARCHAR(MAX),
+		BCC_Users_Code  NVARCHAR(MAX),
+		BCC_User_Mail_Id  NVARCHAR(MAX),
+		Channel_Codes NVARCHAR(MAX)
+	)
+
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+
+	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+	EXEC USP_Get_EmailConfig_Users 'SRV', 'N'
+
+
+	--------------
+
 
 	DECLARE @DefaultSiteUrl VARCHAR(MAX)
 	Select @DefaultSiteUrl = DefaultSiteUrl from System_Param	
@@ -20,11 +51,13 @@ BEGIN
 	SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config where [Key]='SRV'
 	DECLARE CurMail2 CURSOR FOR
 	--Change
-	SELECT User_Mail_Id, BuCode,Users_Code from [dbo].[UFN_Get_Bu_Wise_User]('SRV')
+	--SELECT User_Mail_Id, BuCode,Users_Code from [dbo].[UFN_Get_Bu_Wise_User]('SRV')
+	SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
 	--Change
-	--select Users_Email_id,Business_Unit_Code from Deal_Expiry_Email where Alert_Type='E' --order by Business_Unit_Code desc
+
 	OPEN CurMail2
-	FETCH NEXT FROM CurMail2 Into @Users_Email_id,@Business_Unit_Code,@Users_Code
+	FETCH NEXT FROM CurMail2 INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+	--Into @Users_Email_id,@Business_Unit_Code,@Users_Code
 	WHILE(@@FETCH_STATUS = 0)
 	BEGIN
 		IF ((SELECT COUNT(*) FROM Syn_Deal_Rights_Error_Details	AS SDE
@@ -143,17 +176,21 @@ BEGIN
 		if(@EmailBody!='')
 		SET @EmailBody=@EmailBody +'</table>'
 		SET @EmailDetails = @EmailHeader + @EmailBody  + @EmailFooter
-		--select @EmailDetails,@Users_Email_id,@Business_Unit_Code
+		
 		IF(@EmailDetails!='')
 		BEGIN
-			EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
-			@recipients =  @Users_Email_id,--@UsersEmailId,
-			@subject = @MailSubject,
-			@body = @EmailDetails, 
-			@body_format = 'HTML';
-			--Change
-			INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-			SELECT @Email_Config_Code,GETDATE(),'N',@EmailBody,@Users_Code,'Syndication Rights Validation',@Users_Email_Id
+				EXEC msdb.dbo.sp_send_dbmail 
+				@profile_name = @DatabaseEmailProfile,
+				@recipients =  @To_User_Mail_Id,
+				@copy_recipients = @CC_User_Mail_Id,
+				@blind_copy_recipients = @BCC_User_Mail_Id,
+				@subject = @MailSubject,
+				@body = @EmailDetails,
+				@body_format = 'HTML';
+
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@EmailBody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Syndication Rights Validation'
+
 		END
 			--Change
 		SEt @EmailDetails='' 	
@@ -162,8 +199,12 @@ BEGIN
 		SET @EmailHeader=''
 		SET @EmailBody1=''
 		SET @EmailBody2=''
-		FETCH NEXT FROM CurMail2 Into @Users_Email_id,@Business_Unit_Code,@Users_Code	
+
+		FETCH NEXT FROM CurMail2 INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+
 	END	
 	CLOSE CurMail2;
 	DEALLOCATE CurMail2;
+
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 END

@@ -350,10 +350,11 @@ function SaveUser(dummyGuid) {
     var type=$("#Type:checked").val();
     if (type == "E") {
         var arruseremail, arrccuseremail, arrbccuseremail = [];             
-        arruseremail = $('#txtuseremail').val().trim(/\n/).split(',');       
-        arrccuseremail  = $('#txtccuseremail').val().trim(/\n/).split(',');
-        arrbccuseremail = $('#txtbccuseremail').val().trim(/\n/).split(',');
-        if ($('#txtuseremail').val() == undefined || $.trim($('#txtuseremail').val())=="") {
+        arruseremail = $('#txtuseremail').val().replace(/(\r\n|\n|\r)/gm, "").trim(/\n/).split(',');       
+        arrccuseremail = $('#txtccuseremail').val().replace(/(\r\n|\n|\r)/gm, "").trim(/\n/).split(',');
+        arrbccuseremail = $('#txtbccuseremail').val().replace(/(\r\n|\n|\r)/gm, "").trim(/\n/).split(',');
+
+        if ($('#txtuseremail').val() == undefined || $.trim($('#txtuseremail').val()) == "") {
             $('#txtuseremail').addClass('required');
             showAlert("E", "User Email ID cannot be empty");
             IsValid = false;

@@ -252,10 +252,11 @@ BEGIN
 			CCR.Acq_Deal_Code,
 			CCR.Channel_Code,
 			CCR.Defined_Runs,
+			CCR.Schedule_Runs,
 			CCR.Run_Type
 			,tmp_Run_Channel.Content_Channel_Run_Count
 			,AD.Deal_Desc,V.Vendor_Name
-	ORDER BY trr.End_Date
+	--ORDER BY trr.End_Date
 
 	------------------------------------------- DROP  TEMP TABLES -------------------------------------------		
 	DROP TABLE #Temp_Rights_Run
