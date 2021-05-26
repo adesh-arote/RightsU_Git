@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Dapper.Entity.Master_Entities;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 using System.Web.Mail;
 using System.Net;
@@ -13,19 +13,34 @@ using System.Security.Cryptography;
 using System.Text;
 using System.IO;
 using System.Configuration;
+using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity.Master_Entities;
+using RightsU_Dapper.Entity;
 
 namespace RightsU_Plus.Controllers
 {
     public class UserController : BaseController
     {
+        private readonly Security_Group_Service objSecurityGroupService = new Security_Group_Service();
+        private readonly Security_Group_Rel_Service objSecurityGroupRelService = new Security_Group_Rel_Service();
+        private readonly User_Service objUserService = new User_Service();
+        private readonly Users_Exclusive_Rights_Service objUsersExclusiveRightsService = new Users_Exclusive_Rights_Service();
+        private readonly Vendor_Service objVendorService = new Vendor_Service();
+        private readonly System_Parameter_NewService objSPNService = new System_Parameter_NewService();
+        private readonly Business_Unit_Service objBUService = new Business_Unit_Service();
+        private readonly Users_Password_Detail_Service objUsersPasswordDetailService = new Users_Password_Detail_Service();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+
+
+
         #region --- Properties ---
-        private List<RightsU_Entities.User> lstUser
+        private List<RightsU_Dapper.Entity.Master_Entities.User> lstUser
         {
             get
             {
                 if (Session["lstUser"] == null)
-                    Session["lstUser"] = new List<RightsU_Entities.User>();
-                return (List<RightsU_Entities.User>)Session["lstUser"];
+                    Session["lstUser"] = new List<RightsU_Dapper.Entity.Master_Entities.User>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.User>)Session["lstUser"];
             }
             set { Session["lstUser"] = value; }
         }
@@ -41,17 +56,24 @@ namespace RightsU_Plus.Controllers
             set { Session["lstSecurityGroup"] = value; }
         }
 
-        private List<RightsU_Entities.User> lstUser_Searched
+        private List<RightsU_Dapper.Entity.Master_Entities.User> lstUser_Searched
         {
             get
             {
                 if (Session["lstUser_Searched"] == null)
-                    Session["lstUser_Searched"] = new List<RightsU_Entities.User>();
-                return (List<RightsU_Entities.User>)Session["lstUser_Searched"];
+                    Session["lstUser_Searched"] = new List<RightsU_Dapper.Entity.Master_Entities.User>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.User>)Session["lstUser_Searched"];
             }
             set { Session["lstUser_Searched"] = value; }
         }
-
+        Type[] RelationList = new Type[] { typeof(Users_Channel),
+                        typeof(Users_Configuration),
+                        typeof(Users_Detail),
+                        typeof(Users_Entity),
+                        typeof(Users_Password_Detail),
+                        typeof(Users_Business_Unit)
+                       
+            };
         #endregion
 
         public ViewResult Index()
@@ -60,7 +82,8 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForUsers.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstUser_Searched = lstUser = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            //lstUser_Searched = lstUser = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstUser_Searched = lstUser = objUserService.GetAll().OrderByDescending(o => o.Last_Updated_Time).ToList();
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForUsers);
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
@@ -74,18 +97,23 @@ namespace RightsU_Plus.Controllers
             lstStatus.Add(new SelectListItem { Text = objMessageKey.Deactive, Value = "N" });
             ViewBag.Status = lstStatus;
 
-            var SecurityGroupCodes = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Security_Group_Code).ToArray();
-            var lstSecurityGroup = new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => (SecurityGroupCodes.Contains(x.Security_Group_Code))).ToList();
+            //var SecurityGroupCodes = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Security_Group_Code).ToArray();
+            var SecurityGroupCodes = objUserService.GetAll().Select(x => x.Security_Group_Code).ToArray();
+
+           // var lstSecurityGroup = new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => (SecurityGroupCodes.Contains(x.Security_Group_Code))).ToList();
+            var lstSecurityGroup = objSecurityGroupService.GetAll().Where(x => (SecurityGroupCodes.Contains(x.Security_Group_Code))).ToList();
             ViewBag.SecGroup = new SelectList(lstSecurityGroup, "Security_Group_Code", "Security_Group_Name");
 
-            var lstProductionRoleVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y"
+            //var lstProductionRoleVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y"
+            //    && s.Vendor_Role.Where(x => x.Role_Code == 9).Count() > 0).ToList();
+            var lstProductionRoleVendor = objVendorService.GetAll().Where(s => s.Is_Active == "Y"
                 && s.Vendor_Role.Where(x => x.Role_Code == 9).Count() > 0).ToList();
             // int? Vendor_Code = objLoginUser.MHUsers.Select(s => s.Vendor_Code).FirstOrDefault();
             ViewBag.Vendor = new SelectList(lstProductionRoleVendor, "Vendor_Code", "Vendor_Name");
             Session["VendorData"] = lstProductionRoleVendor;
 
 
-            string AllowUSer = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
+            string AllowUSer = objSPNService.GetList().Where(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
             ViewBag.AllowUSer = AllowUSer;
             FetchData();
             return View("~/Views/User/Index.cshtml");
@@ -94,21 +122,21 @@ namespace RightsU_Plus.Controllers
         public ActionResult ViewProfile(FormCollection objFormCollection)
         {
             int UserCode = Convert.ToInt32(objFormCollection["userCode"]);
-            RightsU_Entities.User objUser = FillUser(UserCode);
+            RightsU_Dapper.Entity.Master_Entities.User objUser = FillUser(UserCode);
             ViewBag.FullName = objUser.Full_Name;
             return View("~/Views/User/ViewProfile.cshtml", objUser);
         }
         public ActionResult ViewUserProfiles()
         {
             int UserCode = objLoginUser.Users_Code;
-            RightsU_Entities.User objUser = FillUser(UserCode);
+            RightsU_Dapper.Entity.Master_Entities.User objUser = FillUser(UserCode);
             ViewBag.FullName = objUser.Full_Name;
             return View("~/Views/User/ViewProfile.cshtml", objUser);
         }
 
         public User FillUser(int userCode)
         {
-            RightsU_Entities.User objUser = new User_Service(objLoginEntity.ConnectionStringName).GetById(userCode);
+            RightsU_Dapper.Entity.Master_Entities.User objUser = objUserService.GetByID(userCode, RelationList);
             string fullName = objUser.First_Name;
             if (!string.IsNullOrEmpty(objUser.Middle_Name))
                 fullName += " " + objUser.Middle_Name;
@@ -121,8 +149,8 @@ namespace RightsU_Plus.Controllers
         public ActionResult UpdateProfilePicture(int hdnUserCode)
         {
             HttpPostedFileBase file = Request.Files["uploadFile"];
-            User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.User objUse = objService.GetById(hdnUserCode);
+            //User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.User objUse = objUserService.GetByID(hdnUserCode, RelationList);
             string filename = DateTime.Now.Ticks.ToString() + "_";
             filename += file.FileName;
             if (filename != "" && file.FileName != "")
@@ -130,20 +158,20 @@ namespace RightsU_Plus.Controllers
                 file.SaveAs(Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["TitleImagePath"] + filename));
                 objUse.User_Image = filename;
             }
-            objUse.EntityState = State.Modified;
-            objService.Save(objUse);
-
-            RightsU_Entities.User objUser = FillUser(hdnUserCode);
+            //objUse.EntityState = State.Modified;
+            //objService.Save(objUse);
+            objUserService.AddEntity(objUse);
+            RightsU_Dapper.Entity.Master_Entities.User objUser = FillUser(hdnUserCode);
             ViewBag.FullName = objUser.Full_Name;
             return View("~/Views/User/ViewProfile.cshtml", objUser);
         }
 
         public PartialViewResult BindUserList(int pageNo, int recordPerPage, string sortType, string searchIsLDAPUser = "", int vendorCode = 0)
         {
-            List<RightsU_Entities.User> lst = new List<RightsU_Entities.User>();
+            List<RightsU_Dapper.Entity.Master_Entities.User> lst = new List<RightsU_Dapper.Entity.Master_Entities.User>();
             int RecordCount = 0;
 
-            string AllowUSer = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
+            string AllowUSer = objSPNService.GetList().Where(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
             ViewBag.AllowUSer = AllowUSer;
 
             if (ViewBag.AllowUser == "Y")
@@ -180,21 +208,23 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult BindUserConfiguration(int UserCode, string TabName)
         {
             ViewBag.isProdHouse = GetUserModuleRights().Contains(GlobalParams.RightCodeForProductionHouseUser.ToString());
-            var paramValue = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Is_Allow_Multilanguage").Select(x => x.Parameter_Value).SingleOrDefault();
+            var paramValue = objSPNService.GetList().Where(s => s.Parameter_Name == "Is_Allow_Multilanguage").Select(x => x.Parameter_Value).SingleOrDefault();
             ViewBag.parmValue = paramValue;
-            User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.User objUser = null;
+            //User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.User objUser = null;
 
             if (UserCode > 0)
             {
-                objUser = objUser_Service.GetById(UserCode);
+                objUser = objUserService.GetByID(UserCode, RelationList);
             }
             else
-                objUser = new RightsU_Entities.User();
+                objUser = new RightsU_Dapper.Entity.Master_Entities.User();
 
-            ViewBag.SecurityGroup = new SelectList(new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Security_Group_Code", "Security_Group_Name", objUser.Security_Group_Code);
-            List<System_Language> lstSystemLanguage = new System_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList();
-            int systemLanguageCode = (lstSystemLanguage.Where(w => w.Is_Default == "Y").First() ?? new System_Language()).System_Language_Code;
+            //ViewBag.SecurityGroup = new SelectList(new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Security_Group_Code", "Security_Group_Name", objUser.Security_Group_Code);
+            ViewBag.SecurityGroup = new SelectList(objSecurityGroupService.GetAll(), "Security_Group_Code", "Security_Group_Name", objUser.Security_Group_Code);
+
+            List<RightsU_Entities.System_Language> lstSystemLanguage = new RightsU_BLL.System_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList();
+            int systemLanguageCode = (lstSystemLanguage.Where(w => w.Is_Default == "Y").First() ?? new RightsU_Entities.System_Language()).System_Language_Code;
             if (UserCode > 0)
             {
                 systemLanguageCode = (objUser.System_Language_Code ?? systemLanguageCode);
@@ -205,38 +235,41 @@ namespace RightsU_Plus.Controllers
             }
             ViewBag.Language = new SelectList(lstSystemLanguage, "System_Language_Code", "Language_Name", systemLanguageCode);
 
-            List<Business_Unit> lstBusinessUnit = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).OrderBy(o => o.Business_Unit_Name).ToList();
+            //List<Business_Unit> lstBusinessUnit = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).OrderBy(o => o.Business_Unit_Name).ToList();
+            List<Business_Unit> lstBusinessUnit = objBUService.GetAll().OrderBy(o => o.Business_Unit_Name).ToList();
             var businessUnitCodes = objUser.Users_Business_Unit.Select(s => s.Business_Unit_Code).ToArray();
             ViewBag.BusinessUnitList = new MultiSelectList(lstBusinessUnit, "Business_Unit_Code", "Business_Unit_Name", businessUnitCodes);
 
-            List<RightsU_Entities.Vendor> lstProductionRoleVendor = (List<RightsU_Entities.Vendor>)Session["VendorData"];
+            List<RightsU_Dapper.Entity.Master_Entities.Vendor> lstProductionRoleVendor = (List<RightsU_Dapper.Entity.Master_Entities.Vendor>)Session["VendorData"];
             int? Vendor_Code = objUser.MHUsers.Select(s => s.Vendor_Code).FirstOrDefault();
             ViewBag.Vendor = new SelectList(lstProductionRoleVendor, "Vendor_Code", "Vendor_Name", Vendor_Code);
             ViewBag.Vendor_Code = Vendor_Code;
 
-            string AllowUSer = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
+            string AllowUSer = objSPNService.GetList().Where(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
             ViewBag.AllowUSer = AllowUSer;
             ViewBag.TabName = TabName;
 
-            List<System_Parameter_New> lstsys = new List<System_Parameter_New>();
-            lstsys = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Type == "U").OrderBy(o => o.Parameter_Name).ToList();
-            List<Email_Config> lstEmailConfig = new List<Email_Config>();
-            lstEmailConfig = new Email_Config_Detail_User_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.User_Codes.Contains(objUser.Users_Code.ToString()) || w.CC_Users.Contains(objUser.Users_Code.ToString())
+            List<RightsU_Dapper.Entity.System_Parameter_New> lstsys = new List<RightsU_Dapper.Entity.System_Parameter_New>();
+            lstsys = objSPNService.GetList().Where(w => w.Type == "U").OrderBy(o => o.Parameter_Name).ToList();
+            List<RightsU_Entities.Email_Config> lstEmailConfig = new List<RightsU_Entities.Email_Config>();
+            lstEmailConfig = new RightsU_BLL.Email_Config_Detail_User_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.User_Codes.Contains(objUser.Users_Code.ToString()) || w.CC_Users.Contains(objUser.Users_Code.ToString())
                 || w.BCC_Users.Contains(objUser.Users_Code.ToString()) || w.ToUser_MailID.Contains(objUser.Email_Id) || w.CCUser_MailID.Contains(objUser.Email_Id) || w.BCCUser_MailID.Contains(objUser.Email_Id))
                 .Select(s => s.Email_Config_Detail.Email_Config).Distinct().ToList();
             ViewBag.SystemParamList = lstsys;
             ViewBag.EmailConfigList = lstEmailConfig;
+            objUser.Users_Code = UserCode;
             return PartialView("~/Views/User/_UserGeneralInfo.cshtml", objUser);
         }
         public PartialViewResult BindUSerSecurityGroup(int? SecurityGroupCode, int UsersCode)
         {
-            string[] strUserModule_Right_Code = new Users_Exclusion_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == UsersCode).ToList().Select(s => s.Module_Right_Code.ToString()).ToArray();
+            //string[] strUserModule_Right_Code = new Users_Exclusion_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == UsersCode).ToList().Select(s => s.Module_Right_Code.ToString()).ToArray();
+            string[] strUserModule_Right_Code = objUsersExclusiveRightsService.GetAll().Where(w => w.Users_Code == UsersCode).ToList().Select(s => s.Module_Right_Code.ToString()).ToArray();
 
-            string[] strModule_right_Code = new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == SecurityGroupCode).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)).ToArray();
-            string Module_right_Code = string.Join(",", new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == SecurityGroupCode).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
+            string[] strModule_right_Code = objSecurityGroupRelService.GetAll().Where(x => x.Security_Group_Code == SecurityGroupCode).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)).ToArray();
+            string Module_right_Code = string.Join(",", objSecurityGroupRelService.GetAll().Where(x => x.Security_Group_Code == SecurityGroupCode).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
             var strExceptRightsCode = strModule_right_Code.Except(strUserModule_Right_Code);
             string strUserExceptionRights = string.Join(",", strExceptRightsCode);
-            User_Security_Tree_View objST = new User_Security_Tree_View(objLoginEntity.ConnectionStringName);
+           RightsU_BLL.User_Security_Tree_View objST = new RightsU_BLL.User_Security_Tree_View(objLoginEntity.ConnectionStringName);
             if (strUserExceptionRights != "")
                 objST.SecurityCodes_Selected = strUserExceptionRights.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             //objST.SecurityCodes_Selected = strExceptRightsCode;
@@ -274,14 +307,14 @@ namespace RightsU_Plus.Controllers
         }
         private void FetchData()
         {
-            lstUser_Searched = lstUser = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstUser_Searched = lstUser = objUserService.GetAll().OrderByDescending(o => o.Last_Updated_Time).ToList();
 
         }
         #endregion
 
         public JsonResult SearchUser(string searchText, string searchIsLDAPUser = "", int vendorCode = 0, string status = "", int secGroupCode = 0)
         {
-            string AllowUSer = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
+            string AllowUSer = objSPNService.GetList().Where(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
             ViewBag.AllowUSer = AllowUSer;
 
             if (ViewBag.AllowUSer == "Y")
@@ -341,13 +374,14 @@ namespace RightsU_Plus.Controllers
 
             if (isLocked)
             {
-                User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.User objUser = objService.GetById(userCode);
+                //User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Master_Entities.User objUser = objUserService.GetByID(userCode, RelationList);
                 objUser.Is_Active = doActive;
                 objUser.Validate_Email = false;
-                objUser.EntityState = State.Modified;
+                //objUser.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objUser, out resultSet);
+                objUserService.AddEntity(objUser);
+                bool isValid = true;// objService.Save(objUser, out resultSet);
                 if (isValid)
                 {
                     lstUser.Where(w => w.Users_Code == userCode).First().Is_Active = doActive;
@@ -362,7 +396,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    message = resultSet;
+                    message = "";
                 }
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -389,7 +423,7 @@ namespace RightsU_Plus.Controllers
         //    if (isLocked)
         //    {
         //        User_Service objService = new User_Service();
-        //        RightsU_Entities.User objUser = objService.GetById(userCode);
+        //        RightsU_Dapper.Entity.Master_Entities.User objUser = objService.GetById(userCode);
         //        objUser.Is_Active = doActive.ToString();
         //        objUser.Validate_Email = false;
         //        objUser.EntityState = State.Modified;
@@ -428,16 +462,17 @@ namespace RightsU_Plus.Controllers
         public JsonResult UnlockUser(int userCode)
         {
             string status = "S", message = "";
-            User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.User objUser = objService.GetById(userCode);
+            //User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.User objUser = objUserService.GetByID(userCode, RelationList);
             objUser.Password_Fail_Count = 0;
             objUser.Last_Updated_Time = DateTime.Now;
             objUser.Last_Action_By = objLoginUser.Users_Code;
             objUser.Validate_Email = false;
-            objUser.EntityState = State.Modified;
+            //objUser.EntityState = State.Modified;
 
             dynamic resultSet;
-            bool isvalid = objService.Save(objUser, out resultSet);
+            objUserService.AddEntity(objUser);
+            bool isvalid = true;// objService.Save(objUser, out resultSet);
             if (isvalid)
             {
                 FetchData();
@@ -445,7 +480,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                message = resultSet;
+                message = "";
             }
 
             var obj = new
@@ -481,17 +516,17 @@ namespace RightsU_Plus.Controllers
             //ViewBag.isProdHouse = GetUserModuleRights().Contains(GlobalParams.RightCodeForProductionHouseUser.ToString());
             //var paramValue = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Is_Allow_Multilanguage").Select(x => x.Parameter_Value).SingleOrDefault();
             //ViewBag.parmValue = paramValue;
-            User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.User objUser = null;
+           // User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.User objUser = null;
 
             if (UserCode > 0)
             {
-                objUser = objUser_Service.GetById(UserCode);
+                objUser = objUserService.GetByID(UserCode, RelationList);
             }
             else
-                objUser = new RightsU_Entities.User();
-
-            ViewBag.SecurityGroup = new SelectList(new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Security_Group_Code", "Security_Group_Name");
+                objUser = new RightsU_Dapper.Entity.Master_Entities.User();
+            objUser.Users_Code = UserCode;
+            ViewBag.SecurityGroup = new SelectList(objSecurityGroupService.GetAll(), "Security_Group_Code", "Security_Group_Name");
 
             /*************************************Code Added For Configuration of language in the dropdown*************************************************/
 
@@ -525,7 +560,7 @@ namespace RightsU_Plus.Controllers
             //var businessUnitCodes = objUser.Users_Business_Unit.Select(s => s.Business_Unit_Code).ToArray();
             //ViewBag.BusinessUnitList = new MultiSelectList(lstBusinessUnit, "Business_Unit_Code", "Business_Unit_Name", businessUnitCodes);
 
-            //List<RightsU_Entities.Vendor> lstProductionRoleVendor = (List<RightsU_Entities.Vendor>)Session["VendorData"];
+            //List<RightsU_Dapper.Entity.Master_Entities.Vendor> lstProductionRoleVendor = (List<RightsU_Dapper.Entity.Master_Entities.Vendor>)Session["VendorData"];
             //int? Vendor_Code = objUser.MHUsers.Select(s => s.Vendor_Code).FirstOrDefault();
             //ViewBag.Vendor = new SelectList(lstProductionRoleVendor, "Vendor_Code", "Vendor_Name", Vendor_Code);
             //ViewBag.Vendor_Code = Vendor_Code;
@@ -538,16 +573,17 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ResetPassword(int UserCode)
         {
-            User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.User objUser = objService.GetById(UserCode);
+           // User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.User objUser = objUserService.GetByID(UserCode, RelationList);
             string pwd = "", Message = "";
             pwd = generatePwd(objUser.First_Name, objUser.Last_Name);
             objUser.Password = getDatabaseEncryptedpassword(pwd);
-            objUser.EntityState = State.Modified;
+            //objUser.EntityState = State.Modified;
             objUser.Is_System_Password = "Y";
             objUser.Password_Fail_Count = 0;
             dynamic resultSet;
-            bool isValid = objService.Save(objUser, out resultSet);
+            objUserService.AddEntity(objUser);
+            bool isValid = true;// objService.Save(objUser, out resultSet);
 
             if (isValid)
             {
@@ -555,7 +591,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                Message = resultSet;
+                Message = "";
             }
             var obj = new
             {
@@ -566,16 +602,16 @@ namespace RightsU_Plus.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveUser(RightsU_Entities.User objUser_MVC, FormCollection objFormCollection)
+        public ActionResult SaveUser(RightsU_Dapper.Entity.Master_Entities.User objUser_MVC, FormCollection objFormCollection)
         {
 
             User objU = new User();
-            User_Service ObjUserService = new User_Service(objLoginEntity.ConnectionStringName);
+            //User_Service ObjUserService = new User_Service(objLoginEntity.ConnectionStringName);
             if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) > 0)
             {
-                objU = ObjUserService.GetById(Convert.ToInt32(objFormCollection["hdnUsers_Code"]));
+                objU = objUserService.GetByID(Convert.ToInt32(objFormCollection["hdnUsers_Code"]), RelationList);
                 objU.Last_Action_By = objLoginUser.Users_Code;
-                objU.EntityState = State.Modified;
+                //objU.EntityState = State.Modified;
             }
             else
             {
@@ -583,7 +619,7 @@ namespace RightsU_Plus.Controllers
                 //password = generatePwd(objUser_MVC.Login_Name);
                 password = generatePwd(objUser_MVC.First_Name, objUser_MVC.Last_Name);
                 objU.Password = getDatabaseEncryptedpassword(password);
-                objU.EntityState = State.Added;
+               // objU.EntityState = State.Added;
                 objU.Is_Active = "Y";
                 objU.Is_System_Password = "Y";
                 objU.Password_Fail_Count = 0;
@@ -594,14 +630,14 @@ namespace RightsU_Plus.Controllers
             objU.Last_Name = objUser_MVC.Last_Name;
             objU.Middle_Name = objUser_MVC.Middle_Name;
             if (objUser_MVC.System_Language_Code == null)
-                objU.System_Language_Code = new System_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y" && s.Is_Default == "Y").Select(x => x.System_Language_Code).SingleOrDefault();
+                objU.System_Language_Code = new RightsU_BLL.System_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y" && s.Is_Default == "Y").Select(x => x.System_Language_Code).SingleOrDefault();
             else
                 objU.System_Language_Code = objUser_MVC.System_Language_Code;
             objU.Validate_Email = true;
             objU.Email_Id = objUser_MVC.Email_Id;
             objU.Last_Updated_Time = DateTime.Now;
             objU.Default_Entity_Code = objLoginUser.Default_Entity_Code;
-            string AllowUSer = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
+            string AllowUSer = objSPNService.GetList().Where(s => s.Parameter_Name == "allow_domain_nondomain").Select(s => s.Parameter_Value).FirstOrDefault();
             ViewBag.AllowUSer = AllowUSer;
 
             if (ViewBag.AllowUSer == "Y")
@@ -634,41 +670,41 @@ namespace RightsU_Plus.Controllers
                 foreach (string BuisnessUnitCode in arrBuisnessCode)
                 {
                     Users_Business_Unit objTR = new Users_Business_Unit();
-                    objTR.EntityState = State.Added;
+                    //objTR.EntityState = State.Added;
                     objTR.Business_Unit_Code = Convert.ToInt32(BuisnessUnitCode);
                     BuisnessUnitList.Add(objTR);
                 }
             }
 
-            IEqualityComparer<Users_Business_Unit> comparerBuisness_Unit = new LambdaComparer<Users_Business_Unit>((x, y) => x.Business_Unit_Code == y.Business_Unit_Code && x.EntityState != State.Deleted);
+            IEqualityComparer<Users_Business_Unit> comparerBuisness_Unit = new RightsU_BLL.LambdaComparer<Users_Business_Unit>((x, y) => x.Business_Unit_Code == y.Business_Unit_Code);
             var Deleted_Users_Business_Unit = new List<Users_Business_Unit>();
             var Updated_Users_Business_Unit = new List<Users_Business_Unit>();
             var Added_Users_Business_Unit = CompareLists<Users_Business_Unit>(BuisnessUnitList.ToList<Users_Business_Unit>(), objU.Users_Business_Unit.ToList<Users_Business_Unit>(), comparerBuisness_Unit, ref Deleted_Users_Business_Unit, ref Updated_Users_Business_Unit);
             Added_Users_Business_Unit.ToList<Users_Business_Unit>().ForEach(t => objU.Users_Business_Unit.Add(t));
-            Deleted_Users_Business_Unit.ToList<Users_Business_Unit>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Users_Business_Unit.ToList<Users_Business_Unit>().ForEach(t => objU.Users_Business_Unit.Remove(t));
 
-            ICollection<MHUser> MHUser = new HashSet<MHUser>();
+            ICollection<RightsU_Entities.MHUser> MHUser = new HashSet<RightsU_Entities.MHUser>();
             if (objFormCollection["ddlVendors"] != null)
             {
                 string Vendor_Code = objFormCollection["ddlVendors"];
-                MHUser objMHUSer = new MHUser();
+                RightsU_Entities.MHUser objMHUSer = new RightsU_Entities.MHUser();
                 objMHUSer.Vendor_Code = Convert.ToInt32(Vendor_Code);
-                objMHUSer.EntityState = State.Added;
+                //objMHUSer.EntityState = State.Added;
                 MHUser.Add(objMHUSer);
             }
 
-            IEqualityComparer<MHUser> compareMHUSer = new LambdaComparer<MHUser>((x, y) => x.Vendor_Code == y.Vendor_Code && x.EntityState != State.Deleted);
-            var Deleted_MHUser = new List<MHUser>();
-            var Updated_MHUser = new List<MHUser>();
-            var Added_MHUSer = CompareLists<MHUser>(MHUser.ToList<MHUser>(), objU.MHUsers.ToList<MHUser>(), compareMHUSer, ref Deleted_MHUser, ref Updated_MHUser);
-            Added_MHUSer.ToList<MHUser>().ForEach(t => objU.MHUsers.Add(t));
-            Deleted_MHUser.ToList<MHUser>().ForEach(t => t.EntityState = State.Deleted);
+            IEqualityComparer<RightsU_Entities.MHUser> compareMHUSer = new RightsU_BLL.LambdaComparer<RightsU_Entities.MHUser>((x, y) => x.Vendor_Code == y.Vendor_Code );
+            var Deleted_MHUser = new List<RightsU_Entities.MHUser>();
+            var Updated_MHUser = new List<RightsU_Entities.MHUser>();
+            var Added_MHUSer = CompareLists<RightsU_Entities.MHUser>(MHUser.ToList<RightsU_Entities.MHUser>(), objU.MHUsers.ToList<RightsU_Entities.MHUser>(), compareMHUSer, ref Deleted_MHUser, ref Updated_MHUser);
+            Added_MHUSer.ToList<RightsU_Entities.MHUser>().ForEach(t => objU.MHUsers.Add(t));
+            Deleted_MHUser.ToList<RightsU_Entities.MHUser>().ForEach(t => objU.MHUsers.Remove(t));
 
             ICollection<Users_Exclusion_Rights> ExclusionRightsList = new HashSet<Users_Exclusion_Rights>();
             if (objFormCollection["hdnTvCodes"] != null)
             {
                 string[] arrUsersSystemRights = objFormCollection["hdnTvCodes"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                string strModule_right_Code = string.Join(",", new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == objU.Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
+                string strModule_right_Code = string.Join(",",objSecurityGroupRelService.GetAll().Where(x => x.Security_Group_Code == objU.Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
                 string[] arrSystemRights = strModule_right_Code.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                 var ExceptsystemRights = arrSystemRights.Except(arrUsersSystemRights);
                 foreach (string SystemRightsCode in ExceptsystemRights)
@@ -676,18 +712,18 @@ namespace RightsU_Plus.Controllers
                     if (SystemRightsCode != "0")
                     {
                         Users_Exclusion_Rights objTR = new Users_Exclusion_Rights();
-                        objTR.EntityState = State.Added;
+                        //objTR.EntityState = State.Added;
                         objTR.Module_Right_Code = Convert.ToInt32(SystemRightsCode);
                         ExclusionRightsList.Add(objTR);
                     }
                 }
             }
-            IEqualityComparer<Users_Exclusion_Rights> comparerExclusion_Rights = new LambdaComparer<Users_Exclusion_Rights>((x, y) => x.Module_Right_Code == y.Module_Right_Code && x.EntityState != State.Deleted);
+            IEqualityComparer<Users_Exclusion_Rights> comparerExclusion_Rights = new RightsU_BLL.LambdaComparer<Users_Exclusion_Rights>((x, y) => x.Module_Right_Code == y.Module_Right_Code);
             var Deleted_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
             var Updated_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
             var Added_Users_Exclusion_Rights = CompareLists<Users_Exclusion_Rights>(ExclusionRightsList.ToList<Users_Exclusion_Rights>(), objU.Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>(), comparerExclusion_Rights, ref Deleted_Users_Exclusion_Rights, ref Updated_Users_Exclusion_Rights);
             Added_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => objU.Users_Exclusion_Rights.Add(t));
-            Deleted_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => objU.Users_Exclusion_Rights.Remove(t));
 
             ICollection<Users_Configuration> UsersConfigurationList = new HashSet<Users_Configuration>();
             int Count = 0;
@@ -699,27 +735,29 @@ namespace RightsU_Plus.Controllers
                     Users_Configuration objUC = new Users_Configuration();
                     objUC.Dashboard_Key = objFormCollection["hdnDashboardConfigKey_" + Count];
                     objUC.Dashboard_Value = Convert.ToInt32(objFormCollection["txtDashboardValue_" + Count]);
-                    objUC.EntityState = State.Added;
+                    //objUC.EntityState = State.Added;
                     UsersConfigurationList.Add(objUC);
                 }
             }
-            IEqualityComparer<Users_Configuration> comparerUsersConfiguration = new LambdaComparer<Users_Configuration>((x, y) => x.Dashboard_Key == y.Dashboard_Key && x.Dashboard_Value == y.Dashboard_Value && x.EntityState != State.Deleted);
+            IEqualityComparer<Users_Configuration> comparerUsersConfiguration = new RightsU_BLL.LambdaComparer<Users_Configuration>((x, y) => x.Dashboard_Key == y.Dashboard_Key && x.Dashboard_Value == y.Dashboard_Value);
             var Deleted_Users_Configuration = new List<Users_Configuration>();
             var Updated_Users_Configuration = new List<Users_Configuration>();
             var Added_Users_Configuration = CompareLists<Users_Configuration>(UsersConfigurationList.ToList<Users_Configuration>(), objU.Users_Configuration.ToList<Users_Configuration>(), comparerUsersConfiguration, ref Deleted_Users_Configuration, ref Updated_Users_Configuration);
             Added_Users_Configuration.ToList<Users_Configuration>().ForEach(t => objU.Users_Configuration.Add(t));
-            Deleted_Users_Configuration.ToList<Users_Configuration>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Users_Configuration.ToList<Users_Configuration>().ForEach(t => objU.Users_Configuration.Remove(t));
 
-            bool valid = ObjUserService.Save(objU, out resultSet);
+            objUserService.AddEntity(objU);
+            bool valid = true;//ObjUserService.Save(objU, out resultSet);
             if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) == 0 && valid)
             {
                 #region -- Save password entry in user password details----------------------------
                 Users_Password_Detail UPD = new Users_Password_Detail();
-                UPD.EntityState = State.Added;
+                //UPD.EntityState = State.Added;
                 UPD.Users_Code = objU.Users_Code;
                 UPD.Users_Passwords = objU.Password;
                 UPD.Password_Change_Date = DateTime.Now;
-                new Users_Password_Detail_Service(objLoginEntity.ConnectionStringName).Save(UPD, out resultSet);
+                objUsersPasswordDetailService.AddEntity(UPD);
+                //new Users_Password_Detail_Service(objLoginEntity.ConnectionStringName).Save(UPD, out resultSet);
 
                 #endregion
 
@@ -757,9 +795,9 @@ namespace RightsU_Plus.Controllers
             {
                 status = "E";
                 if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) > 0)
-                    message = message.Replace("Record {ACTION} successfully", resultSet);
+                    message = message.Replace("Record {ACTION} successfully", "");
                 else
-                    message = message.Replace("Record {ACTION} successfully", resultSet);
+                    message = message.Replace("Record {ACTION} successfully", "");
             };
 
             var obj = new
@@ -873,19 +911,19 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForUsers), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForUsers), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
-        public void Mail(RightsU_Entities.User objUser)
+        public void Mail(RightsU_Dapper.Entity.Master_Entities.User objUser)
         {
             try
             {
                 objUser.Password = generatePwd(objUser.First_Name, objUser.Last_Name);
-                int IsMailSend = new USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, objUser.Password, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().ToUpper(), ConfigurationManager.AppSettings["SiteAddress"].ToString(), ConfigurationManager.AppSettings["SystemName"].ToString(), "NP", objUser.Email_Id.Trim());
+                int IsMailSend = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, objUser.Password, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().ToUpper(), ConfigurationManager.AppSettings["SiteAddress"].ToString(), ConfigurationManager.AppSettings["SystemName"].ToString(), "NP", objUser.Email_Id.Trim());
                 //SendMail objModelMail = new SendMail();
                 //objModelMail.ToEmailId = objUser.Email_Id;
                 //objModelMail.FromEmailId = objLoginUser.Email_Id;

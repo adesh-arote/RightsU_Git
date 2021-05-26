@@ -1,35 +1,40 @@
-﻿using System;
+﻿using RightsU_Dapper.BLL.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_BLL;
-using RightsU_Entities;
+//using RightsU_BLL;
+//using RightsU_Dapper.Entity.Master_Entities;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class Payment_TermController : BaseController
     {
+        
+        private readonly Payment_Term_Service objPaymentTermsService = new Payment_Term_Service();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+
         #region --Properties--
-        private List<RightsU_Entities.Payment_Terms> lstPayment_Term
+        private List<RightsU_Dapper.Entity.Master_Entities.Payment_Term> lstPayment_Term
         {
             get
             {
                 if (Session["lstPayment_Term"] == null)
-                    Session["lstPayment_Term"] = new List<RightsU_Entities.Payment_Terms>();
-                return (List<RightsU_Entities.Payment_Terms>)Session["lstPayment_Term"];
+                    Session["lstPayment_Term"] = new List<RightsU_Dapper.Entity.Master_Entities.Payment_Term>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Payment_Term>)Session["lstPayment_Term"];
             }
             set { Session["lstPayment_Term"] = value; }
         }
 
-        private List<RightsU_Entities.Payment_Terms> lstPayment_Term_Searched
+        private List<RightsU_Dapper.Entity.Master_Entities.Payment_Term> lstPayment_Term_Searched
         {
             get
             {
                 if (Session["lstPayment_Term_Searched"] == null)
-                    Session["lstPayment_Term_Searched"] = new List<RightsU_Entities.Payment_Terms>();
-                return (List<RightsU_Entities.Payment_Terms>)Session["lstPayment_Term_Searched"];
+                    Session["lstPayment_Term_Searched"] = new List<RightsU_Dapper.Entity.Master_Entities.Payment_Term>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Payment_Term>)Session["lstPayment_Term_Searched"];
             }
             set { Session["lstPayment_Term_Searched"] = value; }
         }
@@ -41,7 +46,7 @@ namespace RightsU_Plus.Controllers
             string modulecode = GlobalParams.ModuleCodeForPaymentTerms.ToString();
             ViewBag.Code = modulecode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstPayment_Term_Searched = lstPayment_Term = new Payment_Terms_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstPayment_Term_Searched = lstPayment_Term = objPaymentTermsService.GetAll().ToList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -54,7 +59,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.PaymentTermcode = paymentTermcode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Payment_Terms> lst = new List<RightsU_Entities.Payment_Terms>();
+            List<RightsU_Dapper.Entity.Master_Entities.Payment_Term> lst = new List<RightsU_Dapper.Entity.Master_Entities.Payment_Term>();
             int RecordCount = 0;
             RecordCount = lstPayment_Term_Searched.Count;
 
@@ -65,9 +70,9 @@ namespace RightsU_Plus.Controllers
                 if (sortType == "T")
                     lst = lstPayment_Term_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else if (sortType == "NA")
-                    lst = lstPayment_Term_Searched.OrderBy(o => o.Payment_Terms1).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstPayment_Term_Searched.OrderBy(o => o.Payment_Terms).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else
-                    lst = lstPayment_Term_Searched.OrderByDescending(o => o.Payment_Terms1).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstPayment_Term_Searched.OrderByDescending(o => o.Payment_Terms).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Payment_Term/_Payment_TermList.cshtml", lst);
@@ -119,7 +124,7 @@ namespace RightsU_Plus.Controllers
         {
             if (!string.IsNullOrEmpty(searchText))
             {
-                lstPayment_Term_Searched = lstPayment_Term.Where(w => w.Payment_Terms1.ToUpper().Contains(searchText.ToUpper().Trim())).ToList();
+                lstPayment_Term_Searched = lstPayment_Term.Where(w => w.Payment_Terms.ToUpper().Contains(searchText.ToUpper().Trim())).ToList();
             }
             else
                 lstPayment_Term_Searched = lstPayment_Term;
@@ -132,10 +137,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPaymentTerms), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPaymentTerms), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -147,12 +152,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(paymentTermCode, GlobalParams.ModuleCodeForPaymentTerms, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Payment_Terms_Service objService = new Payment_Terms_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Payment_Terms objPaymentTerm = objService.GetById(paymentTermCode);
+                //Payment_Term_Service objService = new Payment_Term_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Master_Entities.Payment_Term objPaymentTerm = objPaymentTermsService.GetByID(paymentTermCode);
                 objPaymentTerm.Is_Active = doActive;
-                objPaymentTerm.EntityState = State.Modified;
+                //objPaymentTerm.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objPaymentTerm, out resultSet);
+                objPaymentTermsService.AddEntity(objPaymentTerm);
+                bool isValid = true;// objService.Save(objPaymentTerm, out resultSet);
                 if (isValid)
                 {
                     lstPayment_Term.Where(w => w.Payment_Terms_Code == paymentTermCode).First().Is_Active = doActive;
@@ -165,7 +171,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -187,35 +193,36 @@ namespace RightsU_Plus.Controllers
             if (paymentTermcode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Payment_Terms_Service objService = new Payment_Terms_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Payment_Terms objPaymentTerm = null;
+           // Payment_Term_Service objService = new Payment_Term_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.Payment_Term objPaymentTerm = null;
 
             if (paymentTermcode > 0)
             {
-                objPaymentTerm = objService.GetById(paymentTermcode);
-                objPaymentTerm.EntityState = State.Modified;
+                objPaymentTerm = objPaymentTermsService.GetByID(paymentTermcode);
+                //objPaymentTerm.EntityState = State.Modified;
             }
             else
             {
-                objPaymentTerm = new RightsU_Entities.Payment_Terms();
-                objPaymentTerm.EntityState = State.Added;
+                objPaymentTerm = new RightsU_Dapper.Entity.Master_Entities.Payment_Term();
+                //objPaymentTerm.EntityState = State.Added;
                 objPaymentTerm.Inserted_On = DateTime.Now;
                 objPaymentTerm.Inserted_By = objLoginUser.Users_Code;
             }
             objPaymentTerm.Last_Updated_Time = DateTime.Now;
             objPaymentTerm.Last_Action_By = objLoginUser.Users_Code;
             objPaymentTerm.Is_Active = "Y";
-            objPaymentTerm.Payment_Terms1 = paymentTermName.Trim();
+            objPaymentTerm.Payment_Terms = paymentTermName.Trim();
             dynamic resultSet;
-            bool isValid = objService.Save(objPaymentTerm, out resultSet);
+            objPaymentTermsService.AddEntity(objPaymentTerm);
+            bool isValid = true;// objService.Save(objPaymentTerm, out resultSet);
             if (isValid)
             {
-                lstPayment_Term_Searched = lstPayment_Term = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstPayment_Term_Searched = lstPayment_Term = objPaymentTermsService.GetAll().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

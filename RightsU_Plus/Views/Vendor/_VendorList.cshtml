@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.Vendor>
+﻿@model List<RightsU_Dapper.Entity.Master_Entities.Vendor>
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
@@ -11,6 +11,8 @@
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
     }
     List<int?> lstVendorCodes = new RightsU_BLL.MHUser_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Select(s => s.Vendor_Code).ToList();
+    RightsU_Dapper.BLL.Services.Role_Service objRoleService = new RightsU_Dapper.BLL.Services.Role_Service();
+    List<RightsU_Dapper.Entity.Master_Entities.Role> lstRole = objRoleService.GetAll().ToList();
 }
 <script>
     $('.expand_Vendor_Name').expander({
@@ -56,11 +58,10 @@
         {
             foreach (var item in Model)
             {
-                string strRoles = "";
-                if (item.Vendor_Role.Count > 0)
-                {
-                    strRoles = string.Join(", ", item.Vendor_Role.Select(s => s.Role.Role_Name).ToArray());
-                }
+                string strRoles = ""; 
+                    List<int?> lstRoleCode = item.Vendor_Role.Select(x => x.Role_Code).ToList();
+                    strRoles = string.Join(",", lstRole.Where(w => lstRoleCode.Contains(w.Role_Code)).Select(c => c.Role_Name).ToList());          
+                    //strRoles = string.Join(", ", item.Vendor_Role.Select(s => s.Role.Role_Name).ToArray());
                 string strActive = objMessageKey.Active;
                 if (item.Is_Active == "N")
                 {

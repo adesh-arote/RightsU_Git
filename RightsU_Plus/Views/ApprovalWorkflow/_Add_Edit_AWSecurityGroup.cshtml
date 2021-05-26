@@ -1,17 +1,17 @@
-﻿@model List<RightsU_Entities.Workflow_Role>
+﻿@model List<RightsU_Dapper.Entity.Master_Entities.Workflow_Role>
 @using System.Web.Script.Serialization;
 
 @{
-    List<RightsU_Entities.Security_Group> lstSecurityGroup = new List<RightsU_Entities.Security_Group>();
+    List<RightsU_Dapper.Entity.Security_Group> lstSecurityGroup = new List<RightsU_Dapper.Entity.Security_Group>();
     if (ViewData["SecurityGroup"] != "" && ViewData["SecurityGroup"] != null)
     {
-        lstSecurityGroup = (List<RightsU_Entities.Security_Group>)ViewData["SecurityGroup"];
+        lstSecurityGroup = (List<RightsU_Dapper.Entity.Security_Group>)ViewData["SecurityGroup"];
     }
 
-    List<RightsU_Entities.User> lstUser = new List<RightsU_Entities.User>();
+    List<RightsU_Dapper.Entity.Master_Entities.User> lstUser = new List<RightsU_Dapper.Entity.Master_Entities.User>();
     if (ViewData["User"] != "" && ViewData["User"] != null)
     {
-        lstUser = (List<RightsU_Entities.User>)ViewData["User"];
+        lstUser = (List<RightsU_Dapper.Entity.Master_Entities.User>)ViewData["User"];
     }
 
     LoginEntity objLoginEntity = new LoginEntity();
@@ -121,7 +121,7 @@
                             <span>@rowNumber</span>
                         </td>
                         @{
-                    int SGCode = 0;
+                    int? SGCode = 0;
                     int? GC = item.Group_Code;
                     foreach (var objSG in lstSecurityGroup)
                     {

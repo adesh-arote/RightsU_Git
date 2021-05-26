@@ -1,10 +1,12 @@
-﻿using System;
+﻿using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_BLL;
-using RightsU_Entities;
+//using RightsU_BLL;
+//using RightsU_Dapper.Entity;
 using System.Web.Script.Serialization;
 using UTOFrameWork.FrameworkClasses;
 
@@ -12,25 +14,29 @@ namespace RightsU_Plus.Controllers
 {
     public class Security_GroupController : BaseController
     {
+        private readonly Security_Group_Rel_Service objSecurityGroupRelService = new Security_Group_Rel_Service();
+        private readonly Security_Group_Service objSecurityGroupService = new Security_Group_Service();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+
         //
         // GET: /Security_Group/
-        private List<RightsU_Entities.Security_Group> lstSecurity_Group
+        private List<RightsU_Dapper.Entity.Security_Group> lstSecurity_Group
         {
             get
             {
                 if (Session["lstSecurity_Group"] == null)
-                    Session["lstSecurity_Group"] = new List<RightsU_Entities.Security_Group>();
-                return (List<RightsU_Entities.Security_Group>)Session["lstSecurity_Group"];
+                    Session["lstSecurity_Group"] = new List<RightsU_Dapper.Entity.Security_Group>();
+                return (List<RightsU_Dapper.Entity.Security_Group>)Session["lstSecurity_Group"];
             }
             set { Session["lstSecurity_Group"] = value; }
         }
-        private List<RightsU_Entities.Security_Group> lstSecurity_Group_Searched
+        private List<RightsU_Dapper.Entity.Security_Group> lstSecurity_Group_Searched
         {
             get
             {
                 if (Session["lstSecurity_Group_Searched"] == null)
-                    Session["lstSecurity_Group_Searched"] = new List<RightsU_Entities.Security_Group>();
-                return (List<RightsU_Entities.Security_Group>)Session["lstSecurity_Group_Searched"];
+                    Session["lstSecurity_Group_Searched"] = new List<RightsU_Dapper.Entity.Security_Group>();
+                return (List<RightsU_Dapper.Entity.Security_Group>)Session["lstSecurity_Group_Searched"];
             }
             set { Session["lstSecurity_Group_Searched"] = value; }
         }
@@ -49,27 +55,28 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
-        private RightsU_Entities.Security_Group objSecurity_Group
+        private RightsU_Dapper.Entity.Security_Group objSecurity_Group
         {
             get
             {
                 if (Session["objSecurity_Group"] == null)
-                    Session["objSecurity_Group"] = new RightsU_Entities.Security_Group();
-                return (RightsU_Entities.Security_Group)Session["objSecurity_Group"];
+                    Session["objSecurity_Group"] = new RightsU_Dapper.Entity.Security_Group();
+                return (RightsU_Dapper.Entity.Security_Group)Session["objSecurity_Group"];
             }
             set { Session["objSecurity_Group"] = value; }
         }
-
-        private Security_Group_Service objSecurity_Group_Service
-        {
-            get
-            {
-                if (Session["objSecurity_Group_Service"] == null)
-                    Session["objSecurity_Group_Service"] = new Security_Group_Service(objLoginEntity.ConnectionStringName);
-                return (Security_Group_Service)Session["objSecurity_Group_Service"];
-            }
-            set { Session["objSecurity_Group_Service"] = value; }
-        }
+        Type[] RelationList = new Type[] { typeof(Security_Group_Rel)
+            };
+        //private Security_Group_Service objSecurity_Group_Service
+        //{
+        //    get
+        //    {
+        //        if (Session["objSecurity_Group_Service"] == null)
+        //            Session["objSecurity_Group_Service"] = new Security_Group_Service(objLoginEntity.ConnectionStringName);
+        //        return (Security_Group_Service)Session["objSecurity_Group_Service"];
+        //    }
+        //    set { Session["objSecurity_Group_Service"] = value; }
+        //}
 
         public ActionResult Index()
         {
@@ -80,7 +87,7 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindSecurity_GroupList(int pageNo, int recordPerPage, string sortType)
         {
-            List<RightsU_Entities.Security_Group> lst = new List<RightsU_Entities.Security_Group>();
+            List<RightsU_Dapper.Entity.Security_Group> lst = new List<RightsU_Dapper.Entity.Security_Group>();
             int RecordCount = 0;
             ViewBag.UserModuleRights = GetUserModuleRights();
             RecordCount = lstSecurity_Group_Searched.Count;
@@ -110,7 +117,9 @@ namespace RightsU_Plus.Controllers
                 lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
                 lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameDesc, Value = "ND" });
                 ViewBag.SortType = lstSort;
-                lstSecurity_Group_Searched = lstSecurity_Group = new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+                //lstSecurity_Group_Searched = lstSecurity_Group = new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+                lstSecurity_Group_Searched = lstSecurity_Group = objSecurityGroupService.GetAll().OrderByDescending(o => o.Last_Updated_Time).ToList();
+
                 ViewBag.RightRuleCode = "";
                 ViewBag.Action = "";
                 ViewBag.UserModuleRights = GetUserModuleRights();
@@ -118,7 +127,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                Security_Tree_View objST = new Security_Tree_View(objLoginEntity.ConnectionStringName);  
+                RightsU_BLL.Security_Tree_View objST = new RightsU_BLL.Security_Tree_View(objLoginEntity.ConnectionStringName);  
                 objST.SecurityCodes_Selected = SecurityGroupCode.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                 ViewBag.TV_Platform = objST.PopulateTreeNode("Y");
                 ViewBag.TreeId = "Rights_Security";
@@ -180,26 +189,32 @@ namespace RightsU_Plus.Controllers
             else
             {
 
-                objSecurity_Group = objSecurity_Group_Service.GetById(Security_Group_Code);
+                objSecurity_Group = objSecurityGroupService.GetByID(Security_Group_Code, RelationList);
                 TempData["Action"] = "Edit";
 
             }
-            string strModule_right_Code = string.Join(",", new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
+            //string strModule_right_Code = string.Join(",", new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
+            string strModule_right_Code = string.Join(",", objSecurityGroupRelService.GetAll().Where(x => x.Security_Group_Code == Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
+
             ViewBag.strRightModuleCode = strModule_right_Code;
-            objSecurity_Group_Service = null;
+            //objSecurity_Group_Service = null;
             return PartialView("~/Views/Security_Group/_AddEditSecurityGroup.cshtml", objSecurity_Group);
         }
         public JsonResult SaveSecurity_Group(FormCollection objFormCollection)
         {
             string ModuleRight = objFormCollection["hdnTVCodes"].ToString();
             string Securityname = objFormCollection["txtSecurityGroupName"].ToString().Trim();
-             int SecurityGroupCode = Convert.ToInt32(objFormCollection["hdnSecurityCode"].ToString());
+            int SecurityGroupCode = 0;
+            if (objFormCollection["hdnSecurityCode"].ToString() != "" && objFormCollection["hdnSecurityCode"].ToString() != null)
+            {
+                SecurityGroupCode = Convert.ToInt32(objFormCollection["hdnSecurityCode"].ToString());
+            }
 
-            Security_Group_Service objService = new Security_Group_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Security_Group objSecurity_Group = new RightsU_Entities.Security_Group();
+            //Security_Group_Service objService = new Security_Group_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Security_Group objSecurity_Group = new RightsU_Dapper.Entity.Security_Group();
             
             if (SecurityGroupCode > 0)
-                objSecurity_Group = objSecurity_Group_Service.GetById(SecurityGroupCode);
+                objSecurity_Group = objSecurityGroupService.GetByID(SecurityGroupCode, RelationList);
 
             objSecurity_Group.Security_Group_Name = Securityname;
             // objSecurity_Group.
@@ -207,22 +222,22 @@ namespace RightsU_Plus.Controllers
 
             if (SecurityGroupCode > 0)
             {
-                objSecurity_Group.EntityState = State.Modified;
+                //objSecurity_Group.EntityState = State.Modified;
             }
             else
             {
-                objSecurity_Group.EntityState = State.Added;
+               // objSecurity_Group.EntityState = State.Added;
                 objSecurity_Group.Inserted_By = objLoginUser.Users_Code;
                 objSecurity_Group.Inserted_On = System.DateTime.Now;
             }
             objSecurity_Group.Last_Updated_Time = System.DateTime.Now;
 
-            Security_Group_Rel_Service objSecurity_Group_Rel_Service = new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName);
+            //Security_Group_Rel_Service objSecurity_Group_Rel_Service = new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName);
 
 
-            List<System_Module_Right> lstSystemModuleRight = new List<System_Module_Right>();
-            System_Module_Right_Service objSystem_Module_Right_Service = new System_Module_Right_Service(objLoginEntity.ConnectionStringName);
-            lstSystemModuleRight = new System_Module_Right_Service(objLoginEntity.ConnectionStringName).SearchFor(p => true).ToList();
+            List<RightsU_Entities.System_Module_Right> lstSystemModuleRight = new List<RightsU_Entities.System_Module_Right>();
+            RightsU_BLL.System_Module_Right_Service objSystem_Module_Right_Service = new RightsU_BLL.System_Module_Right_Service(objLoginEntity.ConnectionStringName);
+            lstSystemModuleRight = new RightsU_BLL.System_Module_Right_Service(objLoginEntity.ConnectionStringName).SearchFor(p => true).ToList();
 
             var splitModule = ModuleRight.Split(',').Where(x => x.All(char.IsNumber)).ToList();
 
@@ -236,25 +251,26 @@ namespace RightsU_Plus.Controllers
                 {
                     if (item != 0.ToString())
                     {
-                        RightsU_Entities.Security_Group_Rel objSecurity_Group_Rel = new RightsU_Entities.Security_Group_Rel();
+                        RightsU_Dapper.Entity.Security_Group_Rel objSecurity_Group_Rel = new RightsU_Dapper.Entity.Security_Group_Rel();
                         objSecurity_Group_Rel.Security_Group_Code = objSecurity_Group.Security_Group_Code;
                         objSecurity_Group_Rel.System_Module_Rights_Code = Convert.ToInt32(item);
-                        objSecurity_Group_Rel.EntityState = State.Added;
+                        //objSecurity_Group_Rel.EntityState = State.Added;
                         SecurityRelList.Add(objSecurity_Group_Rel);
                     }
                 }
             }
-            IEqualityComparer<Security_Group_Rel> comparerTalentRole = new LambdaComparer<Security_Group_Rel>((x, y) => x.System_Module_Rights_Code == y.System_Module_Rights_Code && x.EntityState != State.Deleted);
+            IEqualityComparer<Security_Group_Rel> comparerTalentRole = new RightsU_BLL.LambdaComparer<Security_Group_Rel>((x, y) => x.System_Module_Rights_Code == y.System_Module_Rights_Code );
             var Deleted_SecurityGroupRel = new List<Security_Group_Rel>();
             var Updated_SecurityGroupRel = new List<Security_Group_Rel>();
             var Added_SecurityGroupRel = CompareLists<Security_Group_Rel>(SecurityRelList.ToList<Security_Group_Rel>(), objSecurity_Group.Security_Group_Rel.ToList<Security_Group_Rel>(), comparerTalentRole, ref Deleted_SecurityGroupRel, ref Updated_SecurityGroupRel);
             Added_SecurityGroupRel.ToList<Security_Group_Rel>().ForEach(t => objSecurity_Group.Security_Group_Rel.Add(t));
-            Deleted_SecurityGroupRel.ToList<Security_Group_Rel>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_SecurityGroupRel.ToList<Security_Group_Rel>().ForEach(t => objSecurity_Group.Security_Group_Rel.Remove(t));
             #endregion
 
             dynamic resultSet;
             string status = "S", message = "Record {ACTION} successfully";
-            bool isValid = objSecurity_Group_Service.Save(objSecurity_Group, out resultSet);
+            objSecurityGroupService.AddEntity(objSecurity_Group);
+            bool isValid = true; 
             if (isValid)
             {
                 status = "S";
@@ -271,7 +287,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
 
             var obj = new
@@ -290,12 +306,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(SecurityGroupCode, GlobalParams.ModuleCodeForSecurityGr, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Security_Group_Service objService = new Security_Group_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Security_Group objSecurity_Group = objService.GetById(SecurityGroupCode);
+                //Security_Group_Service objService = new Security_Group_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Security_Group objSecurity_Group = objSecurityGroupService.GetByID(SecurityGroupCode,RelationList);
                 objSecurity_Group.Is_Active = doActive;
-                objSecurity_Group.EntityState = State.Modified;
+                //objSecurity_Group.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objSecurity_Group, out resultSet);
+                objSecurityGroupService.AddEntity(objSecurity_Group);
+                bool isValid = true;// objService.Save(objSecurity_Group, out resultSet);
                 if (isValid)
                 {
                     lstSecurity_Group.Where(w => w.Security_Group_Code == SecurityGroupCode).First().Is_Active = doActive;
@@ -363,15 +380,15 @@ namespace RightsU_Plus.Controllers
         }
         private void FetchData()
         {
-            lstSecurity_Group_Searched = lstSecurity_Group = new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstSecurity_Group_Searched = lstSecurity_Group = objSecurityGroupService.GetAll().ToList();
         }
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }

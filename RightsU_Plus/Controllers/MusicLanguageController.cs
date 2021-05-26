@@ -1,5 +1,6 @@
-﻿using RightsU_BLL;
-using RightsU_Entities;
+﻿//using RightsU_BLL;
+//using RightsU_Dapper.Entity.Master_Entities;
+using RightsU_Dapper.BLL.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,24 +12,28 @@ namespace RightsU_Plus.Controllers
 {
     public class MusicLanguageController : BaseController
     {
+        private readonly Music_Language_Service objMusicLanguageService = new Music_Language_Service();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+
+
         #region --Properties--
-        private List<RightsU_Entities.Music_Language> lstMusicLanguage
+        private List<RightsU_Dapper.Entity.Master_Entities.Music_Language> lstMusicLanguage
         {
             get
             {
                 if (Session["lstMusicLanguage"] == null)
-                    Session["lstMusicLanguage"] = new List<RightsU_Entities.Music_Language>();
-                return (List<RightsU_Entities.Music_Language>)Session["lstMusicLanguage"];
+                    Session["lstMusicLanguage"] = new List<RightsU_Dapper.Entity.Master_Entities.Music_Language>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Music_Language>)Session["lstMusicLanguage"];
             }
             set { Session["lstMusicLanguage"] = value; }
         }
-        private List<RightsU_Entities.Music_Language> lstMusicLanguage_Searched
+        private List<RightsU_Dapper.Entity.Master_Entities.Music_Language> lstMusicLanguage_Searched
         {
             get
             {
                 if (Session["lstMusicLanguage_Searched"] == null)
-                    Session["lstMusicLanguage_Searched"] = new List<RightsU_Entities.Music_Language>();
-                return (List<RightsU_Entities.Music_Language>)Session["lstMusicLanguage_Searched"];
+                    Session["lstMusicLanguage_Searched"] = new List<RightsU_Dapper.Entity.Master_Entities.Music_Language>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Music_Language>)Session["lstMusicLanguage_Searched"];
             }
             set { Session["lstMusicLanguage_Searched"] = value; }
         }
@@ -40,7 +45,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.Code = modulecode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusicLanguage);
-            lstMusicLanguage_Searched = lstMusicLanguage = new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstMusicLanguage_Searched = lstMusicLanguage = objMusicLanguageService.GetAll().ToList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -53,7 +58,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Music_Language_Code = music_Language_Code;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Music_Language> lst = new List<RightsU_Entities.Music_Language>();
+            List<RightsU_Dapper.Entity.Master_Entities.Music_Language> lst = new List<RightsU_Dapper.Entity.Master_Entities.Music_Language>();
             int RecordCount = 0;
             RecordCount = lstMusicLanguage_Searched.Count;
 
@@ -116,10 +121,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusicLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusicLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -146,12 +151,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(music_Language_Code, GlobalParams.ModuleCodeForMusicLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Music_Language_Service objService = new Music_Language_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Music_Language objMusicLanguage = objService.GetById(music_Language_Code);
+                //Music_Language_Service objService = new Music_Language_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Master_Entities.Music_Language objMusicLanguage = objMusicLanguageService.GetByID(music_Language_Code);
                 objMusicLanguage.Is_Active = doActive;
-                objMusicLanguage.EntityState = State.Modified;
+               // objMusicLanguage.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objMusicLanguage, out resultSet);
+                objMusicLanguageService.AddEntity(objMusicLanguage);
+                bool isValid = true;// objMusicLanguageService.AddEntity(objMusicLanguage);
 
                 if (isValid)
                 {
@@ -165,7 +171,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -187,18 +193,18 @@ namespace RightsU_Plus.Controllers
             if (music_Language_Code > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Music_Language_Service objService = new Music_Language_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Music_Language objMusicLanguage = null;
+           // Music_Language_Service objService = new Music_Language_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.Music_Language objMusicLanguage = null;
 
             if (music_Language_Code > 0)
             {
-                objMusicLanguage = objService.GetById(music_Language_Code);
-                objMusicLanguage.EntityState = State.Modified;
+                objMusicLanguage = objMusicLanguageService.GetByID(music_Language_Code);
+               // objMusicLanguage.EntityState = State.Modified;
             }
             else
             {
-                objMusicLanguage = new RightsU_Entities.Music_Language();
-                objMusicLanguage.EntityState = State.Added;
+                objMusicLanguage = new RightsU_Dapper.Entity.Master_Entities.Music_Language();
+               // objMusicLanguage.EntityState = State.Added;
                 objMusicLanguage.Inserted_On = DateTime.Now;
                 objMusicLanguage.Inserted_By = objLoginUser.Users_Code;
             }
@@ -208,15 +214,16 @@ namespace RightsU_Plus.Controllers
             objMusicLanguage.Is_Active = "Y";
             objMusicLanguage.Language_Name = languageName;
             dynamic resultSet;
-            bool isValid = objService.Save(objMusicLanguage, out resultSet);
+            objMusicLanguageService.AddEntity(objMusicLanguage);
+            bool isValid = true;// objService.Save(objMusicLanguage, out resultSet);
             if (isValid)
             {
-                lstMusicLanguage_Searched = lstMusicLanguage = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstMusicLanguage_Searched = lstMusicLanguage = objMusicLanguageService.GetAll().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

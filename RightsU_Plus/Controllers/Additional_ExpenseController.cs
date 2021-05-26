@@ -1,34 +1,39 @@
-﻿using System;
+﻿using RightsU_Dapper.BLL.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_BLL;
-using RightsU_Entities;
+//using RightsU_BLL;
+//using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class Additional_ExpenseController : BaseController
     {
+        private readonly Additional_Expense_Services objAdditionalExpenseService = new Additional_Expense_Services();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+
+
         #region --Properties--
-        private List<RightsU_Entities.Additional_Expense> lstAdditional_Expense
+        private List<RightsU_Dapper.Entity.Master_Entities.Additional_Expense> lstAdditional_Expense
         {
             get
             {
                 if (Session["lstAdditional_Expense"] == null)
-                    Session["lstAdditional_Expense"] = new List<RightsU_Entities.Additional_Expense>();
-                return (List<RightsU_Entities.Additional_Expense>)Session["lstAdditional_Expense"];
+                    Session["lstAdditional_Expense"] = new List<RightsU_Dapper.Entity.Master_Entities.Additional_Expense>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Additional_Expense>)Session["lstAdditional_Expense"];
             }
             set { Session["lstAdditional_Expense"] = value; }
         }
-        private List<RightsU_Entities.Additional_Expense> lstAdditional_Expense_Searched
+        private List<RightsU_Dapper.Entity.Master_Entities.Additional_Expense> lstAdditional_Expense_Searched
         {
             get
             {
                 if (Session["lstAdditional_Expense_Searched"] == null)
-                    Session["lstAdditional_Expense_Searched"] = new List<RightsU_Entities.Additional_Expense>();
-                return (List<RightsU_Entities.Additional_Expense>)Session["lstAdditional_Expense_Searched"];
+                    Session["lstAdditional_Expense_Searched"] = new List<RightsU_Dapper.Entity.Master_Entities.Additional_Expense>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Additional_Expense>)Session["lstAdditional_Expense_Searched"];
             }
             set { Session["lstAdditional_Expense_Searched"] = value; }
         }
@@ -39,7 +44,7 @@ namespace RightsU_Plus.Controllers
             string modulecode = GlobalParams.ModuleCodeForAdditionalExpense.ToString();
             ViewBag.Code = modulecode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstAdditional_Expense_Searched = lstAdditional_Expense = new Additional_Expense_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstAdditional_Expense_Searched = lstAdditional_Expense = objAdditionalExpenseService.GetAll().ToList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -52,7 +57,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.AdditionalExpenseCode = additionalExpenseCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Additional_Expense> lst = new List<RightsU_Entities.Additional_Expense>();
+            List<RightsU_Dapper.Entity.Master_Entities.Additional_Expense> lst = new List<RightsU_Dapper.Entity.Master_Entities.Additional_Expense>();
             int RecordCount = 0;
             RecordCount = lstAdditional_Expense_Searched.Count;
 
@@ -136,12 +141,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(additionalExpenseCode, GlobalParams.ModuleCodeForAdditionalExpense, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Additional_Expense_Service objService = new Additional_Expense_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Additional_Expense objAdditionalExpense = objService.GetById(additionalExpenseCode);
+                //Additional_Expense_Service objService = new Additional_Expense_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Master_Entities.Additional_Expense objAdditionalExpense = objAdditionalExpenseService.GetByID(additionalExpenseCode);
                 objAdditionalExpense.Is_Active = doActive;
-                objAdditionalExpense.EntityState = State.Modified;
+                //objAdditionalExpense.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objAdditionalExpense, out resultSet);
+                objAdditionalExpenseService.AddEntity(objAdditionalExpense);
+                bool isValid = true;// objService.Save(objAdditionalExpense, out resultSet);
 
                 if (isValid)
                 {
@@ -155,7 +161,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -178,18 +184,18 @@ namespace RightsU_Plus.Controllers
             if (additionalExpenseCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Additional_Expense_Service objService = new Additional_Expense_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Additional_Expense objAdditionalExpense = null;
+            //Additional_Expense_Service objService = new Additional_Expense_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.Additional_Expense objAdditionalExpense = null;
 
             if (additionalExpenseCode > 0)
             {
-                objAdditionalExpense = objService.GetById(additionalExpenseCode);
-                objAdditionalExpense.EntityState = State.Modified;
+                objAdditionalExpense = objAdditionalExpenseService.GetByID(additionalExpenseCode);
+                //objAdditionalExpense.EntityState = State.Modified;
             }
             else
             {
-                objAdditionalExpense = new RightsU_Entities.Additional_Expense();
-                objAdditionalExpense.EntityState = State.Added;
+                objAdditionalExpense = new RightsU_Dapper.Entity.Master_Entities.Additional_Expense();
+                //objAdditionalExpense.EntityState = State.Added;
                 objAdditionalExpense.Inserted_On = System.DateTime.Now;
                 objAdditionalExpense.Inserted_By = objLoginUser.Users_Code;
             }
@@ -199,16 +205,17 @@ namespace RightsU_Plus.Controllers
            objAdditionalExpense.Additional_Expense_Name = additionalExpenseName.Trim();
             objAdditionalExpense.SAP_GL_Group_Code = sapGLGroupCode.Trim();
             dynamic resultSet;
-            bool isValid = objService.Save(objAdditionalExpense, out resultSet);
+            objAdditionalExpenseService.AddEntity(objAdditionalExpense);
+            bool isValid = true;// objService.Save(objAdditionalExpense, out resultSet);
 
             if (isValid)
             {
-               lstAdditional_Expense_Searched = lstAdditional_Expense = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+               lstAdditional_Expense_Searched = lstAdditional_Expense = objAdditionalExpenseService.GetAll().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();
@@ -223,10 +230,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForAdditionalExpense), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForAdditionalExpense), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }

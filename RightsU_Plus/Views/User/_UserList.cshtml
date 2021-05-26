@@ -1,11 +1,14 @@
-﻿@model List<RightsU_Entities.User>
+﻿@model List<RightsU_Dapper.Entity.Master_Entities.User>
 @using UTOFrameWork.FrameworkClasses
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
-    }     
+    }
+    RightsU_Dapper.BLL.Services.Security_Group_Service objService = new RightsU_Dapper.BLL.Services.Security_Group_Service();
+
+    List<RightsU_Dapper.Entity.Security_Group> lstSG = objService.GetAll().ToList();
 }
 
 <table class="table table-bordered table-hover" id="tblUsers">
@@ -45,7 +48,12 @@
                         <span>@item.Last_Name</span>
                     </td>
                     <td>
-                        @Html.Label("SecurityGroup",item.Security_Group == null ?"" : item.Security_Group.Security_Group_Name)
+                        @{ 
+                            int? SecurityGroupCode = item.Security_Group_Code;
+                            string SecutirGroupName = lstSG.Where(w => w.Security_Group_Code == SecurityGroupCode).Select(c => c.Security_Group_Name).FirstOrDefault(); 
+                            <span>@SecutirGroupName</span>
+                            }
+                       
                     </td>
                     <td style="text-align:center;">
                         <span>@strActive</span>

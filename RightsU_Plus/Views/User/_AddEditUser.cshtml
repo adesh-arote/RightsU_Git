@@ -1,4 +1,4 @@
-﻿@model RightsU_Entities.User
+﻿@model RightsU_Dapper.Entity.Master_Entities.User
 @using UTOFrameWork.FrameworkClasses;
 @{
    
@@ -37,8 +37,6 @@
     })
     function TabChange(tabName) {
         debugger
-
-        //BindUserConfiguration(@Model.Users_Code, tabName);
         if (tabName == "GI") {
             debugger
             $('#divSecurityGroup').hide();

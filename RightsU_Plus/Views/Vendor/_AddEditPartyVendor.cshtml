@@ -1,17 +1,33 @@
-﻿@model List<RightsU_Entities.Vendor>
+﻿@model List<RightsU_Dapper.Entity.Master_Entities.Vendor>
 @{
     //  Layout = "~/Views/Shared/_Layout.cshtml";
-    RightsU_Entities.Vendor objVendor = new RightsU_Entities.Vendor();
-    List<RightsU_Entities.Role> objRole = new List<RightsU_Entities.Role>();
+    RightsU_Dapper.Entity.Master_Entities.Vendor objVendor = new RightsU_Dapper.Entity.Master_Entities.Vendor();
+    List<RightsU_Dapper.Entity.Master_Entities.Role> objRole = new List<RightsU_Dapper.Entity.Master_Entities.Role>();
+    List<RightsU_Dapper.Entity.Master_Entities.Country> objCountry = new List<RightsU_Dapper.Entity.Master_Entities.Country>();
+    List<RightsU_Dapper.Entity.Master_Entities.Party_Group> objPartyGroup = new List<RightsU_Dapper.Entity.Master_Entities.Party_Group>();
+    RightsU_Dapper.BLL.Services.Role_Service objRoleService = new RightsU_Dapper.BLL.Services.Role_Service();
+    RightsU_Dapper.BLL.Services.Party_Category_Service objPartyCategoryService = new RightsU_Dapper.BLL.Services.Party_Category_Service();
+
+    List<RightsU_Dapper.Entity.Master_Entities.Role> lstRole = objRoleService.GetAll().ToList();
+    List<RightsU_Dapper.Entity.Master_Entities.Party_Category> lstPartycategory = objPartyCategoryService.GetAll().ToList();
+
     List<int?> lstAType = new List<int?>();
     List<int?> lstSType = new List<int?>();
     if (ViewData["MyVendor"] != "")
     {
-        objVendor = (RightsU_Entities.Vendor)ViewData["MyVendor"];
+        objVendor = (RightsU_Dapper.Entity.Master_Entities.Vendor)ViewData["MyVendor"];
     }
     if (ViewData["Role"] != "" && ViewData["Role"] != null)
     {
-        objRole = (List<RightsU_Entities.Role>)ViewData["Role"];
+        objRole = (List<RightsU_Dapper.Entity.Master_Entities.Role>)ViewData["Role"];
+    }
+    if (ViewData["Country"] != "" && ViewData["Country"] != null)
+    {
+        objCountry = (List<RightsU_Dapper.Entity.Master_Entities.Country>)ViewData["Country"];
+    }
+    if (ViewData["PartyList"] != "" && ViewData["PartyList"] != null)
+    {
+        objPartyGroup = (List<RightsU_Dapper.Entity.Master_Entities.Party_Group>)ViewData["PartyList"];
     }
     if (ViewData["ListSType"] != "")
     {
@@ -48,6 +64,7 @@
     $(document).ready(function () {
         initializeChosen();
         showLoading();
+        debugger;
         BindVendorContact();
         $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val());
 
@@ -131,6 +148,10 @@
     function BindVendorContact() {
         debugger;
         var VendorCode = $('#hdnVendorCode').val();
+        if (VendorCode == "")
+        {
+            VendorCode = 0;
+        }
         //var recordPerPage = $('#txtPageSize').val();
         $.ajax({
             type: "POST",
@@ -594,9 +615,13 @@
                                 {
 
                                     <span>
-                                        @if (objVendor.Party_Category != null)
+                                        @if (objVendor.Party_Category_Code != null)
                                         {
-                                            @objVendor.Party_Category.Party_Category_Name
+                                            int? PartyCategoryCode = @objVendor.Party_Category_Code;
+                                            string Party_Category_Name = string.Join(",", lstPartycategory.Where(w => w.Party_Category_Code == PartyCategoryCode).Select(c => c.Party_Category_Name).ToList());
+                                            <span>@Party_Category_Name</span>
+                                            
+                                           // @objVendor.Party_Category.Party_Category_Name
                                         }
                                     </span>
                                 }
@@ -743,8 +768,12 @@
                             <td>
                                 @if (ViewBag.Mode == "V")
                                 {
-                                    string Type = string.Join(",", @objVendor.Vendor_Role.Select(c => c.Role.Role_Name).ToList());
+                                    List<int?> lstRoleCode = objVendor.Vendor_Role.Select(x => x.Role_Code).ToList();
+                                    
+                                    string Type = string.Join(",", lstRole.Where(w => lstRoleCode.Contains(w.Role_Code)).Select(c => c.Role_Name).ToList());
+                                    //string Type = string.Join(",", @objVendor.Vendor_Role.Select(c => c.Role.Role_Name).ToList());
                                     <span>@Type</span>
+                                    
                                 }
                                 else
                                 {
@@ -759,7 +788,10 @@
                             <td>
                                 @if (ViewBag.Mode == "V")
                                 {
-                                    string country = string.Join(",", @objVendor.Vendor_Country.Where(w => w.Is_Theatrical == "N").Select(c => c.Country.Country_Name).ToList());
+                                    List<int?> lstCountryCode = objVendor.Vendor_Country.Select(x => x.Country_Code).ToList();
+                                    string country = string.Join(",",objCountry.Where(w => lstCountryCode.Contains(w.Country_Code) && w.Is_Theatrical_Territory == "N").Select(c => c.Country_Name).ToList());
+
+                                    //string country = string.Join(",", @objVendor.Vendor_Country.Where(w => w.Is_Theatrical == "N").Select(c => c.Country.Country_Name).ToList());
                                     <span>@country</span>
                                 }
                                 else
@@ -771,7 +803,10 @@
                             <td>
                                 @if (ViewBag.Mode == "V")
                                 {
-                                    string theritical = string.Join(",", @objVendor.Vendor_Country.Where(w => w.Is_Theatrical == "Y").Select(c => c.Country.Country_Name).ToList());
+                                    List<int?> lstCountryCode = objVendor.Vendor_Country.Select(x => x.Country_Code).ToList();
+                                    string theritical = string.Join(",", objCountry.Where(w => lstCountryCode.Contains(w.Country_Code) && w.Is_Theatrical_Territory == "Y" ).Select(c => c.Country_Name).ToList());
+
+                                    //string theritical = string.Join(",", @objVendor.Vendor_Country.Where(w => w.Is_Theatrical == "Y").Select(c => c.Country.Country_Name).ToList());
                                     <span>@theritical</span>
                                 }
                                 else
@@ -790,59 +825,58 @@
                                 </td>
 
                                 if (@objVendor.Vendor_Code > 0)
-                                {
-                                    if (@objVendor.Short_Code != null)
                                     {
+                                        if (@objVendor.Short_Code != null)
+                                        {
                                         <td>
                                             @Html.TextBox("Short_Code", @objVendor.Short_Code, new { @id = "txtShortCode", @class = "alphaNumeric", @maxlength = "4" })
                                         </td>
-                                    }
-                                    else
-                                    {
+                                        }
+                                        else
+                                        {
                                         <td>
                                             @Html.TextBox("Short_Code", @objVendor.Short_Code, new { @id = "txtShortCode", @class = "alphaNumeric", @maxlength = "4", @disabled = true })
                                         </td>
+                                        }
                                     }
-                                }
-                                else
-                                {
+                                    else
+                                    {
                                     <td>
                                         @Html.TextBox("Short_Code", @objVendor.Short_Code, new { @id = "txtShortCode", @class = "alphaNumeric", @maxlength = "4", @disabled = true })
                                     </td>
+                                    }
                                 }
-                            }
-                            @if (ViewBag.IsAllowPartyMaster == "Y")
+                                @if (ViewBag.IsAllowPartyMaster == "Y")
                             {
-                                if (ViewBag.Mode == "V")
-                                {
+                                    if (ViewBag.Mode == "V")
+                                    {
                                     <td>Party Group</td>
                                     <td>
                                         @if (objVendor.Party_Group_Code != null)
                                         {
-                                            @objVendor.Party_Group.Party_Group_Name
+                                            int PartyGroupCode = ViewBag.PartyMasterCode;
+                                            string PartyGroupName = string.Join(",", objPartyGroup.Where(w => w.Party_Group_Code == PartyGroupCode).Select(c => c.Party_Group_Name).ToList());
+                                            <span>@PartyGroupName</span>
+                                            //@objVendor.Party_Group.Party_Group_Name
+
                                         }
                                         else
                                         {
                                             <span>NA</span>
                                         }
                                     </td>
-                                }
-                                else
-                                {
+                                    }
+                                    else
+                                    {
                                     <td>Party Group</td>
                                     <td>
-                                        @Html.DropDownList("Party_Group_Code", (List<SelectListItem>)ViewBag.PartyMasterList, new { @id = "Party_Group_Code", @class = "form_input chosen-select" })
+                                       @Html.DropDownList("Party_Group_Code", (List<SelectListItem>)ViewBag.PartyMasterList, new { @id = "Party_Group_Code", @class = "form_input chosen-select" })
                                         @*@Html.DropDownList("Party_Group_Code", ViewBag.PartyMasterList as SelectList, new { @class = "form_input chosen-select" })*@
                                         <a class="red_icon glyphicon glyphicon-plus" title="Add Party Group" onclick="AddPartyMaster();" />
                                     </td>
                                 }
-
                             }
-
                         </tr>
-
-
-
                     </table>
                 </td>
             </tr>

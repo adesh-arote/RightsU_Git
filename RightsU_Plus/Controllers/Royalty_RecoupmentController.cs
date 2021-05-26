@@ -1,45 +1,53 @@
-﻿using System;
+﻿using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity.Master_Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Dapper.Entity.Master_Entities;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class Royalty_RecoupmentController : BaseController
     {
+        private readonly Royalty_Recoupment_Service objRoyaltyRecoupmentService = new Royalty_Recoupment_Service();
+        private readonly Royalty_Recoupment_Details_Service objRoyalty_Recoupment_Details_Service = new Royalty_Recoupment_Details_Service();
+        private readonly Additional_Expense_Services objAdditionalExpenseService = new Additional_Expense_Services();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+
+        
         #region --- Properties ---
-        private List<RightsU_Entities.Royalty_Recoupment> lstRoyalty
+        private List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment> lstRoyalty
         {
             get
             {
                 if (Session["lstRoyalty"] == null)
-                    Session["lstRoyalty"] = new List<RightsU_Entities.Royalty_Recoupment>();
-                return (List<RightsU_Entities.Royalty_Recoupment>)Session["lstRoyalty"];
+                    Session["lstRoyalty"] = new List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment>)Session["lstRoyalty"];
             }
             set { Session["lstRoyalty"] = value; }
         }
 
-        private List<RightsU_Entities.Royalty_Recoupment> lstRoyalty_Searched
+        private List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment> lstRoyalty_Searched
         {
             get
             {
                 if (Session["lstRoyalty_Searched"] == null)
-                    Session["lstRoyalty_Searched"] = new List<RightsU_Entities.Royalty_Recoupment>();
-                return (List<RightsU_Entities.Royalty_Recoupment>)Session["lstRoyalty_Searched"];
+                    Session["lstRoyalty_Searched"] = new List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment>)Session["lstRoyalty_Searched"];
             }
             set { Session["lstRoyalty_Searched"] = value; }
         }
-        private List<RightsU_Entities.Royalty_Recoupment_Details> RoyaltyRecoupmentDetailsList
+        private List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment_Details> RoyaltyRecoupmentDetailsList
         {
             get
             {
                 if (Session["RoyaltyRecoupmentDetailsList"] == null)
-                    Session["RoyaltyRecoupmentDetailsList"] = new List<RightsU_Entities.Royalty_Recoupment_Details>();
-                return (List<RightsU_Entities.Royalty_Recoupment_Details>)Session["RoyaltyRecoupmentDetailsList"];
+                    Session["RoyaltyRecoupmentDetailsList"] = new List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment_Details>();
+                return (List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment_Details>)Session["RoyaltyRecoupmentDetailsList"];
             }
             set { Session["RoyaltyRecoupmentDetailsList"] = value; }
         }
@@ -58,6 +66,7 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
+    
         #endregion
 
         public ViewResult Index()
@@ -85,28 +94,28 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                Royalty_Recoupment_Service objRoyalty_Service = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Royalty_Recoupment objRoyalty = null;
+               // Royalty_Recoupment_Service objRoyalty_Service = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment objRoyalty = null;
 
                 if (royltyCode > 0)
-                    objRoyalty = objRoyalty_Service.GetById(royltyCode);
+                    objRoyalty = objRoyaltyRecoupmentService.GetByID(royltyCode, new Type[] { typeof(Royalty_Recoupment_Details) });
                 else
-                    objRoyalty = new RightsU_Entities.Royalty_Recoupment();
+                    objRoyalty = new RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment();
 
-                List<Royalty_Recoupment_Details> lstRRD = new Additional_Expense_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList().Select(s =>
+                List<Royalty_Recoupment_Details> lstRRD = objAdditionalExpenseService.GetAll().Where(s => s.Is_Active == "Y").ToList().Select(s =>
                     new Royalty_Recoupment_Details()
                     {
-                        EntityState = State.Added,
+                        //EntityState = State.Added,
                         Recoupment_Type = "A",
                         Recoupment_Type_Code = s.Additional_Expense_Code,
                         Recoupment_Type_Name = s.Additional_Expense_Name,
                         Add_Subtract = "A"
                     }).ToList();
 
-                lstRRD.AddRange(new Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList().Select(s =>
+                lstRRD.AddRange(new RightsU_BLL.Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList().Select(s =>
                     new Royalty_Recoupment_Details()
                     {
-                        EntityState = State.Added,
+                        //EntityState = State.Added,
                         Recoupment_Type = "C",
                         Recoupment_Type_Code = s.Cost_Type_Code,
                         Recoupment_Type_Name = s.Cost_Type_Name,
@@ -133,7 +142,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult BindRoyltyList(int pageNo, int recordPerPage,string sortType)
         {
-            List<RightsU_Entities.Royalty_Recoupment> lst = new List<RightsU_Entities.Royalty_Recoupment>();
+            List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment> lst = new List<RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment>();
             int RecordCount = 0;
             RecordCount = lstRoyalty_Searched.Count;
 
@@ -177,7 +186,7 @@ namespace RightsU_Plus.Controllers
         }
         private void FetchData()
         {
-            lstRoyalty_Searched = lstRoyalty = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstRoyalty_Searched = lstRoyalty = objRoyaltyRecoupmentService.GetAll().OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
         #endregion
 
@@ -205,13 +214,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(royaltyCode, GlobalParams.ModuleCodeForRoyaltyRecoupment, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Royalty_Recoupment_Service objService = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Royalty_Recoupment objRoyalty = objService.GetById(royaltyCode);
+                //Royalty_Recoupment_Service objService = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment objRoyalty = objRoyaltyRecoupmentService.GetByID(royaltyCode);
                 objRoyalty.Is_Active = doActive;
-                objRoyalty.EntityState = State.Modified;
+                //objRoyalty.EntityState = State.Modified;
                 dynamic resultSet;
-
-                bool isValid = objService.Save(objRoyalty, out resultSet);
+                objRoyaltyRecoupmentService.AddEntity(objRoyalty);
+                bool isValid = true;// objService.Save(objRoyalty, out resultSet);
 
                 lstRoyalty.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
                 lstRoyalty_Searched.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
@@ -242,27 +251,27 @@ namespace RightsU_Plus.Controllers
 
         public ViewResult AddEditRoyality(int royltyCode)
         {
-            Royalty_Recoupment_Service objRoyalty_Service = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Royalty_Recoupment objRoyalty = null;
+            //Royalty_Recoupment_Service objRoyalty_Service = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment objRoyalty = null;
             if (royltyCode > 0)
-                objRoyalty = objRoyalty_Service.GetById(royltyCode);
+                objRoyalty = objRoyaltyRecoupmentService.GetByID(royltyCode);
             else
-                objRoyalty = new RightsU_Entities.Royalty_Recoupment();
+                objRoyalty = new RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment();
 
-            List<Royalty_Recoupment_Details> lstRRD = new Additional_Expense_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList().Select(s =>
+            List<Royalty_Recoupment_Details> lstRRD = objAdditionalExpenseService.GetAll().Where(s => s.Is_Active == "Y").ToList().Select(s =>
                 new Royalty_Recoupment_Details()
                 {
-                    EntityState = State.Added,
+                   // EntityState = State.Added,
                     Recoupment_Type = "A",
                     Recoupment_Type_Code = s.Additional_Expense_Code,
                     Recoupment_Type_Name = s.Additional_Expense_Name,
                     Add_Subtract = "A"                                      
                 }).ToList();
 
-            lstRRD.AddRange(new Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList().Select(s =>
+            lstRRD.AddRange(new RightsU_BLL.Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").ToList().Select(s =>
                 new Royalty_Recoupment_Details()
                 {
-                    EntityState = State.Added,
+                    //EntityState = State.Added,
                     Recoupment_Type = "C",
                     Recoupment_Type_Code = s.Cost_Type_Code,
                     Recoupment_Type_Name = s.Cost_Type_Name,
@@ -286,23 +295,25 @@ namespace RightsU_Plus.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveRoyalty(RightsU_Entities.Royalty_Recoupment objRoyalty_MVC, FormCollection objFormCollection)
+        public ActionResult SaveRoyalty(RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment objRoyalty_MVC, FormCollection objFormCollection)
         {
-            Royalty_Recoupment_Service objRoyalty_Service = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Royalty_Recoupment objRoyalty = null;
+            //Royalty_Recoupment_Service objRoyalty_Service = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment objRoyalty = null;
             if (objRoyalty_MVC.Royalty_Recoupment_Code > 0)
             {
                 dynamic resultSets = "";
-                objRoyalty = objRoyalty_Service.GetById(objRoyalty_MVC.Royalty_Recoupment_Code);
-                objRoyalty.Royalty_Recoupment_Details.ToList().ForEach(f => { f.EntityState = State.Deleted; });
+                objRoyalty = objRoyaltyRecoupmentService.GetByID(objRoyalty_MVC.Royalty_Recoupment_Code);
+                //objRoyalty.Royalty_Recoupment_Details.ToList().ForEach(f => { f.EntityState = State.Deleted; });
+                objRoyalty.Royalty_Recoupment_Details.ToList().ForEach(t => objRoyalty.Royalty_Recoupment_Details.Remove(t));
+
 
                 objRoyalty.Royalty_Recoupment_Code = objRoyalty_MVC.Royalty_Recoupment_Code;
-                objRoyalty.EntityState = State.Modified;
+                //objRoyalty.EntityState = State.Modified;
             }
             else
             {
-                objRoyalty = new RightsU_Entities.Royalty_Recoupment();
-                objRoyalty.EntityState = State.Added;
+                objRoyalty = new RightsU_Dapper.Entity.Master_Entities.Royalty_Recoupment();
+                //objRoyalty.EntityState = State.Added;
                 objRoyalty.Royalty_Recoupment_Name = objRoyalty_MVC.Royalty_Recoupment_Name;
                 objRoyalty.Is_Active = "Y";
                 objRoyalty.Inserted_By = objLoginUser.Users_Code;
@@ -329,13 +340,14 @@ namespace RightsU_Plus.Controllers
 
             objRoyalty.Royalty_Recoupment_Name = objRoyalty_MVC.Royalty_Recoupment_Name;
             Royalty_Recoupment objR = new Royalty_Recoupment();
-            Royalty_Recoupment_Service objRoyaltyService = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
+            //Royalty_Recoupment_Service objRoyaltyService = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
 
 
             dynamic resultSet;
             string status = "S", message = "";
 
-            bool valid = objRoyalty_Service.Save(objRoyalty, out resultSet);
+            objRoyaltyRecoupmentService.AddEntity(objRoyalty);
+            bool valid = true;// objRoyalty_Service.Save(objRoyalty, out resultSet);
             if(valid)
             {
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
@@ -382,10 +394,10 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForRoyaltyRecoupment), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForRoyaltyRecoupment), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
