@@ -178,10 +178,23 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
     var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N';
     tmp_pageNo = pagenumber;
     tmp_IsAdvanced = isAdvanced;
+    //if (isAdvanced == 'N')
+    //    $('#divSearch').hide();
+    //else if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+    //    BindAdvanced_Search_Controls('PGL');
+
     if (isAdvanced == 'N')
         $('#divSearch').hide();
-    else if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
-        BindAdvanced_Search_Controls('PGL');
+    else {
+        if (Is_AllowMultiBUsyndeal != 'Y') {
+            if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+                BindAdvanced_Search_Controls('PGL');
+        }
+        else {
+            if (isAdvanced == 'Y' && parseInt($("#ddlSrchBUMultiSelect option").length) == 0)
+                BindAdvanced_Search_Controls('PGL');
+        }
+    }
     //if ($('#ddlSrchTitle').val())
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
     if ($('#txtTitleSearch').val())
