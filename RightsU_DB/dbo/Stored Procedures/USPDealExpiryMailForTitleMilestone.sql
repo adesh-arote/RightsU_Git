@@ -13,7 +13,7 @@ DECLARE
 @Email_Config_Code INT,
 @Is_Abandoned VARCHAR(5)
 SELECT @Email_Config_Code = Email_Config_Code FROM Email_Config where [Key] = 'TME'
-SELECT @Users_Email_Id = 'jatin@uto.in'
+--SELECT @Users_Email_Id = 'jatin@uto.in'
 
 	IF(OBJECT_ID('TEMPDB..#tempExpired') IS NOT NULL)
 		DROP TABLE #tempExpired
@@ -73,94 +73,34 @@ SELECT @Users_Email_Id = 'jatin@uto.in'
 			CC_Users NVARCHAR(MAX),
 			BCC_Users NVARCHAR(MAX)
 		)
-
-		
-		INSERT INTO #tempEmail(UserCode, CC_Users, BCC_Users) 
-		SELECT
-		STUFF((SELECT  U.Email_Id + ';'
-           FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-			INNER JOIN Users U ON U.Users_Code IN(Select number FROM fn_Split_withdelemiter(ECDU.User_Codes,','))
-         WHERE EC.Email_Type = 'Title Milestone Expiry' AND User_Type = 'U' --AND 
-		   FOR XML PATH('')), 1, 0, '') AS User_Codes,
-		 STUFF((SELECT U.Email_Id + ';' 
-           FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-			INNER JOIN Users U ON U.Users_Code IN(Select number FROM fn_Split_withdelemiter(ECDU.CC_Users,','))
-         WHERE EC.Email_Type = 'Title Milestone Expiry' AND User_Type = 'U' --AND 
-          FOR XML PATH('')), 1, 0, '') AS CC_Users,
-		 STUFF((SELECT  U.Email_Id + ';'
-           FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-			INNER JOIN Users U ON U.Users_Code IN(Select number FROM fn_Split_withdelemiter(ECDU.BCC_Users,','))
-         WHERE EC.Email_Type = 'Title Milestone Expiry' AND User_Type = 'U' --AND 
-          FOR XML PATH('')), 1, 0, '') AS BCC_Users 
-		 UNION ALL
-		 SELECT
-		 STUFF((SELECT  ECDU.ToUser_MailID + ';'
-		   FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-		 WHERE EC.Email_Type = 'Title Milestone Expiry' AND User_Type = 'E' --AND 
-		  FOR XML PATH('')), 1, 0, '') AS User_Codes,
-		   STUFF((SELECT  ECDU.CCUser_MailID + ';'
-		   FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-		 WHERE EC.Email_Type = 'Title Milestone Expiry' AND User_Type = 'E' --AND 
-		  FOR XML PATH('')), 1, 0, '') AS CC_Users,
-		   STUFF((SELECT  ECDU.BCCUser_MailID + ';'
-		   FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-		 WHERE EC.Email_Type = 'Title Milestone Expiry' AND User_Type = 'E' --AND 
-		  FOR XML PATH('')), 1, 0, '') AS BCC_Users
-		 UNION ALL
-		 SELECT
-		 STUFF((SELECT  U.Email_Id + ';'
-		   FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-			INNER JOIN Users U ON U.Security_Group_Code IN(Select number FROM fn_Split_withdelemiter(ECDU.Security_Group_Code,','))
-			--INNER JOIN Users U ON U.Users_Code = 
-		  WHERE EC.Email_Type = 'Title Milestone Expiry' AND User_Type = 'G'  --AND 
-		   FOR XML PATH('')), 1, 0, '') AS User_Codes,
-		  STUFF((SELECT U.Email_Id + ';' 
-		   FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-			INNER JOIN Users U ON U.Users_Code IN(Select number FROM fn_Split_withdelemiter(ECDU.CC_Users,','))
-		   WHERE EC.Email_Type = 'Title Milestone Expiry' AND User_Type = 'G'  --AND 
-			FOR XML PATH('')), 1, 0, '') AS CC_Users,
-		   STUFF((SELECT  U.Email_Id + ';'
-			 FROM Email_Config_Detail_User ECDU
-			INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Detail_Code = ECDU.Email_Config_Detail_Code 
-			INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECD.Email_Config_Code
-			INNER JOIN Users U ON U.Users_Code IN(Select number FROM fn_Split_withdelemiter(ECDU.BCC_Users,','))
-			WHERE EC.Email_Type = 'Title Milestone Expiry' AND ECDU.User_Type = 'G'  --AND 
-			 FOR XML PATH('')), 1, 0, '') AS BCC_Users 
-			
+		---------------
+		DECLARE @Business_Unit_Code INT,
+	@To_Users_Code NVARCHAR(MAX),
+	@To_User_Mail_Id  NVARCHAR(MAX),
+	@CC_Users_Code  NVARCHAR(MAX),
+	@CC_User_Mail_Id  NVARCHAR(MAX),
+	@BCC_Users_Code  NVARCHAR(MAX),
+	@BCC_User_Mail_Id  NVARCHAR(MAX),
+	@Channel_Codes NVARCHAR(MAX)
 	
+	DECLARE @Tbl2 TABLE (
+		Id INT,
+		BuCode INT,
+		To_Users_Code NVARCHAR(MAX),
+		To_User_Mail_Id  NVARCHAR(MAX),
+		CC_Users_Code  NVARCHAR(MAX),
+		CC_User_Mail_Id  NVARCHAR(MAX),
+		BCC_Users_Code  NVARCHAR(MAX),
+		BCC_User_Mail_Id  NVARCHAR(MAX),
+		Channel_Codes NVARCHAR(MAX)
+	)
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 
-			DECLARE @UserCode NVARCHAR(MAX), @CCMail NVARCHAR(MAX), @BCCMail NVARCHAR(MAX)
-			 SET @UserCode =
-			 STUFF((SELECT DISTINCT TE.UserCode + ''
-				FROM #tempEmail TE
-		     FOR XML PATH('')), 1, 0, '') 
+	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+	EXEC USP_Get_EmailConfig_Users 'TME', 'N'
 
-			 SET @CCMail =
-			 STUFF((SELECT DISTINCT TE.CC_Users + ''
-				FROM #tempEmail TE
-		     FOR XML PATH('')), 1, 0, '') 
+		-----------------
 
-			 SET @BCCMail =
-			 STUFF((SELECT DISTINCT TE.BCC_Users + ''
-				FROM #tempEmail TE
-		     FOR XML PATH('')), 1, 0, '') 
-			
 		
 			DECLARE @i INT = 1 , @TableHeader NVARCHAR(MAX) = '', @index INT = 1
 
@@ -268,29 +208,37 @@ SELECT @Users_Email_Id = 'jatin@uto.in'
 					</p>
 					</body></html>'
 
-				PRINT '@UserCode : ' + @UserCode
-				PRINT '@CCMail : ' + @CCMail
-				PRINT '@BCCMail :' + @BCCMail
-				Print 'outside loop:' + @Is_Abandoned
-			INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-			SELECT @Email_Config_Code ,GETDATE(),'N',@Emailbody,143,@MailSubjectCr,@UserCode
+				SET @EmailUser_Body= @EmailHead+@Emailbody+@EMailFooter
+	
+				DECLARE cPointer CURSOR FOR SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
+				OPEN cPointer
+				FETCH NEXT FROM cPointer INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+					WHILE @@FETCH_STATUS = 0
+					BEGIN
+						EXEC msdb.dbo.sp_send_dbmail 
+						@profile_name = @DatabaseEmail_Profile,
+						@recipients =  @To_User_Mail_Id,
+						@copy_recipients = @CC_User_Mail_Id,
+						@blind_copy_recipients = @BCC_User_Mail_Id,
+						@subject = @MailSubjectCr,
+						@body = @EmailUser_Body, 
+						@body_format = 'HTML';
 
-			SET @EmailUser_Body= @EmailHead+@Emailbody+@EMailFooter
-			PRINT @EmailUser_Body
+						INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+						SELECT @Email_Config_Code,@Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''), @MailSubjectCr
+				
 
-			
-					EXEC msdb.dbo.sp_send_dbmail 
-					@profile_name = @DatabaseEmail_Profile,
-					@recipients = @UserCode,
-					@copy_recipients = @CCMail,
-					@blind_copy_recipients = @BCCMail,
-					@subject = @MailSubjectCr,
-					@body = @EmailUser_Body, 
-					@body_format = 'HTML';
+					FETCH NEXT FROM cPointer INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+					END
+				CLOSE cPointer
+				DEALLOCATE cPointer
+		
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 
-					IF OBJECT_ID('tempdb..#tempEmail') IS NOT NULL DROP TABLE #tempEmail
-					IF OBJECT_ID('tempdb..#tempExpired') IS NOT NULL DROP TABLE #tempExpired
-					IF OBJECT_ID('tempdb..#TempIsab') IS NOT NULL DROP TABLE #TempIsab
+	IF OBJECT_ID('tempdb..#tempEmail') IS NOT NULL DROP TABLE #tempEmail
+	IF OBJECT_ID('tempdb..#tempExpired') IS NOT NULL DROP TABLE #tempExpired
+	IF OBJECT_ID('tempdb..#TempIsab') IS NOT NULL DROP TABLE #TempIsab
 			
 		
 END
+

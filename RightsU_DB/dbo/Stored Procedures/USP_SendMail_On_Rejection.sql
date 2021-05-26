@@ -42,7 +42,7 @@ BEGIN
 		DECLARE @BUCode INT = 0 
 		DECLARE @Email_Table NVARCHAR(MAX) = ''
 		DECLARE @Email_Config_Code INT
-		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='ARJ'
+		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='ASCM'
  
 		SELECT @Is_Mail_Send_To_Group=ISNULL(Is_Mail_Send_To_Group,'N') FROM System_Param  
   
@@ -171,15 +171,20 @@ BEGIN
 
 		IF(@Is_CustomUsers_WF_SendMail = 'Y')
 		BEGIN
+			DECLARE @ENL TABLE (
+				BUCode INT,
+				User_Code INT,
+				EmailId NVARCHAR(MAX)
+			)
+			INSERT INTO @ENL (BUCode, User_Code, EmailId)
+			EXEC USP_Get_EmailConfig_Users 'ASCM', 'Y'
+
 			INSERT INTO #TempCursorOnRej(First_name, Security_group_name, Email_id, Security_group_code, User_code)
 			SELECT DISTINCT ISNULL(usr.First_Name,'') + ' ' + ISNULL(usr.Middle_Name,'') + ' ' + ISNULL(usr.Last_Name,'') + '   ('+ ISNULL(SG.Security_Group_Name,'') + ')',
 			SG.Security_Group_Name, usr.Email_Id, usr.Security_Group_Code, usr.Users_Code 
-			FROM Email_Config ec
-			INNER JOIN Email_Config_Detail ecd ON ecd.Email_Config_Code = ec.Email_Config_Code
-			INNER JOIN Email_Config_Detail_User ecdu ON ecdu.Email_Config_Detail_Code = ecd.Email_Config_Detail_Code
-			INNER JOIN Users usr ON usr.Users_Code IN (select number from fn_Split_withdelemiter(ecdu.User_Codes,',')) AND usr.Is_Active = 'Y'
+			FROM @ENL ec
+			INNER JOIN Users usr ON usr.Users_Code  = EC.User_Code
 			INNER JOIN Security_Group SG ON SG.Security_Group_Code = Usr.Security_Group_Code
-			WHERE ec.email_config_code = @Email_Config_Code_V18 
 		END
 
 		/* CURSOR START */
@@ -249,7 +254,7 @@ BEGIN
 				@body = @body1,@body_format = 'HTML';
 				
 				INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-				SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Send for Approval', @Cur_email_id
+				SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Allow Send Custom Users Mail', @Cur_email_id
 			END  
 			FETCH NEXT FROM cur_on_rejection INTO @cur_first_name, @cur_security_group_name, @cur_email_id, @cur_security_group_code, @cur_user_code  
 		END  

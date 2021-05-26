@@ -339,6 +339,17 @@ BEGIN
 			inner join Acq_Deal AD ON AD.Acq_Deal_Code = a.Acq_Deal_Code
 		) as e 
 		WHERE e.PushbackTitle IS NULL or e.PushbackTerritory is null or e.PushbackPlatform is null
+		UNION --RIGHTS TERM
+		SELECT e.Agreement_No,
+		 ISNULL(CASE WHEN ISNULL(e.Acq_Deal_Rights_Term,'') = '' THEN 'Right Term ' END, '')  
+		 + 'is Blank'
+		FROM (
+			SELECT ad.Agreement_No , A.Acq_Deal_Rights_Code,
+			(SELECT TOP 1 b.Term FROM Acq_Deal_Rights B WHERE ISNULL(B.Term,'') = '' AND B.Right_Type = 'Y' AND B.Acq_Deal_Rights_Code = A.Acq_Deal_Rights_Code) Acq_Deal_Rights_Term
+			FROM Acq_Deal_Rights A
+			INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = A.Acq_Deal_Code
+		) as e
+		WHERE e.Acq_Deal_Rights_Term is not null
 		UNION --RUN DEFINATION
 		SELECT e.Agreement_No,
 		 ISNULL(CASE WHEN ISNULL(e.RunTitle,'') = '' THEN 'Run Title ' END, '')  

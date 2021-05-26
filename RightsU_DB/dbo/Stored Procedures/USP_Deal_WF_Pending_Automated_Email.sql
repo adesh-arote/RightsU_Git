@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE USP_Deal_WF_Pending_Automated_Email
 AS
-------------------------------
+----------------------------
 --Author: Ayush Dubey
 --Description: Deal Pending Automated Would Trigger
 --Date Created: 21-MAR-2021
@@ -10,7 +10,7 @@ BEGIN
 
 	DECLARE @Email_Config_Code INT = 0,  @MailSubject NVARCHAR(MAX) = 'Deals Pending for Approval - Level wise',  @LevelColumns NVARCHAR(MAX) = '', @LevelColumnsConcat NVARCHAR(MAX) = '',@LevelSynColumns NVARCHAR(MAX) = '', @LevelSynColumnsConcat NVARCHAR(MAX) = '',   @LevelColumnsIsNull NVARCHAR(MAX) = '',
 	@TableBody NVARCHAR(MAX) = '',@TableBody2 NVARCHAR(MAX) = '', @MaxLevel INT = 0,@MaxSynLevel INT = 0, @Email_Template NVARCHAR(MAX) = '',  @LevelSynColumnsIsNull NVARCHAR(MAX) = '',
-	@Users_Email_Id VARCHAR(MAX),@Business_Unit_Code VARCHAR(MAX),@Users_Code VARCHAR(MAX),@DatabaseEmailProfile varchar(200)	= '',@EmailUser_Body NVARCHAR(Max),@EmailUser_Body2 NVARCHAR(Max)
+	@Users_Email_Id VARCHAR(MAX),@Business_Unit_Code INT,@Users_Code VARCHAR(MAX),@DatabaseEmailProfile varchar(200)	= '',@EmailUser_Body NVARCHAR(Max),@EmailUser_Body2 NVARCHAR(Max)
 	
 	DECLARE @Counter INT = 1 , @HeaderName NVARCHAR(MAX) = ''
 
@@ -70,31 +70,37 @@ BEGIN
 
 	SELECT @DatabaseEmailProfile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
 
-	INSERT INTO #UserData(User_Mail_Id,Business_Unit_Code,User_Code)
-	SELECT DISTINCT CAST(User_Mail_Id AS NVARCHAR)
-		,STUFF((
-				SELECT DISTINCT ',' + CAST(t1.BuCode AS VARCHAR)
-				FROM [dbo].[UFN_Get_Bu_Wise_User]('AMR') T1 WHERE t1.Users_Code = t2.Users_Code GROUP BY Users_Code,BUCode
-				FOR XML PATH('')
-				), 1, 1, '') AS BUCode
-	,Users_Code
-	FROM [dbo].[UFN_Get_Bu_Wise_User]('AMR') T2
+	DECLARE
+	@To_Users_Code NVARCHAR(MAX),
+	@To_User_Mail_Id  NVARCHAR(MAX),
+	@CC_Users_Code  NVARCHAR(MAX),
+	@CC_User_Mail_Id  NVARCHAR(MAX),
+	@BCC_Users_Code  NVARCHAR(MAX),
+	@BCC_User_Mail_Id  NVARCHAR(MAX),
+	@Channel_Codes NVARCHAR(MAX)
+	
+	DECLARE @Tbl2 TABLE (
+		Id INT,
+		BuCode INT,
+		To_Users_Code NVARCHAR(MAX),
+		To_User_Mail_Id  NVARCHAR(MAX),
+		CC_Users_Code  NVARCHAR(MAX),
+		CC_User_Mail_Id  NVARCHAR(MAX),
+		BCC_Users_Code  NVARCHAR(MAX),
+		BCC_User_Mail_Id  NVARCHAR(MAX),
+		Channel_Codes NVARCHAR(MAX)
+	)
 
-	INSERT INTO #UserData(User_Mail_Id,Business_Unit_Code,User_Code)
-	SELECT DISTINCT TOUser_MailID,STUFF((
-				SELECT DISTINCT ',' + CAST(Business_Unit_Code AS VARCHAR)
-				FROM Business_Unit T1
-				FOR XML PATH('')
-				), 1, 1, '') AS BUCode,User_Codes FROM
-	EMAIL_CONFIG_DETAIL_USER ECDU 
-	INNER JOIN EMAIL_CONFIG_DETAIL ECD ON ECDU.Email_Config_Detail_Code = ECD.Email_Config_Detail_Code
-	INNER JOIN Email_Config EC ON ECD.Email_Config_Code = EC.Email_Config_Code
-	WHERE EC.[Key] = 'AMR' AND User_Type = 'E'
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 
-	DECLARE curUserData CURSOR FOR  SELECT DISTINCT User_Mail_Id,Business_Unit_Code,User_Code
-	FROM #UserData
+	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+	EXEC USP_Get_EmailConfig_Users 'AMR', 'N'
+
+
+	DECLARE curUserData CURSOR FOR  SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
+	--Change
 	OPEN curUserData
-	FETCH NEXT FROM curUserData INTO @Users_Email_id, @Business_Unit_Code, @Users_Code
+	FETCH NEXT FROM curUserData INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 	WHILE @@Fetch_Status = 0 
 	BEGIN
 		SELECT @Email_Template = Template_Desc FROM Email_Template WHERE Template_For = 'Acq_Syn_Deal_Pending'
@@ -228,20 +234,25 @@ BEGIN
 		END
 
 		SET @Email_Template = REPLACE(@Email_Template , '{syntable}',@TableBody)
-		 
-		EXEC msdb.dbo.Sp_send_dbmail 
-		@profile_name = @DatabaseEmailProfile, 
-		@recipients = @Users_Email_id, 
-		@subject = @MailSubject, 
-		@body = @Email_Template, 
-		@body_format = 'HTML'; 
 
-		INSERT INTO Email_Notification_Log(email_config_code,created_time,is_read, email_body,user_code,[subject],email_id) 
-		SELECT @Email_Config_Code,Getdate(),'N',@TableBody,@Users_Code, 'Automated Mail Pending',@Users_Email_id 
+		EXEC msdb.dbo.sp_send_dbmail 
+				@profile_name = @DatabaseEmailProfile,
+				@recipients =  @To_User_Mail_Id,
+				@copy_recipients = @CC_User_Mail_Id,
+				@blind_copy_recipients = @BCC_User_Mail_Id,
+				@subject = @MailSubject,
+				@body = @Email_Template, 
+				@body_format = 'HTML';
 
-		FETCH NEXT FROM curUserData Into @Users_Email_Id,@Business_Unit_Code,@Users_Code
+				
+		INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+		SELECT @Email_Config_Code,@TableBody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Automated Mail Pending'
+
+		FETCH NEXT FROM curUserData INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 	END 
 	CLOSE curUserData
 	DEALLOCATE curUserData		
+
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 
 END				
