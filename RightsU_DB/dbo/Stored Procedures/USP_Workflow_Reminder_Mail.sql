@@ -44,7 +44,7 @@ BEGIN
 		)
 
 		INSERT INTO @ENL (BUCode, User_Code, EmailId)
-		EXEC USP_Get_EmailConfig_Users 'CUR', 'Y'
+		EXEC USP_Get_EmailConfig_Users 'ARE', 'Y'
 
 		SELECT DISTINCT BUCode, STUFF((SELECT DISTINCT ';' + EmailId FROM @ENL WHERE BUCode = A.BUCode FOR XML PATH ('')) , 1, 1, '') AS Users_Email_id  INTO #TmpEmail_Config FROM @ENL A
 
