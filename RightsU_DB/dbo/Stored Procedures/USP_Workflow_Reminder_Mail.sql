@@ -1,8 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[USP_Workflow_Reminder_Mail] 
--- =============================================
--- Author:		Anchal Sikarwar
--- Create date:	23-03-2017
--- =============================================
+ --=============================================
+ --Author:		Anchal Sikarwar
+ --Create date:	23-03-2017
+ --=============================================
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -11,6 +11,7 @@ BEGIN
 		, @Agreement_No NVARCHAR(max), @Deal_Desc NVARCHAR(max),@Email_Id NVARCHAR(MAX),@Vender_Name NVARCHAR(500), @Agreement_Date NVARCHAR(max), @Is_Daily CHAR(1)
 		,@Days INT, @Bu_Name NVARCHAR(100) 
 
+	DECLARE @Mail_alert_days INT = 7
 	SELECT @DatabaseEmailProfile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'  
 	
 	SELECT @Is_Daily = parameter_value FROM system_parameter_new WHERE parameter_name = 'Approver_Alert_Is_Daily'  
@@ -22,6 +23,12 @@ BEGIN
 	BEGIN
 		DROP TABLE #TempS
 	END
+
+	IF OBJECT_ID('tempdb..#TmpEmail_Config') IS NOT NULL
+	BEGIN
+		DROP TABLE #TmpEmail_Config
+	END
+
 	SET @MailSubject = 'RightsU Approval Reminder'
 	SET @EmailFooter = '&nbsp;</br>&nbsp;</br><FONT FACE="verdana" SIZE="2" COLOR="Black">
 							(This is a system generated mail. Please do not reply back to the same)</b></br></br></font>
@@ -30,12 +37,24 @@ BEGIN
 							<FONT FACE="verdana" SIZE="2" COLOR="Black">
 							RightsU System</br></font></body></html>'
 
-	SELECT DISTINCT MWD.Record_Code, DEE.Users_Email_id + ';' +
+		DECLARE @ENL TABLE (
+			BUCode INT,
+			User_Code INT,
+			EmailId NVARCHAR(MAX)
+		)
+
+		INSERT INTO @ENL (BUCode, User_Code, EmailId)
+		EXEC USP_Get_EmailConfig_Users 'CUR', 'Y'
+
+		SELECT DISTINCT BUCode, STUFF((SELECT DISTINCT ';' + EmailId FROM @ENL WHERE BUCode = A.BUCode FOR XML PATH ('')) , 1, 1, '') AS Users_Email_id  INTO #TmpEmail_Config FROM @ENL A
+
+	SELECT DISTINCT MWD.Record_Code, ISNULL(DEE.Users_Email_id,'') + ';' +
 		STUFF(( SELECT DISTINCT  ';' + U.Email_Id FROM Users U
 		INNER JOIN Users_Business_Unit ubu on ubu.Users_Code = u.Users_Code and ubu.Business_Unit_Code = bu.Business_Unit_Code
 		WHERE  U.Security_Group_Code = MWD.Group_Code AND U.Is_Active = 'Y'
-		FOR XML PATH('')), 1, 1, '') AS Email_Id,
-		DATEDIFF(d,MSH.Status_Changed_On,GETDATE()) AS [Days], BU.Business_Unit_Name--, msh.Status_Changed_On, DEE.Mail_alert_days, DATEADD(d, DEE.Mail_alert_days, MSH.Status_Changed_On)
+		FOR XML PATH('')), 1, 1, '')
+		AS Email_Id,
+		DATEDIFF(d,MSH.Status_Changed_On,GETDATE()) AS [Days], BU.Business_Unit_Name--, msh.Status_Changed_On, @Mail_alert_days, DATEADD(d, @Mail_alert_days, MSH.Status_Changed_On)
 		INTO #TempA
 	FROM Module_Workflow_Detail MWD
 	INNER JOIN Module_Status_History MSH ON MSH.Record_Code = MWD.Record_Code AND MSH.Module_Code = MWD.Module_Code AND MSH.Module_Code = 30
@@ -44,9 +63,7 @@ BEGIN
 									 AND (MSH.Status_Changed_On>=WM.Effective_Start_Date AND MSH.Status_Changed_On<=ISNULL(WM.System_End_Date,CONVERT(datetime,'31 Dec 9999')))  
 	INNER JOIN Business_Unit BU ON BU.Business_Unit_Code=AD.Business_Unit_Code AND BU.Is_Active='Y'
 	INNER JOIN Workflow_Module_Role WMR ON WMR.Workflow_Module_Code=WM.Workflow_Module_Code AND WMR.Group_Code=MWD.Group_Code AND WMR.Group_Level=MWD.Role_Level
-	--INNER JOIN Users U ON U.Security_Group_Code = MWD.Group_Code
-	--LEFT JOIN Users_Business_Unit ubu on ubu.Users_Code = u.Users_Code and ubu.Business_Unit_Code = bu.Business_Unit_Code
-	LEFT JOIN Deal_Expiry_Email DEE ON DEE.Business_Unit_Code=AD.Business_Unit_Code
+	LEFT JOIN #TmpEmail_Config DEE ON DEE.BUCode= AD.Business_Unit_Code
 	WHERE MWD.Module_Workflow_Detail_Code IN(
 		SELECT MIN(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail
 		WHERE Is_Done='N' and Module_Code = 30
@@ -60,20 +77,19 @@ BEGIN
 	AND (
 		(
 			(
-				(DATEADD(d, DEE.Mail_alert_days, MSH.Status_Changed_On) <= GETDATE()) OR
-				(DATEDIFF(d, MSH.Status_Changed_On, GETDATE()) > DEE.Mail_alert_days)
+				(DATEADD(d, @Mail_alert_days, MSH.Status_Changed_On) <= GETDATE()) OR
+				(DATEDIFF(d, MSH.Status_Changed_On, GETDATE()) > @Mail_alert_days)
 			) AND @Is_Daily='Y'
 		) OR (
 			(
-				(dateadd(d, DEE.Mail_alert_days, MSH.Status_Changed_On)=GETDATE()) OR
-				(DATEDIFF(d,MSH.Status_Changed_On,GETDATE())=DEE.Mail_alert_days)
+				(dateadd(d, @Mail_alert_days, MSH.Status_Changed_On)=GETDATE()) OR
+				(DATEDIFF(d,MSH.Status_Changed_On,GETDATE())=@Mail_alert_days)
 			) AND @Is_Daily = 'N'
 		)
 	)
-	AND DEE.Alert_Type='W'
 
 
-	SELECT DISTINCT MWD.Record_Code, DEE.Users_Email_id + ';' +
+	SELECT DISTINCT MWD.Record_Code, ISNULL(DEE.Users_Email_id,'') + ';' +
 	   STUFF(( SELECT DISTINCT  ';' + U.Email_Id FROM Users U
 		INNER JOIN Users_Business_Unit ubu on ubu.Users_Code = u.Users_Code and ubu.Business_Unit_Code = bu.Business_Unit_Code
 		WHERE  U.Security_Group_Code = MWD.Group_Code AND U.Is_Active = 'Y'
@@ -87,9 +103,7 @@ BEGIN
 									 AND (MSH.Status_Changed_On>=WM.Effective_Start_Date AND MSH.Status_Changed_On<=ISNULL(WM.System_End_Date,CONVERT(datetime,'31 Dec 9999')))  
 	INNER JOIN Business_Unit BU ON BU.Business_Unit_Code=SD.Business_Unit_Code AND BU.Is_Active='Y'
 	INNER JOIN Workflow_Module_Role WMR ON WMR.Workflow_Module_Code=WM.Workflow_Module_Code AND WMR.Group_Code=MWD.Group_Code AND WMR.Group_Level=MWD.Role_Level
-	--INNER JOIN Users U ON U.Users_Code=MWD.Primary_User_Code
-	--LEFT JOIN Users_Business_Unit ubu on ubu.Users_Code = u.Users_Code and ubu.Business_Unit_Code = bu.Business_Unit_Code
-	LEFT JOIN Deal_Expiry_Email DEE ON DEE.Business_Unit_Code=SD.Business_Unit_Code
+	LEFT JOIN #TmpEmail_Config DEE ON DEE.BUCode= SD.Business_Unit_Code
 	WHERE MWD.Module_Workflow_Detail_Code IN(
 		SELECT MIN(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail
 		WHERE Is_Done='N' and Module_Code = 35
@@ -103,17 +117,16 @@ BEGIN
 	AND (
 		(
 			(
-				(DATEADD(d, DEE.Mail_alert_days, MSH.Status_Changed_On) <= GETDATE()) OR
-				(DATEDIFF(d, MSH.Status_Changed_On, GETDATE()) > DEE.Mail_alert_days)
+				(DATEADD(d, @Mail_alert_days, MSH.Status_Changed_On) <= GETDATE()) OR
+				(DATEDIFF(d, MSH.Status_Changed_On, GETDATE()) > @Mail_alert_days)
 			) AND @Is_Daily='Y'
 		) OR (
 			(
-				(dateadd(d, DEE.Mail_alert_days, MSH.Status_Changed_On)=GETDATE()) OR
-				(DATEDIFF(d,MSH.Status_Changed_On,GETDATE())=DEE.Mail_alert_days)
+				(dateadd(d, @Mail_alert_days, MSH.Status_Changed_On)=GETDATE()) OR
+				(DATEDIFF(d,MSH.Status_Changed_On,GETDATE())=@Mail_alert_days)
 			) AND @Is_Daily = 'N'
 		)
 	)
-	AND DEE.Alert_Type='W'
 
 
 	IF EXISTS(SELECT * FROM #TempA)
@@ -212,7 +225,7 @@ BEGIN
 						<Font FACE="verdana" SIZE="2" COLOR="Black">Hello User,<br /><br />
 						The following Acquisition deals have not been approved:<br /><br />
 						</Font>'
-						select @Email_Id
+						
 			DECLARE @EmailDetails NVarchar(max)
 			if(@EmailBody!='')
 			SET @EmailBody=@EmailBody +'</table>'
@@ -220,12 +233,7 @@ BEGIN
 			--select @EmailDetails,@Email_Id
 			IF(@EmailDetails!='')
 			BEGIN
-				SELECT @Email_Id = STUFF(
-					(SELECT distinct ',' + number FROM fn_Split_withdelemiter(@Email_Id,';')
-					 FOR XML PATH (''))
-					, 1, 1, '') 
-
-				EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
+					EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
 					@recipients =  @Email_Id,
 					@subject = @MailSubject,
 					@body = @EmailDetails, 
@@ -241,9 +249,6 @@ BEGIN
 		CLOSE CurMail1;
 		DEALLOCATE CurMail1
 	END
-
-
-
 
 	IF EXISTS(SELECT * FROM #TempS)
 	BEGIN
@@ -357,11 +362,6 @@ BEGIN
 		--select @EmailDetails,@Email_Id
 		IF(@EmailDetails!='')
 		BEGIN
-			
-			SELECT @Email_Id = STUFF(
-						 (SELECT distinct ',' + number FROM fn_Split_withdelemiter(@Email_Id,';')
-						  FOR XML PATH (''))
-						 , 1, 1, '') 
 
 			EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
 				@recipients = @Email_Id,

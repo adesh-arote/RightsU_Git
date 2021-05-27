@@ -13,7 +13,7 @@ BEGIN
 	--DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 
 	--INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
-	--SELECT 1,'Table 1', '', '','143,254','utosupport_uto@uto.in;viraj_Bhagat@uto.in','204,208','Jatin_Patel@uto.in;Deepak_Kurian@uto.in','Subject'
+	--SELECT 1,'Table 1', '', '','','utosupport_uto@uto.in;viraj_Bhagat@uto.in','204,208','Jatin_Patel@uto.in;Deepak_Kurian@uto.in','Subject'
 	--UNION
 	--SELECT 1,'Table 2', '1319,1324', 'sds_daf@uto.in;Test_K@uto.in','136,1319','Ragnar_Tygerian@uto.in;sds_daf@uto.in','','Uto_Cs@uto.in;sds_daf@uto.in','Subject'
 
@@ -25,8 +25,13 @@ BEGIN
 
 	DELETE FROM #Email_Config_Users_UDT WHERE To_Users_Code = '' AND BCC_Users_Code = '' AND CC_Users_Code = ''
 
+	UPDATE #Email_Config_Users_UDT SET To_User_Mail_Id = '' WHERE To_Users_Code = ''
+	UPDATE #Email_Config_Users_UDT SET CC_User_Mail_Id = '' WHERE CC_Users_Code = ''
+	UPDATE #Email_Config_Users_UDT SET BCC_User_Mail_Id = '' WHERE BCC_Users_Code = ''
+
+
 	BEGIN
-		INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
+		--INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
 		SELECT tbl1.Email_Config_Code, GETDATE(), 'N', Tbl1.Email_Body, Tbl2.number, Tbl1.Subject ,Tbl1.number FROM 
 		(
 			SELECT  ROW_NUMBER() OVER (ORDER BY A.Email_Config_Users_UDT_Code) AS RowNo, B.number
