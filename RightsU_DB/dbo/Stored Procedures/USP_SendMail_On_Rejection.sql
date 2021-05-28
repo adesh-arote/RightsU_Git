@@ -1,5 +1,4 @@
-﻿
-CREATE Procedure [dbo].[USP_SendMail_On_Rejection]   
+﻿CREATE Procedure [dbo].[USP_SendMail_On_Rejection]   
 	 @RecordCode INT,
 	 @module_workflow_detail_code INT,
 	 @module_code INT,
@@ -25,6 +24,7 @@ BEGIN
 	 
 	SET @Is_Error='N'  
 	BEGIN TRY  
+		DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 		DECLARE @Rejected_by NVARCHAR(500) SET @Rejected_by=''  
 		DECLARE @cur_first_name NVARCHAR(500)  
 		DECLARE @cur_security_group_name NVARCHAR(500)   
@@ -253,8 +253,10 @@ BEGIN
 				@subject = @MailSubjectCr, 
 				@body = @body1,@body_format = 'HTML';
 				
-				INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-				SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Allow Send Custom Users Mail', @Cur_email_id
+
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Allow Send Custom Users Mail'
+
 			END  
 			FETCH NEXT FROM cur_on_rejection INTO @cur_first_name, @cur_security_group_name, @cur_email_id, @cur_security_group_code, @cur_user_code  
 		END  
@@ -262,6 +264,8 @@ BEGIN
 		CLOSE cur_on_rejection  
 		DEALLOCATE cur_on_rejection  
 		/* CURSOR END */
+
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
     
 	IF OBJECT_ID('tempdb..#TempCursorOnRej') IS NOT NULL DROP TABLE #TempCursorOnRej
 		SET @Is_Error='N'  
