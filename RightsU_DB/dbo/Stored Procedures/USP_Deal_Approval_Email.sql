@@ -172,7 +172,7 @@ BEGIN
 					Declare curInner cursor For select Agreement_No,Deal_Desc,Deal_Type,Agreement_Date,Party
 					from #DealDetails
 					Where Business_Unit_Code IN(select Business_Unit_Code from Approval_Email_BU where Email_Id=@Users_Email_Id)
-					select * from Approval_Email_BU
+					
 						OPEN curInner
 						Fetch Next From curInner Into @Agreement_No,@Deal_Desc,@Deal_Type,@Agreement_Date,@Party
 						WHILE @@Fetch_Status = 0 
@@ -237,8 +237,9 @@ BEGIN
 							 @body = @EmailUser_Body, 
 							 @body_format = 'HTML';
 
-							 INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-							 SELECT @Email_Config_Code,GETDATE(),'N',@Emailbody,NULL,@MailSubjectCr,@Users_Email_Id
+							INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_User_Mail_Id, [Subject])
+							SELECT @Email_Config_Code, @Emailbody, ISNULL(@Users_Email_Id ,''), @MailSubjectCr
+
 					END
 					SET @EmailUser_Body=''
 				

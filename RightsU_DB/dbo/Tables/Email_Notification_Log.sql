@@ -7,6 +7,7 @@
     [User_Code]                   INT             NULL,
     [Subject]                     NVARCHAR (1000) NULL,
     [Email_Id]                    NVARCHAR (MAX)  NULL,
+    [User_Type] CHAR(2) NULL, 
     CONSTRAINT [PK_Email_Notification_Log] PRIMARY KEY CLUSTERED ([Email_Notification_Log_Code] ASC),
     CONSTRAINT [FK_Email_Notification_Log_Email_Config] FOREIGN KEY ([Email_Config_Code]) REFERENCES [dbo].[Email_Config] ([Email_Config_Code])
 );
