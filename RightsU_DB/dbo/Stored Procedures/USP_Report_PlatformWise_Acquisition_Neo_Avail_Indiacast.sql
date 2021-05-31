@@ -263,6 +263,7 @@ BEGIN
 	INNER JOIN Acq_Deal_Rights_Platform AS adrp ON adrp.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 	INNER JOIN Acq_Deal_Rights_Title AS adrt ON adrt.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 	INNER JOIN Acq_Deal ad ON ar.Acq_Deal_Code = ad.Acq_Deal_Code
+	INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code
 	INNER JOIN Category C ON ad.Category_Code = C.Category_Code
 	INNER JOIN Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code
 	WHERE 
