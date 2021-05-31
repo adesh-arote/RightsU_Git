@@ -464,7 +464,7 @@
                         {
                             Count = Count + 1;
                             @*<a title="Approve" class="glyphicon glyphicon-ok" onclick="Ask_Confirmation('Approve',@objSynList.IntCode,0)" href="#" ></a>*@
-                            <a title="@objMessageKey.Approve" class="glyphicon glyphicon-check ApproveCounter_@tempCount AT_@objSynList.Syn_Deal_Code" onclick="return Validate_Record_Site(@objSynList.Syn_Deal_Code, 'S', this)" id="Approve+@counter"
+                            <a title="@objMessageKey.Approve" class="glyphicon glyphicon-check ApproveCounter_@tempCount AT_@objSynList.Syn_Deal_Code" onclick="return Validate_Record_Site(@objSynList.Syn_Deal_Code, 'S_', this)" id="S_@counter"
                                href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objSynList.Syn_Deal_Code, ModuleCode = 35, Record_Locking_Code = "RecordLockingCode", Is_Menu = "N" })'></a>
                             if (Count > 3)
                             {
