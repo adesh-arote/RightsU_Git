@@ -25,6 +25,7 @@
             showAlert('I', '@objMessageKey.Pleaseenterremarks');
         }
         else {
+            $(".btn_Apr_Rej_Ropn_BOL").attr('disabled', true);
             if (value == 'A') {
                 showAlert('I', '@objMessageKey.Areyousureyouwanttoapprovethisdeal', 'OKCANCEL');
                 DoConfirmation = 'Y';
@@ -41,7 +42,9 @@
         return false;
     }
 
-    function handleCancel() { }
+    function handleCancel() {
+        $(".btn_Apr_Rej_Ropn_BOL").attr('disabled', false);
+    }
 
     function handleOk() {
         if (DoConfirmation == 'Y') {
@@ -68,6 +71,9 @@
                                 showAlert('E', 'Some Error While Archiving Deal Please Contact Support Team.', 'OK');
                             }
                             message = 'Deal Archived successfully';
+                        }
+                        else if (result == "Already_Approved") {
+                            message = "Deal has been already Approved";
                         }
                         else
                             message = 'Deal Approved successfully';

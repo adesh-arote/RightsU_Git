@@ -9,7 +9,7 @@
   <Entity>
     <ShortName>VIACOM18 Network</ShortName>
     <FullName>Viacom18 Network</FullName>
-    <DatabaseName>RightsU_UAT</DatabaseName>
+    <DatabaseName>Rightsu_Plus_testing</DatabaseName>
     <ConnectionStringName>RightsU_Broadcaster</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
   </Entity>

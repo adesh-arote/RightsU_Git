@@ -25,6 +25,11 @@ function Validate_Record_Site(dealCode, dealType) {
             result = result.split('~');
             var Record_Locking_Code = result[1];
             if (Record_Locking_Code != 'undefined' && Record_Locking_Code > 0) {
+
+                if (dealType == "A" || dealType == "S") {
+                    dealType = dealType + '_';
+                }
+
                 var New_href = $('#' + dealType + dealCode).attr('href').replace("RecordLockingCode", Record_Locking_Code);
                 $('#' + dealType + dealCode).attr('href', New_href);
             }
