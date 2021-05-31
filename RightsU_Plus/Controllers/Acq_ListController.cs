@@ -1553,8 +1553,9 @@ namespace RightsU_Plus.Controllers
         }
         private MultiSelectList BindBUList()
         {
+            //return new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type == "A" && x.Deal_WorkflowFlag != "AR"), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name", ViewBag.WorkFlowStatus);
 
-            return new MultiSelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)), "Business_Unit_Code", "Business_Unit_Name", obj_Acq_Syn_List_Search.BUCode);
+            return new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)), "Business_Unit_Code", "Business_Unit_Name", obj_Acq_Syn_List_Search.BUCode ?? "1");
         }
         #endregion
 
