@@ -183,6 +183,21 @@ namespace RightsU_Plus.Controllers
                     objAcq_Deal = ((Acq_Deal)TempData["RedirectAcqDeal"]);
                 }
                 string uspResult = string.Empty;
+                if (user_Action == "A")
+                {
+                    string isApproved = new Module_Workflow_Detail_Service(objLoginEntity.ConnectionStringName)
+                        .SearchFor(x => x.Module_Code == 30 
+                                        && x.Record_Code == objAcq_Deal.Acq_Deal_Code 
+                                        && x.Group_Code == objLoginUser.Security_Group_Code)
+                        .Select(x=>x.Is_Done)
+                        .FirstOrDefault();
+
+                    if (isApproved == "Y")
+                    {
+                        return Json("Already_Approved");
+                    }
+                }
+
                 if (WorkFlowStatus.Contains("Waiting (Archive)"))
                 {
                     uspResult = Archive(user_Action,objAcq_Deal.Acq_Deal_Code, approvalremarks);
@@ -226,6 +241,21 @@ namespace RightsU_Plus.Controllers
                 else if (TempData["RedirectSynDeal"] != null)
                 {
                     objSyn_Deal = ((Syn_Deal)TempData["RedirectSynDeal"]);
+                }
+
+                if (user_Action == "A")
+                {
+                    string isApproved = new Module_Workflow_Detail_Service(objLoginEntity.ConnectionStringName)
+                        .SearchFor(x => x.Module_Code == 35 
+                                        && x.Record_Code == objSyn_Deal.Syn_Deal_Code 
+                                        && x.Group_Code == objLoginUser.Security_Group_Code)
+                        .Select(X => X.Is_Done)
+                        .FirstOrDefault();
+
+                    if (isApproved == "Y")
+                    {
+                        return Json("Already_Approved");
+                    }
                 }
 
                 string uspResult = String.Empty;

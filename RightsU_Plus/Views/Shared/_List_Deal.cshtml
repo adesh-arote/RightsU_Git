@@ -515,7 +515,7 @@
                             {
 
                                 Count = Count + 1;
-                                <a title="@objMessageKey.Approve" class="glyphicon glyphicon-check ApproveCounter_@tempCount AT_@objAcqList.Acq_Deal_Code" onclick="return Validate_Record_Site(@objAcqList.Acq_Deal_Code, 'A', this)" id="A_@counter"
+                                <a title="@objMessageKey.Approve" class="glyphicon glyphicon-check ApproveCounter_@tempCount AT_@objAcqList.Acq_Deal_Code" onclick="return Validate_Record_Site(@objAcqList.Acq_Deal_Code, 'A', this)" id="A_@objAcqList.Acq_Deal_Code"
                                    href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objAcqList.Acq_Deal_Code, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>
                                 if (Count > 3)
                                 {

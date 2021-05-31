@@ -1862,6 +1862,25 @@ namespace RightsU_BLL
         }
     }
 
+    public class Module_Workflow_Detail_Service
+    {
+        private readonly Module_Workflow_Detail_Repository objModule_Workflow_Detail;
+
+        public Module_Workflow_Detail_Service(string Connection_Str)
+        {
+            this.objModule_Workflow_Detail = new Module_Workflow_Detail_Repository(Connection_Str);
+        }
+        public IQueryable<Module_Workflow_Detail> SearchFor(Expression<Func<Module_Workflow_Detail, bool>> predicate)
+        {
+            return objModule_Workflow_Detail.SearchFor(predicate);
+        }
+
+        public Module_Workflow_Detail GetById(int id)
+        {
+            return objModule_Workflow_Detail.GetById(id);
+        }
+    }
+
     public class Sponsor_Service
     {
         private readonly Sponsor_Repository objSponsor;

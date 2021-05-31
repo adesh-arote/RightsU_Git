@@ -867,6 +867,11 @@ namespace RightsU_DAL
         public Sport_Ancillary_Broadcast_Repository(string conStr) : base(conStr) { }
     }
 
+    public class Module_Workflow_Detail_Repository : RightsU_Repository<Module_Workflow_Detail>
+    {
+        public Module_Workflow_Detail_Repository(string conStr) : base(conStr) { }
+    }
+
     public class Sport_Ancillary_Config_Repository : RightsU_Repository<Sport_Ancillary_Config>
     {
         public Sport_Ancillary_Config_Repository(string conStr) : base(conStr) { }
