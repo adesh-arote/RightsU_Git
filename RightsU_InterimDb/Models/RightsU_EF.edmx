@@ -3832,6 +3832,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Is_Sport_Right" Type="char" MaxLength="1" />
           <Property Name="Is_Applicable_Syn_Run" Type="char" MaxLength="1" />
         </EntityType>
+        <EntityType Name="Platform_Broadcast">
+          <Key>
+            <PropertyRef Name="Platform_Broadcast_Code" />
+          </Key>
+          <Property Name="Platform_Broadcast_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Platform_Code" Type="int" />
+          <Property Name="Broadcast_Mode_Code" Type="int" />
+        </EntityType>
         <EntityType Name="Platform_Group">
           <Key>
             <PropertyRef Name="Platform_Group_Code" />
@@ -14241,6 +14249,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Party_Group" EntityType="Self.Party_Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Payment_Terms" EntityType="Self.Payment_Terms" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Platform" EntityType="Self.Platform" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Platform_Broadcast" EntityType="Self.Platform_Broadcast" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Platform_Group" EntityType="Self.Platform_Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Platform_Group_Details" EntityType="Self.Platform_Group_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Program" EntityType="Self.Program" Schema="dbo" store:Type="Tables" />
@@ -20749,6 +20758,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="DM_Master_Import_Code" Mode="In" Type="Int32" />
             <Parameter Name="CallFor" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Platform_Broadcast" EntityType="RightsU_NeoModel.Platform_Broadcast" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35522,6 +35532,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="DisplayText" Nullable="true" />
           <Property Type="String" Name="CallFor" Nullable="true" />
         </ComplexType>
+        <EntityType Name="Platform_Broadcast">
+          <Key>
+            <PropertyRef Name="Platform_Broadcast_Code" />
+          </Key>
+          <Property Name="Platform_Broadcast_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Platform_Code" Type="Int32" />
+          <Property Name="Broadcast_Mode_Code" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44575,6 +44593,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Platform_Broadcast">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Platform_Broadcast">
+              <MappingFragment StoreEntitySet="Platform_Broadcast">
+                <ScalarProperty Name="Broadcast_Mode_Code" ColumnName="Broadcast_Mode_Code" />
+                <ScalarProperty Name="Platform_Code" ColumnName="Platform_Code" />
+                <ScalarProperty Name="Platform_Broadcast_Code" ColumnName="Platform_Broadcast_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

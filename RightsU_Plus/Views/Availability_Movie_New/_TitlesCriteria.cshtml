@@ -1,0 +1,176 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@model List<RightsU_Entities.USP_Get_Avail_Titles_Result>
+@*<script>
+        $(document).ready(function () {
+            debugger;
+            var a = '@ViewBag.TempList';
+
+            if(a!="")
+            {
+                $('#ddlTitleList').val(a);
+            }
+        })
+
+    </script>*@
+
+<script>
+    var a = '@ViewBag.lstAvailTitles'
+    $('#titleCount').val(a);
+    var a1 = "";
+
+    //var tempID = "";
+    //var CodeString = "";
+    //var splitString = "";
+    //function myFunction(code, titleCode, rowID) {
+    //    debugger;
+    //    var click = 'onclick=removeTitle(' + code + ')';
+
+    //    $("#resultLanguageDetails").append("<div class='titlesSearch' id=" + titleCode + ">" + code + " <a class='glyphicon glyphicon-remove titlesSearchRemove'  onclick='removeTitle(" + titleCode + ", " + rowID + ")'></a></div>").css("font-weight", "bold");
+    //    tempID = '#' + rowID;
+    //    //  tempx = rowiD;
+    //    $(tempID).css("display", "none");
+    //    $('#hdnsearchTitleCode').append("" + titleCode + ",");
+    //    CodeString = $('#hdnsearchTitleCode').text();
+
+
+
+    //    //var x = code;//document.getElementById("title").innerText;
+    //    //if(a1 == ""){
+    //    //    a1=x;
+    //    //}
+    //    //else
+    //    //    a1 = a1 +", "+ x;
+    //    ////$("#resultLanguageDetails").html("<span>" + a1 + "</span>").css("font-weight", "bold");
+
+
+    //    //var str_array = a1.split(',');
+    //    //var temp = "";
+    //    //for (var i = 0; i < str_array.length; i++) {
+    //    //    str_array[i] = str_array[i].replace(/^\s*/, "").replace(/\s*$/, "");
+    //    //    $("#resultLanguageDetails").append("<span>" + code + "</span>");
+
+    //    //}
+
+    //    //document.getElementById("demo").innerHTML = x[2].innerHTML;
+    //}
+
+    //function removeTitle(code, tempID) {
+    //    debugger;
+
+    //    var code1 = '#' + code;
+    //    $(code1).remove();
+
+    //    rowID = '#' + tempID;
+    //    PushTitle(tempID);
+    //    CodeString = CodeString.replace(code + ",", "");
+    //    $('#hdnsearchTitleCode').text(CodeString);
+    //}
+
+    //function PushTitle(tempID) {
+    //    debugger;
+    //    $(tempID).show();
+    //}
+</script>
+<style>
+    .SumoSelect {
+        text-align: left !important;
+    }
+
+    .dateText {
+        width: 49px !important;
+    }
+
+    /*.titlesSearch {
+        position: relative;
+        margin: 3px 5px 2px 0px;
+        padding: 3px 19px 3px 4px;
+        border: 1px solid #ccc;
+        max-width: 100%;
+        border-radius: 3px;
+        background-color: #eee;
+        background-size: 100% 19px;
+        background-repeat: repeat-x;
+        background-clip: padding-box;
+        box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0,0,0,.05);
+        color: #666;
+        line-height: 13px;
+        cursor: default;
+        width: fit-content;
+        float: left;
+    }
+
+    .titlesSearchRemove {
+        top: 2px;
+        right: -7px;
+        font-size: small;
+        color: rgba(128, 128, 128, 0.53);
+    }*/
+</style>
+@*<div id="divLanguageGroupDetails">
+        <div id="resultLanguageDetails" class="more searchChoice" style="text-align:left;max-height: 300px;
+        margin-top: 10px;
+        margin-bottom: 10px;line-height:2.5"></div>
+    </div>*@
+@*<div style="text-align:left;margin-top: 7px;">
+        <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%;  padding: 10px;
+      border: solid 5px #c9c9c9;
+      transition: border 0.3s;" placeholder="Title, Talent, StarCast, Genre, Director, Year of Production" maxlength="100" onkeyup="btnSearch_OnClick()" />
+        <a href="#" style="display:none">
+            <span style="color:#2b64a5" class="glyphicon glyphicon-search" title="" onclick="btnSearch_OnClick()" data-original-title="Search"></span>
+        </a>
+    </div>*@
+<div style="max-height: 200px;overflow-y: auto;">
+    <table class="table table-bordered table-hover">
+        <tbody id="title1">
+            @{int i = 0;}
+            @foreach (var item in Model)
+            {
+                var row = "R_" + @item.Title_Code;
+
+                <tr id="@row" onclick="myFunction('@item.Title_Name',@item.Title_Code,'@row')" style="cursor: pointer;">
+
+                    <td style="display:none">
+                        <span>@i</span>
+
+                    </td>
+
+                    <td style="text-align:left">
+                        @item.Title_Name
+                        <span style="display:none" id=" "></span>
+                    </td>
+                    <td style="text-align:center;display:none">
+                        @*<a title="" href="#" class="glyphicon glyphicon-plus" data-original-title="Add" onclick="AddTitles(@item.Title_Code)"></a>*@
+                        <a title="" href="#" class="glyphicon glyphicon-plus" data-original-title="Add"></a>
+                    </td>
+
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+
+</div>
+</br>
+@*<div id="inputsource">
+        @Html.DropDownList("TitleList", ViewBag.TitleList as MultiSelectList, new { @id = "ddlTitleList", @multiple = "multiple" })
+
+    </div>*@
+</br>
+@*@if (Convert.ToInt32(ViewBag.Code) == 127)
+    {
+        <div style="text-align:center">
+        </div>
+    }
+    else if (Convert.ToInt32(ViewBag.Code) == 134)
+    {
+        <div style="text-align:center">
+            Episode From
+            <input type="text" name="name" value="" id="epFrom" class="dateText" maxlength="4" />
+            To
+            <input type="text" name="name" value="" id="epTo" class="dateText" maxlength="4" />
+        </div>
+    }*@
+<input type="hidden" id="hdnTitleCodes" name="name" value="" />
+<input type="hidden" name="name" value=" " id="titleCount" />
+@*<input type="hidden" name="" value="" id="hdnsearchTitleCode" />*@
+

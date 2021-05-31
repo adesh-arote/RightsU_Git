@@ -1,0 +1,1047 @@
+﻿@model List<UTO.RightsU.Avails.AvailEntity.View.EachAvailViewModel>
+
+<style>
+    #availsReport th {
+        border: 1px solid grey;
+        padding: 8px !important;
+    }
+
+    #availsReportContainer table td {
+        border: 1px solid grey;
+        padding: 8px !important;
+    }
+
+    #availsReport th {
+        white-space: nowrap;
+    }
+
+    #availsReport > thead > tr > th {
+        position: sticky;
+        top: 0px;
+        background-color: #dff0d8;
+        border: 1px solid black !important;
+        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    .title-name {
+        height: 16px !important;
+        width: 100% !important;
+        /*display: inline-block !important;*/
+        max-width: 200px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        /*font-family: WorkSans-Bold !important;*/
+        /*font-size: 14px !important;*/
+        /*font-stretch: normal !important;
+        font-style: normal !important;*/
+        line-height: normal !important;
+        letter-spacing: normal !important;
+        /*color: #222222 !important;*/
+    }
+
+    .title-name-wrap {
+        height: 16px !important;
+        //min-width: 100% !important;
+        /*display: inline-block !important;*/
+        max-width: 200px !important;
+        /*overflow: hidden !important;
+        text-overflow: ellipsis !important;*/
+        //white-space: nowrap !important;
+        /*font-family: WorkSans-Bold !important;*/
+        /*font-size: 14px !important;*/
+        /*font-stretch: normal !important;
+        font-style: normal !important;*/
+        line-height: normal !important;
+        letter-spacing: normal !important;
+        /*color: #222222 !important;*/
+    }
+
+    .title-name-width-max {
+        height: 16px !important;
+        width: 100% !important;
+        /*display: inline-block !important;*/
+        max-width: 400px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        /*font-family: WorkSans-Bold !important;*/
+        /*font-size: 14px !important;*/
+        /*font-stretch: normal !important;
+        font-style: normal !important;*/
+        line-height: normal !important;
+        letter-spacing: normal !important;
+        /*color: #222222 !important;*/
+    }
+
+    .title-name-fixed-width {
+        height: 16px !important;
+        width: 100% !important;
+        /*display: inline-block !important;*/
+        min-width: 150px !important;
+        max-width: 150px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        /*font-family: WorkSans-Bold !important;*/
+        /*font-size: 14px !important;*/
+        /*font-stretch: normal !important;
+        font-style: normal !important;*/
+        line-height: normal !important;
+        letter-spacing: normal !important;
+        /*color: #222222 !important;*/
+    }
+
+    /*.table-fixed tbody {
+        overflow-y: auto;
+        overflow-x: auto;
+        width: 100%;
+        max-height: 200px !important;
+    }*/
+
+    /*body {
+        background-color: #eee;
+    }*/
+
+    /*table th, table td {
+        text-align: center;
+    }*/
+
+    /*table tr:nth-child(even) {
+        background-color: #BEF2F5
+    }*/
+
+    .pagination li:hover {
+        cursor: pointer;
+    }
+</style>
+
+@*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+    <table id="table_id" class="display">
+        <thead>
+            <tr>
+                <th>Column 1</th>
+                <th>Column 2</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Row 1 Data 1</td>
+                <td>Row 1 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+            <tr>
+                <td>Row 2 Data 1</td>
+                <td>Row 2 Data 2</td>
+            </tr>
+        </tbody>
+    </table>*@
+
+
+
+<div class="container" style="width: 100%;padding-left: 0px;">
+
+    <div style="padding-left:10px;padding-bottom:10px;font-size:16px;">
+        @Html.ActionLink("Export Result", "DownloadAvailsReport")
+    </div>
+
+    @*<div class="row">
+        <div class="col-md-12">*@
+
+    @if (Model != null && Model.Count == 0)
+    {
+        <div style="text-align: center;font-size: 18px;font-weight: bold;">
+            No Availability records found for the filters selected.
+        </div>
+    }
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div id="availsReportContainer">
+            <table id="availsReport" class="table table-fixed" style="display:block !important;overflow-x:auto;overflow-y:auto;max-height:470px;padding-top:0px;border-collapse:separate;">
+                <thead class="table bg-success" style="padding-top:0px;">
+                    <tr>
+                        <th style="min-width:160px !important">Title</th>
+                        @if (ViewBag.Code == "134")
+                        {
+                            <th>Episode From</th>
+                            <th>Episode To</th>
+                        }
+                        <th>Country/Territory</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Exclusive</th>
+                        <th>Sub License</th>
+                        @if (ViewBag.IncludeMetadata)
+                        {
+                            <th>Genres</th>
+                                <th style="min-width:200px !important">Star Cast</th>
+                                <th>Year Of Release</th>
+                                <th>Director</th>
+                                <th>Duration (Min)</th>
+                        }
+                        @if (ViewBag.IncludeTitleLanguage)
+                        {
+                            <th>Title Language</th>
+                        }
+                        @*<th>Title Language</th>*@
+                        @if (ViewBag.IncludeSubTitles)
+                        {
+                            <th>Subtitling</th>
+                        }
+                        @*<th>Theatrical</th>*@
+                        @if (ViewBag.IncludeDubbings)
+                        {
+                            <th>Dubbing</th>
+                        }
+                        @*<th>Platform</th>*@
+                        @{
+                            if (Model != null && Model.Count > 0)
+                            {
+                                int totalAvailLines = Model.Count;
+                                List<string> platformsToBeSkipped = new List<string>();
+                                //populate platforms that needs to be skipped as it is not availabale in any of the avail line
+                                var platform_1 = Model.Where(avail => avail.Platform1_Value == "No").Count();
+                                if (platform_1 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform1_Name);
+                                }
+                                var platform_2 = Model.Where(avail => avail.Platform2_Value == "No").Count();
+                                if (platform_2 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform2_Name);
+                                }
+                                var platform_3 = Model.Where(avail => avail.Platform3_Value == "No").Count();
+                                if (platform_3 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform3_Name);
+                                }
+                                var platform_4 = Model.Where(avail => avail.Platform4_Value == "No").Count();
+                                if (platform_4 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform4_Name);
+                                }
+                                var platform_5 = Model.Where(avail => avail.Platform5_Value == "No").Count();
+                                if (platform_5 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform5_Name);
+                                }
+                                var platform_6 = Model.Where(avail => avail.Platform6_Value == "No").Count();
+                                if (platform_6 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform6_Name);
+                                }
+                                var platform_7 = Model.Where(avail => avail.Platform7_Value == "No").Count();
+                                if (platform_7 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform7_Name);
+                                }
+                                var platform_8 = Model.Where(avail => avail.Platform8_Value == "No").Count();
+                                if (platform_8 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform8_Name);
+                                }
+                                var platform_9 = Model.Where(avail => avail.Platform9_Value == "No").Count();
+                                if (platform_9 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform9_Name);
+                                }
+                                var platform_10 = Model.Where(avail => avail.Platform10_Value == "No").Count();
+                                if (platform_10 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform10_Name);
+                                }
+                                var platform_11 = Model.Where(avail => avail.Platform11_Value == "No").Count();
+                                if (platform_11 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform11_Name);
+                                }
+                                var platform_12 = Model.Where(avail => avail.Platform12_Value == "No").Count();
+                                if (platform_12 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform12_Name);
+                                }
+                                var platform_13 = Model.Where(avail => avail.Platform13_Value == "No").Count();
+                                if (platform_13 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform13_Name);
+                                }
+                                var platform_14 = Model.Where(avail => avail.Platform14_Value == "No").Count();
+                                if (platform_14 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform14_Name);
+                                }
+                                var platform_15 = Model.Where(avail => avail.Platform15_Value == "No").Count();
+                                if (platform_15 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform15_Name);
+                                }
+                                var platform_16 = Model.Where(avail => avail.Platform16_Value == "No").Count();
+                                if (platform_16 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform16_Name);
+                                }
+                                var platform_17 = Model.Where(avail => avail.Platform17_Value == "No").Count();
+                                if (platform_17 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform17_Name);
+                                }
+                                var platform_18 = Model.Where(avail => avail.Platform18_Value == "No").Count();
+                                if (platform_18 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform18_Name);
+                                }
+                                var platform_19 = Model.Where(avail => avail.Platform19_Value == "No").Count();
+                                if (platform_19 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform19_Name);
+                                }
+                                var platform_20 = Model.Where(avail => avail.Platform20_Value == "No").Count();
+                                if (platform_20 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform20_Name);
+                                }
+                                var platform_21 = Model.Where(avail => avail.Platform21_Value == "No").Count();
+                                if (platform_21 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform21_Name);
+                                }
+                                var platform_22 = Model.Where(avail => avail.Platform22_Value == "No").Count();
+                                if (platform_22 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform22_Name);
+                                }
+                                var platform_23 = Model.Where(avail => avail.Platform23_Value == "No").Count();
+                                if (platform_23 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform23_Name);
+                                }
+                                var platform_24 = Model.Where(avail => avail.Platform24_Value == "No").Count();
+                                if (platform_24 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform24_Name);
+                                }
+                                var platform_25 = Model.Where(avail => avail.Platform25_Value == "No").Count();
+                                if (platform_25 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform25_Name);
+                                }
+                                var platform_26 = Model.Where(avail => avail.Platform26_Value == "No").Count();
+                                if (platform_26 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform26_Name);
+                                }
+                                var platform_27 = Model.Where(avail => avail.Platform27_Value == "No").Count();
+                                if (platform_27 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform27_Name);
+                                }
+                                var platform_28 = Model.Where(avail => avail.Platform28_Value == "No").Count();
+                                if (platform_28 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform28_Name);
+                                }
+                                var platform_29 = Model.Where(avail => avail.Platform29_Value == "No").Count();
+                                if (platform_29 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform29_Name);
+                                }
+                                var platform_30 = Model.Where(avail => avail.Platform30_Value == "No").Count();
+                                if (platform_30 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform30_Name);
+                                }
+                                var platform_31 = Model.Where(avail => avail.Platform31_Value == "No").Count();
+                                if (platform_31 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform31_Name);
+                                }
+                                var platform_32 = Model.Where(avail => avail.Platform32_Value == "No").Count();
+                                if (platform_32 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform32_Name);
+                                }
+                                var platform_33 = Model.Where(avail => avail.Platform33_Value == "No").Count();
+                                if (platform_33 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform33_Name);
+                                }
+                                var platform_34 = Model.Where(avail => avail.Platform34_Value == "No").Count();
+                                if (platform_34 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform34_Name);
+                                }
+                                var platform_35 = Model.Where(avail => avail.Platform35_Value == "No").Count();
+                                if (platform_35 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform35_Name);
+                                }
+                                var platform_36 = Model.Where(avail => avail.Platform36_Value == "No").Count();
+                                if (platform_36 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform36_Name);
+                                }
+                                var platform_37 = Model.Where(avail => avail.Platform37_Value == "No").Count();
+                                if (platform_37 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform37_Name);
+                                }
+                                var platform_38 = Model.Where(avail => avail.Platform38_Value == "No").Count();
+                                if (platform_38 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform38_Name);
+                                }
+                                var platform_39 = Model.Where(avail => avail.Platform39_Value == "No").Count();
+                                if (platform_39 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform39_Name);
+                                }
+                                var platform_40 = Model.Where(avail => avail.Platform40_Value == "No").Count();
+                                if (platform_40 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform40_Name);
+                                }
+                                var platform_41 = Model.Where(avail => avail.Platform41_Value == "No").Count();
+                                if (platform_41 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform41_Name);
+                                }
+                                var platform_42 = Model.Where(avail => avail.Platform42_Value == "No").Count();
+                                if (platform_42 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform42_Name);
+                                }
+                                var platform_43 = Model.Where(avail => avail.Platform43_Value == "No").Count();
+                                if (platform_43 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform43_Name);
+                                }
+                                var platform_44 = Model.Where(avail => avail.Platform44_Value == "No").Count();
+                                if (platform_44 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform44_Name);
+                                }
+                                var platform_45 = Model.Where(avail => avail.Platform45_Value == "No").Count();
+                                if (platform_45 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform45_Name);
+                                }
+                                var platform_46 = Model.Where(avail => avail.Platform46_Value == "No").Count();
+                                if (platform_46 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform46_Name);
+                                }
+                                var platform_47 = Model.Where(avail => avail.Platform47_Value == "No").Count();
+                                if (platform_47 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform47_Name);
+                                }
+                                var platform_48 = Model.Where(avail => avail.Platform48_Value == "No").Count();
+                                if (platform_48 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform48_Name);
+                                }
+                                var platform_49 = Model.Where(avail => avail.Platform49_Value == "No").Count();
+                                if (platform_49 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform49_Name);
+                                }
+                                var platform_50 = Model.Where(avail => avail.Platform50_Value == "No").Count();
+                                if (platform_50 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform50_Name);
+                                }
+                                var platform_51 = Model.Where(avail => avail.Platform51_Value == "No").Count();
+                                if (platform_51 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform51_Name);
+                                }
+                                var platform_52 = Model.Where(avail => avail.Platform52_Value == "No").Count();
+                                if (platform_52 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform52_Name);
+                                }
+                                var platform_53 = Model.Where(avail => avail.Platform53_Value == "No").Count();
+                                if (platform_53 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform53_Name);
+                                }
+                                var platform_54 = Model.Where(avail => avail.Platform54_Value == "No").Count();
+                                if (platform_54 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform54_Name);
+                                }
+                                var platform_55 = Model.Where(avail => avail.Platform55_Value == "No").Count();
+                                if (platform_55 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform55_Name);
+                                }
+                                var platform_56 = Model.Where(avail => avail.Platform56_Value == "No").Count();
+                                if (platform_56 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform56_Name);
+                                }
+                                var platform_57 = Model.Where(avail => avail.Platform57_Value == "No").Count();
+                                if (platform_57 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform57_Name);
+                                }
+                                var platform_58 = Model.Where(avail => avail.Platform58_Value == "No").Count();
+                                if (platform_58 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform58_Name);
+                                }
+                                var platform_59 = Model.Where(avail => avail.Platform59_Value == "No").Count();
+                                if (platform_59 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform59_Name);
+                                }
+                                var platform_60 = Model.Where(avail => avail.Platform60_Value == "No").Count();
+                                if (platform_60 == totalAvailLines)
+                                {
+                                    platformsToBeSkipped.Add(Model[0].Platform60_Name);
+                                }
+
+                                //#endregion
+
+                                foreach (var platform in Model[0].PlatformList)
+                                {
+                                    bool skipCurrentPlatform = false;
+                                    if (@ViewBag.searchAvailFiltersPlatforms != null && @ViewBag.searchAvailFiltersPlatforms.Count > 0 && !@ViewBag.searchAvailFiltersPlatforms.Contains(platform.PlatformCode))
+                                    {
+                                        skipCurrentPlatform = true;
+                                    }
+
+                                    if (platformsToBeSkipped.Contains(platform.PlatformName))
+                                    {
+                                        skipCurrentPlatform = true;
+                                    }
+
+                                    if (!skipCurrentPlatform)
+                                    {
+                                        <th class="title-name-fixed-width" title="@platform.PlatformName">@platform.PlatformName</th>
+                                    }
+                                }
+                            }
+                        }
+                        <th>Restriction Remark</th>
+                        <th>Sub Deal Restriction Remark</th>
+                        <th>Remarks</th>
+                        <th>Rights Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="title-name-wrap">@Html.DisplayFor(modelItem => item.TitleName)</td>
+
+                                @if (ViewBag.Code == "134")
+                        {
+                                    <td class="title-name-wrap">@Html.DisplayFor(modelItem => item.EpisodeFrom)</td>
+                                    <td class="title-name-wrap">@Html.DisplayFor(modelItem => item.EpisodeTo)</td>
+                                }
+
+
+                                <td class="title-name-width-max">@Html.Raw(item.Country)</td>
+                                <td style="white-space: nowrap;">@Html.DisplayFor(modelItem => item.StartDate)</td>
+                                <td style="white-space: nowrap;">@Html.DisplayFor(modelItem => item.EndDate)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Exclusive)</td>
+                                <td>@Html.DisplayFor(modelItem => item.SubLicense)</td>
+                                @if (ViewBag.IncludeMetadata)
+                        {
+                                    <td>@Html.DisplayFor(modelItem => item.Genre)</td>
+                                    <td class="title-name-wrap">@Html.DisplayFor(modelItem => item.StarCast)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.ReleaseYear)</td>
+                                    <td class="title-name">@Html.DisplayFor(modelItem => item.Director)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Duration)</td>
+                                    //if (item.TitleLanguage.ToUpper() == "YES")
+                                    //{
+
+                                    @*}
+                                        else
+                                        {
+                                            <td></td>
+                                        }*@
+                                }
+                                @if (ViewBag.IncludeTitleLanguage)
+                        {
+                                    <td>@Html.DisplayFor(modelItem => item.LanguageName)</td>
+                                }
+                                @*<td>@Html.DisplayFor(modelItem => item.TitleLanguage)</td>*@
+                                @if (ViewBag.IncludeSubTitles)
+                        {
+                                    <td>@Html.DisplayFor(modelItem => item.SubTiltling)</td>
+                                }
+                                @*<td>@Html.DisplayFor(modelItem => item.IsTheatrical)</td>*@
+                                @if (ViewBag.IncludeDubbings)
+                        {
+                                    <td>@Html.DisplayFor(modelItem => item.Dubbing)</td>
+                                }
+                                @*<td>@Html.DisplayFor(modelItem => item.Platform)</td>*@
+
+                                @{
+                                    int totalAvailLines = Model.Count;
+                                    List<string> platformsToBeSkipped = new List<string>();
+                                    //populate platforms that needs to be skipped as it is not availabale in any of the avail line
+                                    var platform_1 = Model.Where(avail => avail.Platform1_Value == "No").Count();
+                                    if (platform_1 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform1_Name);
+                                    }
+                                    var platform_2 = Model.Where(avail => avail.Platform2_Value == "No").Count();
+                                    if (platform_2 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform2_Name);
+                                    }
+                                    var platform_3 = Model.Where(avail => avail.Platform3_Value == "No").Count();
+                                    if (platform_3 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform3_Name);
+                                    }
+                                    var platform_4 = Model.Where(avail => avail.Platform4_Value == "No").Count();
+                                    if (platform_4 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform4_Name);
+                                    }
+                                    var platform_5 = Model.Where(avail => avail.Platform5_Value == "No").Count();
+                                    if (platform_5 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform5_Name);
+                                    }
+                                    var platform_6 = Model.Where(avail => avail.Platform6_Value == "No").Count();
+                                    if (platform_6 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform6_Name);
+                                    }
+                                    var platform_7 = Model.Where(avail => avail.Platform7_Value == "No").Count();
+                                    if (platform_7 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform7_Name);
+                                    }
+                                    var platform_8 = Model.Where(avail => avail.Platform8_Value == "No").Count();
+                                    if (platform_8 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform8_Name);
+                                    }
+                                    var platform_9 = Model.Where(avail => avail.Platform9_Value == "No").Count();
+                                    if (platform_9 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform9_Name);
+                                    }
+                                    var platform_10 = Model.Where(avail => avail.Platform10_Value == "No").Count();
+                                    if (platform_10 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform10_Name);
+                                    }
+                                    var platform_11 = Model.Where(avail => avail.Platform11_Value == "No").Count();
+                                    if (platform_11 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform11_Name);
+                                    }
+                                    var platform_12 = Model.Where(avail => avail.Platform12_Value == "No").Count();
+                                    if (platform_12 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform12_Name);
+                                    }
+                                    var platform_13 = Model.Where(avail => avail.Platform13_Value == "No").Count();
+                                    if (platform_13 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform13_Name);
+                                    }
+                                    var platform_14 = Model.Where(avail => avail.Platform14_Value == "No").Count();
+                                    if (platform_14 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform14_Name);
+                                    }
+                                    var platform_15 = Model.Where(avail => avail.Platform15_Value == "No").Count();
+                                    if (platform_15 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform15_Name);
+                                    }
+                                    var platform_16 = Model.Where(avail => avail.Platform16_Value == "No").Count();
+                                    if (platform_16 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform16_Name);
+                                    }
+                                    var platform_17 = Model.Where(avail => avail.Platform17_Value == "No").Count();
+                                    if (platform_17 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform17_Name);
+                                    }
+                                    var platform_18 = Model.Where(avail => avail.Platform18_Value == "No").Count();
+                                    if (platform_18 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform18_Name);
+                                    }
+                                    var platform_19 = Model.Where(avail => avail.Platform19_Value == "No").Count();
+                                    if (platform_19 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform19_Name);
+                                    }
+                                    var platform_20 = Model.Where(avail => avail.Platform20_Value == "No").Count();
+                                    if (platform_20 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform20_Name);
+                                    }
+                                    var platform_21 = Model.Where(avail => avail.Platform21_Value == "No").Count();
+                                    if (platform_21 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform21_Name);
+                                    }
+                                    var platform_22 = Model.Where(avail => avail.Platform22_Value == "No").Count();
+                                    if (platform_22 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform22_Name);
+                                    }
+                                    var platform_23 = Model.Where(avail => avail.Platform23_Value == "No").Count();
+                                    if (platform_23 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform23_Name);
+                                    }
+                                    var platform_24 = Model.Where(avail => avail.Platform24_Value == "No").Count();
+                                    if (platform_24 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform24_Name);
+                                    }
+                                    var platform_25 = Model.Where(avail => avail.Platform25_Value == "No").Count();
+                                    if (platform_25 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform25_Name);
+                                    }
+                                    var platform_26 = Model.Where(avail => avail.Platform26_Value == "No").Count();
+                                    if (platform_26 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform26_Name);
+                                    }
+                                    var platform_27 = Model.Where(avail => avail.Platform27_Value == "No").Count();
+                                    if (platform_27 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform27_Name);
+                                    }
+                                    var platform_28 = Model.Where(avail => avail.Platform28_Value == "No").Count();
+                                    if (platform_28 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform28_Name);
+                                    }
+                                    var platform_29 = Model.Where(avail => avail.Platform29_Value == "No").Count();
+                                    if (platform_29 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform29_Name);
+                                    }
+                                    var platform_30 = Model.Where(avail => avail.Platform30_Value == "No").Count();
+                                    if (platform_30 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform30_Name);
+                                    }
+                                    var platform_31 = Model.Where(avail => avail.Platform31_Value == "No").Count();
+                                    if (platform_31 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform31_Name);
+                                    }
+                                    var platform_32 = Model.Where(avail => avail.Platform32_Value == "No").Count();
+                                    if (platform_32 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform32_Name);
+                                    }
+                                    var platform_33 = Model.Where(avail => avail.Platform33_Value == "No").Count();
+                                    if (platform_33 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform33_Name);
+                                    }
+                                    var platform_34 = Model.Where(avail => avail.Platform34_Value == "No").Count();
+                                    if (platform_34 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform34_Name);
+                                    }
+                                    var platform_35 = Model.Where(avail => avail.Platform35_Value == "No").Count();
+                                    if (platform_35 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform35_Name);
+                                    }
+                                    var platform_36 = Model.Where(avail => avail.Platform36_Value == "No").Count();
+                                    if (platform_36 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform36_Name);
+                                    }
+                                    var platform_37 = Model.Where(avail => avail.Platform37_Value == "No").Count();
+                                    if (platform_37 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform37_Name);
+                                    }
+                                    var platform_38 = Model.Where(avail => avail.Platform38_Value == "No").Count();
+                                    if (platform_38 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform38_Name);
+                                    }
+                                    var platform_39 = Model.Where(avail => avail.Platform39_Value == "No").Count();
+                                    if (platform_39 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform39_Name);
+                                    }
+                                    var platform_40 = Model.Where(avail => avail.Platform40_Value == "No").Count();
+                                    if (platform_40 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform40_Name);
+                                    }
+                                    var platform_41 = Model.Where(avail => avail.Platform41_Value == "No").Count();
+                                    if (platform_41 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform41_Name);
+                                    }
+                                    var platform_42 = Model.Where(avail => avail.Platform42_Value == "No").Count();
+                                    if (platform_42 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform42_Name);
+                                    }
+                                    var platform_43 = Model.Where(avail => avail.Platform43_Value == "No").Count();
+                                    if (platform_43 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform43_Name);
+                                    }
+                                    var platform_44 = Model.Where(avail => avail.Platform44_Value == "No").Count();
+                                    if (platform_44 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform44_Name);
+                                    }
+                                    var platform_45 = Model.Where(avail => avail.Platform45_Value == "No").Count();
+                                    if (platform_45 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform45_Name);
+                                    }
+                                    var platform_46 = Model.Where(avail => avail.Platform46_Value == "No").Count();
+                                    if (platform_46 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform46_Name);
+                                    }
+                                    var platform_47 = Model.Where(avail => avail.Platform47_Value == "No").Count();
+                                    if (platform_47 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform47_Name);
+                                    }
+                                    var platform_48 = Model.Where(avail => avail.Platform48_Value == "No").Count();
+                                    if (platform_48 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform48_Name);
+                                    }
+                                    var platform_49 = Model.Where(avail => avail.Platform49_Value == "No").Count();
+                                    if (platform_49 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform49_Name);
+                                    }
+                                    var platform_50 = Model.Where(avail => avail.Platform50_Value == "No").Count();
+                                    if (platform_50 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform50_Name);
+                                    }
+                                    var platform_51 = Model.Where(avail => avail.Platform51_Value == "No").Count();
+                                    if (platform_51 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform51_Name);
+                                    }
+                                    var platform_52 = Model.Where(avail => avail.Platform52_Value == "No").Count();
+                                    if (platform_52 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform52_Name);
+                                    }
+                                    var platform_53 = Model.Where(avail => avail.Platform53_Value == "No").Count();
+                                    if (platform_53 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform53_Name);
+                                    }
+                                    var platform_54 = Model.Where(avail => avail.Platform54_Value == "No").Count();
+                                    if (platform_54 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform54_Name);
+                                    }
+                                    var platform_55 = Model.Where(avail => avail.Platform55_Value == "No").Count();
+                                    if (platform_55 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform55_Name);
+                                    }
+                                    var platform_56 = Model.Where(avail => avail.Platform56_Value == "No").Count();
+                                    if (platform_56 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform56_Name);
+                                    }
+                                    var platform_57 = Model.Where(avail => avail.Platform57_Value == "No").Count();
+                                    if (platform_57 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform57_Name);
+                                    }
+                                    var platform_58 = Model.Where(avail => avail.Platform58_Value == "No").Count();
+                                    if (platform_58 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform58_Name);
+                                    }
+                                    var platform_59 = Model.Where(avail => avail.Platform59_Value == "No").Count();
+                                    if (platform_59 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform59_Name);
+                                    }
+                                    var platform_60 = Model.Where(avail => avail.Platform60_Value == "No").Count();
+                                    if (platform_60 == totalAvailLines)
+                                    {
+                                        platformsToBeSkipped.Add(Model[0].Platform60_Name);
+                                    }
+
+                                    int index = 1;
+
+                                    foreach (var platform in Model[0].PlatformList)
+                                    {
+                                        bool skipCurrentPlatform = false;
+                                        if (@ViewBag.searchAvailFiltersPlatforms != null && @ViewBag.searchAvailFiltersPlatforms.Count > 0 && !@ViewBag.searchAvailFiltersPlatforms.Contains(platform.PlatformCode))
+                                        {
+                                            skipCurrentPlatform = true;
+                                        }
+
+                                        if (platformsToBeSkipped.Contains(platform.PlatformName))
+                                        {
+                                            skipCurrentPlatform = true;
+                                        }
+
+                                        if (!skipCurrentPlatform)
+                                        {
+                                            <td class="title-name">@GetPropertyValue(item, "Platform" + index + "_Value")</td>
+                                        }
+                                        index++;
+                                    }
+                                }
+
+                                @functions
+                                {
+                                    private object GetPropertyValue(object avail, string propertyName)
+                                    {
+                                        return avail.GetType().GetProperties()
+                                           .Single(pi => pi.Name == propertyName)
+                                           .GetValue(avail, null);
+                                    }
+                                }
+
+                                @*@foreach (var platform in item.PlatformMatrix)
+                                    {
+                                        //bool skipCurrentPlatform = false;
+                                        //if (@ViewBag.searchAvailFiltersPlatforms != null && @ViewBag.searchAvailFiltersPlatforms.Count > 0 && !@ViewBag.searchAvailFiltersPlatforms.Contains(platform.PlatformCode))
+                                        //{
+                                        //    skipCurrentPlatform = true;
+                                        //}
+
+                                        //if (!skipCurrentPlatform)
+                                        //{
+                                        <td>@platform</td>
+                                        //}
+                                    }*@
+                                <td class="title-name-width-max" title="@Html.DisplayFor(modelItem => item.RestrictionRemarks)">@Html.DisplayFor(modelItem => item.RestrictionRemarks)</td>
+                                <td class="title-name-width-max"></td>
+                                <td class="title-name-width-max" title="@Html.DisplayFor(modelItem => item.Remarks)">@Html.DisplayFor(modelItem => item.Remarks)</td>
+                                <td class="title-name-width-max" title="@Html.DisplayFor(modelItem => item.RightsRemarks)">@Html.DisplayFor(modelItem => item.RightsRemarks)</td>
+                            </tr>
+                                        }
+                                    }
+                    <tr>
+                </tbody>
+            </table>
+        </div>
+                                    }
+                                    @*</div>
+                                        </div>*@
+                                </div>
+                                @*<select class="form-control" name="state" id="maxRows">
+                                        <option value="5000">Show ALL Rows</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="70">70</option>
+                                        <option value="100">100</option>
+                                    </select>*@
+
+                                @*<div class="pagination-container">
+                                        <nav>
+                                            <ul class="pagination">
+                                                <li data-page="prev">
+                                                    <span> < <span class="sr-only">(current)</span></span>
+                                                </li>
+
+                                                <li data-page="next" id="prev">
+                                                    <span> > <span class="sr-only">(current)</span></span>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>*@
+
+
+                                @*<script src="~/Scripts/bootstrap.min.js"></script>
+
+                                    <script src="~/Custom_Scripts/js.js"></script>
+
+                                    <script type="text/javascript">
+                                        $(document).ready(function () {
+                                            getPagination('#availsReport');
+                                        });
+                                    </script>*@

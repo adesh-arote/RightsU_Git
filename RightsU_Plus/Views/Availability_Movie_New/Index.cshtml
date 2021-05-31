@@ -1,0 +1,4560 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link href="~/CSS/AvailabilityRightPanel.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<script src="~/JS_Core/common.concat.js"></script>
+
+<script src="~/JS_Core/jquery.ba-hashchange.js"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/JS_Core/AvailabilityRightPanel.js"></script>
+
+<script>
+    var URL_BindTitleList = '@Url.Action("BindTitleList", "Availability_Movie_New")';
+    var URL_SearchTitles = '@Url.Action("SearchTitles", "Availability_Movie_New")';
+    var URL_BindPeriod = '@Url.Action("BindPeriod", "Availability_Movie_New")';
+    var URL_BindRegion = '@Url.Action("BindRegion", "Availability_Movie_New")';
+    var URL_BindRegionRight = '@Url.Action("BindRegionRight", "Availability_Movie_New")';
+    var URL_BindTerritoryDetails = '@Url.Action("LoadCountry", "Availability_Movie_New")';
+    var URL_BindSubtitleLanguage = '@Url.Action("BindSubtitleLanguage", "Availability_Movie_New")';
+    var URL_BindLanguageGroupDetails = '@Url.Action("LoadLanguageNew", "Availability_Movie_New")';
+    var URL_BindDubbingLanguage = '@Url.Action("BindDubbingLanguage", "Availability_Movie_New")';
+    var URL_BindLanguageGroup_Dub_Details = '@Url.Action("LoadLanguageNew_Dub", "Availability_Movie_New")';
+    var URL_BindOther = '@Url.Action("BindOther", "Availability_Movie_New")';
+
+    var URL_BindPlatform = '@Url.Action("BindPlatform", "Availability_Movie_New")';
+    var URL_BindPlatformTree = '@Url.Action("AddEditPlatform_Group", "Availability_Movie_New")';
+    var URL_BindAvailReport = '@Url.Action("BindAvailReport", "Availability_Movie_New")';
+    var URL_BindSelectedResult = '@Url.Action("BindSelectedResult", "Availability_Movie_New")';
+    var URL_BindLanguageTree = '@Url.Action("AddEditLanguage_Group", "Availability_Movie_New")';
+    var URL_BindLanguageTree_Dub = '@Url.Action("AddEditLanguage_Group_Dub", "Availability_Movie_New")';
+    var URL_BindCountryTree = '@Url.Action("AddEditCountry", "Availability_Movie_New")';
+    var URL_SaveReport = '@Url.Action("SaveReport", "Availability_Movie_New")';
+    var URL_BindQueryList = '@Url.Action("BindQueryList", "Availability_Movie_New")' ;
+    var URL_SearchQueryList = '@Url.Action("SearchQueryList", "Availability_Movie_New")';
+    var URL_BindReportCriteria = '@Url.Action("BindReportCriteria","Availability_Movie_New")';
+    var URL_DeleteQuery = '@Url.Action("DeleteQuery", "Availability_Movie_New")';
+    var URL_AddTitles = '@Url.Action("AddTitles", "Availability_Movie_New")';
+    var URL_BindPromoter = '@Url.Action("BindPromoter", "Availability_Movie_New")';
+    var URL_BindPromoterTree = '@Url.Action("AddEditPromoter_Group", "Availability_Movie_New")';
+    var URL_BindSportsPlatTree = '@Url.Action("BindSportsPlatTree", "Availability_Movie_New")';
+
+    var moduleCode  = "";
+    var UserCode = "";
+    var IsCheckRights="";
+    var IsFirstTime = "N";
+    var getTabName = "";
+    var IscallfromSaveQuery = "N";
+    var TerritoryCodess = "";
+    var selectedCountryCodes = "";
+    var tabNameInSaveQuery = "";
+    var TabNames = "";
+    var PrevBUCode = "";
+
+    $(document).ready(function () {
+        debugger;
+        $('#titleTab').click();
+        $('.fancytree-checkbox').change(function(){
+            debugger
+            alert('tree clicked');
+            $('hdnAccordianRegion').val('N');
+        });
+
+
+        $('#hdnLoginUserCode').val('@ViewBag.LoginUserCode');
+        UserCode = @ViewBag.LoginUserCode;
+
+
+        $('.ClosePanel').click(function () {
+            debugger;
+            $('.tab-content').css("display", "none");
+            $('#wrapper').css("width", "0px");
+            $('li').removeClass("current1");
+            $('.MoreDubbingDiv').hide('slow');
+            $('.MoreOptionSubtitleDiv').hide('slow');
+            $('.MorePlatformDiv').hide('slow');
+            $('.MoreOptionRegionDiv').hide('slow');
+            $('.MoreOptionSelfUtilizationDiv').hide('slow');
+        })
+
+
+        $('ul').click(function () {
+            $('#wrapper').css("width", "500px");
+        })
+        $('#QueryListTab').click(function(){
+
+
+        })
+
+
+        BindPeriod();
+        BindRegionRight();
+        //BindRegion();
+        BindSubtitleLanguage();
+        BindDubbingLanguage();
+        BindOther();
+        BindPlatformCriteria();
+        BindPromoterCriteria();
+        SearchQueryList();
+        addNumeric();
+
+        if ('@ViewBag.Code' == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            $('#v-nav > div.tab-content').css("right","410px");
+        }
+        moduleCode= '@ViewBag.Code';
+    });
+
+    function addNumeric() {
+        $("#epFrom").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 1
+        });
+        $("#epTo").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 1
+        });
+    }
+    var strInsertVal = "";
+    var episodeFrom = "";
+    var episodeTo = "";
+    //-------------------Period tab Function Start--------------
+
+
+
+    //-------------------Period tab Function End--------------
+
+
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindQueryList();
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function checkCurrentAction() {
+
+        return true;
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!checkCurrentAction())
+            return false;
+
+        if (!ValidatePageSize())
+            return false;
+
+        BindQueryList();
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function SearchQueryList() {
+
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        var BU_Code = $("#ddlBusinessUnit").val();
+        var ReportName = $('#rptName').val();
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_SearchQueryList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                pageNo:pageNo,
+                recordPerPage:recordPerPage,
+                BU_Code: BU_Code,
+                ReportName:ReportName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindQueryList();
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+
+            }
+        });
+    }
+
+    function CheckDuplicateRecord(){
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        var BU_Code = $("#ddlBusinessUnit").val();
+        var ReportName = $('#rptName').val();
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_CheckDuplicateRecord,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                pageNo:pageNo,
+                recordPerPage:recordPerPage,
+                BU_Code: BU_Code,
+                ReportName:ReportName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindQueryList();
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+
+            }
+        });
+    }
+
+    function SaveReport() {
+        debugger;
+        showLoading();
+        var titleCodes = CodeString.replace(/,\s*$/, "");
+
+        if (titleCodes == null) {
+            titleCodes = "";
+        }
+        var platformCodes = $('#hdnTVCodes_G').val();
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            platformCodes = "";
+        }
+        var PromoterCodes = $('#hdnTVCodes_Promoter_G').val();
+        if(PromoterCodes == null)
+            PromoterCodes = "";
+
+        var Country_Code = "";
+        if($('#ddlTerritoryList').val() != null)
+            Country_Code = $('#ddlTerritoryList').val().join(',');
+        else
+            Country_Code = "0";
+        var isOriginalLang = $('#chkIsOriginalLanguage').is(':checked');
+
+        var txtfrom = "";
+        var txtto = "";
+
+        var txtfromSave ="";
+        var txttoSave = "";
+
+        var rblPeriodType = $('input[type =radio][name=GroupPeriod]:checked').val()
+        if (rblPeriodType == "Minimum")
+        {
+            rblPeriodType = "MI";
+            txtfrom = $('#startDate').val();
+            txtto = $('#endDate').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+        }
+
+
+        else if (rblPeriodType == "Flexi")
+        {
+            rblPeriodType = "FL";
+            txtfrom =$('#startDateFlexi').val();
+            txtto = $('#endDateFlexi').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+
+            if(txtto == "")
+                txttoSave ="";
+            if(txtfrom == ""){
+                hideLoading();
+                showAlert('E','Please Select Flexi Start date');
+                return false;
+            }
+        }
+        else if (rblPeriodType == "Fixed")
+        {
+            rblPeriodType = "FI";
+            txtfrom =$('#startDateFixed').val();
+            txtto = $('#endDateFixed').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+        }
+
+        var date1 = $('#startDate').datepicker('getDate');
+        var dateStart = new Date(Date.parse(date1));
+        var date2 = $('#endDate').datepicker('getDate');
+        var dateEnd = new Date(Date.parse(date2));
+
+        var Dubbing_Subtitling = "0";
+        var LangGroup_Dub = "";
+        var LangGroup_Sub = "";
+        if($('#ddlLanguageGroupNew_Dub').val() != null)
+            LangGroup_Dub = $('#ddlLanguageGroupNew_Dub').val().join(',');
+        else
+            LangGroup_Dub = "0";
+        if($('#ddlLanguageGroupNew').val() != null)
+            LangGroup_Sub = $('#ddlLanguageGroupNew').val().join(',');
+        else
+            LangGroup_Sub ="0";
+
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            LangGroup_Dub= "";
+            LangGroup_Sub = "";
+        }
+
+
+
+        var Title_Language_Code = $('#langList').val();
+        if (Title_Language_Code == null) {
+            Title_Language_Code = "";
+        }
+        var ExcactMatch_Platform = $('#chkExactMatch_Platform').is(':checked');
+        var chkMustHave_Platform = $('#chkMustHave_Platform').is(':checked');
+        if (ExcactMatch_Platform == true) {
+            ExcactMatch_Platform = $('#chkExactMatch_Platform').val();
+        }
+        else if(chkMustHave_Platform == true)
+            ExcactMatch_Platform = "MH";
+        else
+            ExcactMatch_Platform = "";
+
+        var ExcactMatch_Promoter = $('#chkExactMatch_Promoter').is(':checked');
+        var chkMustHave_Promoter = $('#chkMustHave_Promoter').is(':checked');
+        if (ExcactMatch_Promoter == true) {
+            ExcactMatch_Promoter = $('#chkExactMatch_Promoter').val();
+        }
+        else if(chkMustHave_Promoter == true)
+            ExcactMatch_Promoter = "MH";
+        else
+            ExcactMatch_Promoter = "";
+        if(moduleCode == '@GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString()' || moduleCode == '@GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString()' )
+        {
+            var Exclusivity = ["E","N","Y"];
+        }
+        else{
+            var Exclusivity = $('#ddlExclusive').val();
+        }
+        var sublicList = $('#sublicList').val();
+        if (sublicList == null) {
+            sublicList = "";
+        }
+        var chkExactMatch = $('#chkExactMatch').is(':checked');
+        var chkMustHave = $('#chkMustHave').is(':checked');
+        var ddlMustHaveCountry = $('#ddlMustHaveCountry').val();
+        if (chkExactMatch == true) {
+            chkExactMatch = $('#chkExactMatch').val();
+        }
+        else if(chkMustHave == true)
+            chkExactMatch = "MH";
+        else
+            chkExactMatch = "";
+        if(chkMustHave == true){
+
+        }
+        else {
+            ddlMustHaveCountry = "";
+        }
+
+        var ddlListCountry = $('#ddlListCountry').val();
+        if (ddlListCountry == null) {
+            ddlListCountry = "";
+        }
+        ddlListCountry = "";
+        var Subtitling_Codes = $('#hdnTVCodes_SubLang_G').val();
+        if (Subtitling_Codes == null) {
+            Subtitling_Codes = "";
+        }
+
+        var Dubbing_Codes = $('#hdnTVCodes_DubLang_G').val();
+        if (Dubbing_Codes == null) {
+            Dubbing_Codes = "";
+        }
+
+
+
+        if (Subtitling_Codes != "") {
+            Dubbing_Subtitling = "S";
+        }
+        if (Dubbing_Codes != "") {
+            Dubbing_Subtitling = "D";
+        }
+        if (Subtitling_Codes != "" && Dubbing_Codes != "") {
+            Dubbing_Subtitling = "S,D"
+        }
+        var BU_Code = $('#ddlBusinessUnit').val();
+        var chkDigital = $('#chkDigital').is(':checked');
+
+        var chkRestRemarks = $('#chkRestRemarks').is(':checked');
+        var chkOtherRemarks = $('#chkOtherRemarks').is(':checked');
+
+        var MustHave_Platform_Codes = ""
+        var chkMustHave_Platform = $('#chkMustHave_Platform').is(':checked');
+        if (chkMustHave_Platform == true) {
+            MustHave_Platform_Codes = $('#hdnTVCodes_M').val();
+
+
+        }
+        else {
+            MustHave_Platform_Codes = "0";
+        }
+
+        var MustHave_Promoter_Codes = ""
+        var chkMustHave_Promoter = $('#chkMustHave_Promoter').is(':checked');
+        if (chkMustHave_Promoter == true) {
+            MustHave_Promoter_Codes = $('#hdnTVCodes_Promoter_M').val();
+
+
+        }
+        else {
+            MustHave_Promoter_Codes = "0";
+        }
+        var chkMetaData = $('#chkMetaData').is(':checked');
+        var MetaData = "";
+        if (chkMetaData == true) {
+            MetaData = "Y";
+        }
+        else {
+            MetaData = "N";
+        }
+
+        var chkIncludeAncillary = $('#chkIncludeAncillary').is(':checked');
+        var IncludeAncillary = "";
+        if (chkIncludeAncillary == true) {
+            IncludeAncillary = "Y";
+        }
+        else {
+            IncludeAncillary = "N";
+        }
+
+        var chkIFTACluster = $('#chkIFTACluster').is(':checked');
+        if (chkIFTACluster == true) {
+            chkIFTACluster = "Y";
+        }
+        else {
+            chkIFTACluster = "N";
+        }
+        var TerritoryList = $('#hdnTVCodes_Country').val();
+
+
+
+        var Visibility = $('input[name=Visibility]:checked').val();
+
+        var pfGroupCode = "";
+        if($('#ddlPlatformGroup').val() != null)
+            pfGroupCode = $('#ddlPlatformGroup').val().join(',');
+        else
+            pfGroupCode= "0";
+
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+            pfGroupCode = "";
+
+        var chkExactMatch_Sub = $('#chkExactMatch_Sub').is(':checked');
+        var chkMustHave_Sub = $('#chkMustHave_Sub').is(':checked');
+        if (chkExactMatch_Sub == true) {
+            chkExactMatch_Sub = $('#chkExactMatch_Sub').val();
+        }
+        else if(chkMustHave_Sub == true)
+            chkExactMatch_Sub = "MH";
+        else
+            chkExactMatch_Sub = "";
+
+        var MustHave_Subtitle_Codes = ""
+
+        if (chkMustHave_Sub == true) {
+
+            //MustHave_Subtitle_Codes = $('#hdnTVCodes_SubLang_M').val();
+            MustHave_Subtitle_Codes = $('#ddlMustHaveLanguage').val();
+
+        }
+        else {
+            MustHave_Subtitle_Codes = "0";
+        }
+
+
+        var ddlListLanguageGroup = $('#ddlListLanguageGroup').val();
+        if (ddlListLanguageGroup == null) {
+            ddlListLanguageGroup = "";
+        }
+        ddlListLanguageGroup = "";
+        var chkExactMatch_Dub = $('#chkExactMatch_Dub').is(':checked');
+        var chkMustHave_Dub = $('#chkMustHave_Dub').is(':checked');
+        if (chkExactMatch_Dub == true) {
+            chkExactMatch_Dub = $('#chkExactMatch_Dub').val();
+        }
+        else if(chkMustHave_Dub == true)
+            chkExactMatch_Dub = "MH";
+        else
+            chkExactMatch_Dub = "";
+
+
+        var MustHave_Dubbing_Codes = ""
+
+        if (chkMustHave_Dub == true) {
+            //MustHave_Dubbing_Codes = $('#hdnTVCodes_DubLang_M').val();
+            MustHave_Dubbing_Codes = $('#ddlMustHaveLanguage_Dub').val();
+
+
+        }
+        else {
+            MustHave_Dubbing_Codes = "0";
+        }
+
+
+        var ddlListLanguageGroup_Dub = $('#ddlListLanguageGroup_Dub').val();
+        if (ddlListLanguageGroup_Dub == null) {
+            ddlListLanguageGroup_Dub = "";
+        }
+        ddlListLanguageGroup_Dub = "";
+        episodeFrom = $('#epFrom').val();
+        if(episodeFrom == null || episodeFrom == "")
+            episodeFrom = 0;
+        episodeTo = $('#epTo').val();
+        if(episodeTo == null || episodeTo == "")
+            episodeTo = 0;
+        tabNameInSaveQuery = IsCheckRights;
+
+        var ReportName = $.trim($('#rptName').val());
+        if(ReportName == null || ReportName == ""){
+            hideLoading();
+            $('#rptName').addClass('required');
+            showAlert('E', 'Please Enter Report Name');
+            return false;
+        }
+        var platformCodes = $('#hdnTVCodes_G').val();
+        //var titleCodes = $('#ddlTitleList').val();
+        var titleCodes = CodeString;
+        var TerritoryList = $('#hdnTVCodes_Country').val();
+        var GenerateReport = $('#hdnIsGenerateReport').val();
+
+
+        if ((platformCodes == "" || platformCodes == null)
+                 && (titleCodes == "" || titleCodes == null)
+                 && (TerritoryList == "" || TerritoryList == null)) {
+            hideLoading();
+            showAlert('E', 'Please Select Search criteria');
+            return false;
+        }
+
+        if(GenerateReport == "N"){
+            hideLoading();
+            showAlert('E', 'Please generate report');
+            return false;
+        }
+
+
+        //  var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        var BU_Code = $("#ddlBusinessUnit").val();
+
+
+
+        var Visibility = $('input[name=Visibility]:checked').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strInsertVal:strInsertVal,
+                ReportName:ReportName,
+                Visibility:Visibility,
+
+                //  pageNo:pageNo,
+                recordPerPage:recordPerPage,
+                BU_Code:BU_Code,
+                episodeFrom:episodeFrom,
+                episodeTo:episodeTo,
+                tabNameInSaveQuery : tabNameInSaveQuery,
+                titleCodes: titleCodes,
+                platformCodes: platformCodes,
+                Country_Code: TerritoryList,
+                isOriginalLang: isOriginalLang,
+                rblPeriodType: rblPeriodType,
+                Dubbing_Subtitling: Dubbing_Subtitling,
+                Title_Language_Code: Title_Language_Code,
+                ExcactMatch_Platform: ExcactMatch_Platform,
+                Exclusivity: Exclusivity,
+                sublicList: sublicList,
+                chkExactMatch: chkExactMatch,
+                ddlMustHaveCountry: ddlMustHaveCountry,
+                ddlListCountry: ddlListCountry,
+                Subtitling_Codes: Subtitling_Codes,
+                Dubbing_Codes: Dubbing_Codes,
+                BU_Code: BU_Code,
+                chkDigital: chkDigital,
+                txtfrom: txtfrom,
+                txtto: txtto,
+                chkRestRemarks: chkRestRemarks,
+                chkOtherRemarks: chkOtherRemarks,
+                MustHave_Platform_Codes: MustHave_Platform_Codes,
+                chkMetaData: MetaData,
+                chkIFTACluster: chkIFTACluster,
+                pfGroupCode:pfGroupCode,
+                LangGroup_Sub:LangGroup_Sub,
+                chkExactMatch_Sub:chkExactMatch_Sub,
+                MustHave_Subtitle_Codes:MustHave_Subtitle_Codes,
+                ddlListLanguageGroup:ddlListLanguageGroup,
+                LangGroup_Dub:LangGroup_Dub,
+                chkExactMatch_Dub:chkExactMatch_Dub,
+                MustHave_Dubbing_Codes:MustHave_Dubbing_Codes,
+                ddlListLanguageGroup_Dub:ddlListLanguageGroup_Dub,
+                Territory_Code:Country_Code,
+                episodeFrom:episodeFrom,
+                episodeTo:episodeTo,
+                tabName:IsCheckRights,
+                IncludeAncillary : IncludeAncillary,
+                PromoterCodes: PromoterCodes,
+                ExcactMatch_Promoter: ExcactMatch_Promoter,
+                MustHave_Promoter_Codes: MustHave_Promoter_Codes
+
+            }),
+            // async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    debugger;
+                    hideLoading();
+                    if(result.Duplicate == "Y"){
+                        showAlert('E','Record Already exists');
+                        return false;
+                    }
+                    $('#lblRecordCount').text(result.RecordCount);
+                    $('#hdnAction').val("")
+                    SetPaging();
+
+                    SearchQueryList();
+                    showAlert("S",'Report saved Successfully');
+                    $('#hdnIsGenerateReport').val('N');
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindQueryList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        var BU_Code = $("#ddlBusinessUnit").val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindQueryList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo:pageNo,
+                recordPerPage:recordPerPage,
+                BU_Code: BU_Code
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divQueryList').empty();
+                    $('#divQueryList').html(result);
+                    SetPaging();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ConverDate(dt){
+        var date1 = new Date(MakeDateFormate(dt));
+        var x = date1.getDate();
+        var y = date1.getMonth() + 1;
+        var z= date1.getFullYear();
+
+        if(x<10){
+            x= '0' + x;
+        }
+        if(y<10){
+            y = '0' + y;
+        }
+
+        var finalDate = y +'/'+ x +'/'+ z;
+        return finalDate;
+    }
+    function BindSelectedResult(){
+        debugger
+        $('#hdnIsGenerateReport').val('Y');
+        //var titleCodes = $('#ddlTitleList').val();
+        var titleCodes = CodeString.replace(/,\s*$/, "");
+        var Country_Code = "";
+        if (titleCodes == null) {
+            titleCodes = "";
+        }
+        var platformCodes = $('#hdnTVCodes_G').val();
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            platformCodes = "";
+        }
+
+        var promoterCodes = $('#hdnTVCodes_Promoter_G').val();
+        if(promoterCodes == null)
+            promoterCodes = "";
+
+        if($('#ddlTerritoryList').val() != null)
+            Country_Code = $('#ddlTerritoryList').val().join(',');
+        else
+            Country_Code = "0";
+        var isOriginalLang = $('#chkIsOriginalLanguage').is(':checked');
+
+        var txtfrom = "";
+        var txtto = "";
+
+        var txtfromSave ="";
+        var txttoSave = "";
+
+        var rblPeriodType = $('input[type =radio][name=GroupPeriod]:checked').val()
+        if (rblPeriodType == "Minimum")
+        {
+            rblPeriodType = "MI";
+            txtfrom = $('#startDate').val();
+            txtto = $('#endDate').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+        }
+
+
+        else if (rblPeriodType == "Flexi")
+        {
+            rblPeriodType = "FL";
+            txtfrom =$('#startDateFlexi').val();
+            txtto = $('#endDateFlexi').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+
+            if(txtto == "")
+                txttoSave ="";
+            if(txtfrom == ""){
+                hideLoading();
+                showAlert('E','Please Select Flexi Start date');
+                return false;
+            }
+        }
+        else if (rblPeriodType == "Fixed")
+        {
+            rblPeriodType = "FI";
+            txtfrom =$('#startDateFixed').val();
+            txtto = $('#endDateFixed').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+
+            if(txtfrom == "" && txtto == ""){
+                hideLoading();
+                showAlert('E','Please select Fixed Start date and End date');
+                return false;
+            }
+            else if(txtfrom == ""){
+                hideLoading();
+                showAlert('E','Please select Fixed Start date');
+                return false;
+            }
+            else if(txtto == ""){
+                hideLoading();
+                showAlert('E','Please select Fixed End date');
+                return false;
+            }
+
+
+        }
+
+        var date1 = $('#startDate').datepicker('getDate');
+        var dateStart = new Date(Date.parse(date1));
+        var date2 = $('#endDate').datepicker('getDate');
+        var dateEnd = new Date(Date.parse(date2));
+        if(dateStart>dateEnd){
+            hideLoading();
+            showAlert('E','Start date cannot be greater than End date');
+            return false;
+        }
+
+        var Dubbing_Subtitling = "0";
+        var LangGroup_Dub = "";
+        var LangGroup_Sub = "";
+        if($('#ddlLanguageGroupNew_Dub').val() != null)
+            LangGroup_Dub = $('#ddlLanguageGroupNew_Dub').val().join(',');
+        else
+            LangGroup_Dub = "0";
+        if($('#ddlLanguageGroupNew').val() != null)
+            LangGroup_Sub = $('#ddlLanguageGroupNew').val().join(',');
+        else
+            LangGroup_Sub ="0";
+
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            LangGroup_Dub= "";
+            LangGroup_Sub = "";
+        }
+
+
+
+        var Title_Language_Code = $('#langList').val();
+        if (Title_Language_Code == null) {
+            Title_Language_Code = "";
+        }
+        var ExcactMatch_Platform = $('#chkExactMatch_Platform').is(':checked');
+        var chkMustHave_Platform = $('#chkMustHave_Platform').is(':checked');
+        if (ExcactMatch_Platform == true) {
+            ExcactMatch_Platform = $('#chkExactMatch_Platform').val();
+        }
+        else if(chkMustHave_Platform == true)
+            ExcactMatch_Platform = "MH";
+        else
+            ExcactMatch_Platform = "";
+
+        var ExcactMatch_Promoter = $('#chkExactMatch_Promoter').is(':checked');
+        var chkMustHave_Promoter = $('#chkMustHave_Promoter').is(':checked');
+        if (ExcactMatch_Promoter == true) {
+            ExcactMatch_Promoter = $('#chkExactMatch_Promoter').val();
+        }
+        else if(chkMustHave_Promoter == true)
+            ExcactMatch_Promoter = "MH";
+        else
+            ExcactMatch_Promoter = "";
+
+
+            if (moduleCode == '@GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString()' || moduleCode == '@GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString()') {
+                var Exclusivity = ["E", "N", "Y"];
+            }
+            else {
+                var Exclusivity = $('#ddlExclusive').val();
+            }
+
+        if (Exclusivity == null) {
+            showAlert("E", "Please select atleast one exclusive rights.")
+            return false;
+        }
+
+
+        var sublicList = $('#sublicList').val();
+        if (sublicList == null) {
+            sublicList = "";
+        }
+        var chkExactMatch = $('#chkExactMatch').is(':checked');
+        var chkMustHave = $('#chkMustHave').is(':checked');
+        var ddlMustHaveCountry = $('#ddlMustHaveCountry').val();
+        if (chkExactMatch == true) {
+            chkExactMatch = $('#chkExactMatch').val();
+        }
+        else if(chkMustHave == true)
+            chkExactMatch = "MH";
+        else
+            chkExactMatch = "";
+        if(chkMustHave == true){
+            if(ddlMustHaveCountry == null){
+                showAlert('E','Please select atleast one Must Have Country or Uncheck Must Have for Region');
+                hideLoading();
+                return false;
+
+            }
+        }
+        else {
+            ddlMustHaveCountry = "";
+        }
+
+        var ddlListCountry = $('#ddlListCountry').val();
+        if (ddlListCountry == null) {
+            ddlListCountry = "";
+        }
+        ddlListCountry = "";
+        var Subtitling_Codes = $('#hdnTVCodes_SubLang_G').val();
+        if (Subtitling_Codes == null) {
+            Subtitling_Codes = "";
+        }
+
+        var Dubbing_Codes = $('#hdnTVCodes_DubLang_G').val();
+        if (Dubbing_Codes == null) {
+            Dubbing_Codes = "";
+        }
+
+        if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+            if((isOriginalLang == "N" || isOriginalLang == false) && Subtitling_Codes == "" && Dubbing_Codes == ""){
+                hideLoading();
+                showAlert('E','Please select Title Language or Subtitling or Dubbing.');
+                return false;
+            }
+        }
+
+        if (Subtitling_Codes != "") {
+            Dubbing_Subtitling = "S";
+        }
+        if (Dubbing_Codes != "") {
+            Dubbing_Subtitling = "D";
+        }
+        if (Subtitling_Codes != "" && Dubbing_Codes != "") {
+            Dubbing_Subtitling = "S,D"
+        }
+        var BU_Code = $('#ddlBusinessUnit').val();
+        var chkDigital = $('#chkDigital').is(':checked');
+
+        var chkRestRemarks = $('#chkRestRemarks').is(':checked');
+        var chkOtherRemarks = $('#chkOtherRemarks').is(':checked');
+
+        var MustHave_Platform_Codes = ""
+        var chkMustHave_Platform = $('#chkMustHave_Platform').is(':checked');
+        if (chkMustHave_Platform == true) {
+            MustHave_Platform_Codes = $('#hdnTVCodes_M').val();
+            if(MustHave_Platform_Codes == null || MustHave_Platform_Codes =="")
+            {
+                showAlert('E','Please select atleast one Must Have Platform or Uncheck Must Have for Platform');
+                hideLoading();
+                return false;
+            }
+
+        }
+        else {
+            MustHave_Platform_Codes = "0";
+        }
+
+        var MustHave_Promoter_Codes = ""
+        var chkMustHave_Promoter = $('#chkMustHave_Promoter').is(':checked');
+        if (chkMustHave_Promoter == true) {
+            MustHave_Promoter_Codes = $('#hdnTVCodes_Promoter_M').val();
+            if(MustHave_Promoter_Codes == null || MustHave_Promoter_Codes =="")
+            {
+                showAlert('E','Please select atleast one Must Have Self Utilization or Uncheck Must Have for Self Utilization');
+                hideLoading();
+                return false;
+            }
+
+        }
+        else {
+            MustHave_Promoter_Codes = "0";
+        }
+
+        var chkMetaData = $('#chkMetaData').is(':checked');
+        var MetaData = "";
+        if (chkMetaData == true) {
+            MetaData = "Y";
+        }
+        else {
+            MetaData = "N";
+        }
+
+        var chkIncludeAncillary = $('#chkIncludeAncillary').is(':checked');
+        var IncludeAncillary = "";
+        if (chkIncludeAncillary == true) {
+            IncludeAncillary = "Y";
+        }
+        else {
+            IncludeAncillary = "N";
+        }
+        var chkIFTACluster = $('#chkIFTACluster').is(':checked');
+        if (chkIFTACluster == true) {
+            chkIFTACluster = "Y";
+        }
+        else {
+            chkIFTACluster = "N";
+        }
+        var TerritoryList = $('#hdnTVCodes_Country').val();
+        if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+            if ((platformCodes == "" || platformCodes == null)
+                  && (titleCodes == "" || titleCodes == null)
+                  && (TerritoryList == "" || TerritoryList == null)) {
+                hideLoading();
+                showAlert('E', 'Please Select atleast one Title or Region or Platform');
+                return false;
+            }
+        }
+        else
+        {
+            if (
+                (titleCodes == "" || titleCodes == null)
+                  && (TerritoryList == "" || TerritoryList == null)) {
+                hideLoading();
+                showAlert('E', 'Please Select atleast one Title or Region or Platform');
+                return false;
+            }
+        }
+
+
+        var Visibility = $('input[name=Visibility]:checked').val();
+        var pfGroupCode = "";
+        if($('#ddlPlatformGroup').val() != null)
+            pfGroupCode = $('#ddlPlatformGroup').val().join(',');
+        else
+            pfGroupCode= "0";
+
+        //if(platformCodes == "")
+        //    pfGroupCode = "0";
+        //if(Subtitling_Codes == "")
+        //    LangGroup_Sub = "0";
+        //if(Dubbing_Codes == "")
+        //    LangGroup_Dub = "0";
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+
+            pfGroupCode = "";
+
+
+        var chkExactMatch_Sub = $('#chkExactMatch_Sub').is(':checked');
+        var chkMustHave_Sub = $('#chkMustHave_Sub').is(':checked');
+        if (chkExactMatch_Sub == true) {
+            chkExactMatch_Sub = $('#chkExactMatch_Sub').val();
+        }
+        else if(chkMustHave_Sub == true)
+            chkExactMatch_Sub = "MH";
+        else
+            chkExactMatch_Sub = "";
+
+        var MustHave_Subtitle_Codes = ""
+
+        if (chkMustHave_Sub == true) {
+
+            //MustHave_Subtitle_Codes = $('#hdnTVCodes_SubLang_M').val();
+            MustHave_Subtitle_Codes = $('#ddlMustHaveLanguage').val();
+            if(MustHave_Subtitle_Codes == null){
+                MustHave_Subtitle_Codes = "";
+                showAlert('E','Please select atleast one Must Have Language or Uncheck Must Have for Subtitling');
+                hideLoading();
+                return false;
+            }
+        }
+        else {
+            MustHave_Subtitle_Codes = "0";
+        }
+
+
+        var ddlListLanguageGroup = $('#ddlListLanguageGroup').val();
+        if (ddlListLanguageGroup == null) {
+            ddlListLanguageGroup = "";
+        }
+        ddlListLanguageGroup = "";
+        var chkExactMatch_Dub = $('#chkExactMatch_Dub').is(':checked');
+        var chkMustHave_Dub = $('#chkMustHave_Dub').is(':checked');
+        if (chkExactMatch_Dub == true) {
+            chkExactMatch_Dub = $('#chkExactMatch_Dub').val();
+        }
+        else if(chkMustHave_Dub == true)
+            chkExactMatch_Dub = "MH";
+        else
+            chkExactMatch_Dub = "";
+
+
+        var MustHave_Dubbing_Codes = ""
+
+        if (chkMustHave_Dub == true) {
+            //MustHave_Dubbing_Codes = $('#hdnTVCodes_DubLang_M').val();
+            MustHave_Dubbing_Codes = $('#ddlMustHaveLanguage_Dub').val();
+
+            if(MustHave_Dubbing_Codes == null){
+                MustHave_Dubbing_Codes = "";
+                showAlert('E','Please select atleast one Must Have Language or Uncheck Must Have for Dubbing');
+                hideLoading();
+                return false;
+            }
+        }
+        else {
+            MustHave_Dubbing_Codes = "0";
+        }
+
+
+        var ddlListLanguageGroup_Dub = $('#ddlListLanguageGroup_Dub').val();
+        if (ddlListLanguageGroup_Dub == null) {
+            ddlListLanguageGroup_Dub = "";
+        }
+        ddlListLanguageGroup_Dub = "";
+        episodeFrom = $('#epFrom').val();
+        if(episodeFrom == null || episodeFrom == "")
+            episodeFrom = 0;
+        episodeTo = $('#epTo').val();
+        if(episodeTo == null || episodeTo == "")
+            episodeTo = 0;
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            strInsertVal=  "'" + titleCodes + "','" + TerritoryList + "','" + rblPeriodType + "','"
+                 + txtfromSave + "','" + txttoSave + "','" + UserCode + "', GETDATE() ,'" + chkRestRemarks + "','" + chkOtherRemarks + "','" + Exclusivity + "','" + sublicList + "','" + chkExactMatch +
+                 "','" + ddlMustHaveCountry + "','" + ddlListCountry + "','" + BU_Code + "','TH','Y','"
+             + chkDigital + "','PU','" + Country_Code + "','" + chkMetaData + "'";
+
+        } //,'" + Country_Code + "'
+        else{
+            strInsertVal = "'" + titleCodes + "','" + platformCodes + "','" + TerritoryList + "','" + isOriginalLang + "','" + Dubbing_Subtitling + "','" + Title_Language_Code + "','" + rblPeriodType + "','"
+                 + txtfromSave + "','" + txttoSave + "','" + UserCode + "', GETDATE() ,'" + chkRestRemarks + "','" + chkOtherRemarks + "','"
+                 + ExcactMatch_Platform + "', '" + MustHave_Platform_Codes + "','" + Exclusivity + "','" + sublicList + "','" + chkExactMatch + "','" + ddlMustHaveCountry + "','"
+            + ddlListCountry + "','" + Subtitling_Codes + "','" + Dubbing_Codes + "','" + BU_Code + "','SQ','Y','"
+             + chkDigital + "','" + chkMetaData + "','PU','" + chkIFTACluster + "','"+ pfGroupCode + "','"+ LangGroup_Sub + "','" + chkExactMatch_Sub + "','"
+            + MustHave_Subtitle_Codes + "','" + ddlListLanguageGroup + "','" + LangGroup_Dub + "','" + chkExactMatch_Dub + "','" + MustHave_Dubbing_Codes + "','"
+            + ddlListLanguageGroup_Dub + "','" + Country_Code + "', '"+ IncludeAncillary +"','" + promoterCodes + "','" + ExcactMatch_Promoter + "','" + MustHave_Promoter_Codes + "'";
+        }
+        $('.tab-content').css("display", "none");
+        $('#wrapper').css("width", "0px");
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindSelectedResult,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                titleCodes: titleCodes,
+                platformCodes: platformCodes,
+                Country_Code: TerritoryList,
+                isOriginalLang: isOriginalLang,
+                rblPeriodType: rblPeriodType,
+                Dubbing_Subtitling: Dubbing_Subtitling,
+                Title_Language_Code: Title_Language_Code,
+                ExcactMatch_Platform: ExcactMatch_Platform,
+                Exclusivity: Exclusivity,
+                sublicList: sublicList,
+                chkExactMatch: chkExactMatch,
+                ddlMustHaveCountry: ddlMustHaveCountry,
+                ddlListCountry: ddlListCountry,
+                Subtitling_Codes: Subtitling_Codes,
+                Dubbing_Codes: Dubbing_Codes,
+                BU_Code: BU_Code,
+                chkDigital: chkDigital,
+                txtfrom: txtfrom,
+                txtto: txtto,
+                chkRestRemarks: chkRestRemarks,
+                chkOtherRemarks: chkOtherRemarks,
+                MustHave_Platform_Codes: MustHave_Platform_Codes,
+                chkMetaData: MetaData,
+                chkIFTACluster: chkIFTACluster,
+                pfGroupCode:pfGroupCode,
+                LangGroup_Sub:LangGroup_Sub,
+                chkExactMatch_Sub:chkExactMatch_Sub,
+                MustHave_Subtitle_Codes:MustHave_Subtitle_Codes,
+                ddlListLanguageGroup:ddlListLanguageGroup,
+                LangGroup_Dub:LangGroup_Dub,
+                chkExactMatch_Dub:chkExactMatch_Dub,
+                MustHave_Dubbing_Codes:MustHave_Dubbing_Codes,
+                ddlListLanguageGroup_Dub:ddlListLanguageGroup_Dub,
+                Territory_Code:Country_Code,
+                episodeFrom:episodeFrom,
+                episodeTo:episodeTo,
+                tabName:IsCheckRights,
+                IncludeAncillary:IncludeAncillary,
+                promoterCodes: promoterCodes,
+                ExcactMatch_Promoter: ExcactMatch_Promoter,
+                MustHave_Promoter_Codes: MustHave_Promoter_Codes
+            }),
+            async: false,
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    if ($('#aViewPlatform').attr('data-original-title') !== undefined) {
+                        debugger
+                        $('#aViewPlatform').removeAttr('data-original-title');
+                        $('#aViewPlatform').attr('data-original-title', " Platforms");
+
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function BindAvailReport(AvailReportCode) {
+        debugger;
+        $('#divResult').empty();
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+        showLoading();
+        $('#hdnIsGenerateReport').val('Y');
+        //var titleCodes = $('#ddlTitleList').val();
+        var titleCodes = CodeString.replace(/,\s*$/, "");
+
+        if (titleCodes == null) {
+            titleCodes = "";
+        }
+        var platformCodes = $('#hdnTVCodes_G').val();
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            platformCodes = "";
+        }
+        var PromoterCodes = $('#hdnTVCodes_Promoter_G').val();
+        if(PromoterCodes == null)
+            PromoterCodes = "";
+
+        var Country_Code = "";
+        if($('#ddlTerritoryList').val() != null)
+            Country_Code = $('#ddlTerritoryList').val().join(',');
+        else
+            Country_Code = "0";
+        var isOriginalLang = $('#chkIsOriginalLanguage').is(':checked');
+
+        var txtfrom = "";
+        var txtto = "";
+
+        var txtfromSave ="";
+        var txttoSave = "";
+
+        var rblPeriodType = $('input[type =radio][name=GroupPeriod]:checked').val()
+        if (rblPeriodType == "Minimum")
+        {
+            rblPeriodType = "MI";
+            txtfrom = $('#startDate').val();
+            txtto = $('#endDate').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+        }
+
+
+        else if (rblPeriodType == "Flexi")
+        {
+            rblPeriodType = "FL";
+            txtfrom =$('#startDateFlexi').val();
+            txtto = $('#endDateFlexi').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+
+            if(txtto == "")
+                txttoSave ="";
+            if(txtfrom == ""){
+                hideLoading();
+                showAlert('E','Please Select Flexi Start date');
+                return false;
+            }
+        }
+        else if (rblPeriodType == "Fixed")
+        {
+            rblPeriodType = "FI";
+            txtfrom =$('#startDateFixed').val();
+            txtto = $('#endDateFixed').val();
+
+            txtfromSave = ConverDate(txtfrom);
+            txttoSave = ConverDate(txtto);
+
+            if(txtfrom == "" && txtto == ""){
+                hideLoading();
+                showAlert('E','Please select Fixed Start date and End date');
+                return false;
+            }
+            else if(txtfrom == ""){
+                hideLoading();
+                showAlert('E','Please select Fixed Start date');
+                return false;
+            }
+            else if(txtto == ""){
+                hideLoading();
+                showAlert('E','Please select Fixed End date');
+                return false;
+            }
+
+
+        }
+
+        var date1 = $('#startDate').datepicker('getDate');
+        var dateStart = new Date(Date.parse(date1));
+        var date2 = $('#endDate').datepicker('getDate');
+        var dateEnd = new Date(Date.parse(date2));
+        if(dateStart>dateEnd){
+            hideLoading();
+            showAlert('E','Start date cannot be greater than End date');
+            return false;
+        }
+
+        var Dubbing_Subtitling = "0";
+        var LangGroup_Dub = "";
+        var LangGroup_Sub = "";
+        if($('#ddlLanguageGroupNew_Dub').val() != null)
+            LangGroup_Dub = $('#ddlLanguageGroupNew_Dub').val().join(',');
+        else
+            LangGroup_Dub = "0";
+        if($('#ddlLanguageGroupNew').val() != null)
+            LangGroup_Sub = $('#ddlLanguageGroupNew').val().join(',');
+        else
+            LangGroup_Sub ="0";
+
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            LangGroup_Dub= "";
+            LangGroup_Sub = "";
+        }
+
+
+
+        var Title_Language_Code = $('#langList').val();
+        if (Title_Language_Code == null) {
+            Title_Language_Code = "";
+        }
+        var ExcactMatch_Platform = $('#chkExactMatch_Platform').is(':checked');
+        var chkMustHave_Platform = $('#chkMustHave_Platform').is(':checked');
+        if (ExcactMatch_Platform == true) {
+            ExcactMatch_Platform = $('#chkExactMatch_Platform').val();
+        }
+        else if(chkMustHave_Platform == true)
+            ExcactMatch_Platform = "MH";
+        else
+            ExcactMatch_Platform = "";
+
+        var ExcactMatch_Promoter = $('#chkExactMatch_Promoter').is(':checked');
+        var chkMustHave_Promoter = $('#chkMustHave_Promoter').is(':checked');
+        if (ExcactMatch_Promoter == true) {
+            ExcactMatch_Promoter = $('#chkExactMatch_Promoter').val();
+        }
+        else if(chkMustHave_Promoter == true)
+            ExcactMatch_Promoter = "MH";
+        else
+            ExcactMatch_Promoter = "";
+
+            if (moduleCode == '@GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString()' || moduleCode == '@GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString()') {
+                var Exclusivity = ["E", "N", "C"];
+            }
+            else {
+                var Exclusivity = $('#ddlExclusive').val();
+            }
+
+        if (Exclusivity == null) {
+            showAlert("E", "Please select atleast one exclusive rights.")
+            return false;
+        }
+
+
+        var sublicList = $('#sublicList').val();
+        if (sublicList == null) {
+            sublicList = "";
+        }
+        var chkExactMatch = $('#chkExactMatch').is(':checked');
+        var chkMustHave = $('#chkMustHave').is(':checked');
+        var ddlMustHaveCountry = $('#ddlMustHaveCountry').val();
+        if (chkExactMatch == true) {
+            chkExactMatch = $('#chkExactMatch').val();
+        }
+        else if(chkMustHave == true)
+            chkExactMatch = "MH";
+        else
+            chkExactMatch = "";
+        if(chkMustHave == true){
+            if(ddlMustHaveCountry == null){
+                showAlert('E','Please select atleast one Must Have Country or Uncheck Must Have for Region');
+                hideLoading();
+                return false;
+
+            }
+        }
+        else {
+            ddlMustHaveCountry = "";
+        }
+
+        var ddlListCountry = $('#ddlListCountry').val();
+        if (ddlListCountry == null) {
+            ddlListCountry = "";
+        }
+        ddlListCountry = "";
+        var Subtitling_Codes = $('#hdnTVCodes_SubLang_G').val();
+        if (Subtitling_Codes == null) {
+            Subtitling_Codes = "";
+        }
+
+        var Dubbing_Codes = $('#hdnTVCodes_DubLang_G').val();
+        if (Dubbing_Codes == null) {
+            Dubbing_Codes = "";
+        }
+
+        if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+            if((isOriginalLang == "N" || isOriginalLang == false) && Subtitling_Codes == "" && Dubbing_Codes == ""){
+                hideLoading();
+                showAlert('E','Please select Title Language or Subtitling or Dubbing.');
+                return false;
+            }
+        }
+
+        if (Subtitling_Codes != "") {
+            Dubbing_Subtitling = "S";
+        }
+        if (Dubbing_Codes != "") {
+            Dubbing_Subtitling = "D";
+        }
+        if (Subtitling_Codes != "" && Dubbing_Codes != "") {
+            Dubbing_Subtitling = "S,D"
+        }
+        var BU_Code = $('#ddlBusinessUnit').val();
+        var chkDigital = $('#chkDigital').is(':checked');
+
+        var chkRestRemarks = $('#chkRestRemarks').is(':checked');
+        var chkOtherRemarks = $('#chkOtherRemarks').is(':checked');
+
+        var MustHave_Platform_Codes = ""
+        var chkMustHave_Platform = $('#chkMustHave_Platform').is(':checked');
+        if (chkMustHave_Platform == true) {
+            MustHave_Platform_Codes = $('#hdnTVCodes_M').val();
+            if(MustHave_Platform_Codes == null || MustHave_Platform_Codes =="")
+            {
+                showAlert('E','Please select atleast one Must Have Platform or Uncheck Must Have for Platform');
+                hideLoading();
+                return false;
+            }
+
+        }
+        else {
+            MustHave_Platform_Codes = "0";
+        }
+
+        var MustHave_Promoter_Codes = ""
+        var chkMustHave_Promoter = $('#chkMustHave_Promoter').is(':checked');
+        if (chkMustHave_Promoter == true) {
+            MustHave_Promoter_Codes = $('#hdnTVCodes_Promoter_M').val();
+            if(MustHave_Promoter_Codes == null || MustHave_Promoter_Codes =="")
+            {
+                showAlert('E','Please select atleast one Must Have Self Utilization or Uncheck Must Have for Self Utilization');
+                hideLoading();
+                return false;
+            }
+
+        }
+        else {
+            MustHave_Promoter_Codes = "0";
+        }
+        var chkMetaData = $('#chkMetaData').is(':checked');
+        var MetaData = "";
+        if (chkMetaData == true) {
+            MetaData = "Y";
+        }
+        else {
+            MetaData = "N";
+        }
+
+        var chkIncludeAncillary = $('#chkIncludeAncillary').is(':checked');
+        var IncludeAncillary = "";
+        if (chkIncludeAncillary == true) {
+            IncludeAncillary = "Y";
+        }
+        else {
+            IncludeAncillary = "N";
+        }
+
+        var chkIFTACluster = $('#chkIFTACluster').is(':checked');
+        if (chkIFTACluster == true) {
+            chkIFTACluster = "Y";
+        }
+        else {
+            chkIFTACluster = "N";
+        }
+        var TerritoryList = $('#hdnTVCodes_Country').val();
+        if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+            if ((platformCodes == "" || platformCodes == null)
+                  && (titleCodes == "" || titleCodes == null)
+                  && (TerritoryList == "" || TerritoryList == null)) {
+                hideLoading();
+                showAlert('E', 'Please Select atleast one Title or Region or Platform');
+                return false;
+            }
+        }
+        else
+        {
+            if (
+                (titleCodes == "" || titleCodes == null)
+                  && (TerritoryList == "" || TerritoryList == null)) {
+                hideLoading();
+                showAlert('E', 'Please Select atleast one Title or Region or Platform');
+                return false;
+            }
+        }
+
+
+        var Visibility = $('input[name=Visibility]:checked').val();
+
+        var pfGroupCode = "";
+        if($('#ddlPlatformGroup').val() != null)
+            pfGroupCode = $('#ddlPlatformGroup').val().join(',');
+        else
+            pfGroupCode= "0";
+
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+            pfGroupCode = "";
+
+        var chkExactMatch_Sub = $('#chkExactMatch_Sub').is(':checked');
+        var chkMustHave_Sub = $('#chkMustHave_Sub').is(':checked');
+        if (chkExactMatch_Sub == true) {
+            chkExactMatch_Sub = $('#chkExactMatch_Sub').val();
+        }
+        else if(chkMustHave_Sub == true)
+            chkExactMatch_Sub = "MH";
+        else
+            chkExactMatch_Sub = "";
+
+        var MustHave_Subtitle_Codes = ""
+
+        if (chkMustHave_Sub == true) {
+
+            //MustHave_Subtitle_Codes = $('#hdnTVCodes_SubLang_M').val();
+            MustHave_Subtitle_Codes = $('#ddlMustHaveLanguage').val();
+            if(MustHave_Subtitle_Codes == null){
+                MustHave_Subtitle_Codes = "";
+                showAlert('E','Please select atleast one Must Have Language or Uncheck Must Have for Subtitling');
+                hideLoading();
+                return false;
+            }
+        }
+        else {
+            MustHave_Subtitle_Codes = "0";
+        }
+
+
+        var ddlListLanguageGroup = $('#ddlListLanguageGroup').val();
+        if (ddlListLanguageGroup == null) {
+            ddlListLanguageGroup = "";
+        }
+        ddlListLanguageGroup = "";
+        var chkExactMatch_Dub = $('#chkExactMatch_Dub').is(':checked');
+        var chkMustHave_Dub = $('#chkMustHave_Dub').is(':checked');
+        if (chkExactMatch_Dub == true) {
+            chkExactMatch_Dub = $('#chkExactMatch_Dub').val();
+        }
+        else if(chkMustHave_Dub == true)
+            chkExactMatch_Dub = "MH";
+        else
+            chkExactMatch_Dub = "";
+
+
+        var MustHave_Dubbing_Codes = ""
+
+        if (chkMustHave_Dub == true) {
+            //MustHave_Dubbing_Codes = $('#hdnTVCodes_DubLang_M').val();
+            MustHave_Dubbing_Codes = $('#ddlMustHaveLanguage_Dub').val();
+
+            if(MustHave_Dubbing_Codes == null){
+                MustHave_Dubbing_Codes = "";
+                showAlert('E','Please select atleast one Must Have Language or Uncheck Must Have for Dubbing');
+                hideLoading();
+                return false;
+            }
+        }
+        else {
+            MustHave_Dubbing_Codes = "0";
+        }
+
+
+        var ddlListLanguageGroup_Dub = $('#ddlListLanguageGroup_Dub').val();
+        if (ddlListLanguageGroup_Dub == null) {
+            ddlListLanguageGroup_Dub = "";
+        }
+        ddlListLanguageGroup_Dub = "";
+        episodeFrom = $('#epFrom').val();
+        if(episodeFrom == null || episodeFrom == "")
+            episodeFrom = 0;
+        episodeTo = $('#epTo').val();
+        if(episodeTo == null || episodeTo == "")
+            episodeTo = 0;
+        tabNameInSaveQuery = IsCheckRights;
+        if(moduleCode == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+        {
+            strInsertVal=  "'" + titleCodes + "','" + TerritoryList + "','" + rblPeriodType + "','"
+                 + txtfromSave + "','" + txttoSave + "','" + UserCode + "', GETDATE() ,'" + chkRestRemarks + "','" + chkOtherRemarks + "','" + Exclusivity + "','" + sublicList + "','" + chkExactMatch +
+                 "','" + ddlMustHaveCountry + "','" + ddlListCountry + "','" + BU_Code + "','TH','Y','"
+             + chkDigital + "','PU','" + Country_Code + "','" + chkMetaData + "'";
+
+        } //,'" + Country_Code + "'
+        else{
+            strInsertVal = "'" + titleCodes + "','" + platformCodes + "','" + TerritoryList + "','" + isOriginalLang + "','" + Dubbing_Subtitling + "','" + Title_Language_Code + "','" + rblPeriodType + "','"
+                 + txtfromSave + "','" + txttoSave + "','" + UserCode + "', GETDATE() ,'" + chkRestRemarks + "','" + chkOtherRemarks + "','"
+                 + ExcactMatch_Platform + "', '" + MustHave_Platform_Codes + "','" + Exclusivity + "','" + sublicList + "','" + chkExactMatch + "','" + ddlMustHaveCountry + "','"
+            + ddlListCountry + "','" + Subtitling_Codes + "','" + Dubbing_Codes + "','" + BU_Code + "','SQ','Y','"
+             + chkDigital + "','" + chkMetaData + "','PU','" + chkIFTACluster + "','"+ pfGroupCode + "','"+ LangGroup_Sub + "','" + chkExactMatch_Sub + "','"
+            + MustHave_Subtitle_Codes + "','" + ddlListLanguageGroup + "','" + LangGroup_Dub + "','" + chkExactMatch_Dub + "','" + MustHave_Dubbing_Codes + "','"
+            + ddlListLanguageGroup_Dub + "','" + Country_Code + "', '"+ IncludeAncillary +"','" + PromoterCodes + "','" + ExcactMatch_Promoter + "','" + MustHave_Promoter_Codes + "'";
+        }
+        $('.tab-content').css("display", "none");
+        $('#wrapper').css("width", "0px");
+
+
+        // return false;
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindAvailReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                titleCodes: titleCodes,
+                platformCodes: platformCodes,
+                Country_Code: TerritoryList,
+                isOriginalLang: isOriginalLang,
+                rblPeriodType: rblPeriodType,
+                Dubbing_Subtitling: Dubbing_Subtitling,
+                Title_Language_Code: Title_Language_Code,
+                ExcactMatch_Platform: ExcactMatch_Platform,
+                Exclusivity: Exclusivity,
+                sublicList: sublicList,
+                chkExactMatch: chkExactMatch,
+                ddlMustHaveCountry: ddlMustHaveCountry,
+                ddlListCountry: ddlListCountry,
+                Subtitling_Codes: Subtitling_Codes,
+                Dubbing_Codes: Dubbing_Codes,
+                BU_Code: BU_Code,
+                chkDigital: chkDigital,
+                txtfrom: txtfrom,
+                txtto: txtto,
+                chkRestRemarks: chkRestRemarks,
+                chkOtherRemarks: chkOtherRemarks,
+                MustHave_Platform_Codes: MustHave_Platform_Codes,
+                chkMetaData: MetaData,
+                chkIFTACluster: chkIFTACluster,
+                pfGroupCode:pfGroupCode,
+                LangGroup_Sub:LangGroup_Sub,
+                chkExactMatch_Sub:chkExactMatch_Sub,
+                MustHave_Subtitle_Codes:MustHave_Subtitle_Codes,
+                ddlListLanguageGroup:ddlListLanguageGroup,
+                LangGroup_Dub:LangGroup_Dub,
+                chkExactMatch_Dub:chkExactMatch_Dub,
+                MustHave_Dubbing_Codes:MustHave_Dubbing_Codes,
+                ddlListLanguageGroup_Dub:ddlListLanguageGroup_Dub,
+                Territory_Code:Country_Code,
+                episodeFrom:episodeFrom,
+                episodeTo:episodeTo,
+                tabName:IsCheckRights,
+                IncludeAncillary : IncludeAncillary,
+                PromoterCodes: PromoterCodes,
+                ExcactMatch_Promoter: ExcactMatch_Promoter,
+                MustHave_Promoter_Codes: MustHave_Promoter_Codes
+
+            }),
+            //async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    $('#divResult').empty();
+                    $('#divResult').html(result);
+
+
+                }
+
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindReportCriteria(Avail_Report_Schedule_Code) {
+        debugger;
+        $('#hdnAccordianRegion').val('Y');
+
+        $('.tab-content').css("display", "none");// for closing the opened panel
+        $('#wrapper').css("width", "0px");       //
+        //
+        var ReportName = $('#rptName').val();
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $('#hdnsearchTitleCode').text('');
+
+        var BU_Code = $("#ddlBusinessUnit").val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindReportCriteria,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                pageNo:pageNo,
+                recordPerPage:recordPerPage,
+                BU_Code:BU_Code,
+                Avail_Report_Schedule_Code:Avail_Report_Schedule_Code,
+
+            }),
+            //async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    debugger;
+                    $('#rptName').val(result.Report_Name);
+
+                    // $('#ddlTitleList').val(result.TitleCode.split(','))[0].sumo.reload();
+                    $('#resultLanguageDetails').text('');
+                   // SearchTitles('');
+                    btnSearch_OnClick('');
+                    CodeString = result.TitleCode;
+
+                    var TitleCodesSplit = result.TitleCode.split(",");
+                    var TitleNamesSplit = result.TitleName.split(",");
+
+                    for(i = 0,j=0;i < TitleCodesSplit.length,j<TitleNamesSplit.length;i++,j++)
+                    {
+                        //alert(TitleCodesSplit[i]+","+TitleNamesSplit[j]+","+"R_"+TitleCodesSplit[i]);
+                        myFunction(TitleNamesSplit[j], TitleCodesSplit[i], "R_"+TitleCodesSplit[i]);
+                    }
+                    if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+                    {
+                        if(result.LanguageCodes != "")
+                            $('#langList').val(result.LanguageCodes.split(','))[0].sumo.reload();
+                    }
+
+                    //=======================================Period Tab=============================================
+
+                    if(result.DateType == "MI" || result.DateType == "Minimum"){
+                        $('#rbgMinimum').attr('checked',true);
+                        $('#startDate').val(result.StartDate);
+                        $('#endDate').val(result.EndDate);
+                        $("#flexiDiv").hide();
+                        $("#fixedDiv").hide();
+                        $("#minDiv").show();
+                    }
+                    else if(result.DateType == "FL" || result.DateType == "Flexi"){
+                        $('#rbgFlexi').attr('checked',true);
+                        $('#startDateFlexi').val(result.StartDate);
+                        $('#endDateFlexi').val(result.EndDate);
+                        $("#flexiDiv").show();
+                        $("#fixedDiv").hide();
+                        $("#minDiv").hide();
+                    }
+                    else if(result.DateType == "FI" || result.DateType == "Fixed" ){
+                        $('#rbgFixed').attr('checked',true);
+                        $('#startDateFixed').val(result.StartDate);
+                        $('#endDateFixed').val(result.EndDate);
+                        $("#flexiDiv").hide();
+                        $("#fixedDiv").show();
+                        $("#minDiv").hide();
+                    }
+
+                    //================================================================================================
+                    if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+                        BindPlatform(result.PlatformCodes);
+
+                        if((result.PlatformExactMatch).trim() == "EM"){
+                            $('#chkExactMatch_Platform').attr('checked',true);
+                        }
+                        else{
+                            $('#chkExactMatch_Platform').attr('checked',false);
+                        }
+
+                    }
+
+                    $('#ddlExclusive').val(result.Exclusivity).trigger('chosen:updated');
+                    if(result.SubLicenseCode != "")
+                        $('#sublicList').val(result.SubLicenseCode.split(','))[0].sumo.reload();
+
+                    if(result.RestrictionRemarks == "true"){
+                        $('#chkRestRemarks').attr('checked',true);
+                    }
+                    else{
+                        $('#chkRestRemarks').attr('checked',false);
+                    }
+
+                    if(result.OtherRemarks == "true"){
+                        $('#chkOtherRemarks').attr('checked',true);
+                    }
+                    else{
+                        $('#chkOtherRemarks').attr('checked',false);
+                    }
+
+                    if(result.IncludeMetadata == "true"){
+                        $('#chkMetaData').attr('checked',true);
+                    }
+                    else{
+                        $('#chkMetaData').attr('checked',false);
+                    }
+                    if(result.IncludeAncillary == "Y"){
+                        $('#chkIncludeAncillary').prop('checked',true);
+                    }
+                    else{
+                        $('#chkIncludeAncillary').prop('checked',false);
+                    }
+                    if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+                        if(result.IsOriginaLang == "Yes"){
+                            $('#chkIsOriginalLanguage').attr('checked',true);
+                        }
+                        else{
+                            $('#chkIsOriginalLanguage').attr('checked',false);
+                        }
+
+                        if(result.SelfConsumption == true){
+                            $('#chkDigital').attr('checked',true);
+                        }
+                        else{
+                            $('#chkDigital').attr('checked',false);
+                        }
+                    }
+
+                    if(result.Visibility == "PU"){
+                        $('#rbgPublic').prop('checked', true);
+
+                    }
+                    else if(result.Visibility == "RO"){
+                        $('#rbgRoleBased').prop('checked', true);
+                    }
+                    else if(result.Visibility == "PR"){
+                        $('#rbgPrivate').prop('checked', true);
+                    }
+                    //=======================================Region Tab=============================================
+
+                    //$('#ddlTerritoryList').val(result.CountryCode)[0].sumo.reload();
+                    $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-weight", 100)
+                    $('.SumoSelect .select-all.partial > span i').css("display", "none");
+                    $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-size", 12)
+
+                    if(result.IFTA == "Y"){
+                        $('#chkIFTACluster').prop('checked',true);
+                    }
+                    else{
+                        $('#chkIFTACluster').prop('checked',false);
+                    }
+                    //$('#ResolveConflictTab > li > a').data('tabname') = result.TabName ;
+                    IscallfromSaveQuery = result.TabName;
+                    TerritoryCodess= result.CountryCode;
+                    selectedCountryCodes = result.TerritoryCodes;
+                    BindRegion("runQuery")
+                    //if(result.Region_MustHave != "")
+                    //    $('#ddlMustHaveCountry').val(result.Region_MustHave.split(','))[0].sumo.reload();
+                    $('#hdnAccordianRegion').val('Y');
+                    $('#hdnIsFlag_Region').val('Y');
+                    if((result.Region_ExactMatch).trim() == "EM"){
+                        $('#chkExactMatch').prop('checked',true);
+                        $("#ddlMustHaveCountry").prop('disabled', true)[0].sumo.reload();
+                    }
+                    else{
+                        $('#chkExactMatch').prop('checked',false);
+                    }
+
+                    if(result.Region_MustHave != "" || result.Region_MustHave != 0)
+                    {
+                        $('#chkMustHave').prop('checked',true);
+                        $("#ddlMustHaveCountry").prop('disabled', false)[0].sumo.reload();
+                        BindTerritoryDetails(result.Region_MustHave);
+                        $('#ddlMustHaveCountry').val(result.Region_MustHave.split(','))[0].sumo.reload();
+                    }
+                    else{
+                        $('#chkMustHave').prop('checked',false);
+                        $("#ddlMustHaveCountry").SumoSelect();
+                        //$("#ddlMustHaveCountry").prop('disabled', true)[0].sumo.reload();
+                    }
+
+
+                    //==============================================================================================
+
+                    //=======================================Platform Tab=============================================
+                    if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+                        $('#ddlPlatformGroup').SumoSelect();
+                        $('#ddlPlatformGroup').val(result.Platform_GroupCode.split(','))[0].sumo.reload();
+                        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-weight", 100)
+                        $('.SumoSelect .select-all.partial > span i').css("display", "none");
+                        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-size", 12)
+
+                        AddEditPlatform_Group("",result.Platfromcodes,"Y");
+                        $('#hdnIsFlag_Platform').val('Y');
+                        if((result.Platform_ExactMatch).trim() == "EM"){
+                            $('#hdnPlatformType').val('PG');
+                            $('#chkExactMatch_Platform').prop('checked',true);
+                            $('#chkMustHave_Platform').prop('checked',false);
+                            $("#hdnTVCodes_G").val(result.Platfromcodes);
+                            BindMustHaveTree("EM");
+                            //$('#hdnIsFlag_Platform').val('N');
+                        }
+                        else{
+                            $('#chkExactMatch_Platform').prop('checked',false);
+                        }
+
+                        if(result.Platform_MustHave != "" && result.Platform_MustHave != 0)
+                        {
+                            $('#hdnPlatformType').val('PG');
+                            $('#chkMustHave_Platform').prop('checked',true);
+                            $("#hdnTVCodes_G").val(result.Platfromcodes);
+                            BindMustHaveTree("MH",result.Platform_MustHave);
+
+                        }
+                        else{
+                            $('#chkMustHave_Platform').prop('checked',false);
+                        }
+                        //==============================================================================================
+
+                        //=======================================SubTitling Tab=============================================
+                        $('#ddlLanguageGroupNew').SumoSelect();
+                        $('#ddlLanguageGroupNew').val(result.Subtitling_Group_Code.split(','))[0].sumo.reload();
+                        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-weight", 100)
+                        $('.SumoSelect .select-all.partial > span i').css("display", "none");
+                        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-size", 12)
+
+
+                        AddEditLanguage_Group(result.Subtit_Language_Code,"runQuery");
+                        BindLanguageGroupDetails(result.Subtit_Language_Code);
+                        $('#ddlMustHaveLanguage').val(result.Subtitling_MustHave.split(','))[0].sumo.reload();
+                        $('#hdnAccordianSub').val('Y');
+                        $('#hdnIsFlag_Subtitling').val('Y');
+                        if((result.Subtitling_ExactMatch).trim() == "EM"){
+                            $('#chkExactMatch_Sub').prop('checked',true);
+                            $('#chkMustHave_Sub').prop('checked',false);
+                            $("#ddlMustHaveLanguage").prop('disabled', true)[0].sumo.reload();
+                        }
+                        else{
+                            $('#chkExactMatch_Sub').prop('checked',false);
+                        }
+
+                        if(result.Subtitling_MustHave != "" && result.Subtitling_MustHave != 0)
+                        {
+                            $('#chkMustHave_Sub').prop('checked',true);
+                            $("#ddlMustHaveLanguage").prop('disabled', false)[0].sumo.reload();
+                        }
+                        else{
+                            $('#chkMustHave_Sub').prop('checked',false);
+                            $("#ddlMustHaveLanguage").prop('disabled', true)[0].sumo.reload();
+                        }
+                        //==============================================================================================
+
+
+                        //=======================================Dubbing Tab=============================================
+                        $('#ddlLanguageGroupNew_Dub').SumoSelect();
+                        $('#ddlLanguageGroupNew_Dub').val(result.Dubbing_Group_Code.split(','))[0].sumo.reload();
+                        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-weight", 100)
+                        $('.SumoSelect .select-all.partial > span i').css("display", "none");
+                        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-size", 12)
+
+                        AddEditLanguage_Group_Dub(result.Dubbing_Language_Code,"runQuery");
+                        BindLanguageGroup_Dub_Details(result.Dubbing_Language_Code);
+                        //$('#ddlListLanguageGroup_Dub').val(result.Dubbing_Exclusion.split(','))[0].sumo.reload();
+                        $('#ddlMustHaveLanguage_Dub').val(result.Dubbing_MustHave.split(','))[0].sumo.reload();
+
+                        $('#hdnAccordianDub').val('Y');
+                        $('#hdnIsFlag_Dubbing').val('Y');
+                        if((result.Dubbing_ExactMatch).trim() == "EM"){
+                            $('#chkExactMatch_Dub').prop('checked',true);
+                            $('#chkMustHave_Dub').prop('checked',false);
+                            $("#ddlMustHaveLanguage_Dub").prop('disabled', true)[0].sumo.reload();
+                        }
+                        else{
+                            $('#chkExactMatch_Dub').prop('checked',false);
+                        }
+
+                        if(result.Dubbing_MustHave != "" && result.Dubbing_MustHave != 0)
+                        {
+                            $('#chkMustHave_Dub').prop('checked',true);
+                            $("#ddlMustHaveLanguage_Dub").prop('disabled', false)[0].sumo.reload();
+                        }
+                        else{
+                            $('#chkMustHave_Dub').prop('checked',false);
+                            $("#ddlMustHaveLanguage_Dub").prop('disabled', true)[0].sumo.reload();
+                        }
+                        //=================================================================================================
+                        //==========================================Self Utilization=======================================
+                        if(moduleCode != '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+
+                            AddEditPromoter_Group("",result.Promoter_code,"Y");
+                            $("#hdnTVCodes_Promoter_G").val(result.Promoter_code);
+                            $('#hdnIsFlag_Promoter').val('Y');
+                            if((result.PromoterExactMatch).trim() == "EM"){
+                                $('#hdnPromoterType').val('PG');
+                                $("#hdnTVCodes_Promoter_G").val(result.Promoter_code);
+                                $('#chkExactMatch_Promoter').prop('checked',true);
+                                $('#chkMustHave_Promoter').prop('checked',false);
+
+                                BindPromoterMustHaveTree("EM");
+                                //$('#hdnIsFlag_Platform').val('N');
+                            }
+                            else{
+                                $('#chkMustHave_Promoter').prop('checked',false);
+                            }
+
+                            if(result.Promoter_MustHave != "" && result.Promoter_MustHave != 0)
+                            {
+                                $('#hdnPromoterType').val('PG');
+                                $('#chkMustHave_Promoter').prop('checked',true);
+                                $("#hdnTVCodes_Promoter_G").val(result.Platfromcodes);
+                                BindPromoterMustHaveTree("MH",result.Promoter_MustHave);
+
+                            }
+                            else{
+                                $('#chkMustHave_Promoter').prop('checked',false);
+                            }
+                        }
+                        //=================================================================================================
+
+                        $("#epFrom").val(result.Episode_From);
+                        $("#epTo").val(result.Episode_To);
+                    }
+                    BindSelectedResult();
+                    $('#hdnAction').val("")
+                    SetPaging();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+
+            }
+        });
+    }
+
+    function handleCancel() {
+        Command_Name = "";
+        dummyException_G = "";
+    }
+    function handleOk() {
+
+        if (Command_Name == "DELETE_EXCEPTION_RATE") {
+            DeleteQuery(dummyException_G, true);
+        }
+    }
+
+    function DeleteQuery(queryCode, confirmed) {
+        debugger;
+
+        if (confirmed) {
+            Command_Name = "";
+            dummyException_G = "";
+
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteQuery,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    queryCode: queryCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert("S", result.Message);
+                            SearchQueryList();
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+
+                }
+            });
+        }
+        else
+        {
+            Command_Name = "DELETE_EXCEPTION_RATE";
+            dummyException_G = queryCode;
+            showAlert("I", "Are you sure, you want to delete this record ?", "OKCANCEL")
+        }
+
+    }
+
+
+    function BindTitleList() {
+        debugger;
+        showLoading();
+        var BU_Code = $("#ddlBusinessUnit").val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindTitleList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                BU_Code: BU_Code
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                else {
+                    hideLoading();
+                    $('#resultLanguageDetails').empty();
+                    $('#divTitlesCriteria').empty();
+                    $('#searchCommon').val('');
+                    $('#titleCountTab').text('0');
+                    $('#hdnsearchTitleCode').text('');
+                    CodeString = "";
+                    BindPlatformtreeForSportsDeal(BU_Code, PrevBUCode);
+                    PrevBUCode = $("#ddlBusinessUnit").val();
+                    //$('#divTitlesCriteria').html(result);
+
+                    //$('#ddlTitleList').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+                    //$('#ddlTitleList')[0].sumo.reload();
+                    SearchQueryList();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindPlatformtreeForSportsDeal(BU_Code, PrevBUCode) {
+        debugger;
+        if (PrevBUCode == "") {
+            PrevBUCode = 0;
+        }
+        $.ajax({
+            type: "POST",
+            url: URL_BindSportsPlatTree,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            //dataType: "Json",
+            data: JSON.stringify({
+                BU_Code: BU_Code,
+                PrevBUCode: PrevBUCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_ReloadPlatformTree == "Y") {
+                        $('#pupupHtml1').empty();
+                        $('#ddlPlatformGroup')[0].sumo.unSelectAll();
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindPeriod() {
+        showLoading();
+        debugger;
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPeriod,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+
+
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    $('#divPeriodCriteria').empty();
+                    $('#divPeriodCriteria').html(result);
+                    initializeDatepicker();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindRegionRight() {
+        debugger;
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindRegionRight,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#divRegionCriteria').empty();
+                    $('#divRegionCriteria').html(result);
+                    IsFirstTime = "Y";
+                    initializeExpander();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindRegion(callFrom) {
+        debugger;
+
+            IsCheckRights = callFrom;
+        var CountryLevel =false;
+        if(callFrom == "CO")
+            CountryLevel = true;
+        if (callFrom == "runQuery")
+            TabName = IscallfromSaveQuery;
+        else
+            IscallfromSaveQuery = callFrom;
+        var IFTA = $('#chkIFTACluster').is(":checked");
+        $.ajax({
+            type: "POST",
+            url: URL_BindRegion,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async:false,
+            data: JSON.stringify({
+                IFTA: IFTA,
+                CountryLevel:CountryLevel,
+                CheckRight:callFrom
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#divMappingData').empty();
+                    $('#divMappingData').html(result);
+
+                    $('#ddlTerritoryList').SumoSelect();
+                    if(TerritoryCodess != "0" && TerritoryCodess != ""){
+                        $('#ddlTerritoryList').val(TerritoryCodess.split(','))[0].sumo.reload();
+                        TerritoryCodess = "";
+                    }
+                    initializeExpander();
+                    initializeChosen();
+                    if (callFrom == "check" || callFrom == "UnCheck") {
+                        AddEditRegion("");
+                    }
+                    if (callFrom == "IF" || callFrom == "CO" ) {
+                        AddEditRegion("");
+                    }
+                    if(callFrom =="runQuery")
+                    {
+                        AddEditRegion(selectedCountryCodes, callFrom, IscallfromSaveQuery)
+                    }
+                    // BindCountry();
+                    initializeChosen();
+                    initializeTooltip();
+
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function AddEditRegion(selectedCodes,callFrom,Region_On) {
+        debugger
+
+        showLoading();
+        var langGroupCode ="";
+        if(callFrom == "runQuery"){
+            IsCheckRights = Region_On;
+            $('#hdnTVCodes_Country').val(selectedCodes);
+        }
+        $('#hdnAccordianRegion').val("N");
+        Slide("region");
+        var chkIFTA = $('#chkIFTACluster').is(":checked");
+        if (chkIFTA == true) {
+            chkIFTA = "IFTA";
+        }
+        else {
+            chkIFTA = "T";
+        }
+        if ('@ViewBag.Code' == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()'){
+            chkIFTA = "";
+        }
+        if($('#ddlTerritoryList').val() != null)
+            langGroupCode  = $('#ddlTerritoryList').val().join(',');
+        else
+            langGroupCode ="0";
+        //if (langGroupCode != 0) {
+        //    var x = langGroupCode.substr(1);
+        //}
+        //else {
+        var x = langGroupCode;
+        //}
+        $.ajax({
+            type: "POST",
+            url: URL_BindCountryTree,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+           // async: false,
+            data: JSON.stringify({
+                //Platform_Group_Code: platformCodes_G
+                TerritoryCode: x,
+                IFTACluster: chkIFTA,
+                selectedCodes: selectedCodes,
+                callFrom:callFrom,
+                Region_On:IsCheckRights
+            }),
+
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    hideLoading();
+                    $('#pupupHtml1_Country').empty();
+                    $('#pupupHtml1_Country').html(result);
+                    BindTerritoryDetails(selectedCodes);
+                    var RegionCount = $('#Rights_Platform_CountryplatformCnt').text();
+                    if (RegionCount == "") {
+                        RegionCount = "0";
+                    }
+                    if ($('#btnResetSearch_Rights_Platform_Country').attr('title') !== undefined) {
+                        $('#btnResetSearch_Rights_Platform_Country').attr('data-original-title', "Delete");
+                        initializeTooltip();
+                    }
+                    if(RegionCount > 9){
+                        if ($('#regionCountTab').attr('data-original-title') !== undefined) {
+                            $('#regionCountTab').removeAttr('data-original-title');
+                            $('#regionCountTab').text("9+");
+                            $('#regionCountTab').attr('data-original-title', RegionCount + " Regions");
+
+                        }
+                        initializeTooltip();
+                    }
+                    else{
+
+                        if ($('#regionCountTab').attr('data-original-title') !== undefined) {
+                            $('#regionCountTab').removeAttr('data-original-title');
+                            $('#regionCountTab').text(RegionCount);
+                            $('#regionCountTab').attr('data-original-title', RegionCount + " Regions");
+                        }
+
+                        initializeTooltip();
+                    }
+                    $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-weight", 100)
+                    $('.SumoSelect .select-all.partial > span i').css("display", "none");
+                    $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-size", 12)
+
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+
+            }
+        });
+    }
+
+    function BindTerritoryDetails(platformCodes) {
+        debugger;
+        var territoryCode="";
+        if( $("#ddlTerritoryList").val() != null)
+            territoryCode = $("#ddlTerritoryList").val().join(',');
+        else
+             territoryCode = "";
+        var chkIFTA = $('#chkIFTACluster').is(":checked");
+        if (chkIFTA == true) {
+            chkIFTA = "IFTA";
+        }
+        else {
+            chkIFTA = "T";
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindTerritoryDetails,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            //dataType: "html",
+            data: JSON.stringify({
+                Code: territoryCode,
+                IFTACluster: chkIFTA,
+                platformCodes: platformCodes
+                //call: "COUNTRY_LIST"
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    var MustHaveSelected = $("#ddlMustHaveCountry").val();
+                    var hdnCodes = $('#hdnTVCodes_Country').val();
+                    var hdnText = $('#hdnTVText_Country').val();
+                    debugger;
+                    var array = JSON.parse("[" + hdnCodes.split(",") + "]");
+                    var array2 = JSON.parse("[" + hdnText.split(",") + "]");
+
+                    //if (MustHaveSelected != undefined) {
+                        $("#ddlMustHaveCountry").empty();
+                        $(result.listCountry).each(function (index, item) {
+                            $("#ddlMustHaveCountry").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $('#ddlMustHaveCountry').SumoSelect({ selectAll: true });
+                    if (MustHaveSelected != null && MustHaveSelected != undefined)
+                            $('#ddlMustHaveCountry').val(MustHaveSelected);
+
+                        $('#ddlMustHaveCountry')[0].sumo.reload();
+                    //}
+                    $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css('text-align', 'left');
+                    IsFirstTime = 'N';
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+
+    function BindPlatformCriteria() {
+
+        debugger;
+        //var code = $('#ddlPlatformGroup').val();
+        var code = 0;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatform,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Platform_Group_Code: code
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divPlatformCriteria').empty();
+                    $('#divPlatformCriteria').html(result);
+                    initializeTooltip();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindPromoterCriteria() {
+
+        debugger;
+        //var code = $('#ddlPlatformGroup').val();
+        var code = 0;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPromoter,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divPromoterCriteria').empty();
+                    $('#divPromoterCriteria').html(result);
+                    initializeTooltip();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function AddEditPlatform_Group(callFrom, selectedCodes,isRunQuery) {
+        showLoading();
+        debugger;
+        var BU_Code = $("#ddlBusinessUnit").val();
+        var pfGroupCode = "";
+        Slide("platform");
+        if (callFrom != "accordian") {
+            $('#divMustHave').empty();
+            $('#chkMustHave_Platform').prop('checked', false);
+            $('#chkExactMatch_Platform').prop('checked', false);
+        }
+        else {
+
+        }
+        if( $('#ddlPlatformGroup').val() != null)
+            pfGroupCode  =  $('#ddlPlatformGroup').val().join(',');
+        else
+            pfGroupCode ="0";
+
+        @*if(isRunQuery == "Y" && pfGroupCode == "0")
+            pfGroupCode = '@ViewBag.Avail_All_Platform_Code';*@
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTree,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                //Platform_Group_Code: platformCodes_G
+                Platform_Group_Code: pfGroupCode,
+                selectedCodes: selectedCodes,
+                isRunQuery: isRunQuery,
+                BU_Code: BU_Code
+            }),
+            // async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    hideLoading();
+                    $('#pupupHtml1').empty();
+                    $('#pupupHtml1').html(result);
+                    var PlatformCount = $('#Rights_Platform_GplatformCnt').text();
+                    if (PlatformCount == "")
+                        PlatformCount = "0";
+                    if ($('#btnResetSearch_Rights_Platform_GplatformCnt').attr('title') !== undefined) {
+                        $('#btnResetSearch_Rights_Platform_GplatformCnt').attr('data-original-title', "Delete");
+                        initializeTooltip();
+                    }
+                    if (PlatformCount > 9) {
+                        if ($('#PlatformCountTab').attr('data-original-title') !== undefined) {
+                            $('#PlatformCountTab').removeAttr('data-original-title');
+                            $('#PlatformCountTab').text("9+");
+                            $('#PlatformCountTab').attr('data-original-title', PlatformCount + " Platforms");
+                        }
+                        initializeTooltip();
+                    }
+                    else {
+
+                        if ($('#PlatformCountTab').attr('data-original-title') !== undefined) {
+                            $('#PlatformCountTab').removeAttr('data-original-title');
+                            $('#PlatformCountTab').text(PlatformCount);
+                            $('#PlatformCountTab').attr('data-original-title', PlatformCount + " Platforms");
+                        }
+                        initializeTooltip();
+                    }
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+
+            }
+        });
+    }
+    function AddEditPromoter_Group(callFrom, selectedCodes,isRunQuery) {
+        showLoading();
+        debugger;
+        var pfGroupCode = "";
+        Slide("platform");
+        if (callFrom != "accordian") {
+            $('#divMustHave').empty();
+            $('#chkMustHave_Platform').prop('checked', false);
+            $('#chkExactMatch_Platform').prop('checked', false);
+        }
+        else {
+
+        }
+        if( $('#ddlPlatformGroup').val() != null)
+            pfGroupCode  =  $('#ddlPlatformGroup').val().join(',');
+        else
+            pfGroupCode ="0";
+
+       @*if(isRunQuery == "Y" && pfGroupCode == "0")
+        pfGroupCode = '@ViewBag.Avail_All_Platform_Code';*@
+
+
+    $.ajax({
+        type: "POST",
+        url: URL_BindPromoterTree,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        dataType: "html",
+        data: JSON.stringify({
+            //Platform_Group_Code: platformCodes_G
+            Platform_Group_Code: pfGroupCode,
+            selectedCodes: selectedCodes,
+            isRunQuery:isRunQuery
+        }),
+        // async: false,
+        success: function (result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            else {
+                debugger;
+                hideLoading();
+                $('#pupupHtmlPromoter').empty();
+                $('#pupupHtmlPromoter').html(result);
+                var PlatformCount = $('#Rights_Promoter_GplatformCnt').text();
+                if ($('#btnResetSearch_Rights_Promoter_GplatformCnt').attr('title') !== undefined) {
+                    $('#btnResetSearch_Rights_Promoter_GplatformCnt').attr('data-original-title', "Delete");
+                    initializeTooltip();
+                }
+                if (PlatformCount == "")
+                    PlatformCount = "0";
+                if (PlatformCount > 9) {
+                    if ($('#SelfUtilizationCountTab').attr('data-original-title') !== undefined) {
+                        $('#SelfUtilizationCountTab').removeAttr('data-original-title');
+                        $('#SelfUtilizationCountTab').text("9+");
+                        $('#SelfUtilizationCountTab').attr('data-original-title', PlatformCount + " Self Utilizations");
+                    }
+                    initializeTooltip();
+                }
+                else {
+
+                    if ($('#SelfUtilizationCountTab').attr('data-original-title') !== undefined) {
+                        $('#SelfUtilizationCountTab').removeAttr('data-original-title');
+                        $('#SelfUtilizationCountTab').text(PlatformCount);
+                        $('#SelfUtilizationCountTab').attr('data-original-title', PlatformCount + " Self Utilizations");
+                    }
+                    initializeTooltip();
+                }
+                initializeChosen();
+            }
+        },
+        error: function (result) {
+            alert('Error: ' + result.responseText);
+            hideLoading();
+
+        }
+    });
+    }
+    function BindSubtitleLanguage() {
+        debugger;
+        showLoading();
+        var code = 0;
+        $.ajax({
+            type: "POST",
+            url: URL_BindSubtitleLanguage,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Language_Group_Code: code
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    $('#divSubtitleLanguageCriteria').empty();
+                    $('#divSubtitleLanguageCriteria').html(result);
+                    initializeChosen();
+                    initializeTooltip();
+                    initializeExpander();
+
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindLanguageGroupDetails(platformCodes) {
+        debugger;
+        var languageGroupCode="";
+        if($("#ddlLanguageGroupNew").val() != null)
+            languageGroupCode = $("#ddlLanguageGroupNew").val().join(',');
+        else
+            languageGroupCode="";
+        $.ajax({
+            type: "POST",
+            url: URL_BindLanguageGroupDetails,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            //dataType: "html",
+            data: JSON.stringify({
+                code: languageGroupCode,
+                platformCodes: platformCodes
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+
+                    var MustHaveSelectedVal = $("#ddlMustHaveLanguage").val();
+                    $("#ddlMustHaveLanguage").empty();
+                    $(result.lstLanguageGroupDetails).each(function (index, item) {
+                        $("#ddlMustHaveLanguage").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlMustHaveLanguage').SumoSelect({ selectAll: true });
+                    if(MustHaveSelectedVal != null)
+                        $("#ddlMustHaveLanguage").val(MustHaveSelectedVal);
+
+                    $('#ddlMustHaveLanguage')[0].sumo.reload();
+                    $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css('text-align', 'left');
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function Slide(callFrom){
+        debugger;
+        if ($('.accordion_body').is(':visible')) {
+            $(".accordion_body").slideUp(300);
+            $(".plusminus").text('+');
+        }
+
+        if ($(this).next(".accordion_body").is(':visible')) {
+            $(this).next(".accordion_body").slideUp(300);
+            $(this).children(".plusminus").text('+');
+        } else {
+            if(callFrom == "sub"){
+                $('#accordianSubLanguage').next(".accordion_body").slideDown(300);
+                $('#accordianSubLanguage').children(".plusminus").text('-');
+            }
+            else if(callFrom == "dub"){
+                $('#accordianDubLanguage').next(".accordion_body").slideDown(300);
+                $('#accordianDubLanguage').children(".plusminus").text('-');
+            }
+            else if(callFrom == "region"){
+                if(IsCheckRights == "CO"){
+                    $('#accordianTerritory').next(".accordion_body").slideDown(300);
+                    $('#accordianCountry').next(".accordion_body").slideDown(300);
+                }
+                else{
+                    $('#accordianTerritory').next(".accordion_body").slideDown(300);
+                    // $('#accordianCountry').next(".accordion_body").slideDown(300);
+                    $('#accordianTerritory').children(".plusminus").text('-');
+                }
+            }
+            else if(callFrom == "platform"){
+                $('#divPlatform').next(".accordion_body").slideDown(300);
+                $('#divPlatform').children(".plusminus").text('-');
+            }
+
+        }
+    }
+
+
+    function AddEditLanguage_Group(selectedCodes,callFrom) {
+        debugger;
+        showLoading();
+        var langGroupCode="";
+        if(callFrom == "runQuery")
+            $('#hdnTVCodes_SubLang_G').val(selectedCodes);
+
+        $('#hdnAccordianSub').val('N');
+        Slide("sub");
+
+       // var langGroupCode = $('#ddlLanguageGroupNew').val();
+        if( $('#ddlLanguageGroupNew').val() != null)
+            langGroupCode  = $('#ddlLanguageGroupNew').val().join(',');
+        else
+            langGroupCode ="0";
+
+        //if (langGroupCode != 0) {
+        //    var x = langGroupCode.substr(1);
+        //}
+        //else {
+            var x = langGroupCode;
+        //}
+
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindLanguageTree,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Language_Group_Code: x,
+                selectedCodes: selectedCodes,
+                callFrom:callFrom
+            }),
+            // async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    hideLoading();
+                    $('#pupupHtml1_SubLang').empty();
+                    $('#pupupHtml1_SubLang').html(result);
+                    BindLanguageGroupDetails(selectedCodes);
+                    var SubtitleCount = $('#Rights_Platform_SubLang_GplatformCnt').text();
+                    if (SubtitleCount == "")
+                        SubtitleCount = "0";
+                    if ($('#btnResetSearch_Rights_Platform_SubLang_GplatformCnt').attr('title') !== undefined) {
+                        $('#btnResetSearch_Rights_Platform_SubLang_GplatformCnt').attr('data-original-title', "Delete");
+                        initializeTooltip();
+                    }
+                    if (SubtitleCount > 9) {
+                        if ($('#subTitleCountTab').attr('data-original-title') !== undefined) {
+                            $('#subTitleCountTab').removeAttr('data-original-title');
+                            $('#subTitleCountTab').text("9+");
+                            $('#subTitleCountTab').attr('data-original-title', SubtitleCount + " Subtitles");
+
+                        }
+                        initializeTooltip();
+                    }
+                    else {
+                        if ($('#subTitleCountTab').attr('data-original-title') !== undefined) {
+                            $('#subTitleCountTab').removeAttr('data-original-title');
+                            $('#subTitleCountTab').text(SubtitleCount);
+                            $('#subTitleCountTab').attr('data-original-title', SubtitleCount + " Subtitles");
+                        }
+                        initializeTooltip();
+                    }
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindDubbingLanguage() {
+        debugger;
+        var code = 0;
+        $.ajax({
+            type: "POST",
+            url: URL_BindDubbingLanguage,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Language_Group_Code: code
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divDubbingLanguageCriteria').empty();
+                    $('#divDubbingLanguageCriteria').html(result);
+                    initializeTooltip();
+                    initializeExpander();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindLanguageGroup_Dub_Details(platformCodes) {
+        debugger;
+        var languageGroupCode="";
+        if($("#ddlLanguageGroupNew_Dub").val() != null)
+            languageGroupCode = $("#ddlLanguageGroupNew_Dub").val().join(',');
+        else
+            languageGroupCode = "";
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindLanguageGroup_Dub_Details,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            //dataType: "html",
+            data: JSON.stringify({
+                code: languageGroupCode,
+                platformCodes: platformCodes
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    var MustHaveSelectedVal = $('#ddlMustHaveLanguage_Dub').val();
+
+                    $("#ddlMustHaveLanguage_Dub").empty();
+                    $(result.lstListLanguageDetails_Dub).each(function (index, item) {
+                        $("#ddlMustHaveLanguage_Dub").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlMustHaveLanguage_Dub').SumoSelect({ selectAll: true });
+                    if(MustHaveSelectedVal!=null)
+                        $("#ddlMustHaveLanguage_Dub").val(MustHaveSelectedVal);
+
+                    $('#ddlMustHaveLanguage_Dub')[0].sumo.reload();
+                    $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css('text-align', 'left');
+
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function AddEditLanguage_Group_Dub(selectedCodes,callFrom) {
+        debugger;
+        showLoading();
+        var langGroupCode="";
+        if(callFrom == "runQuery")
+            $('#hdnTVCodes_DubLang_G').val(selectedCodes);
+        $('#hdnAccordianDub').val('N');
+        Slide("dub");
+        if( $('#ddlLanguageGroupNew_Dub').val() != null)
+            langGroupCode  = $('#ddlLanguageGroupNew_Dub').val().join(',');
+        else
+            langGroupCode ="0";
+
+        var x = langGroupCode;
+        //var langGroupCode = $('#ddlLanguageGroupNew_Dub').val();
+        //if (langGroupCode != 0) {
+        //    var x = langGroupCode.substr(1);
+        //}
+        //else {
+        //    var x = langGroupCode;
+        //}
+        $.ajax({
+            type: "POST",
+            url: URL_BindLanguageTree_Dub,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                //Platform_Group_Code: platformCodes_G
+                Language_Group_Code: x,
+                selectedCodes: selectedCodes,
+                callFrom:callFrom
+            }),
+            //  async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    hideLoading();
+                    $('#pupupHtml1_DubLang').empty();
+                    $('#pupupHtml1_DubLang').html(result);
+                    BindLanguageGroup_Dub_Details(selectedCodes);
+                    var DubbingCount = $('#Rights_Platform_DubLang_GplatformCnt').text();
+                    if (DubbingCount == "")
+                        DubbingCount = "0";
+                    if ($('#btnResetSearch_Rights_Platform_DubLang_GplatformCnt').attr('title') !== undefined) {
+                        $('#btnResetSearch_Rights_Platform_DubLang_GplatformCnt').attr('data-original-title', "Delete");
+                        initializeTooltip();
+                    }
+                    if (DubbingCount > 9) {
+                        if ($('#DubbingCountTab').attr('data-original-title') !== undefined) {
+                            $('#DubbingCountTab').removeAttr('data-original-title');
+                            $('#DubbingCountTab').text("9+");
+                            $('#DubbingCountTab').attr('data-original-title', DubbingCount + " Dubbings");
+
+                        }
+                        initializeTooltip();
+                    }
+                    else {
+
+                        if ($('#DubbingCountTab').attr('data-original-title') !== undefined) {
+                            $('#DubbingCountTab').removeAttr('data-original-title');
+                            $('#DubbingCountTab').text(DubbingCount);
+                            $('#DubbingCountTab').attr('data-original-title', DubbingCount + " Dubbings");
+                        }
+                        initializeTooltip();
+                    }
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindOther() {
+        debugger;
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindOther,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+
+
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divOtherCriteria').empty();
+                    $('#divOtherCriteria').html(result);
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function expand() {
+        debugger;
+        $('.expand_Category_Name').expander({
+            slicePoint: 78,
+            expandPrefix: '',
+            expandText: '...read more',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    }
+
+    function showMore() {
+
+        var showChar = 100;  // How many characters are shown by default
+        var ellipsestext = "...";
+        var moretext = "<b>...read more</b>";
+        var lesstext = "<b>[^]</b>";
+
+
+        $('.more').each(function () {
+            var content = $(this).html();
+
+            if (content.length > showChar) {
+
+                var c = content.substr(0, showChar);
+                var h = content.substr(showChar, content.length - showChar);
+
+                var html = c + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+
+                $(this).html(html);
+            }
+
+        });
+
+        $(".morelink").click(function () {
+            if ($(this).hasClass("less")) {
+                $(this).removeClass("less");
+                $(this).html(moretext);
+            } else {
+                $(this).addClass("less");
+                $(this).html(lesstext);
+            }
+            $(this).parent().prev().toggle();
+            $(this).prev().toggle();
+            return false;
+        });
+    }
+    function btnSearch_OnClick(searchText) {
+       var searchText = $("#searchCommon").val();
+        var BU_Code = $("#ddlBusinessUnit").val();
+        var a = $('#ddlTitleList').val();
+        $("#searchCommon").autocomplete({
+            focus: function () {
+                return false;
+            },
+            search: function (e, u) {
+                $(this).addClass('loader');
+            },
+            source: function (request, response) {
+                var param = {
+                    searchText: searchText,
+                    BU_Code: BU_Code,
+                    a: a,
+                    CodeString:CodeString.replace(/,\s*$/, "")
+                };
+                $.ajax({
+                    url: URL_SearchTitles,
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+
+                        response($.map(data, function (v, i) {
+                            $('#searchCommon').removeClass('loader');
+                                return {
+                                    label: v.Title_Name,
+                                    val: v.Title_Code
+                                }
+                            }))
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Error" + textStatus);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                myFunction(ui.item.label,ui.item.val,"R_"+ui.item.val);
+                $('#hdnsearchTitleCode').text(CodeString);
+                ui.item.val = '';
+                ui.item.label = '';
+                ui.item.value= '';
+            },
+            minLength: 2,
+            open: function (event, ui) {
+                debugger;
+                $(".ui-autocomplete").css("position", "absolute");
+                $(".ui-autocomplete").css("max-height", "200px");
+                $(".ui-autocomplete").css("max-width", "430px");
+                $(".ui-autocomplete").css("overflow-y", "auto");
+                $(".ui-autocomplete").css("overflow-x", "hidden");
+                $(".ui-autocomplete").css("z-index", "2147483647");
+                if('@ViewBag.Code' == '@GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString()')
+                {
+                    if($(window).width() > 1300){
+                        $(".ui-autocomplete").css("left", "542px");
+                    }
+                    else
+                    {
+                        $(".ui-autocomplete").css("left", "383px");
+                    }
+                }
+                else if('@ViewBag.Code' == '@GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString()'){
+                    if($(window).width() > 1300){
+                        $(".ui-autocomplete").css("left", "595px");
+                    }
+                    else
+                    {
+                        $(".ui-autocomplete").css("left", "468px");
+                    }
+                }
+                else{
+                    if($(window).width() > 1300){
+                        //$(".ui-autocomplete").css("left", "611px");
+                        //$(".ui-autocomplete").css("left", $('#searchTab').offset().left + 15);
+                    }
+                    else
+                    {
+                        //$(".ui-autocomplete").css("left", "447px");
+                        //$(".ui-autocomplete").css("left", $('#searchTab').offset().left + 15);
+                    }
+                }
+            },
+        });
+    }
+
+    function setFocusToTextBox(){
+        document.getElementById("searchCommon").focus();
+    }
+    var tempName = ""
+    function AddTitles(titleCode){
+        debugger;
+        var BU_Code = $("#ddlBusinessUnit").val();
+        $.ajax({
+            type: "POST",
+            url: URL_AddTitles,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                titleCode: titleCode,
+                BU_Code:BU_Code,
+                tempName:tempName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#resultLanguageDetails").text('');
+                    $("#resultLanguageDetails").append("<span>" +result.TitleName+"</span>");
+
+                    tempName = result.TitleName
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+
+            }
+        });
+    }
+
+    //---------Title New Search--------------------------
+
+    var tempID = "";
+    var CodeString = "";
+    var splitString = "";
+
+    function myFunction(code, titleCode, rowID) {
+        debugger
+        var click = 'onclick=removeTitle(' + code + ')';
+
+        if(titleCode != ""){
+            $("#resultLanguageDetails").append("<div class='titlesSearch' id=" + titleCode + ">" + code + " <a class='glyphicon glyphicon-remove titlesSearchRemove'  onclick='removeTitle(" + titleCode + ")'></a></div>").css("font-weight", "bold");
+        }
+        tempID = '#' + rowID;
+        //  tempx = rowiD;
+        $(tempID).css("display", "none");
+        if(titleCode == ""){
+            $('#hdnsearchTitleCode').text("");
+        }
+        else{
+            $('#hdnsearchTitleCode').append("" + titleCode + ",");}
+        CodeString = $('#hdnsearchTitleCode').text();
+
+        splitString = CodeString.split(",");
+        if(splitString.length - 1 > 9){
+            if ($('#titleCountTab').attr('data-original-title') !== undefined) {
+                $('#titleCountTab').removeAttr('data-original-title');
+                $('#titleCountTab').text("9+");
+                $('#titleCountTab').attr('data-original-title', splitString.length-1 + " Titles");
+
+            }
+            initializeTooltip();
+        }
+        else{
+
+            if ($('#titleCountTab').attr('data-original-title') !== undefined) {
+                $('#titleCountTab').removeAttr('data-original-title');
+                $('#titleCountTab').text(splitString.length - 1);
+                $('#titleCountTab').attr('data-original-title', splitString.length-1 + " Titles");
+            }
+            initializeTooltip();
+        }
+    }
+
+    function removeTitle(code) {
+        debugger;
+
+        var code1 = '#' + code;
+        $(code1).remove();
+        CodeString = CodeString.replace(code + ",", "");
+        $('#hdnsearchTitleCode').text(CodeString);
+        if(CodeString.split(",").length-1 > 9){
+            if ($('#titleCountTab').attr('data-original-title') !== undefined) {
+                $('#titleCountTab').removeAttr('data-original-title');
+                $('#titleCountTab').text("9+");
+                $('#titleCountTab').attr('data-original-title', CodeString.split(",").length-1 + " Title");
+
+            }
+            initializeTooltip();
+        }
+        else{
+
+            if ($('#titleCountTab').attr('data-original-title') !== undefined) {
+                $('#titleCountTab').removeAttr('data-original-title');
+                $('#titleCountTab').text(CodeString.split(",").length-1);
+                $('#titleCountTab').attr('data-original-title', CodeString.split(",").length-1 + " Title");
+            }
+            initializeTooltip();
+        }
+
+    }
+
+    function PushTitle(tempID) {
+        debugger;
+        $(tempID).show();
+    }
+
+</script>
+@if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+{
+    <style>
+        #v-nav > div.tab-content {
+            right: 327px;
+        }
+    </style>
+}
+<style>
+    .loadinggif1 {
+        background: url('http://www.hsi.com.hk/HSI-Net/pages/images/en/share/ajax-loader.gif') no-repeat right center;
+    }
+
+    .scale_table_block {
+        margin-bottom: 0px !important;
+    }
+
+    .Run_Query {
+        top: 7px;
+    }
+
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divTreeFilter {
+        width: 400px;
+    }
+
+    .ClosePanel {
+        top: 7px;
+        /*padding-left: 5px;*/
+    }
+
+    .RightTab:hover {
+        color: orange;
+    }
+
+    #v-nav > div.tab-content {
+        padding: 8px !important;
+    }
+
+    .loadinggif {
+        background: url('../../Images/LoadingCircle.gif') no-repeat 316px bottom !important;
+        z-index: 999;
+    }
+
+    .paging_area {
+        font-size: 12px;
+    }
+
+        .paging_area span.pull-right {
+            margin: 0px 5px !important;
+        }
+
+    #ddlBusinessUnit_chosen {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .wrapper {
+        top: 133px !important;
+    }
+
+    .MenuToggle {
+        top: 4px !important;
+    }
+
+    searchChoice {
+        position: relative;
+        margin: 3px 4px 2px 0;
+        padding: 3px 19px 3px 4px;
+        border: 1px solid #ccc;
+        max-width: 100%;
+        border-radius: 3px;
+        background-color: #eee;
+        background-size: 100% 19px;
+        background-repeat: repeat-x;
+        background-clip: padding-box;
+        box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0,0,0,.05);
+        color: #666;
+        line-height: 13px;
+        cursor: default;
+    }
+
+    #resultLanguageDetails {
+        height: unset !important;
+    }
+
+    #titleCountTab, #regionCountTab, #PlatformCountTab, #subTitleCountTab, SelfUtilizationCountTab {
+        position: absolute;
+        top: 6px;
+        right: 22px;
+        width: 17px;
+        height: 17px;
+        font-size: 10px;
+        padding-top: 0.1em;
+        background: #f9df73;
+        border-radius: 50%;
+        box-shadow: 0 0 7px #aaa;
+    }
+
+    #DubbingCountTab {
+        position: absolute;
+        top: 6px;
+        right: 23px;
+        width: 17px;
+        height: 17px;
+        font-size: 10px;
+        padding-top: 0.1em;
+        background: #f9df73;
+        border-radius: 50%;
+        box-shadow: 0 0 7px #aaa;
+    }
+
+    #SelfUtilizationCountTab {
+        position: absolute;
+        top: 6px;
+        right: 23px;
+        width: 17px;
+        height: 17px;
+        font-size: 10px;
+        padding-top: 0.1em;
+        background: #f9df73;
+        border-radius: 50%;
+        box-shadow: 0 0 7px #aaa;
+    }
+
+    .titlesSearch {
+        position: relative;
+        margin: 3px 5px 2px 0px;
+        padding: 3px 19px 3px 4px;
+        border: 1px solid #ccc;
+        max-width: 100%;
+        border-radius: 3px;
+        background-color: #eee;
+        background-size: 100% 19px;
+        background-repeat: repeat-x;
+        background-clip: padding-box;
+        box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0,0,0,.05);
+        color: #666;
+        line-height: 13px;
+        cursor: default;
+        width: fit-content;
+        float: left;
+    }
+
+    .titlesSearchRemove {
+        top: 2px;
+        right: -7px;
+        font-size: small;
+        color: rgba(128, 128, 128, 0.53);
+    }
+
+    .ui-state-focus {
+        display: block !important;
+        width: 430px;
+    }
+
+    .ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl {
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+        border-top-right-radius: 0px !important;
+    }
+
+    .ui-menu-item {
+        padding: 2px 1em 2px 0.1em !important;
+    }
+
+    .ui-widget {
+        font-size: 0.9em !important;
+    }
+
+    .tooltip.right {
+        width: 120px;
+    }
+</style>
+@if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport)
+{
+    <style>
+        #v-nav > div.tab-content {
+            right: 325px;
+        }
+
+        #v-nav > ul {
+            right: 725px;
+        }
+    </style>
+}
+<div class="main_section" id="mainSection">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+
+                    @if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForMovieAvailabilityNewReport)
+                    {
+                        <h2 class="pull-left">
+                            Syndication Avail for Films
+                            <span></span>
+                        </h2>
+                    }
+                    else if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForProgramAvailabilityReport)
+                    {
+                        <h2 class="pull-left">
+                            Program Availability
+                            <span></span>
+                        </h2>
+                    }
+                    else if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport)
+                    {
+                        <h2 class="pull-left">
+                            Movie Availability (Indiacast)
+                            <span></span>
+                        </h2>
+                    }
+                    else if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport)
+                    {
+                        <h2 class="pull-left">
+                            Program Availability (Indiacast)
+                            <span></span>
+                        </h2>
+                    }
+                    else if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport)
+                    {
+                        <h2 class="pull-left">
+                            Self Utilization Availability (Movie)
+                            <span></span>
+                        </h2>
+                    }
+                    else if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+                    {
+                        <h2 class="pull-left">
+                            Self Utilization Availability (Program)
+                            <span></span>
+                        </h2>
+                    }
+                    else
+                    {
+                        <h2 class="pull-left">
+                            Theatrical Availability
+                            <span></span>
+                        </h2>
+                    }
+                    <div class="pull-right">
+                        @*class="right_nav pull-right"*@
+                        <table>
+                            <tr>
+                                <td style="width:100px"><label class="bold">Business Unit</label></td>
+                                <td style="width:176px">
+                                    @Html.DropDownList("BusinessUnit", (List<SelectListItem>)ViewBag.BusinessUnitList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", @onchange = "BindTitleList()" })
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div id="divFilter">
+
+                    <table>
+                        <tr>
+                            <td style="width:12%;"><label class="bold">Report Name</label></td>
+                            <td style="width:38%;">
+                                <input type="text" maxlength="50" style="width:370px" placeholder="Enter Report Name" id="rptName" />
+                            </td>
+                            <td style="width:25%;">
+                                <label class="bold">Visibility</label>&nbsp;&nbsp;
+                                @Html.RadioButton("Visibility", "PU", new { id = "rbgPublic", @class = "genderclassAdd", @checked = "checked" })<span>Public</span>
+                                @Html.RadioButton("Visibility", "RO", new { id = "rbgRoleBased", @class = "genderclassAdd" }) <span>Role Based</span>
+                                @Html.RadioButton("Visibility", "PR", new { id = "rbgPrivate", @class = "genderclassAdd" })<span>Private</span>
+                            </td>
+                            <td style="width:25%;">
+                                <input type="button" id="btnShow" class="btn btn-primary" value="Save" onclick="SaveReport()">
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+            </div>
+
+            <div id="divResult">
+
+            </div>
+
+        </div>
+
+        <section class="wrapper" id="wrapper">
+
+            <div id="v-nav">
+                <ul style="height:45px;">
+                    <li tab="tab1" title="Title" class="first current1 RightTab" data-placement="top" id="titleTab" style="cursor:pointer;  border-left: 1px solid rgba(0, 0, 0, 0.08);">
+                        <a class="glyphicon glyphicon-film MenuToggle"></a>
+                        <span id="titleCountTab" class="count" data-placement="right" title="0 Title">0</span>
+                    </li>
+                    <li tab="tab2" title="Period" data-placement="right" class="first RightTab" style="cursor:pointer">
+                        <a class="glyphicon glyphicon-calendar MenuToggle" style="top: -4px!important;"></a>
+                    </li>
+                    <li tab="tab3" title="Region" data-placement="top" class="RightTab" id="RegionTab" style="cursor:pointer">
+                        <a class="glyphicon glyphicon-globe MenuToggle"></a>
+                        <span id="regionCountTab" class="count" title="0 Region" data-placement="right">0</span>
+                    </li>
+                    @if (Convert.ToInt32(ViewBag.Code) != GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
+                    {
+                        <li tab="tab4" title="Platform" data-placement="top" class="RightTab" id="pfTab" style="cursor:pointer">
+                            <a class="glyphicon glyphicon-road MenuToggle"></a>
+                            <span id="PlatformCountTab" class="count" title="0 Platform" data-placement="right">0</span>
+                        </li>
+                        <li tab="tab5" title="Subtitle" data-placement="top" class="RightTab" id="SubLangTab" style="cursor:pointer">
+                            <a class="glyphicon glyphicon-object-align-vertical MenuToggle"></a>
+                            <span id="subTitleCountTab" class="count" title="0 Subtitle" data-placement="right">0</span>
+                        </li>
+                        <li tab="tab6" title="Dubbing" data-placement="top" class="RightTab" id="DubLangTab" style="cursor:pointer">
+                            <a class="glyphicon glyphicon-object-align-bottom MenuToggle"></a>
+                            <span id="DubbingCountTab" class="count" title="0 Dubbing" data-placement="right">0</span>
+                        </li>
+                        if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+                        {
+                            <li tab="tab9" title="Self Utilization" data-placement="top" class="RightTab" id="SelfUtilizationTab" style="cursor:pointer">
+                                <a class="glyphicon glyphicon-object-align-bottom MenuToggle"></a>
+                                <span id="SelfUtilizationCountTab" class="count" title="0 Self Utilization" data-placement="right">0</span>
+                            </li>
+                        }
+                    }
+                    <li tab="tab7" title="Others" data-placement="right" class="RightTab" style="cursor:pointer">
+                        <a class="glyphicon glyphicon-tasks MenuToggle"></a>
+                    </li>
+                    <li tab="tab8" title="Query List" class="last RightTab" id="QueryListTab" data-placement="right" style="cursor:pointer">
+                        <a class="glyphicon glyphicon-list MenuToggle"></a>
+                    </li>
+
+                    @*<li  class="last" title="Query List" data-placement="left"><a class="glyphicon glyphicon-check" id="rptShow" onclick="BindAvailReport()"></a></li>*@
+                </ul>
+
+                <div class="tab-content">
+                    @*<h4><b>Title</b></h4>*@
+                    <div class="scale_table_block" id="searchTab">
+                        @*<div id="divLanguageGroupDetails">*@
+
+                        <div id="resultLanguageDetails" class="more searchChoice" style="text-align:left;max-height: 100px; margin-bottom: 10px;line-height:2.5"></div>
+
+                        @*<div id="slimscroll" class="more searchChoice" style="text-align:left;max-height: 300px;
+                            margin-bottom: 10px;line-height:2.5"></div>*@
+                        @*</div>*@
+
+                        <div style="text-align:left;margin-top: 7px;">
+                            <input type="text" placeholder="Title, Talent, StarCast, Genre, Director, Year of Production" style="width:430px; border-radius:3px;" class="search" name="srchCommon" id="searchCommon"
+                                   autocomplete="on" onkeyup="btnSearch_OnClick(this)" />
+
+                            @*<input type="text" name="srchCommon" id="searchCommon" class="search" style="width:430px; border-radius:3px;
+
+                                    transition: border 0.3s;" placeholder="Title, Talent, StarCast, Genre, Director, Year of Production"
+                                        maxlength="100" onkeyup="btnSearch_OnClick()" />
+                                <a href="#" style="display:none">
+                                    <span style="color:#2b64a5" class="glyphicon glyphicon-search" title="" onclick="btnSearch_OnClick()" data-original-title="Search"></span>
+                                </a>*@
+                            <input type="hidden" name="" value="" id="hdnsearchTitleCode" />
+                        </div>
+
+                        @*<div id="divTitlesCriteria" class="deal">
+
+                            </div>*@
+                        <br />
+                        @if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForMovieAvailabilityNewReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
+                        {
+                            <div style="text-align:center">
+                            </div>
+                        }
+                        else if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForProgramAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport)
+                        {
+                            <div style="text-align:center">
+                                Episode From
+                                <input type="text" name="name" value="" id="epFrom" class="dateText" maxlength="4" />
+                                To
+                                <input type="text" name="name" value="" id="epTo" class="dateText" maxlength="4" />
+                            </div>
+                        }
+                    </div>
+                    <table>
+                        <tr>
+                            <td style="text-align:right"><a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindSelectedResult()"></a></td>
+                            <td style="text-align:left"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                        </tr>
+                        <tr></tr>
+                    </table>
+
+
+                </div>
+
+                <div class="tab-content">
+                    @*<h4><b>Period</b></h4>*@
+                    <div class="scale_table_block">
+                        <div id="divPeriodCriteria" class="deal">
+                        </div>
+                    </div>
+                    @*<a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindAvailReport()"></a>
+                        <a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a>*@
+                    <table>
+                        <tr>
+                            <td style="text-align:right"><a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindSelectedResult()"></a></td>
+                            <td style="text-align:left"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                        </tr>
+                        <tr></tr>
+                    </table>
+                </div>
+
+                <div class="tab-content">
+                    @*<h4><b>Region</b></h4>*@
+                    <div id="divRegionCriteria" class="deal">
+                    </div>
+                    <input type="hidden" id="hdnTVCodes_C" name="hdnTVCodes" value="" />
+                    <input type="hidden" id="hdnTVCodes_Country" name="hdnTVCodes_G" value="" />
+                    <input type="hidden" id="hdnTVCodes_Country_M" name="hdnTVCodes_M" value="" />
+                    <input type="hidden" id="hdnTVCodes_Country_E" name="hdnTVCodes_M" value="" />
+                    <input type="hidden" id="hdnTVText_Country" name="hdnTVText_Country" value="" />
+                    <input type="hidden" id="hdnCountryType" value="" />
+                    @*<a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindAvailReport()"></a>
+                        <a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a>*@
+                    <table>
+                        <tr>
+                            <td style="text-align:right"><a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindSelectedResult()"></a></td>
+                            <td style="text-align:left"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                        </tr>
+                        <tr></tr>
+                    </table>
+                </div>
+                @if (Convert.ToInt32(ViewBag.Code) != GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
+                {
+                    <div class="tab-content">
+                        @*<h4><b>Platform</b></h4>*@
+                        <div id="divPlatformCriteria" class="deal">
+                        </div>
+                        <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" value="" />
+                        <input type="hidden" id="hdnTVCodes_G" name="hdnTVCodes_G" value="" />
+                        <input type="hidden" id="hdnTVCodes_M" name="hdnTVCodes_M" value="" />
+                        <input type="hidden" id="hdnTVCodes_E" name="hdnTVCodes_M" value="" />
+                        <input type="hidden" id="hdnPlatformType" value="" />
+                        @*<a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindAvailReport()"></a>
+                            <a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a>*@
+                        <table>
+                            <tr>
+                                <td style="text-align:right"><a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindSelectedResult()"></a></td>
+                                <td style="text-align:left"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                            </tr>
+                            <tr></tr>
+                        </table>
+                    </div>
+
+                    <div class="tab-content">
+                        @*<h4><b>Subtitle Language</b></h4>*@
+                        <div id="divSubtitleLanguageCriteria" class="deal">
+                        </div>
+                        <input type="hidden" id="hdnTVCodes_Sub" name="hdnTVCodes" value="" />
+                        <input type="hidden" id="hdnTVCodes_SubLang_G" name="hdnTVCodes_G" value="" />
+                        <input type="hidden" id="hdnTVCodes_SubLang_M" name="hdnTVCodes_M" value="" />
+                        <input type="hidden" id="hdnTVCodes_SubLang_E" name="hdnTVCodes_M" value="" />
+                        <input type="hidden" id="hdnSubLanguageType" value="" />
+                        @*<a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindAvailReport()"></a>
+                            <a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a>*@
+                        <table>
+                            <tr>
+                                <td style="text-align:right"><a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindSelectedResult()"></a></td>
+                                <td style="text-align:left"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                            </tr>
+                            <tr></tr>
+                        </table>
+                    </div>
+
+                    <div class="tab-content">
+                        @*<h4><b>Dubbing Language</b></h4>*@
+                        <div id="divDubbingLanguageCriteria" class="deal">
+                        </div>
+
+                        <input type="hidden" id="hdnTVCodes_Dub" name="hdnTVCodes" value="" />
+                        <input type="hidden" id="hdnTVCodes_DubLang_G" name="hdnTVCodes_G" value="" />
+                        <input type="hidden" id="hdnTVCodes_DubLang_M" name="hdnTVCodes_M" value="" />
+                        <input type="hidden" id="hdnTVCodes_DubLang_E" name="hdnTVCodes_M" value="" />
+                        <input type="hidden" id="hdnDubLanguageType" value="" />
+                        @*<a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindAvailReport()"></a>
+                            <a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a>*@
+                        <table>
+                            <tr>
+                                <td style="text-align:right"><a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindSelectedResult()"></a></td>
+                                <td style="text-align:left"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                            </tr>
+                            <tr></tr>
+                        </table>
+                    </div>
+                    if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+                    {
+                        <div class="tab-content">
+                            @*<h4><b>Platform</b></h4>*@
+                            <div id="divPromoterCriteria" class="deal">
+                            </div>
+                            <input type="hidden" id="hdnTVCodes_Promoter" name="hdnTVCodes" value="" />
+                            <input type="hidden" id="hdnTVCodes_Promoter_G" name="hdnTVCodes_G" value="" />
+                            <input type="hidden" id="hdnTVCodes_Promoter_M" name="hdnTVCodes_M" value="" />
+                            <input type="hidden" id="hdnTVCodes_Promoter_E" name="hdnTVCodes_M" value="" />
+                            <input type="hidden" id="hdnPromoterType" value="" />
+                            @*<a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindAvailReport()"></a>
+                                <a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a>*@
+                            <table>
+                                <tr>
+                                    <td style="text-align:right"><a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindSelectedResult()"></a></td>
+                                    <td style="text-align:left"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                                </tr>
+                                <tr></tr>
+                            </table>
+                        </div>
+                    }
+                }
+
+                <div class="tab-content">
+                    @*<h4><b>Others</b></h4>*@
+                    <div class="scale_table_block">
+                        <div id="divOtherCriteria" class="deal">
+                        </div>
+                    </div>
+                    @*<a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindAvailReport()"></a>
+                        <a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a>*@
+                    <table>
+                        <tr>
+                            <td style="text-align:right"><a class="glyphicon glyphicon-play Run_Query" title="Run Query" onclick="BindSelectedResult()"></a></td>
+                            <td style="text-align:left"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                        </tr>
+                        <tr></tr>
+                    </table>
+                </div>
+
+                <div class="tab-content">
+                    @*<h4><b>Query List</b></h4>*@
+                    <div class="scale_table_block">
+                        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                        <div class="paging_area">
+                            <span class="pull-left">Total Records: </span>
+                            <span class="pull-left" id="lblRecordCount" style="font-weight:bold"></span>
+                            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                            <div id="Pagination" class="pagination">
+                            </div>
+                            <span class="pull-right" style="margin-top: 4px!important;">
+                                @*<b>Page Size:</b>
+                                    <b>10</b>*@
+                                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onfocus="checkCurrentAction()" onchange="txtPageSize_OnChange()" style="display:none">
+                            </span>
+                        </div>
+                        <div id="divQueryList">
+
+                        </div>
+
+                    </div>
+
+
+                    @*<a class="glyphicon glyphicon-remove ClosePanel " title="Close"></a>*@
+                    <table>
+                        <tr>
+                            <td style="text-align:center"><a class="glyphicon glyphicon-remove ClosePanel" title="Close"></a></td>
+                        </tr>
+                        <tr></tr>
+                    </table>
+                </div>
+
+            </div>
+        </section>
+    </section>
+    @*<script src="~/JS_Core/AvailabilityRightPanel.js"></script>*@
+    <input type="hidden" name="Region" value="N" id="hdnIsFlag_Region" />
+    <input type="hidden" name="Platform" value="N" id="hdnIsFlag_Platform" />
+    <input type="hidden" name="Subtitling" value="N" id="hdnIsFlag_Subtitling" />
+    <input type="hidden" name="Dubbing" value="N" id="hdnIsFlag_Dubbing" />
+    <input type="hidden" name="name" value="hdnLoginUserCode" />
+    <input type="hidden" name="GenerateReport" value="N" id="hdnIsGenerateReport" />
+    <input type="hidden" name="Promoter" value="N" id="hdnIsFlag_Promoter" />
+
+
+    @*---Paging related hidden fields----------*@
+    <input type="hidden" name="Subtitling" value="N" id="hdnAccordianSub" />
+    <input type="hidden" name="Dubbing" value="N" id="hdnAccordianDub" />
+    <input type="hidden" name="Region" value="N" id="hdnAccordianRegion" />
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup in" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .slimScrollDiv {
+        border: unset !important;
+        height: unset !important;
+    }
+
+    #nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #fff;
+        padding: 15px;
+        border-radius: 20px;
+        width: 200px;
+    }
+
+        #nav ul {
+            list-style-type: square;
+            list-style-position: inside;
+            margin: 20px 0 0 0;
+            padding: 0;
+        }
+
+        #nav a {
+            text-decoration: none;
+            color: #000;
+        }
+
+            #nav a:hover {
+                text-decoration: underline;
+            }
+
+    #git-fork img {
+        position: fixed;
+        top: 0;
+        right: 0;
+        border: 0;
+        z-index: 999;
+    }
+</style>
+
+
+<script>
+
+    (function ($) {
+
+        $.fn.extend({
+            slimScroll: function (options) {
+                if (LayoutDirection_G == "RTL") {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        //height: '250px',
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'left',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+                else {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        //   height: '100px',
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'right',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+
+                var o = $.extend(defaults, options);
+
+                // do it for every element that matches selector
+                this.each(function () {
+
+                    var isOverPanel, isOverBar, isDragg, queueHide, touchDif,
+                        barHeight, percentScroll, lastScroll,
+                        divS = '<div></div>',
+                        minBarHeight = 30,
+                        releaseScroll = false;
+
+                    // used in event handlers and for better minification
+                    var me = $(this);
+
+                    // ensure we are not binding it again
+                    if (me.parent().hasClass(o.wrapperClass)) {
+                        // start from last bar position
+                        var offset = me.scrollTop();
+
+                        // find bar and rail
+                        bar = me.siblings('.' + o.barClass);
+                        rail = me.siblings('.' + o.railClass);
+
+                        getBarHeight();
+
+                        // check if we should scroll existing instance
+                        if ($.isPlainObject(options)) {
+                            // Pass height: auto to an existing slimscroll object to force a resize after contents have changed
+                            if ('height' in options && options.height == 'auto') {
+                                me.parent().css('height', 'auto');
+                                me.css('height', 'auto');
+                                var height = me.parent().parent().height();
+                                me.parent().css('height', height);
+                                me.css('height', height);
+                            } else if ('height' in options) {
+                                var h = options.height;
+                                me.parent().css('height', h);
+                                me.css('height', h);
+                            }
+
+                            if ('scrollTo' in options) {
+                                // jump to a static point
+                                offset = parseInt(o.scrollTo);
+                            }
+                            else if ('scrollBy' in options) {
+                                // jump by value pixels
+                                offset += parseInt(o.scrollBy);
+                            }
+                            else if ('destroy' in options) {
+                                // remove slimscroll elements
+                                bar.remove();
+                                rail.remove();
+                                me.unwrap();
+                                return;
+                            }
+
+                            // scroll content by the given offset
+                            scrollContent(offset, false, true);
+                        }
+
+                        return;
+                    }
+                    else if ($.isPlainObject(options)) {
+                        if ('destroy' in options) {
+                            return;
+                        }
+                    }
+
+                    // optionally set height to the parent's height
+                    o.height = (o.height == 'auto') ? me.parent().height() : o.height;
+
+                    // wrap content
+                    var wrapper = $(divS)
+                        .addClass(o.wrapperClass)
+                        .css({
+                            position: 'relative',
+                            overflow: 'hidden',
+                            width: o.width,
+                            height: o.height
+                        });
+
+                    // update style for the div
+                    me.css({
+                        overflow: 'hidden',
+                        width: o.width,
+                        height: o.height
+                    });
+
+                    // create scrollbar rail
+                    var rail = $(divS)
+                        .addClass(o.railClass)
+                        .css({
+                            width: o.size,
+                            height: '100%',
+                            position: 'absolute',
+                            top: 0,
+                            display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
+                            'border-radius': o.railBorderRadius,
+                            background: o.railColor,
+                            opacity: o.railOpacity,
+                            zIndex: 90
+                        });
+
+                    // create scrollbar
+                    var bar = $(divS)
+                        .addClass(o.barClass)
+                        .css({
+                            background: o.color,
+                            width: o.size,
+                            position: 'absolute',
+                            top: 0,
+                            opacity: o.opacity,
+                            display: o.alwaysVisible ? 'block' : 'none',
+                            'border-radius': o.borderRadius,
+                            BorderRadius: o.borderRadius,
+                            MozBorderRadius: o.borderRadius,
+                            WebkitBorderRadius: o.borderRadius,
+                            zIndex: 99
+                        });
+
+                    // set position
+                    var posCss = (o.position == 'right') ? { right: o.distance } : { left: o.distance };
+                    rail.css(posCss);
+                    bar.css(posCss);
+
+                    // wrap it
+                    me.wrap(wrapper);
+
+                    // append to parent div
+                    me.parent().append(bar);
+                    me.parent().append(rail);
+
+                    // make it draggable and no longer dependent on the jqueryUI
+                    if (o.railDraggable) {
+                        bar.bind("mousedown", function (e) {
+                            var $doc = $(document);
+                            isDragg = true;
+                            t = parseFloat(bar.css('top'));
+                            pageY = e.pageY;
+
+                            $doc.bind("mousemove.slimscroll", function (e) {
+                                currTop = t + e.pageY - pageY;
+                                bar.css('top', currTop);
+                                scrollContent(0, bar.position().top, false);// scroll content
+                            });
+
+                            $doc.bind("mouseup.slimscroll", function (e) {
+                                isDragg = false; hideBar();
+                                $doc.unbind('.slimscroll');
+                            });
+                            return false;
+                        }).bind("selectstart.slimscroll", function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            return false;
+                        });
+                    }
+
+                    // on rail over
+                    rail.hover(function () {
+                        showBar();
+                    }, function () {
+                        hideBar();
+                    });
+
+                    // on bar over
+                    bar.hover(function () {
+                        isOverBar = true;
+                    }, function () {
+                        isOverBar = false;
+                    });
+
+                    // show on parent mouseover
+                    me.hover(function () {
+                        isOverPanel = true;
+                        showBar();
+                        hideBar();
+                    }, function () {
+                        isOverPanel = false;
+                        hideBar();
+                    });
+
+                    // support for mobile
+                    me.bind('touchstart', function (e, b) {
+                        if (e.originalEvent.touches.length) {
+                            // record where touch started
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    me.bind('touchmove', function (e) {
+                        // prevent scrolling the page if necessary
+                        if (!releaseScroll) {
+                            e.originalEvent.preventDefault();
+                        }
+                        if (e.originalEvent.touches.length) {
+                            // see how far user swiped
+                            var diff = (touchDif - e.originalEvent.touches[0].pageY) / o.touchScrollStep;
+                            // scroll content
+                            scrollContent(diff, true);
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    // set up initial height
+                    getBarHeight();
+
+                    // check start position
+                    if (o.start === 'bottom') {
+                        // scroll content to bottom
+                        bar.css({ top: me.outerHeight() - bar.outerHeight() });
+                        scrollContent(0, true);
+                    }
+                    else if (o.start !== 'top') {
+                        // assume jQuery selector
+                        scrollContent($(o.start).position().top, null, true);
+
+                        // make sure bar stays hidden
+                        if (!o.alwaysVisible) { bar.hide(); }
+                    }
+
+                    // attach scroll events
+                    attachWheel(this);
+
+                    function _onWheel(e) {
+                        // use mouse wheel only when mouse is over
+                        if (!isOverPanel) { return; }
+
+                        var e = e || window.event;
+
+                        var delta = 0;
+                        if (e.wheelDelta) { delta = -e.wheelDelta / 120; }
+                        if (e.detail) { delta = e.detail / 3; }
+
+                        var target = e.target || e.srcTarget || e.srcElement;
+                        if ($(target).closest('.' + o.wrapperClass).is(me.parent())) {
+                            // scroll content
+                            scrollContent(delta, true);
+                        }
+
+                        // stop window scroll
+                        if (e.preventDefault && !releaseScroll) { e.preventDefault(); }
+                        if (!releaseScroll) { e.returnValue = false; }
+                    }
+
+                    function scrollContent(y, isWheel, isJump) {
+                        releaseScroll = false;
+                        var delta = y;
+                        var maxTop = me.outerHeight() - bar.outerHeight();
+
+                        if (isWheel) {
+                            // move bar with mouse wheel
+                            delta = parseInt(bar.css('top')) + y * parseInt(o.wheelStep) / 100 * bar.outerHeight();
+
+                            // move bar, make sure it doesn't go out
+                            delta = Math.min(Math.max(delta, 0), maxTop);
+
+                            // if scrolling down, make sure a fractional change to the
+                            // scroll position isn't rounded away when the scrollbar's CSS is set
+                            // this flooring of delta would happened automatically when
+                            // bar.css is set below, but we floor here for clarity
+                            delta = (y > 0) ? Math.ceil(delta) : Math.floor(delta);
+
+                            // scroll the scrollbar
+                            bar.css({ top: delta + 'px' });
+                        }
+
+                        // calculate actual scroll amount
+                        percentScroll = parseInt(bar.css('top')) / (me.outerHeight() - bar.outerHeight());
+                        delta = percentScroll * (me[0].scrollHeight - me.outerHeight());
+
+                        if (isJump) {
+                            delta = y;
+                            var offsetTop = delta / me[0].scrollHeight * me.outerHeight();
+                            offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);
+                            bar.css({ top: offsetTop + 'px' });
+                        }
+
+                        // scroll content
+                        me.scrollTop(delta);
+
+                        // fire scrolling event
+                        me.trigger('slimscrolling', ~~delta);
+
+                        // ensure bar is visible
+                        showBar();
+
+                        // trigger hide when scroll is stopped
+                        hideBar();
+                    }
+
+                    function attachWheel(target) {
+                        if (window.addEventListener) {
+                            target.addEventListener('DOMMouseScroll', _onWheel, false);
+                            target.addEventListener('mousewheel', _onWheel, false);
+                        }
+                        else {
+                            document.attachEvent("onmousewheel", _onWheel)
+                        }
+                    }
+
+                    function getBarHeight() {
+                        // calculate scrollbar height and make sure it is not too small
+                        barHeight = Math.max((me.outerHeight() / me[0].scrollHeight) * me.outerHeight(), minBarHeight);
+                        bar.css({ height: barHeight + 'px' });
+
+                        // hide scrollbar if content is not long enough
+                        var display = barHeight == me.outerHeight() ? 'none' : 'block';
+                        bar.css({ display: display });
+                    }
+
+                    function showBar() {
+                        // recalculate bar height
+                        getBarHeight();
+                        clearTimeout(queueHide);
+
+                        // when bar reached top or bottom
+                        if (percentScroll == ~~percentScroll) {
+                            //release wheel
+                            releaseScroll = o.allowPageScroll;
+
+                            // publish approporiate event
+                            if (lastScroll != percentScroll) {
+                                var msg = (~~percentScroll == 0) ? 'top' : 'bottom';
+                                me.trigger('slimscroll', msg);
+                            }
+                        }
+                        else {
+                            releaseScroll = false;
+                        }
+                        lastScroll = percentScroll;
+
+                        // show only when required
+                        if (barHeight >= me.outerHeight()) {
+                            //allow window scroll
+                            releaseScroll = true;
+                            return;
+                        }
+                        bar.stop(true, true).fadeIn('fast');
+                        if (o.railVisible) { rail.stop(true, true).fadeIn('fast'); }
+                    }
+
+                    function hideBar() {
+                        // only hide when options allow it
+                        if (!o.alwaysVisible) {
+                            queueHide = setTimeout(function () {
+                                if (!(o.disableFadeOut && isOverPanel) && !isOverBar && !isDragg) {
+                                    bar.fadeOut('slow');
+                                    rail.fadeOut('slow');
+                                }
+                            }, 1000);
+                        }
+                    }
+
+                });
+
+                // maintain chainability
+                return this;
+            }
+        });
+
+        $.fn.extend({
+            slimscroll: $.fn.slimScroll
+        });
+
+    })(jQuery);
+
+</script>
+<script type="text/javascript">
+
+    $(function () {
+        debugger;
+
+        $('#resultLanguageDetails').slimscroll();
+
+    });
+</script>
