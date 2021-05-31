@@ -248,10 +248,12 @@ BEGIN
 		   (STUFF((
 			SELECT DISTINCT ',' + adr_Tmp.Restriction_Remarks 
 			FROM Acq_Deal AD_Tmp
+			INNER JOIN Acq_Deal_Movie Adm_Tmp ON AD_Tmp.Acq_Deal_Code = Adm_Tmp.Acq_Deal_Code AND AD_Tmp.Master_Deal_Movie_Code_ToLink = ADM.Acq_Deal_Movie_Code
 			INNER JOIN Acq_Deal_Rights ADR_Tmp ON adr_Tmp.Acq_Deal_Code = AD_Tmp.Acq_Deal_Code 
-			WHERE AD_Tmp.Is_Master_Deal = 'N' AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
-			(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ad.Acq_Deal_Code AND adm_Tmp.Title_Code = adrt.Title_Code 
-			AND ISNULL(adm_Tmp.Episode_Starts_From,0) = ISNULL(adrt.Episode_From,0) AND ISNULL(adm_Tmp.Episode_End_To,0) = ISNULL(adrt.Episode_To,0))
+			INNER JOIN Acq_Deal_Rights_Title ADRT_Tmp ON ADR_Tmp.Acq_Deal_Rights_Code = ADRT_Tmp.Acq_Deal_Rights_Code AND ADRT_Tmp.Title_Code = Adm_Tmp.Title_Code 
+			AND ISNULL(Adm_Tmp.Episode_Starts_From,0) = ISNULL(ADRT_Tmp.Episode_From,0) AND ISNULL(Adm_Tmp.Episode_End_To,0) = ISNULL(ADRT_Tmp.Episode_To,0)
+			WHERE AD_Tmp.Is_Master_Deal = 'N' --AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
+			--(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ad.Acq_Deal_Code)
 			FOR XML PATH(''),type).value('.', 'nvarchar(max)'),1,1,'')) 
 			, ar.Actual_Right_Start_Date, ar.Actual_Right_End_Date
 			,ar.Is_Exclusive, ISNULL(ar.Sub_License_Code, 0)
