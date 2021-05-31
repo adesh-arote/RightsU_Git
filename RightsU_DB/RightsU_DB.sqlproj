@@ -1469,10 +1469,21 @@
     <Build Include="dbo\Stored Procedures\USPMHConsumptionRequestListDetail.sql" />
     <Build Include="dbo\Stored Procedures\USP_Music_Schedule_Process_Neo.sql" />
     <Build Include="dbo\User Defined Types\MusicScheduleProcess.sql" />
+    <Build Include="dbo\User Defined Types\Email_Config_Users_UDT.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database Scripts\DBSchema_v5.0.1.12.sql" />
     <None Include="Database Scripts\DBConfig_v5.0.1.12.sql" />
-    <None Include="dbo\User Defined Types\Email_Config_Users_UDT.sql" />
+    <None Include="Database Scripts\DBConfig_v5.0.1.13.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.1.13.sql" />
+    <None Include="Database Scripts\DBConfig_v5.0.3.1.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.3.1.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.5.1.sql" />
+    <None Include="Database Scripts\DBConfig_v5.0.6.1.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.6.1.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.6.2.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.7.1.sql" />
+    <None Include="Database Scripts\DBConfig_v5.0.7.1.sql" />
+    <None Include="Database Scripts\DBScript_v5.0.8.1.sql" />
   </ItemGroup>
 </Project>
