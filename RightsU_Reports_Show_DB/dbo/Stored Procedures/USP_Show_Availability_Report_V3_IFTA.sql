@@ -526,13 +526,15 @@ BEGIN
 					FROM Acq_Deal AD_Tmp
 					INNER JOIN Acq_Deal_Rights ADR_Tmp ON adr_Tmp.Acq_Deal_Code = AD_Tmp.Acq_Deal_Code 
 					WHERE AD_Tmp.Is_Master_Deal = 'N' AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
-					(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ar.Acq_Deal_Code)
+					(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ar.Acq_Deal_Code AND adm_Tmp.Title_Code = ADRT.Title_Code
+						AND ISNULL(adm_Tmp.Episode_Starts_From,0) = ISNULL(ADRT.Episode_From,0) AND ISNULL(adm_Tmp.Episode_End_To,0) = ISNULL(ADRT.Episode_To,0))
 					FOR XML PATH(''),type).value('.', 'nvarchar(max)'),1,1,'')
 				) As Sub_Deal_Restriction_Remark, 
 		CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END,ADM.Due_Diligence,C.Category_Name,DT.Deal_Type_Name
 		FROM Acq_Deal_Rights ar
 		INNER JOIN #Avail_Raw ar1 On ar1.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 		Inner Join Acq_Deal ad On ar.Acq_Deal_Code = ad.Acq_Deal_Code
+		INNER JOIN Acq_Deal_Rights_Title ADRT ON ar.Acq_Deal_Rights_Code = ADRT.Acq_Deal_Rights_Code
 		INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code
 		INNER JOin Category C ON ad.Category_Code = C.Category_Code
 		INNER JOin Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code
@@ -544,6 +546,7 @@ BEGIN
 		--AND ar.Sub_License_Code IN (SELECT SubLicense_Code FROM #Tmp_SL)
 		--AND 
 		(ad.Business_Unit_Code IN (SELECT CAST(number as INT) from [dbo].[fn_Split_withdelemiter](@BU_Code,',')))
+		AND ADRT.Title_Code IN (SELECT tt.Title_Code FROM #Temp_Title tt)
 		--(ad.Business_Unit_Code = CAST(@BU_Code AS INT) OR CAST(@BU_Code AS INT) = 0)   
 		--AND ar.Acq_Deal_Rights_Code IN (
 		--	SELECT IsNull(adrt.Acq_Deal_Rights_Code, 0) FROM #Temp_Title tt
