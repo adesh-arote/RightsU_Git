@@ -4,8 +4,8 @@ using System.Collections;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_BLL;
-using RightsU_Entities;
+//using RightsU_BLL;
+//using RightsU_Dapper.Entity;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.Entity.Core.Objects;
@@ -17,11 +17,19 @@ using System.Web.UI;
 using UTOFrameWork.FrameworkClasses;
 using System.Net;
 using System.Net.Mime;
+using RightsU_Dapper.BLL.Services;
+
+//using RightsU_Dapper.Entity.StoredProcedure_Entities;
+using RightsU_Dapper.Entity;
 
 namespace RightsU_Plus.Controllers
 {
     public class Amort_RuleController : BaseController
     {
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+        private readonly Amort_Rule_Service objAmort_Rule_Service = new Amort_Rule_Service();
+        private readonly USP_List_Amort_Rule_Service objUSP_List_Amort_Rule_Service = new USP_List_Amort_Rule_Service();
+
         //
         // GET: /Amort_Rule/
         public int moduleCode = 180;
@@ -57,13 +65,13 @@ namespace RightsU_Plus.Controllers
             set { Session["Amort_Rule_Search_Page_Properties"] = value; }
         }
 
-        public RightsU_Entities.Amort_Rule objAmortRule
+        public RightsU_Dapper.Entity.Amort_Rule objAmortRule
         {
             get
             {
                 if (Session["Session_Amort_Rule"] == null)
-                    Session["Session_Amort_Rule"] = new RightsU_Entities.Amort_Rule();
-                return (RightsU_Entities.Amort_Rule)Session["Session_Amort_Rule"];
+                    Session["Session_Amort_Rule"] = new RightsU_Dapper.Entity.Amort_Rule();
+                return (RightsU_Dapper.Entity.Amort_Rule)Session["Session_Amort_Rule"];
             }
             set { Session["Session_Amort_Rule"] = value; }
         }
@@ -78,8 +86,8 @@ namespace RightsU_Plus.Controllers
                 IsMenu1 = obj_Dic_Layout["IsMenu"];
                 //TempData.Keep("QS_LayOut");
             }
-            ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-            string c = addRights.FirstOrDefault();
+            string addRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            string c = addRights;
             ViewBag.AddVisibility = c;
             string IsMenu = "";
             if (Request.QueryString["IsMenu"] != null)
@@ -98,8 +106,8 @@ namespace RightsU_Plus.Controllers
             int Page_No = 0, Page_Size = 0;
             Page_No = Convert.ToInt32(TempData["Page_No"]);
             Page_Size = Convert.ToInt32(TempData["Page_Size"]);
-            ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-            string c = addRights.FirstOrDefault();
+            string addRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            string c = addRights;
             ViewBag.AddVisibility = c;
             if (Page_No > 0)
                 PageNo = Page_No;
@@ -148,17 +156,17 @@ namespace RightsU_Plus.Controllers
             if (Rule_Type == string.Empty && IsShowAll == "N")
                 Rule_Type = objPage_Properties.Rule_Type;
 
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+            //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             int RecordCount = 0;
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
+            int objRecordCount = 0;
             string StrSearch = string.Empty;
             if (Rule_No != string.Empty)
                 StrSearch += " And Rule_No like N'%" + Rule_No + "%'";
             if (Rule_Type != string.Empty)
                 StrSearch += " And Rule_Type=N'" + Rule_Type + "'";
             string orderByCndition = "Last_Updated_Time DESC ,Inserted_On DESC";
-            List<USP_List_Amort_Rule_Result> AmortRuleList = objUSP.USP_List_Amort_Rule(StrSearch, PageNo, orderByCndition, "Y", PageSize, objRecordCount, moduleCode, Convert.ToString(objLoginUser.Users_Code)).ToList();
-            RecordCount = Convert.ToInt32(objRecordCount.Value);
+            List<USP_List_Amort_Rule_Result> AmortRuleList = objUSP_List_Amort_Rule_Service.USP_List_Amort_Rule(StrSearch, PageNo, orderByCndition, "Y", PageSize,out objRecordCount, moduleCode, Convert.ToString(objLoginUser.Users_Code)).ToList();
+            RecordCount = Convert.ToInt32(objRecordCount);
             ViewBag.RecordCount = RecordCount;
 
             if (PageNo <= 0)
@@ -198,8 +206,8 @@ namespace RightsU_Plus.Controllers
                 ViewBag.AmortDetailCommand = "Add";
                 ViewBag.RuleType = RuleType;
                 ViewBag.TableIndex = Index + 1;
-                Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
-                objAmortRule = objAmortRuleService.GetById(code);
+                //Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
+                objAmortRule = objAmort_Rule_Service.GetByID(code, new Type[] { typeof(Amort_Rule_Details) });
                 ViewBag.nos = Convert.ToString(objAmortRule.Nos);
             }
 
@@ -222,7 +230,7 @@ namespace RightsU_Plus.Controllers
                     if (i < objAmortRule.Amort_Rule_Details.Count)
                     {
                         objAmortRuleDetail = objAmortRule.Amort_Rule_Details.ElementAt(i);
-                        objAmortRuleDetail.EntityState = State.Modified;
+                        //objAmortRuleDetail.EntityState = State.Modified;
                     }
                     objAmortRuleDetail.From_Range = lstAmortRuleDetails[i].From_Range;
                     To_Range = objAmortRuleDetail.To_Range = lstAmortRuleDetails[i].To_Range;
@@ -247,11 +255,11 @@ namespace RightsU_Plus.Controllers
                 ViewBag.TableIndex = Index - 1;
                 Amort_Rule_Details objAmortRuleDetails = new Amort_Rule_Details();
                 objAmortRuleDetails = objAmortRule.Amort_Rule_Details.ElementAt(deleteIndex);
-                objAmortRuleDetails.EntityState = State.Deleted;
+                //objAmortRuleDetails.EntityState = State.Deleted;
                 objAmortRule.Amort_Rule_Details.Remove(objAmortRuleDetails);
             }
             ViewBag.ListCount = objAmortRule.Amort_Rule_Details.Count;
-            return PartialView("_Amort_Details", objAmortRule.Amort_Rule_Details.Where(i => i.EntityState != State.Deleted));
+            return PartialView("_Amort_Details", objAmortRule.Amort_Rule_Details);
         }
 
         public PartialViewResult PeriodEquallyDistributeCheck(string RuleType = "", string RunType = "", int Index = 0, bool status = true)
@@ -280,12 +288,17 @@ namespace RightsU_Plus.Controllers
         public ActionResult Save(Amort_Rule objAmortRule_MVC, FormCollection objFormCollection)
         {
             string status = "S";
-            int AmortCode = Convert.ToInt32(objFormCollection["Amort_Rule_Code"].Trim());
+            int AmortCode = 0;
+            if (objFormCollection["Amort_Rule_Code"] != null && objFormCollection["Amort_Rule_Code"] != "")
+            {
+                AmortCode = Convert.ToInt32(objFormCollection["Amort_Rule_Code"]);
+            }
+          //int AmortCode = 0; Convert.ToInt32(objFormCollection["Amort_Rule_Code"].Trim());
             Amort_Rule objAmortRule = new Amort_Rule();
-            Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
+           // Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
             if (AmortCode != 0)
             {
-                objAmortRule = objAmortRuleService.GetById(AmortCode);
+                objAmortRule = objAmort_Rule_Service.GetByID(AmortCode, new Type[] { typeof(Amort_Rule_Details) });
             }
             string distributeType = objFormCollection["PeriodType_Dist"];
             objAmortRule.Rule_Type = objAmortRule_MVC.Rule_Type = objFormCollection["Ruletype"];
@@ -317,17 +330,17 @@ namespace RightsU_Plus.Controllers
                     objAmortRule.Distribution_Type = objAmortRule_MVC.Distribution_Type = null;
                 }
 
-                objAmortRule.Amort_Rule_Details.ToList().ForEach(x => x.EntityState = State.Deleted);
+                objAmortRule.Amort_Rule_Details.ToList().ForEach(t => objAmortRule.Amort_Rule_Details.Remove(t));
                 for (int i = 0; i < objAmortRule_MVC.Amort_Rule_Details.Count; i++)
                 {
                     Amort_Rule_Details objAmortRuleDetail = new Amort_Rule_Details();
-                    objAmortRuleDetail.EntityState = State.Added;
+                    //objAmortRuleDetail.EntityState = State.Added;
                     bool isAdd = true;
 
                     if (i < objAmortRule.Amort_Rule_Details.Count)
                     {
                         objAmortRuleDetail = objAmortRule.Amort_Rule_Details.ElementAt(i);
-                        objAmortRuleDetail.EntityState = State.Modified;
+                        //objAmortRuleDetail.EntityState = State.Modified;
                         isAdd = false;
                     }
                     objAmortRuleDetail.From_Range = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].From_Range;
@@ -341,19 +354,19 @@ namespace RightsU_Plus.Controllers
                 }
                     if (objAmortRule_MVC.Amort_Rule_Code > 0)
                     {
-                        objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Modified;
+                        //objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Modified;
                         objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
                         status = "U";
                     }
                     else
                     {
-                        objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Added;
+                      //  objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Added;
                         objAmortRule.Inserted_On = objAmortRule_MVC.Inserted_On = DateTime.Now;
                         objAmortRule.Is_Active = "Y";
                         objAmortRule.Inserted_By = objAmortRule_MVC.Inserted_By = objLoginUser.Users_Code;
                         objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
                     }
-                    objAmortRuleService.Save(objAmortRule);
+                    objAmort_Rule_Service.AddEntity(objAmortRule);
                     string msg = string.Empty;
                     if (status.Equals("S"))
                     {
@@ -373,8 +386,8 @@ namespace RightsU_Plus.Controllers
                     ViewBag.Rule_Type = objPage_Properties.Rule_Type;
                     ViewBag.Rule_No = objPage_Properties.Rule_No;
                     ViewBag.Rule_TypeList = BindRuleType();
-                    ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-                    string c = addRights.FirstOrDefault();
+                    string addRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+                    string c = addRights;
                     ViewBag.AddVisibility = c;
                     return View("Index");
         }
@@ -393,8 +406,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.Rule_Type = objPage_Properties.Rule_Type;
             ViewBag.Rule_No = objPage_Properties.Rule_No;
             ViewBag.Rule_TypeList = BindRuleType();
-            ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-            string c = addRights.FirstOrDefault();
+            string addRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            string c = addRights;
             ViewBag.AddVisibility = c;
             return View("Index");
         }
@@ -402,8 +415,8 @@ namespace RightsU_Plus.Controllers
         public ActionResult View(int id)
         {
             Amort_Rule objAR = new Amort_Rule();
-            Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
-            objAR = objAmortRuleService.GetById(id);
+           // Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
+            objAR = objAmort_Rule_Service.GetByID(id, new Type[] { typeof(Amort_Rule_Details) });
             return View("View", objAR);
         }
         public ActionResult ShowAmort()
@@ -418,8 +431,8 @@ namespace RightsU_Plus.Controllers
                 TempData.Keep("TempId");
             }
             Amort_Rule objAR = new Amort_Rule();
-            Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
-            objAR = objAmortRuleService.GetById(id);
+           // Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
+            objAR = objAmort_Rule_Service.GetByID(id, new Type[] { typeof(Amort_Rule_Details) });
             return View("View", objAR);
         }
         public ActionResult AddAmortRule(string commandName)
@@ -448,9 +461,9 @@ namespace RightsU_Plus.Controllers
                 TempData.Keep("TempId");
             }
             Amort_Rule objAR = new Amort_Rule();
-            Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
+            //Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
             ViewBag.CommandAction = "Edit";
-            objAmortRule = objAR = objAmortRuleService.GetById(id);
+            objAmortRule = objAR = objAmort_Rule_Service.GetByID(id, new Type[] { typeof(Amort_Rule_Details) });
             ViewBag.RuleType = objAmortRule.Rule_Type;
             ViewBag.AmortDetailCommand = "Add";
             ViewBag.AmortCode = objAR.Amort_Rule_Code;
@@ -464,9 +477,9 @@ namespace RightsU_Plus.Controllers
 
         public Boolean AmongstRightsPeriod()
         {
-            Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
+           // Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
             List<Amort_Rule> lstAmortRule = new List<Amort_Rule>();
-            lstAmortRule = objAmortRuleService.SearchFor(p => p.Period_For=="A").ToList();
+            lstAmortRule = objAmort_Rule_Service.GetAll().Where(p => p.Period_For=="A").ToList();
             if (lstAmortRule.Count > 0)
                 return false;
             return true;
@@ -485,8 +498,8 @@ namespace RightsU_Plus.Controllers
             string message = "";
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             Amort_Rule objAR = new Amort_Rule();
-            Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
-            objAmortRule = objAR = objAmortRuleService.GetById(id);
+           // Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
+            objAmortRule = objAR = objAmort_Rule_Service.GetByID(id, new Type[] { typeof(Amort_Rule_Details) });
             if (objAmortRule.Is_Active == "Y")
             {
                 objAmortRule.Is_Active = "N";
@@ -497,8 +510,8 @@ namespace RightsU_Plus.Controllers
                 objAmortRule.Is_Active = "Y";
                 message = "Activated Successfully";
             }
-            objAmortRule.EntityState =State.Modified;
-            objAmortRuleService.Save(objAmortRule);
+            //objAmortRule.EntityState =State.Modified;
+            objAmort_Rule_Service.AddEntity(objAmortRule);
             objJson.Add("Message", message);
             objJson.Add("Error", "");
             return Json(objJson);
@@ -510,15 +523,15 @@ namespace RightsU_Plus.Controllers
             string errortype = "";
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             Amort_Rule objAR = new Amort_Rule();
-            Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
+            //Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
             List<Amort_Rule> lstAmortRule = new List<Amort_Rule>();
                 if (id > 0)
                 {
-                    lstAmortRule = objAmortRuleService.SearchFor(p => p.Rule_No == ruleno.Trim() && p.Amort_Rule_Code != id).ToList();
+                    lstAmortRule = objAmort_Rule_Service.GetAll().Where(p => p.Rule_No == ruleno.Trim() && p.Amort_Rule_Code != id).ToList();
                 }
                 else
                 {
-                    lstAmortRule = objAmortRuleService.SearchFor(p => p.Rule_No == ruleno.Trim()).ToList();
+                    lstAmortRule = objAmort_Rule_Service.GetAll().Where(p => p.Rule_No == ruleno.Trim()).ToList();
                 }
                 if (lstAmortRule.Count != 0)
                 {
@@ -527,7 +540,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    lstAmortRule = objAmortRuleService.SearchFor(p => p.Amort_Rule_Code != id && p.Distribution_Type == periodType && 
+                    lstAmortRule = objAmort_Rule_Service.GetAll().Where(p => p.Amort_Rule_Code != id && p.Distribution_Type == periodType && 
                         (p.Rule_Type == "R" || p.Rule_Type == "P") && p.Nos == noOfMonth).ToList();
                     if (lstAmortRule.Count > 0)
                         message = "No.of Runs already exists for this Equally Distribute";
@@ -546,10 +559,10 @@ namespace RightsU_Plus.Controllers
                 StrSearch += " And Rule_No like '%" + hdnRuleNo + "%'";
             if (hdnRuleType != string.Empty)
                 StrSearch += " And Rule_Type='" + hdnRuleType + "'";
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+           // USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             int RecordCount = 0;
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            var AmortRuleList = objUSP.USP_List_Amort_Rule(StrSearch, PageNo, "Amort_Rule_Code", "N", PageSize, objRecordCount, moduleCode, Convert.ToString(objLoginUser.Users_Code)).ToList();
+            int objRecordCount = 0;
+            var AmortRuleList = objUSP_List_Amort_Rule_Service.USP_List_Amort_Rule(StrSearch, PageNo, "Amort_Rule_Code", "N", PageSize, out objRecordCount, moduleCode, Convert.ToString(objLoginUser.Users_Code)).ToList();
             System.Web.UI.WebControls.GridView gridvw = new System.Web.UI.WebControls.GridView();
             gridvw.AutoGenerateColumns = false;
             gridvw.Columns.Add(new BoundField { HeaderText = "Rule No", DataField = "Rule_No" });

@@ -31,7 +31,7 @@ namespace RightsU_Dapper.Entity
         public virtual Deal_Type Deal_Type { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual Genres Genre { get; set; }
+        public virtual Genre Genre { get; set; }
     }
 }
 

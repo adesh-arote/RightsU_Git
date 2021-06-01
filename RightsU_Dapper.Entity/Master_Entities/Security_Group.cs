@@ -12,7 +12,7 @@ namespace RightsU_Dapper.Entity
         {
             //this.Module_Workflow_Detail = new HashSet<Module_Workflow_Detail>();
             //this.Module_Workflow_Detail1 = new HashSet<Module_Workflow_Detail>();
-            //this.Security_Group_Rel = new HashSet<Security_Group_Rel>();
+            this.Security_Group_Rel = new HashSet<Security_Group_Rel>();
             this.Users = new HashSet<User>();
             //this.Workflow_Role = new HashSet<Workflow_Role>();
             //this.Workflow_BU_Role = new HashSet<Workflow_BU_Role>();
@@ -30,7 +30,7 @@ namespace RightsU_Dapper.Entity
 
         //public virtual ICollection<Module_Workflow_Detail> Module_Workflow_Detail { get; set; }
         //public virtual ICollection<Module_Workflow_Detail> Module_Workflow_Detail1 { get; set; }
-        //public virtual ICollection<Security_Group_Rel> Security_Group_Rel { get; set; }
+        public virtual ICollection<Security_Group_Rel> Security_Group_Rel { get; set; }
         public virtual ICollection<User> Users { get; set; }
         //    public virtual ICollection<Workflow_Role> Workflow_Role { get; set; }
         //    public virtual ICollection<Workflow_BU_Role> Workflow_BU_Role { get; set; }

@@ -12,9 +12,9 @@ namespace RightsU_Dapper.Entity
         public int? Title_Geners_Code { get; set; }
         [ForeignKeyReference(typeof(Title))]
         public Nullable<int> Title_Code { get; set; }
-        [ForeignKeyReference(typeof(Genres))]
+        [ForeignKeyReference(typeof(Genre))]
         public Nullable<int> Genres_Code { get; set; }
-        public virtual Genres Genre { get; set; }
+        public virtual Genre Genre { get; set; }
         public virtual Title Title { get; set; }
     }
 }

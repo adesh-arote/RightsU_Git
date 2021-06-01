@@ -1,16 +1,24 @@
-﻿using System;
+﻿using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Dapper.Entity;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class ChannelController : BaseController
     {
+        private readonly Channel_Service objChannelService = new Channel_Service();
+        private readonly Entity_Service objEntityService = new Entity_Service();
+        private readonly Country_Service objCountryService = new Country_Service();
+        private readonly Vendor_Service objVendorService = new Vendor_Service();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+
         //
         // GET: /Channel/
         #region --- Properties ---
@@ -27,43 +35,43 @@ namespace RightsU_Plus.Controllers
 
             return AddResult.ToList<T>();
         }
-        private List<RightsU_Entities.Channel> lstChannel
+        private List<RightsU_Dapper.Entity.Channel> lstChannel
         {
             get
             {
                 if (Session["lstChannel"] == null)
-                    Session["lstChannel"] = new List<RightsU_Entities.Channel>();
-                return (List<RightsU_Entities.Channel>)Session["lstChannel"];
+                    Session["lstChannel"] = new List<RightsU_Dapper.Entity.Channel>();
+                return (List<RightsU_Dapper.Entity.Channel>)Session["lstChannel"];
             }
             set { Session["lstChannel"] = value; }
         }
-        private List<RightsU_Entities.Channel> lstChannelEdit
+        private List<RightsU_Dapper.Entity.Channel> lstChannelEdit
         {
             get
             {
                 if (Session["lstChannelEdit"] == null)
-                    Session["lstChannelEdit"] = new List<RightsU_Entities.Channel>();
-                return (List<RightsU_Entities.Channel>)Session["lstChannelEdit"];
+                    Session["lstChannelEdit"] = new List<RightsU_Dapper.Entity.Channel>();
+                return (List<RightsU_Dapper.Entity.Channel>)Session["lstChannelEdit"];
             }
             set { Session["lstChannelEdit"] = value; }
         }
-        private List<RightsU_Entities.Channel> lstChannel_Searched
+        private List<RightsU_Dapper.Entity.Channel> lstChannel_Searched
         {
             get
             {
                 if (Session["lstChannel_Searched"] == null)
-                    Session["lstChannel_Searched"] = new List<RightsU_Entities.Channel>();
-                return (List<RightsU_Entities.Channel>)Session["lstChannel_Searched"];
+                    Session["lstChannel_Searched"] = new List<RightsU_Dapper.Entity.Channel>();
+                return (List<RightsU_Dapper.Entity.Channel>)Session["lstChannel_Searched"];
             }
             set { Session["lstChannel_Searched"] = value; }
         }
-        //private List<RightsU_Entities.Genre> lstGenre
+        //private List<RightsU_Dapper.Entity.Genre> lstGenre
         //{
         //    get
         //    {
         //        if (Session["lstGenre"] == null)
-        //            Session["lstGenre"] = new List<RightsU_Entities.Channel>();
-        //        return (List<RightsU_Entities.Genre>)Session["lstGenre"];
+        //            Session["lstGenre"] = new List<RightsU_Dapper.Entity.Channel>();
+        //        return (List<RightsU_Dapper.Entity.Genre>)Session["lstGenre"];
         //    }
         //    set { Session["lstGenre"] = value; }
         //}
@@ -82,6 +90,8 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
+        Type[] RelationList = new Type[] { typeof(Channel_Territory)
+            };
         #endregion
 
         public ActionResult Index()
@@ -112,24 +122,26 @@ namespace RightsU_Plus.Controllers
             {
                 #region
 
-                Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Channel objChannel = objService.GetById(ChannelCode);
-                lstChannel_Searched = lstChannelEdit = new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(a => a.Channel_Code == ChannelCode).ToList();
+                //Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
+                //RightsU_Dapper.Entity.Channel objChannel = objService.GetById(ChannelCode);
+                RightsU_Dapper.Entity.Channel objChannel = objChannelService.GetChannelByID(ChannelCode, RelationList);
+               
+                lstChannel_Searched = lstChannelEdit = objChannelService.GetList().Where(a => a.Channel_Code == ChannelCode).ToList();
 
-                Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Country objCountry = objCountryService.GetById(ChannelCode);
+                //Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Country objCountry = objCountryService.GetRightRuleByID(ChannelCode);
 
                 //var genList = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
                 //ViewBag.GenereList = new SelectList(genList, "Genres_Code", "Genres_Name", objChannel.Genre.Genres_Code);
 
-                var entityList = new Entity_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
+                var entityList = objEntityService.GetAll().ToList();
                 ViewBag.EntityList = new SelectList(entityList, "Entity_Code", "Entity_Name", objChannel.Entity_Code);
 
-                var vendorList = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
+                var vendorList = objVendorService.GetAll().ToList();
                 ViewBag.VendorList = new SelectList(vendorList, "Vendor_Code", "Vendor_Name", objChannel.Entity_Code);
 
                 int[] countryCode =  objChannel.Channel_Territory.Select(s =>Convert.ToInt32(s.Country_Code)).ToArray();
-                var countryList = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
+                var countryList = objCountryService.GetList().ToList();
                 ViewBag.CountryList = new MultiSelectList(countryList, "Country_Code", "Country_Name", countryCode);
 
                 if (objChannel.Entity_Type.ToLower() == "o")
@@ -193,20 +205,18 @@ namespace RightsU_Plus.Controllers
                 //ViewBag.lstGeneres = new SelectList(lstgenre, "Genres_Code", "Genres_Name", "");
 
 
-                Entity_Service objEntityService = new Entity_Service(objLoginEntity.ConnectionStringName);
-                var lstentity = objEntityService.SearchFor(a => true).ToList();
+                //Entity_Service objEntityService = new Entity_Service(objLoginEntity.ConnectionStringName);
+                var lstentity = objEntityService.GetAll().ToList();
                 ViewBag.lstEntity = new SelectList(lstentity, "Entity_Code", "Entity_Name", "");
 
-                Vendor_Service objVendorService = new Vendor_Service(objLoginEntity.ConnectionStringName);
-                var lstvendor = objVendorService.SearchFor(a => true).ToList();
+                //Vendor_Service objVendorService = new Vendor_Service(objLoginEntity.ConnectionStringName);
+                var lstvendor = objVendorService.GetAll().ToList();
                 ViewBag.lstVendors = new SelectList(lstvendor, "Vendor_Code", "Vendor_Name", "");
 
-                Channel_Service objChannel = new Channel_Service(objLoginEntity.ConnectionStringName);
+                //Channel_Service objChannel = new Channel_Service(objLoginEntity.ConnectionStringName);
 
-
-
-                Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
-                var lstcountry = objCountryService.SearchFor(a => true).ToList();
+                //Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
+                var lstcountry = objCountryService.GetList().ToList();
                 ViewBag.lstCountry = new SelectList(lstcountry, "Country_Code", "Country_Name", "");
 
                 ViewBag.EntityType = "Own";
@@ -219,7 +229,7 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindChannelList(int pageNo, int recordPerPage, string sortType)
         {
-            List<RightsU_Entities.Channel> lst = new List<RightsU_Entities.Channel>();
+            List<RightsU_Dapper.Entity.Channel> lst = new List<RightsU_Dapper.Entity.Channel>();
             int RecordCount = 0;
             RecordCount = lstChannel_Searched.Count;
 
@@ -262,7 +272,7 @@ namespace RightsU_Plus.Controllers
         }
         private void FetchData()
         {
-            lstChannel_Searched = lstChannel = new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstChannel_Searched = lstChannel = objChannelService.GetList().OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
         #endregion
 
@@ -284,24 +294,24 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult EditChannel(int ChannelCode)
         {
-            Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Channel objChannel = objService.GetById(ChannelCode);
-            lstChannel_Searched = lstChannelEdit = new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(a => a.Channel_Code == ChannelCode).ToList();
+            //Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Channel objChannel = objChannelService.GetChannelByID(ChannelCode);
+            lstChannel_Searched = lstChannelEdit = objChannelService.GetList().Where(a => a.Channel_Code == ChannelCode).ToList();
 
-            Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Country objCountry = objCountryService.GetById(ChannelCode);
+            //Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Country objCountry = objCountryService.GetRightRuleByID(ChannelCode);
 
             //var genList = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
             //ViewBag.GenereList = new SelectList(genList, "Genres_Code", "Genres_Name", objChannel.Genre.Genres_Code);
 
-            var entityList = new Entity_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
+            var entityList = objEntityService.GetAll().ToList();
             ViewBag.EntityList = new SelectList(entityList, "Entity_Code", "Entity_Name", objChannel.Entity_Code);
 
-            var vendorList = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
+            var vendorList = objVendorService.GetAll().ToList();
             ViewBag.VendorList = new SelectList(vendorList, "Vendor_Code", "Vendor_Name", objChannel.Entity_Code);
 
             string countryCode = string.Join(",", objChannel.Channel_Territory.Select(s => s.Country_Code).ToArray());
-            var countryList = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
+            var countryList = objCountryService.GetList().ToList();
             ViewBag.CountryList = new MultiSelectList(countryList, "Country_Code", "Country_Name", countryCode);
 
             if (objChannel.Entity_Type.ToLower() == "o")
@@ -312,12 +322,6 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.EntityType = "Others";
             }
-
-
-
-
-
-
 
             //List<SelectListItem> listItems = new List<SelectListItem>();
 
@@ -417,8 +421,8 @@ namespace RightsU_Plus.Controllers
 
 
 
-            Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Channel objChannel = objService.GetById(Convert.ToInt32(Channel_Code));
+            //Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Channel objChannel = objChannelService.GetChannelByID(Convert.ToInt32(Channel_Code));
 
 
 
@@ -445,7 +449,7 @@ namespace RightsU_Plus.Controllers
             objChannel.OffsetTime_AsRun = OffsetTime_AsRun + ":" + OffsetTime_AsRun1;
             objChannel.Last_Action_By = objLoginUser.Users_Code;
             objChannel.Last_Updated_Time = System.DateTime.Now;
-            objChannel.EntityState = State.Modified;
+            //objChannel.EntityState = State.Modified;
 
             dynamic resultSet;
             string status = "S", message = "Record {ACTION} successfully";
@@ -454,31 +458,31 @@ namespace RightsU_Plus.Controllers
             RedirectToAction("index");
 
 
-            ICollection<RightsU_Entities.Channel_Territory> BuisnessUnitList = new HashSet<RightsU_Entities.Channel_Territory>();
+            ICollection<RightsU_Dapper.Entity.Channel_Territory> BuisnessUnitList = new HashSet<RightsU_Dapper.Entity.Channel_Territory>();
             if (Country_Code != null)
             {
                 var split = Country_Code.Split(',');
                 // string[] arrBuisnessCode = LanguageCodes[0].s
                 foreach (string BuisnessUnitCode in split)
                 {
-                    RightsU_Entities.Channel_Territory objTR = new Channel_Territory();
-                    objTR.EntityState = State.Added;
+                    RightsU_Dapper.Entity.Channel_Territory objTR = new RightsU_Dapper.Entity.Channel_Territory();
+                    //objTR.EntityState = State.Added;
                     objTR.Country_Code = Convert.ToInt32(BuisnessUnitCode);
                     BuisnessUnitList.Add(objTR);
                 }
             }
-            RightsU_Entities.Channel_Territory objTR1 = new Channel_Territory();
+            RightsU_Dapper.Entity.Channel_Territory objTR1 = new RightsU_Dapper.Entity.Channel_Territory();
 
-            IEqualityComparer<RightsU_Entities.Channel_Territory> comparerBuisness_Unit = new LambdaComparer<RightsU_Entities.Channel_Territory>((x, y) => x.Country_Code == y.Country_Code && x.EntityState != State.Deleted);
-            var Deleted_Users_Business_Unit = new List<RightsU_Entities.Channel_Territory>();
-            var Updated_Users_Business_Unit = new List<RightsU_Entities.Channel_Territory>();
+            IEqualityComparer<RightsU_Dapper.Entity.Channel_Territory> comparerBuisness_Unit = new RightsU_BLL.LambdaComparer<RightsU_Dapper.Entity.Channel_Territory>((x, y) => x.Country_Code == y.Country_Code);
+            var Deleted_Users_Business_Unit = new List<RightsU_Dapper.Entity.Channel_Territory>();
+            var Updated_Users_Business_Unit = new List<RightsU_Dapper.Entity.Channel_Territory>();
 
-            var Added_Users_Business_Unit = CompareLists<RightsU_Entities.Channel_Territory>(BuisnessUnitList.ToList<RightsU_Entities.Channel_Territory>(), objChannel.Channel_Territory.ToList<RightsU_Entities.Channel_Territory>(), comparerBuisness_Unit, ref Deleted_Users_Business_Unit, ref Updated_Users_Business_Unit);
-            Added_Users_Business_Unit.ToList<RightsU_Entities.Channel_Territory>().ForEach(t => objChannel.Channel_Territory.Add(t));
-            Deleted_Users_Business_Unit.ToList<RightsU_Entities.Channel_Territory>().ForEach(t => t.EntityState = State.Deleted);
+            var Added_Users_Business_Unit = CompareLists<RightsU_Dapper.Entity.Channel_Territory>(BuisnessUnitList.ToList<RightsU_Dapper.Entity.Channel_Territory>(), objChannel.Channel_Territory.ToList<RightsU_Dapper.Entity.Channel_Territory>(), comparerBuisness_Unit, ref Deleted_Users_Business_Unit, ref Updated_Users_Business_Unit);
+            Added_Users_Business_Unit.ToList<RightsU_Dapper.Entity.Channel_Territory>().ForEach(t => objChannel.Channel_Territory.Add(t));
+            Deleted_Users_Business_Unit.ToList<RightsU_Dapper.Entity.Channel_Territory>().ForEach(t => objChannel.Channel_Territory.Remove(t));
 
-
-            bool isValid = objService.Save(objChannel, out resultSet);
+            objChannelService.AddEntity(objChannel);
+            bool isValid = true;  //objService.Save(objChannel, out resultSet);
             if (isValid)
             {
                 lstChannel.Where(w => w.Channel_Code == Convert.ToInt32(Channel_Code)).First();
@@ -496,7 +500,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
 
 
@@ -511,8 +515,10 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult BindVendorDropdown(string other)
         {
-            List<SelectListItem> lstvendor = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Vendor_Name == other).
-                OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name").ToList();
+            //List<SelectListItem> lstvendor = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Vendor_Name == other).
+            //    OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name").ToList();
+            List<SelectListItem> lstvendor = new SelectList(objVendorService.GetAll().Where(s => s.Vendor_Name == other).
+               OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name").ToList();
             var obj = new
             {
                 VendorList = lstvendor
@@ -539,20 +545,18 @@ namespace RightsU_Plus.Controllers
             //ViewBag.lstGeneres = new SelectList(lstgenre, "Genres_Code", "Genres_Name", "");
 
 
-            Entity_Service objEntityService = new Entity_Service(objLoginEntity.ConnectionStringName);
-            var lstentity = objEntityService.SearchFor(a => true).ToList();
+            //Entity_Service objEntityService = new Entity_Service(objLoginEntity.ConnectionStringName);
+            var lstentity = objEntityService.GetAll().ToList();
             ViewBag.lstEntity = new SelectList(lstentity, "Entity_Code", "Entity_Name", "");
 
-            Vendor_Service objVendorService = new Vendor_Service(objLoginEntity.ConnectionStringName);
-            var lstvendor = objVendorService.SearchFor(a => true).ToList();
+            //Vendor_Service objVendorService = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            var lstvendor = objVendorService.GetAll().ToList();
             ViewBag.lstVendors = new SelectList(lstvendor, "Vendor_Code", "Vendor_Name", "");
 
-            Channel_Service objChannel = new Channel_Service(objLoginEntity.ConnectionStringName);
+            //Channel_Service objChannel = new Channel_Service(objLoginEntity.ConnectionStringName);
 
-
-
-            Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
-            var lstcountry = objCountryService.SearchFor(a => true).ToList();
+            //Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
+            var lstcountry = objCountryService.GetList().ToList();
             ViewBag.lstCountry = new SelectList(lstcountry, "Country_Code", "Country_Name", "");
 
             ViewBag.EntityType = "Own";
@@ -615,9 +619,9 @@ namespace RightsU_Plus.Controllers
             string OffsetTime_AsRun = objFormCollection["OffsetTime_AsRun"].ToString();
             string OffsetTime_AsRun1 = objFormCollection["OffsetTime_AsRun1"].ToString();
 
-            Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Channel objChannel = new RightsU_Entities.Channel();
-            objChannel.EntityState = State.Added;
+            //Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Channel objChannel = new RightsU_Dapper.Entity.Channel();
+            //objChannel.EntityState = State.Added;
             if (objFormCollection["ddlEntity"] != "")
             {
                 if (Convert.ToChar(Entity_Type) == 'O')
@@ -653,8 +657,8 @@ namespace RightsU_Plus.Controllers
                 var split = Country_Code.Split(',');
                 foreach (string BuisnessUnitCode in split)
                 {
-                    RightsU_Entities.Channel_Territory objTR = new Channel_Territory();
-                    objTR.EntityState = State.Added;
+                    RightsU_Dapper.Entity.Channel_Territory objTR = new RightsU_Dapper.Entity.Channel_Territory();
+                    //objTR.EntityState = State.Added;
                     objTR.Country_Code = Convert.ToInt32(BuisnessUnitCode);
                     objChannel.Channel_Territory.Add(objTR);
                 }
@@ -662,7 +666,8 @@ namespace RightsU_Plus.Controllers
             dynamic resultSet;
             try
             {
-                bool isValid = objService.Save(objChannel, out resultSet);
+                objChannelService.AddEntity(objChannel);
+                bool isValid = true;//objService.Save(objChannel, out resultSet);
                 if (isValid)
                 {
                     //message = message.Replace("{ACTION}", "added");
@@ -694,12 +699,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(Channel_Code, GlobalParams.ModuleCodeForChannel, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Channel objChannel = objService.GetById(Channel_Code);
+                //Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Channel objChannel = objChannelService.GetChannelByID(Channel_Code);
                 objChannel.Is_Active = doActive;
-                objChannel.EntityState = State.Modified;
+                //objChannel.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objChannel, out resultSet);
+                objChannelService.AddEntity(objChannel);
+                bool isValid = true;//objService.Save(objChannel, out resultSet);
                 if (isValid)
                 {
                     lstChannel.Where(w => w.Channel_Code == Channel_Code).First().Is_Active = doActive;
@@ -735,10 +741,10 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }

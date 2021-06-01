@@ -3,180 +3,193 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Dapper.Entity;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 using System.Collections;
+using RightsU_Dapper.BLL.Services;
 
 namespace RightsU_Plus.Controllers
 {
     public class AssignWorkflowController : BaseController
     {
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+        private readonly Workflow_Module_Service objWorkflowModuleService = new Workflow_Module_Service();
+        private readonly Workflow_Service objWorkflowService = new Workflow_Service();
+        private readonly System_Module_Service objSystemModuleService = new System_Module_Service();
+        private readonly User_Service objUserService = new User_Service();
+        private readonly Security_Group_Service objSecurityGroupService = new Security_Group_Service();
+        private readonly Business_Unit_Service objBusinessUnitService = new Business_Unit_Service();
+        private readonly Workflow_Role_Service objWorkflowRoleService = new Workflow_Role_Service();
+        private readonly Workflow_Module_Role_Service objWorkflowModuleRoleService = new Workflow_Module_Role_Service();
+
+
+
         #region --- Properties ---
-        private List<RightsU_Entities.Workflow> lstWorkflow
+        private List<RightsU_Dapper.Entity.Workflow> lstWorkflow
         {
             get
             {
                 if (Session["lstWorkflow"] == null)
-                    Session["lstWorkflow"] = new List<RightsU_Entities.Workflow>();
-                return (List<RightsU_Entities.Workflow>)Session["lstWorkflow"];
+                    Session["lstWorkflow"] = new List<RightsU_Dapper.Entity.Workflow>();
+                return (List<RightsU_Dapper.Entity.Workflow>)Session["lstWorkflow"];
             }
             set { Session["lstWorkflow"] = value; }
         }
-        private List<RightsU_Entities.Workflow> lstWorkflow_Searched
+        private List<RightsU_Dapper.Entity.Workflow> lstWorkflow_Searched
         {
             get
             {
                 if (Session["lstWorkflow_Searched"] == null)
-                    Session["lstWorkflow_Searched"] = new List<RightsU_Entities.Workflow>();
-                return (List<RightsU_Entities.Workflow>)Session["lstWorkflow_Searched"];
+                    Session["lstWorkflow_Searched"] = new List<RightsU_Dapper.Entity.Workflow>();
+                return (List<RightsU_Dapper.Entity.Workflow>)Session["lstWorkflow_Searched"];
             }
             set { Session["lstWorkflow_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.Business_Unit> lstBusiness_Unit
+        private List<RightsU_Dapper.Entity.Business_Unit> lstBusiness_Unit
         {
             get
             {
                 if (Session["lstBusiness_Unit"] == null)
-                    Session["lstBusiness_Unit"] = new List<RightsU_Entities.Business_Unit>();
-                return (List<RightsU_Entities.Business_Unit>)Session["lstBusiness_Unit"];
+                    Session["lstBusiness_Unit"] = new List<RightsU_Dapper.Entity.Business_Unit>();
+                return (List<RightsU_Dapper.Entity.Business_Unit>)Session["lstBusiness_Unit"];
             }
             set { Session["lstBusiness_Unit"] = value; }
         }
-        private List<RightsU_Entities.Business_Unit> lstBusiness_Unit_Searched
+        private List<RightsU_Dapper.Entity.Business_Unit> lstBusiness_Unit_Searched
         {
             get
             {
                 if (Session["lstBusiness_Unit_Searched"] == null)
-                    Session["lstBusiness_Unit_Searched"] = new List<RightsU_Entities.Business_Unit>();
-                return (List<RightsU_Entities.Business_Unit>)Session["lstBusiness_Unit_Searched"];
+                    Session["lstBusiness_Unit_Searched"] = new List<RightsU_Dapper.Entity.Business_Unit>();
+                return (List<RightsU_Dapper.Entity.Business_Unit>)Session["lstBusiness_Unit_Searched"];
             }
             set { Session["lstBusiness_Unit_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.Workflow_Role> lstWorkflow_Role
+        private List<RightsU_Dapper.Entity.Workflow_Role> lstWorkflow_Role
         {
             get
             {
                 if (Session["lstWorkflow_Role"] == null)
-                    Session["lstWorkflow_Role"] = new List<RightsU_Entities.Workflow_Role>();
-                return (List<RightsU_Entities.Workflow_Role>)Session["lstWorkflow_Role"];
+                    Session["lstWorkflow_Role"] = new List<RightsU_Dapper.Entity.Workflow_Role>();
+                return (List<RightsU_Dapper.Entity.Workflow_Role>)Session["lstWorkflow_Role"];
             }
             set { Session["lstWorkflow_Role"] = value; }
         }
-        private List<RightsU_Entities.Workflow_Role> lstWorkflow_Role_Searched
+        private List<RightsU_Dapper.Entity.Workflow_Role> lstWorkflow_Role_Searched
         {
             get
             {
                 if (Session["lstWorkflow_Role_Searched"] == null)
-                    Session["lstWorkflow_Role_Searched"] = new List<RightsU_Entities.Workflow_Role>();
-                return (List<RightsU_Entities.Workflow_Role>)Session["lstWorkflow_Role_Searched"];
+                    Session["lstWorkflow_Role_Searched"] = new List<RightsU_Dapper.Entity.Workflow_Role>();
+                return (List<RightsU_Dapper.Entity.Workflow_Role>)Session["lstWorkflow_Role_Searched"];
             }
             set { Session["lstWorkflow_Role_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.Security_Group> lstSecurity_Group
+        private List<RightsU_Dapper.Entity.Security_Group> lstSecurity_Group
         {
             get
             {
                 if (Session["lstSecurity_Group"] == null)
-                    Session["lstSecurity_Group"] = new List<RightsU_Entities.Security_Group>();
-                return (List<RightsU_Entities.Security_Group>)Session["lstSecurity_Group"];
+                    Session["lstSecurity_Group"] = new List<RightsU_Dapper.Entity.Security_Group>();
+                return (List<RightsU_Dapper.Entity.Security_Group>)Session["lstSecurity_Group"];
             }
             set { Session["lstSecurity_Group"] = value; }
         }
-        private List<RightsU_Entities.Security_Group> lstSecurity_Group_Searched
+        private List<RightsU_Dapper.Entity.Security_Group> lstSecurity_Group_Searched
         {
             get
             {
                 if (Session["lstSecurity_Group_Searched"] == null)
-                    Session["lstSecurity_Group_Searched"] = new List<RightsU_Entities.Security_Group>();
-                return (List<RightsU_Entities.Security_Group>)Session["lstSecurity_Group_Searched"];
+                    Session["lstSecurity_Group_Searched"] = new List<RightsU_Dapper.Entity.Security_Group>();
+                return (List<RightsU_Dapper.Entity.Security_Group>)Session["lstSecurity_Group_Searched"];
             }
             set { Session["lstSecurity_Group_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.System_Module> lstSystem_Module
+        private List<RightsU_Dapper.Entity.System_Module> lstSystem_Module
         {
             get
             {
                 if (Session["lstSystem_Module"] == null)
-                    Session["lstSystem_Module"] = new List<RightsU_Entities.System_Module>();
-                return (List<RightsU_Entities.System_Module>)Session["lstSystem_Module"];
+                    Session["lstSystem_Module"] = new List<RightsU_Dapper.Entity.System_Module>();
+                return (List<RightsU_Dapper.Entity.System_Module>)Session["lstSystem_Module"];
             }
             set { Session["lstSystem_Module"] = value; }
         }
-        private List<RightsU_Entities.System_Module> lstSystem_Module_Searched
+        private List<RightsU_Dapper.Entity.System_Module> lstSystem_Module_Searched
         {
             get
             {
                 if (Session["lstSystem_Module_Searched"] == null)
-                    Session["lstSystem_Module_Searched"] = new List<RightsU_Entities.System_Module>();
-                return (List<RightsU_Entities.System_Module>)Session["lstSystem_Module_Searched"];
+                    Session["lstSystem_Module_Searched"] = new List<RightsU_Dapper.Entity.System_Module>();
+                return (List<RightsU_Dapper.Entity.System_Module>)Session["lstSystem_Module_Searched"];
             }
             set { Session["lstSystem_Module_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.User> lstUser
+        private List<RightsU_Dapper.Entity.User> lstUser
         {
             get
             {
                 if (Session["lstUser"] == null)
-                    Session["lstUser"] = new List<RightsU_Entities.User>();
-                return (List<RightsU_Entities.User>)Session["lstUser"];
+                    Session["lstUser"] = new List<RightsU_Dapper.Entity.User>();
+                return (List<RightsU_Dapper.Entity.User>)Session["lstUser"];
             }
             set { Session["lstUser"] = value; }
         }
-        private List<RightsU_Entities.User> lstUser_Searched
+        private List<RightsU_Dapper.Entity.User> lstUser_Searched
         {
             get
             {
                 if (Session["lstlstUser_Searched"] == null)
-                    Session["lstlstUser_Searched"] = new List<RightsU_Entities.User>();
-                return (List<RightsU_Entities.User>)Session["lstlstUser_Searched"];
+                    Session["lstlstUser_Searched"] = new List<RightsU_Dapper.Entity.User>();
+                return (List<RightsU_Dapper.Entity.User>)Session["lstlstUser_Searched"];
             }
             set { Session["lstlstUser_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.Workflow_Module> lstWorkflow_Module
+        private List<RightsU_Dapper.Entity.Workflow_Module> lstWorkflow_Module
         {
             get
             {
                 if (Session["lstWorkflow_Module"] == null)
-                    Session["lstWorkflow_Module"] = new List<RightsU_Entities.Workflow_Module>();
-                return (List<RightsU_Entities.Workflow_Module>)Session["lstWorkflow_Module"];
+                    Session["lstWorkflow_Module"] = new List<RightsU_Dapper.Entity.Workflow_Module>();
+                return (List<RightsU_Dapper.Entity.Workflow_Module>)Session["lstWorkflow_Module"];
             }
             set { Session["lstWorkflow_Module"] = value; }
         }
-        private List<RightsU_Entities.Workflow_Module> lstWorkflow_Module_Searched
+        private List<RightsU_Dapper.Entity.Workflow_Module> lstWorkflow_Module_Searched
         {
             get
             {
                 if (Session["lstWorkflow_Module_Searched"] == null)
-                    Session["lstWorkflow_Module_Searched"] = new List<RightsU_Entities.Workflow_Module>();
-                return (List<RightsU_Entities.Workflow_Module>)Session["lstWorkflow_Module_Searched"];
+                    Session["lstWorkflow_Module_Searched"] = new List<RightsU_Dapper.Entity.Workflow_Module>();
+                return (List<RightsU_Dapper.Entity.Workflow_Module>)Session["lstWorkflow_Module_Searched"];
             }
             set { Session["lstWorkflow_Module_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.Workflow_Module_Role> lstWorkflow_Module_Role
+        private List<RightsU_Dapper.Entity.Workflow_Module_Role> lstWorkflow_Module_Role
         {
             get
             {
                 if (Session["lstWorkflow_Module_Role"] == null)
-                    Session["lstWorkflow_Module_Role"] = new List<RightsU_Entities.Workflow_Module_Role>();
-                return (List<RightsU_Entities.Workflow_Module_Role>)Session["lstWorkflow_Module_Role"];
+                    Session["lstWorkflow_Module_Role"] = new List<RightsU_Dapper.Entity.Workflow_Module_Role>();
+                return (List<RightsU_Dapper.Entity.Workflow_Module_Role>)Session["lstWorkflow_Module_Role"];
             }
             set { Session["lstWorkflow_Module_Role"] = value; }
         }
-        private List<RightsU_Entities.Workflow_Module_Role> lstWorkflow_Module_Role_Searched
+        private List<RightsU_Dapper.Entity.Workflow_Module_Role> lstWorkflow_Module_Role_Searched
         {
             get
             {
                 if (Session["lstWorkflow_Module_Role_Searched"] == null)
-                    Session["lstWorkflow_Module_Role_Searched"] = new List<RightsU_Entities.Workflow_Module_Role>();
-                return (List<RightsU_Entities.Workflow_Module_Role>)Session["lstWorkflow_Module_Role_Searched"];
+                    Session["lstWorkflow_Module_Role_Searched"] = new List<RightsU_Dapper.Entity.Workflow_Module_Role>();
+                return (List<RightsU_Dapper.Entity.Workflow_Module_Role>)Session["lstWorkflow_Module_Role_Searched"];
             }
             set { Session["lstWorkflow_Module_Role_Searched"] = value; }
         }
@@ -186,19 +199,19 @@ namespace RightsU_Plus.Controllers
 
         public ViewResult Index()
         {
-            lstSystem_Module_Searched = lstSystem_Module = new System_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Can_Workflow_Assign == "Y").ToList();
-            lstUser_Searched = lstUser = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
-            lstSecurity_Group_Searched = lstSecurity_Group = new Security_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
-            lstWorkflow_Role_Searched = lstWorkflow_Role = new Workflow_Role_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
-            lstWorkflow_Searched = lstWorkflow = new Workflow_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
-            lstBusiness_Unit_Searched = lstBusiness_Unit = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
-            lstWorkflow_Module_Role_Searched = lstWorkflow_Module_Role = new Workflow_Module_Role_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
-            lstWorkflow_Module_Searched = lstWorkflow_Module = new Workflow_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+            lstSystem_Module_Searched = lstSystem_Module = objSystemModuleService.GetAll().Where(x => x.Can_Workflow_Assign == "Y").ToList();
+            lstUser_Searched = lstUser = objUserService.GetAll().ToList();
+            lstSecurity_Group_Searched = lstSecurity_Group = objSecurityGroupService.GetList().ToList();
+            lstWorkflow_Role_Searched = lstWorkflow_Role = objWorkflowRoleService.GetAll().ToList();
+            lstWorkflow_Searched = lstWorkflow = objWorkflowService.GetAll().ToList();
+            lstBusiness_Unit_Searched = lstBusiness_Unit = objBusinessUnitService.GetAll().ToList();
+            lstWorkflow_Module_Role_Searched = lstWorkflow_Module_Role = objWorkflowModuleRoleService.GetAll().ToList();
+            lstWorkflow_Module_Searched = lstWorkflow_Module = objWorkflowModuleService.GetAll().Where(x => x.Is_Active == "Y").ToList();
             return View("~/Views/AssignWorkflow/Index.cshtml");
         }
         public PartialViewResult BindWorkflowList(int pageNo, int recordPerPage)
         {
-            List<RightsU_Entities.Workflow_Module> lst = new List<RightsU_Entities.Workflow_Module>();
+            List<RightsU_Dapper.Entity.Workflow_Module> lst = new List<RightsU_Dapper.Entity.Workflow_Module>();
             int RecordCount = 0;
             RecordCount = lstWorkflow_Module_Searched.Count;
             if (RecordCount > 0)
@@ -212,12 +225,12 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindWorkflowSG(int WFCode, int BUCode,string Status)
         {
-            List<RightsU_Entities.Workflow_Role> lst = new List<RightsU_Entities.Workflow_Role>();
+            List<RightsU_Dapper.Entity.Workflow_Role> lst = new List<RightsU_Dapper.Entity.Workflow_Role>();
             int RecordCount = 0;
-            RecordCount = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == WFCode || x.Workflow_Code == 0).Where(x => x.EntityState != State.Deleted).ToList().Count();
+            RecordCount = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == WFCode || x.Workflow_Code == 0).ToList().Count();
             if (RecordCount > 0)
             {
-                lst = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == WFCode || x.Workflow_Code == 0).Where(x => x.EntityState != State.Deleted).ToList();
+                lst = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == WFCode || x.Workflow_Code == 0).ToList();
             }
             ViewData["SecurityGroup"] = lstSecurity_Group_Searched;
             ViewData["User"] = lstUser_Searched;
@@ -246,8 +259,8 @@ namespace RightsU_Plus.Controllers
                 {
                     TempData["View"] = "V";
                     ViewData["Status"] = "V";
-                    Workflow_Module_Service objService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
-                    RightsU_Entities.Workflow_Module objWorkflow = objService.GetById(WorkflowModuleCode);
+                   // Workflow_Module_Service objService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
+                    RightsU_Dapper.Entity.Workflow_Module objWorkflow = objWorkflowModuleService.GetByID(WorkflowModuleCode);
                     //ViewData["Reminder_Days"] = (new Workflow_Module_Role_Service()).SearchFor(x => x.Workflow_Module_Code == objWorkflow.Workflow_Module_Code).FirstOrDefault().Reminder_Days;
                     // TempData["BusinessUnit"] = new SelectList(lstBusiness_Unit_Searched.Where(x => x.Is_Active == "Y"), "Business_Unit_Code", "Business_Unit_Name", objWorkflow.Business_Unit_Code);
                     ViewData["MyWorkflow"] = objWorkflow;
@@ -261,12 +274,12 @@ namespace RightsU_Plus.Controllers
                 if (WorkflowModuleCode > 0)
                 {
 
-                    Workflow_Module_Service objService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
-                    RightsU_Entities.Workflow_Module objWorkflow = objService.GetById(WorkflowModuleCode);
+                    //Workflow_Module_Service objService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
+                    RightsU_Dapper.Entity.Workflow_Module objWorkflow = objWorkflowModuleService.GetByID(WorkflowModuleCode);
 
-                    List<RightsU_Entities.Workflow_Module> lstWorkflow_Module = new List<RightsU_Entities.Workflow_Module>();
+                    List<RightsU_Dapper.Entity.Workflow_Module> lstWorkflow_Module = new List<RightsU_Dapper.Entity.Workflow_Module>();
 
-                    lstWorkflow_Module = new Workflow_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit_Code == objWorkflow.Business_Unit_Code && x.Module_Code == objWorkflow.Module_Code).Where(x => x.Is_Active == "N").ToList();
+                    lstWorkflow_Module = objWorkflowModuleService.GetAll().Where(x => x.Business_Unit_Code == objWorkflow.Business_Unit_Code && x.Module_Code == objWorkflow.Module_Code).Where(x => x.Is_Active == "N").ToList();
                     ViewBag.HistoryModuleName = objWorkflow.System_Module.Module_Name;
                     ViewData["MyWorkflow"] = lstWorkflow_Module;
                 }
@@ -278,8 +291,8 @@ namespace RightsU_Plus.Controllers
                 if (WorkflowModuleCode > 0)
                 {
                     ViewData["Status"] = "U";
-                    Workflow_Module_Service objService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
-                    RightsU_Entities.Workflow_Module objWorkflow = objService.GetById(WorkflowModuleCode);
+                    //Workflow_Module_Service objService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
+                    RightsU_Dapper.Entity.Workflow_Module objWorkflow = objWorkflowModuleService.GetByID(WorkflowModuleCode);
                     //ViewData["Reminder_Days"] = (new Workflow_Module_Role_Service()).SearchFor(x => x.Workflow_Module_Code == objWorkflow.Workflow_Module_Code).FirstOrDefault().Reminder_Days;
                     ViewData["MyWorkflow"] = objWorkflow;
                 }
@@ -351,10 +364,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForAssignWorkflow), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForAssignWorkflow), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
             return rights;
         }
         public JsonResult SearchWorkflow(string searchText)
@@ -404,7 +417,7 @@ namespace RightsU_Plus.Controllers
             //var exceptionList = lstWorkflow_Module_Searched.Where(x => x.Module_Code == MNCode && x.Business_Unit_Code == BUCode && x.Is_Active == "Y").Select(x => x.Workflow_Code).ToList();
             //var query = lstWorkflow_Searched.Where(x => !exceptionList.Contains(x.Workflow_Code));
 
-            var query = new Workflow_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit_Code == BUCode).ToList();
+            var query = objWorkflowService.GetAll().Where(x => x.Business_Unit_Code == BUCode).ToList();
 
             Dictionary<string, object> objJson = new Dictionary<string, object>();
 
@@ -417,10 +430,10 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult BindWorkflowEdit(int AACode)
         {
-            List<RightsU_Entities.Workflow> lst_New_WorkFlow = new List<RightsU_Entities.Workflow>();
-            Workflow_Module_Service objWorkflowService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Workflow_Module objWorkflowModule = new RightsU_Entities.Workflow_Module();
-            objWorkflowModule = objWorkflowService.GetById(AACode);
+            List<RightsU_Dapper.Entity.Workflow> lst_New_WorkFlow = new List<RightsU_Dapper.Entity.Workflow>();
+            //Workflow_Module_Service objWorkflowService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Workflow_Module objWorkflowModule = new RightsU_Dapper.Entity.Workflow_Module();
+            objWorkflowModule = objWorkflowModuleService.GetByID(AACode);
 
             int MNCode = Convert.ToInt32(objWorkflowModule.Module_Code);
             int BUCode = Convert.ToInt32(objWorkflowModule.Business_Unit_Code);
@@ -435,7 +448,7 @@ namespace RightsU_Plus.Controllers
 
             //var query = lst_New_WorkFlow.Where(x => !exceptionList.Contains(x.Workflow_Code));
 
-            var query = new Workflow_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit_Code == BUCode && !exceptionList.Contains(x.Workflow_Code)).ToList();
+            var query = objWorkflowService.GetAll().Where(x => x.Business_Unit_Code == BUCode && !exceptionList.Contains(x.Workflow_Code)).ToList();
 
 
             Dictionary<string, object> objJson = new Dictionary<string, object>();
@@ -452,8 +465,8 @@ namespace RightsU_Plus.Controllers
         public JsonResult SaveWorkflowModule(FormCollection objFormCollection)
         {
 
-            Workflow_Module_Service objWorkflowService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Workflow_Module objWorkflowModule = new RightsU_Entities.Workflow_Module();
+           // Workflow_Module_Service objWorkflowService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Workflow_Module objWorkflowModule = new RightsU_Dapper.Entity.Workflow_Module();
 
             #region --FormCollection
             int WorkflowModuleCode = 0;
@@ -490,20 +503,21 @@ namespace RightsU_Plus.Controllers
             string status = "S", message = "Record {ACTION} successfully";
             if (WorkflowModuleCode > 0)
             {
-                Workflow_Module_Service objWorkflowService_Update = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Workflow_Module objWM_Update = new RightsU_Entities.Workflow_Module();
-                objWM_Update = objWorkflowService_Update.GetById(WorkflowModuleCode);
+                //Workflow_Module_Service objWorkflowService_Update = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Workflow_Module objWM_Update = new RightsU_Dapper.Entity.Workflow_Module();
+                objWM_Update = objWorkflowModuleService.GetByID(WorkflowModuleCode);
                 objWM_Update.Is_Active = "N";
                 objWM_Update.Last_Updated_Time = System.DateTime.Now;
                 objWM_Update.System_End_Date = New_ESD.AddDays(-1);
-                objWM_Update.EntityState = State.Modified;
+                //objWM_Update.EntityState = State.Modified;
                 objWM_Update.Last_Action_By = objLoginUser.Users_Code;
 
                 dynamic resultSet_Upt;
-                bool isValid = objWorkflowService_Update.Save(objWM_Update, out resultSet_Upt);
+                objWorkflowModuleService.UpdateEntity(objWM_Update);
+                bool isValid = true;// objWorkflowService_Update.Save(objWM_Update, out resultSet_Upt);
                 if (isValid)
                 {
-                    lstWorkflow_Module_Searched = lstWorkflow_Module = new Workflow_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+                    lstWorkflow_Module_Searched = lstWorkflow_Module = objWorkflowModuleService.GetAll().Where(x => x.Is_Active == "Y").ToList();
                 }
 
 
@@ -515,22 +529,22 @@ namespace RightsU_Plus.Controllers
                 objWorkflowModule.Effective_Start_Date = New_ESD;
                 objWorkflowModule.Ideal_Process_Days = 0;
                 objWorkflowModule.Is_Active = "Y";
-                objWorkflowModule.EntityState = State.Added;
+                //objWorkflowModule.EntityState = State.Added;
 
 
-                List<RightsU_Entities.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Entities.Workflow_Role>();
+                List<RightsU_Dapper.Entity.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Dapper.Entity.Workflow_Role>();
                 temp_lstWorkflow_Role = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == New_Workflow_Code).ToList();
 
                 if (temp_lstWorkflow_Role.Count > 0)
                 {
                     foreach (var item in temp_lstWorkflow_Role)
                     {
-                        RightsU_Entities.Workflow_Module_Role obj_WMR = new RightsU_Entities.Workflow_Module_Role();
+                        RightsU_Dapper.Entity.Workflow_Module_Role obj_WMR = new RightsU_Dapper.Entity.Workflow_Module_Role();
                         obj_WMR.Group_Level = item.Group_Level;
                         obj_WMR.Group_Code = item.Group_Code;
                         obj_WMR.Workflow_Role_Code = item.Workflow_Role_Code;
                         obj_WMR.Reminder_Days = item.Reminder_Days==null?0:item.Reminder_Days;
-                        obj_WMR.EntityState = State.Added;
+                       // obj_WMR.EntityState = State.Added;
                         objWorkflowModule.Workflow_Module_Role.Add(obj_WMR);
                     }
                 }
@@ -547,20 +561,20 @@ namespace RightsU_Plus.Controllers
                 objWorkflowModule.Ideal_Process_Days = 0;
                 objWorkflowModule.Is_Active = "Y";
                 objWorkflowModule.Last_Action_By = objLoginUser.Users_Code;
-                objWorkflowModule.EntityState = State.Added;
+                //objWorkflowModule.EntityState = State.Added;
 
-                List<RightsU_Entities.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Entities.Workflow_Role>();
+                List<RightsU_Dapper.Entity.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Dapper.Entity.Workflow_Role>();
                 temp_lstWorkflow_Role = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == Workflow_Code).ToList();
                 if (temp_lstWorkflow_Role.Count > 0)
                 {
                     foreach (var item in temp_lstWorkflow_Role)
                     {
-                        RightsU_Entities.Workflow_Module_Role obj_WMR = new RightsU_Entities.Workflow_Module_Role();
+                        RightsU_Dapper.Entity.Workflow_Module_Role obj_WMR = new RightsU_Dapper.Entity.Workflow_Module_Role();
                         obj_WMR.Group_Level = item.Group_Level;
                         obj_WMR.Group_Code = item.Group_Code;
                         obj_WMR.Workflow_Role_Code = item.Workflow_Role_Code;
                         obj_WMR.Reminder_Days = 0;
-                        obj_WMR.EntityState = State.Added;
+                       // obj_WMR.EntityState = State.Added;
                         objWorkflowModule.Workflow_Module_Role.Add(obj_WMR);
                     }
                 }
@@ -569,13 +583,14 @@ namespace RightsU_Plus.Controllers
             objWorkflowModule.Last_Action_By = objLoginUser.Users_Code;
             objWorkflowModule.Last_Updated_Time = System.DateTime.Now;
             dynamic resultSet;
-            bool isDuplicate = objWorkflowService.Validate(objWorkflowModule, out resultSet);
+            bool isDuplicate = true;// objWorkflowService.Validate(objWorkflowModule, out resultSet);
             if (isDuplicate)
             {
-                bool isValid = objWorkflowService.Save(objWorkflowModule, out resultSet);
+                objWorkflowModuleService.AddEntity(objWorkflowModule);
+                bool isValid = true;// objWorkflowService.Save(objWorkflowModule, out resultSet);
                 if (isValid)
                 {
-                    lstWorkflow_Module_Searched = lstWorkflow_Module = new Workflow_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+                    lstWorkflow_Module_Searched = lstWorkflow_Module = objWorkflowModuleService.GetAll().Where(x => x.Is_Active == "Y").ToList();
                     status = "S";
 
                     int recordLockingCode = Convert.ToInt32(objFormCollection["Record_Code"]);
@@ -589,13 +604,13 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             var obj = new
             {

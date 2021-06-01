@@ -16,24 +16,24 @@ namespace RightsU_Plus.Controllers
         private readonly Genres_Service objGenres_Service = new Genres_Service();
         private readonly USP_Service objProcedureService = new USP_Service();
         #region --Properties--
-        private List<RightsU_Dapper.Entity.Genres> lstGenre
+        private List<RightsU_Dapper.Entity.Genre> lstGenre
         {
             get
             {
                 if (Session["lstGenre"] == null)
-                    Session["lstGenre"] = new List<RightsU_Dapper.Entity.Genres>();
-                return (List<RightsU_Dapper.Entity.Genres>)Session["lstGenre"];
+                    Session["lstGenre"] = new List<RightsU_Dapper.Entity.Genre>();
+                return (List<RightsU_Dapper.Entity.Genre>)Session["lstGenre"];
             }
             set { Session["lstGenre"] = value; }
         }
 
-        private List<RightsU_Dapper.Entity.Genres> lstGenre_Searched
+        private List<RightsU_Dapper.Entity.Genre> lstGenre_Searched
         {
             get
             {
                 if (Session["lstGenre_Searched"] == null)
-                    Session["lstGenre_Searched"] = new List<RightsU_Dapper.Entity.Genres>();
-                return (List<RightsU_Dapper.Entity.Genres>)Session["lstGenre_Searched"];
+                    Session["lstGenre_Searched"] = new List<RightsU_Dapper.Entity.Genre>();
+                return (List<RightsU_Dapper.Entity.Genre>)Session["lstGenre_Searched"];
             }
             set { Session["lstGenre_Searched"] = value; }
         }
@@ -45,7 +45,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForGenres.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstGenre_Searched = lstGenre = (List<RightsU_Dapper.Entity.Genres>)objGenres_Service.GetList();
+            lstGenre_Searched = lstGenre = (List<RightsU_Dapper.Entity.Genre>)objGenres_Service.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -59,7 +59,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Genres_Code = genresCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Dapper.Entity.Genres> lst = new List<RightsU_Dapper.Entity.Genres>();
+            List<RightsU_Dapper.Entity.Genre> lst = new List<RightsU_Dapper.Entity.Genre>();
             int RecordCount = 0;
             RecordCount = lstGenre_Searched.Count;
             if (RecordCount > 0)
@@ -153,7 +153,7 @@ namespace RightsU_Plus.Controllers
             if (isLocked)
             {
                 //Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Dapper.Entity.Genres objGenre = objGenres_Service.GetGenresByID(genres_Code);
+                RightsU_Dapper.Entity.Genre objGenre = objGenres_Service.GetGenresByID(genres_Code);
                 objGenre.Is_Active = doActive;
                 objGenres_Service.UpdateGenres(objGenre);
                // objGenre.EntityState = State.Modified;
@@ -196,7 +196,7 @@ namespace RightsU_Plus.Controllers
                 message = objMessageKey.Recordupdatedsuccessfully;
 
             //Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Dapper.Entity.Genres objGenre = null;
+            RightsU_Dapper.Entity.Genre objGenre = null;
 
             if (genresCode > 0)
             {
@@ -206,7 +206,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                objGenre = new RightsU_Dapper.Entity.Genres();
+                objGenre = new RightsU_Dapper.Entity.Genre();
                // objGenres_Service.AddEntity(objGenre);
                 //objGenre.EntityState = State.Added;
                 objGenre.Inserted_On = DateTime.Now;

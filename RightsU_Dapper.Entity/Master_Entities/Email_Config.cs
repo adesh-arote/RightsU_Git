@@ -24,15 +24,15 @@ namespace RightsU_Dapper.Entity
         public string Days_Config { get; set; }
         public string Days_Freq { get; set; }
         public string Remarks { get; set; }
-        //[SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
-        //public string User_Count { get; set; }
-        //[SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
-        //public int Count { get; set; }
-        //[SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
-        //public int TotalCount { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        public string User_Count { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        public int Count { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        public int TotalCount { get; set; }
         [OneToMany]
         public virtual ICollection<Email_Config_Detail> Email_Config_Detail { get; set; }
         //public virtual ICollection<Email_Notification_Log> Email_Notification_Log { get; set; }

@@ -1,6 +1,6 @@
 ﻿@using UTOFrameWork.FrameworkClasses;
 @using System.Configuration;
-@model IEnumerable<RightsU_Entities.Amort_Rule_Details>
+@model IEnumerable<RightsU_Dapper.Entity.Amort_Rule_Details>
 @{
     Layout = null;
 }
@@ -54,7 +54,7 @@
              for (int i = 0; i < Model.Count(); i++)
              {
                  int count = Model.Count();
-                 RightsU_Entities.Amort_Rule_Details objARD = Model.ElementAt(i);
+                 RightsU_Dapper.Entity.Amort_Rule_Details objARD = Model.ElementAt(i);
             <tr>
                 @if (ViewBag.AmortDetailCommand == "Add")
                 { 
@@ -95,7 +95,7 @@ else if (ViewBag.RuleType == "P")
            for (int i = 0; i < Model.Count(); i++)
            {
                int count = Model.Count();
-               RightsU_Entities.Amort_Rule_Details objARD = Model.ElementAt(i);
+               RightsU_Dapper.Entity.Amort_Rule_Details objARD = Model.ElementAt(i);
             <tr id="trPriodAmortDeatil">
                 @if (ViewBag.AmortDetailCommand == "Add")
                 { 
@@ -135,7 +135,7 @@ else if (ViewBag.RuleType == "O")
             for (int i = 0; i < Model.Count(); i++)
             {
                 int count = Model.Count();
-                RightsU_Entities.Amort_Rule_Details objARD = Model.ElementAt(i);
+                RightsU_Dapper.Entity.Amort_Rule_Details objARD = Model.ElementAt(i);
             <tr>
                 @if (ViewBag.AmortDetailCommand == "Add")
                 {
@@ -243,7 +243,7 @@ else if (ViewBag.RuleType == "C")
             for (int i = 0; i < Model.Count(); i++)
             {
                 int count = Model.Count();
-                RightsU_Entities.Amort_Rule_Details objARD = Model.ElementAt(i);
+                RightsU_Dapper.Entity.Amort_Rule_Details objARD = Model.ElementAt(i);
                 if (ViewBag.AmortDetailCommand == "Add")
                 { 
                     if(i == 0)

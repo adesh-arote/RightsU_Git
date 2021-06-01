@@ -1,11 +1,11 @@
-﻿@model List<RightsU_Entities.Workflow_Module>
+﻿@model List<RightsU_Dapper.Entity.Workflow_Module>
 @using UTOFrameWork.FrameworkClasses;
 
 @{
-    List<RightsU_Entities.Workflow_Module> objWorkflow_Module = new List<RightsU_Entities.Workflow_Module>();
+    List<RightsU_Dapper.Entity.Workflow_Module> objWorkflow_Module = new List<RightsU_Dapper.Entity.Workflow_Module>();
     if (ViewData["MyWorkflow"] != "")
     {
-        objWorkflow_Module = (List<RightsU_Entities.Workflow_Module>)ViewData["MyWorkflow"];
+        objWorkflow_Module = (List<RightsU_Dapper.Entity.Workflow_Module>)ViewData["MyWorkflow"];
     }
 }
 

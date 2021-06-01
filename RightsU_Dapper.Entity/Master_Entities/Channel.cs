@@ -10,10 +10,10 @@ namespace RightsU_Dapper.Entity
     {
         public Channel()
         {
-            //this.Acq_Deal_Run = new HashSet<Acq_Deal_Run>();
-            //this.BVException_Channel = new HashSet<BVException_Channel>();
+            this.Acq_Deal_Run = new HashSet<Acq_Deal_Run>();
+            this.BVException_Channel = new HashSet<BVException_Channel>();
             //this.Channel_Entity = new HashSet<Channel_Entity>();
-            //this.Channel_Territory = new HashSet<Channel_Territory>();
+            this.Channel_Territory = new HashSet<Channel_Territory>();
             //this.RunDatas = new HashSet<RunData>();
             //this.Channel_Region_Mapping = new HashSet<Channel_Region_Mapping>();
             //this.IPR_Opp_Channel = new HashSet<IPR_Opp_Channel>();
@@ -27,7 +27,7 @@ namespace RightsU_Dapper.Entity
         public int? Channel_Code { get; set; }
         public string Channel_Name { get; set; }
         public string Channel_Id { get; set; }
-        [ForeignKeyReference(typeof(Genres))]
+        [ForeignKeyReference(typeof(Genre))]
         public Nullable<int> Genres_Code { get; set; }
         public Nullable<int> Entity_Code { get; set; }
         public string Entity_Type { get; set; }
@@ -54,11 +54,11 @@ namespace RightsU_Dapper.Entity
         public string Is_Parent_Child { get; set; }
         public Nullable<int> Parent_Channel_Code { get; set; }
         public Nullable<int> Channel_Category_Code { get; set; }
-        //public virtual ICollection<Acq_Deal_Run> Acq_Deal_Run { get; set; }
-        //public virtual ICollection<BVException_Channel> BVException_Channel { get; set; }
-        //public virtual ICollection<Channel_Entity> Channel_Entity { get; set; }
-        //public virtual Genre Genre { get; set; }
-        //public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
+        public virtual ICollection<Acq_Deal_Run> Acq_Deal_Run { get; set; }
+        public virtual ICollection<BVException_Channel> BVException_Channel { get; set; }
+       // public virtual ICollection<Channel_Entity> Channel_Entity { get; set; }
+        public virtual Genre Genre { get; set; }
+        public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
         //public virtual ICollection<RunData> RunDatas { get; set; }
         //public virtual ICollection<Channel_Region_Mapping> Channel_Region_Mapping { get; set; }
         //public virtual ICollection<IPR_Opp_Channel> IPR_Opp_Channel { get; set; }

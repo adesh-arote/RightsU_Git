@@ -3,8 +3,8 @@ using UTOFrameWork.FrameworkClasses;
 using System.Configuration;
 using System.Collections;
 
-using RightsU_BLL;
-using RightsU_Entities;
+//using RightsU_BLL;
+//using RightsU_Dapper.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,78 +14,84 @@ using System.Data;
 using System.Xml;
 using System.IO;
 using System.Text;
+using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity;
 
 namespace RightsU_Plus.Controllers
 {
     public class BV_LogController : BaseController
     {
+        private readonly System_Parameter_NewService objSPNService = new System_Parameter_NewService();
+        private readonly BMS_Log_Service objBMSLogService = new BMS_Log_Service();
+        private readonly USP_List_BMS_log_Service objUSPService =  new USP_List_BMS_log_Service();
+        private readonly BMS_All_Masters_Service objBMSAllMastersService = new BMS_All_Masters_Service();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
 
-
-        private List<RightsU_Entities.BMS_Log> lstBMS_Log
+        private List<RightsU_Dapper.Entity.BMS_Log> lstBMS_Log
         {
             get
             {
                 if (Session["lstBMS_Log"] == null)
-                    Session["lstBMS_Log"] = new List<RightsU_Entities.BMS_Log>();
-                return (List<RightsU_Entities.BMS_Log>)Session["lstBMS_Log"];
+                    Session["lstBMS_Log"] = new List<RightsU_Dapper.Entity.BMS_Log>();
+                return (List<RightsU_Dapper.Entity.BMS_Log>)Session["lstBMS_Log"];
             }
             set { Session["lstBMS_Log"] = value; }
         }
 
-        private List<RightsU_Entities.BMS_Log> lstBMS_Log_Searched
+        private List<RightsU_Dapper.Entity.BMS_Log> lstBMS_Log_Searched
         {
             get
             {
                 if (Session["lstBMS_Log_Searched"] == null)
-                    Session["lstBMS_Log_Searched"] = new List<RightsU_Entities.BMS_Log>();
-                return (List<RightsU_Entities.BMS_Log>)Session["lstBMS_Log_Searched"];
+                    Session["lstBMS_Log_Searched"] = new List<RightsU_Dapper.Entity.BMS_Log>();
+                return (List<RightsU_Dapper.Entity.BMS_Log>)Session["lstBMS_Log_Searched"];
             }
             set { Session["lstBMS_Log_Searched"] = value; }
         }
 
-        private List<RightsU_Entities.BMS_All_Masters> lstBMS_All_Masters
+        private List<RightsU_Dapper.Entity.BMS_All_Masters> lstBMS_All_Masters
         {
             get
             {
                 if (Session["lstBMS_All_Masters"] == null)
-                    Session["lstBMS_All_Masters"] = new List<RightsU_Entities.BMS_All_Masters>();
-                return (List<RightsU_Entities.BMS_All_Masters>)Session["lstBMS_All_Masters"];
+                    Session["lstBMS_All_Masters"] = new List<RightsU_Dapper.Entity.BMS_All_Masters>();
+                return (List<RightsU_Dapper.Entity.BMS_All_Masters>)Session["lstBMS_All_Masters"];
             }
             set { Session["lstBMS_All_Masters"] = value; }
         }
 
-        private List<RightsU_Entities.BMS_All_Masters> lstBMS_All_Masters_Searched
+        private List<RightsU_Dapper.Entity.BMS_All_Masters> lstBMS_All_Masters_Searched
         {
             get
             {
                 if (Session["lstBMS_All_Masters_Searched"] == null)
-                    Session["lstBMS_All_Masters_Searched"] = new List<RightsU_Entities.BMS_All_Masters>();
-                return (List<RightsU_Entities.BMS_All_Masters>)Session["lstBMS_All_Masters_Searched"];
+                    Session["lstBMS_All_Masters_Searched"] = new List<RightsU_Dapper.Entity.BMS_All_Masters>();
+                return (List<RightsU_Dapper.Entity.BMS_All_Masters>)Session["lstBMS_All_Masters_Searched"];
             }
             set { Session["lstBMS_All_Masters_Searched"] = value; }
         }
 
-        private RightsU_Entities.BMS_Log objBMSLog
+        private RightsU_Dapper.Entity.BMS_Log objBMSLog
         {
             get
             {
                 if (Session["objBMSLog"] == null)
-                    Session["objBMSLog"] = new RightsU_Entities.BMS_Log();
-                return (RightsU_Entities.BMS_Log)Session["objBMSLog"];
+                    Session["objBMSLog"] = new RightsU_Dapper.Entity.BMS_Log();
+                return (RightsU_Dapper.Entity.BMS_Log)Session["objBMSLog"];
             }
             set { Session["objCurrency"] = value; }
         }
 
-        private BMS_Log_Service objBMSLog_Service
-        {
-            get
-            {
-                if (Session["objBMSLog_Service"] == null)
-                    Session["objBMSLog_Service"] = new BMS_Log_Service(objLoginEntity.ConnectionStringName);
-                return (BMS_Log_Service)Session["objBMSLog_Service"];
-            }
-            set { Session["objBMSLog_Service"] = value; }
-        }
+        //private BMS_Log_Service objBMSLog_Service
+        //{
+        //    get
+        //    {
+        //        if (Session["objBMSLog_Service"] == null)
+        //            Session["objBMSLog_Service"] = new BMS_Log_Service(objLoginEntity.ConnectionStringName);
+        //        return (BMS_Log_Service)Session["objBMSLog_Service"];
+        //    }
+        //    set { Session["objBMSLog_Service"] = value; }
+        //}
 
 
 
@@ -114,9 +120,10 @@ namespace RightsU_Plus.Controllers
         private List<USP_List_BMS_log_Result> BindAllDropDowns()
         {
             int resultSet = 0;
-            ObjectParameter objresultSet = new ObjectParameter("resultSet", resultSet);
+            //ObjectParameter objresultSet = new ObjectParameter("resultSet", resultSet);
+            int objresultSet = 0;
             // List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service().USP_Get_Acq_PreReq("DTG,DTP,DTC,BUT,VEN,DIR,TIT", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
-            List<USP_List_BMS_log_Result> obj_USP_List_BMS_log_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_BMS_log("AND 1=1", 1, "Y", 10, objresultSet).ToList();
+            List<USP_List_BMS_log_Result> obj_USP_List_BMS_log_Result = objUSPService.USP_List_BMS_log("AND 1=1", 1, "Y", 10,out objresultSet).ToList();
 
             return obj_USP_List_BMS_log_Result;
         }
@@ -152,15 +159,15 @@ namespace RightsU_Plus.Controllers
 
             Dictionary<string, object> objJson = new Dictionary<string, object>();
 
-            int Original_Language_code = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "Title_OriginalLanguage").Select(i => i.Parameter_Value).FirstOrDefault());
+            int Original_Language_code = Convert.ToInt32(objSPNService.GetList().Where(y => y.Parameter_Name == "Title_OriginalLanguage").Select(i => i.Parameter_Value).FirstOrDefault());
 
             //SelectList lstModuleName = new SelectList(new BMS_All_Masters_Service().SearchFor(x => x.Is_Active == "Y")
             //   .Select(i => new { Display_Value = i.Order_Id, Display_Text = i.Module_Name }).ToList(),
             //   "Display_Value", "Display_Text", Module_Name.Split(','));
 
-            SelectList lstModuleName = new SelectList(new BMS_All_Masters_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(i => new { Display_Value = i.Order_Id, Display_Text = i.Module_Name }).ToList(),
+            SelectList lstModuleName = new SelectList(objBMSAllMastersService.GetAll().Where(x => true).Select(i => new { Display_Value = i.Order_Id, Display_Text = i.Module_Name }).ToList(),
                 "Display_Value", "Display_Text", Module_Name.Split(','));
-            SelectList lstMethodType = new SelectList(new BMS_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(i => i.Method_Type).Distinct().ToList());
+            SelectList lstMethodType = new SelectList(objBMSLogService.GetAll().Where(x => true).Select(i => i.Method_Type).Distinct().ToList());
             //.Select(i => new {Display_Text = i.Method_Type }).Distinct().ToList());
 
             //SelectList lstRecordStatus = new SelectList(new BMS_Log_Service().SearchFor(x => true).Select(i => i.Record_Status).Distinct().ToList());
@@ -209,9 +216,9 @@ namespace RightsU_Plus.Controllers
             List<USP_List_BMS_log_Result> obj_USP_List_BMS_log_Result = new List<USP_List_BMS_log_Result>();
 
             List<USP_List_BMS_log_Result> lst1 = new List<USP_List_BMS_log_Result>();
-            //List<RightsU_Entities.BMS_Log> lst1 = new List<RightsU_Entities.BMS_Log>();
+            //List<RightsU_Dapper.Entity.BMS_Log> lst1 = new List<RightsU_Dapper.Entity.BMS_Log>();
 
-            List<RightsU_Entities.BMS_Log> lst = new List<RightsU_Entities.BMS_Log>();
+            List<RightsU_Dapper.Entity.BMS_Log> lst = new List<RightsU_Dapper.Entity.BMS_Log>();
             int RecordCount = 0;
             RecordCount = lstBMS_Log_Searched.Count;
            
@@ -249,11 +256,12 @@ namespace RightsU_Plus.Controllers
 
                 }
                 int recordCount = 0;
-                ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
-                obj_USP_List_BMS_log_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_BMS_log(query, 1, "Y", 50, objRecordCount).ToList();
+              //  ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
+                int objRecordCount = 0;
+                obj_USP_List_BMS_log_Result = objUSPService.USP_List_BMS_log(query, 1, "Y", 50,out objRecordCount).ToList();
                 foreach (var item in obj_USP_List_BMS_log_Result)
                 {
-                    RightsU_Entities.BMS_Log objbvlog = new RightsU_Entities.BMS_Log();
+                    RightsU_Dapper.Entity.BMS_Log objbvlog = new RightsU_Dapper.Entity.BMS_Log();
                     objbvlog.BMS_Log_Code = item.BMS_Log_Code;
                     objbvlog.Module_Name = item.Module_Name;
                     objbvlog.Method_Type = item.Method_Type;
@@ -265,14 +273,14 @@ namespace RightsU_Plus.Controllers
                     objbvlog.Error_Description = item.Error_Description;
                     lst.Add(objbvlog);
                 }
-                ViewBag.RC = objRecordCount.Value;
+                ViewBag.RC = objRecordCount;
 
 
             
 
             var obj = new
             {
-                Record_Count = objRecordCount.Value
+                Record_Count = objRecordCount
             };
             return Json(obj);
         }
@@ -280,10 +288,10 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -317,9 +325,9 @@ namespace RightsU_Plus.Controllers
             List<USP_List_BMS_log_Result> obj_USP_List_BMS_log_Result = new List<USP_List_BMS_log_Result>();
 
             List<USP_List_BMS_log_Result> lst1 = new List<USP_List_BMS_log_Result>();
-            //List<RightsU_Entities.BMS_Log> lst1 = new List<RightsU_Entities.BMS_Log>();
+            //List<RightsU_Dapper.Entity.BMS_Log> lst1 = new List<RightsU_Dapper.Entity.BMS_Log>();
 
-            List<RightsU_Entities.BMS_Log> lst = new List<RightsU_Entities.BMS_Log>();
+            List<RightsU_Dapper.Entity.BMS_Log> lst = new List<RightsU_Dapper.Entity.BMS_Log>();
             int RecordCount = 0;
             RecordCount = lstBMS_Log_Searched.Count;
             if (ADSearch == "Y")
@@ -358,11 +366,12 @@ namespace RightsU_Plus.Controllers
 
                 }
                 int recordCount = 0;
-                ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
-                obj_USP_List_BMS_log_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_BMS_log(query, pageNo, "Y", pageSize, objRecordCount).ToList();
+                int objRecordCount = 0;
+                //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
+                obj_USP_List_BMS_log_Result = objUSPService.USP_List_BMS_log(query, pageNo, "Y", pageSize,out objRecordCount).ToList();
                 foreach (var item in obj_USP_List_BMS_log_Result)
                 {
-                    RightsU_Entities.BMS_Log objbvlog = new RightsU_Entities.BMS_Log();
+                    RightsU_Dapper.Entity.BMS_Log objbvlog = new RightsU_Dapper.Entity.BMS_Log();
                     objbvlog.BMS_Log_Code = item.BMS_Log_Code;
                     objbvlog.Module_Name = item.Module_Name;
                     objbvlog.Method_Type = item.Method_Type;
@@ -374,7 +383,7 @@ namespace RightsU_Plus.Controllers
                     objbvlog.Error_Description = item.Error_Description;
                     lst.Add(objbvlog);
                 }
-                ViewBag.RC = objRecordCount.Value;
+                ViewBag.RC = objRecordCount;
 
                
             }
@@ -400,24 +409,25 @@ namespace RightsU_Plus.Controllers
                         query = "AND 1=1";
                     }
 
-                    RightsU_Entities.BMS_Log objbvlog = new RightsU_Entities.BMS_Log();
+                    RightsU_Dapper.Entity.BMS_Log objbvlog = new RightsU_Dapper.Entity.BMS_Log();
 
                     //int resultSet = 0;
                     //ObjectParameter objresultSet = new ObjectParameter("resultSet", resultSet);
 
                     int recordCount = 0;
-                    ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
+                    int objRecordCount = 0;
+                    //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
 
 
-                    USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+                    //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
                     // lst = lstBMS_Log_Searched.Skip(noOfRecordSkip).Take(noOfRecordTake).OrderByDescending(a => a.Module_Name).ToList();
 
 
 
-                    lst1 = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_BMS_log(query, pageNo, "Y", pageSize, objRecordCount).ToList();
+                    lst1 = objUSPService.USP_List_BMS_log(query, pageNo, "Y", pageSize,out objRecordCount).ToList();
                     foreach (var item in lst1)
                     {
-                        RightsU_Entities.BMS_Log objbvlog1 = new RightsU_Entities.BMS_Log();
+                        RightsU_Dapper.Entity.BMS_Log objbvlog1 = new RightsU_Dapper.Entity.BMS_Log();
                         objbvlog1.BMS_Log_Code = item.BMS_Log_Code;
                         objbvlog1.Module_Name = item.Module_Name;
                         objbvlog1.Method_Type = item.Method_Type;
@@ -429,7 +439,7 @@ namespace RightsU_Plus.Controllers
                         objbvlog1.Error_Description = item.Error_Description;
                         lst.Add(objbvlog1);
                     }
-                    ViewBag.RC = objRecordCount.Value;
+                    ViewBag.RC = objRecordCount;
                     
                 }
             }
@@ -445,26 +455,28 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SearchBVLogList(string searchText)
         {
-            List<RightsU_Entities.BMS_Log> lstsearch = new List<RightsU_Entities.BMS_Log>();
-            List<RightsU_Entities.BMS_Log> lst = new List<RightsU_Entities.BMS_Log>();
+            List<RightsU_Dapper.Entity.BMS_Log> lstsearch = new List<RightsU_Dapper.Entity.BMS_Log>();
+            List<RightsU_Dapper.Entity.BMS_Log> lst = new List<RightsU_Dapper.Entity.BMS_Log>();
             List<USP_List_BMS_log_Result> lst1 = new List<USP_List_BMS_log_Result>();
-            RightsU_Entities.BMS_Log objbvlog = new RightsU_Entities.BMS_Log();
+            RightsU_Dapper.Entity.BMS_Log objbvlog = new RightsU_Dapper.Entity.BMS_Log();
 
             //int resultSet = 0;
             //ObjectParameter objresultSet = new ObjectParameter("resultSet", resultSet);
 
             int recordCount = 0;
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
+            int objRecordCount = 0;
+
+           // ObjectParameter objRecordCount = new ObjectParameter("RecordCount", recordCount);
 
 
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+            //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             // lst = lstBMS_Log_Searched.Skip(noOfRecordSkip).Take(noOfRecordTake).OrderByDescending(a => a.Module_Name).ToList();
 
 
-            lst1 = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_BMS_log("AND 1=1", 1, "Y", 50, objRecordCount).ToList();
+            lst1 = objUSPService.USP_List_BMS_log("AND 1=1", 1, "Y", 50,out objRecordCount).ToList();
             foreach (var item in lst1)
             {
-                RightsU_Entities.BMS_Log objbvlog1 = new RightsU_Entities.BMS_Log();
+                RightsU_Dapper.Entity.BMS_Log objbvlog1 = new RightsU_Dapper.Entity.BMS_Log();
                 objbvlog1.BMS_Log_Code = item.BMS_Log_Code;
                 objbvlog1.Module_Name = item.Module_Name;
                 objbvlog1.Method_Type = item.Method_Type;
@@ -487,10 +499,10 @@ namespace RightsU_Plus.Controllers
                         query = query + " OR  Request_Xml like '%" + searchText + "%'";
                         query = query + "   OR  Response_Xml like '%" + searchText + "%'  ";        
 
-                    lst1 = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_BMS_log(query, 1, "Y", 50, objRecordCount).ToList();
+                    lst1 = objUSPService.USP_List_BMS_log(query, 1, "Y", 50,out objRecordCount).ToList();
                     foreach (var item in lst1)
                     {
-                        RightsU_Entities.BMS_Log objbvlog1 = new RightsU_Entities.BMS_Log();
+                        RightsU_Dapper.Entity.BMS_Log objbvlog1 = new RightsU_Dapper.Entity.BMS_Log();
                         objbvlog1.BMS_Log_Code = item.BMS_Log_Code;
                         objbvlog1.Module_Name = item.Module_Name;
                         objbvlog1.Method_Type = item.Method_Type;
@@ -510,14 +522,14 @@ namespace RightsU_Plus.Controllers
 
             var obj = new
             {
-                Record_Count = objRecordCount.Value
+                Record_Count = objRecordCount
             };
             return Json(obj);
         }
 
         public ActionResult Index()
         {
-            lstBMS_All_Masters_Searched = lstBMS_All_Masters = new BMS_All_Masters_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstBMS_All_Masters_Searched = lstBMS_All_Masters = objBMSAllMastersService.GetAll().ToList();
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/BV_Log/Index.cshtml");
 
@@ -526,9 +538,9 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult ViewXML(int BMSLogCode, string commandName)
         {
-            BMS_Log_Service objBMS_Log_Service = new BMS_Log_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.BMS_Log objBMS_Log = new RightsU_Entities.BMS_Log();
-            objBMS_Log = objBMS_Log_Service.GetById(BMSLogCode);
+           // BMS_Log_Service objBMS_Log_Service = new BMS_Log_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.BMS_Log objBMS_Log = new RightsU_Dapper.Entity.BMS_Log();
+            objBMS_Log = objBMSLogService.GetByID(BMSLogCode);
 
             string type = "RES";
 

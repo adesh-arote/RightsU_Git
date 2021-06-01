@@ -1,34 +1,39 @@
-﻿using System;
+﻿using RightsU_Dapper.BLL.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_BLL;
-using RightsU_Entities;
+//using RightsU_BLL;
+//using RightsU_Dapper.Entity;
 using UTOFrameWork.FrameworkClasses;
 namespace RightsU_Plus.Controllers
 {
     public class SAP_WBSController : BaseController
     {
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+        private readonly SAP_WBS_Service objSAPWBSService = new SAP_WBS_Service();
+
+        
         #region --Properties--
-        private List<RightsU_Entities.SAP_WBS> lstSAP_WBS
+        private List<RightsU_Dapper.Entity.SAP_WBS> lstSAP_WBS
         {
             get
             {
                 if (Session["lstSAP_WBS"] == null)
-                    Session["lstSAP_WBS"] = new List<RightsU_Entities.SAP_WBS>();
-                return (List<RightsU_Entities.SAP_WBS>)Session["lstSAP_WBS"];
+                    Session["lstSAP_WBS"] = new List<RightsU_Dapper.Entity.SAP_WBS>();
+                return (List<RightsU_Dapper.Entity.SAP_WBS>)Session["lstSAP_WBS"];
             }
             set { Session["lstSAP_WBS"] = value; }
         }
 
-        private List<RightsU_Entities.SAP_WBS> lstSAP_WBS_Searched
+        private List<RightsU_Dapper.Entity.SAP_WBS> lstSAP_WBS_Searched
         {
             get
             {
                 if (Session["lstSAP_WBS_Searched"] == null)
-                    Session["lstSAP_WBS_Searched"] = new List<RightsU_Entities.SAP_WBS>();
-                return (List<RightsU_Entities.SAP_WBS>)Session["lstSAP_WBS_Searched"];
+                    Session["lstSAP_WBS_Searched"] = new List<RightsU_Dapper.Entity.SAP_WBS>();
+                return (List<RightsU_Dapper.Entity.SAP_WBS>)Session["lstSAP_WBS_Searched"];
             }
             set { Session["lstSAP_WBS_Searched"] = value; }
         }
@@ -39,7 +44,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForSAP_WBS.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstSAP_WBS_Searched = lstSAP_WBS = new SAP_WBS_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstSAP_WBS_Searched = lstSAP_WBS = objSAPWBSService.GetAll().ToList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -51,7 +56,7 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult BindSAP_WBSList(int pageNo, int recordPerPage, int sapWbsCode, string SortType = "")
         {
             ViewBag.SAP_WBS_Code = sapWbsCode;
-            List<RightsU_Entities.SAP_WBS> lst = new List<RightsU_Entities.SAP_WBS>();
+            List<RightsU_Dapper.Entity.SAP_WBS> lst = new List<RightsU_Dapper.Entity.SAP_WBS>();
             int RecordCount = 0;
             RecordCount = lstSAP_WBS_Searched.Count;
 
@@ -95,10 +100,10 @@ namespace RightsU_Plus.Controllers
         #endregion
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSAP_WBS), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSAP_WBS), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }

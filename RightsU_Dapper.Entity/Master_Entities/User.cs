@@ -4,8 +4,9 @@ namespace RightsU_Dapper.Entity
     using Dapper.SimpleSave;
     using System;
     using System.Collections.Generic;
+    using RightsU_Entities;
 
-    [Table("User")]
+    [Table("Users")]
     public partial class User
     {
         public User()
@@ -17,10 +18,10 @@ namespace RightsU_Dapper.Entity
             //this.Users_Password_Detail = new HashSet<Users_Password_Detail>();
             this.Users_Business_Unit = new HashSet<Users_Business_Unit>();
             //this.Glossary_AskExpert = new HashSet<Glossary_AskExpert>();
-            //this.MHUsers = new HashSet<MHUser>();
-            //this.Users_Configuration = new HashSet<Users_Configuration>();
-            //this.Users_Exclusion_Rights = new HashSet<Users_Exclusion_Rights>();
-            //this.Users_Detail = new HashSet<Users_Detail>();
+            this.MHUsers = new HashSet<MHUser>();
+            this.Users_Configuration = new HashSet<Users_Configuration>();
+            this.Users_Exclusion_Rights = new HashSet<Users_Exclusion_Rights>();
+            this.Users_Detail = new HashSet<Users_Detail>();
         }
         public int Users_Code { get; set; }
         public string Login_Name { get; set; }
@@ -72,10 +73,10 @@ namespace RightsU_Dapper.Entity
         //public virtual System_Language System_Language { get; set; }
         //public string DefaultEntityName { get; set; }
         //public string DefaultEntityLogoName { get; set; }
-        //public virtual ICollection<MHUser> MHUsers { get; set; }
-        //public virtual ICollection<Users_Configuration> Users_Configuration { get; set; }
-        //public virtual ICollection<Users_Exclusion_Rights> Users_Exclusion_Rights { get; set; }
-        //public virtual ICollection<Users_Detail> Users_Detail { get; set; }
+        public virtual ICollection<MHUser> MHUsers { get; set; }
+        public virtual ICollection<Users_Configuration> Users_Configuration { get; set; }
+        public virtual ICollection<Users_Exclusion_Rights> Users_Exclusion_Rights { get; set; }
+        public virtual ICollection<Users_Detail> Users_Detail { get; set; }
 
     }
 }

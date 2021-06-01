@@ -1,12 +1,9 @@
-﻿using Dapper;
-using Dapper.SimpleLoad;
+﻿using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
-using RightsU_Dapper.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace RightsU_Dapper.DAL.Infrastructure
 {
@@ -53,39 +50,20 @@ namespace RightsU_Dapper.DAL.Infrastructure
                 connection.Close();
             }
         }
-        public  T1 GetById<T1>(object param, Type[] additionalTypes = null)
+       
+        public T1 GetById<T1>(object param, Type[] additionalTypes = null)
         {
             using (var connection = dbConnection.Connection())
             {
                 connection.Open();
-
-                T1 obj = connection.AutoQuery<T1>(new Type[] { typeof(Music_Deal_Platform_Dapper)
-                    , typeof(Music_Deal_Language_Dapper)
-                    ,typeof(Music_Deal_DealType_Dapper)
-                    ,typeof(Music_Deal_Channel_Dapper)
-                    ,typeof(Music_Deal_Country_Dapper)
-                    ,typeof(Music_Deal_LinkShow_Dapper)
-                    ,typeof(Music_Deal_Vendor_Dapper)
-
-                }, param).FirstOrDefault();
+                var list = (dynamic)null;
+                if (additionalTypes == null)
+                    list = connection.AutoQuery<T1>(param).FirstOrDefault();
+                else
+                    list = connection.AutoQuery<T1>(additionalTypes, param).FirstOrDefault();
 
                 connection.Close();
-                return obj;
-            }
-        }
-
-        public T1 GetTalentById<T1>(object param, Type[] additionalTypes = null)
-        {
-            using (var connection = dbConnection.Connection())
-            {
-                connection.Open();
-                var list = (dynamic)null;                if (additionalTypes == null)
-                    list = connection.AutoQuery<T1>(param).FirstOrDefault();                else
-                    list = connection.AutoQuery<T1>(additionalTypes, param).FirstOrDefault();                connection.Close();                return list;
-                //T1 obj = connection.AutoQuery<T1>(param).FirstOrDefault();
-
-                //connection.Close();
-                //return obj;
+                return list;
             }
         }
         public  T1 GetById<T1, T2>(object param)

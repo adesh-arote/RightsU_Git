@@ -169,18 +169,18 @@ namespace RightsU_Plus.Controllers
                 Email_Config_Detail_User objECUD = objECD.Email_Config_Detail_User.Where(x => x.Dummy_Guid == DummyGuid).FirstOrDefault();
                 if (objECUD == null)
                     objECUD = new Email_Config_Detail_User();
-                ViewBag.lstBU = new MultiSelectList(objBusiness_UnitService.GetList().Where(x => x.Is_Active == "Y"), "Business_Unit_Code", "Business_Unit_Name", objECUD.Business_Unit_Codes.Split(',')).OrderBy(x => x.Text).ToList();
+                ViewBag.lstBU = new MultiSelectList(objBusiness_UnitService.GetAll().Where(x => x.Is_Active == "Y"), "Business_Unit_Code", "Business_Unit_Name", objECUD.Business_Unit_Codes.Split(',')).OrderBy(x => x.Text).ToList();
                 if (objECD.Email_Config.IsChannel == "Y")
                     ViewBag.lstChannel = new MultiSelectList(objChannelService.GetList().Where(x => x.Is_Active == "Y"), "Channel_Code", "Channel_Name", objECUD.Channel_Codes.Split(',')).OrderBy(x => x.Text).ToList();
             }
             if (CommandName == "ADD")
             {
                 if (objECD.Email_Config.IsBusinessUnit == "Y")
-                    ViewBag.lstBU = new MultiSelectList(objBusiness_UnitService.GetList().Where(x => x.Is_Active == "Y"), "Business_Unit_Code", "Business_Unit_Name").OrderBy(x => x.Text).ToList();
+                    ViewBag.lstBU = new MultiSelectList(objBusiness_UnitService.GetAll().Where(x => x.Is_Active == "Y"), "Business_Unit_Code", "Business_Unit_Name").OrderBy(x => x.Text).ToList();
                 if (objECD.Email_Config.IsChannel == "Y")
                     ViewBag.lstChannel = new MultiSelectList(objChannelService.GetList().Where(x => x.Is_Active == "Y"), "Channel_Code", "Channel_Name").OrderBy(x => x.Text).ToList();
                 if (objECD.Email_Config.IsBusinessUnit == "N")
-                    ViewBag.lstUsers = new MultiSelectList(objUserService.GetList().Where(x => x.Is_Active == "Y"), "Users_Code", "First_Name").OrderBy(x => x.Text).ToList();
+                    ViewBag.lstUsers = new MultiSelectList(objUserService.GetAll().Where(x => x.Is_Active == "Y"), "Users_Code", "First_Name").OrderBy(x => x.Text).ToList();
             }
             ViewBag.IsChannel = objECD.Email_Config.IsChannel;
             ViewBag.IsBusinessUnit = objECD.Email_Config.IsBusinessUnit;
@@ -242,7 +242,7 @@ namespace RightsU_Plus.Controllers
             if (BUCodes != null)
             {
                 List<User> lstU = new List<User>();
-                var newList = objUsers_Business_UnitService.GetList().Where(u => BUCodes.Contains(u.Business_Unit_Code.ToString())).
+                var newList = objUsers_Business_UnitService.GetAll().Where(u => BUCodes.Contains(u.Business_Unit_Code.ToString())).
                     GroupBy(s => new { s.Users_Code }).Where(s => s.Count() == BUCodes.Count() && s.Key != null)
                     .Select(s => s.Key).ToArray();
                 foreach (var a in newList)
@@ -251,13 +251,13 @@ namespace RightsU_Plus.Controllers
                     {
                         string c = a.Users_Code.ToString();
                         int b = Convert.ToInt32(a.Users_Code);
-                        User objUser = objUserService.GetList().Where(u => u.Users_Code == b && u.Is_Active == "Y").FirstOrDefault();
+                        User objUser = objUserService.GetAll().Where(u => u.Users_Code == b && u.Is_Active == "Y").FirstOrDefault();
 
                         if (objUser != null)
                             lstU.Add(objUser);
                     }
                 }
-                lstU = lstU.Union(objUserService.GetList().Where(u => selectedUsers.Contains(u.Users_Code.ToString())).ToList()).ToList();
+                lstU = lstU.Union(objUserService.GetAll().Where(u => selectedUsers.Contains(u.Users_Code.ToString())).ToList()).ToList();
                 lst = new SelectList(lstU.Select(x => new { Display_Value = x.Users_Code, Display_Text = x.First_Name + " " + x.Last_Name }).Distinct()
                , "Display_Value", "Display_Text", selectedUsers.Split(',')).OrderBy(x => x.Text).ToList();
                 selectedCcBcclist = lst;
@@ -298,7 +298,7 @@ namespace RightsU_Plus.Controllers
             {
                 if (BUCodes == null)
                 {
-                    lst = new MultiSelectList(objUserService.GetList().Where(x => x.Is_Active == "Y")
+                    lst = new MultiSelectList(objUserService.GetAll().Where(x => x.Is_Active == "Y")
                   .Select(x => new { Display_Value = x.Users_Code, Display_Text = x.First_Name + " " + x.Last_Name }).Distinct()
                  , "Display_Value", "Display_Text", selectedUsers.Split(',')).OrderBy(x => x.Text).ToList();
                     selectedCcBcclist = lst;
@@ -328,7 +328,7 @@ namespace RightsU_Plus.Controllers
             if (Type == "G")
             {
                 SecurityGroupCode = Convert.ToInt32(UsersCodes[0]);
-                UsersCodes = objUserService.GetList().Where(x => x.Security_Group_Code == SecurityGroupCode && x.Is_Active == "Y").Select(x => x.Users_Code.ToString()).ToArray();
+                UsersCodes = objUserService.GetAll().Where(x => x.Security_Group_Code == SecurityGroupCode && x.Is_Active == "Y").Select(x => x.Users_Code.ToString()).ToArray();
             }
             else if (Type == "U")
             {
@@ -501,7 +501,7 @@ namespace RightsU_Plus.Controllers
                                   select new { Business_Unit_Code = t1, User_Code = t2, Channel_Code = t3, Security_Group_Code = obj.Security_Group_Code };
 
                 var existRecordNew = from x in existRecord
-                                     from y in objUserService.GetList().Where(u => u.Is_Active == "Y")
+                                     from y in objUserService.GetAll().Where(u => u.Is_Active == "Y")
                    .Where(y => y.Security_Group_Code == x.Security_Group_Code)
                                      select new
                                      {
@@ -545,24 +545,24 @@ namespace RightsU_Plus.Controllers
             if (objECDU.CC_Users != "" && objECDU.CC_Users != null)
             {
                 string[] arrCcCodes = objECDU.CC_Users.Split(',');
-                objECDU.CC_User_Names = string.Join(", ", (objUserService.GetList().Where(x => arrCcCodes.Contains(x.Users_Code.ToString())
+                objECDU.CC_User_Names = string.Join(", ", (objUserService.GetAll().Where(x => arrCcCodes.Contains(x.Users_Code.ToString())
                ).Select(x => x.First_Name).ToList()));
             }
             if (objECDU.BCC_Users != "" && objECDU.BCC_Users != null)
             {
                 string[] arrBccCodes = objECDU.BCC_Users.Split(',');
-                objECDU.BCC_User_Names = string.Join(", ", (objUserService.GetList().Where(x => arrBccCodes.Contains(x.Users_Code.ToString())
+                objECDU.BCC_User_Names = string.Join(", ", (objUserService.GetAll().Where(x => arrBccCodes.Contains(x.Users_Code.ToString())
                 ).Select(x => x.First_Name).ToList()));
             }
             if (objECDU.User_Codes != "" && objECDU.User_Codes != null)
             {
                 string[] arrUserCodes = objECDU.User_Codes.Split(',');
-                objECDU.User_Names = string.Join(", ", (objUserService.GetList().Where(x => arrUserCodes.Contains(x.Users_Code.ToString())
+                objECDU.User_Names = string.Join(", ", (objUserService.GetAll().Where(x => arrUserCodes.Contains(x.Users_Code.ToString())
                ).Select(x => x.First_Name).ToList()));
             }
             if (objECDU.Business_Unit_Codes != "")
             {
-                objECDU.Business_Unit_Names = string.Join(", ", (objBusiness_UnitService.GetList().Where(x => arrBUCodes
+                objECDU.Business_Unit_Names = string.Join(", ", (objBusiness_UnitService.GetAll().Where(x => arrBUCodes
                 .Contains(x.Business_Unit_Code.ToString())
 
                 ).Select(x => x.Business_Unit_Name).ToList()));
@@ -577,7 +577,7 @@ namespace RightsU_Plus.Controllers
                 objECDU.Security_Group_Names = objSecurity_GroupService.GetList().Where(x => x.Security_Group_Code == objECDU.Security_Group_Code
                 && x.Is_Active == "Y").Select(x => x.Security_Group_Name).FirstOrDefault();
 
-                objECDU.User_Names = string.Join(", ", (objUserService.GetList().Where(x => x.Security_Group_Code == objECDU.Security_Group_Code
+                objECDU.User_Names = string.Join(", ", (objUserService.GetAll().Where(x => x.Security_Group_Code == objECDU.Security_Group_Code
                && x.Is_Active == "Y"
                && ((x.Users_Business_Unit.Where(y => arrBUCodes.Contains(y.Business_Unit_Code.ToString())).FirstOrDefault().Users_Code == x.Users_Code && objECDU.Business_Unit_Codes != "0") || objECDU.Business_Unit_Codes == "0")
                ).Select(x => x.First_Name).ToList()));

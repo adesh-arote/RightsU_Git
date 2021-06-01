@@ -14,7 +14,7 @@ namespace RightsU_Dapper.Entity
         public Nullable<int> Genres_Code { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual Genres Genre { get; set; }
+        public virtual Genre Genre { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         public virtual Title_Alternate Title_Alternate { get; set; }

@@ -1,10 +1,10 @@
-﻿@model List<RightsU_Entities.Vendor_Contacts>
+﻿@model List<RightsU_Dapper.Entity.Vendor_Contacts>
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
-    }  
+    }
 }
 <table class="table table-bordered table-hover" id="tblMusicLink">
     <thead>
@@ -14,36 +14,36 @@
             <th style="width:20%;">@objMessageKey.Email</th>
             <th style="width:15%;">@objMessageKey.PhoneNo.</th>
             <th style="width:20%;">@objMessageKey.ContactName</th>
-            @if(ViewBag.Mode != "V")
-            { 
-            <th style="width:15%;">@objMessageKey.Action</th>
+            @if (ViewBag.Mode != "V")
+            {
+                <th style="width:15%;">@objMessageKey.Action</th>
             }
         </tr>
     </thead>
     <tbody>
         @if (TempData["Action"] == "AddVendorContact")
         {
-        <tr>
-            <td align="center">
-                New No.
-            </td>
-            <td>
-                @Html.TextBox("Department", "", new { @class = "alpha", style = "width:90% ", maxlength = 30 })
-            </td>
-            <td>
-                @Html.TextBox("Email", "", new { @class = "email", style = "width:90% ", maxlength = 100 })
-            </td>
-            <td>
-                @Html.TextBox("Phone_No", "", new { @class = "numeric", style = "width:90% ", maxlength = 15 })
-            </td>
-            <td>
-                @Html.TextBox("Contact_Name", "", new { @class = "alpha", style = "width:90% ", maxlength = 30 })
-            </td>
-            <td align="center">
-                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveVendorContact()"></a>
-                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelVendorContact()"></a>
-            </td>
-        </tr>
+            <tr>
+                <td align="center">
+                    New No.
+                </td>
+                <td>
+                    @Html.TextBox("Department", "", new { @class = "alpha", style = "width:90% ", maxlength = 30 })
+                </td>
+                <td>
+                    @Html.TextBox("Email", "", new { @class = "email", style = "width:90% ", maxlength = 100 })
+                </td>
+                <td>
+                    @Html.TextBox("Phone_No", "", new { @class = "numeric", style = "width:90% ", maxlength = 15 })
+                </td>
+                <td>
+                    @Html.TextBox("Contact_Name", "", new { @class = "alpha", style = "width:90% ", maxlength = 30 })
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveVendorContact()"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelVendorContact()"></a>
+                </td>
+            </tr>
         }
         @{int rowNumber = 1; }
         @if (Model.Count > 0)
@@ -92,14 +92,14 @@
                         <td>
                             <span>@item.Contact_Name</span>
                         </td>
-@if (ViewBag.Mode != "V")
-{
-    <td align="center">
-        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditVendorContact('@item.Dummy_Guid','EDIT')"></a>
-        <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteVendorContact('@item.Dummy_Guid', false)"></a>
+                        @if (ViewBag.Mode != "V")
+                        {
+                            <td align="center">
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditVendorContact('@item.Dummy_Guid','EDIT')"></a>
+                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteVendorContact('@item.Dummy_Guid', false)"></a>
 
-    </td>
-}
+                            </td>
+                        }
                     </tr>
                 }
                 rowNumber++;
@@ -120,7 +120,7 @@
 
 
 <script>
-    $(document).ready(function () {     
+    $(document).ready(function () {
         $(".alpha").keypress(function (event) {
             debugger;
             var regex = new RegExp("^[a-zA-Z0-9 ]+$");
@@ -145,6 +145,6 @@
         }
         $(".numeric").keypress(function () {
             CheckNumeric(event);
-        });  
+        });
     });
 </script>

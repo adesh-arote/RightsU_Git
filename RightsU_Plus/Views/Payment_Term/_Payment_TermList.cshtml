@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.Payment_Terms>
+﻿@model List<RightsU_Dapper.Entity.Payment_Term>
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
@@ -43,7 +43,7 @@
                     @if (ViewBag.CommandName == "EDIT" && ViewBag.PaymentTermcode == item.Payment_Terms_Code)
                     {
                         <td>
-                            <input id="txtPaymentTermName_@item.Payment_Terms_Code" type="text" value="@item.Payment_Terms1" maxlength="100" style="width:80%;" />
+                            <input id="txtPaymentTermName_@item.Payment_Terms_Code" type="text" value="@item.Payment_Terms" maxlength="100" style="width:80%;" />
                         </td>
                         <td align="center">
                             <span>@strActive</span>
@@ -56,7 +56,7 @@
                     else
                     {
                         <td>
-                            <div>@item.Payment_Terms1</div>
+                            <div>@item.Payment_Terms</div>
                         </td>
                         <td align="center">
                             <span>@strActive</span>

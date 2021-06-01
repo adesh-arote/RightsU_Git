@@ -1,9 +1,9 @@
-﻿@model List<RightsU_Entities.Workflow>
+﻿@model List<RightsU_Dapper.Entity.Workflow>
 @{
-    RightsU_Entities.Workflow objWorkflow = new RightsU_Entities.Workflow();
+    RightsU_Dapper.Entity.Workflow objWorkflow = new RightsU_Dapper.Entity.Workflow();
     if (ViewData["MyWorkflow"] != "")
     {
-        objWorkflow = (RightsU_Entities.Workflow)ViewData["MyWorkflow"];
+        objWorkflow = (RightsU_Dapper.Entity.Workflow)ViewData["MyWorkflow"];
     }
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)

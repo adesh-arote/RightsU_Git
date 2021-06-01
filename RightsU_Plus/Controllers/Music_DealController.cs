@@ -145,19 +145,19 @@ namespace RightsU_Plus.Controllers
                     objMusicDeal.Version = (Convert.ToInt32(Convert.ToDouble(objMusicDeal.Version)) + 1).ToString("0000");
                 }
             }
-            objDeal_Schema.Module_Rights_List = new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Security_Group_Code == objLoginUser.Security_Group_Code
+            objDeal_Schema.Module_Rights_List = new RightsU_BLL.Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Security_Group_Code == objLoginUser.Security_Group_Code
                             && i.System_Module_Rights_Code == i.System_Module_Right.Module_Right_Code
                             && i.System_Module_Right.Module_Code == GlobalParams.ModuleCodeForMusicDeal)
                 .Select(i => i.System_Module_Right.Right_Code).Distinct().ToList();
 
-            ViewBag.EntityList = new SelectList(new Entity_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList(), "Entity_Code", "Entity_Name");
+            ViewBag.EntityList = new SelectList(new RightsU_BLL.Entity_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList(), "Entity_Code", "Entity_Name");
 
             string vendorCodes = string.Join(",", objMusicDeal.Music_Deal_Vendor.Select(x => x.Vendor_Code.ToString()).ToArray());
-            ViewBag.VendorList = new MultiSelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Vendor_Name).ToList(), "Vendor_Code", "Vendor_Name", vendorCodes.Split(','));
+            ViewBag.VendorList = new MultiSelectList(new RightsU_BLL. Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Vendor_Name).ToList(), "Vendor_Code", "Vendor_Name", vendorCodes.Split(','));
             ViewBag.MusicLabelList = new SelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Music_Label_Name).ToList(), "Music_Label_Code", "Music_Label_Name");
 
             string musicLangugaeCodes = string.Join(",", objMusicDeal.Music_Deal_Language.Select(x => x.Music_Language_Code.ToString()).ToArray());
-            ViewBag.TrackLanguageList = new MultiSelectList(new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Language_Name).ToList(), "Music_Language_Code", "Language_Name", musicLangugaeCodes.Split(','));
+            ViewBag.TrackLanguageList = new MultiSelectList(new RightsU_BLL.Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Language_Name).ToList(), "Music_Language_Code", "Language_Name", musicLangugaeCodes.Split(','));
 
             string channelCodes = string.Join(",", objMusicDeal.Music_Deal_Channel.Select(x => x.Channel_Code.ToString()).ToArray());
             ViewBag.ChannelList = new MultiSelectList(new RightsU_BLL.Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Channel_Name).ToList(), "Channel_Code", "Channel_Name", channelCodes.Split(','));

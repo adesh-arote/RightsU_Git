@@ -3,92 +3,106 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Entities;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity;
 
 namespace RightsU_Plus.Controllers
 {
     public class VendorController : BaseController
     {
+        private readonly System_Parameter_NewService objSPNService = new System_Parameter_NewService();
+        private readonly Vendor_Service objVendorService = new Vendor_Service();
+        private readonly Country_Service objCountry_Service = new Country_Service();
+        private readonly Vendor_Contacts_Service objVendorContactsService = new Vendor_Contacts_Service();
+        private readonly Party_Category_Service objParty_Category_Service = new Party_Category_Service();
+        private readonly Party_Group_Service objParty_Group_Service = new Party_Group_Service();
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+        private readonly Vendor_Country_Service objVendor_Country = new Vendor_Country_Service();
+        private readonly Role_Service objRole_Service = new Role_Service();
+
+      
+
         #region --- Properties ---
-        private List<RightsU_Entities.Vendor> lstVendor
+        private List<RightsU_Dapper.Entity.Vendor> lstVendor
         {
             get
             {
                 if (Session["lstVendor"] == null)
-                    Session["lstVendor"] = new List<RightsU_Entities.Vendor>();
-                return (List<RightsU_Entities.Vendor>)Session["lstVendor"];
+                    Session["lstVendor"] = new List<RightsU_Dapper.Entity.Vendor>();
+                return (List<RightsU_Dapper.Entity.Vendor>)Session["lstVendor"];
             }
             set { Session["lstVendor"] = value; }
         }
-        private List<RightsU_Entities.Vendor> lstVendor_Searched
+        private List<RightsU_Dapper.Entity.Vendor> lstVendor_Searched
         {
             get
             {
                 if (Session["lstVendor_Searched"] == null)
-                    Session["lstVendor_Searched"] = new List<RightsU_Entities.Vendor>();
-                return (List<RightsU_Entities.Vendor>)Session["lstVendor_Searched"];
+                    Session["lstVendor_Searched"] = new List<RightsU_Dapper.Entity.Vendor>();
+                return (List<RightsU_Dapper.Entity.Vendor>)Session["lstVendor_Searched"];
             }
             set { Session["lstVendor_Searched"] = value; }
         }
-        private List<RightsU_Entities.Vendor_Contacts> lstVendorContact
+        private List<RightsU_Dapper.Entity.Vendor_Contacts> lstVendorContact
         {
             get
             {
                 if (Session["lstVendorContact"] == null)
-                    Session["lstVendorContact"] = new List<RightsU_Entities.Vendor_Contacts>();
-                return (List<RightsU_Entities.Vendor_Contacts>)Session["lstVendorContact"];
+                    Session["lstVendorContact"] = new List<RightsU_Dapper.Entity.Vendor_Contacts>();
+                return (List<RightsU_Dapper.Entity.Vendor_Contacts>)Session["lstVendorContact"];
             }
             set { Session["lstVendorContact"] = value; }
         }
-        private List<RightsU_Entities.Vendor_Contacts> lstVendorContact_Searched
+        private List<RightsU_Dapper.Entity.Vendor_Contacts> lstVendorContact_Searched
         {
             get
             {
                 if (Session["lstVendorContact_Searched"] == null)
-                    Session["lstVendorContact_Searched"] = new List<RightsU_Entities.Vendor_Contacts>();
-                return (List<RightsU_Entities.Vendor_Contacts>)Session["lstVendorContact_Searched"];
+                    Session["lstVendorContact_Searched"] = new List<RightsU_Dapper.Entity.Vendor_Contacts>();
+                return (List<RightsU_Dapper.Entity.Vendor_Contacts>)Session["lstVendorContact_Searched"];
             }
             set { Session["lstVendorContact_Searched"] = value; }
         }
-        private List<RightsU_Entities.Country> lstCountry
+        private List<RightsU_Dapper.Entity.Country> lstCountry
         {
             get
             {
                 if (Session["lstCountry"] == null)
-                    Session["lstCountry"] = new List<RightsU_Entities.Country>();
-                return (List<RightsU_Entities.Country>)Session["lstCountry"];
+                    Session["lstCountry"] = new List<RightsU_Dapper.Entity.Country>();
+                return (List<RightsU_Dapper.Entity.Country>)Session["lstCountry"];
             }
             set { Session["lstCountry"] = value; }
         }
-        private List<RightsU_Entities.Country> lstCountry_Searched
+        private List<RightsU_Dapper.Entity.Country> lstCountry_Searched
         {
             get
             {
                 if (Session["lstCountry_Searched"] == null)
-                    Session["lstCountry_Searched"] = new List<RightsU_Entities.Country>();
-                return (List<RightsU_Entities.Country>)Session["lstCountry_Searched"];
+                    Session["lstCountry_Searched"] = new List<RightsU_Dapper.Entity.Country>();
+                return (List<RightsU_Dapper.Entity.Country>)Session["lstCountry_Searched"];
             }
             set { Session["lstCountry_Searched"] = value; }
         }
-        private List<RightsU_Entities.Role> lstRole
+        private List<RightsU_Dapper.Entity.Role> lstRole
         {
             get
             {
                 if (Session["lstRole"] == null)
-                    Session["lstRole"] = new List<RightsU_Entities.Role>();
-                return (List<RightsU_Entities.Role>)Session["lstRole"];
+                    Session["lstRole"] = new List<RightsU_Dapper.Entity.Role>();
+                return (List<RightsU_Dapper.Entity.Role>)Session["lstRole"];
             }
             set { Session["lstRole"] = value; }
         }
-        private List<RightsU_Entities.Role> lstRole_Searched
+        private List<RightsU_Dapper.Entity.Role> lstRole_Searched
         {
             get
             {
                 if (Session["lstRole_Searched"] == null)
-                    Session["lstRole_Searched"] = new List<RightsU_Entities.Role>();
-                return (List<RightsU_Entities.Role>)Session["lstRole_Searched"];
+                    Session["lstRole_Searched"] = new List<RightsU_Dapper.Entity.Role>();
+                return (List<RightsU_Dapper.Entity.Role>)Session["lstRole_Searched"];
             }
             set { Session["lstRole_Searched"] = value; }
         }
@@ -107,12 +121,18 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
+        Type[] RelationList = new Type[] { typeof(Vendor_Country),
+                        typeof(Vendor_Contacts),
+                        typeof(Vendor_Role),
+                        typeof(Party_Category)
+                        
+            };
         #endregion
 
         #region --- List And Binding ---
         public ViewResult Index()
         {
-           string VendorModuleCode = Request.QueryString["modulecode"];
+            string VendorModuleCode = Request.QueryString["modulecode"];
             if (VendorModuleCode == "10")
             {
                 LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForVendor);
@@ -127,20 +147,20 @@ namespace RightsU_Plus.Controllers
             else
             {
                 LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForCustomer);
-                ModuleCode = GlobalParams.ModuleCodeForCustomer.ToString();            
+                ModuleCode = GlobalParams.ModuleCodeForCustomer.ToString();
             }
 
             return View("~/Views/Vendor/Index.cshtml");
         }
         public PartialViewResult BindVendorList(int pageNo, int recordPerPage, string sortType)
         {
-            List<RightsU_Entities.Vendor> lst = new List<RightsU_Entities.Vendor>();
+            List<RightsU_Dapper.Entity.Vendor> lst = new List<RightsU_Dapper.Entity.Vendor>();
             int RecordCount = 0;
             if (ModuleCode == "10")
                 lstVendor_Searched = lstVendor_Searched.Where(w => w.Party_Type == "V").ToList();
             else
                 lstVendor_Searched = lstVendor_Searched.Where(w => w.Party_Type == "C").ToList();
-            
+
             RecordCount = lstVendor_Searched.Count;
             if (RecordCount > 0)
             {
@@ -154,30 +174,33 @@ namespace RightsU_Plus.Controllers
                     lst = lstVendor_Searched.OrderByDescending(o => o.Vendor_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
             ViewBag.UserModuleRights = GetUserModuleRights();
+
             return PartialView("~/Views/Vendor/_VendorList.cshtml", lst);
         }
-        public PartialViewResult BindVendorContact(int VendorCode ,string Mode)
+        public PartialViewResult BindVendorContact(int VendorCode, string Mode)
         {
-            List<RightsU_Entities.Vendor_Contacts> lst = new List<RightsU_Entities.Vendor_Contacts>();
+            List<RightsU_Dapper.Entity.Vendor_Contacts> lst = new List<RightsU_Dapper.Entity.Vendor_Contacts>();
             int RecordCount = 0;
             ViewBag.Mode = Mode;
-            RecordCount = lstVendorContact_Searched.Where(x => x.Vendor_Code == VendorCode || x.Vendor_Code == 0).Where(x => x.EntityState != State.Deleted).ToList().Count();
+            RecordCount = lstVendorContact_Searched.Where(x => x.Vendor_Code == VendorCode || x.Vendor_Code == 0).ToList().Count();
+            //.Where(x => x.EntityState != State.Deleted).ToList().Count();
             if (RecordCount > 0)
             {
-                lst = lstVendorContact_Searched.Where(x => x.Vendor_Code == VendorCode || x.Vendor_Code == 0).Where(x => x.EntityState != State.Deleted).ToList();
+                lst = lstVendorContact_Searched.Where(x => x.Vendor_Code == VendorCode || x.Vendor_Code == 0).ToList();
             }
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Vendor/_Add_Edit_Vendor.cshtml", lst);
         }
         public PartialViewResult BindPartialPages(string key, int VendorCode)
         {
+           
             string ModuleName = "";
             ViewBag.isProdHouse = GetUserModuleRights().Contains(GlobalParams.RightCodeForProductionHouseUser.ToString());
-            string AllowShortCode = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "allow_ShortCodeFor_Vendor").Select(s => s.Parameter_Value).FirstOrDefault();
+            string AllowShortCode = objSPNService.GetList().Where(s => s.Parameter_Name == "allow_ShortCodeFor_Vendor").Select(s => s.Parameter_Value).FirstOrDefault();
             ViewBag.AllowShortCode = AllowShortCode;
-            ViewBag.IsAllowPartyMaster = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "IsAllowPartyMaster").Select(w => w.Parameter_Value).FirstOrDefault();
-            Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Vendor objVendor = null;
+            ViewBag.IsAllowPartyMaster = objSPNService.GetList().Where(s => s.Parameter_Name == "IsAllowPartyMaster").Select(w => w.Parameter_Value).FirstOrDefault();
+            //Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Vendor objVendor = null;
             if (key == "LIST")
             {
                 ViewBag.Code = ModuleCode;
@@ -187,19 +210,20 @@ namespace RightsU_Plus.Controllers
                 lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
                 lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameDesc, Value = "ND" });
                 ViewBag.SortType = lstSort;
-                lstRole_Searched = lstRole_Searched = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Role_Type.Contains("V")).ToList();
-                lstCountry_Searched = lstCountry = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
-                if (ModuleCode == "10"){
-                    lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Party_Type == "V").OrderByDescending(o => o.Last_Updated_Time).ToList();
-                    ModuleName = "Party";                    
+                lstRole_Searched = lstRole_Searched = objRole_Service.GetList().Where(x => x.Role_Type != null && x.Role_Type.Trim().Contains("V")).ToList();
+                lstCountry_Searched = lstCountry = objCountry_Service.GetList().Where(x => x.Is_Active == "Y").ToList();
+                if (ModuleCode == "10")
+                {
+                    lstVendor_Searched = lstVendor = objVendorService.GetAll(RelationList).Where(x => true && x.Party_Type == "V").OrderByDescending(o => o.Last_Updated_Time).ToList();
+                    ModuleName = "Party";
                 }
                 else
                 {
-                    lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Party_Type == "C").OrderByDescending(o => o.Last_Updated_Time).ToList();
-                     ModuleName = "Customer";
+                    lstVendor_Searched = lstVendor = objVendorService.GetAll(RelationList).Where(x => true && x.Party_Type == "C").OrderByDescending(o => o.Last_Updated_Time).ToList();
+                    ModuleName = "Customer";
                 }
                 ViewBag.ModuleName = ModuleName;
-                lstVendorContact_Searched = lstVendorContact = new Vendor_Contacts_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+                lstVendorContact_Searched = lstVendorContact = objVendorContactsService.GetAll().ToList();
                 ViewBag.UserModuleRights = GetUserModuleRights();
                 return PartialView("~/Views/Vendor/_Vendor.cshtml");
             }
@@ -211,7 +235,8 @@ namespace RightsU_Plus.Controllers
                 {
                     ViewBag.Mode = "";
                     ViewData["Status"] = "U";
-                    objVendor = objService.GetById(VendorCode);
+
+                    objVendor = objVendorService.GetByID(VendorCode, RelationList);
 
                     ViewData["MyVendor"] = objVendor;
                     #region  --- Country ---
@@ -220,7 +245,7 @@ namespace RightsU_Plus.Controllers
                     foreach (var country in strCode)
                     {
                         int i = Convert.ToInt32(country.Country_Code);
-                        RightsU_Entities.Country objCountry = lstCountry_Searched.Where(x => x.Country_Code == i).SingleOrDefault();
+                        RightsU_Dapper.Entity.Country objCountry = lstCountry_Searched.Where(x => x.Country_Code == i).SingleOrDefault();
                         string CountryName = objCountry.Country_Name;
                         SelectListItem selectList = new SelectListItem()
                         {
@@ -230,7 +255,7 @@ namespace RightsU_Plus.Controllers
                         };
                         listSelectListItems.Add(selectList);
                     }
-                    List<RightsU_Entities.Country> temp_lstCountry = new List<RightsU_Entities.Country>();
+                    List<RightsU_Dapper.Entity.Country> temp_lstCountry = new List<RightsU_Dapper.Entity.Country>();
                     temp_lstCountry = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "N").ToList(); ;
                     foreach (var item in strCode)
                     {
@@ -238,7 +263,7 @@ namespace RightsU_Plus.Controllers
                         var akshay = lstCountry_Searched.First(x => x.Country_Code == i);
                         temp_lstCountry.Remove(akshay);
                     }
-                    foreach (RightsU_Entities.Country city in temp_lstCountry)
+                    foreach (RightsU_Dapper.Entity.Country city in temp_lstCountry)
                     {
                         SelectListItem selectList = new SelectListItem()
                         {
@@ -255,7 +280,7 @@ namespace RightsU_Plus.Controllers
                     foreach (var country in strCode_Theterical)
                     {
                         int i = Convert.ToInt32(country.Country_Code);
-                        RightsU_Entities.Country objCountry = lstCountry_Searched.Where(x => x.Country_Code == i).SingleOrDefault();
+                        RightsU_Dapper.Entity.Country objCountry = lstCountry_Searched.Where(x => x.Country_Code == i).SingleOrDefault();
                         string CountryName = objCountry.Country_Name;
                         SelectListItem selectList = new SelectListItem()
                         {
@@ -265,7 +290,7 @@ namespace RightsU_Plus.Controllers
                         };
                         listSelectListItems_Theatrical.Add(selectList);
                     }
-                    List<RightsU_Entities.Country> temp_lstCountry_Theaterical = new List<RightsU_Entities.Country>();
+                    List<RightsU_Dapper.Entity.Country> temp_lstCountry_Theaterical = new List<RightsU_Dapper.Entity.Country>();
                     temp_lstCountry_Theaterical = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "Y").ToList(); ;
                     foreach (var item in strCode_Theterical)
                     {
@@ -273,7 +298,7 @@ namespace RightsU_Plus.Controllers
                         var lstCountry = lstCountry_Searched.First(x => x.Country_Code == i);
                         temp_lstCountry_Theaterical.Remove(lstCountry);
                     }
-                    foreach (RightsU_Entities.Country city in temp_lstCountry_Theaterical)
+                    foreach (RightsU_Dapper.Entity.Country city in temp_lstCountry_Theaterical)
                     {
                         SelectListItem selectList = new SelectListItem()
                         {
@@ -283,11 +308,11 @@ namespace RightsU_Plus.Controllers
                         listSelectListItems_Theatrical.Add(selectList);
                     }
                     TempData["Theatrical"] = listSelectListItems_Theatrical;
-                    Syn_Deal_Service objSDS = new Syn_Deal_Service(objLoginEntity.ConnectionStringName);
-                    List<Syn_Deal> lstSyn_Deal = objSDS.SearchFor(s => s.Vendor_Code == VendorCode).ToList();
+                    RightsU_BLL.Syn_Deal_Service objSDS = new RightsU_BLL.Syn_Deal_Service(objLoginEntity.ConnectionStringName);
+                    List<RightsU_Entities.Syn_Deal> lstSyn_Deal = objSDS.SearchFor(s => s.Vendor_Code == VendorCode).ToList();
 
-                    Acq_Deal_Service objADS = new Acq_Deal_Service(objLoginEntity.ConnectionStringName);
-                    List<Acq_Deal> lstAcq_Deal = objADS.SearchFor(s => s.Vendor_Code == VendorCode).ToList();
+                    RightsU_BLL.Acq_Deal_Service objADS = new RightsU_BLL.Acq_Deal_Service(objLoginEntity.ConnectionStringName);
+                    List<RightsU_Entities.Acq_Deal> lstAcq_Deal = objADS.SearchFor(s => s.Vendor_Code == VendorCode).ToList();
 
                     var ListSType = lstSyn_Deal.Select(x => x.Customer_Type).Distinct().ToList();
                     var ListAType = lstAcq_Deal.Select(a => a.Role_Code).Distinct().ToList();
@@ -297,34 +322,40 @@ namespace RightsU_Plus.Controllers
                     ViewData["ListSType"] = ListSType;
                     ViewData["ListAType"] = ListAType;
                     #endregion
-
                     #region -----type-----
-                    List<Role> lstRole = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Role_Type.Contains("V")).OrderBy(o => o.Role_Name).ToList();
+                    List<RightsU_Dapper.Entity.Role> lstRole = objRole_Service.GetList().Where(w => w.Role_Type != null && w.Role_Type.Contains("V")).OrderBy(o => o.Role_Name).ToList();
                     var roleCodes = objVendor.Vendor_Role.Select(s => s.Role_Code).ToArray();
                     //var roleCodes = new[] { 8, 29 };
-                   // ViewBag.RoleList = new MultiSelectList(lstRole, "Role_Code", "Role_Name", new[] { 8, 29 });
+                    // ViewBag.RoleList = new MultiSelectList(lstRole, "Role_Code", "Role_Name", new[] { 8, 29 });
                     TempData["RoleList"] = new MultiSelectList(lstRole, "Role_Code", "Role_Name", roleCodes);
                     #endregion
-                    List<RightsU_Entities.Party_Category> lstPartyCategory = new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+                    List<RightsU_Dapper.Entity.Party_Category> lstPartyCategory = objParty_Category_Service.GetList().Where(x => x.Is_Active == "Y").ToList();
                     var PartyCategoryCode = objVendor.Party_Category_Code;
                     ViewBag.PartyCategory = new SelectList(lstPartyCategory, "Party_Category_Code", "Party_Category_Name", PartyCategoryCode);
                     PartyMasterCode = Convert.ToInt32(objVendor.Party_Group_Code);
 
                 }
-                else if(key == "VIEW")
+                else if (key == "VIEW")
                 {
-                    objVendor = objService.GetById(VendorCode);
+                    
+                    objVendor = objVendorService.GetByID(VendorCode, RelationList);
                     ViewBag.Mode = "V";
                     ViewData["MyVendor"] = objVendor;
+                    ViewData["Role"] = lstRole_Searched;
+                    ViewData["Country"] = lstCountry_Searched;
+                    ViewData["Theatrical"] = lstCountry_Searched;
+                    ViewBag.PartyMasterCode = Convert.ToInt32(objVendor.Party_Group_Code);
+                    ViewData["PartyList"] = objParty_Group_Service.GetAll().OrderBy(o => o.Party_Group_Name).ToList();
+
                 }
                 else
                 {
                     ViewBag.Mode = "";
-                    List<Role> lstRole = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Role_Type.Contains("V")).OrderBy(o => o.Role_Name).ToList();
+                    List<RightsU_Dapper.Entity.Role> lstRole = objRole_Service.GetList().Where(w => w.Role_Type != null && w.Role_Type.Contains("V")).OrderBy(o => o.Role_Name).ToList();
                     TempData["RoleList"] = new MultiSelectList(lstRole, "Role_Code", "Role_Name");
                     List<SelectListItem> lstRoles = new List<SelectListItem>();
-                    List<RightsU_Entities.Role> temp_lstRoles = lstRole_Searched.Where(x => x.Role_Type.Contains("V")).ToList();
-                    foreach (RightsU_Entities.Role city in temp_lstRoles)
+                    List<RightsU_Dapper.Entity.Role> temp_lstRoles = lstRole_Searched.Where(x => x.Role_Type.Contains("V")).ToList();
+                    foreach (RightsU_Dapper.Entity.Role city in temp_lstRoles)
                     {
                         SelectListItem selectList = new SelectListItem()
                         {
@@ -338,8 +369,8 @@ namespace RightsU_Plus.Controllers
                     ViewData["MyVendor"] = "";
                     #region == country & theterical
                     List<SelectListItem> listSelectListItems = new List<SelectListItem>();
-                    List<RightsU_Entities.Country> temp_lstCountry = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "N").ToList();
-                    foreach (RightsU_Entities.Country city in temp_lstCountry)
+                    List<RightsU_Dapper.Entity.Country> temp_lstCountry = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "N").ToList();
+                    foreach (RightsU_Dapper.Entity.Country city in temp_lstCountry)
                     {
                         SelectListItem selectList = new SelectListItem()
                         {
@@ -350,8 +381,8 @@ namespace RightsU_Plus.Controllers
                     }
                     TempData["Country"] = listSelectListItems;
                     List<SelectListItem> listSelectListItems_Theatrical = new List<SelectListItem>();
-                    List<RightsU_Entities.Country> temp_lstTheatrical = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "Y").ToList();
-                    foreach (RightsU_Entities.Country city in temp_lstTheatrical)
+                    List<RightsU_Dapper.Entity.Country> temp_lstTheatrical = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "Y").ToList();
+                    foreach (RightsU_Dapper.Entity.Country city in temp_lstTheatrical)
                     {
                         SelectListItem selectList = new SelectListItem()
                         {
@@ -362,11 +393,11 @@ namespace RightsU_Plus.Controllers
                     }
                     TempData["Theatrical"] = listSelectListItems_Theatrical;
                     #endregion
-                    List<RightsU_Entities.Party_Category> lstPartyCategory = new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+                    List<RightsU_Dapper.Entity.Party_Category> lstPartyCategory = objParty_Category_Service.GetList().Where(x => x.Is_Active == "Y").ToList();
                     ViewBag.PartyCategory = new SelectList(lstPartyCategory, "Party_Category_Code", "Party_Category_Name");
                 }
-                List<SelectListItem> PartySelectList  = new List<SelectListItem>(); 
-                PartySelectList = new SelectList(new Party_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderBy(o => o.Party_Group_Name), "Party_Group_Code", "Party_Group_Name", PartyMasterCode).ToList();
+                List<SelectListItem> PartySelectList = new List<SelectListItem>();
+                PartySelectList = new SelectList(objParty_Group_Service.GetAll().OrderBy(o => o.Party_Group_Name), "Party_Group_Code", "Party_Group_Name", PartyMasterCode).ToList();
                 PartySelectList.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
                 ViewBag.PartyMasterList = PartySelectList;
 
@@ -375,8 +406,6 @@ namespace RightsU_Plus.Controllers
             }
         }
         #endregion
-
-
 
         #region  --- Other Methods ---
 
@@ -426,18 +455,18 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new List<string>();
+            string lstRights;
             if (ModuleCode == "10")
             {
-               lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForVendor), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
+                lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForVendor), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             }
             else
             {
-               lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForCustomer), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+                lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForCustomer), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             }
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
             return rights;
         }
         protected List<T> CompareLists<T>(List<T> FirstList, List<T> SecondList, IEqualityComparer<T> comparer, ref List<T> DelResult, ref List<T> UPResult) where T : class
@@ -455,19 +484,20 @@ namespace RightsU_Plus.Controllers
         {
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             string status = "S", message = "Record saved successfully";
-            Party_Group_Service objService = new Party_Group_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Party_Group objPartyGroup = new RightsU_Entities.Party_Group();
-            objPartyGroup.EntityState = State.Added;
+            //Party_Group_Service objService = new Party_Group_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Party_Group objPartyGroup = new RightsU_Dapper.Entity.Party_Group();
+            //objPartyGroup.EntityState = State.Added;
             objPartyGroup.InsertedOn = DateTime.Now;
             objPartyGroup.Last_Updated_By = DateTime.Now;
             objPartyGroup.Is_Active = "Y";
             objPartyGroup.Party_Group_Name = Party_Master_Name;
             dynamic resultSet;
-            bool isValid = objService.Save(objPartyGroup, out resultSet);
+            bool isValid = true;
+            objParty_Group_Service.AddEntity(objPartyGroup);
             if (!isValid)
             {
                 status = "E";
-                message = resultSet;
+                message = "Record saved successfully";
             }
             var obj = new
             {
@@ -502,13 +532,13 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult AddEditVendorList(int VendorCode)
         {
-            ViewBag.IsAllowPartyMaster = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "IsAllowPartyMaster").Select(w => w.Parameter_Value).FirstOrDefault();
+            ViewBag.IsAllowPartyMaster = objSPNService.GetList().Where(s => s.Parameter_Name == "IsAllowPartyMaster").Select(w => w.Parameter_Value).FirstOrDefault();
             Session["VendorCode_AddEdit"] = VendorCode;
             if (VendorCode > 0)
             {
                 ViewData["Status"] = "U";
-                Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Vendor objVendor = objService.GetById(VendorCode);
+                //Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Vendor objVendor = objVendorService.GetByID(VendorCode, RelationList);
                 ViewData["MyVendor"] = objVendor;
                 #region  --- Country ---
                 List<SelectListItem> listSelectListItems = new List<SelectListItem>();
@@ -516,7 +546,7 @@ namespace RightsU_Plus.Controllers
                 foreach (var country in strCode)
                 {
                     int i = Convert.ToInt32(country.Country_Code);
-                    RightsU_Entities.Country objCountry = lstCountry_Searched.Where(x => x.Country_Code == i).SingleOrDefault();
+                    RightsU_Dapper.Entity.Country objCountry = lstCountry_Searched.Where(x => x.Country_Code == i).SingleOrDefault();
                     string CountryName = objCountry.Country_Name;
                     SelectListItem selectList = new SelectListItem()
                     {
@@ -526,7 +556,7 @@ namespace RightsU_Plus.Controllers
                     };
                     listSelectListItems.Add(selectList);
                 }
-                List<RightsU_Entities.Country> temp_lstCountry = new List<RightsU_Entities.Country>();
+                List<RightsU_Dapper.Entity.Country> temp_lstCountry = new List<RightsU_Dapper.Entity.Country>();
                 temp_lstCountry = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "N").ToList(); ;
                 foreach (var item in strCode)
                 {
@@ -534,7 +564,7 @@ namespace RightsU_Plus.Controllers
                     var removeCountry = lstCountry_Searched.First(x => x.Country_Code == i);
                     temp_lstCountry.Remove(removeCountry);
                 }
-                foreach (RightsU_Entities.Country city in temp_lstCountry)
+                foreach (RightsU_Dapper.Entity.Country city in temp_lstCountry)
                 {
                     SelectListItem selectList = new SelectListItem()
                     {
@@ -551,7 +581,7 @@ namespace RightsU_Plus.Controllers
                 foreach (var country in strCode_Theterical)
                 {
                     int i = Convert.ToInt32(country.Country_Code);
-                    RightsU_Entities.Country objCountry = lstCountry_Searched.Where(x => x.Country_Code == i).SingleOrDefault();
+                    RightsU_Dapper.Entity.Country objCountry = lstCountry_Searched.Where(x => x.Country_Code == i).SingleOrDefault();
                     string CountryName = objCountry.Country_Name;
                     SelectListItem selectList = new SelectListItem()
                     {
@@ -561,7 +591,7 @@ namespace RightsU_Plus.Controllers
                     };
                     listSelectListItems_Theatrical.Add(selectList);
                 }
-                List<RightsU_Entities.Country> temp_lstCountry_Theaterical = new List<RightsU_Entities.Country>();
+                List<RightsU_Dapper.Entity.Country> temp_lstCountry_Theaterical = new List<RightsU_Dapper.Entity.Country>();
                 temp_lstCountry_Theaterical = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "Y").ToList(); ;
                 foreach (var item in strCode_Theterical)
                 {
@@ -569,7 +599,7 @@ namespace RightsU_Plus.Controllers
                     var akshay = lstCountry_Searched.First(x => x.Country_Code == i);
                     temp_lstCountry_Theaterical.Remove(akshay);
                 }
-                foreach (RightsU_Entities.Country city in temp_lstCountry_Theaterical)
+                foreach (RightsU_Dapper.Entity.Country city in temp_lstCountry_Theaterical)
                 {
                     SelectListItem selectList = new SelectListItem()
                     {
@@ -588,8 +618,8 @@ namespace RightsU_Plus.Controllers
                 ViewData["MyVendor"] = "";
                 #region == country & theterical
                 List<SelectListItem> listSelectListItems = new List<SelectListItem>();
-                List<RightsU_Entities.Country> temp_lstCountry = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "N").ToList();
-                foreach (RightsU_Entities.Country city in temp_lstCountry)
+                List<RightsU_Dapper.Entity.Country> temp_lstCountry = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "N").ToList();
+                foreach (RightsU_Dapper.Entity.Country city in temp_lstCountry)
                 {
                     SelectListItem selectList = new SelectListItem()
                     {
@@ -600,8 +630,8 @@ namespace RightsU_Plus.Controllers
                 }
                 TempData["Country"] = listSelectListItems;
                 List<SelectListItem> listSelectListItems_Theatrical = new List<SelectListItem>();
-                List<RightsU_Entities.Country> temp_lstTheatrical = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "Y").ToList();
-                foreach (RightsU_Entities.Country city in temp_lstTheatrical)
+                List<RightsU_Dapper.Entity.Country> temp_lstTheatrical = lstCountry_Searched.Where(x => x.Is_Theatrical_Territory == "Y").ToList();
+                foreach (RightsU_Dapper.Entity.Country city in temp_lstTheatrical)
                 {
                     SelectListItem selectList = new SelectListItem()
                     {
@@ -613,22 +643,23 @@ namespace RightsU_Plus.Controllers
                 TempData["Theatrical"] = listSelectListItems_Theatrical;
                 #endregion
             }
-            ViewData["Role"] = lstRole_Searched; // Send this list to the view
+            ViewData["Role"] = lstRole_Searched;// Send this list to the view
+        
             //return View("~/Views/Vendor/Add_Edit_Vendor.cshtml");
             return View("~/Views/Vendor/_AddEditPartyVendor.cshtml");
 
         }
 
-        public JsonResult SaveVendor(RightsU_Entities.Vendor objUser_MVC, FormCollection objFormCollection)
+        public JsonResult SaveVendor(RightsU_Dapper.Entity.Vendor objUser_MVC, FormCollection objFormCollection)
         {
-            Vendor_Service objVendorService = new Vendor_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Vendor objVendor = new RightsU_Entities.Vendor();
+            //Vendor_Service objVendorService = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Vendor objVendor = new RightsU_Dapper.Entity.Vendor();
             #region --FormCollection
             var listSelectedCountry = new String[0];
             var listSelectedTheatrical = new String[0];
             List<int> Type_ID = new List<int>();
             int VendorCode = 0;
-            if (objFormCollection["VendorCode"] != null)
+            if (objFormCollection["VendorCode"] != null && objFormCollection["VendorCode"] != "")
             {
                 VendorCode = Convert.ToInt32(objFormCollection["VendorCode"]);
             }
@@ -657,13 +688,13 @@ namespace RightsU_Plus.Controllers
             {
                 listSelectedTheatrical = Convert.ToString(objFormCollection["Theatrical"]).Split(',');
             }
-           
+
             #endregion
             string status = "S", message = "Record {ACTION} successfully";
             if (VendorCode > 0)
             {
                 #region   -- -Update vendor
-                objVendor = objVendorService.GetById(VendorCode);
+                objVendor = objVendorService.GetByID(VendorCode, RelationList);
                 objVendor.Vendor_Name = Vendor_Name;
                 objVendor.Address = Vendor_Addr;
                 objVendor.Phone_No = Vendor_PhNo;
@@ -687,27 +718,27 @@ namespace RightsU_Plus.Controllers
                 objVendor.Party_Group_Code = Party_Group_Code;
                 if (objVendor.Party_Group_Code == 0)
                     objVendor.Party_Group_Code = null;
-                objVendor.EntityState = State.Modified;
+                //objVendor.EntityState = State.Modified;
                 ICollection<Vendor_Country> VendorCountryList = new HashSet<Vendor_Country>();
                 if (objFormCollection["Country"] != null)
                 {
                     foreach (var CountryCode in listSelectedCountry)
                     {
                         int i = Convert.ToInt32(CountryCode);
-                        RightsU_Entities.Vendor_Country objCountry = new RightsU_Entities.Vendor_Country();
-                        objCountry.EntityState = State.Added;
+                        RightsU_Dapper.Entity.Vendor_Country objCountry = new RightsU_Dapper.Entity.Vendor_Country();
+                        //objCountry.EntityState = State.Added;
                         objCountry.Is_Theatrical = "N";
                         objCountry.Country_Code = i;
                         VendorCountryList.Add(objCountry);
                     }
                 }
-                IEqualityComparer<Vendor_Country> comparerVendorCountry = new LambdaComparer<Vendor_Country>((x, y) => x.Country_Code == y.Country_Code && x.Is_Theatrical == "N" && x.EntityState != State.Deleted);
+                IEqualityComparer<Vendor_Country> comparerVendorCountry = new RightsU_BLL.LambdaComparer<Vendor_Country>((x, y) => x.Country_Code == y.Country_Code && x.Is_Theatrical == "N");
                 var Deleted_Vendor_Country = new List<Vendor_Country>();
                 var Updated_Vendor_Country = new List<Vendor_Country>();
                 var Added_Vendor_Country = CompareLists<Vendor_Country>(VendorCountryList.ToList<Vendor_Country>(), objVendor.Vendor_Country.Where(x => x.Is_Theatrical == "N").ToList<Vendor_Country>(), comparerVendorCountry, ref Deleted_Vendor_Country, ref Updated_Vendor_Country);
                 Added_Vendor_Country.ToList<Vendor_Country>().ForEach(t => objVendor.Vendor_Country.Add(t));
-                Deleted_Vendor_Country.ToList<Vendor_Country>().ForEach(t => t.EntityState = State.Deleted);
-
+                //Deleted_Vendor_Country.ToList<Vendor_Country>().ForEach(t => t.EntityState = State.Deleted);
+                Deleted_Vendor_Country.ToList().ForEach(t => objVendor.Vendor_Country.Remove(t));
 
                 //if (objVendor.Acq_Deal.Count > 0 || objVendor.Acq_Deal_Cost_Commission.Count > 0 ||objVendor.Acq_Deal_Cost_Variable_Cost.Count > 0 ||objVendor.Acq_Deal_Licensor.Count > 0 ||objVendor.Syn_Deal.Count > 0 ||objVendor.Syn_Deal_Revenue_Commission.Count > 0 
                 //    || objVendor.Syn_Deal_Revenue_Variable_Cost.Count > 0 )
@@ -719,38 +750,37 @@ namespace RightsU_Plus.Controllers
                 //    }
                 //}
 
-
-
                 ICollection<Vendor_Country> VendorTheatricalList = new HashSet<Vendor_Country>();
                 if (objFormCollection["Theatrical"] != null)
                 {
                     foreach (var CountryCode in listSelectedTheatrical)
                     {
                         int i = Convert.ToInt32(CountryCode);
-                        RightsU_Entities.Vendor_Country objCountry = new RightsU_Entities.Vendor_Country();
+                        RightsU_Dapper.Entity.Vendor_Country objCountry = new RightsU_Dapper.Entity.Vendor_Country();
                         objCountry.Is_Theatrical = "Y";
                         objCountry.Country_Code = i;
                         VendorTheatricalList.Add(objCountry);
                     }
                 }
-                IEqualityComparer<Vendor_Country> comparerVendorTheaterical = new LambdaComparer<Vendor_Country>((x, y) => x.Country_Code == y.Country_Code && x.Is_Theatrical == "Y" && x.EntityState != State.Deleted);
+                IEqualityComparer<Vendor_Country> comparerVendorTheaterical = new RightsU_BLL.LambdaComparer<Vendor_Country>((x, y) => x.Country_Code == y.Country_Code && x.Is_Theatrical == "Y");
                 var Deleted_Vendor_Theaterical = new List<Vendor_Country>();
                 var Updated_Vendor_Theaterical = new List<Vendor_Country>();
                 var Added_Vendor_Theaterical = CompareLists<Vendor_Country>(VendorTheatricalList.ToList<Vendor_Country>(), objVendor.Vendor_Country.Where(x => x.Is_Theatrical == "Y").ToList<Vendor_Country>(), comparerVendorTheaterical, ref Deleted_Vendor_Theaterical, ref Updated_Vendor_Theaterical);
                 Added_Vendor_Theaterical.ToList<Vendor_Country>().ForEach(t => objVendor.Vendor_Country.Add(t));
-                Deleted_Vendor_Theaterical.ToList<Vendor_Country>().ForEach(t => t.EntityState = State.Deleted);
+                Deleted_Vendor_Theaterical.ToList<Vendor_Country>().ForEach(t => objVendor.Vendor_Country.Remove(t));
 
-              
-                List<RightsU_Entities.Vendor_Contacts> tempVendorContact = new List<RightsU_Entities.Vendor_Contacts>();
-                tempVendorContact = lstVendorContact_Searched.Where(x => x.Vendor_Code == 0 || x.Vendor_Code == VendorCode && x.EntityState != State.Deleted).ToList();
-                IEqualityComparer<Vendor_Contacts> comparerVendor_Contacts = new LambdaComparer<Vendor_Contacts>((x, y) => x.Vendor_Contacts_Code == y.Vendor_Contacts_Code && x.EntityState != State.Deleted);
+
+                List<RightsU_Dapper.Entity.Vendor_Contacts> tempVendorContact = new List<RightsU_Dapper.Entity.Vendor_Contacts>();
+                tempVendorContact = lstVendorContact_Searched.Where(x => x.Vendor_Code == 0 || x.Vendor_Code == VendorCode).ToList();
+                IEqualityComparer<Vendor_Contacts> comparerVendor_Contacts = new RightsU_BLL.LambdaComparer<Vendor_Contacts>((x, y) => x.Vendor_Contacts_Code == y.Vendor_Contacts_Code);
                 var Deleted_Vendor_Contacts = new List<Vendor_Contacts>();
                 var Updated_Vendor_Contacts = new List<Vendor_Contacts>();
                 var Added_Vendor_Contacts = CompareLists<Vendor_Contacts>(tempVendorContact.ToList<Vendor_Contacts>(), objVendor.Vendor_Contacts.ToList<Vendor_Contacts>(), comparerVendor_Contacts, ref Deleted_Vendor_Contacts, ref Updated_Vendor_Contacts);
                 Added_Vendor_Contacts.ToList<Vendor_Contacts>().ForEach(t => objVendor.Vendor_Contacts.Add(t));
-                Deleted_Vendor_Contacts.ToList<Vendor_Contacts>().ForEach(t => t.EntityState = State.Deleted);
-                List<RightsU_Entities.Vendor_Contacts> Modified_VC = new List<RightsU_Entities.Vendor_Contacts>();
-                Modified_VC = tempVendorContact.Where(x => x.EntityState == State.Modified).ToList();
+                Deleted_Vendor_Contacts.ToList<Vendor_Contacts>().ForEach(t => objVendor.Vendor_Contacts.Remove(t));
+
+                List<RightsU_Dapper.Entity.Vendor_Contacts> Modified_VC = new List<RightsU_Dapper.Entity.Vendor_Contacts>();
+                //Modified_VC = tempVendorContact.Where(x => x.EntityState == State.Modified).ToList();
                 foreach (var item in Modified_VC)
                 {
                     foreach (var objVendorContact in objVendor.Vendor_Contacts)
@@ -761,7 +791,8 @@ namespace RightsU_Plus.Controllers
                             objVendorContact.Phone_No = item.Phone_No;
                             objVendorContact.Email = item.Email;
                             objVendorContact.Contact_Name = item.Contact_Name;
-                            objVendorContact.EntityState = State.Modified;
+                            //objVendorContact.EntityState = State.Modified;
+                            objVendorContactsService.UpdateEntity(objVendorContact);
                         }
                     }
 
@@ -775,7 +806,7 @@ namespace RightsU_Plus.Controllers
                 objVendor.Vendor_Name = Vendor_Name;
                 objVendor.Address = Vendor_Addr;
                 objVendor.Phone_No = Vendor_PhNo;
-                objVendor.Fax_No = Vendor_FaxNo;  
+                objVendor.Fax_No = Vendor_FaxNo;
                 objVendor.ST_No = Vendor_STNo;
                 objVendor.VAT_No = Vendor_VATNo;
                 objVendor.TIN_No = Vendor_TINNo;
@@ -791,17 +822,17 @@ namespace RightsU_Plus.Controllers
                 else
                     objVendor.Party_Type = "C";
                 objVendor.Is_Active = "Y";
-                if (PartyCategoryCode > 0)    
+                if (PartyCategoryCode > 0)
                     objVendor.Party_Category_Code = PartyCategoryCode;
                 objVendor.Inserted_By = objLoginUser.Users_Code;
                 objVendor.Inserted_On = System.DateTime.Now;
-                objVendor.EntityState = State.Added;
+                //objVendor.EntityState = State.Added;
                 if (objFormCollection["Country"] != null)
                 {
                     foreach (var CountryCode in listSelectedCountry)
                     {
                         int i = Convert.ToInt32(CountryCode);
-                        RightsU_Entities.Vendor_Country objCountry = new RightsU_Entities.Vendor_Country();
+                        RightsU_Dapper.Entity.Vendor_Country objCountry = new RightsU_Dapper.Entity.Vendor_Country();
                         objCountry.Is_Theatrical = "N";
                         objCountry.Country_Code = i;
                         objVendor.Vendor_Country.Add(objCountry);
@@ -812,18 +843,18 @@ namespace RightsU_Plus.Controllers
                     foreach (var CountryCode in listSelectedTheatrical)
                     {
                         int i = Convert.ToInt32(CountryCode);
-                        RightsU_Entities.Vendor_Country objCountry = new RightsU_Entities.Vendor_Country();
+                        RightsU_Dapper.Entity.Vendor_Country objCountry = new RightsU_Dapper.Entity.Vendor_Country();
                         objCountry.Is_Theatrical = "Y";
                         objCountry.Country_Code = i;
                         objVendor.Vendor_Country.Add(objCountry);
                     }
                 }
-              
-                List<RightsU_Entities.Vendor_Contacts> temp_lstContact = new List<RightsU_Entities.Vendor_Contacts>();
+
+                List<RightsU_Dapper.Entity.Vendor_Contacts> temp_lstContact = new List<RightsU_Dapper.Entity.Vendor_Contacts>();
                 temp_lstContact = lstVendorContact_Searched.Where(x => x.Vendor_Code == 0).ToList();
                 if (temp_lstContact.Count > 0)
                 {
-                    foreach (RightsU_Entities.Vendor_Contacts item in temp_lstContact)
+                    foreach (RightsU_Dapper.Entity.Vendor_Contacts item in temp_lstContact)
                     {
                         objVendor.Vendor_Contacts.Add(item);
                     }
@@ -838,29 +869,40 @@ namespace RightsU_Plus.Controllers
                 foreach (string RoleCode in arrRoleCode)
                 {
                     Vendor_Role objVR = new Vendor_Role();
-                    objVR.EntityState = State.Added;
+                    //objVR.EntityState = State.Added;
                     objVR.Role_Code = Convert.ToInt32(RoleCode);
                     RoleList.Add(objVR);
                 }
             }
 
-            IEqualityComparer<Vendor_Role> comparerRoles = new LambdaComparer<Vendor_Role>((x, y) => x.Role_Code == y.Role_Code && x.EntityState != State.Deleted);
+            IEqualityComparer<Vendor_Role> comparerRoles = new RightsU_BLL.LambdaComparer<Vendor_Role>((x, y) => x.Role_Code == y.Role_Code);
             var Deleted_Role_Code = new List<Vendor_Role>();
             var Updatedd_Role_Code = new List<Vendor_Role>();
             var Addedd_Role_Code = CompareLists<Vendor_Role>(RoleList.ToList<Vendor_Role>(), objVendor.Vendor_Role.ToList<Vendor_Role>(), comparerRoles, ref Deleted_Role_Code, ref Updatedd_Role_Code);
             Addedd_Role_Code.ToList<Vendor_Role>().ForEach(t => objVendor.Vendor_Role.Add(t));
-            Deleted_Role_Code.ToList<Vendor_Role>().ForEach(t => t.EntityState = State.Deleted);
+            Deleted_Role_Code.ToList<Vendor_Role>().ForEach(t => objVendor.Vendor_Role.Remove(t));
             #endregion
             objVendor.Short_Code = objUser_MVC.Short_Code;
             objVendor.Last_Updated_Time = System.DateTime.Now;
             dynamic resultSet;
-            bool isDuplicate = objVendorService.Validate(objVendor, out resultSet);
+            //bool isDuplicate = objVendorService.Validate(objVendor, out resultSet);
+            bool isDuplicate = true;
             if (isDuplicate)
             {
-                bool isValid = objVendorService.Save(objVendor, out resultSet);
+                if(objVendor.Vendor_Code > 0)
+                {
+                    objVendorService.UpdateEntity(objVendor);
+
+                }
+                else
+                {
+                    objVendorService.AddEntity(objVendor);
+                }
+                //bool isValid = objVendorService.Save(objVendor, out resultSet);
+                bool isValid = true;
                 if (isValid)
                 {
-                    lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+                    lstVendor_Searched = lstVendor = objVendorService.GetAll().ToList();
                     status = "S";
 
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
@@ -871,18 +913,21 @@ namespace RightsU_Plus.Controllers
                     //message = message.Replace("{ACTION}", "updated");
                     else
                         message = objMessageKey.RecordAddedSuccessfully;
-                        //message = message.Replace("{ACTION}", "added");
+                    //message = message.Replace("{ACTION}", "added");
                 }
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    //message = resultSet;
+                    message = "";
                 }
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                //message = resultSet;
+                message = "";
+
             }
             var obj = new
             {
@@ -899,19 +944,21 @@ namespace RightsU_Plus.Controllers
             bool isLocked = true;
             CommonUtil objCommonUtil = new CommonUtil();
             if (ModuleCode == "10")
-                 isLocked = objCommonUtil.Lock_Record(vendorCode, GlobalParams.ModuleCodeForVendor, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
+                isLocked = objCommonUtil.Lock_Record(vendorCode, GlobalParams.ModuleCodeForVendor, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             else
-                 isLocked = objCommonUtil.Lock_Record(vendorCode, GlobalParams.ModuleCodeForCustomer, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
+                isLocked = objCommonUtil.Lock_Record(vendorCode, GlobalParams.ModuleCodeForCustomer, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
 
             if (isLocked)
             {
                 // string status = "S", message = "Record {ACTION} successfully";
-                Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Vendor objVendor = objService.GetById(vendorCode);
+                //Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Vendor objVendor = objVendorService.GetByID(vendorCode);
                 objVendor.Is_Active = doActive;
-                objVendor.EntityState = State.Modified;
+                //objVendor.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objVendor, out resultSet);
+                //bool isValid = objService.Save(objVendor, out resultSet);
+                objVendorService.AddEntity(objVendor);
+                bool isValid = true;
                 if (isValid)
                 {
                     lstVendor.Where(w => w.Vendor_Code == vendorCode).First().Is_Active = doActive;
@@ -923,11 +970,11 @@ namespace RightsU_Plus.Controllers
                     message = "Cound not {ACTION} record";
                 }
                 if (doActive == "Y")
-                    if(status == "E")
+                    if (status == "E")
                         message = objMessageKey.CouldNotActivatedRecord;
                     else
-                    //message = message.Replace("{ACTION}", "Activated");
-                     message = objMessageKey.Recordactivatedsuccessfully;
+                        //message = message.Replace("{ACTION}", "Activated");
+                        message = objMessageKey.Recordactivatedsuccessfully;
                 else
                 {
                     if (status == "E")
@@ -968,21 +1015,21 @@ namespace RightsU_Plus.Controllers
 
             int VendorCode_AddEdit = Convert.ToInt32(Session["VendorCode_AddEdit"]);
 
-            if (lstVendorContact_Searched.Where(r => r.Vendor_Code == 0 || r.Vendor_Code == VendorCode_AddEdit).Where(s => s.Email.ToUpper() == str_Email.ToUpper() && s.EntityState != State.Deleted).Count() > 0)
+            if (lstVendorContact_Searched.Where(r => r.Vendor_Code == 0 || r.Vendor_Code == VendorCode_AddEdit).Where(s => s.Email.ToUpper() == str_Email.ToUpper()).Count() > 0)
             {
                 status = "E";
                 message = objMessageKey.EmailIDalredyexists;
             }
             else
             {
-                RightsU_Entities.Vendor_Contacts objVendorContacts = new RightsU_Entities.Vendor_Contacts();
+                RightsU_Dapper.Entity.Vendor_Contacts objVendorContacts = new RightsU_Dapper.Entity.Vendor_Contacts();
 
                 objVendorContacts.Department = str_Department;
                 objVendorContacts.Email = str_Email;
                 objVendorContacts.Phone_No = str_Phone_No;
                 objVendorContacts.Contact_Name = str_Contact_Name;
                 objVendorContacts.Vendor_Code = 0;
-                objVendorContacts.EntityState = State.Added;
+                //objVendorContacts.EntityState = State.Added;
                 lstVendorContact_Searched.Add(objVendorContacts);
             }
 
@@ -1003,7 +1050,7 @@ namespace RightsU_Plus.Controllers
             }
             else if (commandName == "EDIT")
             {
-                RightsU_Entities.Vendor_Contacts objVendorContact = new RightsU_Entities.Vendor_Contacts();
+                RightsU_Dapper.Entity.Vendor_Contacts objVendorContact = new RightsU_Dapper.Entity.Vendor_Contacts();
                 objVendorContact = lstVendorContact_Searched.Where(x => x.Dummy_Guid.ToString() == dummyGuid).SingleOrDefault();
                 TempData["Action"] = "EditVendorContact";
                 TempData["idVendorContact"] = objVendorContact.Dummy_Guid;
@@ -1030,21 +1077,23 @@ namespace RightsU_Plus.Controllers
 
             if (lstVendorContact_Searched.Where(r => r.Vendor_Code == 0 || r.Vendor_Code == VendorCode_AddEdit)
                 .Where(x => x._Dummy_Guid != str_DummyGuid)
-                .Where(s => s.Email.ToUpper() == str_Email.ToUpper() && s.EntityState != State.Deleted).Count() > 0)
+                .Where(s => s.Email.ToUpper() == str_Email.ToUpper()).Count() > 0)
             {
                 status = "E";
                 message = objMessageKey.EmailIDalredyexists;
             }
             else
             {
-                RightsU_Entities.Vendor_Contacts objVendorContacts = lstVendorContact_Searched.Where(x => x._Dummy_Guid == str_DummyGuid).SingleOrDefault();
+                RightsU_Dapper.Entity.Vendor_Contacts objVendorContacts = lstVendorContact_Searched.Where(x => x._Dummy_Guid == str_DummyGuid).SingleOrDefault();
                 objVendorContacts.Department = str_Department;
                 objVendorContacts.Email = str_Email;
                 objVendorContacts.Phone_No = str_Phone_No;
                 objVendorContacts.Contact_Name = str_Contact_Name;
+
                 if (objVendorContacts.Vendor_Code > 0)
                 {
-                    objVendorContacts.EntityState = State.Modified;
+                    objVendorContactsService.UpdateEntity(objVendorContacts);
+                    //objVendorContacts.EntityState = State.Modified;
                 }
             }
 
@@ -1060,12 +1109,13 @@ namespace RightsU_Plus.Controllers
         public JsonResult DeleteVendorContact(string dummyGuid)
         {
             string status = "S", message = "Record {ACTION} successfully";
-            RightsU_Entities.Vendor_Contacts objVendorContacts = lstVendorContact_Searched.Where(x => x._Dummy_Guid == dummyGuid).SingleOrDefault();
+            RightsU_Dapper.Entity.Vendor_Contacts objVendorContacts = lstVendorContact_Searched.Where(x => x._Dummy_Guid == dummyGuid).SingleOrDefault();
             if (objVendorContacts != null)
             {
                 if (objVendorContacts.Vendor_Code > 0)
                 {
-                    objVendorContacts.EntityState = State.Deleted;
+                    objVendorContactsService.DeleteEntity(objVendorContacts);
+                    //objVendorContacts.EntityState = State.Deleted;
                 }
                 else
                 {

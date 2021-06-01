@@ -1,11 +1,16 @@
-﻿@model List<RightsU_Entities.BVException>
+﻿@model List<RightsU_Dapper.Entity.BVException>
 @using UTOFrameWork.FrameworkClasses
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
-    }     
+    }
+    RightsU_Dapper.BLL.Services.Channel_Service objService = new RightsU_Dapper.BLL.Services.Channel_Service();
+    List<RightsU_Dapper.Entity.Channel> lstChannel = objService.GetAll().ToList();
+
+    RightsU_Dapper.BLL.Services.User_Service objUserService = new RightsU_Dapper.BLL.Services.User_Service();
+    List<RightsU_Dapper.Entity.User> lstUser = objUserService.GetAll().ToList();
 }
 <script>
     $('.expand_strChannelName').expander({
@@ -38,13 +43,31 @@
             foreach (var item in Model)
             {
                 string strExceptionType = "Schedule", strChannelName = "", strUserNames = "";
+
                 if (item.BVException_Channel.Count > 0)
                 {
-                    strChannelName = string.Join(",", item.BVException_Channel.Select(c => c.Channel.Channel_Name).ToList());
+                    List<int> ChannelCode = item.BVException_Channel.Select(c => c.Channel_Code).ToList();
+                    List<string> lstChannels = new List<string>();
+                    foreach (int a in ChannelCode)
+                    {
+                        strChannelName = string.Join(",", lstChannel.Where(w => w.Channel_Code == a).Select(c => c.Channel_Name).ToList());
+                        lstChannels.Add(strChannelName);
+                    }
+                    strChannelName = string.Join(",", lstChannels);
+                    //strChannelName = string.Join(",", item.BVException_Channel.Select(c => c.Channel.Channel_Name).ToList());
                 }
                 if (item.BVException_Users.Count > 0)
                 {
-                    strUserNames = string.Join(",", item.BVException_Users.Select(u => u.User.Full_Name).ToList());
+                    List<int> UserCode = item.BVException_Users.Select(c => c.Users_Code).ToList();
+                    List<string> lstUsers = new List<string>();
+
+                    foreach (int a in UserCode)
+                    {
+                        strUserNames = string.Join(",", lstUser.Where(w => w.Users_Code == a).Select(c => c.Full_Name).ToList());
+                        lstUsers.Add(strUserNames);
+                    }
+                    strUserNames = string.Join(",", lstUsers);
+                    //strUserNames = string.Join(",", item.BVException_Users.Select(u => u.User.Full_Name).ToList());
                 }
 
                 if (item.Bv_Exception_Type.Trim() == "R")

@@ -1,4 +1,4 @@
-﻿@model RightsU_Entities.Amort_Rule
+﻿@model RightsU_Dapper.Entity.Amort_Rule
 @using System.Configuration;
 @using UTOFrameWork.FrameworkClasses
 @{
@@ -290,7 +290,7 @@
 
                                                         @for (int i = 0; i < Model.Amort_Rule_Details.Count; i++)
                                                         {
-                                                            RightsU_Entities.Amort_Rule_Details objARD = Model.Amort_Rule_Details.ElementAt(i);
+                                                            RightsU_Dapper.Entity.Amort_Rule_Details objARD = Model.Amort_Rule_Details.ElementAt(i);
                                                             if (i == 0)
                                                             {
                                                             <tr>

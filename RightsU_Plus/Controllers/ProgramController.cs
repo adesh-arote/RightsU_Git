@@ -41,7 +41,7 @@ namespace RightsU_Plus.Controllers
         }
         #endregion
         Type[] RelationList = new Type[] { typeof(Deal_Type)
-                    ,typeof(RightsU_Dapper.Entity.Genres) };
+                    ,typeof(RightsU_Dapper.Entity.Genre) };
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForProgram);
