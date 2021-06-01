@@ -2855,4 +2855,32 @@ namespace RightsU_Dapper.BLL.Services
                 objMusic_Language_Repository.Delete(obj);
             }
         }
+    public class Music_Theme_Service
+    {
+        Music_Theme_Repository objMusic_Theme_Repository = new Music_Theme_Repository();
+        public Music_Theme_Service()
+        {
+            this.objMusic_Theme_Repository = new Music_Theme_Repository();
+        }
+        public Music_Theme GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Theme_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Theme> GetAll(Type[] RelationList = null)
+        {
+            return objMusic_Theme_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Music_Theme obj)
+        {
+            objMusic_Theme_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Theme obj)
+        {
+            objMusic_Theme_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Theme obj)
+        {
+            objMusic_Theme_Repository.Delete(obj);
+        }
     }
+}
