@@ -189,6 +189,7 @@ namespace RightsU_Plus.Controllers
                         .SearchFor(x => x.Module_Code == 30 
                                         && x.Record_Code == objAcq_Deal.Acq_Deal_Code 
                                         && x.Group_Code == objLoginUser.Security_Group_Code)
+                        .OrderByDescending(x => x.Module_Workflow_Detail_Code)
                         .Select(x=>x.Is_Done)
                         .LastOrDefault();
 
@@ -249,6 +250,7 @@ namespace RightsU_Plus.Controllers
                         .SearchFor(x => x.Module_Code == 35 
                                         && x.Record_Code == objSyn_Deal.Syn_Deal_Code 
                                         && x.Group_Code == objLoginUser.Security_Group_Code)
+                        .OrderByDescending(x => x.Module_Workflow_Detail_Code)
                         .Select(X => X.Is_Done)
                         .LastOrDefault();
 
