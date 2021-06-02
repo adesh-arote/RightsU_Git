@@ -1460,6 +1460,7 @@
     <Build Include="dbo\Functions\UFN_Get_UsernName_Last_Approved.sql" />
     <Build Include="dbo\Stored Procedures\USP_Insert_Email_Notification_Log.sql" />
     <Build Include="dbo\Stored Procedures\USP_Get_EmailConfig_Users.sql" />
+    <Build Include="dbo\Views\System_Parameter_New.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
