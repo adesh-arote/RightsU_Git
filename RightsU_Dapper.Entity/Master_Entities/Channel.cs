@@ -2,6 +2,7 @@
 namespace RightsU_Dapper.Entity
 {
     using Dapper.SimpleSave;
+    using Dapper.SimpleLoad;
     using System;
     using System.Collections.Generic;
 
@@ -57,7 +58,10 @@ namespace RightsU_Dapper.Entity
         public virtual ICollection<Acq_Deal_Run> Acq_Deal_Run { get; set; }
         public virtual ICollection<BVException_Channel> BVException_Channel { get; set; }
        // public virtual ICollection<Channel_Entity> Channel_Entity { get; set; }
+       [SimpleSaveIgnore]
+       [SimpleLoadIgnore]
         public virtual Genre Genre { get; set; }
+        [OneToMany]
         public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
         //public virtual ICollection<RunData> RunDatas { get; set; }
         //public virtual ICollection<Channel_Region_Mapping> Channel_Region_Mapping { get; set; }

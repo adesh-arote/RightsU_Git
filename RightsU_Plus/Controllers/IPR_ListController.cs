@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Entities;
+//using RightsU_BLL;
 using System.Data.Entity.Core.Objects;
 using UTOFrameWork.FrameworkClasses;
 using System.Configuration;
@@ -13,11 +13,31 @@ using System.Web.UI.WebControls;
 using System.IO;
 using System.Web.UI;
 using Microsoft.Reporting.WebForms;
+using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity;
 
 namespace RightsU_Plus.Controllers
 {
     public class IPR_ListController : BaseController
     {
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+        private readonly IPR_TYPE_Service objIPR_TYPE_Service = new IPR_TYPE_Service();
+        private readonly IPR_APP_STATUS_Service objIPR_APP_STATUS_Service = new IPR_APP_STATUS_Service();
+        private readonly IPR_ENTITY_Service objIPR_ENTITY_Service = new IPR_ENTITY_Service();
+        private readonly IPR_Opp_Service objIPR_Opp_Service = new IPR_Opp_Service();
+        private readonly IPR_Opp_Status_Service objIPR_Opp_Status_Service = new IPR_Opp_Status_Service();
+        private readonly USP_List_IPR_Service objUSP_List_IPR_Service = new USP_List_IPR_Service();
+        private readonly IPR_Country_Service objIPR_Country_Service = new IPR_Country_Service();
+        private readonly Business_Unit_Service objBU_Service = new Business_Unit_Service();
+        private readonly Channel_Service objChannel_Service = new Channel_Service();
+        private readonly USP_List_IPR_Opp_Service objUSP_List_IPR_Opp_Service = new USP_List_IPR_Opp_Service();
+        private readonly System_Parameter_New_Service objSystem_Parameter_New_Service = new System_Parameter_New_Service();
+        private readonly IPR_REP_Service objIPR_REP_Service = new IPR_REP_Service();
+
+
+
+
+
         #region --- Attributes and Properties ---
         ReportViewer ReportViewer1;
         ArrayList arrUserRight;
@@ -391,26 +411,26 @@ namespace RightsU_Plus.Controllers
             }
             int RecordLockingCode = objPage_Properties.RecordLockingCode;
             tab = "";
-            SelectList type_List = new SelectList((new IPR_TYPE_Service(objLoginEntity.ConnectionStringName).SearchFor(x => 1 == 1).ToList()).OrderBy(o => o.Type), "Type", "Type", Type);
-            SelectList applicationStatus_List = new SelectList(((new IPR_APP_STATUS_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => x.Is_Active == "Y").ToList()), "App_Status",
+            SelectList type_List = new SelectList((objIPR_TYPE_Service.GetAll().Where(x => 1 == 1).ToList()).OrderBy(o => o.Type), "Type", "Type", Type);
+            SelectList applicationStatus_List = new SelectList((objIPR_APP_STATUS_Service.GetAll().Where(x => x.Is_Active == "Y").ToList()), "App_Status",
             "App_Status", ApplicationStatus);
-            SelectList applicant_List = new SelectList((new IPR_ENTITY_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => 1 == 1).ToList(), "Entity", "Entity", Applicant);
-            SelectList oppStatus_List = new SelectList((new IPR_Opp_Status_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => x.Is_Active == "Y").ToList().OrderBy(o => o.Opp_Status),
+            SelectList applicant_List = new SelectList(objIPR_ENTITY_Service.GetAll().Where(x => 1 == 1).ToList(), "Entity", "Entity", Applicant);
+            SelectList oppStatus_List = new SelectList(objIPR_Opp_Status_Service.GetAll().Where(x => x.Is_Active == "Y").ToList().OrderBy(o => o.Opp_Status),
             "Opp_Status", "Opp_Status", OppStatus);
-            SelectList country_List = new SelectList(((new IPR_Country_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => x.Is_Active == "Y").ToList()), "IPR_Country_Name", "IPR_Country_Name", Country);
+            SelectList country_List = new SelectList((objIPR_Country_Service.GetAll().Where(x => x.Is_Active == "Y").ToList()), "IPR_Country_Name", "IPR_Country_Name", Country);
             ViewBag.Type_List = type_List;
             ViewBag.ApplicationStatus_List = applicationStatus_List;
             ViewBag.Applicant_List = applicant_List;
             ViewBag.OppStatus_List = oppStatus_List;
             ViewBag.Country_List = country_List;
 
-            List<Business_Unit> lstBusinessUnit = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).OrderBy(o => o.Business_Unit_Name).ToList();
+            List<Business_Unit> lstBusinessUnit = objBU_Service.GetAll().OrderBy(o => o.Business_Unit_Name).ToList();
             ViewBag.BusinessUnitList = new MultiSelectList(lstBusinessUnit, "Business_Unit_Code", "Business_Unit_Name");
-            List<RightsU_Entities.Channel> lstChannel = new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Active == "Y").OrderBy(o => o.Channel_Name).ToList();
+            List<RightsU_Dapper.Entity.Channel> lstChannel =objChannel_Service.GetList().Where(w => w.Is_Active == "Y").OrderBy(o => o.Channel_Name).ToList();
             ViewBag.ChannelList = new MultiSelectList(lstChannel, "Channel_Code", "Channel_Name");
 
-            ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-            string c = addRights.FirstOrDefault();
+            string addRights =objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            string c = addRights;
             ViewBag.AddVisibility = c;
             ViewBag.NoRight = true;
             ViewBag.NoRight = true;
@@ -495,7 +515,8 @@ namespace RightsU_Plus.Controllers
             if (IsSetPage == "Y")
                 SetPageNo(Tab, Convert.ToInt32(PageNo) + 1);
             ViewBag.isAdvanced = IsAdvanced;
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
+            int objRecordCount = 0;
+            //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
             if (Tab != "")
                 tab = Tab;
             if (tab == CurrentTab_International)
@@ -503,9 +524,9 @@ namespace RightsU_Plus.Controllers
                 string orderByCndition = "T.IPR_Rep_Code desc";
                 List<USP_List_IPR_Result> lst = new List<USP_List_IPR_Result>();
                 search += " AND IR.IPR_For = 'I'";
-                lst = (new USP_Service(objLoginEntity.ConnectionStringName).USP_List_IPR("I", search, IpageNo, orderByCndition, isPaging,
-                    recordPerPage, objRecordCount, objLoginUser.Users_Code, Convert.ToInt32(moduleCode)).ToList());
-                RecordCount = Convert.ToInt32(objRecordCount.Value);
+                lst = (objUSP_List_IPR_Service.USP_List_IPR("I", search, IpageNo, orderByCndition, isPaging,
+                    recordPerPage,out objRecordCount, objLoginUser.Users_Code, Convert.ToInt32(moduleCode)).ToList());
+                RecordCount = Convert.ToInt32(objRecordCount);
                 ViewBag.RecordCount = RecordCount;
                 ViewBag.Tab = CurrentTab_International;
                 ViewBag.PageNo = IpageNo;
@@ -516,9 +537,9 @@ namespace RightsU_Plus.Controllers
                 string orderByCndition = "IOp.IPR_Opp_Code desc";
                 List<USP_List_IPR_Opp_Result> lst = new List<USP_List_IPR_Opp_Result>();
                 search += " AND IOp.IPR_For = 'B'";
-                lst = (new USP_Service(objLoginEntity.ConnectionStringName).USP_List_IPR_Opp(CurrentTab_OppositionBy, search, BpageNo,
-                    orderByCndition, isPaging, recordPerPage, objRecordCount, objLoginUser.Users_Code, Convert.ToInt32(moduleCode)).ToList());
-                RecordCount = Convert.ToInt32(objRecordCount.Value);
+                lst = (objUSP_List_IPR_Opp_Service.USP_List_IPR_Opp(CurrentTab_OppositionBy, search, BpageNo,
+                    orderByCndition, isPaging, recordPerPage,out objRecordCount, objLoginUser.Users_Code, Convert.ToInt32(moduleCode)).ToList());
+                RecordCount = Convert.ToInt32(objRecordCount);
                 ViewBag.RecordCount = RecordCount;
                 ViewBag.Tab = CurrentTab_OppositionBy;
                 ViewBag.PageNo = BpageNo;
@@ -529,9 +550,9 @@ namespace RightsU_Plus.Controllers
                 string orderByCndition = "IOp.IPR_Opp_Code desc";
                 List<USP_List_IPR_Opp_Result> lst = new List<USP_List_IPR_Opp_Result>();
                 search += " AND IOp.IPR_For = 'A'";
-                lst = (new USP_Service(objLoginEntity.ConnectionStringName).USP_List_IPR_Opp(CurrentTab_OppositionAgainst, search, ApageNo,
-                    orderByCndition, isPaging, recordPerPage, objRecordCount, objLoginUser.Users_Code, Convert.ToInt32(moduleCode)).ToList());
-                RecordCount = Convert.ToInt32(objRecordCount.Value);
+                lst = (objUSP_List_IPR_Opp_Service.USP_List_IPR_Opp(CurrentTab_OppositionAgainst, search, ApageNo,
+                    orderByCndition, isPaging, recordPerPage,out objRecordCount, objLoginUser.Users_Code, Convert.ToInt32(moduleCode)).ToList());
+                RecordCount = Convert.ToInt32(objRecordCount);
                 ViewBag.RecordCount = RecordCount;
                 ViewBag.Tab = CurrentTab_OppositionAgainst;
                 ViewBag.PageNo = ApageNo;
@@ -542,9 +563,9 @@ namespace RightsU_Plus.Controllers
                 string orderByCndition = "T.IPR_Rep_Code desc";
                 List<USP_List_IPR_Result> lst = new List<USP_List_IPR_Result>();
                 search += " AND IR.IPR_For = 'D'";
-                lst = (new USP_Service(objLoginEntity.ConnectionStringName).USP_List_IPR("D", search, DpageNo, orderByCndition, isPaging,
-                    recordPerPage, objRecordCount, objLoginUser.Users_Code, Convert.ToInt32(moduleCode)).ToList());
-                RecordCount = Convert.ToInt32(objRecordCount.Value);
+                lst = (objUSP_List_IPR_Service.USP_List_IPR("D", search, DpageNo, orderByCndition, isPaging,
+                    recordPerPage,out objRecordCount, objLoginUser.Users_Code, Convert.ToInt32(moduleCode)).ToList());
+                RecordCount = Convert.ToInt32(objRecordCount);
                 ViewBag.RecordCount = RecordCount;
                 ViewBag.Tab = CurrentTab_Domestic;
                 ViewBag.PageNo = DpageNo;
@@ -907,7 +928,7 @@ namespace RightsU_Plus.Controllers
         }
         public void ReportCredential()
         {
-            var rptCredetialList = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.IsActive == "Y" && w.Parameter_Name.Contains("RPT_")).ToList();
+            var rptCredetialList = objSystem_Parameter_New_Service.GetList().Where(w => w.IsActive == "Y" && w.Parameter_Name.Contains("RPT_")).ToList();
 
             string ReportingServer = rptCredetialList.Where(x => x.Parameter_Name == "RPT_ReportingServer").Select(x => x.Parameter_Value).FirstOrDefault();//  ConfigurationManager.AppSettings["ReportingServer"];
             string IsCredentialRequired = rptCredetialList.Where(x => x.Parameter_Name == "RPT_IsCredentialRequired").Select(x => x.Parameter_Value).FirstOrDefault();// ConfigurationManager.AppSettings["IsCredentialRequired"];
@@ -937,24 +958,26 @@ namespace RightsU_Plus.Controllers
             if (tab == CurrentTab_OppositionAgainst || tab == CurrentTab_OppositionBy)
             {
                 int IPR_Opp_Code = Convert.ToInt32(IPR_Code);
-                IPR_Opp_Service objIPR_Opp_Service = new IPR_Opp_Service(objLoginEntity.ConnectionStringName);
-                IPR_Opp objOpp = objIPR_Opp_Service.GetById(IPR_Opp_Code);
-                objOpp.EntityState = State.Deleted;
+                //IPR_Opp_Service objIPR_Opp_Service = new IPR_Opp_Service(objLoginEntity.ConnectionStringName);
+                IPR_Opp objOpp = objIPR_Opp_Service.GetByID(IPR_Opp_Code);
+                //objOpp.EntityState = State.Deleted;
                 dynamic resultSet;
-                isValid = objIPR_Opp_Service.Delete(objOpp, out resultSet);
+                objIPR_Opp_Service.DeleteEntity(objOpp);
+                isValid = true;// objIPR_Opp_Service.Delete(objOpp, out resultSet);
             }
             else
             {
                 int IPR_Rep_Code = Convert.ToInt32(IPR_Code);
-                IPR_REP_Service objIPR_REP_Service = new IPR_REP_Service(objLoginEntity.ConnectionStringName);
-                IPR_REP objIR = objIPR_REP_Service.GetById(IPR_Rep_Code);
-                IPR_Opp_Service objIPR_Opp_Service = new IPR_Opp_Service(objLoginEntity.ConnectionStringName);
-                int c = objIPR_Opp_Service.SearchFor(x => x.IPR_Rep_Code == IPR_Rep_Code).ToList().Count;
+               // IPR_REP_Service objIPR_REP_Service = new IPR_REP_Service(objLoginEntity.ConnectionStringName);
+                IPR_REP objIR = objIPR_REP_Service.GetByID(IPR_Rep_Code);
+                //IPR_Opp_Service objIPR_Opp_Service = new IPR_Opp_Service(objLoginEntity.ConnectionStringName);
+                int c = objIPR_Opp_Service.GetAll().Where(x => x.IPR_Rep_Code == IPR_Rep_Code).ToList().Count;
                 if (c == 0)
                 {
-                    objIR.EntityState = State.Deleted;
+                    //objIR.EntityState = State.Deleted;
                     dynamic resultSet;
-                    isValid = objIPR_REP_Service.Delete(objIR, out resultSet);
+                    objIPR_REP_Service.DeleteEntity(objIR);
+                    isValid = true;// objIPR_REP_Service.Delete(objIR, out resultSet);
                 }
                 else
                     objJson.Add("Error", "IPR Rep is already Used in IPR Opposition");
