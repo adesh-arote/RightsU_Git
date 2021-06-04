@@ -67,6 +67,8 @@
     <Compile Include="Master_Entities\Music_Title.cs" />
     <Compile Include="Master_Entities\Music_Title_Label.cs" />
     <Compile Include="Master_Entities\Music_Label.cs" />
+    <Compile Include="Master_Entities\Music_Theme.cs" />
+    <Compile Include="Master_Entities\Music_Title_Theme.cs" />
     <Compile Include="Master_Entities\Security_Group.cs" />
     <Compile Include="Master_Entities\Users_Business_Unit.cs" />
     <Compile Include="Master_Entities\Email_Config.cs" />

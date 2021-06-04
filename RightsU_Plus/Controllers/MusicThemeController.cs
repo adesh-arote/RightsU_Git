@@ -1,5 +1,6 @@
-﻿using RightsU_BLL;
-using RightsU_Entities;
+﻿//using RightsU_BLL;
+//using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,24 +12,28 @@ namespace RightsU_Plus.Controllers
 {
     public class MusicThemeController : BaseController
     {
-        private List<RightsU_Entities.Music_Theme> lstMusicTheme
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+        private readonly Music_Theme_Service objMusic_Theme_Service = new Music_Theme_Service();
+
+        
+        private List<RightsU_Dapper.Entity.Music_Theme> lstMusicTheme
         {
             get
             {
                 if (Session["lstMusicTheme"] == null)
-                    Session["lstMusicTheme"] = new List<RightsU_Entities.Music_Theme>();
-                return (List<RightsU_Entities.Music_Theme>)Session["lstMusicTheme"];
+                    Session["lstMusicTheme"] = new List<RightsU_Dapper.Entity.Music_Theme>();
+                return (List<RightsU_Dapper.Entity.Music_Theme>)Session["lstMusicTheme"];
             }
             set { Session["lstMusicTheme"] = value; }
         }
 
-        private List<RightsU_Entities.Music_Theme> lstMusicTheme_Searched
+        private List<RightsU_Dapper.Entity.Music_Theme> lstMusicTheme_Searched
         {
             get
             {
                 if (Session["lstMusicTheme_Searched"] == null)
-                    Session["lstMusicTheme_Searched"] = new List<RightsU_Entities.Music_Theme>();
-                return (List<RightsU_Entities.Music_Theme>)Session["lstMusicTheme_Searched"];
+                    Session["lstMusicTheme_Searched"] = new List<RightsU_Dapper.Entity.Music_Theme>();
+                return (List<RightsU_Dapper.Entity.Music_Theme>)Session["lstMusicTheme_Searched"];
             }
             set { Session["lstMusicTheme_Searched"] = value; }
         }
@@ -39,7 +44,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusicTheme);
-            lstMusicTheme_Searched = lstMusicTheme = new Music_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstMusicTheme_Searched = lstMusicTheme = objMusic_Theme_Service.GetAll().ToList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -52,7 +57,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.MusicTheme_Code = MusicTheme_Code;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Music_Theme> lst = new List<RightsU_Entities.Music_Theme>();
+            List<RightsU_Dapper.Entity.Music_Theme> lst = new List<RightsU_Dapper.Entity.Music_Theme>();
             int RecordCount = 0;
             RecordCount = lstMusicTheme_Searched.Count;
 
@@ -94,10 +99,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusicTheme), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+           string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusicTheme), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -140,8 +145,8 @@ namespace RightsU_Plus.Controllers
         {
 
             string status = "S", message = "Record {ACTION} successfully";
-            Music_Theme_Service objService = new Music_Theme_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Music_Theme objMusicTheme = objService.GetById(MusicTheme_Code);
+           // Music_Theme_Service objService = new Music_Theme_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Music_Theme objMusicTheme = objMusic_Theme_Service.GetByID(MusicTheme_Code);
 
             TempData["Action"] = "EditMusicTheme";
             TempData["idMusicTheme"] = objMusicTheme.Music_Theme_Code;
@@ -161,12 +166,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(MusicTheme_Code, GlobalParams.ModuleCodeForMusicTheme, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Music_Theme_Service objService = new Music_Theme_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Music_Theme objMusicTheme = objService.GetById(MusicTheme_Code);
+               // Music_Theme_Service objService = new Music_Theme_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Music_Theme objMusicTheme = objMusic_Theme_Service.GetByID(MusicTheme_Code);
                 objMusicTheme.Is_Active = doActive;
-                objMusicTheme.EntityState = State.Modified;
+                //objMusicTheme.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objMusicTheme, out resultSet);
+                objMusic_Theme_Service.AddEntity(objMusicTheme);
+                bool isValid = true;// objMusic_Theme_Service.AddEntity(objMusicTheme);
                 if (isValid)
                 {
                     lstMusicTheme.Where(w => w.Music_Theme_Code == MusicTheme_Code).First().Is_Active = doActive;
@@ -208,18 +214,18 @@ namespace RightsU_Plus.Controllers
         public JsonResult SaveMusicTheme(int MusicTheme_Code, string MusicTheme_Name, int Record_Code)
         { 
             string status = "S", message = "Record {ACTION} successfully";
-            Music_Theme_Service objService = new Music_Theme_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Music_Theme objMusicTheme = null;
+           // Music_Theme_Service objService = new Music_Theme_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Music_Theme objMusicTheme = null;
 
             if (MusicTheme_Code > 0)
             {
-                objMusicTheme = objService.GetById(MusicTheme_Code);
-                objMusicTheme.EntityState = State.Modified;
+                objMusicTheme = objMusic_Theme_Service.GetByID(MusicTheme_Code);
+                //objMusicTheme.EntityState = State.Modified;
             }
             else
             {
-                objMusicTheme = new RightsU_Entities.Music_Theme();
-                objMusicTheme.EntityState = State.Added;
+                objMusicTheme = new RightsU_Dapper.Entity.Music_Theme();
+                //objMusicTheme.EntityState = State.Added;
                 objMusicTheme.Inserted_On = DateTime.Now;
                 objMusicTheme.Inserted_By = objLoginUser.Users_Code;
             }
@@ -229,15 +235,16 @@ namespace RightsU_Plus.Controllers
             objMusicTheme.Is_Active = "Y";
             objMusicTheme.Music_Theme_Name = MusicTheme_Name;
             dynamic resultSet;
-            bool isValid = objService.Save(objMusicTheme, out resultSet);
+            objMusic_Theme_Service.AddEntity(objMusicTheme);
+            bool isValid = true; //objService.Save(objMusicTheme, out resultSet);
             if (isValid)
             {
-                lstMusicTheme_Searched = lstMusicTheme = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstMusicTheme_Searched = lstMusicTheme = objMusic_Theme_Service.GetAll().OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             if (MusicTheme_Code > 0)
             {
