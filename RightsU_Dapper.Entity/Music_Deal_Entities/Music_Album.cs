@@ -11,7 +11,7 @@ namespace RightsU_Dapper.Entity
         public Music_Album()
         {
             this.Music_Album_Talent = new HashSet<Music_Album_Talent>();
-            //this.Music_Title = new HashSet<Music_Title>();
+            this.Music_Title = new HashSet<Music_Title>();
             //this.MHRequestDetails = new HashSet<MHRequestDetail>();
         }
         [PrimaryKey]
@@ -25,7 +25,8 @@ namespace RightsU_Dapper.Entity
         public string Is_Active { get; set; }
         [OneToMany]
         public virtual ICollection<Music_Album_Talent> Music_Album_Talent { get; set; }
-        //public virtual ICollection<Music_Title> Music_Title { get; set; }
+        [OneToMany]
+        public virtual ICollection<Music_Title> Music_Title { get; set; }
         //public virtual ICollection<MHRequestDetail> MHRequestDetails { get; set; }
     }
 }

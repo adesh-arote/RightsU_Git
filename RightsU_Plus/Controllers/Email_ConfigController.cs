@@ -110,6 +110,7 @@ namespace RightsU_Plus.Controllers
                 Session["selectedBccSession"] = value;
             }
         }
+        Type[] RelationList = new Type[] { typeof(Email_Config_Detail) };
         public ActionResult Index()
         {
             objECD = null;
@@ -118,8 +119,8 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindGrid()
         {
-            ViewBag.Show_Hide_Buttons = objProcedureService.USP_MODULE_RIGHTS(GlobalParams.ModuleCodeForEmailConfig, objLoginUser.Security_Group_Code, objLoginUser.Users_Code).FirstOrDefault();
-            List<Email_Config> lstEC = objEmail_ConfigService.GetList().ToList();
+            ViewBag.Show_Hide_Buttons = GetUserModuleRights();//objProcedureService.USP_MODULE_RIGHTS(GlobalParams.ModuleCodeForEmailConfig, objLoginUser.Security_Group_Code, objLoginUser.Users_Code).FirstOrDefault();
+            List<Email_Config> lstEC = objEmail_ConfigService.GetList(RelationList).ToList();
             lstEC.ForEach(f =>
             {
                 f.User_Count = (f.Email_Config_Detail.FirstOrDefault() ?? new Email_Config_Detail()).Email_Config_Detail_User.Select(s => new
@@ -128,10 +129,19 @@ namespace RightsU_Plus.Controllers
 
             return PartialView("~/Views/Email_Config/_Email_Config_List.cshtml", lstEC);
         }
+        private string GetUserModuleRights()
+        {
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForTerritoryGroup), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToString();
+            string rights = "";
+            if (lstRights != null)
+                rights = lstRights;
+
+            return rights;
+        }
         public PartialViewResult AddEditConfigure(int EmailConfigCode)
         {
             objECDService = null;
-            ViewBag.Show_Hide_Buttons = objProcedureService.USP_MODULE_RIGHTS(GlobalParams.ModuleCodeForEmailConfig, objLoginUser.Security_Group_Code, objLoginUser.Users_Code).FirstOrDefault();
+            ViewBag.Show_Hide_Buttons = GetUserModuleRights();//objProcedureService.USP_MODULE_RIGHTS(GlobalParams.ModuleCodeForEmailConfig, objLoginUser.Security_Group_Code, objLoginUser.Users_Code).FirstOrDefault();
             objECD = objECDService.GetList().Where(x => x.Email_Config_Code == EmailConfigCode).FirstOrDefault();
             if (objECD.Email_Config_Code == 0 || objECD.Email_Config_Detail_Code == 0)
             {
@@ -162,7 +172,7 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindUserGrid(string CommandName, string DummyGuid)
         {
-            ViewBag.Show_Hide_Buttons = objProcedureService.USP_MODULE_RIGHTS(GlobalParams.ModuleCodeForEmailConfig, objLoginUser.Security_Group_Code, objLoginUser.Users_Code).FirstOrDefault();
+            ViewBag.Show_Hide_Buttons = GetUserModuleRights();//objProcedureService.USP_MODULE_RIGHTS(GlobalParams.ModuleCodeForEmailConfig, objLoginUser.Security_Group_Code, objLoginUser.Users_Code).FirstOrDefault();
             if (CommandName == "EDIT")
             {
                 ViewBag.CodeForEdit = DummyGuid;

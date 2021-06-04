@@ -2,6 +2,7 @@
 namespace RightsU_Dapper.Entity
 {
     using Dapper.SimpleSave;
+    using Dapper.SimpleLoad;
     using System;
     using System.Collections.Generic;
 
@@ -29,6 +30,8 @@ namespace RightsU_Dapper.Entity
         {
             return Guid.NewGuid().ToString();
         }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public virtual Currency Currency { get; set; }
     }
 }

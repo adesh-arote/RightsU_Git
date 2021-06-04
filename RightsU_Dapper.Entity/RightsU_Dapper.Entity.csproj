@@ -66,8 +66,10 @@
     <Compile Include="Deal\Deal_Schema.cs" />
     <Compile Include="IPR\IPR_Country.cs" />
     <Compile Include="IPR\IPR_REP.cs" />
-    <Compile Include="Master_Entities\Music_Theme.cs" />
     <Compile Include="Master_Entities\Music_Title.cs" />
+    <Compile Include="Master_Entities\Music_Title_Label.cs" />
+    <Compile Include="Master_Entities\Music_Label.cs" />
+    <Compile Include="Master_Entities\Music_Theme.cs" />
     <Compile Include="Master_Entities\Music_Title_Theme.cs" />
     <Compile Include="Master_Entities\Security_Group.cs" />
     <Compile Include="Master_Entities\Users_Business_Unit.cs" />

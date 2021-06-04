@@ -150,9 +150,9 @@ namespace RightsU_Plus.Controllers
 
             #region --- Bind Global Properties ---
 
-            ViewBag.hdnIPR_Renewed_Untill_Year1 = (new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => x.Parameter_Name == "IPR_Renewed_Untill_Year").Select(s => s.Parameter_Value).FirstOrDefault();
+            ViewBag.hdnIPR_Renewed_Untill_Year1 = (new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => x.Parameter_Name == "IPR_Renewed_Untill_Year").Select(s => s.Parameter_Value).FirstOrDefault();
 
-            TempData["hdnIPR_Renewed_Untill_Year"] = (new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => x.Parameter_Name == "IPR_Renewed_Untill_Year").Select(s => s.Parameter_Value).FirstOrDefault();
+            TempData["hdnIPR_Renewed_Untill_Year"] = (new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)).SearchFor(x => x.Parameter_Name == "IPR_Renewed_Untill_Year").Select(s => s.Parameter_Value).FirstOrDefault();
             #endregion
             string imagePage = string.Empty;
             ClearSession();
@@ -223,11 +223,11 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                List<RightsU_Entities.Channel> lstChannel = new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Active == "Y").OrderBy(o => o.Channel_Name).ToList();
+                List<RightsU_Entities.Channel> lstChannel = new RightsU_BLL.Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Active == "Y").OrderBy(o => o.Channel_Name).ToList();
                 var channelCodes = objIPR_REP.IPR_Rep_Channel.Select(s => s.Channel_Code).ToArray();
                 ViewBag.ChannelList = new MultiSelectList(lstChannel, "Channel_Code", "Channel_Name", channelCodes);
 
-                List<Business_Unit> lstBusinessUnit = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).OrderBy(o => o.Business_Unit_Name).ToList();
+                List<Business_Unit> lstBusinessUnit = new RightsU_BLL.Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).OrderBy(o => o.Business_Unit_Name).ToList();
                 var businessUnitCodes = objIPR_REP.IPR_Rep_Business_Unit.Select(s => s.Business_Unit_Code).ToArray();
                 ViewBag.BusinessUnitList = new MultiSelectList(lstBusinessUnit, "Business_Unit_Code", "Business_Unit_Name", businessUnitCodes);
             }

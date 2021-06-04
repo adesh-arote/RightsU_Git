@@ -46,6 +46,5 @@ namespace RightsU_Dapper.Entity
         public virtual ICollection<Title_Milestone> Title_Milestone { get; set; }
         [OneToMany]
         public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; }
-
     }
 }

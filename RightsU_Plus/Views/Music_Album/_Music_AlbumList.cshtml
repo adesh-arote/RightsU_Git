@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.Music_Album>
+﻿@model List<RightsU_Dapper.Entity.Music_Album>
 @using UTOFrameWork.FrameworkClasses;
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -6,6 +6,7 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    List<RightsU_Dapper.Entity.Talents> lstTalentCodes = new RightsU_Dapper.BLL.Services.Talent_Service().GetList().ToList();
 }
 <script>
 
@@ -69,7 +70,9 @@
             foreach (var item in Model)
             {
                 string TalentName = "";
-                TalentName = string.Join(",", item.Music_Album_Talent.Where(w => w.Talent.Talent_Role.Any(a=>a.Role_Code == GlobalParams.Role_code_StarCast)).Select(s => s.Talent.Talent_Name));
+                List<int?> lstTalentCode = item.Music_Album_Talent.Select(x => x.Talent_Code).ToList();
+                TalentName = string.Join(",", lstTalentCodes.Where(w => lstTalentCode.Contains(w.Talent_Code) && w.Talent_Code!= null).Select(c => c.Talent_Name).ToList());
+                //TalentName = string.Join(",", item.Music_Album_Talent.Where(w => w.Talent.Talent_Role.Any(a=>a.Role_Code == GlobalParams.Role_code_StarCast)).Select(s => s.Talent.Talent_Name));
                 string strActive = objMessageKey.Active;
                 if (item.Is_Active == "N")
                 {
