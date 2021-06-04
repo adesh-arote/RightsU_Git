@@ -19,23 +19,23 @@ namespace RightsU_Plus.Controllers
 
         #region --- Properties ---
 
-        private List<RightsU_Dapper.Entity.Talent> lstTalent
+        private List<RightsU_Dapper.Entity.Talents> lstTalent
         {
             get
             {
                 if (Session["lstTalent"] == null)
-                    Session["lstTalent"] = new List<RightsU_Dapper.Entity.Talent>();
-                return (List<RightsU_Dapper.Entity.Talent>)Session["lstTalent"];
+                    Session["lstTalent"] = new List<RightsU_Dapper.Entity.Talents>();
+                return (List<RightsU_Dapper.Entity.Talents>)Session["lstTalent"];
             }
             set { Session["lstTalent"] = value; }
         }
-        private List<RightsU_Dapper.Entity.Talent> lstTalent_Searched
+        private List<RightsU_Dapper.Entity.Talents> lstTalent_Searched
         {
             get
             {
                 if (Session["lstTalent_Searched"] == null)
-                    Session["lstTalent_Searched"] = new List<RightsU_Dapper.Entity.Talent>();
-                return (List<RightsU_Dapper.Entity.Talent>)Session["lstTalent_Searched"];
+                    Session["lstTalent_Searched"] = new List<RightsU_Dapper.Entity.Talents>();
+                return (List<RightsU_Dapper.Entity.Talents>)Session["lstTalent_Searched"];
             }
             set { Session["lstTalent_Searched"] = value; }
         }
@@ -54,9 +54,9 @@ namespace RightsU_Plus.Controllers
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameDesc, Value = "ND" });
             ViewBag.SortType = lstSort;
             /*lstTalent_Searched = lstTalent = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList()*/   
-            lstTalent_Searched = lstTalent = (List<RightsU_Dapper.Entity.Talent>)objTalent_Service.GetList(new Type[] { typeof(Talent_Role) });
+            lstTalent_Searched = lstTalent = (List<RightsU_Dapper.Entity.Talents>)objTalent_Service.GetList(new Type[] { typeof(Talent_Role) });
 
-            RightsU_Dapper.Entity.Talent objTalent = new RightsU_Dapper.Entity.Talent();
+            RightsU_Dapper.Entity.Talents objTalent = new RightsU_Dapper.Entity.Talents();
             List<SelectListItem> lstTitleType = new List<SelectListItem>();
             lstTitleType = new SelectList(objRoleService.GetList().Where(x => x.Role_Type != null && x.Role_Type.Trim() == "T").OrderBy(o => o.Role_Name),"Role_Code","Role_Name","Please Select").ToList();
             lstTitleType.Insert(0, new SelectListItem() { Value = "", Text = "Please Select" });
@@ -69,7 +69,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult BindTalentList(int pageNo, int recordPerPage, string sortType)
         {
-            List<RightsU_Dapper.Entity.Talent> lst = new List<RightsU_Dapper.Entity.Talent>();
+            List<RightsU_Dapper.Entity.Talents> lst = new List<RightsU_Dapper.Entity.Talents>();
             List<SelectListItem> lstTitleType = new List<SelectListItem>();
             lstTitleType = new SelectList(objRoleService.GetList().Where(x => x.Role_Type != null && x.Role_Type.Trim() == "T").OrderBy(o => o.Role_Name), "Role_Code", "Role_Name", "Please Select").ToList();
             ViewBag.ROle = lstTitleType;
@@ -150,7 +150,7 @@ namespace RightsU_Plus.Controllers
             {
                 Record_Count = lstTalent_Searched.Count
             };
-            RightsU_Dapper.Entity.Talent objTalent = new RightsU_Dapper.Entity.Talent();
+            RightsU_Dapper.Entity.Talents objTalent = new RightsU_Dapper.Entity.Talents();
             List<Role> lstRoleUnit = objRoleService.GetList().Where(x =>x.Role_Type!=null && x.Role_Type.Trim() == "T").OrderBy(o => o.Role_Name).ToList();
             var rolecode = objTalent.Talent_Role.Select(s => s.Role_Code).ToArray();
             ViewBag.RoleList = new MultiSelectList(lstRoleUnit, "Role_Code", "Role_Name", "--Please Select--");
@@ -167,7 +167,7 @@ namespace RightsU_Plus.Controllers
             if (isLocked)
             {
                 //Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Dapper.Entity.Talent objTalent = objTalent_Service.GetTalentByID(talentCode);
+                RightsU_Dapper.Entity.Talents objTalent = objTalent_Service.GetTalentByID(talentCode);
                 objTalent.Is_Active = doActive;
                 //objTalent.EntityState = State.Modified;
                 dynamic resultSet;
@@ -214,7 +214,7 @@ namespace RightsU_Plus.Controllers
 
             string status = "S", message = "Record {ACTION} successfully";
             Talent_Service objService = new Talent_Service();
-            RightsU_Dapper.Entity.Talent objTalent = objService.GetTalentByID(talentcode);
+            RightsU_Dapper.Entity.Talents objTalent = objService.GetTalentByID(talentcode);
             //Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
             //RightsU_Dapper.Entity.Talent objTalent = new RightsU_Dapper.Entity.Talent();
 
@@ -244,7 +244,7 @@ namespace RightsU_Plus.Controllers
             string status = "S", message = "Record {ACTION} successfully";
 
             //Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Dapper.Entity.Talent objTalent = objTalent_Service.GetTalentByID(talentcode);
+            RightsU_Dapper.Entity.Talents objTalent = objTalent_Service.GetTalentByID(talentcode);
             objTalent.Talent_Name = talentname;
             objTalent.Last_Action_By = objLoginUser.Users_Code;
             objTalent.Last_Updated_Time = System.DateTime.Now;
@@ -322,7 +322,7 @@ namespace RightsU_Plus.Controllers
 
             TempData["Action"] = "AddTalent";
 
-            RightsU_Dapper.Entity.Talent objTalent = new RightsU_Dapper.Entity.Talent();
+            RightsU_Dapper.Entity.Talents objTalent = new RightsU_Dapper.Entity.Talents();
             List<Role> lstRoleUnit = objRoleService.GetList().Where(x => x.Role_Type != null && x.Role_Type.Trim() == "T").OrderBy(o => o.Role_Name).ToList();
             var rolecode = objTalent.Talent_Role.Select(s => s.Role_Code).ToArray();
             ViewBag.RoleList = new MultiSelectList(lstRoleUnit, "Role_Code", "Role_Name", rolecode);
@@ -348,7 +348,7 @@ namespace RightsU_Plus.Controllers
 
             //Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
             Talent_Service objService = new Talent_Service();
-            RightsU_Dapper.Entity.Talent objTalent = new RightsU_Dapper.Entity.Talent();
+            RightsU_Dapper.Entity.Talents objTalent = new RightsU_Dapper.Entity.Talents();
 
             objTalent.Gender = gender;
             // objTalent.

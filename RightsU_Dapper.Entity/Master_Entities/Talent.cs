@@ -6,9 +6,9 @@ namespace RightsU_Dapper.Entity
     using System.Collections.Generic;
 
     [Table("Talent")]
-    public partial class Talent
+    public partial class Talents
     {
-        public Talent()
+        public Talents()
         {
             this.Talent_Role = new HashSet<Talent_Role>();
             this.Title_Audio_Details_Singers = new HashSet<Title_Audio_Details_Singers>();
@@ -46,6 +46,5 @@ namespace RightsU_Dapper.Entity
         public virtual ICollection<Title_Milestone> Title_Milestone { get; set; }
         [OneToMany]
         public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; }
-
     }
 }

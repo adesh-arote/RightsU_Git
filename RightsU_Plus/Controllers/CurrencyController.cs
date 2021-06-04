@@ -15,6 +15,7 @@ namespace RightsU_Plus.Controllers
     {
         private readonly USP_Service objProcedureService = new USP_Service();
         private readonly Currency_Service objCurrencyService = new Currency_Service();
+        private readonly Currency_Exchange_Rate_Service objCurrency_Exchange_RateService = new Currency_Exchange_Rate_Service();
 
         #region --- Properties ---
         private List<RightsU_Dapper.Entity.Currency> lstCurrency
@@ -311,8 +312,8 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult BindExchangeRateList(string commandName, string dummyGuid)
         {
             string maxDate = "";
-            //if (objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).Count() > 0)
-            //    maxDate = objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).Select(s => s.Effective_Start_Date).Max().ToString(GlobalParams.DateFormat);
+            if (objCurrency.Currency_Exchange_Rate.Count() > 0)
+                maxDate = objCurrency.Currency_Exchange_Rate.Select(s => s.Effective_Start_Date).Max().ToString(GlobalParams.DateFormat);
 
             string canEdit = "Y", canDelete = "Y";
 
@@ -327,8 +328,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.CanEdit = canEdit;
             ViewBag.CanDelete = canDelete;
             ViewBag.MaxDate = maxDate;
-            // List<Currency_Exchange_Rate> lst = objCurrency.Currency_Exchange_Rate.Where(w => w.EntityState != State.Deleted).OrderBy(x=>x.Effective_Start_Date).ToList();
-            return PartialView("~/Views/Currency/_CurrencyExchangeRateList.cshtml");//, lst);
+            List<Currency_Exchange_Rate> lst = objCurrency.Currency_Exchange_Rate.OrderBy(x=>x.Effective_Start_Date).ToList();
+            return PartialView("~/Views/Currency/_CurrencyExchangeRateList.cshtml",lst);
         }
 
         public JsonResult SaveExchangeRate(string dummyGuid, DateTime effectiveDate, decimal exchangeRate)
@@ -350,10 +351,17 @@ namespace RightsU_Plus.Controllers
                 //objCurrencyService.UpdateMusic_Deal()
                     //objCER.EntityState = State.Modified;
             }
-
-            objCER.Effective_Start_Date = effectiveDate;
+            
+                objCER.Effective_Start_Date = effectiveDate;
             objCER.Exchange_Rate = exchangeRate;
-
+            if (objCER == null)
+            {
+                objCurrency_Exchange_RateService.AddEntity(objCER);
+            }
+            else
+            {
+                objCurrency_Exchange_RateService.UpdateMusic_Deal(objCER);
+            }
             object obj = new
             {
                 Status = status,

@@ -12,7 +12,7 @@ namespace RightsU_Dapper.Entity
         {
             this.Acq_Deal = new HashSet<Acq_Deal>();
             this.Currency_Exchange_Rate = new HashSet<Currency_Exchange_Rate>();
-            //this.Material_Order_Details = new HashSet<Material_Order_Details>();
+            this.Material_Order_Details = new HashSet<Material_Order_Details>();
             this.Syn_Deal = new HashSet<Syn_Deal>();
             this.Acq_Deal_Cost = new HashSet<Acq_Deal_Cost>();
             this.Syn_Deal_Revenue = new HashSet<Syn_Deal_Revenue>();
@@ -33,8 +33,8 @@ namespace RightsU_Dapper.Entity
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
         [OneToMany]
         public virtual ICollection<Currency_Exchange_Rate> Currency_Exchange_Rate { get; set; }
-        //[OneToMany]
-       // public virtual ICollection<Material_Order_Details> Material_Order_Details { get; set; }
+        [OneToMany]
+        public virtual ICollection<Material_Order_Details> Material_Order_Details { get; set; }
         [OneToMany]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
         [OneToMany]

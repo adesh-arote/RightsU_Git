@@ -13,7 +13,7 @@ namespace RightsU_Dapper.Entity
         public int? Vendor_Role_Code { get; set; }
         //[ForeignKeyReference(typeof(Vendor))]
         public int Vendor_Code { get; set; }
-        public int Role_Code { get; set; }
+        public int? Role_Code { get; set; }
         public string Is_Active { get; set; }
 
         //public virtual Vendor Vendor { get; set; }

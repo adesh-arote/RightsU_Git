@@ -22,7 +22,7 @@ namespace RightsU_Dapper.Entity
         public virtual Role Role { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual Talent Talent { get; set; }
+        public virtual Talents Talent { get; set; }
     }
 }
 

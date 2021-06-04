@@ -38,7 +38,7 @@ namespace RightsU_Dapper.Entity
         //  public virtual Milestone_Type Milestone_Type { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual Talent Talent { get; set; }
+        public virtual Talents Talent { get; set; }
         public virtual ICollection<ProjectMilestoneDetail> ProjectMilestoneDetails { get; set; }
         public virtual ICollection<ProjectMilestoneTitle> ProjectMilestoneTitles { get; set; }
     }

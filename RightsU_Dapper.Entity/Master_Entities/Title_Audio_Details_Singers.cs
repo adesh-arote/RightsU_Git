@@ -17,7 +17,7 @@ namespace RightsU_Dapper.Entity
         public Nullable<int> Talent_Code { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual Talent Talent { get; set; }
+        public virtual Talents Talent { get; set; }
         public virtual Title Title { get; set; }
     }
 }

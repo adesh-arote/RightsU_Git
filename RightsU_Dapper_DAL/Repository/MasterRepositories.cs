@@ -1642,36 +1642,36 @@ namespace RightsU_Dapper.DAL.Repository
             base.DeleteAllEntity(ListEntity);
         }
     }
-    public class Talent_Repository : MainRepository<Talent>
+    public class Talent_Repository : MainRepository<Talents>
     {
-        public Talent Get(int? Id, Type[] RelationList = null)
+        public Talents Get(int? Id, Type[] RelationList = null)
         {
             var obj = new { Talent_Code = Id };
-            return base.GetById<Talent>(obj, RelationList);
+            return base.GetById<Talents>(obj, RelationList);
         }
-        public void Add(Talent entity)
+        public void Add(Talents entity)
         {
             //Talent oldObj = Get(entity.Talent_Code);
             //base.UpdateEntity(oldObj, entity);
             base.AddEntity(entity);
         }
-        public void Update(Talent entity)
+        public void Update(Talents entity)
         {
-            Talent oldObj = Get(entity.Talent_Code);
+            Talents oldObj = Get(entity.Talent_Code);
             base.UpdateEntity(oldObj, entity);
         }
-        public void Delete(Talent entity)
+        public void Delete(Talents entity)
         {
             base.DeleteEntity(entity);
         }
 
-        public IEnumerable<Talent> GetAll(Type[] additionalTypes = null)
+        public IEnumerable<Talents> GetAll(Type[] additionalTypes = null)
         {
-            return base.GetAll<Talent>();
+            return base.GetAll<Talents>();
         }
-        public IEnumerable<Talent> SearchFor(object param)
+        public IEnumerable<Talents> SearchFor(object param)
         {
-            return base.SearchForEntity<Talent>(param);
+            return base.SearchForEntity<Talents>(param);
         }
     }
     public class Role_Repository : MainRepository<Role>
@@ -1848,7 +1848,7 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public Currency Get(int? Id, Type[] RelationList = null)
         {
-            var obj = new { Grade_Code = Id };
+            var obj = new { Currency_Code = Id };
             return base.GetById<Currency>(obj, RelationList);
         }
         public void Add(Currency entity)
@@ -2551,7 +2551,7 @@ namespace RightsU_Dapper.DAL.Repository
 
         public IEnumerable<Email_Config> GetAll(Type[] additionalTypes = null)
         {
-            return base.GetAll<Email_Config>();
+            return base.GetAll<Email_Config>(additionalTypes);
         }
         public IEnumerable<Email_Config> SearchFor(object param)
         {
@@ -2739,6 +2739,172 @@ namespace RightsU_Dapper.DAL.Repository
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Security_Group entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Label_Repository : MainRepository<Music_Label>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Label> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Label>();
+        }
+        public IEnumerable<Music_Label> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Label>(param);
+        }
+        public Music_Label Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Label_Code = Id };
+            return base.GetById<Music_Label>(obj, RelationList);
+        }
+        public void Add(Music_Label entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Label entity)
+        {
+            Music_Label oldObj = Get(entity.Music_Label_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Label entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Title_Repository : MainRepository<Title>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Title> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Title>();
+        }
+        public IEnumerable<Title> SearchFor(object param)
+        {
+            return base.SearchForEntity<Title>(param);
+        }
+        public Title Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Label_Code = Id };
+            return base.GetById<Title>(obj, RelationList);
+        }
+        public void Add(Title entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Title entity)
+        {
+            Title oldObj = Get(entity.Title_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Title entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Album_Repository : MainRepository<Music_Album>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Album> GetAll(Type[] additionalTypes = null)
+        {
+
+            return base.GetAll<Music_Album>(additionalTypes);
+        }
+        public IEnumerable<Music_Album> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Album>(param);
+        }
+        public Music_Album Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Album_Code = Id };
+            return base.GetById<Music_Album>(obj, RelationList);
+        }
+        public void Add(Music_Album entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Album entity)
+        {
+            Music_Album oldObj = Get(entity.Music_Album_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Album entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Album_Talent_Repository : MainRepository<Music_Album_Talent>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Album_Talent> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Album_Talent>(additionalTypes);
+        }
+        public IEnumerable<Music_Album_Talent> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Album_Talent>(param);
+        }
+        public Music_Album_Talent Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Album_Talent_Code = Id };
+            return base.GetById<Music_Album_Talent>(obj, RelationList);
+        }
+        public void Add(Music_Album_Talent entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Album_Talent entity)
+        {
+            Music_Album_Talent oldObj = Get(entity.Music_Album_Talent_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Album_Talent entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Currency_Exchange_Rate_Repository : MainRepository<Currency_Exchange_Rate>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Currency_Exchange_Rate> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Currency_Exchange_Rate>(additionalTypes);
+        }
+        public IEnumerable<Currency_Exchange_Rate> SearchFor(object param)
+        {
+            return base.SearchForEntity<Currency_Exchange_Rate>(param);
+        }
+        public Currency_Exchange_Rate Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Currency_Exchange_Rate_Code = Id };
+            return base.GetById<Currency_Exchange_Rate>(obj, RelationList);
+        }
+        public void Add(Currency_Exchange_Rate entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Currency_Exchange_Rate entity)
+        {
+            Currency_Exchange_Rate oldObj = Get(entity.Currency_Exchange_Rate_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Currency_Exchange_Rate entity)
         {
             base.DeleteEntity(entity);
         }

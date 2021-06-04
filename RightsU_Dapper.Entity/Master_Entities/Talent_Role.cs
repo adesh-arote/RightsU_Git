@@ -12,7 +12,7 @@ namespace RightsU_Dapper.Entity
         //public State EntityState { get; set; }
         [PrimaryKey]
         public int? Talent_Role_Code { get; set; }
-        [ForeignKeyReference(typeof(Talent))]
+        [ForeignKeyReference(typeof(Talents))]
         public Nullable<int> Talent_Code { get; set; }
         public Nullable<int> Role_Code { get; set; }
         [SimpleSaveIgnore]
@@ -20,7 +20,7 @@ namespace RightsU_Dapper.Entity
         public virtual Role Role { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual Talent Talent { get; set; }
+        public virtual Talents Talent { get; set; }
     }
 }
 

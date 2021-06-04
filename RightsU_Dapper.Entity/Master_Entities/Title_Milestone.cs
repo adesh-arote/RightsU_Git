@@ -29,7 +29,7 @@ namespace RightsU_Dapper.Entity
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         public virtual Milestone_Nature Milestone_Nature { get; set; }
-        public virtual Talent Talent { get; set; }
+        public virtual Talents Talent { get; set; }
         public virtual Title Title { get; set; }
     }
 }

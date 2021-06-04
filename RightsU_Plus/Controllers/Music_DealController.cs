@@ -154,7 +154,7 @@ namespace RightsU_Plus.Controllers
 
             string vendorCodes = string.Join(",", objMusicDeal.Music_Deal_Vendor.Select(x => x.Vendor_Code.ToString()).ToArray());
             ViewBag.VendorList = new MultiSelectList(new RightsU_BLL. Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Vendor_Name).ToList(), "Vendor_Code", "Vendor_Name", vendorCodes.Split(','));
-            ViewBag.MusicLabelList = new SelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Music_Label_Name).ToList(), "Music_Label_Code", "Music_Label_Name");
+            ViewBag.MusicLabelList = new SelectList(new RightsU_BLL.Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Music_Label_Name).ToList(), "Music_Label_Code", "Music_Label_Name");
 
             string musicLangugaeCodes = string.Join(",", objMusicDeal.Music_Deal_Language.Select(x => x.Music_Language_Code.ToString()).ToArray());
             ViewBag.TrackLanguageList = new MultiSelectList(new RightsU_BLL.Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").OrderBy(x => x.Language_Name).ToList(), "Music_Language_Code", "Language_Name", musicLangugaeCodes.Split(','));

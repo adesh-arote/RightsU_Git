@@ -12,7 +12,7 @@
     }
     List<int?> lstVendorCodes = new RightsU_BLL.MHUser_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Select(s => s.Vendor_Code).ToList();
     RightsU_Dapper.BLL.Services.Role_Service objRoleService = new RightsU_Dapper.BLL.Services.Role_Service();
-    List<RightsU_Dapper.Entity.Role> lstRole = objRoleService.GetAll().ToList();
+    List<RightsU_Dapper.Entity.Role> lstRole = objRoleService.GetList().ToList();
 }
 <script>
     $('.expand_Vendor_Name').expander({

@@ -3,33 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Entities;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity;
 
 namespace RightsU_Plus.Controllers
 {
     public class Music_LabelController : BaseController
     {
+        private readonly Music_Label_Service objMusicLabelService = new Music_Label_Service();
+        private readonly Title_Service objTitleService = new Title_Service();
+        private readonly USP_Service objProcedureService = new USP_Service();
         #region --- Properties ---
-        private List<RightsU_Entities.Music_Label> lstMusic_Label
+        private List<RightsU_Dapper.Entity.Music_Label> lstMusic_Label
         {
             get
             {
                 if (Session["lstMusic_Label"] == null)
-                    Session["lstMusic_Label"] = new List<RightsU_Entities.Music_Label>();
-                return (List<RightsU_Entities.Music_Label>)Session["lstMusic_Label"];
+                    Session["lstMusic_Label"] = new List<RightsU_Dapper.Entity.Music_Label>();
+                return (List< RightsU_Dapper.Entity.Music_Label>)Session["lstMusic_Label"];
             }
             set { Session["lstMusic_Label"] = value; }
         }
 
-        private List<RightsU_Entities.Music_Label> lstMusic_Label_Searched
+        private List<RightsU_Dapper.Entity.Music_Label> lstMusic_Label_Searched
         {
             get
             {
                 if (Session["lstMusic_Label_Searched"] == null)
-                    Session["lstMusic_Label_Searched"] = new List<RightsU_Entities.Music_Label>();
-                return (List<RightsU_Entities.Music_Label>)Session["lstMusic_Label_Searched"];
+                    Session["lstMusic_Label_Searched"] = new List<RightsU_Dapper.Entity.Music_Label>();
+                return (List<RightsU_Dapper.Entity.Music_Label>)Session["lstMusic_Label_Searched"];
             }
             set { Session["lstMusic_Label_Searched"] = value; }
         }
@@ -43,7 +48,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.Code = modulecode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusicLabel);
-            lstMusic_Label_Searched = lstMusic_Label = new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstMusic_Label_Searched = lstMusic_Label = (List<RightsU_Dapper.Entity.Music_Label>)objMusicLabelService.GetAll();
             Session["TitleLabelCode"] = "";
             Session["TitleLabelCode"] = GetTitleLabelCode();
             List<SelectListItem> lstSort = new List<SelectListItem>();
@@ -57,7 +62,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult BindMusic_LabelList(int pageNo, int recordPerPage, string sortType)
         {
-            List<RightsU_Entities.Music_Label> lst = new List<RightsU_Entities.Music_Label>();
+            List<RightsU_Dapper.Entity.Music_Label> lst = new List<RightsU_Dapper.Entity.Music_Label>();
             int RecordCount = 0;
             RecordCount = lstMusic_Label_Searched.Count;
             if (RecordCount > 0)
@@ -102,16 +107,16 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusicLabel), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string lstRights = objProcedureService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusicLabel), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
             return rights;
         }
 
         private string GetTitleLabelCode()
         {
-            List<RightsU_Entities.Title> lstRights = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Music_Label_Code != null && x.Music_Label_Code != 0).ToList();
+            List<RightsU_Dapper.Entity.Title> lstRights = objTitleService.GetAll().Where(x => true).Where(x => x.Music_Label_Code != null && x.Music_Label_Code != 0).ToList();
             string rights = "~";
             if (lstRights.FirstOrDefault() != null)
             {
@@ -158,12 +163,13 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(Music_LabelCode, GlobalParams.ModuleCodeForMusicLabel, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                Music_Label_Service objService = new Music_Label_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Music_Label objMusic_Label = objService.GetById(Music_LabelCode);
+                //Music_Label_Service objService = new Music_Label_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Music_Label objMusic_Label = objMusicLabelService.GetByID(Music_LabelCode);
                 objMusic_Label.Is_Active = doActive;
-                objMusic_Label.EntityState = State.Modified;
+                objMusicLabelService.UpdateEntity(objMusic_Label);
+                //objMusic_Label.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objMusic_Label, out resultSet);
+                bool isValid = true;//= objService.Save(objMusic_Label, out resultSet);
                 if (isValid)
                 {
                     lstMusic_Label.Where(w => w.Music_Label_Code == Music_LabelCode).First().Is_Active = doActive;
@@ -214,8 +220,8 @@ namespace RightsU_Plus.Controllers
             }
             else if (commandName == "EDIT")
             {
-                Music_Label_Service objService = new Music_Label_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Music_Label objMusic_Label = objService.GetById(Music_LabelCode);
+               // Music_Label_Service objService = new Music_Label_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.Music_Label objMusic_Label = objMusicLabelService.GetByID(Music_LabelCode);
                 TempData["Action"] = "EditMusic_Label";
                 TempData["idMusic_Label"] = objMusic_Label.Music_Label_Code;
             }
@@ -250,36 +256,46 @@ namespace RightsU_Plus.Controllers
             int Music_LabelCode = Convert.ToInt32(objFormCollection["Music_LabelCode"]);
             int Record_Code = Convert.ToInt32(objFormCollection["Record_Code"]);
             string status = "S", message = "Record {ACTION} successfully";
-            Music_Label_Service objService = new Music_Label_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Music_Label objMusic_Label = new RightsU_Entities.Music_Label();
+           // Music_Label_Service objService = new Music_Label_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.Music_Label objMusic_Label = new RightsU_Dapper.Entity.Music_Label();
             if (Music_LabelCode != 0)
             {
                 string str_Music_Label_Name = objFormCollection["Music_Label_Name"].ToString().Trim();
-                objMusic_Label = objService.GetById(Music_LabelCode);
+                objMusic_Label = objMusicLabelService.GetByID(Music_LabelCode);
                 objMusic_Label.Music_Label_Name = str_Music_Label_Name;
                 objMusic_Label.Last_Action_By = objLoginUser.Users_Code;
 
-                objMusic_Label.EntityState = State.Modified;
+                //objMusic_Label.EntityState = State.Modified;
             }
             else
             {
                 string str_Music_Label_Name = objFormCollection["Music_Label_Name"].ToString().Trim();
-                objMusic_Label = new RightsU_Entities.Music_Label();
+                objMusic_Label = new RightsU_Dapper.Entity.Music_Label();
                 objMusic_Label.Is_Active = "Y";
                 objMusic_Label.Music_Label_Name = str_Music_Label_Name;
                 objMusic_Label.Inserted_By = objLoginUser.Users_Code;
                 objMusic_Label.Inserted_On = System.DateTime.Now;
-                objMusic_Label.EntityState = State.Added;
+                //objMusic_Label.EntityState = State.Added;
             }
             objMusic_Label.Last_Updated_Time = System.DateTime.Now;
             dynamic resultSet;
-            bool isDuplicate = objService.Validate(objMusic_Label, out resultSet);
+            //bool isDuplicate = objService.Validate(objMusic_Label, out resultSet);
+            bool isDuplicate = true;
             if (isDuplicate)
             {
-                bool isValid = objService.Save(objMusic_Label, out resultSet);
-                if (isValid)
+                if (Music_LabelCode != 0)
                 {
-                    lstMusic_Label_Searched = lstMusic_Label = new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                    objMusicLabelService.UpdateEntity(objMusic_Label);
+                }
+                else
+                {
+                    objMusicLabelService.AddEntity(objMusic_Label);
+                }
+
+                bool isValid = true;//objService.Save(objMusic_Label, out resultSet);
+                    if (isValid)
+                {
+                    lstMusic_Label_Searched = lstMusic_Label = objMusicLabelService.GetAll().Where(x => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
                     if (Music_LabelCode > 0)
                     {
                         if (status == "E")
@@ -293,20 +309,20 @@ namespace RightsU_Plus.Controllers
                         if (status == "E")
                             message = objMessageKey.CouldNotsavedRecord;
                         else
-                            message = objMessageKey.Recordupdatedsuccessfully;
+                            message = objMessageKey.RecordAddedSuccessfully;
                     }
                         //message = message.Replace("{ACTION}", "added");
                 }
                 else
                 {
                     status = "E";
-                    message = resultSet;
+                    message = "";
                 }
             }
             else
             {
                 status = "E";
-                message = resultSet;
+                message = "";
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

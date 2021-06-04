@@ -486,7 +486,7 @@ namespace RightsU_Plus.Controllers
 
                 if (Show_Type_Code != null)
                 {
-                    var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Name.ToUpper()
+                    var result = new RightsU_BLL.Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Name.ToUpper()
                     .Contains(searchString.ToUpper())
                     && s.Is_Active == "Y"
                     && arrDTCodes.Contains(s.Deal_Type_Code.ToString()))
@@ -495,7 +495,7 @@ namespace RightsU_Plus.Controllers
 
                     if (Show_Type_Code.Contains("SP"))
                     {
-                        var titleresult = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Name.ToUpper()
+                        var titleresult = new RightsU_BLL.Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Name.ToUpper()
                             .Contains(searchString.ToUpper())
                             && s.Is_Active == "Y"
                             && arrTTCodes.Contains(s.Title_Code.ToString()))
@@ -510,7 +510,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Name.ToUpper()
+                    var result = new RightsU_BLL.Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Name.ToUpper()
                    .Contains(searchString.ToUpper())
                     && s.Is_Active == "Y"
                     && (arrDTCodes.Contains(s.Deal_Type_Code.ToString()) || arrTTCodes.Contains(s.Title_Code.ToString()))

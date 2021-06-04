@@ -15,36 +15,36 @@ namespace RightsU_Dapper.BLL.Services
         {
             this.objTalent_Repository = new Talent_Repository();
         }
-        public Talent GetTalentByID(int? ID, Type[] RelationList = null)
+        public Talents GetTalentByID(int? ID, Type[] RelationList = null)
         {
             return objTalent_Repository.Get(ID, RelationList);
         }
-        public IEnumerable<Talent> GetTalentList()
+        public IEnumerable<Talents> GetTalentList()
         {
             return objTalent_Repository.GetAll();
         }
-        public void AddEntity(Talent obj)
+        public void AddEntity(Talents obj)
         {
             objTalent_Repository.Add(obj);
         }
-        public void UpdateMusic_Deal(Talent obj)
+        public void UpdateMusic_Deal(Talents obj)
         {
             objTalent_Repository.Update(obj);
         }
-        public void DeleteMusic_Deal(Talent obj)
+        public void DeleteMusic_Deal(Talents obj)
         {
             objTalent_Repository.Delete(obj);
         }
 
-        public IEnumerable<Talent> SearchFor(object param)
+        public IEnumerable<Talents> SearchFor(object param)
         {
             return objTalent_Repository.SearchFor(param);
         }
-        public IEnumerable<Talent> GetList(Type[] additionalTypes = null)
+        public IEnumerable<Talents> GetList(Type[] additionalTypes = null)
         {
             return objTalent_Repository.GetAll();
         }
-        private bool ValidateDuplicate(Talent objToValidate, out dynamic resultSet)
+        private bool ValidateDuplicate(Talents objToValidate, out dynamic resultSet)
         {
             //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
             //{
@@ -681,6 +681,53 @@ namespace RightsU_Dapper.BLL.Services
         //        return true;
         //    }
 
+    }
+    public class Currency_Exchange_Rate_Service
+    {
+        Currency_Exchange_Rate_Repository objCurrency_Exchange_Rate_Repository = new Currency_Exchange_Rate_Repository();
+        public Currency_Exchange_Rate_Service()
+        {
+            this.objCurrency_Exchange_Rate_Repository = new Currency_Exchange_Rate_Repository();
+        }
+        public Currency_Exchange_Rate GetTalentByID(int? ID, Type[] RelationList = null)
+        {
+            return objCurrency_Exchange_Rate_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Currency_Exchange_Rate> GetTalentList()
+        {
+            return objCurrency_Exchange_Rate_Repository.GetAll();
+        }
+        public void AddEntity(Currency_Exchange_Rate obj)
+        {
+            objCurrency_Exchange_Rate_Repository.Add(obj);
+        }
+        public void UpdateMusic_Deal(Currency_Exchange_Rate obj)
+        {
+            objCurrency_Exchange_Rate_Repository.Update(obj);
+        }
+        public void DeleteMusic_Deal(Currency_Exchange_Rate obj)
+        {
+            objCurrency_Exchange_Rate_Repository.Delete(obj);
+        }
+
+        public IEnumerable<Currency_Exchange_Rate> SearchFor(object param)
+        {
+            return objCurrency_Exchange_Rate_Repository.SearchFor(param);
+        }
+        public IEnumerable<Currency_Exchange_Rate> GetList(Type[] additionalTypes = null)
+        {
+            return objCurrency_Exchange_Rate_Repository.GetAll();
+        }
+        private bool ValidateDuplicate(Currency_Exchange_Rate objToValidate, out dynamic resultSet)
+        {
+            //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
+            //{
+            //    resultSet = "Talent already exists";
+            //    return false;
+            //}
+            resultSet = "";
+            return true;
+        }
     }
     public class Material_Medium_Service
     {
@@ -2855,4 +2902,146 @@ namespace RightsU_Dapper.BLL.Services
                 objMusic_Language_Repository.Delete(obj);
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public class Music_Label_Service
+    {
+        Music_Label_Repository objMusic_Label_Repository = new Music_Label_Repository();
+        public Music_Label_Service()
+        {
+            this.objMusic_Label_Repository = new Music_Label_Repository();
+        }
+        public Music_Label GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Label_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Label> GetAll(Type[] RelationList = null)
+        {
+            return objMusic_Label_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Music_Label obj)
+        {
+            objMusic_Label_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Label obj)
+        {
+            objMusic_Label_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Label obj)
+        {
+            objMusic_Label_Repository.Delete(obj);
+        }
     }
+    public class Title_Service
+    {
+        Title_Repository objTitle_Repository = new Title_Repository();
+        public Title_Service()
+        {
+            this.objTitle_Repository = new Title_Repository();
+        }
+        public Title GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objTitle_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Title> GetAll(Type[] RelationList = null)
+        {
+            return objTitle_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Title obj)
+        {
+            objTitle_Repository.Add(obj);
+        }
+        public void UpdateEntity(Title obj)
+        {
+            objTitle_Repository.Update(obj);
+        }
+        public void DeleteEntity(Title obj)
+        {
+            objTitle_Repository.Delete(obj);
+        }
+    }
+    public class Music_Album_Service
+    {
+        Music_Album_Repository objMusic_Album_Repository = new Music_Album_Repository();
+        public Music_Album_Service()
+        {
+            this.objMusic_Album_Repository = new Music_Album_Repository();
+        }
+        public Music_Album GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Album_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Album> GetAll(Type[] RelationList = null)
+        {
+            return objMusic_Album_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Music_Album obj)
+        {
+            objMusic_Album_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Album obj)
+        {
+            objMusic_Album_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Album obj)
+        {
+            objMusic_Album_Repository.Delete(obj);
+        }
+    }
+    public class Music_Album_Talent_Service
+    {
+        Music_Album_Talent_Repository objMusic_Album_Talent_Repository = new Music_Album_Talent_Repository();
+        public Music_Album_Talent_Service()
+        {
+            this.objMusic_Album_Talent_Repository = new Music_Album_Talent_Repository();
+        }
+        public Music_Album_Talent GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Album_Talent_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Album_Talent> GetAll(Type[] RelationList = null)
+        {
+            return objMusic_Album_Talent_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Music_Album_Talent obj)
+        {
+            objMusic_Album_Talent_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Album_Talent obj)
+        {
+            objMusic_Album_Talent_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Album_Talent obj)
+        {
+            objMusic_Album_Talent_Repository.Delete(obj);
+        }
+    }
+
+}
