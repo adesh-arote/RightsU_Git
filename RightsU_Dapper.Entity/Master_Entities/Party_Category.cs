@@ -10,7 +10,7 @@ namespace RightsU_Dapper.Entity
     {
         public Party_Category()
         {
-           // this.Vendors = new HashSet<Vendor>();
+            this.Vendors = new HashSet<Vendor>();
         }
         [PrimaryKey]
         public int? Party_Category_Code { get; set; }
@@ -21,7 +21,8 @@ namespace RightsU_Dapper.Entity
         public Nullable<int> Last_Updated_By { get; set; }
         public string Is_Active { get; set; }
 
-        //public virtual ICollection<Vendor> Vendors { get; set; }
+        [OneToMany]
+        public ICollection<Vendor> Vendors { get; set; }
     }
 }
 

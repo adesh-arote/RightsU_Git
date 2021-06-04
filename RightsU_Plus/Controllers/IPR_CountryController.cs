@@ -1,36 +1,40 @@
 ﻿
+using RightsU_Dapper.BLL.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using RightsU_Entities;
-using RightsU_BLL;
+//using RightsU_Dapper.Entity;
+//using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class IPR_CountryController : BaseController
     {
+        private readonly USP_MODULE_RIGHTS_Service objUSP_MODULE_RIGHTS_Service = new USP_MODULE_RIGHTS_Service();
+        private readonly IPR_Country_Service objIPRCountryService = new IPR_Country_Service();
+
         #region --- Properties ---
-        private List<RightsU_Entities.IPR_Country> lstIPR_Country
+        private List<RightsU_Dapper.Entity.IPR_Country> lstIPR_Country
         {
             get
             {
                 if (Session["lstIPR_Country"] == null)
-                    Session["lstIPR_Country"] = new List<RightsU_Entities.IPR_Country>();
-                return (List<RightsU_Entities.IPR_Country>)Session["lstIPR_Country"];
+                    Session["lstIPR_Country"] = new List<RightsU_Dapper.Entity.IPR_Country>();
+                return (List<RightsU_Dapper.Entity.IPR_Country>)Session["lstIPR_Country"];
             }
             set { Session["lstIPR_Country"] = value; }
         }
 
-        private List<RightsU_Entities.IPR_Country> lstIPR_Country_Searched
+        private List<RightsU_Dapper.Entity.IPR_Country> lstIPR_Country_Searched
         {
             get
             {
                 if (Session["lstIPR_Country_Searched"] == null)
-                    Session["lstIPR_Country_Searched"] = new List<RightsU_Entities.IPR_Country>();
-                return (List<RightsU_Entities.IPR_Country>)Session["lstIPR_Country_Searched"];
+                    Session["lstIPR_Country_Searched"] = new List<RightsU_Dapper.Entity.IPR_Country>();
+                return (List<RightsU_Dapper.Entity.IPR_Country>)Session["lstIPR_Country_Searched"];
             }
             set { Session["lstIPR_Country_Searched"] = value; }
         }
@@ -39,14 +43,14 @@ namespace RightsU_Plus.Controllers
 
         public ViewResult Index()
         {
-            lstIPR_Country_Searched = lstIPR_Country = new IPR_Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstIPR_Country_Searched = lstIPR_Country = objIPRCountryService.GetAll().OrderByDescending(o => o.Last_Updated_Time).ToList();
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/IPR_Country/Index.cshtml");
         }
 
         public PartialViewResult BindIPR_CountryList(int pageNo, int recordPerPage)
         {
-            List<RightsU_Entities.IPR_Country> lst = new List<RightsU_Entities.IPR_Country>();
+            List<RightsU_Dapper.Entity.IPR_Country> lst = new List<RightsU_Dapper.Entity.IPR_Country>();
             int RecordCount = 0;
             RecordCount = lstIPR_Country_Searched.Count;
             if (RecordCount > 0)
@@ -84,10 +88,10 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeFor_IPR_Country), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
+            string lstRights = objUSP_MODULE_RIGHTS_Service.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeFor_IPR_Country), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToString();
             string rights = "";
-            if (lstRights.FirstOrDefault() != null)
-                rights = lstRights.FirstOrDefault();
+            if (lstRights != null)
+                rights = lstRights;
 
             return rights;
         }
@@ -140,12 +144,13 @@ namespace RightsU_Plus.Controllers
             if (isLocked)
             {
 
-                IPR_Country_Service objService = new IPR_Country_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.IPR_Country objIPR_Country = objService.GetById(IPR_CountryCode);
+                //IPR_Country_Service objService = new IPR_Country_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.IPR_Country objIPR_Country = objIPRCountryService.GetByID(IPR_CountryCode);
                 objIPR_Country.Is_Active = doActive;
-                objIPR_Country.EntityState = State.Modified;
+                //objIPR_Country.EntityState = State.Modified;
                 dynamic resultSet;
-                bool isValid = objService.Save(objIPR_Country, out resultSet);
+                objIPRCountryService.AddEntity(objIPR_Country);
+                bool isValid = true;// objService.Save(objIPR_Country, out resultSet);
                 if (isValid)
                 {
                     lstIPR_Country.Where(w => w.IPR_Country_Code == IPR_CountryCode).First().Is_Active = doActive;
@@ -187,8 +192,8 @@ namespace RightsU_Plus.Controllers
             }
             else if (commandName == "EDIT")
             {
-                IPR_Country_Service objService = new IPR_Country_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.IPR_Country objIPR_Country = objService.GetById(IPR_CountryCode);
+                //IPR_Country_Service objService = new IPR_Country_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Dapper.Entity.IPR_Country objIPR_Country = objIPRCountryService.GetByID(IPR_CountryCode);
                 TempData["Action"] = "EditIPR_Country";
                 TempData["idIPR_Country"] = objIPR_Country.IPR_Country_Code;
             }
@@ -204,49 +209,51 @@ namespace RightsU_Plus.Controllers
         {
             int IPR_CountryCode = Convert.ToInt32(objFormCollection["IPR_CountryCode"]);
             string status = "S", message = "Record {ACTION} successfully";
-            IPR_Country_Service objService = new IPR_Country_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.IPR_Country objIPR_Country = new RightsU_Entities.IPR_Country();
+            //IPR_Country_Service objService = new IPR_Country_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Dapper.Entity.IPR_Country objIPR_Country = new RightsU_Dapper.Entity.IPR_Country();
             if (IPR_CountryCode != 0)
             {
                 string str_IPR_Country_Name = objFormCollection["IPR_Country_Name"].ToString().Trim();
-                objIPR_Country = objService.GetById(IPR_CountryCode);
+                objIPR_Country = objIPRCountryService.GetByID(IPR_CountryCode);
                 objIPR_Country.IPR_Country_Name = str_IPR_Country_Name;
                 objIPR_Country.Last_Action_By = objLoginUser.Users_Code;
-                objIPR_Country.EntityState = State.Modified;
+                //objIPR_Country.EntityState = State.Modified;
             }
             else
             {
                 string str_IPR_Country_Name = objFormCollection["IPR_Country_Name"].ToString().Trim();
-                objIPR_Country = new RightsU_Entities.IPR_Country();
+                objIPR_Country = new RightsU_Dapper.Entity.IPR_Country();
                 objIPR_Country.Is_Active = "Y";
                 objIPR_Country.IPR_Country_Name = str_IPR_Country_Name;
                 objIPR_Country.Inserted_By = objLoginUser.Users_Code;
                 objIPR_Country.Inserted_On = System.DateTime.Now;
-                objIPR_Country.EntityState = State.Added;
+               // objIPR_Country.EntityState = State.Added;
             }
             objIPR_Country.Last_Updated_Time = System.DateTime.Now;
-            dynamic resultSet;
-            bool isDuplicate = objService.Validate(objIPR_Country, out resultSet);
+            string resultSet;
+            bool isDuplicate = objIPRCountryService.Validate(objIPR_Country, out resultSet);
+            
             if (isDuplicate)
             {
-                bool isValid = objService.Save(objIPR_Country, out resultSet);
+                objIPRCountryService.AddEntity(objIPR_Country);
+                bool isValid = true;// objService.Save(objIPR_Country, out resultSet);
                 if (isValid)
                 {
-                    lstIPR_Country_Searched = lstIPR_Country = new IPR_Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+                    lstIPR_Country_Searched = lstIPR_Country = objIPRCountryService.GetAll().OrderByDescending(o => o.Last_Updated_Time).ToList();
                     if (IPR_CountryCode > 0)
                         message = message.Replace("{ACTION}", "updated");
                     else
                         message = message.Replace("{ACTION}", "added");
 
-                    if (objIPR_Country.EntityState == State.Modified)
-                    {
+                    //if (objIPR_Country.EntityState == State.Modified)
+                    //{
                          int Record_Code =  Convert.ToInt32(objFormCollection["Record_Code"]);
                          if (Record_Code > 0)
                          {
                              int recordLockingCode = Convert.ToInt32(Record_Code);
                              DBUtil.Release_Record(recordLockingCode);
                          }
-                    }  
+                    //}  
                 }
                 else
                 {

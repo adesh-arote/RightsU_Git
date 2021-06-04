@@ -123,9 +123,7 @@ namespace RightsU_Plus.Controllers
         }
         Type[] RelationList = new Type[] { typeof(Vendor_Country),
                         typeof(Vendor_Contacts),
-                        typeof(Vendor_Role),
-                        typeof(Party_Category)
-                        
+                        typeof(Vendor_Role)
             };
         #endregion
 
@@ -884,15 +882,14 @@ namespace RightsU_Plus.Controllers
             #endregion
             objVendor.Short_Code = objUser_MVC.Short_Code;
             objVendor.Last_Updated_Time = System.DateTime.Now;
-            dynamic resultSet;
-            //bool isDuplicate = objVendorService.Validate(objVendor, out resultSet);
-            bool isDuplicate = true;
+            string resultSet;
+            bool isDuplicate = objVendorService.Validate(objVendor, out resultSet);
+           // bool isDuplicate = true;
             if (isDuplicate)
             {
                 if(objVendor.Vendor_Code > 0)
                 {
                     objVendorService.UpdateEntity(objVendor);
-
                 }
                 else
                 {
@@ -925,8 +922,8 @@ namespace RightsU_Plus.Controllers
             else
             {
                 status = "E";
-                //message = resultSet;
-                message = "";
+                message = resultSet;
+                //message = "";
 
             }
             var obj = new

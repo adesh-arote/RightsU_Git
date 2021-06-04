@@ -8,8 +8,8 @@
     RightsU_Dapper.BLL.Services.Role_Service objRoleService = new RightsU_Dapper.BLL.Services.Role_Service();
     RightsU_Dapper.BLL.Services.Party_Category_Service objPartyCategoryService = new RightsU_Dapper.BLL.Services.Party_Category_Service();
 
-    List<RightsU_Dapper.Entity.Role> lstRole = objRoleService.GetAll().ToList();
-    List<RightsU_Dapper.Entity.Party_Category> lstPartycategory = objPartyCategoryService.GetAll().ToList();
+    List<RightsU_Dapper.Entity.Role> lstRole = objRoleService.GetList().ToList();
+    List<RightsU_Dapper.Entity.Party_Category> lstPartycategory = objPartyCategoryService.GetList().ToList();
 
     List<int?> lstAType = new List<int?>();
     List<int?> lstSType = new List<int?>();

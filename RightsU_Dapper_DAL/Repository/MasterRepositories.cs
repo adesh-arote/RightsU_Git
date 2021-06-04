@@ -161,8 +161,6 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public void Add(Vendor entity)
         {
-            Vendor oldObj = Get(entity.Vendor_Code);
-            //base.UpdateEntity(oldObj, entity);
             base.AddEntity(entity);
         }
         public void Update(Vendor entity)
@@ -307,37 +305,6 @@ namespace RightsU_Dapper.DAL.Repository
             return base.SearchForEntity<Vendor_Role>(param);
         }
     }
-    //public class Country_Repository : MainRepository<Country>
-    //{
-    //    public Country Get(int? Id, Type[] RelationList = null)
-    //    {
-    //        var obj = new { Country_Code = Id };
-    //        return base.GetById<Country>(obj, RelationList);
-    //    }
-    //    public void Add(Country entity)
-    //    {
-    //        Country oldObj = Get(entity.Country_Code);
-    //        base.UpdateEntity(oldObj, entity);
-    //        //base.AddEntity(entity);
-    //    }
-    //    public void Update(Country entity)
-    //    {
-    //        Country oldObj = Get(entity.Country_Code);
-    //        base.UpdateEntity(oldObj, entity);
-    //    }
-    //    public void Delete(Country entity)
-    //    {
-    //        base.DeleteEntity(entity);
-    //    }
-    //    public IEnumerable<Country> GetAll()
-    //    {
-    //        return base.GetAll<Country>();
-    //    }
-    //    public IEnumerable<Country> SearchFor(object param)
-    //    {
-    //        return base.SearchForEntity<Country>(param);
-    //    }
-    //}
     public class Vendor_Contacts_Repository : MainRepository<Vendor_Contacts>
     {
         public Vendor_Contacts Get(int? Id, Type[] RelationList = null)

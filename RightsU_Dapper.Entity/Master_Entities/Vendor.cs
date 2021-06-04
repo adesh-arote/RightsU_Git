@@ -66,8 +66,10 @@ namespace RightsU_Dapper.Entity
         public Nullable<int> Ref_Vendor_Key { get; set; }
         public string Record_Status { get; set; }
         public string Error_Description { get; set; }
+        [ForeignKeyReference(typeof(Party_Category))]
         public Nullable<int> Party_Category_Code { get; set; }
         public string Party_Type { get; set; }
+        [ForeignKeyReference(typeof(Party_Group))]
         public Nullable<int> Party_Group_Code { get; set; }
         [OneToMany]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }

@@ -682,6 +682,34 @@ namespace RightsU_Dapper.BLL.Services
         //    }
 
     }
+    public class Entity_Service
+    {
+        Entity_Repository objEntity_Repository = new Entity_Repository();
+        public Entity_Service()
+        {
+            this.objEntity_Repository = new Entity_Repository();
+        }
+        public RightsU_Dapper.Entity.Entity GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objEntity_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<RightsU_Dapper.Entity.Entity> GetAll(Type[] additionalTypes = null)
+        {
+            return objEntity_Repository.GetAll();
+        }
+        public void AddEntity(RightsU_Dapper.Entity.Entity obj)
+        {
+            objEntity_Repository.Add(obj);
+        }
+        public void UpdateEntity(RightsU_Dapper.Entity.Entity obj)
+        {
+            objEntity_Repository.Update(obj);
+        }
+        public void DeleteEntity(RightsU_Dapper.Entity.Entity obj)
+        {
+            objEntity_Repository.Delete(obj);
+        }
+    }
     public class Material_Medium_Service
     {
         Material_Medium_Repository objMaterial_Medium_Repository = new Material_Medium_Repository();
@@ -709,11 +737,6 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteMusic_Deal(Material_Medium obj)
         {
             objMaterial_Medium_Repository.Delete(obj);
-        }
-
-        public IEnumerable<Material_Medium> SearchFor(object param)
-        {
-            return objMaterial_Medium_Repository.SearchFor(param);
         }
         public IEnumerable<Material_Medium> GetList(Type[] additionalTypes = null)
         {
@@ -914,72 +937,10 @@ namespace RightsU_Dapper.BLL.Services
         {
             objCategory_Repository.Delete(obj);
         }
-
-        public IEnumerable<Category> SearchFor(object param)
-        {
-            return objCategory_Repository.SearchFor(param);
-        }
         public IEnumerable<Category> GetList(Type[] additionalTypes = null)
         {
             return objCategory_Repository.GetAll();
         }
-        //private readonly Category_Repository objRepository;
-
-        //public Category_Service(string Connection_Str)
-        //{
-        //    this.objRepository = new Category_Repository(Connection_Str);
-        //}
-        //public IQueryable<Category> SearchFor(Expression<Func<Category, bool>> predicate)
-        //{
-        //    return objRepository.SearchFor(predicate);
-        //}
-
-        //public Category GetById(int id)
-        //{
-        //    return objRepository.GetById(id);
-        //}
-
-        //public bool Save(Category objToSave, out dynamic resultSet)
-        //{
-        //    return base.Save(objToSave, objRepository, out resultSet);
-        //}
-
-        //public bool Update(Category objToUpdate, out dynamic resultSet)
-        //{
-        //    return base.Update(objToUpdate, objRepository, out resultSet);
-        //}
-
-        //public bool Delete(Category objToDelete, out dynamic resultSet)
-        //{
-        //    return base.Delete(objToDelete, objRepository, out resultSet);
-        //}
-
-        //public override bool Validate(Category objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateUpdate(Category objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateDelete(Category objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-        //private bool ValidateDuplicate(Category objToValidate, out dynamic resultSet)
-        //{
-        //    if (SearchFor(s => s.Category_Name == objToValidate.Category_Name && s.Category_Code != objToValidate.Category_Code).Count() > 0)
-        //    {
-        //        resultSet = "Category already exists";
-        //        return false;
-        //    }
-
-        //    resultSet = "";
-        //    return true;
-        //}
     }
     public class System_Parameter_New_Service
     {
@@ -1009,63 +970,10 @@ namespace RightsU_Dapper.BLL.Services
         {
             objSystem_Parameter_New_Repository.Delete(obj);
         }
-
-        public IEnumerable<System_Parameter_New> SearchFor(object param)
-        {
-            return objSystem_Parameter_New_Repository.SearchFor(param);
-        }
         public IEnumerable<System_Parameter_New> GetList(Type[] additionalTypes = null)
         {
             return objSystem_Parameter_New_Repository.GetAll();
         }
-        //    private readonly System_Parameter_New_Repository objRepository;
-
-        //    public System_Parameter_New_Service(string Connection_Str)
-        //    {
-        //        this.objRepository = new System_Parameter_New_Repository(Connection_Str);
-        //    }
-        //    public IQueryable<System_Parameter_New> SearchFor(Expression<Func<System_Parameter_New, bool>> predicate)
-        //    {
-        //        return objRepository.SearchFor(predicate);
-        //    }
-
-        //    public System_Parameter_New GetById(int id)
-        //    {
-        //        return objRepository.GetById(id);
-        //    }
-
-        //    public bool Save(System_Parameter_New objToSave, out dynamic resultSet)
-        //    {
-        //        return base.Save(objToSave, objRepository, out resultSet);
-        //    }
-
-        //    public bool Update(System_Parameter_New objToUpdate, out dynamic resultSet)
-        //    {
-        //        return base.Update(objToUpdate, objRepository, out resultSet);
-        //    }
-
-        //    public bool Delete(System_Parameter_New objToDelete, out dynamic resultSet)
-        //    {
-        //        return base.Delete(objToDelete, objRepository, out resultSet);
-        //    }
-
-        //    public override bool Validate(System_Parameter_New objToValidate, out dynamic resultSet)
-        //    {
-        //        resultSet = "";
-        //        return true;
-        //    }
-
-        //    public override bool ValidateUpdate(System_Parameter_New objToValidate, out dynamic resultSet)
-        //    {
-        //        resultSet = "";
-        //        return true;
-        //    }
-
-        //    public override bool ValidateDelete(System_Parameter_New objToValidate, out dynamic resultSet)
-        //    {
-        //        resultSet = "";
-        //        return true;
-        //    }
     }
     public class Platform_Group_Service
     {
@@ -1095,71 +1003,14 @@ namespace RightsU_Dapper.BLL.Services
         {
             objPlatform_Group_Repository.Delete(obj);
         }
-
-        public IEnumerable<Platform_Group> SearchFor(object param)
-        {
-            return objPlatform_Group_Repository.SearchFor(param);
-        }
         public IEnumerable<Platform_Group> GetList(Type[] additionalTypes = null)
         {
             return objPlatform_Group_Repository.GetAll(additionalTypes);
         }
-        //private readonly Platform_Group_Repository objRepository;
-
-        //public Platform_Group_Service(string Connection_Str)
-        //{
-        //    this.objRepository = new Platform_Group_Repository(Connection_Str);
-        //}
-        //public IQueryable<Platform_Group> SearchFor(Expression<Func<Platform_Group, bool>> predicate)
-        //{
-        //    return objRepository.SearchFor(predicate);
-        //}
-
-        //public Platform_Group GetById(int id)
-        //{
-        //    return objRepository.GetById(id);
-        //}
-
-        //public bool Save(Platform_Group objToSave, out dynamic resultSet)
-        //{
-        //    return base.Save(objToSave, objRepository, out resultSet);
-        //}
-
-        //public override bool Validate(Platform_Group objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateUpdate(Platform_Group objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateDelete(Platform_Group objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        //private bool ValidateDuplicate(Platform_Group objToValidate, out dynamic resultSet)
-        //{
-        //    if (SearchFor(s => s.Platform_Group_Name.ToUpper() == objToValidate.Platform_Group_Name.ToUpper().Trim() && s.Platform_Group_Code != objToValidate.Platform_Group_Code).Count() > 0)
-        //    {
-        //        resultSet = "Platform group already exists";
-        //        return false;
-        //    }
-
-        //    resultSet = "";
-        //    return true;
-        //}
     }
     public class Platform_Service
     {
         Platform_Repository objPlatform_Repository = new Platform_Repository();
-        public IEnumerable<Platform> SearchFor(object param)
-        {
-            return objPlatform_Repository.SearchFor(param);
-        }
         public IEnumerable<Platform> GetList(Type[] additionalTypes = null)
         {
             return objPlatform_Repository.GetAll();
@@ -1168,21 +1019,6 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objPlatform_Repository.Get(ID, RelationList);
         }
-        //private readonly Platform_Repository objPlatform;
-
-        //public Platform_Service(string Connection_Str)
-        //{
-        //    this.objPlatform = new Platform_Repository(Connection_Str);
-        //}
-        //public IQueryable<Platform> SearchFor(Expression<Func<Platform, bool>> predicate)
-        //{
-        //    return objPlatform.SearchFor(predicate);
-        //}
-
-        //public Platform GetById(int id)
-        //{
-        //    return objPlatform.GetById(id);
-        //}
     }
     public class Milestone_Nature_Service
     {
@@ -1212,75 +1048,10 @@ namespace RightsU_Dapper.BLL.Services
         {
             objMilestone_Nature_Repository.Delete(obj);
         }
-
-        public IEnumerable<Milestone_Nature> SearchFor(object param)
-        {
-            return objMilestone_Nature_Repository.SearchFor(param);
-        }
         public IEnumerable<Milestone_Nature> GetList(Type[] additionalTypes = null)
         {
             return objMilestone_Nature_Repository.GetAll();
         }
-        //    private readonly Milestone_Nature_Repository objRepository;
-
-        //    public Milestone_Nature_Service(string Connection_Str)
-        //    {
-        //        this.objRepository = new Milestone_Nature_Repository(Connection_Str);
-        //    }
-        //    public IQueryable<Milestone_Nature> SearchFor(Expression<Func<Milestone_Nature, bool>> predicate)
-        //    {
-        //        return objRepository.SearchFor(predicate);
-        //    }
-
-        //    public Milestone_Nature GetById(int id)
-        //    {
-        //        return objRepository.GetById(id);
-        //    }
-
-        //    public bool Save(Milestone_Nature objToSave, out dynamic resultSet)
-        //    {
-        //        return base.Save(objToSave, objRepository, out resultSet);
-        //    }
-
-        //    public bool Update(Milestone_Nature objToUpdate, out dynamic resultSet)
-        //    {
-        //        return base.Update(objToUpdate, objRepository, out resultSet);
-        //    }
-
-        //    public bool Delete(Milestone_Nature objToDelete, out dynamic resultSet)
-        //    {
-        //        return base.Delete(objToDelete, objRepository, out resultSet);
-        //    }
-
-        //    public override bool Validate(Milestone_Nature objToValidate, out dynamic resultSet)
-        //    {
-        //        return ValidateDuplicate(objToValidate, out resultSet);
-        //    }
-
-        //    public override bool ValidateUpdate(Milestone_Nature objToValidate, out dynamic resultSet)
-        //    {
-        //        return ValidateDuplicate(objToValidate, out resultSet);
-
-        //    }
-
-        //    public override bool ValidateDelete(Milestone_Nature objToValidate, out dynamic resultSet)
-        //    {
-        //        resultSet = "";
-        //        return true;
-        //    }
-
-        //    private bool ValidateDuplicate(Milestone_Nature objToValidate, out dynamic resultSet)
-        //    {
-        //        if (SearchFor(s => s.Milestone_Nature_Name == objToValidate.Milestone_Nature_Name && s.Milestone_Nature_Code != objToValidate.Milestone_Nature_Code).Count() > 0)
-        //        {
-        //            resultSet = "Milestone Nature already exists";
-        //            return false;
-        //        }
-
-        //        resultSet = "";
-        //        return true;
-        //    }
-        //}
     }
     public class Platform_Group_Details_Service
     {
@@ -1310,53 +1081,11 @@ namespace RightsU_Dapper.BLL.Services
         {
             objPlatform_Group_Details_Repository.Delete(obj);
         }
-
-        public IEnumerable<Platform_Group_Details> SearchFor(object param)
-        {
-            return objPlatform_Group_Details_Repository.SearchFor(param);
-        }
         public IEnumerable<Platform_Group_Details> GetList(Type[] additionalTypes = null)
         {
             return objPlatform_Group_Details_Repository.GetAll(additionalTypes);
         }
-        //private readonly Platform_Group_Details_Repository objRepository;
 
-        //public Platform_Group_Details_Service(string Connection_Str)
-        //{
-        //    this.objRepository = new Platform_Group_Details_Repository(Connection_Str);
-        //}
-        //public IQueryable<Platform_Group_Details> SearchFor(Expression<Func<Platform_Group_Details, bool>> predicate)
-        //{
-        //    return objRepository.SearchFor(predicate);
-        //}
-
-        //public Platform_Group_Details GetById(int id)
-        //{
-        //    return objRepository.GetById(id);
-        //}
-
-        //public bool Save(Platform_Group_Details objToSave, out dynamic resultSet)
-        //{
-        //    return base.Save(objToSave, objRepository, out resultSet);
-        //}
-
-        //public override bool Validate(Platform_Group_Details objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        //public override bool ValidateUpdate(Platform_Group_Details objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        //public override bool ValidateDelete(Platform_Group_Details objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
     }
     public class Program_Service
     {
@@ -1385,11 +1114,6 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteCategory(Program obj)
         {
             objProgram_Repository.Delete(obj);
-        }
-
-        public IEnumerable<Program> SearchFor(object param)
-        {
-            return objProgram_Repository.SearchFor(param);
         }
         public IEnumerable<Program> GetList(Type[] additionalTypes = null)
         {
@@ -1424,11 +1148,6 @@ namespace RightsU_Dapper.BLL.Services
         {
             objDeal_Type_Repository.Delete(obj);
         }
-
-        public IEnumerable<Deal_Type> SearchFor(object param)
-        {
-            return objDeal_Type_Repository.SearchFor(param);
-        }
         public IEnumerable<Deal_Type> GetList(Type[] additionalTypes = null)
         {
             return objDeal_Type_Repository.GetAll(additionalTypes);
@@ -1461,11 +1180,6 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteCategory(Party_Category obj)
         {
             objParty_Category_Repository.Delete(obj);
-        }
-
-        public IEnumerable<Party_Category> SearchFor(object param)
-        {
-            return objParty_Category_Repository.SearchFor(param);
         }
         public IEnumerable<Party_Category> GetList(Type[] additionalTypes = null)
         {
@@ -1500,35 +1214,10 @@ namespace RightsU_Dapper.BLL.Services
         {
             objBV_HouseId_Data_Repository.Delete(obj);
         }
-
-        public IEnumerable<BV_HouseId_Data> SearchFor(object param)
-        {
-            return objBV_HouseId_Data_Repository.SearchFor(param);
-        }
         public IEnumerable<BV_HouseId_Data> GetList(Type[] additionalTypes = null)
         {
             return objBV_HouseId_Data_Repository.GetAll(additionalTypes);
         }
-        //private readonly BV_HouseId_Data_Repository objAD;
-
-        //public BV_HouseId_Data_Service(string Connection_Str)
-        //{
-        //    this.objAD = new BV_HouseId_Data_Repository(Connection_Str);
-        //}
-        //public IQueryable<BV_HouseId_Data> SearchFor(Expression<Func<BV_HouseId_Data, bool>> predicate)
-        //{
-        //    return objAD.SearchFor(predicate);
-        //}
-
-        //public BV_HouseId_Data GetById(int id)
-        //{
-        //    return objAD.GetById(id);
-        //}
-
-        //public void Save(BV_HouseId_Data objD)
-        //{
-        //    objAD.Update(objD);
-        //}
 
     }
     public class Acq_Deal_Movie_Service
@@ -1559,52 +1248,10 @@ namespace RightsU_Dapper.BLL.Services
         {
             objAcq_Deal_Movie_Repository.Delete(obj);
         }
-
-        public IEnumerable<Acq_Deal_Movie> SearchFor(object param)
-        {
-            return objAcq_Deal_Movie_Repository.SearchFor(param);
-        }
         public IEnumerable<Acq_Deal_Movie> GetList(Type[] additionalTypes = null)
         {
             return objAcq_Deal_Movie_Repository.GetAll(additionalTypes);
         }
-        //private readonly Acq_Deal_Movie_Repository objADMR;
-        ////public Acq_Deal_Movie_Service()
-        ////{
-        ////    this.objADMR = new Acq_Deal_Movie_Repository(DBConnection.Connection_Str);
-        ////}
-        //public Acq_Deal_Movie_Service(string Connection_Str)
-        //{
-        //    this.objADMR = new Acq_Deal_Movie_Repository(Connection_Str);
-        //}
-        //public IQueryable<Acq_Deal_Movie> SearchFor(Expression<Func<Acq_Deal_Movie, bool>> predicate)
-        //{
-        //    return objADMR.SearchFor(predicate);
-        //}
-
-        //public Acq_Deal_Movie GetById(int id)
-        //{
-        //    return objADMR.GetById(id);
-        //}
-
-
-        //public override bool Validate(Acq_Deal_Movie objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        //public override bool ValidateUpdate(Acq_Deal_Movie objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        //public override bool ValidateDelete(Acq_Deal_Movie objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
     }
     public class Title_Content_Mapping_Service
     {
@@ -1634,66 +1281,10 @@ namespace RightsU_Dapper.BLL.Services
         {
             objTitle_Content_Mapping_Repository.Delete(obj);
         }
-
-        public IEnumerable<Title_Content_Mapping> SearchFor(object param)
-        {
-            return objTitle_Content_Mapping_Repository.SearchFor(param);
-        }
         public IEnumerable<Title_Content_Mapping> GetList(Type[] additionalTypes = null)
         {
             return objTitle_Content_Mapping_Repository.GetAll(additionalTypes);
         }
-        //private readonly Title_Content_Mapping_Repository objRepository;
-        ////public Title_Content_Mapping_Service()
-        ////{
-        ////    this.objRepository = new Title_Content_Mapping_Repository(DBConnection.Connection_Str);
-        ////}
-        //public Title_Content_Mapping_Service(string Connection_Str)
-        //{
-        //    this.objRepository = new Title_Content_Mapping_Repository(Connection_Str);
-        //}
-        //public IQueryable<Title_Content_Mapping> SearchFor(Expression<Func<Title_Content_Mapping, bool>> predicate)
-        //{
-        //    return objRepository.SearchFor(predicate);
-        //}
-
-        //public Title_Content_Mapping GetById(int id)
-        //{
-        //    return objRepository.GetById(id);
-        //}
-
-        //public bool Save(Title_Content_Mapping objToSave, out dynamic resultSet)
-        //{
-        //    return base.Save(objToSave, objRepository, out resultSet);
-        //}
-
-        //public bool Update(Title_Content_Mapping objToUpdate, out dynamic resultSet)
-        //{
-        //    return base.Update(objToUpdate, objRepository, out resultSet);
-        //}
-
-        //public bool Delete(Title_Content_Mapping objToDelete, out dynamic resultSet)
-        //{
-        //    return base.Delete(objToDelete, objRepository, out resultSet);
-        //}
-
-        //public override bool Validate(Title_Content_Mapping objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        //public override bool ValidateUpdate(Title_Content_Mapping objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        //public override bool ValidateDelete(Title_Content_Mapping objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
     }
     public class Email_Config_Detail_Service
     {
@@ -1724,10 +1315,6 @@ namespace RightsU_Dapper.BLL.Services
             objEmail_Config_Detail_Repository.Delete(obj);
         }
 
-        public IEnumerable<Email_Config_Detail> SearchFor(object param)
-        {
-            return objEmail_Config_Detail_Repository.SearchFor(param);
-        }
         public IEnumerable<Email_Config_Detail> GetList(Type[] additionalTypes = null)
         {
             return objEmail_Config_Detail_Repository.GetAll(additionalTypes);
@@ -1761,54 +1348,11 @@ namespace RightsU_Dapper.BLL.Services
         {
             objEmail_Config_Repository.Delete(obj);
         }
-
-        public IEnumerable<Email_Config> SearchFor(object param)
-        {
-            return objEmail_Config_Repository.SearchFor(param);
-        }
         public IEnumerable<Email_Config> GetList(Type[] additionalTypes = null)
         {
             return objEmail_Config_Repository.GetAll(additionalTypes);
         }
     }
-    //public class Business_Unit_Service
-    //{
-    //    Business_Unit_Repository objBusiness_Unit_Repository = new Business_Unit_Repository();
-
-    //    public Business_Unit_Service()
-    //    {
-    //        this.objBusiness_Unit_Repository = new Business_Unit_Repository();
-    //    }
-    //    public Business_Unit GetBusiness_UnitByID(int? ID, Type[] RelationList = null)
-    //    {
-    //        return objBusiness_Unit_Repository.Get(ID, RelationList);
-    //    }
-    //    public IEnumerable<Business_Unit> GetTalentList()
-    //    {
-    //        return objBusiness_Unit_Repository.GetAll();
-    //    }
-    //    public void AddEntity(Business_Unit obj)
-    //    {
-    //        objBusiness_Unit_Repository.Add(obj);
-    //    }
-    //    public void UpdateTitle_Content_Mapping_Movie(Business_Unit obj)
-    //    {
-    //        objBusiness_Unit_Repository.Update(obj);
-    //    }
-    //    public void DeleteCategory(Business_Unit obj)
-    //    {
-    //        objBusiness_Unit_Repository.Delete(obj);
-    //    }
-
-    //    public IEnumerable<Business_Unit> SearchFor(object param)
-    //    {
-    //        return objBusiness_Unit_Repository.SearchFor(param);
-    //    }
-    //    public IEnumerable<Business_Unit> GetList(Type[] additionalTypes = null)
-    //    {
-    //        return objBusiness_Unit_Repository.GetAll(additionalTypes);
-    //    }
-    //}
     public class Channel_Service
     {
         Channel_Repository objChannel_Repository = new Channel_Repository();
@@ -1837,92 +1381,11 @@ namespace RightsU_Dapper.BLL.Services
         {
             objChannel_Repository.Delete(obj);
         }
-
-        public IEnumerable<Channel> SearchFor(object param)
-        {
-            return objChannel_Repository.SearchFor(param);
-        }
         public IEnumerable<Channel> GetList(Type[] additionalTypes = null)
         {
             return objChannel_Repository.GetAll(additionalTypes);
         }
     }
-    //public class User_Service
-    //{
-    //    User_Repository objUser_Repository = new User_Repository();
-
-    //    public User_Service()
-    //    {
-    //        this.objUser_Repository = new User_Repository();
-    //    }
-    //    public User GetUserByID(int? ID, Type[] RelationList = null)
-    //    {
-    //        return objUser_Repository.Get(ID, RelationList);
-    //    }
-    //    public IEnumerable<User> GetTalentList()
-    //    {
-    //        return objUser_Repository.GetAll();
-    //    }
-    //    public void AddEntity(User obj)
-    //    {
-    //        objUser_Repository.Add(obj);
-    //    }
-    //    public void UpdateChannel(User obj)
-    //    {
-    //        objUser_Repository.Update(obj);
-    //    }
-    //    public void DeleteCategory(User obj)
-    //    {
-    //        objUser_Repository.Delete(obj);
-    //    }
-
-    //    public IEnumerable<User> SearchFor(object param)
-    //    {
-    //        return objUser_Repository.SearchFor(param);
-    //    }
-    //    public IEnumerable<User> GetList(Type[] additionalTypes = null)
-    //    {
-    //        return objUser_Repository.GetAll(additionalTypes);
-    //    }
-    //}
-    //public class Users_Business_Unit_Service
-    //{
-    //    Users_Business_Unit_Repository objUsers_Business_Unit_Repository = new Users_Business_Unit_Repository();
-
-    //    public Users_Business_Unit_Service()
-    //    {
-    //        this.objUsers_Business_Unit_Repository = new Users_Business_Unit_Repository();
-    //    }
-    //    public Users_Business_Unit GetUserByID(int? ID, Type[] RelationList = null)
-    //    {
-    //        return objUsers_Business_Unit_Repository.Get(ID, RelationList);
-    //    }
-    //    public IEnumerable<Users_Business_Unit> GetTalentList()
-    //    {
-    //        return objUsers_Business_Unit_Repository.GetAll();
-    //    }
-    //    public void AddEntity(Users_Business_Unit obj)
-    //    {
-    //        objUsers_Business_Unit_Repository.Add(obj);
-    //    }
-    //    public void UpdateChannel(Users_Business_Unit obj)
-    //    {
-    //        objUsers_Business_Unit_Repository.Update(obj);
-    //    }
-    //    public void DeleteCategory(Users_Business_Unit obj)
-    //    {
-    //        objUsers_Business_Unit_Repository.Delete(obj);
-    //    }
-
-    //    public IEnumerable<Users_Business_Unit> SearchFor(object param)
-    //    {
-    //        return objUsers_Business_Unit_Repository.SearchFor(param);
-    //    }
-    //    public IEnumerable<Users_Business_Unit> GetList(Type[] additionalTypes = null)
-    //    {
-    //        return objUsers_Business_Unit_Repository.GetAll(additionalTypes);
-    //    }
-    //}
     public class Security_Group_Service
     {
         Security_Group_Repository objSecurity_Group_Repository = new Security_Group_Repository();
@@ -1952,909 +1415,814 @@ namespace RightsU_Dapper.BLL.Services
             objSecurity_Group_Repository.Delete(obj);
         }
 
-        public IEnumerable<Security_Group> SearchFor(object param)
-        {
-            return objSecurity_Group_Repository.SearchFor(param);
-        }
         public IEnumerable<Security_Group> GetList(Type[] additionalTypes = null)
         {
             return objSecurity_Group_Repository.GetAll(additionalTypes);
         }
     }
-        public class Payment_Term_Service
+    public class Payment_Term_Service
+    {
+        Payment_Terms_Repository objPayment_Term_Repository = new Payment_Terms_Repository();
+        public Payment_Term_Service()
         {
-            Payment_Terms_Repository objPayment_Term_Repository = new Payment_Terms_Repository();
-            public Payment_Term_Service()
-            {
-                this.objPayment_Term_Repository = new Payment_Terms_Repository();
-            }
-            public Payment_Term GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objPayment_Term_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Payment_Term> GetAll()
-            {
-                return objPayment_Term_Repository.GetAll();
-            }
-            public void AddEntity(Payment_Term obj)
-            {
-                objPayment_Term_Repository.Add(obj);
-            }
-            public void UpdateEntity(Payment_Term obj)
-            {
-                objPayment_Term_Repository.Update(obj);
-            }
-            public void DeleteEntity(Payment_Term obj)
-            {
-                objPayment_Term_Repository.Delete(obj);
-            }
-            public IEnumerable<Payment_Term> SearchFor(object param)
-            {
-                return objPayment_Term_Repository.SearchFor(param);
-            }
+            this.objPayment_Term_Repository = new Payment_Terms_Repository();
         }
-        public class Royalty_Recoupment_Service
+        public Payment_Term GetByID(int? ID, Type[] RelationList = null)
         {
-            Royalty_Recoupment_Repository objRoyalty_Recoupment_Repository = new Royalty_Recoupment_Repository();
-            public Royalty_Recoupment_Service()
-            {
-                this.objRoyalty_Recoupment_Repository = new Royalty_Recoupment_Repository();
-            }
-            public Royalty_Recoupment GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objRoyalty_Recoupment_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Royalty_Recoupment> GetAll()
-            {
-                return objRoyalty_Recoupment_Repository.GetAll();
-            }
-            public void AddEntity(Royalty_Recoupment obj)
-            {
-                objRoyalty_Recoupment_Repository.Add(obj);
-            }
-            public void UpdateEntity(Royalty_Recoupment obj)
-            {
-                objRoyalty_Recoupment_Repository.Update(obj);
-            }
-            public void DeleteEntity(Royalty_Recoupment obj)
-            {
-                objRoyalty_Recoupment_Repository.Delete(obj);
-            }
-            public IEnumerable<Royalty_Recoupment> SearchFor(object param)
-            {
-                return objRoyalty_Recoupment_Repository.SearchFor(param);
-            }
+            return objPayment_Term_Repository.Get(ID, RelationList);
         }
-        public class Royalty_Recoupment_Details_Service
+        public IEnumerable<Payment_Term> GetAll()
         {
-            Royalty_Recoupment_Details_Repository objRoyalty_Recoupment_Details_Repository = new Royalty_Recoupment_Details_Repository();
-            public Royalty_Recoupment_Details_Service()
-            {
-                this.objRoyalty_Recoupment_Details_Repository = new Royalty_Recoupment_Details_Repository();
-            }
-            public Royalty_Recoupment_Details GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objRoyalty_Recoupment_Details_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Royalty_Recoupment_Details> GetAll()
-            {
-                return objRoyalty_Recoupment_Details_Repository.GetAll();
-            }
-            public void AddEntity(Royalty_Recoupment_Details obj)
-            {
-                objRoyalty_Recoupment_Details_Repository.Add(obj);
-            }
-            public void UpdateEntity(Royalty_Recoupment_Details obj)
-            {
-                objRoyalty_Recoupment_Details_Repository.Update(obj);
-            }
-            public void DeleteEntity(Royalty_Recoupment_Details obj)
-            {
-                objRoyalty_Recoupment_Details_Repository.Delete(obj);
-            }
-            public IEnumerable<Royalty_Recoupment_Details> SearchFor(object param)
-            {
-                return objRoyalty_Recoupment_Details_Repository.SearchFor(param);
-            }
+            return objPayment_Term_Repository.GetAll();
         }
-        public class User_Service
+        public void AddEntity(Payment_Term obj)
         {
-            User_Repository objUser_Repository = new User_Repository();
-            public User_Service()
-            {
-                this.objUser_Repository = new User_Repository();
-            }
-            public User GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objUser_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<User> GetAll()
-            {
-                return objUser_Repository.GetAll();
-            }
-            public void AddEntity(User obj)
-            {
-                objUser_Repository.Add(obj);
-            }
-            public void UpdateEntity(User obj)
-            {
-                objUser_Repository.Update(obj);
-            }
-            public void DeleteEntity(User obj)
-            {
-                objUser_Repository.Delete(obj);
-            }
-            public IEnumerable<User> SearchFor(object param)
-            {
-                return objUser_Repository.SearchFor(param);
-            }
+            objPayment_Term_Repository.Add(obj);
         }
-        public class Users_Exclusive_Rights_Service
+        public void UpdateEntity(Payment_Term obj)
         {
-            Users_Exclusion_Rights_Repository objUsers_Exclusion_Rights_Repository = new Users_Exclusion_Rights_Repository();
-            public Users_Exclusive_Rights_Service()
-            {
-                this.objUsers_Exclusion_Rights_Repository = new Users_Exclusion_Rights_Repository();
-            }
-            public Users_Exclusion_Rights GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objUsers_Exclusion_Rights_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Users_Exclusion_Rights> GetAll()
-            {
-                return objUsers_Exclusion_Rights_Repository.GetAll();
-            }
-            public void AddEntity(Users_Exclusion_Rights obj)
-            {
-                objUsers_Exclusion_Rights_Repository.Add(obj);
-            }
-            public void UpdateEntity(Users_Exclusion_Rights obj)
-            {
-                objUsers_Exclusion_Rights_Repository.Update(obj);
-            }
-            public void DeleteEntity(Users_Exclusion_Rights obj)
-            {
-                objUsers_Exclusion_Rights_Repository.Delete(obj);
-            }
-            public IEnumerable<Users_Exclusion_Rights> SearchFor(object param)
-            {
-                return objUsers_Exclusion_Rights_Repository.SearchFor(param);
-            }
+            objPayment_Term_Repository.Update(obj);
         }
-        public class Business_Unit_Service
+        public void DeleteEntity(Payment_Term obj)
         {
-            Business_Unit_Repository objBusiness_Unit_Repository = new Business_Unit_Repository();
-            public Business_Unit_Service()
-            {
-                this.objBusiness_Unit_Repository = new Business_Unit_Repository();
-            }
-            public Business_Unit GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objBusiness_Unit_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Business_Unit> GetAll()
-            {
-                return objBusiness_Unit_Repository.GetAll();
-            }
-            public void AddEntity(Business_Unit obj)
-            {
-                objBusiness_Unit_Repository.Add(obj);
-            }
-            public void UpdateEntity(Business_Unit obj)
-            {
-                objBusiness_Unit_Repository.Update(obj);
-            }
-            public void DeleteEntity(Business_Unit obj)
-            {
-                objBusiness_Unit_Repository.Delete(obj);
-            }
-            public IEnumerable<Business_Unit> SearchFor(object param)
-            {
-                return objBusiness_Unit_Repository.SearchFor(param);
-            }
+            objPayment_Term_Repository.Delete(obj);
         }
-        public class Users_Password_Detail_Service
+        
+    }
+    public class Royalty_Recoupment_Service
+    {
+        Royalty_Recoupment_Repository objRoyalty_Recoupment_Repository = new Royalty_Recoupment_Repository();
+        public Royalty_Recoupment_Service()
         {
-            Users_Password_Detail_Repository objUsers_Password_Detail_Repository = new Users_Password_Detail_Repository();
-            public Users_Password_Detail_Service()
-            {
-                this.objUsers_Password_Detail_Repository = new Users_Password_Detail_Repository();
-            }
-            public Users_Password_Detail GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objUsers_Password_Detail_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Users_Password_Detail> GetAll()
-            {
-                return objUsers_Password_Detail_Repository.GetAll();
-            }
-            public void AddEntity(Users_Password_Detail obj)
-            {
-                objUsers_Password_Detail_Repository.Add(obj);
-            }
-            public void UpdateEntity(Users_Password_Detail obj)
-            {
-                objUsers_Password_Detail_Repository.Update(obj);
-            }
-            public void DeleteEntity(Users_Password_Detail obj)
-            {
-                objUsers_Password_Detail_Repository.Delete(obj);
-            }
-            public IEnumerable<Users_Password_Detail> SearchFor(object param)
-            {
-                return objUsers_Password_Detail_Repository.SearchFor(param);
-            }
+            this.objRoyalty_Recoupment_Repository = new Royalty_Recoupment_Repository();
         }
-        public class SAP_WBS_Service
+        public Royalty_Recoupment GetByID(int? ID, Type[] RelationList = null)
         {
-            SAP_WBS_Repository objSAP_WBS_Repository = new SAP_WBS_Repository();
-            public SAP_WBS_Service()
-            {
-                this.objSAP_WBS_Repository = new SAP_WBS_Repository();
-            }
-            public SAP_WBS GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objSAP_WBS_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<SAP_WBS> GetAll()
-            {
-                return objSAP_WBS_Repository.GetAll();
-            }
-            public void AddEntity(SAP_WBS obj)
-            {
-                objSAP_WBS_Repository.Add(obj);
-            }
-            public void UpdateEntity(SAP_WBS obj)
-            {
-                objSAP_WBS_Repository.Update(obj);
-            }
-            public void DeleteEntity(SAP_WBS obj)
-            {
-                objSAP_WBS_Repository.Delete(obj);
-            }
-            public IEnumerable<SAP_WBS> SearchFor(object param)
-            {
-                return objSAP_WBS_Repository.SearchFor(param);
-            }
+            return objRoyalty_Recoupment_Repository.Get(ID, RelationList);
         }
-        public class BVException_Service
+        public IEnumerable<Royalty_Recoupment> GetAll()
         {
-            BVException_Repository objBVException_Repository = new BVException_Repository();
-            public BVException_Service()
-            {
-                this.objBVException_Repository = new BVException_Repository();
-            }
-            public BVException GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objBVException_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<BVException> GetAll(Type[] RelationList = null)
-            {
-                return objBVException_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(BVException obj)
-            {
-                objBVException_Repository.Add(obj);
-            }
-            public void UpdateEntity(BVException obj)
-            {
-                objBVException_Repository.Update(obj);
-            }
-            public void DeleteEntity(BVException obj)
-            {
-                objBVException_Repository.Delete(obj);
-            }
-            public IEnumerable<BVException> SearchFor(object param)
-            {
-                return objBVException_Repository.SearchFor(param);
-            }
+            return objRoyalty_Recoupment_Repository.GetAll();
         }
+        public void AddEntity(Royalty_Recoupment obj)
+        {
+            objRoyalty_Recoupment_Repository.Add(obj);
+        }
+        public void UpdateEntity(Royalty_Recoupment obj)
+        {
+            objRoyalty_Recoupment_Repository.Update(obj);
+        }
+        public void DeleteEntity(Royalty_Recoupment obj)
+        {
+            objRoyalty_Recoupment_Repository.Delete(obj);
+        }
+        
+    }
+    public class Royalty_Recoupment_Details_Service
+    {
+        Royalty_Recoupment_Details_Repository objRoyalty_Recoupment_Details_Repository = new Royalty_Recoupment_Details_Repository();
+        public Royalty_Recoupment_Details_Service()
+        {
+            this.objRoyalty_Recoupment_Details_Repository = new Royalty_Recoupment_Details_Repository();
+        }
+        public Royalty_Recoupment_Details GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objRoyalty_Recoupment_Details_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Royalty_Recoupment_Details> GetAll()
+        {
+            return objRoyalty_Recoupment_Details_Repository.GetAll();
+        }
+        public void AddEntity(Royalty_Recoupment_Details obj)
+        {
+            objRoyalty_Recoupment_Details_Repository.Add(obj);
+        }
+        public void UpdateEntity(Royalty_Recoupment_Details obj)
+        {
+            objRoyalty_Recoupment_Details_Repository.Update(obj);
+        }
+        public void DeleteEntity(Royalty_Recoupment_Details obj)
+        {
+            objRoyalty_Recoupment_Details_Repository.Delete(obj);
+        }
+       
+    }
+    public class User_Service
+    {
+        User_Repository objUser_Repository = new User_Repository();
+        public User_Service()
+        {
+            this.objUser_Repository = new User_Repository();
+        }
+        public User GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objUser_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<User> GetAll()
+        {
+            return objUser_Repository.GetAll();
+        }
+        public void AddEntity(User obj)
+        {
+            objUser_Repository.Add(obj);
+        }
+        public void UpdateEntity(User obj)
+        {
+            objUser_Repository.Update(obj);
+        }
+        public void DeleteEntity(User obj)
+        {
+            objUser_Repository.Delete(obj);
+        }
+      
+    }
+    public class Users_Exclusive_Rights_Service
+    {
+        Users_Exclusion_Rights_Repository objUsers_Exclusion_Rights_Repository = new Users_Exclusion_Rights_Repository();
+        public Users_Exclusive_Rights_Service()
+        {
+            this.objUsers_Exclusion_Rights_Repository = new Users_Exclusion_Rights_Repository();
+        }
+        public Users_Exclusion_Rights GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objUsers_Exclusion_Rights_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Users_Exclusion_Rights> GetAll()
+        {
+            return objUsers_Exclusion_Rights_Repository.GetAll();
+        }
+        public void AddEntity(Users_Exclusion_Rights obj)
+        {
+            objUsers_Exclusion_Rights_Repository.Add(obj);
+        }
+        public void UpdateEntity(Users_Exclusion_Rights obj)
+        {
+            objUsers_Exclusion_Rights_Repository.Update(obj);
+        }
+        public void DeleteEntity(Users_Exclusion_Rights obj)
+        {
+            objUsers_Exclusion_Rights_Repository.Delete(obj);
+        }
+      
+    }
+    public class Business_Unit_Service
+    {
+        Business_Unit_Repository objBusiness_Unit_Repository = new Business_Unit_Repository();
+        public Business_Unit_Service()
+        {
+            this.objBusiness_Unit_Repository = new Business_Unit_Repository();
+        }
+        public Business_Unit GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objBusiness_Unit_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Business_Unit> GetAll()
+        {
+            return objBusiness_Unit_Repository.GetAll();
+        }
+        public void AddEntity(Business_Unit obj)
+        {
+            objBusiness_Unit_Repository.Add(obj);
+        }
+        public void UpdateEntity(Business_Unit obj)
+        {
+            objBusiness_Unit_Repository.Update(obj);
+        }
+        public void DeleteEntity(Business_Unit obj)
+        {
+            objBusiness_Unit_Repository.Delete(obj);
+        }
+      
+    }
+    public class Users_Password_Detail_Service
+    {
+        Users_Password_Detail_Repository objUsers_Password_Detail_Repository = new Users_Password_Detail_Repository();
+        public Users_Password_Detail_Service()
+        {
+            this.objUsers_Password_Detail_Repository = new Users_Password_Detail_Repository();
+        }
+        public Users_Password_Detail GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objUsers_Password_Detail_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Users_Password_Detail> GetAll()
+        {
+            return objUsers_Password_Detail_Repository.GetAll();
+        }
+        public void AddEntity(Users_Password_Detail obj)
+        {
+            objUsers_Password_Detail_Repository.Add(obj);
+        }
+        public void UpdateEntity(Users_Password_Detail obj)
+        {
+            objUsers_Password_Detail_Repository.Update(obj);
+        }
+        public void DeleteEntity(Users_Password_Detail obj)
+        {
+            objUsers_Password_Detail_Repository.Delete(obj);
+        }
+      
+    }
+    public class SAP_WBS_Service
+    {
+        SAP_WBS_Repository objSAP_WBS_Repository = new SAP_WBS_Repository();
+        public SAP_WBS_Service()
+        {
+            this.objSAP_WBS_Repository = new SAP_WBS_Repository();
+        }
+        public SAP_WBS GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objSAP_WBS_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<SAP_WBS> GetAll()
+        {
+            return objSAP_WBS_Repository.GetAll();
+        }
+        public void AddEntity(SAP_WBS obj)
+        {
+            objSAP_WBS_Repository.Add(obj);
+        }
+        public void UpdateEntity(SAP_WBS obj)
+        {
+            objSAP_WBS_Repository.Update(obj);
+        }
+        public void DeleteEntity(SAP_WBS obj)
+        {
+            objSAP_WBS_Repository.Delete(obj);
+        }
+       
+    }
+    public class BVException_Service
+    {
+        BVException_Repository objBVException_Repository = new BVException_Repository();
+        public BVException_Service()
+        {
+            this.objBVException_Repository = new BVException_Repository();
+        }
+        public BVException GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objBVException_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<BVException> GetAll(Type[] RelationList = null)
+        {
+            return objBVException_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(BVException obj)
+        {
+            objBVException_Repository.Add(obj);
+        }
+        public void UpdateEntity(BVException obj)
+        {
+            objBVException_Repository.Update(obj);
+        }
+        public void DeleteEntity(BVException obj)
+        {
+            objBVException_Repository.Delete(obj);
+        }
+       
+    }
 
-        public class System_Language_Service
+    public class System_Language_Service
+    {
+        System_Language_Repository objSystem_Language_Repository = new System_Language_Repository();
+        public System_Language_Service()
         {
-            System_Language_Repository objSystem_Language_Repository = new System_Language_Repository();
-            public System_Language_Service()
-            {
-                this.objSystem_Language_Repository = new System_Language_Repository();
-            }
-            public System_Language GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objSystem_Language_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<System_Language> GetAll(Type[] RelationList = null)
-            {
-                return objSystem_Language_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(System_Language obj)
-            {
-                objSystem_Language_Repository.Add(obj);
-            }
-            public void UpdateEntity(System_Language obj)
-            {
-                objSystem_Language_Repository.Update(obj);
-            }
-            public void DeleteEntity(System_Language obj)
-            {
-                objSystem_Language_Repository.Delete(obj);
-            }
-            public IEnumerable<System_Language> SearchFor(object param)
-            {
-                return objSystem_Language_Repository.SearchFor(param);
-            }
+            this.objSystem_Language_Repository = new System_Language_Repository();
         }
+        public System_Language GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objSystem_Language_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<System_Language> GetAll(Type[] RelationList = null)
+        {
+            return objSystem_Language_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(System_Language obj)
+        {
+            objSystem_Language_Repository.Add(obj);
+        }
+        public void UpdateEntity(System_Language obj)
+        {
+            objSystem_Language_Repository.Update(obj);
+        }
+        public void DeleteEntity(System_Language obj)
+        {
+            objSystem_Language_Repository.Delete(obj);
+        }
+    }
 
-        public class System_Module_Message_Service
+    public class System_Module_Message_Service
+    {
+        System_Module_Message_Repository objSystem_Module_Message_Repository = new System_Module_Message_Repository();
+        public System_Module_Message_Service()
         {
-            System_Module_Message_Repository objSystem_Module_Message_Repository = new System_Module_Message_Repository();
-            public System_Module_Message_Service()
-            {
-                this.objSystem_Module_Message_Repository = new System_Module_Message_Repository();
-            }
-            public System_Module_Message GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objSystem_Module_Message_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<System_Module_Message> GetAll(Type[] RelationList = null)
-            {
-                return objSystem_Module_Message_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(System_Module_Message obj)
-            {
-                objSystem_Module_Message_Repository.Add(obj);
-            }
-            public void UpdateEntity(System_Module_Message obj)
-            {
-                objSystem_Module_Message_Repository.Update(obj);
-            }
-            public void DeleteEntity(System_Module_Message obj)
-            {
-                objSystem_Module_Message_Repository.Delete(obj);
-            }
-            public IEnumerable<System_Module_Message> SearchFor(object param)
-            {
-                return objSystem_Module_Message_Repository.SearchFor(param);
-            }
+            this.objSystem_Module_Message_Repository = new System_Module_Message_Repository();
         }
-        public class System_Module_Service
+        public System_Module_Message GetByID(int? ID, Type[] RelationList = null)
         {
-            System_Module_Repository objSystem_Module_Repository = new System_Module_Repository();
-            public System_Module_Service()
-            {
-                this.objSystem_Module_Repository = new System_Module_Repository();
-            }
-            public System_Module GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objSystem_Module_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<System_Module> GetAll(Type[] RelationList = null)
-            {
-                return objSystem_Module_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(System_Module obj)
-            {
-                objSystem_Module_Repository.Add(obj);
-            }
-            public void UpdateEntity(System_Module obj)
-            {
-                objSystem_Module_Repository.Update(obj);
-            }
-            public void DeleteEntity(System_Module obj)
-            {
-                objSystem_Module_Repository.Delete(obj);
-            }
-            public IEnumerable<System_Module> SearchFor(object param)
-            {
-                return objSystem_Module_Repository.SearchFor(param);
-            }
+            return objSystem_Module_Message_Repository.Get(ID, RelationList);
         }
-        public class USP_GetSystem_Language_Message_ByModule_Service
+        public IEnumerable<System_Module_Message> GetAll(Type[] RelationList = null)
         {
-            USP_GetSystem_Language_Message_ByModule_Repository objUSP_Repository = new USP_GetSystem_Language_Message_ByModule_Repository();
+            return objSystem_Module_Message_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(System_Module_Message obj)
+        {
+            objSystem_Module_Message_Repository.Add(obj);
+        }
+        public void UpdateEntity(System_Module_Message obj)
+        {
+            objSystem_Module_Message_Repository.Update(obj);
+        }
+        public void DeleteEntity(System_Module_Message obj)
+        {
+            objSystem_Module_Message_Repository.Delete(obj);
+        }
+    }
+    public class System_Module_Service
+    {
+        System_Module_Repository objSystem_Module_Repository = new System_Module_Repository();
+        public System_Module_Service()
+        {
+            this.objSystem_Module_Repository = new System_Module_Repository();
+        }
+        public System_Module GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objSystem_Module_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<System_Module> GetAll(Type[] RelationList = null)
+        {
+            return objSystem_Module_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(System_Module obj)
+        {
+            objSystem_Module_Repository.Add(obj);
+        }
+        public void UpdateEntity(System_Module obj)
+        {
+            objSystem_Module_Repository.Update(obj);
+        }
+        public void DeleteEntity(System_Module obj)
+        {
+            objSystem_Module_Repository.Delete(obj);
+        }
+    }
+    public class USP_GetSystem_Language_Message_ByModule_Service
+    {
+        USP_GetSystem_Language_Message_ByModule_Repository objUSP_Repository = new USP_GetSystem_Language_Message_ByModule_Repository();
 
-            public USP_GetSystem_Language_Message_ByModule_Service()
-            {
-                this.objUSP_Repository = new USP_GetSystem_Language_Message_ByModule_Repository();
-            }
-            public IEnumerable<USP_GetSystem_Language_Message_ByModule_Result> USP_GetSystem_Language_Message_ByModule(Nullable<int> module_Code, string form_ID, Nullable<int> system_Language_Code)
-            {
-                return objUSP_Repository.USP_GetSystem_Language_Message_ByModule(module_Code, form_ID, system_Language_Code);
-            }
-        }
-        public class Workflow_Module_Service
+        public USP_GetSystem_Language_Message_ByModule_Service()
         {
-            Workflow_Module_Repository objWorkflow_Module_Repository = new Workflow_Module_Repository();
-            public Workflow_Module_Service()
-            {
-                this.objWorkflow_Module_Repository = new Workflow_Module_Repository();
-            }
-            public Workflow_Module GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objWorkflow_Module_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Workflow_Module> GetAll(Type[] RelationList = null)
-            {
-                return objWorkflow_Module_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(Workflow_Module obj)
-            {
-                objWorkflow_Module_Repository.Add(obj);
-            }
-            public void UpdateEntity(Workflow_Module obj)
-            {
-                objWorkflow_Module_Repository.Update(obj);
-            }
-            public void DeleteEntity(Workflow_Module obj)
-            {
-                objWorkflow_Module_Repository.Delete(obj);
-            }
-            public IEnumerable<Workflow_Module> SearchFor(object param)
-            {
-                return objWorkflow_Module_Repository.SearchFor(param);
-            }
+            this.objUSP_Repository = new USP_GetSystem_Language_Message_ByModule_Repository();
         }
-        public class Workflow_Service
+        public IEnumerable<USP_GetSystem_Language_Message_ByModule_Result> USP_GetSystem_Language_Message_ByModule(Nullable<int> module_Code, string form_ID, Nullable<int> system_Language_Code)
         {
-            Workflow_Repository objWorkflow_Repository = new Workflow_Repository();
-            public Workflow_Service()
-            {
-                this.objWorkflow_Repository = new Workflow_Repository();
-            }
-            public Workflow GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objWorkflow_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Workflow> GetAll(Type[] RelationList = null)
-            {
-                return objWorkflow_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(Workflow obj)
-            {
-                objWorkflow_Repository.Add(obj);
-            }
-            public void UpdateEntity(Workflow obj)
-            {
-                objWorkflow_Repository.Update(obj);
-            }
-            public void DeleteEntity(Workflow obj)
-            {
-                objWorkflow_Repository.Delete(obj);
-            }
-            public IEnumerable<Workflow> SearchFor(object param)
-            {
-                return objWorkflow_Repository.SearchFor(param);
-            }
+            return objUSP_Repository.USP_GetSystem_Language_Message_ByModule(module_Code, form_ID, system_Language_Code);
         }
-        public class Workflow_Role_Service
+    }
+    public class Workflow_Module_Service
+    {
+        Workflow_Module_Repository objWorkflow_Module_Repository = new Workflow_Module_Repository();
+        public Workflow_Module_Service()
         {
-            Workflow_Role_Repository objWorkflow_Role_Repository = new Workflow_Role_Repository();
-            public Workflow_Role_Service()
-            {
-                this.objWorkflow_Role_Repository = new Workflow_Role_Repository();
-            }
-            public Workflow_Role GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objWorkflow_Role_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Workflow_Role> GetAll(Type[] RelationList = null)
-            {
-                return objWorkflow_Role_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(Workflow_Role obj)
-            {
-                objWorkflow_Role_Repository.Add(obj);
-            }
-            public void UpdateEntity(Workflow_Role obj)
-            {
-                objWorkflow_Role_Repository.Update(obj);
-            }
-            public void DeleteEntity(Workflow_Role obj)
-            {
-                objWorkflow_Role_Repository.Delete(obj);
-            }
-            public IEnumerable<Workflow_Role> SearchFor(object param)
-            {
-                return objWorkflow_Role_Repository.SearchFor(param);
-            }
+            this.objWorkflow_Module_Repository = new Workflow_Module_Repository();
         }
-        public class Workflow_Module_Role_Service
+        public Workflow_Module GetByID(int? ID, Type[] RelationList = null)
         {
-            Workflow_Module_Role_Repository objWorkflow_Module_Role_Repository = new Workflow_Module_Role_Repository();
-            public Workflow_Module_Role_Service()
-            {
-                this.objWorkflow_Module_Role_Repository = new Workflow_Module_Role_Repository();
-            }
-            public Workflow_Module_Role GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objWorkflow_Module_Role_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Workflow_Module_Role> GetAll(Type[] RelationList = null)
-            {
-                return objWorkflow_Module_Role_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(Workflow_Module_Role obj)
-            {
-                objWorkflow_Module_Role_Repository.Add(obj);
-            }
-            public void UpdateEntity(Workflow_Module_Role obj)
-            {
-                objWorkflow_Module_Role_Repository.Update(obj);
-            }
-            public void DeleteEntity(Workflow_Module_Role obj)
-            {
-                objWorkflow_Module_Role_Repository.Delete(obj);
-            }
-            public IEnumerable<Workflow_Module_Role> SearchFor(object param)
-            {
-                return objWorkflow_Module_Role_Repository.SearchFor(param);
-            }
+            return objWorkflow_Module_Repository.Get(ID, RelationList);
         }
-        public class Users_Business_Unit_Service
+        public IEnumerable<Workflow_Module> GetAll(Type[] RelationList = null)
         {
-            Users_Business_Unit_Repository objUsers_Business_Unit_Repository = new Users_Business_Unit_Repository();
-            public Users_Business_Unit_Service()
-            {
-                this.objUsers_Business_Unit_Repository = new Users_Business_Unit_Repository();
-            }
-            public Users_Business_Unit GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objUsers_Business_Unit_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Users_Business_Unit> GetAll(Type[] RelationList = null)
-            {
-                return objUsers_Business_Unit_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(Users_Business_Unit obj)
-            {
-                objUsers_Business_Unit_Repository.Add(obj);
-            }
-            public void UpdateEntity(Users_Business_Unit obj)
-            {
-                objUsers_Business_Unit_Repository.Update(obj);
-            }
-            public void DeleteEntity(Users_Business_Unit obj)
-            {
-                objUsers_Business_Unit_Repository.Delete(obj);
-            }
-            public IEnumerable<Users_Business_Unit> SearchFor(object param)
-            {
-                return objUsers_Business_Unit_Repository.SearchFor(param);
-            }
+            return objWorkflow_Module_Repository.GetAll(RelationList);
         }
-        //public class BV_HouseId_Data_Service
-        //{
-        //    BV_HouseId_Data_Repository objBV_HouseId_Data_Repository = new BV_HouseId_Data_Repository();
-        //    public BV_HouseId_Data_Service()
-        //    {
-        //        this.objBV_HouseId_Data_Repository = new BV_HouseId_Data_Repository();
-        //    }
-        //    public BV_HouseId_Data GetByID(int? ID, Type[] RelationList = null)
-        //    {
-        //        return objBV_HouseId_Data_Repository.Get(ID, RelationList);
-        //    }
-        //    public IEnumerable<BV_HouseId_Data> GetAll(Type[] RelationList = null)
-        //    {
-        //        return objBV_HouseId_Data_Repository.GetAll(RelationList);
-        //    }
-        //    public void AddEntity(BV_HouseId_Data obj)
-        //    {
-        //        objBV_HouseId_Data_Repository.Add(obj);
-        //    }
-        //    public void UpdateEntity(BV_HouseId_Data obj)
-        //    {
-        //        objBV_HouseId_Data_Repository.Update(obj);
-        //    }
-        //    public void DeleteEntity(BV_HouseId_Data obj)
-        //    {
-        //        objBV_HouseId_Data_Repository.Delete(obj);
-        //    }
-        //    public IEnumerable<BV_HouseId_Data> SearchFor(object param)
-        //    {
-        //        return objBV_HouseId_Data_Repository.SearchFor(param);
-        //    }
-        //}
-        public class USP_Validate_Episode_Service
+        public void AddEntity(Workflow_Module obj)
         {
-            USP_Validate_Episode_Repository objUSP_Repository = new USP_Validate_Episode_Repository();
+            objWorkflow_Module_Repository.Add(obj);
+        }
+        public void UpdateEntity(Workflow_Module obj)
+        {
+            objWorkflow_Module_Repository.Update(obj);
+        }
+        public void DeleteEntity(Workflow_Module obj)
+        {
+            objWorkflow_Module_Repository.Delete(obj);
+        }
+    }
+    public class Workflow_Service
+    {
+        Workflow_Repository objWorkflow_Repository = new Workflow_Repository();
+        public Workflow_Service()
+        {
+            this.objWorkflow_Repository = new Workflow_Repository();
+        }
+        public Workflow GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objWorkflow_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Workflow> GetAll(Type[] RelationList = null)
+        {
+            return objWorkflow_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Workflow obj)
+        {
+            objWorkflow_Repository.Add(obj);
+        }
+        public void UpdateEntity(Workflow obj)
+        {
+            objWorkflow_Repository.Update(obj);
+        }
+        public void DeleteEntity(Workflow obj)
+        {
+            objWorkflow_Repository.Delete(obj);
+        }
+    }
+    public class Workflow_Role_Service
+    {
+        Workflow_Role_Repository objWorkflow_Role_Repository = new Workflow_Role_Repository();
+        public Workflow_Role_Service()
+        {
+            this.objWorkflow_Role_Repository = new Workflow_Role_Repository();
+        }
+        public Workflow_Role GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objWorkflow_Role_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Workflow_Role> GetAll(Type[] RelationList = null)
+        {
+            return objWorkflow_Role_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Workflow_Role obj)
+        {
+            objWorkflow_Role_Repository.Add(obj);
+        }
+        public void UpdateEntity(Workflow_Role obj)
+        {
+            objWorkflow_Role_Repository.Update(obj);
+        }
+        public void DeleteEntity(Workflow_Role obj)
+        {
+            objWorkflow_Role_Repository.Delete(obj);
+        }
+    }
+    public class Workflow_Module_Role_Service
+    {
+        Workflow_Module_Role_Repository objWorkflow_Module_Role_Repository = new Workflow_Module_Role_Repository();
+        public Workflow_Module_Role_Service()
+        {
+            this.objWorkflow_Module_Role_Repository = new Workflow_Module_Role_Repository();
+        }
+        public Workflow_Module_Role GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objWorkflow_Module_Role_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Workflow_Module_Role> GetAll(Type[] RelationList = null)
+        {
+            return objWorkflow_Module_Role_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Workflow_Module_Role obj)
+        {
+            objWorkflow_Module_Role_Repository.Add(obj);
+        }
+        public void UpdateEntity(Workflow_Module_Role obj)
+        {
+            objWorkflow_Module_Role_Repository.Update(obj);
+        }
+        public void DeleteEntity(Workflow_Module_Role obj)
+        {
+            objWorkflow_Module_Role_Repository.Delete(obj);
+        }
+    }
+    public class Users_Business_Unit_Service
+    {
+        Users_Business_Unit_Repository objUsers_Business_Unit_Repository = new Users_Business_Unit_Repository();
+        public Users_Business_Unit_Service()
+        {
+            this.objUsers_Business_Unit_Repository = new Users_Business_Unit_Repository();
+        }
+        public Users_Business_Unit GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objUsers_Business_Unit_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Users_Business_Unit> GetAll(Type[] RelationList = null)
+        {
+            return objUsers_Business_Unit_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Users_Business_Unit obj)
+        {
+            objUsers_Business_Unit_Repository.Add(obj);
+        }
+        public void UpdateEntity(Users_Business_Unit obj)
+        {
+            objUsers_Business_Unit_Repository.Update(obj);
+        }
+        public void DeleteEntity(Users_Business_Unit obj)
+        {
+            objUsers_Business_Unit_Repository.Delete(obj);
+        }
+    }
+    public class USP_Validate_Episode_Service
+    {
+        USP_Validate_Episode_Repository objUSP_Repository = new USP_Validate_Episode_Repository();
 
-            public USP_Validate_Episode_Service()
-            {
-                this.objUSP_Repository = new USP_Validate_Episode_Repository();
-            }
-            public IEnumerable<USP_Validate_Episode_Result> USP_Validate_Episode(string title_with_Episode, string Program_Type)
-            {
-                return objUSP_Repository.USP_Validate_Episode(title_with_Episode, Program_Type);
-            }
-        }
-        public class USP_UpdateContentHouseID_Service
+        public USP_Validate_Episode_Service()
         {
-            USP_UpdateContentHouseID_Repository objUSP_UpdateContentHouseID_Repository = new USP_UpdateContentHouseID_Repository();
+            this.objUSP_Repository = new USP_Validate_Episode_Repository();
+        }
+        public IEnumerable<USP_Validate_Episode_Result> USP_Validate_Episode(string title_with_Episode, string Program_Type)
+        {
+            return objUSP_Repository.USP_Validate_Episode(title_with_Episode, Program_Type);
+        }
+    }
+    public class USP_UpdateContentHouseID_Service
+    {
+        USP_UpdateContentHouseID_Repository objUSP_UpdateContentHouseID_Repository = new USP_UpdateContentHouseID_Repository();
 
-            public USP_UpdateContentHouseID_Service()
-            {
-                this.objUSP_UpdateContentHouseID_Repository = new USP_UpdateContentHouseID_Repository();
-            }
-            public void USP_UpdateContentHouseID(Nullable<int> BV_HouseId_Data_Code, Nullable<int> MappedDealTitleCode)
-            {
-                objUSP_UpdateContentHouseID_Repository.USP_UpdateContentHouseID(BV_HouseId_Data_Code, MappedDealTitleCode);
-            }
-        }
-        public class BMS_Log_Service
+        public USP_UpdateContentHouseID_Service()
         {
-            BMS_Log_Repository objBMS_Log_Repository = new BMS_Log_Repository();
-            public BMS_Log_Service()
-            {
-                this.objBMS_Log_Repository = new BMS_Log_Repository();
-            }
-            public BMS_Log GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objBMS_Log_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<BMS_Log> GetAll(Type[] RelationList = null)
-            {
-                return objBMS_Log_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(BMS_Log obj)
-            {
-                objBMS_Log_Repository.Add(obj);
-            }
-            public void UpdateEntity(BMS_Log obj)
-            {
-                objBMS_Log_Repository.Update(obj);
-            }
-            public void DeleteEntity(BMS_Log obj)
-            {
-                objBMS_Log_Repository.Delete(obj);
-            }
+            this.objUSP_UpdateContentHouseID_Repository = new USP_UpdateContentHouseID_Repository();
         }
+        public void USP_UpdateContentHouseID(Nullable<int> BV_HouseId_Data_Code, Nullable<int> MappedDealTitleCode)
+        {
+            objUSP_UpdateContentHouseID_Repository.USP_UpdateContentHouseID(BV_HouseId_Data_Code, MappedDealTitleCode);
+        }
+    }
+    public class BMS_Log_Service
+    {
+        BMS_Log_Repository objBMS_Log_Repository = new BMS_Log_Repository();
+        public BMS_Log_Service()
+        {
+            this.objBMS_Log_Repository = new BMS_Log_Repository();
+        }
+        public BMS_Log GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objBMS_Log_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<BMS_Log> GetAll(Type[] RelationList = null)
+        {
+            return objBMS_Log_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(BMS_Log obj)
+        {
+            objBMS_Log_Repository.Add(obj);
+        }
+        public void UpdateEntity(BMS_Log obj)
+        {
+            objBMS_Log_Repository.Update(obj);
+        }
+        public void DeleteEntity(BMS_Log obj)
+        {
+            objBMS_Log_Repository.Delete(obj);
+        }
+    }
 
-        public class USP_List_BMS_log_Service
-        {
-            USP_List_BMS_log_Repository objUSP_Repository = new USP_List_BMS_log_Repository();
+    public class USP_List_BMS_log_Service
+    {
+        USP_List_BMS_log_Repository objUSP_Repository = new USP_List_BMS_log_Repository();
 
-            public USP_List_BMS_log_Service()
-            {
-                this.objUSP_Repository = new USP_List_BMS_log_Repository();
-            }
-            public IEnumerable<USP_List_BMS_log_Result> USP_List_BMS_log(string strSearch, Nullable<int> pageNo, string isPaging, Nullable<int> pageSize, out int recordCount)
-            {
-                return objUSP_Repository.USP_List_BMS_log(strSearch, pageNo, isPaging, pageSize, out recordCount);
-            }
-        }
-        public class BMS_All_Masters_Service
+        public USP_List_BMS_log_Service()
         {
-            BMS_All_Masters_Repository objBMS_All_Masters_Repository = new BMS_All_Masters_Repository();
-            public BMS_All_Masters_Service()
-            {
-                this.objBMS_All_Masters_Repository = new BMS_All_Masters_Repository();
-            }
-            public BMS_All_Masters GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objBMS_All_Masters_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<BMS_All_Masters> GetAll(Type[] RelationList = null)
-            {
-                return objBMS_All_Masters_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(BMS_All_Masters obj)
-            {
-                objBMS_All_Masters_Repository.Add(obj);
-            }
-            public void UpdateEntity(BMS_All_Masters obj)
-            {
-                objBMS_All_Masters_Repository.Update(obj);
-            }
-            public void DeleteEntity(BMS_All_Masters obj)
-            {
-                objBMS_All_Masters_Repository.Delete(obj);
-            }
+            this.objUSP_Repository = new USP_List_BMS_log_Repository();
         }
-        public class USP_List_Amort_Rule_Service
+        public IEnumerable<USP_List_BMS_log_Result> USP_List_BMS_log(string strSearch, Nullable<int> pageNo, string isPaging, Nullable<int> pageSize, out int recordCount)
         {
-            USP_List_Amort_Rule_Repository objUSP_Repository = new USP_List_Amort_Rule_Repository();
+            return objUSP_Repository.USP_List_BMS_log(strSearch, pageNo, isPaging, pageSize, out recordCount);
+        }
+    }
+    public class BMS_All_Masters_Service
+    {
+        BMS_All_Masters_Repository objBMS_All_Masters_Repository = new BMS_All_Masters_Repository();
+        public BMS_All_Masters_Service()
+        {
+            this.objBMS_All_Masters_Repository = new BMS_All_Masters_Repository();
+        }
+        public BMS_All_Masters GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objBMS_All_Masters_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<BMS_All_Masters> GetAll(Type[] RelationList = null)
+        {
+            return objBMS_All_Masters_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(BMS_All_Masters obj)
+        {
+            objBMS_All_Masters_Repository.Add(obj);
+        }
+        public void UpdateEntity(BMS_All_Masters obj)
+        {
+            objBMS_All_Masters_Repository.Update(obj);
+        }
+        public void DeleteEntity(BMS_All_Masters obj)
+        {
+            objBMS_All_Masters_Repository.Delete(obj);
+        }
+    }
+    public class USP_List_Amort_Rule_Service
+    {
+        USP_List_Amort_Rule_Repository objUSP_Repository = new USP_List_Amort_Rule_Repository();
 
-            public USP_List_Amort_Rule_Service()
-            {
-                this.objUSP_Repository = new USP_List_Amort_Rule_Repository();
-            }
-            public IEnumerable<USP_List_Amort_Rule_Result> USP_List_Amort_Rule(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, out int recordCount, Nullable<int> user_Code, string moduleCode)
-            {
-                return objUSP_Repository.USP_List_Amort_Rule(strSearch, pageNo, orderByCndition, isPaging, pageSize, out recordCount, user_Code, moduleCode);
-            }
-        }
-        public class Amort_Rule_Service
+        public USP_List_Amort_Rule_Service()
         {
-            Amort_Rule_Repository objAmort_Rule_Repository = new Amort_Rule_Repository();
-            public Amort_Rule_Service()
-            {
-                this.objAmort_Rule_Repository = new Amort_Rule_Repository();
-            }
-            public Amort_Rule GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objAmort_Rule_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Amort_Rule> GetAll(Type[] RelationList = null)
-            {
-                return objAmort_Rule_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(Amort_Rule obj)
-            {
-                objAmort_Rule_Repository.Add(obj);
-            }
-            public void UpdateEntity(Amort_Rule obj)
-            {
-                objAmort_Rule_Repository.Update(obj);
-            }
-            public void DeleteEntity(Amort_Rule obj)
-            {
-                objAmort_Rule_Repository.Delete(obj);
-            }
+            this.objUSP_Repository = new USP_List_Amort_Rule_Repository();
         }
-        public class USPBindJobAndExecute_Service
+        public IEnumerable<USP_List_Amort_Rule_Result> USP_List_Amort_Rule(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, out int recordCount, Nullable<int> user_Code, string moduleCode)
         {
-            USPBindJobAndExecute_Repository objUSP_Repository = new USPBindJobAndExecute_Repository();
+            return objUSP_Repository.USP_List_Amort_Rule(strSearch, pageNo, orderByCndition, isPaging, pageSize, out recordCount, user_Code, moduleCode);
+        }
+    }
+    public class Amort_Rule_Service
+    {
+        Amort_Rule_Repository objAmort_Rule_Repository = new Amort_Rule_Repository();
+        public Amort_Rule_Service()
+        {
+            this.objAmort_Rule_Repository = new Amort_Rule_Repository();
+        }
+        public Amort_Rule GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objAmort_Rule_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Amort_Rule> GetAll(Type[] RelationList = null)
+        {
+            return objAmort_Rule_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Amort_Rule obj)
+        {
+            objAmort_Rule_Repository.Add(obj);
+        }
+        public void UpdateEntity(Amort_Rule obj)
+        {
+            objAmort_Rule_Repository.Update(obj);
+        }
+        public void DeleteEntity(Amort_Rule obj)
+        {
+            objAmort_Rule_Repository.Delete(obj);
+        }
+    }
+    public class USPBindJobAndExecute_Service
+    {
+        USPBindJobAndExecute_Repository objUSP_Repository = new USPBindJobAndExecute_Repository();
 
-            public USPBindJobAndExecute_Service()
-            {
-                this.objUSP_Repository = new USPBindJobAndExecute_Repository();
-            }
-            public IEnumerable<USPBindJobAndExecute_Result> USPBindJobAndExecute(string type, string jobName)
-            {
-                return objUSP_Repository.USPBindJobAndExecute(type, jobName);
-            }
-        }
-        public class USPRUBVMappingList_Service
+        public USPBindJobAndExecute_Service()
         {
-            USPRUBVMappingList_Repository objUSP_Repository = new USPRUBVMappingList_Repository();
+            this.objUSP_Repository = new USPBindJobAndExecute_Repository();
+        }
+        public IEnumerable<USPBindJobAndExecute_Result> USPBindJobAndExecute(string type, string jobName)
+        {
+            return objUSP_Repository.USPBindJobAndExecute(type, jobName);
+        }
+    }
+    public class USPRUBVMappingList_Service
+    {
+        USPRUBVMappingList_Repository objUSP_Repository = new USPRUBVMappingList_Repository();
 
-            public USPRUBVMappingList_Service()
-            {
-                this.objUSP_Repository = new USPRUBVMappingList_Repository();
-            }
-            public IEnumerable<USPRUBVMappingList_Result> USPRUBVMappingList(string dropdownOption, string tabselect, Nullable<int> pageNo, Nullable<int> pageSize, out int recordCount)
-            {
-                return objUSP_Repository.USPRUBVMappingList(dropdownOption, tabselect, pageNo, pageSize, out recordCount);
-            }
-        }
-        public class BMS_Asset_Service
+        public USPRUBVMappingList_Service()
         {
-            BMS_Asset_Repository objBMS_Asset_Repository = new BMS_Asset_Repository();
-            public BMS_Asset_Service()
-            {
-                this.objBMS_Asset_Repository = new BMS_Asset_Repository();
-            }
-            public BMS_Asset GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objBMS_Asset_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<BMS_Asset> GetAll(Type[] RelationList = null)
-            {
-                return objBMS_Asset_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(BMS_Asset obj)
-            {
-                objBMS_Asset_Repository.Add(obj);
-            }
-            public void UpdateEntity(BMS_Asset obj)
-            {
-                objBMS_Asset_Repository.Update(obj);
-            }
-            public void DeleteEntity(BMS_Asset obj)
-            {
-                objBMS_Asset_Repository.Delete(obj);
-            }
+            this.objUSP_Repository = new USPRUBVMappingList_Repository();
         }
-        public class BMS_Deal_Content_Service
+        public IEnumerable<USPRUBVMappingList_Result> USPRUBVMappingList(string dropdownOption, string tabselect, Nullable<int> pageNo, Nullable<int> pageSize, out int recordCount)
         {
-            BMS_Deal_Content_Repository objBMS_Deal_Content_Repository = new BMS_Deal_Content_Repository();
-            public BMS_Deal_Content_Service()
-            {
-                this.objBMS_Deal_Content_Repository = new BMS_Deal_Content_Repository();
-            }
-            public BMS_Deal_Content GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objBMS_Deal_Content_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<BMS_Deal_Content> GetAll(Type[] RelationList = null)
-            {
-                return objBMS_Deal_Content_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(BMS_Deal_Content obj)
-            {
-                objBMS_Deal_Content_Repository.Add(obj);
-            }
-            public void UpdateEntity(BMS_Deal_Content obj)
-            {
-                objBMS_Deal_Content_Repository.Update(obj);
-            }
-            public void DeleteEntity(BMS_Deal_Content obj)
-            {
-                objBMS_Deal_Content_Repository.Delete(obj);
-            }
+            return objUSP_Repository.USPRUBVMappingList(dropdownOption, tabselect, pageNo, pageSize, out recordCount);
         }
-        public class BMS_Deal_Content_Rights_Service
+    }
+    public class BMS_Asset_Service
+    {
+        BMS_Asset_Repository objBMS_Asset_Repository = new BMS_Asset_Repository();
+        public BMS_Asset_Service()
         {
-            BMS_Deal_Content_Rights_Repository objBMS_Deal_Content_Rights_Repository = new BMS_Deal_Content_Rights_Repository();
-            public BMS_Deal_Content_Rights_Service()
-            {
-                this.objBMS_Deal_Content_Rights_Repository = new BMS_Deal_Content_Rights_Repository();
-            }
-            public BMS_Deal_Content_Rights GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objBMS_Deal_Content_Rights_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<BMS_Deal_Content_Rights> GetAll(Type[] RelationList = null)
-            {
-                return objBMS_Deal_Content_Rights_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(BMS_Deal_Content_Rights obj)
-            {
-                objBMS_Deal_Content_Rights_Repository.Add(obj);
-            }
-            public void UpdateEntity(BMS_Deal_Content_Rights obj)
-            {
-                objBMS_Deal_Content_Rights_Repository.Update(obj);
-            }
-            public void DeleteEntity(BMS_Deal_Content_Rights obj)
-            {
-                objBMS_Deal_Content_Rights_Repository.Delete(obj);
-            }
+            this.objBMS_Asset_Repository = new BMS_Asset_Repository();
         }
-        public class BMS_Deal_Service
+        public BMS_Asset GetByID(int? ID, Type[] RelationList = null)
         {
-            BMS_Deal_Repository objBMS_Deal_Repository = new BMS_Deal_Repository();
-            public BMS_Deal_Service()
-            {
-                this.objBMS_Deal_Repository = new BMS_Deal_Repository();
-            }
-            public BMS_Deal GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objBMS_Deal_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<BMS_Deal> GetAll(Type[] RelationList = null)
-            {
-                return objBMS_Deal_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(BMS_Deal obj)
-            {
-                objBMS_Deal_Repository.Add(obj);
-            }
-            public void UpdateEntity(BMS_Deal obj)
-            {
-                objBMS_Deal_Repository.Update(obj);
-            }
-            public void DeleteEntity(BMS_Deal obj)
-            {
-                objBMS_Deal_Repository.Delete(obj);
-            }
+            return objBMS_Asset_Repository.Get(ID, RelationList);
         }
-        public class Music_Language_Service
+        public IEnumerable<BMS_Asset> GetAll(Type[] RelationList = null)
         {
-            Music_Language_Repository objMusic_Language_Repository = new Music_Language_Repository();
-            public Music_Language_Service()
-            {
-                this.objMusic_Language_Repository = new Music_Language_Repository();
-            }
-            public Music_Language GetByID(int? ID, Type[] RelationList = null)
-            {
-                return objMusic_Language_Repository.Get(ID, RelationList);
-            }
-            public IEnumerable<Music_Language> GetAll(Type[] RelationList = null)
-            {
-                return objMusic_Language_Repository.GetAll(RelationList);
-            }
-            public void AddEntity(Music_Language obj)
-            {
-                objMusic_Language_Repository.Add(obj);
-            }
-            public void UpdateEntity(Music_Language obj)
-            {
-                objMusic_Language_Repository.Update(obj);
-            }
-            public void DeleteEntity(Music_Language obj)
-            {
-                objMusic_Language_Repository.Delete(obj);
-            }
+            return objBMS_Asset_Repository.GetAll(RelationList);
         }
+        public void AddEntity(BMS_Asset obj)
+        {
+            objBMS_Asset_Repository.Add(obj);
+        }
+        public void UpdateEntity(BMS_Asset obj)
+        {
+            objBMS_Asset_Repository.Update(obj);
+        }
+        public void DeleteEntity(BMS_Asset obj)
+        {
+            objBMS_Asset_Repository.Delete(obj);
+        }
+    }
+    public class BMS_Deal_Content_Service
+    {
+        BMS_Deal_Content_Repository objBMS_Deal_Content_Repository = new BMS_Deal_Content_Repository();
+        public BMS_Deal_Content_Service()
+        {
+            this.objBMS_Deal_Content_Repository = new BMS_Deal_Content_Repository();
+        }
+        public BMS_Deal_Content GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objBMS_Deal_Content_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<BMS_Deal_Content> GetAll(Type[] RelationList = null)
+        {
+            return objBMS_Deal_Content_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(BMS_Deal_Content obj)
+        {
+            objBMS_Deal_Content_Repository.Add(obj);
+        }
+        public void UpdateEntity(BMS_Deal_Content obj)
+        {
+            objBMS_Deal_Content_Repository.Update(obj);
+        }
+        public void DeleteEntity(BMS_Deal_Content obj)
+        {
+            objBMS_Deal_Content_Repository.Delete(obj);
+        }
+    }
+    public class BMS_Deal_Content_Rights_Service
+    {
+        BMS_Deal_Content_Rights_Repository objBMS_Deal_Content_Rights_Repository = new BMS_Deal_Content_Rights_Repository();
+        public BMS_Deal_Content_Rights_Service()
+        {
+            this.objBMS_Deal_Content_Rights_Repository = new BMS_Deal_Content_Rights_Repository();
+        }
+        public BMS_Deal_Content_Rights GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objBMS_Deal_Content_Rights_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<BMS_Deal_Content_Rights> GetAll(Type[] RelationList = null)
+        {
+            return objBMS_Deal_Content_Rights_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(BMS_Deal_Content_Rights obj)
+        {
+            objBMS_Deal_Content_Rights_Repository.Add(obj);
+        }
+        public void UpdateEntity(BMS_Deal_Content_Rights obj)
+        {
+            objBMS_Deal_Content_Rights_Repository.Update(obj);
+        }
+        public void DeleteEntity(BMS_Deal_Content_Rights obj)
+        {
+            objBMS_Deal_Content_Rights_Repository.Delete(obj);
+        }
+    }
+    public class BMS_Deal_Service
+    {
+        BMS_Deal_Repository objBMS_Deal_Repository = new BMS_Deal_Repository();
+        public BMS_Deal_Service()
+        {
+            this.objBMS_Deal_Repository = new BMS_Deal_Repository();
+        }
+        public BMS_Deal GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objBMS_Deal_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<BMS_Deal> GetAll(Type[] RelationList = null)
+        {
+            return objBMS_Deal_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(BMS_Deal obj)
+        {
+            objBMS_Deal_Repository.Add(obj);
+        }
+        public void UpdateEntity(BMS_Deal obj)
+        {
+            objBMS_Deal_Repository.Update(obj);
+        }
+        public void DeleteEntity(BMS_Deal obj)
+        {
+            objBMS_Deal_Repository.Delete(obj);
+        }
+    }
+    public class Music_Language_Service
+    {
+        Music_Language_Repository objMusic_Language_Repository = new Music_Language_Repository();
+        public Music_Language_Service()
+        {
+            this.objMusic_Language_Repository = new Music_Language_Repository();
+        }
+        public Music_Language GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Language_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Language> GetAll(Type[] RelationList = null)
+        {
+            return objMusic_Language_Repository.GetAll(RelationList);
+        }
+        public void AddEntity(Music_Language obj)
+        {
+            objMusic_Language_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Language obj)
+        {
+            objMusic_Language_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Language obj)
+        {
+            objMusic_Language_Repository.Delete(obj);
+        }
+    }
     public class Music_Theme_Service
     {
         Music_Theme_Repository objMusic_Theme_Repository = new Music_Theme_Repository();
@@ -2881,6 +2249,295 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteEntity(Music_Theme obj)
         {
             objMusic_Theme_Repository.Delete(obj);
+        }
+    }
+    public class Vendor_Service
+    {
+        Vendor_Repository objVendor_Repository = new Vendor_Repository();
+        public Vendor_Service()
+        {
+            this.objVendor_Repository = new Vendor_Repository();
+        }
+        public Vendor GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objVendor_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Vendor> GetAll(Type[] additionalTypes = null)
+        {
+            return objVendor_Repository.GetAll(additionalTypes);
+        }
+        public void AddEntity(Vendor obj)
+        {
+            objVendor_Repository.Add(obj);
+        }
+        public void UpdateEntity(Vendor obj)
+        {
+            objVendor_Repository.Update(obj);
+        }
+        public void DeleteEntity(Vendor obj)
+        {
+            objVendor_Repository.Delete(obj);
+        }
+        public bool Validate(Vendor objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Vendor objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Vendor_Name == objToValidate.Vendor_Name && s.Vendor_Code != objToValidate.Vendor_Code).Count() > 0)
+            {
+                resultSet = "Party already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+    public class Vendor_Country_Service
+    {
+        Vendor_Country_Repository objVendor_Country_Repository = new Vendor_Country_Repository();
+        public Vendor_Country_Service()
+        {
+            this.objVendor_Country_Repository = new Vendor_Country_Repository();
+        }
+        public Vendor_Country GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objVendor_Country_Repository.Get(ID, RelationList);
+        }
+        public void AddEntity(Vendor_Country obj)
+        {
+            objVendor_Country_Repository.Add(obj);
+        }
+        public void UpdateEntity(Vendor_Country obj)
+        {
+            objVendor_Country_Repository.Update(obj);
+        }
+        public void DeleteEntity(Vendor_Country obj)
+        {
+            objVendor_Country_Repository.Delete(obj);
+        }
+    }
+    public class Vendor_Role_Service
+    {
+        Vendor_Role_Repository objVendor_Role_Repository = new Vendor_Role_Repository();
+        public Vendor_Role_Service()
+        {
+            this.objVendor_Role_Repository = new Vendor_Role_Repository();
+        }
+        public Vendor_Role GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objVendor_Role_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Vendor_Role> GetAll()
+        {
+            return objVendor_Role_Repository.GetAll();
+        }
+        public void AddEntity(Vendor_Role obj)
+        {
+            objVendor_Role_Repository.Add(obj);
+        }
+        public void UpdateEntity(Vendor_Role obj)
+        {
+            objVendor_Role_Repository.Update(obj);
+        }
+        public void DeleteEntity(Vendor_Role obj)
+        {
+            objVendor_Role_Repository.Delete(obj);
+        }
+    }
+    public class Party_Group_Service
+    {
+        Party_Group_Repository objParty_Group_Repository = new Party_Group_Repository();
+        public Party_Group_Service()
+        {
+            this.objParty_Group_Repository = new Party_Group_Repository();
+        }
+        public Party_Group GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objParty_Group_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Party_Group> GetAll()
+        {
+            return objParty_Group_Repository.GetAll();
+        }
+        public void AddEntity(Party_Group obj)
+        {
+            objParty_Group_Repository.Add(obj);
+        }
+        public void UpdateEntity(Party_Group obj)
+        {
+            objParty_Group_Repository.Update(obj);
+        }
+        public void DeleteEntity(Party_Group obj)
+        {
+            objParty_Group_Repository.Delete(obj);
+        }
+    }
+    public class Vendor_Contacts_Service
+    {
+        Vendor_Contacts_Repository objVendor_Contacts_Repository = new Vendor_Contacts_Repository();
+        public Vendor_Contacts_Service()
+        {
+            this.objVendor_Contacts_Repository = new Vendor_Contacts_Repository();
+        }
+        public Vendor_Contacts GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objVendor_Contacts_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Vendor_Contacts> GetAll()
+        {
+            return objVendor_Contacts_Repository.GetAll();
+        }
+        public void AddEntity(Vendor_Contacts obj)
+        {
+            objVendor_Contacts_Repository.Add(obj);
+        }
+        public void UpdateEntity(Vendor_Contacts obj)
+        {
+            objVendor_Contacts_Repository.Update(obj);
+        }
+        public void DeleteEntity(Vendor_Contacts obj)
+        {
+            objVendor_Contacts_Repository.Delete(obj);
+        }
+    }
+    public class USP_MODULE_RIGHTS_Service
+    {
+        USP_MODULE_RIGHTS_Repository objUSP_Repository = new USP_MODULE_RIGHTS_Repository();
+
+        public USP_MODULE_RIGHTS_Service()
+        {
+            this.objUSP_Repository = new USP_MODULE_RIGHTS_Repository();
+        }
+        public string USP_MODULE_RIGHTS(Nullable<int> module_Code, Nullable<int> security_Group_Code, Nullable<int> users_Code)
+        {
+            return objUSP_Repository.USP_MODULE_RIGHTS(module_Code, security_Group_Code, users_Code);
+        }
+    }
+    public class Territory_Services
+    {
+        Territory_Repository objTerritory_Repository = new Territory_Repository();
+        public Territory_Services()
+        {
+            this.objTerritory_Repository = new Territory_Repository();
+        }
+        public Territory GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objTerritory_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Territory> GetAll(Type[] additionalTypes = null)
+        {
+            return objTerritory_Repository.GetAll();
+        }
+        public void AddEntity(Territory obj)
+        {
+            objTerritory_Repository.Add(obj);
+        }
+        public void UpdateEntity(Territory obj)
+        {
+            objTerritory_Repository.Update(obj);
+        }
+        public void DeleteEntity(Territory obj)
+        {
+            objTerritory_Repository.Delete(obj);
+        }
+    }
+    public class Territory_Details_Services
+    {
+        Territory_Details_Repository objTerritory_Details_Repository = new Territory_Details_Repository();
+        public Territory_Details_Services()
+        {
+            this.objTerritory_Details_Repository = new Territory_Details_Repository();
+        }
+        public Territory_Details GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objTerritory_Details_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Territory_Details> GetAll(Type[] additionalTypes = null)
+        {
+            return objTerritory_Details_Repository.GetAll();
+        }
+        public void AddEntity(Territory_Details obj)
+        {
+            objTerritory_Details_Repository.Add(obj);
+        }
+        public void UpdateEntity(Territory_Details obj)
+        {
+            objTerritory_Details_Repository.Update(obj);
+        }
+        public void DeleteEntity(Territory_Details obj)
+        {
+            objTerritory_Details_Repository.Delete(obj);
+        }
+    }
+    public class USP_List_Territory_Service
+    {
+        USP_List_Territory_Repository objUSP_List_Territory_Repository = new USP_List_Territory_Repository();
+
+        public USP_List_Territory_Service()
+        {
+            this.objUSP_List_Territory_Repository = new USP_List_Territory_Repository();
+        }
+        public IEnumerable<USP_List_Territory_Result> USP_List_Territory(Nullable<int> sysLanguageCode)
+        {
+            return objUSP_List_Territory_Repository.USP_List_Territory(sysLanguageCode);
+        }
+    }
+    public class Additional_Expense_Services
+    {
+        Addtional_Expense_Repository objAddtional_Expense_Repository = new Addtional_Expense_Repository();
+        public Additional_Expense_Services()
+        {
+            this.objAddtional_Expense_Repository = new Addtional_Expense_Repository();
+        }
+        public Additional_Expense GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objAddtional_Expense_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Additional_Expense> GetAll(Type[] additionalTypes = null)
+        {
+            return objAddtional_Expense_Repository.GetAll();
+        }
+        public void AddEntity(Additional_Expense obj)
+        {
+            objAddtional_Expense_Repository.Add(obj);
+        }
+        public void UpdateEntity(Additional_Expense obj)
+        {
+            objAddtional_Expense_Repository.Update(obj);
+        }
+        public void DeleteEntity(Additional_Expense obj)
+        {
+            objAddtional_Expense_Repository.Delete(obj);
+        }
+    }
+    public class Language_Services
+    {
+        Language_Repository objLanguage_Repository = new Language_Repository();
+        public Language_Services()
+        {
+            this.objLanguage_Repository = new Language_Repository();
+        }
+        public Language GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objLanguage_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Language> GetAll(Type[] additionalTypes = null)
+        {
+            return objLanguage_Repository.GetAll();
+        }
+        public void AddEntity(Language obj)
+        {
+            objLanguage_Repository.Add(obj);
+        }
+        public void UpdateEntity(Language obj)
+        {
+            objLanguage_Repository.Update(obj);
+        }
+        public void DeleteEntity(Language obj)
+        {
+            objLanguage_Repository.Delete(obj);
         }
     }
 }
