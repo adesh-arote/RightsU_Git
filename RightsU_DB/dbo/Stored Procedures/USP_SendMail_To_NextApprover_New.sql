@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USP_SendMail_To_NextApprover_New]
+﻿CREATE PROCEDURE [dbo].[USP_SendMail_To_NextApprover_New]
 (
 	@RecordCode Int=3
 	,@Module_code Int=30
