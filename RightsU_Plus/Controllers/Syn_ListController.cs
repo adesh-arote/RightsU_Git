@@ -136,6 +136,9 @@ namespace RightsU_Plus.Controllers
             //ViewBag.Workflow_List = BindWorkflowStatus();
             ViewBag.PageNo = obj_Acq_Syn_List_Search.PageNo - 1;
             ViewBag.ReleaseRecord = ReleaseRecord;
+            string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
+            ViewBag.Is_AllowMultiBUsyndeal = Is_AllowMultiBUsyndeal;
+
             ViewBag.BusineesUnitList = BindBUList();
             if (obj_Acq_Syn_List_Search.BUCode == null)
             {
@@ -143,7 +146,14 @@ namespace RightsU_Plus.Controllers
             }
             if (obj_Acq_Syn_List_Search.isAdvanced == "Y")
             {
-                ViewBag.BUCode = obj_Acq_Syn_List_Search.BUCodes_Search;
+                if (Is_AllowMultiBUsyndeal == "Y")
+                {
+                    ViewBag.BUCode = obj_Acq_Syn_List_Search.BUCode;
+                }
+                else
+                {
+                    ViewBag.BUCode = obj_Acq_Syn_List_Search.BUCodes_Search;
+                }
             }
             return View("~/Views/Syn_List/Index.cshtml");
         }
@@ -209,10 +219,21 @@ namespace RightsU_Plus.Controllers
                         //        else
                         //            sql += " AND Deal_Workflow_Status NOT IN ('A','W','R')";
                     }
+                    string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
+                    if (Is_AllowMultiBUsyndeal != "Y")
+                    {
+                        obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
 
-                    obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
-                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0)
+                    }
+                    //obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
+                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0 && Is_AllowMultiBUsyndeal != "Y")
+                    {
                         sql += " And Business_Unit_Code In (" + obj_Acq_Syn_List_Search.BUCodes_Search + ") ";// AND is_active='Y' ";
+                    }
+                    else
+                    {
+                        sql += " And Business_Unit_Code In (" + strBU + ") ";// AND is_active='Y' ";
+                    }
 
                     if (obj_Acq_Syn_List_Search.strIncludeArchiveDeal == "Y")
                         sql += " AND (is_active in ('Y') OR ( Deal_Workflow_Status = 'AR'))";
@@ -223,7 +244,7 @@ namespace RightsU_Plus.Controllers
                 {
                     obj_Acq_Syn_List_Search.Common_Search = !string.IsNullOrEmpty(commonSearch.Trim()) ? commonSearch.Trim().Replace("'", "''") : "";
                     obj_Acq_Syn_List_Search.BUCode = strBUCode;
-                    sql += "AND Business_Unit_Code =" + obj_Acq_Syn_List_Search.BUCode;
+                    sql += "AND Business_Unit_Code IN (" + obj_Acq_Syn_List_Search.BUCode + ") ";
 
                     if (strIncludeArchiveDeal == "Y")
                         sql += " AND (is_active in ('Y') OR ( Deal_Workflow_Status = 'AR'))";
@@ -251,7 +272,7 @@ namespace RightsU_Plus.Controllers
                                     else
                                         sql += " AND Deal_Workflow_Status <> 'AR' AND is_active ='Y' ";
 
-                                    sql += " OR Business_Unit_Code =" + obj_Acq_Syn_List_Search.BUCode + " AND (agreement_no like '%" + commonStr[i - 1] + "%'"
+                                    sql += " OR Business_Unit_Code IN (" + obj_Acq_Syn_List_Search.BUCode + ") AND (agreement_no like '%" + commonStr[i - 1] + "%'"
                                           + " OR Entity_Code IN (SELECT Entity_Code FROM Entity WHERE Entity_Name LIKE N'%" + commonStr[i - 1] + "%')"
                                           + " OR Vendor_Code IN (SELECT Vendor_Code FROM Vendor WHERE Vendor_Name LIKE N'%" + commonStr[i - 1] + "%')"
                                           + " OR Syn_Deal_Code IN (SELECT Syn_Deal_Code FROM Syn_Deal_Movie WHERE Title_Code IN (SELECT Title_Code FROM Title WHERE Title_name  LIKE N'%" + commonStr[i - 1] + "%')))";
@@ -699,7 +720,7 @@ namespace RightsU_Plus.Controllers
 
             }
 
-            Archive:
+        Archive:
             if (CommandName == "SendForArchive" || CommandName == "Archive")
             {
                 count = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Syn_Deal_Code == Acq_Deal_Code && (s.Deal_Workflow_Status == "AR" || s.Deal_Workflow_Status == "WA")).Count();
@@ -719,7 +740,7 @@ namespace RightsU_Plus.Controllers
                     isLocked = objCommonUtil.Lock_Record(Acq_Deal_Code, GlobalParams.ModuleCodeForSynDeal, objLoginUser.Users_Code, out RLCode, out message, objLoginEntity.ConnectionStringName);
             }
 
-            End:
+        End:
             //if (message == "" && Key == "AR")
             //{
             //    List<int?> lstTitle_Code = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
@@ -974,9 +995,48 @@ namespace RightsU_Plus.Controllers
             List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Syn_PreReq("DTG,DTP,DTC,BUT,LAV,DIR,TIT", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
             return obj_USP_Get_PreReq_Result;
         }
-        public JsonResult OnChangeBindTitle(int? dealTypeCode, int? BUCode)
+        public JsonResult OnChangeBindTitle(int? dealTypeCode, int? BUCode, string TitleSearch, params int?[] ddlBUMulti)
         {
-            return Json(BindTitle(dealTypeCode, BUCode), JsonRequestBehavior.AllowGet);
+            Title_Service objTS = new Title_Service(objLoginEntity.ConnectionStringName);
+            string Is_AllowMultiBUacqdeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUacqdeal").ToUpper();
+            if (Is_AllowMultiBUacqdeal == "Y")
+            {
+                var arrTitleSearch = TitleSearch.Split('﹐').Where(x => x != "").ToList();
+
+                if (ddlBUMulti != null)
+                {
+
+
+                    var result = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(
+                      x => ddlBUMulti.Contains(x.Acq_Deal.Business_Unit_Code)
+                           && (x.Title.Deal_Type_Code == dealTypeCode || dealTypeCode == 0)
+                      ).Where(x => arrTitleSearch.Contains(x.Title.Title_Name))
+                      .Select(x => new { Title_Name = x.Title.Title_Name, Title_Code = x.Title.Title_Code }).Distinct().ToList();
+
+                    obj_Acq_Syn_List_Search.TitleCodes_Search = String.Join(",", result.Select(x => x.Title_Code).ToList());
+                    obj_Acq_Syn_List_Search.BUCode = String.Join(",", ddlBUMulti.Select(x => x.ToString()).ToArray());
+                    string comma = result.Count > 0 ? "﹐" : "";
+                    var obj = new
+                    {
+                        Title_Name = String.Join("﹐", result.Select(x => x.Title_Name).ToList()) + comma,
+                        Title_Code = String.Join(",", result.Select(x => x.Title_Code).ToList())
+                    };
+
+                    return Json(obj, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var obj = new
+                    {
+                        Title_Name = "",
+                        Title_Code = ""
+                    };
+
+                    return Json(obj, JsonRequestBehavior.AllowGet);
+                }
+            }
+            else
+                return Json(BindTitle(dealTypeCode, BUCode), JsonRequestBehavior.AllowGet);
         }
         private MultiSelectList BindTitle(int? Deal_Type_Code, int? BUCode)
         {
@@ -993,16 +1053,17 @@ namespace RightsU_Plus.Controllers
             terms = terms.Select(s => s.Trim()).ToList();
             string searchString = terms.LastOrDefault().ToString().Trim();
             //string[] arrsearchString = searchString.ToUpper().Split(',');
-
-            var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Movie.Any(AM => AM.Syn_Deal.Business_Unit_Code.ToString() == BUCode && AM.Title_Code == x.Title_Code) && (x.Deal_Type_Code.ToString() == dealTypeCode || dealTypeCode == "0")).Where(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()))
-               .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
+            var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Movie.Any(AM => BUCode.Contains(AM.Syn_Deal.Business_Unit_Code.ToString()) && AM.Title_Code == x.Title_Code) && (x.Deal_Type_Code.ToString() == dealTypeCode || dealTypeCode == "0")).Where(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()))
+              .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
+            //var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Movie.Any(AM => AM.Syn_Deal.Business_Unit_Code.ToString() == BUCode && AM.Title_Code == x.Title_Code) && (x.Deal_Type_Code.ToString() == dealTypeCode || dealTypeCode == "0")).Where(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()))
+            //   .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
             return Json(result);
         }
         private SelectList BindWorkflowStatus()
         {
             return new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type == "S"), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name");
         }
-        private SelectList BindBUList()
+        private MultiSelectList BindBUList()
         {
 
             return new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)), "Business_Unit_Code", "Business_Unit_Name", obj_Acq_Syn_List_Search.BUCode);

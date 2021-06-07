@@ -68,6 +68,14 @@ namespace RightsU_Plus.Controllers
             ViewBag.IsCatchUpRights = GetCatchUpConfig();
             Session["FileName"] = "";
             Session["FileName"] = "acq_Ancillary";
+
+            int prevAcq_Deal = 0;
+            if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_VIEW && TempData["prevAcqDeal"] != null)
+            {
+                prevAcq_Deal = Convert.ToInt32(TempData["prevAcqDeal"]);
+                TempData.Keep("prevAcqDeal");
+            }
+            ViewBag.prevAcq_Deal = prevAcq_Deal;
             return PartialView("~/Views/Acq_Deal/_Acq_Ancillary_List.cshtml");
         }
         public ActionResult Cancel()

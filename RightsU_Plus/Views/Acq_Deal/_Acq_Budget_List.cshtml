@@ -26,7 +26,7 @@
     var URL_DeleteBudget = '@Url.Action("DeleteBudget", "Acq_Budget")';
     var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")'
 
-    $(document).ready(function () { 
+    $(document).ready(function () {
         $('.modal').modal({
             backdrop: 'static',
             keyboard: false,
@@ -113,7 +113,7 @@
         BindGrid(0,false);
     }
     function AddBudget()
-    {           
+    {
         $.ajax({
             type: "POST",
             url: URL_AddBudget,
@@ -123,7 +123,7 @@
             success: function (result) {
                 if (result == "true") {
                     redirectToLogin();
-                }   
+                }
 
                 $('#popEditBudget').html(result);
                 initializeChosen();
@@ -136,7 +136,7 @@
         });
     }
     function EditBudget(Acq_Deal_Budget_Code)
-    {    
+    {
         $.ajax({
             type: "POST",
             url: URL_EditBudget,
@@ -147,9 +147,9 @@
             success: function (result) {
                 if (result == "true") {
                     redirectToLogin();
-                }  
-             
-                $('#popEditBudget').html(result);    
+                }
+
+                $('#popEditBudget').html(result);
                 initializeChosen();
                 $('#popEditBudget').modal();
             },
@@ -243,24 +243,24 @@
     }
 </script>
 <style>
-    .SumoSelect{
-       width: 95% !important;                
+    .SumoSelect {
+        width: 95% !important;
     }
-    .chosen-container .chosen-drop
-    {
-        position:fixed;
-        top:38%;
-        left:-9999px;
-        z-index:1010;
-        width:94%;
-        border:1px solid #aaa;
-        border-top:0;
-        background:#fff;
-        box-shadow:0 4px 5px rgba(0,0,0,.15)
+
+    .chosen-container .chosen-drop {
+        position: fixed;
+        top: 38%;
+        left: -9999px;
+        z-index: 1010;
+        width: 94%;
+        border: 1px solid #aaa;
+        border-top: 0;
+        background: #fff;
+        box-shadow: 0 4px 5px rgba(0,0,0,.15)
     }
-   .chosen-drop-new
-    {
-        left:58px;
+
+    .chosen-drop-new {
+        left: 58px;
     }
 </style>
 <div class="grid_area">
@@ -269,7 +269,7 @@
             <div class="tab-content clearfix table-wrapper scale_table_container">
                 <div class="tab-pane active" id="tabBudget">
                     <div class="scale_table_block">
-                       <table class="table">
+                        <table class="table">
                             <tr>
                                 <td class="bold" style="width: 10%;">
                                     @objMessageKey.Titles
@@ -324,6 +324,11 @@
                                     <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
                                            onclick="location.href='@Url.Action("View", "Title")    '">
                                 }
+                                else if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                {
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                }
                                 else
                                 {
                                     <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
@@ -341,8 +346,8 @@
 
 @*<div aria-labelledby="myModalLabel" id="popEditBudget" class="form_wrapper modal fade big_popup scroll" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
 
-</div>*@
+    </div>*@
 
 <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popEditBudget" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-height:450px;">
-    
+
 </div>

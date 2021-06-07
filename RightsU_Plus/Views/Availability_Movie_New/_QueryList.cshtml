@@ -1,0 +1,37 @@
+﻿@using RightsU_Entities
+@model dynamic
+
+
+<table class="table table-bordered table-hover" style="margin-top:10px">
+    <thead>
+        <tr>
+            <th> Report Name</th>
+            <th>Created By</th>
+            <th>Created On</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="text-align:left">
+                    @item.ReportName
+
+                </td>
+                <td>
+                    @item.UserName
+                </td>
+                <td>
+                    @item.Inserted_On
+                </td>
+                <td style="text-align:center">
+                    <a title="" href="#" class="glyphicon glyphicon-play" data-original-title="Run Query" onclick="BindReportCriteria(@item.Avail_Report_Schedule_Code)"></a>
+                    <a title="" href="#" class="glyphicon glyphicon-trash" data-original-title="Delete Query" onclick="DeleteQuery(@item.Avail_Report_Schedule_Code,false)"></a>
+                </td>
+
+            </tr>
+
+        }
+    </tbody>
+</table>

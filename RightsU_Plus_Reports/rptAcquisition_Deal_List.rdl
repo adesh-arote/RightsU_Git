@@ -43,6 +43,9 @@
           <QueryParameter Name="@DealSegment">
             <Value>=Parameters!DealSegment.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@TypeOfFilm">
+            <Value>=Parameters!TypeOfFilm.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USP_Acquition_Deal_List_Report</CommandText>
@@ -857,6 +860,20 @@ WHERE  (Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment')</CommandText>
         <CommandText>SELECT        TOP (1) Parameter_Value
 FROM            System_Parameter_New
 WHERE        (Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AllowSelfUtilizationInReport">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT TOP (1) Parameter_Value
+FROM     System_Parameter_New
+WHERE  (Parameter_Name = 'Is_SelfUtilization_inReport')</CommandText>
       </Query>
       <Fields>
         <Field Name="Parameter_Value">
@@ -6259,8 +6276,16 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowSelfUtilizationInReport") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowSelfUtilizationInReport") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -11616,6 +11641,10 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
       </DefaultValue>
       <Prompt>Deal Segment</Prompt>
     </ReportParameter>
+    <ReportParameter Name="TypeOfFilm">
+      <DataType>String</DataType>
+      <Prompt>Type Of Film</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -11766,6 +11795,11 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
           <ColumnIndex>3</ColumnIndex>
           <RowIndex>9</RowIndex>
           <ParameterName>DealSegment</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>4</ColumnIndex>
+          <RowIndex>9</RowIndex>
+          <ParameterName>TypeOfFilm</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

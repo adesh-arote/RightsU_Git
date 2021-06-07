@@ -209,7 +209,7 @@
         var txtFPercent =  $(Percentage);
         var ddlFCostType =  $(CostType);
         var Payment_Term_Code = $(Payment_Term_Code);
-        
+
 
         if (txtFPercent != null) {
             if (txtFPercent.value != "")
@@ -278,8 +278,8 @@
              return false;
              }
         }
-       
-      
+
+
 
 
     }
@@ -388,7 +388,7 @@
             else {
                 validatePercent($("#txtPercentageSR_0"), $("#txtAmountSR_0") ,$("#ddl_Cost_Type_Code_0"), $("#ddl_Payment_Term_Code"), 0);
             }
-            
+
         }
         returnVal =  ChkDuplicatePaymentTerm();
         if(canSave==0)
@@ -860,8 +860,16 @@
                                 else
                                 {
                                     <li>
-                                        <input type="button" id="btnCancel_Deal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                               onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Acq_Payment_Term" ) '">
+                                        @if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                        {
+                                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                                   onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                        }
+                                        else
+                                        {
+                                            <input type="button" id="btnCancel_Deal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                                   onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Acq_Payment_Term") '">
+                                        }
                                     </li>
                                 }
                             </ul>

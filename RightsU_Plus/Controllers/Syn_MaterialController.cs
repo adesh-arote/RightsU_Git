@@ -58,7 +58,7 @@ namespace RightsU_Plus.Controllers
             int Deal_Code = objDeal_Schema.Deal_Code;
             objDeal_Schema.Page_From = GlobalParams.Page_From_Material;
             objDeal = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).GetById(Deal_Code);
-            objDeal_Schema.Deal_Type_Code = Convert.ToInt32( objDeal.Deal_Type_Code);// To be deleted
+            objDeal_Schema.Deal_Type_Code = Convert.ToInt32(objDeal.Deal_Type_Code);// To be deleted
             Session["objDeal"] = objDeal;
             ViewBag.PageMode = objDeal_Schema.Mode;
             ViewBag.Approver_Remark = objDeal_Schema.Approver_Remark;
@@ -75,7 +75,17 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult Create(string isAdd, int txtPageSize, int pageNo)
         {
             ViewBag.CommandName = "Add";
-            BindTitle("");
+            string Is_Acq_Syn_Material_MultiTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_Material_MultiTitle").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_Syn_Material_MultiTitle == "Y")
+            {
+                ViewBag.Is_Acq_Syn_Material_MultiTitle = Is_Acq_Syn_Material_MultiTitle;
+                var lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(objDeal.Syn_Deal_Code, objDeal_Schema.Deal_Type_Code, "S").ToList();
+                TempData["Title_Code"] = new MultiSelectList(lst, "Title_Code", "Title_Name");
+            }
+            else
+            {
+                BindTitle("");
+            }
             BindMaterialType(0);
             BindMaterialMediumType(0);
             if (isAdd == "1")
@@ -199,7 +209,7 @@ namespace RightsU_Plus.Controllers
 
         #region Methods
 
-        public string SaveMaterial(int Syn_Deal_Material_Code, int Title_Code, int Material_Type_Code, int Material_Medium_Code, int Quantity, string Title_Codes)
+        public string SaveMaterial(int Syn_Deal_Material_Code, int Title_Code, int Material_Type_Code, int Material_Medium_Code, int Quantity, string Title_Codes, string strAddTitle_Code = "")
         {
             string ReturnMessage = "Y";
             if (Syn_Deal_Material_Code == 0)
@@ -229,17 +239,66 @@ namespace RightsU_Plus.Controllers
                 objSyn_Deal_Material.Material_Medium_Code = Material_Medium_Code;
                 objSyn_Deal_Material.Quantity = Quantity;
 
-                if (CheckDuplicateMaterial(objSyn_Deal_Material, "Add", Title_Codes))
+                string Is_Acq_Syn_Material_MultiTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_Material_MultiTitle").Select(x => x.Parameter_Value).FirstOrDefault();
+                bool IsDuplicate = false;
+                List<string> lstTitles = new List<string>();
+
+                if (Is_Acq_Syn_Material_MultiTitle == "Y")
                 {
-                    objSyn_Deal_Material.EntityState = State.Added;
-                    dynamic resultSet;
-                    objSyn_Deal_Material_Service.Save(objSyn_Deal_Material, out resultSet);
+                    var lstTitleCode = strAddTitle_Code.Split(',');
+                    var lstTitleName = Title_Codes.Split(',');
+                    int i = 0;
+
+                    foreach (var titleCode in lstTitleCode)
+                    {
+                        objSyn_Deal_Material.Title_Code = Convert.ToInt32(titleCode);
+                        objSyn_Deal_Material.Episode_From = 1;
+                        objSyn_Deal_Material.Episode_To = 1;
+
+                        if (!CheckDuplicateMaterial(objSyn_Deal_Material, "Add", lstTitleName[i]))
+                        {
+                            lstTitles.Add(lstTitleName[i]);
+                            IsDuplicate = true;
+                        }
+                        i++;
+                    }
+                    if (IsDuplicate)
+                    {
+                        ReturnMessage = string.Join(",", lstTitles);
+                        return ReturnMessage;
+                    }
+
+                    i = 0;
+
+                    foreach (var titleCode in lstTitleCode)
+                    {
+
+                        objSyn_Deal_Material.Title_Code = Convert.ToInt32(titleCode);
+                        objSyn_Deal_Material.Episode_From = 1;
+                        objSyn_Deal_Material.Episode_To = 1;
+
+                        if (CheckDuplicateMaterial(objSyn_Deal_Material, "Add", lstTitleName[i]))
+                        {
+                            objSyn_Deal_Material.EntityState = State.Added;
+                            dynamic resultSet;
+                            objSyn_Deal_Material_Service.Save(objSyn_Deal_Material, out resultSet);
+                        }
+                        i++;
+                    }
                 }
                 else
                 {
-                    ReturnMessage = "N";
+                    if (CheckDuplicateMaterial(objSyn_Deal_Material, "Add", Title_Codes))
+                    {
+                        objSyn_Deal_Material.EntityState = State.Added;
+                        dynamic resultSet;
+                        objSyn_Deal_Material_Service.Save(objSyn_Deal_Material, out resultSet);
+                    }
+                    else
+                    {
+                        ReturnMessage = "N";
+                    }
                 }
-
             }
             else
             {
@@ -396,7 +455,7 @@ namespace RightsU_Plus.Controllers
 
         private void BindTitle(string selectedTitleCode)
         {
-            List<SelectListItem> lst = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(objDeal.Syn_Deal_Code, objDeal_Schema.Deal_Type_Code,"S").ToList(), "Title_Code", "Title_Name", selectedTitleCode).ToList();
+            List<SelectListItem> lst = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(objDeal.Syn_Deal_Code, objDeal_Schema.Deal_Type_Code, "S").ToList(), "Title_Code", "Title_Name", selectedTitleCode).ToList();
             lst.Insert(0, new SelectListItem() { Value = "0", Text = objMessageKey.PleaseSelect });
             ViewBag.lstTitle = lst;
         }

@@ -21,6 +21,7 @@
     [Title_Image]            VARCHAR (2000)  NULL,
     [Music_Label_Code]       INT             NULL,
     [Program_Code]           INT             NULL,
+    [Original_Title_Code]    INT             NULL,
     CONSTRAINT [PK_Title_1] PRIMARY KEY CLUSTERED ([Title_Code] ASC),
     CONSTRAINT [FK_Title_Deal_Type] FOREIGN KEY ([Deal_Type_Code]) REFERENCES [dbo].[Deal_Type] ([Deal_Type_Code]),
     CONSTRAINT [FK_Title_Grade_Master] FOREIGN KEY ([Grade_Code]) REFERENCES [dbo].[Grade_Master] ([Grade_Code]),
@@ -28,4 +29,6 @@
     CONSTRAINT [FK_Title_Original_Language] FOREIGN KEY ([Original_Language_Code]) REFERENCES [dbo].[Language] ([Language_Code]),
     CONSTRAINT [FK_Title_Program] FOREIGN KEY ([Program_Code]) REFERENCES [dbo].[Program] ([Program_Code])
 );
+
+
 

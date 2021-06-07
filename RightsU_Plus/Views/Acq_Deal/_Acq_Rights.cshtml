@@ -25,14 +25,16 @@
 <script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Rights.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
 <style type="text/css">
-    #Tree_Filter_Rights_Platform {   
-        width:565px;
-        padding-left:3px;
-        position:relative!important;
+    #Tree_Filter_Rights_Platform {
+        width: 565px;
+        padding-left: 3px;
+        position: relative !important;
     }
-    #Rights_Platform{
-        margin:0px 0px 0px 0px!important;
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
     }
+
     #tabValidity {
         width: 97%;
     }
@@ -103,7 +105,8 @@
     .sumo_ddlPromoter, .sumo_ddlRemarks {
         width: 400px !important;
     }
-    .boldSubLcns{
+
+    .boldSubLcns {
         font-weight: 700;
     }
 </style>
@@ -200,7 +203,7 @@
         "MsgForHB": '@objMessageKey.asitisalreadyselectedinHoldback',
         "MsgPlaceSearch": '@objMessageKey.Search'
     }
-   
+
 
     var lblTreeCount = 'lblTreeCount';
     $(document).ready(function () {
@@ -230,12 +233,12 @@
         showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
         //MsgForunsavedData = All unsaved data will be lost, still want to go ahead
     }
-  
+
 </script>
 
 @using (Ajax.BeginForm("Save_Rights", "Acq_Rights", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @id = "frmRights" }))
 {
-    string ORightType = "", Promoter_Tab = "";
+    string ORightType = "", Promoter_Tab = "", Is_Acq_Syn_CoExclusive = "", Is_Acq_Under_Production = "";
     if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
     {
         ORightType = Model.Original_Right_Type;
@@ -245,8 +248,12 @@
         ORightType = Model.Right_Type;
     }
     Promoter_Tab = objSPNService.SearchFor(s => s.Parameter_Name == "Promoter_Tab").First().Parameter_Value;
+    Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+    Is_Acq_Under_Production = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Under_Production").FirstOrDefault().Parameter_Value;
+
+    @Html.Hidden("Is_Acq_Syn_CoExclusive", Is_Acq_Syn_CoExclusive);
     @Html.Hidden("IsPromoter", Promoter_Tab);
-    @Html.Hidden("hdnPromoter",Model.Promoter_Flag);
+    @Html.Hidden("hdnPromoter", Model.Promoter_Flag);
     <div class="grid_area" onclick="hideRegion(); hideSubTitle(); hideDubbing();">
         <div class="navigation_tabs">
             <div class="tabbable">
@@ -277,48 +284,85 @@
                                         <div class="platform_checkbox">
                                             <input type="hidden" value="" id="hdnIs_Exclusive" name="hdnIs_Exclusive">
                                             <table>
-                                                <tr>
-                                                    <td style="width: 102px;"><label>@objMessageKey.ExclusiveRights</label></td>
-                                                    <td style="padding-right: 338px;">
-                                                        <div style="width: 83%; float: right;">
-                                                            <div id="divExclusiveRights" style="width:90px; height:23px">
-                                                                @{ string displayStyle = "none";
-                                                                    string attrDisabled1 = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
-                                                                }
-                                                                @if (Model.Is_Exclusive == "Y")
-                                                                {
-                                                                    displayStyle = "";
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" @attrDisabled1 />@objMessageKey.Yes
-
-                                                                    </label>
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" @attrDisabled1 />@objMessageKey.NO
-                                                                    </label>
-                                                                }
-                                                                else if (Model.Is_Exclusive == "N")
-                                                                {
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" @attrDisabled1 />@objMessageKey.Yes
-                                                                    </label>
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" @attrDisabled1 />@objMessageKey.NO
-                                                                    </label>
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" @attrDisabled1 />@objMessageKey.Yes
-                                                                    </label>
-                                                                    <label class="radio-inline">
-                                                                        <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" @attrDisabled1 />@objMessageKey.NO
-                                                                    </label>
-                                                                }
+                                                @if (Is_Acq_Syn_CoExclusive == "Y")
+                                                {
+                                                    <tr>
+                                                        <td style="width: 102px;"><label>Exclusivity</label></td>
+                                                        <td style="padding-right: 338px;">
+                                                            <div style="width: 83%; float: right;">
+                                                                <div id="divExclusiveRights" style="width:90px; height:23px">
+                                                                    <table style="width: 300px;">
+                                                                        <tr>
+                                                                            <td>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY" value="Y" checked="@(Model.Is_Exclusive == "Y" ? true : false)" class="exc" />Exclusive
+                                                                                </label>
+                                                                            </td>
+                                                                            <td>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN" value="N" checked="@(Model.Is_Exclusive == "N" ? true : false)" class="exc" />Non-Exclusive
+                                                                                </label>
+                                                                            </td>
+                                                                            <td>
+                                                                                <label class="radio-inline">
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" />Co-Exclusive
+                                                                                </label>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td style="width: 102px;"><label>@objMessageKey.ExclusiveRights</label></td>
+                                                        <td style="padding-right: 338px;">
+                                                            <div style="width: 83%; float: right;">
+
+                                                                <div id="divExclusiveRights" style="width:90px; height:23px">
+                                                                    @{ string displayStyle = "none";
+                                                                        string attrDisabled1 = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
+                                                                    }
+                                                                    @if (Model.Is_Exclusive == "Y")
+                                                                    {
+                                                                        displayStyle = "";
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" @attrDisabled1 />@objMessageKey.Yes
+
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                        </label>
+                                                                    }
+                                                                    else if (Model.Is_Exclusive == "N")
+                                                                    {
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" @attrDisabled1 />@objMessageKey.Yes
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                        </label>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" @attrDisabled1 />@objMessageKey.Yes
+                                                                        </label>
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                        </label>
+                                                                    }
+                                                                </div>
+
+
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
                                                 <tr>
                                                     <td colspan="2">
                                                         <label class="checkbox-inline">
@@ -399,8 +443,8 @@
                                         <div style="width: 83%; float: right;">
                                             <div id="divSublicensingOptions" style="width:90px; height:23px">
                                                 @{
-                                                string displayStyle1 = "none";
-                                                string attrDisabled = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
+                                                    string displayStyle1 = "none";
+                                                    string attrDisabled = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
                                                 }
                                                 @if (Model.Is_Sub_License == "Y")
                                                 {
@@ -453,6 +497,14 @@
                                                     <a data-toggle="tab" href="#tabPerp" role="tab">@objMessageKey.Perpetuity</a>
                                                 </li>
                                             </ul>
+                                            @if (Is_Acq_Under_Production == "Y")
+                                            {
+                                                <span style="padding-left: 10%;">
+                                                    @Html.CheckBox("Is_Under_Production", (Model.Is_Under_Production == "Y" ? true : false), null)
+                                                    Under Production
+                                                </span>
+                                            }
+
                                             @Html.Hidden("Original_Right_Type", ORightType)
                                             @Html.Hidden("Right_Type", Model.Right_Type)
 
@@ -466,12 +518,12 @@
                                                     <label>Tentative</label>
                                                     <br>
                                                     <label>@objMessageKey.StartDate</label>
-                                                    @Html.TextBox("Start_Date", Model.Start_Date, new { @id = "Start_Date", @placeholder = "DD/MM/YYYY", @class = "isDatepicker" })
-                                                    @Html.TextBox("Term_YY", Model.Term_YY, new { @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
-                                                    @Html.TextBox("Term_MM", Model.Term_MM, new { @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
-                                                    @Html.TextBox("Term_DD", Model.Term_DD, new { @class = "smallTextBox", @placeholder = "DD", @maxlength = 2 })
+                                                    @Html.TextBox("Start_Date", Model.Start_Date, new { autocomplete = "off", @id = "Start_Date", @placeholder = "DD/MM/YYYY", @class = "isDatepicker" })
+                                                    @Html.TextBox("Term_YY", Model.Term_YY, new { autocomplete = "off", @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
+                                                    @Html.TextBox("Term_MM", Model.Term_MM, new { autocomplete = "off", @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
+                                                    @Html.TextBox("Term_DD", Model.Term_DD, new { autocomplete = "off", @class = "smallTextBox", @placeholder = "DD", @maxlength = 2 })
                                                     <label style="margin-left: 15px">@objMessageKey.EndDate</label>
-                                                    @Html.TextBox("End_Date", Model.End_Date, new { @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                    @Html.TextBox("End_Date", Model.End_Date, new { autocomplete = "off", @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
                                                 </div>
                                                 <div class="@(ORightType == "M" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabMile">
                                                     <ul class="from_to clearfix">
@@ -508,18 +560,18 @@
                                                             @Html.TextBox("Perpetuity_Date", Model.Start_Date, new { @id = "txtPerpetuity_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
                                                         </li>
                                                         @if (ViewBag.Enabled_Perpetuity == "Y")
-                {
-                                        <li style="text-decoration: none;display: inline;padding-left: 4%">
-                                            <b>@objMessageKey.Term : </b>
-                                            <label>@ViewBag.Term_Perputity</label>
-                                            <label>@objMessageKey.Years</label>
-                                            @Html.Hidden("Term_Perputity", ViewBag.Term_Perputity as string, new { @id = "hdnTerm_Perputity" })
-                                        </li>
-                                        <li style="text-decoration: none;display: inline;width: 35%;float: right">
-                                            <label>@objMessageKey.EndDate</label>
-                                            @Html.TextBox("Perpetuity_EndDate", Model.End_Date, new { @id = "txtPerpetuity_EndDate", @placeholder = "DD/MM/YYYY", @readonly = "readonly", @style = "width:95px;" })
-                                        </li>
-}
+                                                        {
+                                                            <li style="text-decoration: none;display: inline;padding-left: 4%">
+                                                                <b>@objMessageKey.Term : </b>
+                                                                <label>@ViewBag.Term_Perputity</label>
+                                                                <label>@objMessageKey.Years</label>
+                                                                @Html.Hidden("Term_Perputity", ViewBag.Term_Perputity as string, new { @id = "hdnTerm_Perputity" })
+                                                            </li>
+                                                            <li style="text-decoration: none;display: inline;width: 35%;float: right">
+                                                                <label>@objMessageKey.EndDate</label>
+                                                                @Html.TextBox("Perpetuity_EndDate", Model.End_Date, new { @id = "txtPerpetuity_EndDate", @placeholder = "DD/MM/YYYY", @readonly = "readonly", @style = "width:95px;" })
+                                                            </li>
+                                                        }
                                                     </ul>
                                                 </div>
                                             </div>

@@ -150,7 +150,7 @@
         $("[required='required']").removeAttr("required");
         var IsValid = ValidatePageSize();
         var ViewType = $('input[name=optViewType]:checked').val();
-  
+
         if (IsValid)
             BindGridNew($("#" + ViewType)[0], 'Y');
             //LoadBulkUpdateList();
@@ -426,7 +426,7 @@
             //LoadBulkUpdateList();
         }
     }
-   
+
     function LoadBulkUpdateList() {
         var pageNo = '1';
         if ($("#hdnPageIndex") != undefined && $("#hdnPageIndex").val() != "")
@@ -609,7 +609,7 @@
         });
     }
 
- 
+
     function ValidateBulkApply() {
         debugger;
         var Lcount = parseInt($('#hdnCount').val());
@@ -1423,13 +1423,15 @@
     .chosen-container-multi {
         width: 60% !important;
     }
-    #Tree_Filter_Rights_Platform {   
-        width:1100px;
-        padding-left:3px;
-        position:relative!important;
+
+    #Tree_Filter_Rights_Platform {
+        width: 1100px;
+        padding-left: 3px;
+        position: relative !important;
     }
-    #Rights_Platform{
-        margin:0px 0px 0px 0px!important;
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
     }
 </style>
 @using (Ajax.BeginForm("ChangeTab", "Acq_Rights_List", new AjaxOptions { OnSuccess = "Save_Success" }))
@@ -1603,11 +1605,11 @@
                                                         <label>@objMessageKey.Tentative</label>
                                                         <br>
                                                         <label>@objMessageKey.StartDate</label>
-                                                        @Html.TextBox("Start_Date", "", new { @id = "Start_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
-                                                        @Html.TextBox("Term_YY", "", new { @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
-                                                        @Html.TextBox("Term_MM", "", new { @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
+                                                        @Html.TextBox("Start_Date", "", new { autocomplete = "off", @id = "Start_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                        @Html.TextBox("Term_YY", "", new { autocomplete = "off", @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
+                                                        @Html.TextBox("Term_MM", "", new { autocomplete = "off", @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
                                                         <label style="margin-left: 15px">@objMessageKey.EndDate</label>
-                                                        @Html.TextBox("End_Date", "", new { @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                        @Html.TextBox("End_Date", "", new { autocomplete = "off", @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
                                                     </div>
                                                     <div class="tab-pane scale_table_block" id="tabMile">
                                                         <ul class="from_to clearfix">

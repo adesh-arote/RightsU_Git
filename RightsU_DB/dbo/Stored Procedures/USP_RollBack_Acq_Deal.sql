@@ -67,7 +67,8 @@ BEGIN
 			Acq_Deal.Channel_Cluster_Code = AtAd.Channel_Cluster_Code,
 			Acq_Deal.Is_Auto_Push =  AtAD.Is_Auto_Push,
 			Acq_Deal.Deal_Segment_Code = AtAD.Deal_Segment_Code,
-			Acq_Deal.Revenue_Vertical_Code = AtAD.Revenue_Vertical_Code
+			Acq_Deal.Revenue_Vertical_Code = AtAD.Revenue_Vertical_Code,
+			Acq_Deal.Confirming_Party = AtAD.Confirming_Party
 			FROM AT_Acq_Deal AtAD   
 			WHERE AT_Acq_Deal_Code = @AT_Acq_Deal_Code AND Acq_Deal.Acq_Deal_Code = @Acq_Deal_Code  
      

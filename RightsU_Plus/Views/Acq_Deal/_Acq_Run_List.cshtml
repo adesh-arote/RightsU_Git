@@ -147,7 +147,7 @@
 
                                     }
 
-                                   
+
                                 </td>
                                 <td style="float: right;">
                                     @if (objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_VIEW)
@@ -184,7 +184,7 @@
                                 </td>
                                 <td colspan="2" style="width: 20%;">
                                     @*<input type="button" class="button" value="@objMessageKey.Search" onclick="searchClick()">
-                                    <input type="button" class="button" value="@objMessageKey.ShowAll" onclick="showAllClick()">*@
+                                        <input type="button" class="button" value="@objMessageKey.ShowAll" onclick="showAllClick()">*@
                                 </td>
                             </tr>
                         </table>
@@ -248,7 +248,15 @@
                             else
                             {
                                 <li>
-                                    <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Run_List")'" />
+                                    @if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                    {
+                                        <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                    }
+                                    else
+                                    {
+                                        <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Run_List")'" />
+                                    }
                                 </li>
                             }
                         </ul>

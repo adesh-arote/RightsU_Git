@@ -6,7 +6,7 @@
     else {
         if (msg_G != null && msg_G != '')
             showAlert('e', msg_G);
-    } 
+    }
     if (RLCode_G != '')
         Call_RefreshRecordReleaseTime(RLCode_G);
     if (IncludeSubDeal_Search_G != 'undefined' && IncludeSubDeal_Search_G == 'N')
@@ -51,19 +51,26 @@ function BindAdvanced_Search_Controls(callfrom) {
     else
         $('#AdSearch').css("padding-right", "0px");
 
-    var SelectedBU = $("#ddlBUUnit").val();
-    $('#ddlSrchBU').val(SelectedBU);
+    if (Is_AllowMultiBUacqdeal != 'Y') {
+        var SelectedBU = $("#ddlBUUnit").val();
+        $('#ddlSrchBU').val(SelectedBU);
+    }
+    else {
+        var SelectedBUMulti = $("#ddlGenBUMultiSelect").val();
+        $('#ddlSrchBUMultiSelect').val(SelectedBUMulti);
+        //$("#ddlSrchBUMultiSelect")[0].sumo.reload();
+    }
     //Here call from PGL - Pageload (document ready), BTC - Button(Search) Click
     if (callfrom == 'BTC') {
         $('#divSearch').slideToggle(400);
-        //OnChangeBindTitle('L');
+
     }
     if ($('#txtTitleSearch').val())
         tmpTitle = $('#txtTitleSearch').val();
     var Is_async = true;
     if (tmp_IsAdvanced == 'Y')
         Is_async = false
-    if (parseInt($("#ddlSrchBU option").length) == 0) {
+    if (parseInt($("#ddlSrchBU option").length) == 0 || (parseInt($("#ddlSrchBUMultiSelect option").length) == 0)) {
         debugger;
         $.ajax({
             type: "POST",
@@ -82,13 +89,20 @@ function BindAdvanced_Search_Controls(callfrom) {
                 }
                 else {
                     debugger;
+                    $("#ddlSrchBUMultiSelect").empty();
                     $(result.USP_Result).each(function (index, item) {
                         if (this.Data_For == 'DTP' || this.Data_For == 'DTC')
                             $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'DTG')
                             $("#ddlSrchDealTag").append($("<option>").val(this.Display_Value).text(this.Display_Text));
-                        if (this.Data_For == 'BUT')
-                            $("#ddlSrchBU").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                        if (this.Data_For == 'BUT') {
+                            if (Is_AllowMultiBUacqdeal != 'Y') {
+                                $("#ddlSrchBU").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            }
+                            else {
+                                $("#ddlSrchBUMultiSelect").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            }
+                        }
                         if (this.Data_For == 'DIR')
                             $("#ddlSrchDirector").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'VEN')
@@ -102,14 +116,27 @@ function BindAdvanced_Search_Controls(callfrom) {
                     var obj_Search = $(result.Obj_Acq_Syn_List_Search);
                     $("#ddlSrchDealType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlSrchDealTag").val(obj_Search[0].Status_Search).attr("selected", "true").trigger("chosen:updated");
-                    if ($('#ddlBUUnit').val() == obj_Search[0].BUCodes_Search) {
-                        $("#ddlSrchBU").val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
-                        $('#ddlBUUnit').val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+                    if (Is_AllowMultiBUacqdeal != 'Y') {
+                        if ($('#ddlBUUnit').val() == obj_Search[0].BUCodes_Search) {
+                            debugger;
+                            $("#ddlSrchBU").val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+                            $('#ddlBUUnit').val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+
+                        }
+                        else {
+                            $("#ddlSrchBU").val(SelectedBU).attr("selected", "true").trigger("chosen:updated");
+                        }
                     }
                     else {
-                        $("#ddlSrchBU").val(SelectedBU).attr("selected", "true").trigger("chosen:updated");
+                        if ($('#ddlGenBUMultiSelect').val() == obj_Search[0].BUCodes_Search) {
+                            debugger;
+                            $("#ddlSrchBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
+                            $("#ddlGenBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
+                        }
+                        else {
+                            $('#ddlSrchBUMultiSelect').val(SelectedBUMulti)[0].sumo.reload();
+                        }
                     }
-                    
                     $("#ddlSrchDirector").val(obj_Search[0].DirectorCodes_Search.split(','))[0].sumo.reload();
                     $("#ddlSrchLicensor").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
                     $("#ddlWorkflowStatus").val(obj_Search[0].WorkFlowStatus_Search).attr("selected", "true").trigger("chosen:updated");
@@ -134,8 +161,16 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
     tmp_IsAdvanced = isAdvanced;
     if (isAdvanced == 'N')
         $('#divSearch').hide();
-    else if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
-        BindAdvanced_Search_Controls('PGL');
+    else {
+        if (Is_AllowMultiBUacqdeal != 'Y') {
+            if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+                BindAdvanced_Search_Controls('PGL');
+        }
+        else {
+            if (isAdvanced == 'Y' && parseInt($("#ddlSrchBUMultiSelect option").length) == 0)
+                BindAdvanced_Search_Controls('PGL');
+        }
+    }
     //if ($('#ddlSrchTitle').val())
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
 
@@ -154,9 +189,29 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
 
-    var BUCode = $('#ddlBUUnit').val();
+    var BUCode = "";
+    if (Is_AllowMultiBUacqdeal != 'Y') {
+        BUCode = $('#ddlBUUnit').val();
+    }
+    else {
+        if ($('#ddlGenBUMultiSelect').val())
+            BUCode = $('#ddlGenBUMultiSelect').val().join(',');
+    }
+    var strBU = "";
+    if (Is_AllowMultiBUacqdeal != 'Y') {
+        strBU = $('#ddlSrchBU').val();
+    }
+    else {
+        if ($('#ddlSrchBUMultiSelect').val())
+            strBU = $('#ddlSrchBUMultiSelect').val().join(',');
+    }
 
-
+    if (BUCode == "undefined" || BUCode == "" || BUCode == null) {
+        debugger;
+        showAlert('E', "Business Unit Cannot be Blank.");
+        hideLoading();
+        return false;
+    }
     $.ajax({
         type: "POST",
         url: URL_PartialDealList,
@@ -178,12 +233,12 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
             strTitles: tmpTitle,
             strDirector: tmpDirector,
             strLicensor: tmpLicensor,
-            strBU: $('#ddlSrchBU').val(),
+            strBU: strBU,
             strShowAll: ShowAll,
             strIncludeSubDeal: tmpChecked,
             strIncludeArchiveDeal: tmpArchiveChecked,
             ClearSession: $('#hdnClearAll').val(),
-            strBUCode: $('#ddlBUUnit').val()
+            strBUCode: BUCode//$('#ddlBUUnit').val()
         }),
         success: function (result) {
             if (result == "true")
@@ -230,7 +285,7 @@ function validateSearch() {
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
 
     if ($("#txtTitleSearch").val())
-        tmpTitle = $('#txtTitleSearch').val()
+        tmpTitle = $('#txtTitleSearch').val();
 
     if ($('#ddlSrchDirector').val())
         tmpDirector = $('#ddlSrchDirector').val().join(',');
@@ -243,7 +298,7 @@ function validateSearch() {
 
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
-    
+
 
     var txtSDealNo = $('#txtSrchDealNo').val();
     var txtfrom = $('#txtfrom').val();
@@ -251,7 +306,14 @@ function validateSearch() {
     var ddlTagStatus = $('#ddlSrchDealTag').val();
     var ddlBU = $('#ddlSrchBU').val();
     var ddlDealType = $('#ddlSrchDealType').val();
-
+    if (Is_AllowMultiBUacqdeal == 'Y') {
+        var ddlBUMulti = $('#ddlSrchBUMultiSelect').val();
+        if (ddlBUMulti == null || ddlBUMulti == "") {
+            showAlert('E', "Business Unit Cannot be Blank.");
+            return false;
+        }
+        $('#ddlGenBUMultiSelect').val(ddlBUMulti);
+    }
     $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
     if (txtSDealNo == "" && txtfrom == "" && txtto == "" && tmpLicensor == "" && tmpDirector == "" && tmpTitle == "" && ddlTagStatus < "0" && ddlBU < "0" && ddlDealType < "0") {
         showAlert('e', 'Please select/enter search criteria');
@@ -276,12 +338,17 @@ function ShowAll() {
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
-    OnChangeBindTitle();
+    $('#ddlGenBUMultiSelect').val('1');
+    $("#ddlGenBUMultiSelect")[0].sumo.reload();
+    $('#ddlSrchBUMultiSelect').val('1');
+    $("#ddlSrchBUMultiSelect")[0].sumo.reload();
+    OnChangeBindTitle('ShowAll');
     //$("#ddlSrchTitle")[0].sumo.unSelectAll();
-
     $("#ddlSrchDirector")[0].sumo.unSelectAll();
-
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
+    //$("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+    //$("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
+
     $('#ddlBUUnit').val(BUCode).attr("selected", "true").trigger("chosen:updated");
 
     showLD = 'Y';
@@ -310,12 +377,15 @@ function ClearAll() {
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
+
     OnChangeBindTitle();
     //$("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#chkSubDeal").prop("checked", false);
     $("#chkArchiveDeal").prop("checked", false);
     $("#ddlSrchDirector")[0].sumo.unSelectAll();
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
+    $("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+    $("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
     showLD = 'Y';
     LoadDeals(0, 'N', 'Y');
     $('#divSearch').show();
@@ -327,18 +397,39 @@ function OnChangeBindTitle(callFrom) {
     $("#chkArchiveDeal").prop("checked", false);
     $("#chkSubDeal").prop("checked", false);
     var dealTypeVal = $('#ddlSrchDealType').val();
+
     //var ddlBU = $('#ddlSrchBU').val();
     //$('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
 
-    var ddlBU = $('#ddlSrchBU').val();
-    if (callFrom != 'L') {
-        $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
+    if (Is_AllowMultiBUacqdeal != 'Y') {
+        var ddlBU = $('#ddlSrchBU').val();
+        if (callFrom != 'L') {
+            $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
+        }
+        else {
+            dealTypeVal = '0';
+            ddlBU = $('#ddlBUUnit').val();
+        }
     }
     else {
-        dealTypeVal = '0';
-        ddlBU = $('#ddlBUUnit').val();
+        var ddlBUMulti = $('#ddlSrchBUMultiSelect').val();
+        if (callFrom == 'ShowAll') {
+            ddlBUMulti = ["1"];
+            $('#ddlGenBUMultiSelect').val('1');
+            $("#ddlGenBUMultiSelect")[0].sumo.reload();
+        }
+        else if (callFrom == 'TP' && ddlBUMulti == null) {
+            ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+        }
+        else if (callFrom != 'L') {
+            $('#ddlGenBUMultiSelect').val(ddlBUMulti);
+            $("#ddlGenBUMultiSelect")[0].sumo.reload();
+        }
+        else {
+            dealTypeVal = '0';
+            ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+        }
     }
-
     //$("#ddlSrchTitle").find("option").attr("selected", false);
     //$("#ddlSrchTitle").val('')[0].sumo.reload();
 
@@ -350,7 +441,11 @@ function OnChangeBindTitle(callFrom) {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
             dealTypeCode: dealTypeVal,
-            BUCode: ddlBU
+            BUCode: ddlBU,
+            ddlBUMulti: ddlBUMulti,
+            TitleSearch: $('#txtTitleSearch').val()
+            //TitleSearch: $('#hdnTitleSearch').val()
+
         }),
         async: true,
         success: function (result) {
@@ -359,12 +454,20 @@ function OnChangeBindTitle(callFrom) {
                 redirectToLogin();
             }
             else {
-                //$("#ddlSrchTitle").empty();
-                //$(result).each(function (index, item) {
-                //    $("#ddlSrchTitle").append($("<option>").val(this.Value).text(this.Text));
-                //});
-                //$("#ddlSrchTitle").val('')[0].sumo.reload();
-                $("#txtTitleSearch").val('');
+                if (Is_AllowMultiBUacqdeal === 'Y') {
+                    $('#txtTitleSearch').val(result.Title_Name);
+                    $('#hdnTitleSearch').val(result.Title_Code);
+
+                    //$("#ddlSrchTitle").empty();
+                    //$(result).each(function (index, item) {
+                    //    $("#ddlSrchTitle").append($("<option>").val(this.Value).text(this.Text));
+                    //});
+                    //$("#ddlSrchTitle").val('')[0].sumo.reload();
+                }
+                else {
+                    $("#txtTitleSearch").val('');
+                }
+
             }
         },
         error: function (result) {
@@ -391,7 +494,7 @@ function handleOk() {
         CheckRecordCurrentStatus();
     }
     else if (Command_Name_G == "SendForArchive" || Command_Name_G == "Archive") //Command_Name_G == "Archive" ||
-    { 
+    {
         Chk_RecCrntStsForArchive();
     }
 }
@@ -949,7 +1052,7 @@ function Ask_Confirmation(commandName, Acq_Deal_Code, IsZeroWorkFlow) {
                     else {
                         showAlert("E", "Cannot send deal for approval as rights are in processing state");
                         IsValid = "N";
-                        HideShow(ID, View_G,'N');
+                        HideShow(ID, View_G, 'N');
                         return false;
                     }
                 }

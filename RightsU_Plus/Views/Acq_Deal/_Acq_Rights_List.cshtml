@@ -97,7 +97,7 @@
         });
     }
 
- 
+
 </script>
 <script>
     $('.expand_AcqRemarks').expander({
@@ -158,7 +158,7 @@
                             </div>
                             <span class="pull-right">
                                 @objMessageKey.PageSize:
-                                <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')"/>
+                                <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')" />
                             </span>
                             @*@if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
                                 {
@@ -227,7 +227,15 @@
                                 else
                                 {
                                     <li>
-                                        <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Rights_List")    '" />
+                                        @if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0 )
+                                        {
+                                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                                   onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                        }
+                                        else
+                                        {
+                                            <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Rights_List")    '" />
+                                        }
                                     </li>
                                 }
                             </ul>

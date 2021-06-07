@@ -1,6 +1,4 @@
-﻿
-
-CREATE  PROCEDURE [dbo].[USP_Assign_Workflow](
+﻿CREATE  PROCEDURE [dbo].[USP_Assign_Workflow](
 	@Record_Code Int,
 	@Module_Code Int,
 	@Login_User Int, 
@@ -265,7 +263,8 @@ BEGIN
 		
 				IF(@Module_Code = 30)
 				BEGIN
-					UPDATE Acq_Deal SET Work_Flow_Code = @Workflow_Code, Deal_Workflow_Status = 'A', Last_Updated_Time = GETDATE() WHERE Acq_Deal_Code = @Record_Code													
+					UPDATE Acq_Deal SET Work_Flow_Code = @Workflow_Code, Deal_Workflow_Status = 'A'--, Last_Updated_Time = GETDATE()
+					WHERE Acq_Deal_Code = @Record_Code													
 					--EXEC DBO.USP_Generate_Title_Content @Record_Code, '', @Login_User
 
 					INSERT INTO Deal_Process(Deal_Code, Module_Code, EditWithoutApproval, [Action], Inserted_On, Process_Start, Porcess_End, User_Code) 
@@ -275,7 +274,7 @@ BEGIN
 				END
 				ELSE IF(@Module_Code = 35)
 				BEGIN
-					Update Syn_Deal SET Work_Flow_Code = @Workflow_Code, Deal_Workflow_Status = 'A', Last_Updated_Time = GETDATE() 
+					Update Syn_Deal SET Work_Flow_Code = @Workflow_Code, Deal_Workflow_Status = 'A'--, Last_Updated_Time = GETDATE() 
 					WHERE Syn_Deal_Code = @Record_Code
 					--EXEC DBO.USP_AT_Syn_Deal @Record_Code, @Is_Error OUT
 

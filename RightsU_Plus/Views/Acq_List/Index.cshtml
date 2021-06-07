@@ -66,7 +66,9 @@
     , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Acq_List")'
     , URL_Archive = '@Url.Action("Archive", "Acq_List")';
 
+    var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';
     var BUCode = '@ViewBag.BUCode';
+
     function Validate_Record(dealCode, dealType, recordID) {
         var rid = recordID.id;
         var valid = true;
@@ -152,12 +154,17 @@
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
             $('.MoreActionDiv').css("left", "32px !important");
         }
-
         $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
-       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?AcquisitionDeal');
-        debugger;
+        if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {
+            $('#ddlGenBUMultiSelect').SumoSelect();
+            $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode'.split(','))
+            $('#ddlGenBUMultiSelect')[0].sumo.reload();
 
-        $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
+            $('#ddlSrchBUMultiSelect').SumoSelect();
+        }
+        else {
+            $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
+        }
         //$("td").bind("mousemove", function (event) {
         //    $(this).find("span.PlatformExpand").css({
         //        top: event.pageY + 5 + "px",
@@ -202,14 +209,12 @@
                 $("#pnlSearch").removeClass("tinyADSearch")
         });
         $("#AllsubmenuHide").click(function () {
-            if ('@objMessageKey.LayoutDirection' == "RTL")
-            {
+            if ('@objMessageKey.LayoutDirection' == "RTL") {
                 $('.RightPanel').css('left', LeftpanelHideCss);
                 $('.leftPanel').css('right', panelHideCss);
                 $('#sideNavi').show();
             }
-            else
-            {
+            else {
                 $('.RightPanel').css('right', RightpanelHideCss);
                 $('.leftPanel').css('left', panelHideCss);
                 $('#sideNavi').show();
@@ -257,14 +262,23 @@
     });
 
     function togglePanelVisibility2(panelID) {
-        var ddlBusinessUnit = $('#ddlBUUnit').val();
-        if (ddlBusinessUnit != 0 || ddlBusinessUnit!= null) {
-            $('#ddlSrchBU').val(ddlBusinessUnit).attr("selected", "true").trigger("chosen:updated");
+        debugger;
+        if (Is_AllowMultiBUacqdeal != 'Y') {
+            var ddlBusinessUnit = $('#ddlBUUnit').val();
+            if (ddlBusinessUnit != 0 || ddlBusinessUnit != null) {
+                $('#ddlSrchBU').val(ddlBusinessUnit).attr("selected", "true").trigger("chosen:updated");
+            }
+        }
+        else {
+            var ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+            if (ddlBUMulti != 0 || ddlBUMulti != null) {
+                $('#ddlSrchBUMultiSelect').val(ddlBUMulti);
+                OnChangeBindTitle('TP');
+            }
         }
         document.getElementById("showMore").innerHTML = "Show more...";
         debugger;
-        if ('@objMessageKey.LayoutDirection' == "RTL")
-        {
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
             document.getElementById('pnlSearch').removeAttribute('hidden')
             $('.leftPanel').css('right', panelHideCss);
             $(".RightPanel:not(#" + panelID + ")").css("left", LeftpanelHideCss);
@@ -280,8 +294,7 @@
                 $('#sideNavi').hide();
             }
         }
-        else
-        {
+        else {
             document.getElementById('pnlSearch').removeAttribute('hidden')
             $('.leftPanel').css('left', panelHideCss);
             $('.MoreActionDiv').hide('fast');
@@ -352,7 +365,7 @@
     }
     var objAcqListCode;
     var commandName;
-    function ShowRemark(status,IntCode) {
+    function ShowRemark(status, IntCode) {
         debugger;
         // $("#ddlStarCastAdd").attr('selectedIndex', '-1');
         $("#pop_setRemark").modal();
@@ -366,121 +379,132 @@
             commandName = "SendForAuth";
         }
     }
-   function ApproveRemarkOk(){
-       debugger;
-       var remark = $.trim($('#txtArea').val());
-       if (remark == "") {
-           $('#txtArea').val('').attr('required', true);
-           return false
-       }
+    function ApproveRemarkOk() {
+        debugger;
+        var remark = $.trim($('#txtArea').val());
+        if (remark == "") {
+            $('#txtArea').val('').attr('required', true);
+            return false
+        }
         //Ask_Confirmation(commandName, objAcqListCode, 0);
-   };
-   var URL_Bind_Title = '@Url.Action("Bind_Title", "Acq_List")';
-   function populateTitle(evt) {
-       debugger;
-       //$("#ddlSrchTitle").find("option").attr("selected", false);
-       //$("#ddlSrchTitle").val('')[0].sumo.reload();
-       var dealTypeVal = $('#ddlSrchDealType').val();
-       var ddlBU = $('#ddlBUUnit').val();
+    };
+    var URL_Bind_Title = '@Url.Action("Bind_Title", "Acq_List")';
+    function populateTitle(evt) {
+        debugger;
+        //$("#ddlSrchTitle").find("option").attr("selected", false);
+        //$("#ddlSrchTitle").val('')[0].sumo.reload();
+        var dealTypeVal = $('#ddlSrchDealType').val();
+        var ddlBU = "";
+        if (Is_AllowMultiBUacqdeal != 'Y') {
+            ddlBU = $('#ddlBUUnit').val();
+        }
+        else {
+            ddlBU = $('#ddlSrchBUMultiSelect').val().join(',');
+        }
 
+        var Selected_Title_Codes = "";
+        var selectedtxt = $('#txtTitleSearch').val();
+        var txt = selectedtxt.split('?');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $('#txtTitleSearch').autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (v, i) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    param = {
+                        Searched_Title: $('#txtTitleSearch').val(),
+                        dealTypeCode: dealTypeVal,
+                        BUCode: ddlBU
+                    };
+                    $.ajax({
+                        url: URL_Bind_Title,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = "@objMessageKey.NoResultFound";
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
 
-       var Selected_Title_Codes = "";
-       var selectedtxt = $('#txtTitleSearch').val();
-       var txt = selectedtxt.split('?');
-       var iscomplete = true;
-       if (txt[txt.length - 1].trim() == "")
-           iscomplete = false;
-       if (iscomplete) {
-           $('#txtTitleSearch').autocomplete({
-               focus: function () {
-                   return false;
-               },
-               search: function (v, i) {
-                   $(this).addClass('loader');
-               },
-               source: function (request, response) {
-                   param = {
-                       Searched_Title: $('#txtTitleSearch').val(),
-                       dealTypeCode: dealTypeVal,
-                       BUCode: ddlBU
-                   };
-                   $.ajax({
-                       url: URL_Bind_Title,
-                       data: JSON.stringify(param),
-                       dataType: "json",
-                       type: "POST",
-                       contentType: "application/json; charset=utf-8",
-                       dataFilter: function (data) { return data; },
-                       success: function (data) {
-                           debugger;
-                           if (data.length == 0) {
-                               data[0] = "@objMessageKey.NoResultFound";
-                               response($.map(data, function (v, i) {
-                                   $('#txtTitleSearch').removeClass('loader');
-                                   return {
-                                       label: 'Result Not Found',
-                                       val: '0'
-                                   }
-                               }))
-                           }
-                           else {
-                               response($.map(data, function (v, i) {
-                                   $('#txtTitleSearch').removeClass('loader');
-                                   return {
-                                       label: v.Title_Name,
-                                       val: v.Title_Code
-                                   }
-                               }))
-                           }
-                       },
-                       error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
 
-                           alert("Error" + textStatus);
-                       }
-                   });
+                },
+                select: function (event, i) {
+                    //debugger;
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnTitleSearch").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnTitleSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "300px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
 
-               },
-               select: function (event, i) {
-                   //debugger;
-                   var text = this.value.split(/﹐\s*/);
-                   text.pop();
-                   text.push(i.item.value);
-                   text.push("");
-                   this.value = text;
-                   this.value = text.join("﹐");
-                   var value = $("#hdnTitleSearch").val().split(/,\s*/);
-                   value.pop();
-                   value.push(i.item.val);
-                   value.push("");
-                   $("#hdnTitleSearch")[0].value = value.join(", ");
-                   return false;
-               },
-               minLength: 3,
-               open: function (event, ui) {
-                   $(".ui-autocomplete").css("position", "auto");
-                   $(".ui-autocomplete").css("max-height", "200px");
-                   $(".ui-autocomplete").css("max-width", "300px");
-                   $(".ui-autocomplete").css("overflow-y", "auto");
-                   $(".ui-autocomplete").css("overflow-x", "hidden");
-                   $(".ui-autocomplete").css("z-index", "2147483647");
+                },
 
-               },
-
-           });
-       }
-       else
-           return false;
-   }
+            });
+        }
+        else
+            return false;
+    }
 
 </script>
 <style>
     /*.tinyADSearch {
         top: 40px;
     }*/
+    .SumoSelect.open > .optWrapper {
+        top: 35px;
+        display: block;
+        z-index: 1010;
+    }
+
     .main_section {
         overflow-x: auto !important;
     }
-        
+
     .RightPanel {
         padding-left: 10px;
         background-color: #dbdbdb;
@@ -490,7 +514,7 @@
         top: 70px;
         /* padding: 10px; */
         /*position: absolute !important;*/
-        position:fixed;
+        position: fixed;
         z-index: 5;
         right: 0px;
         box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
@@ -502,6 +526,7 @@
         -webkit-transition: all 0.3s;
         /*overflow: auto;*/
     }
+
     .AdSearch {
         margin-left: 8px;
         margin-top: 3px;
@@ -533,9 +558,10 @@
         white-space: pre !important;
     }
 
-    .SumoSelect {
+    /*.SumoSelect {
         width: 94% !important;
-    }
+    }*/
+
     /*new added*/
     .search_area {
         border-bottom: 1px dotted #777;
@@ -672,9 +698,10 @@
     #ui-id-1 {
         position: fixed;
     }
-     .container {
-    min-height: 738px;
-}
+
+    .container {
+        min-height: 738px;
+    }
 
     /*.tinyADSearch {
         top: 70px;
@@ -698,7 +725,14 @@
 
                     <li class="AdSearch">
                         <label>@objMessageKey.BusinessUnit:</label><br>
-                        <select id="ddlSrchBU" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 174px;"></select>
+                        @if (ViewBag.Is_AllowMultiBUacqdeal != "Y")
+                        {
+                            <select id="ddlSrchBU" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 174px;"></select>
+                        }
+                        else
+                        {
+                            <select id="ddlSrchBUMultiSelect" onchange="OnChangeBindTitle()" multiple="multiple" style="width: 174px;"></select>
+                        }
                     </li>
                     <li class="AdSearch">
                         <label>@objMessageKey.DealType:</label><br>
@@ -781,11 +815,11 @@
                         <select id="ddlSrchDirector" multiple="multiple"></select>
                     </li>
                     @*<li class="AdSearch" id="spType">
-                        <label id="spType1">Sport Type:</label><br />
-                        <select id="ddlSrchSportType" style="width: 174px;">
-                            <option value="" selected>Please Select </option>
-                        </select>
-                    </li>*@
+                            <label id="spType1">Sport Type:</label><br />
+                            <select id="ddlSrchSportType" style="width: 174px;">
+                                <option value="" selected>Please Select </option>
+                            </select>
+                        </li>*@
 
                 </ul>
                 <br />
@@ -804,17 +838,17 @@
                         Include Archive Deal
                     </label>
                     @*<label class="checkbox-inline">
-                        @if (ViewBag.IncludeSubDeal == "true")
-                        {
-                            <input type="checkbox" id="chkSubDeal" value="Y" checked="checked" />
-                        }
-                        else
-                        {
-                            <input type="checkbox" id="chkSubDeal" value="Y" />
-                        }
-                        @objMessageKey.IncludeSubDeals
-                    </label><br><br>
-                    <br />*@
+                            @if (ViewBag.IncludeSubDeal == "true")
+                            {
+                                <input type="checkbox" id="chkSubDeal" value="Y" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkSubDeal" value="Y" />
+                            }
+                            @objMessageKey.IncludeSubDeals
+                        </label><br><br>
+                        <br />*@
                     <input type="hidden" id="hdnClearAll" />
                 </div>
             </div>
@@ -824,15 +858,31 @@
 
         <div class="container acq main_col" id="AllsubmenuHide">
             <div class="top_area">
-                <h2 class="pull-left">@objMessageKey.AcquisitionDeals</h2>
-
-
+                <h2 class="pull-left" style="">
+                    @objMessageKey.AcquisitionDeals
+                </h2>
+                <div class="MuBUList" style="">
+                    @if (ViewBag.Is_AllowMultiBUacqdeal == "Y")
+                    {
+                        @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                    }
+                </div>
                 <div class="right_nav pull-right">
                     <ul>
                         <li>
-                            <span>
-                                @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "" })
-                            </span>
+                            @if (ViewBag.Is_AllowMultiBUacqdeal != "Y")
+                            {
+                                <span>
+                                    @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "" })
+                                </span>
+                            }
+                            @*else
+                            {
+                                <span>
+                                    @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                                </span>
+                                @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select> 
+                            }*@
 
                             <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:279px !important;"
                                    placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" />
@@ -854,7 +904,8 @@
                             @{if (ViewBag.AddVisibility == true)
                                 {
                                     <a class="btn-primary" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Add", Acq_Deal_Code = 0 })">@objMessageKey.AddDeal</a>
-                                }}
+                                }
+                            }
                         </li>
                         @*<li>
                                 <div id="sideNavi">

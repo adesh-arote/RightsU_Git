@@ -867,6 +867,11 @@ namespace RightsU_DAL
         public Sport_Ancillary_Broadcast_Repository(string conStr) : base(conStr) { }
     }
 
+    public class Module_Workflow_Detail_Repository : RightsU_Repository<Module_Workflow_Detail>
+    {
+        public Module_Workflow_Detail_Repository(string conStr) : base(conStr) { }
+    }
+
     public class Sport_Ancillary_Config_Repository : RightsU_Repository<Sport_Ancillary_Config>
     {
         public Sport_Ancillary_Config_Repository(string conStr) : base(conStr) { }
@@ -2868,6 +2873,11 @@ namespace RightsU_DAL
     public class Deal_Segment_Repository : RightsU_Repository<Deal_Segment>
     {
         public Deal_Segment_Repository(string conStr) : base(conStr) { }
+    }
+
+    public class Platform_Broadcast_Repository : RightsU_Repository<Platform_Broadcast>
+    {
+        public Platform_Broadcast_Repository(string conStr) : base(conStr) { }
     }
 
     public class Revenue_Vertical_Repository : RightsU_Repository<Revenue_Vertical>

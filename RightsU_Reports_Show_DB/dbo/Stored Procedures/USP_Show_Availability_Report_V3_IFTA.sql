@@ -1,5 +1,4 @@
 ﻿
-
 CREATE PROCEDURE [dbo].[USP_Show_Availability_Report_V3_IFTA]
 (
 
@@ -525,9 +524,12 @@ BEGIN
 			   (
 					STUFF((SELECT DISTINCT ',' + adr_Tmp.Restriction_Remarks 
 					FROM Acq_Deal AD_Tmp
+					INNER JOIN Acq_Deal_Movie Adm_Tmp ON AD_Tmp.Acq_Deal_Code = Adm_Tmp.Acq_Deal_Code AND AD_Tmp.Master_Deal_Movie_Code_ToLink = ADM.Acq_Deal_Movie_Code
 					INNER JOIN Acq_Deal_Rights ADR_Tmp ON adr_Tmp.Acq_Deal_Code = AD_Tmp.Acq_Deal_Code 
-					WHERE AD_Tmp.Is_Master_Deal = 'N' AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
-					(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ar.Acq_Deal_Code)
+					INNER JOIN Acq_Deal_Rights_Title ADRT_Tmp ON ADR_Tmp.Acq_Deal_Rights_Code = ADRT_Tmp.Acq_Deal_Rights_Code AND ADRT_Tmp.Title_Code = Adm_Tmp.Title_Code 
+					AND ISNULL(Adm_Tmp.Episode_Starts_From,0) = ISNULL(ADRT_Tmp.Episode_From,0) AND ISNULL(Adm_Tmp.Episode_End_To,0) = ISNULL(ADRT_Tmp.Episode_To,0)
+					WHERE AD_Tmp.Is_Master_Deal = 'N' --AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
+					--(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ar.Acq_Deal_Code)
 					FOR XML PATH(''),type).value('.', 'nvarchar(max)'),1,1,'')
 				) As Sub_Deal_Restriction_Remark, 
 		CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END,ADM.Due_Diligence,C.Category_Name,DT.Deal_Type_Name
@@ -702,7 +704,8 @@ BEGIN
 		INNER JOIN Acq_Deal_Rights_Holdback_Platform hbp On hb.Acq_Deal_Rights_Holdback_Code = hbp.Acq_Deal_Rights_Holdback_Code
 		INNER JOIN Acq_Deal_Rights_Holdback_Territory hbt On hb.Acq_Deal_Rights_Holdback_Code = hbt.Acq_Deal_Rights_Holdback_Code
 		INNER JOIN #TMP_MAIN tm On tm.Avail_Raw_Code = ar.Avail_Raw_Code AND tm.Platform_Code = hbp.Platform_Code AND tm.Country_Code = hbt.Country_Code
-		Where (hb.Holdback_Type = 'D' And CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATE) >= CAST(hb.Holdback_Release_Date AS DATE) AND CAST(hb.Holdback_Release_Date AS DATE) >= GETDATE()) Or hb.Holdback_Type = 'R'
+		Where ((hb.Holdback_Type = 'D' And CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATE) >= CAST(hb.Holdback_Release_Date AS DATE) AND CAST(hb.Holdback_Release_Date AS DATE) >= GETDATE()) Or hb.Holdback_Type = 'R')
+		OR ISNULL(hb.Holdback_Release_Date,'') = ''
 		
 		Select Distinct Title_Code InTo #MainTit From #TMP_MAIN
 
@@ -1196,8 +1199,9 @@ BEGIN
 	print 'STEP-12 Query to get title details' + convert(varchar(30),getdate() ,109)	
 	BEGIN
 		-----------------Query to get title details
-		SELECT t.Title_Code, t.Title_Language_Code, t.Title_Name,
-			Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
+		SELECT t.Title_Code, t.Title_Language_Code, --t.Title_Name,
+		CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
+			,Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
 			Star_Cast = [dbo].[UFN_GetStarCastForTitle](t.Title_Code),
 			Director = [dbo].[UFN_GetDirectorForTitle](t.Title_Code),
 			COALESCE(t.Duration_In_Min, '0') Duration_In_Min, COALESCE(t.Year_Of_Production, '') Year_Of_Production,
@@ -1394,6 +1398,8 @@ BEGIN
 			INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code
 			LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 			LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
+			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME)) OR
+			ISNULL(tm.Holdback_Release_Date,'') = ''
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Episode_From, Episode_To, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		COL1, COL2, COL3, Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 
@@ -1449,6 +1455,8 @@ BEGIN
 		INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code
 		LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 		LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
+		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME)) OR
+		ISNULL(tm.Holdback_Release_Date,'') = ''
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Episode_From, Episode_To, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		COL1, COL2, COL3, Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 

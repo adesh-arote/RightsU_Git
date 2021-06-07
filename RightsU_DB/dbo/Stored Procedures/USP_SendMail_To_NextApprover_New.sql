@@ -9,7 +9,7 @@
 AS
 BEGIN	
 	--declare
-	--@RecordCode Int=21617
+	--@RecordCode Int=2118
 	--,@Module_code Int=30
 	--,@RedirectToApprovalList Varchar(100)='N'
 	--,@AutoLoginUser Varchar(100)=143
@@ -23,7 +23,7 @@ BEGIN
 	-- =============================================
 	SET @Is_Error = 'N'
 	BEGIN TRY
-
+		DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 		DECLARE @Cur_first_name NVARCHAR(500)
 		DECLARE @Cur_security_group_name NVARCHAR(500) 
 		DECLARE @Cur_email_id NVARCHAR(500) 
@@ -44,6 +44,8 @@ BEGIN
 		DECLARE @Acq_Deal_Rights_Code varchar(max)=''
 		DECLARE @Promoter_Count int
 		DECLARE @Promoter_Message varchar(max) =''
+		DECLARE @Approved_by NVARCHAR(MAX) = ''
+
 		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='SFA'
 
 		SELECT @Is_Mail_Send_To_Group=ISNULL(Is_Mail_Send_To_Group,'N') FROM System_Param	--// FLAG FOR SEND MAIL TO INDIVIDUAL PERSON ON GROUP //--
@@ -96,9 +98,13 @@ BEGIN
 				SELECT TOP 1 
 					@Agreement_No = Agreement_No, @Agreement_Date = CONVERT(VARCHAR(15), Agreement_Date, 106), 
 					@Deal_Desc = Deal_Desc, @Primary_Licensor = V.Vendor_Name,@BU_Name = BU.Business_Unit_Name,
-					@Created_By = U1.Login_Name ,
+					@Created_By = ISNULL(UPPER(LEFT(U1.First_Name,1))+LOWER(SUBSTRING(U1.First_Name,2,LEN(U1.First_Name))), '') 
+								+ ' ' + ISNULL(UPPER(LEFT(U1.Middle_Name,1))+LOWER(SUBSTRING(U1.Middle_Name,2,LEN(U1.Middle_Name))), '') 
+								+ ' ' + ISNULL(UPPER(LEFT(U1.Last_Name,1))+LOWER(SUBSTRING(U1.Last_Name,2,LEN(U1.Last_Name))), '') ,
 					@Creation_Date = CONVERT(VARCHAR(15), ad.Inserted_On, 106),
-					@Last_Actioned_By = U2.Login_Name,
+					@Last_Actioned_By =ISNULL(UPPER(LEFT(U2.First_Name,1))+LOWER(SUBSTRING(U2.First_Name,2,LEN(U2.First_Name))), '') 
+								+ ' ' + ISNULL(UPPER(LEFT(U2.Middle_Name,1))+LOWER(SUBSTRING(U2.Middle_Name,2,LEN(U2.Middle_Name))), '') 
+								+ ' ' + ISNULL(UPPER(LEFT(U2.Last_Name,1))+LOWER(SUBSTRING(U2.Last_Name,2,LEN(U2.Last_Name))), '') ,
 					@Last_Actioned_Date = CONVERT(VARCHAR(15), ad.Last_Updated_Time, 106)
 				FROM Acq_Deal AD
 					INNER JOIN Vendor V ON AD.Vendor_Code = V.Vendor_Code
@@ -128,8 +134,13 @@ BEGIN
 				SELECT TOP 1 
 					@Agreement_No = Agreement_No, @Agreement_Date = CONVERT(VARCHAR(15), Agreement_Date, 106), 
 					@Deal_Desc = Deal_Description, @Primary_Licensor = V.Vendor_Name, @BU_Name = BU.Business_Unit_Name,
+					@Created_By = ISNULL(UPPER(LEFT(U1.First_Name,1))+LOWER(SUBSTRING(U1.First_Name,2,LEN(U1.First_Name))), '') 
+								+ ' ' + ISNULL(UPPER(LEFT(U1.Middle_Name,1))+LOWER(SUBSTRING(U1.Middle_Name,2,LEN(U1.Middle_Name))), '') 
+								+ ' ' + ISNULL(UPPER(LEFT(U1.Last_Name,1))+LOWER(SUBSTRING(U1.Last_Name,2,LEN(U1.Last_Name))), '') ,
 					@Creation_Date = CONVERT(VARCHAR(15), SD.Inserted_On, 106),
-					@Last_Actioned_By = U2.Login_Name,
+					@Last_Actioned_By =ISNULL(UPPER(LEFT(U2.First_Name,1))+LOWER(SUBSTRING(U2.First_Name,2,LEN(U2.First_Name))), '') 
+								+ ' ' + ISNULL(UPPER(LEFT(U2.Middle_Name,1))+LOWER(SUBSTRING(U2.Middle_Name,2,LEN(U2.Middle_Name))), '') 
+								+ ' ' + ISNULL(UPPER(LEFT(U2.Last_Name,1))+LOWER(SUBSTRING(U2.Last_Name,2,LEN(U2.Last_Name))), '') ,
 					@Last_Actioned_Date = CONVERT(VARCHAR(15), SD.Last_Updated_Time, 106)
 				FROM Syn_Deal SD
 					INNER JOIN Vendor V ON SD.Vendor_Code = V.Vendor_Code
@@ -236,7 +247,7 @@ BEGIN
 				END
 
 
-			   IF(@DealType = 'Acquisition')
+			   IF(@DealType = 'Acquisition'  AND @Is_RU_Content_Category = 'N')
 			   BEGIN
 					SET @Email_Table += '<td align="center" width="10%" class="tblHead">Self Utilization</td>'
 			   END   
@@ -269,7 +280,7 @@ BEGIN
 						<td align="center" class="tblData">{Last_Actioned_Date}</td> 
 					'
 				END
-			   IF(@DealType = 'Acquisition')
+			   IF(@DealType = 'Acquisition' AND @Is_RU_Content_Category = 'N')
 			   BEGIN
 					SET @Email_Table += '<td align="center" class="tblData">{Promoter}</td>'
 				END   
@@ -279,11 +290,14 @@ BEGIN
 				
 				--REPLACE ALL THE PARAMETER VALUE
 				SELECT @body1 = template_desc FROM Email_Template WHERE Template_For='A' 
+				SELECT @Approved_by = dbo.UFN_Get_UsernName_Last_Approved(@RecordCode, @Module_code, 'A')
+
 				SET @body1 = replace(@body1,'{login_name}',@Cur_first_name)
 				SET @body1 = replace(@body1,'{deal_no}',@DealNo)
 				SET @body1 = replace(@body1,'{deal_type}',@DealType)
 				set @body1 = replace(@body1,'{click here}',@DefaultSiteUrl)
 				SET @body1 = replace(@body1,'{link}',@DefaultSiteUrl)
+				SET @body1 = replace(@body1,'{approved_by}',@Approved_by)
 
 				SET @Email_Table = replace(@Email_Table,'{Agreement_No}',@Agreement_No)  
 				SET @Email_Table = REPLACE(@Email_Table,'{Agreement_Date}',@Agreement_Date)  
@@ -291,7 +305,7 @@ BEGIN
 				SET @Email_Table = replace(@Email_Table,'{Primary_Licensor}',@Primary_Licensor)  
 				SET @Email_Table = replace(@Email_Table,'{Titles}',@Titles)  
 				SET @Email_Table = replace(@Email_Table,'{BU_Name}',@BU_Name)  
-				IF(@DealType = 'Acquisition')
+				IF(@DealType = 'Acquisition' AND @Is_RU_Content_Category = 'N')
 				BEGIN
 					SET @Email_Table = replace(@Email_Table,'{Promoter}',@Promoter_Message)  
 				END   
@@ -318,15 +332,15 @@ BEGIN
 
 				DECLARE @DatabaseEmail_Profile varchar(200)	
 				SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
-				
+
 				EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile,
 				@Recipients =  @Cur_email_id,
 				@Copy_recipients = @CC,
 				@subject = @MailSubjectCr,
 				@body = @body1,@body_format = 'HTML';  
 
-				INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-				SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Send for Approval', @Cur_email_id
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Send for Approval'
 
 				--select @body1
 
@@ -338,6 +352,8 @@ BEGIN
 		DEALLOCATE Cur_On_Rejection
 		/* CURSOR END */
 					 --select @DefaultSiteUrl
+
+		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 		SET @Is_Error='N'
 	END TRY
 	BEGIN CATCH
@@ -355,18 +371,3 @@ BEGIN
 			ERROR_MESSAGE() AS ERRORMESSAGE;
 	END CATCH							
 END
-
-
-
---update Email_Template SET template_desc =
---'<html>   <head>    <style>     table.tblFormat     {      border:1px solid black;      border-collapse:collapse;     }    
--- th.tblHead     {      border:1px solid black;        color: #ffffff ;       background-color: #585858;      font-family:verdana;      
--- font-size:12px; font-weight:bold    }     td.tblData     {      border:1px solid black;       vertical-align:top;      font-family:verdana;      
--- font-size:12px;     }          .textFont     {      color: black ;       font-family:verdana;      font-size:12px;     }    
---       #divFooter     {      color: gray;     }    </style>   </head>   <body>    <div class="textFont">     Dear&nbsp;{login_name},<br />
---	   <br />     The {deal_type} Deal No: <b>{deal_no}</b> is waiting for approval.<br /><br />   
---	     Please <a href=''{link}'' target=''_blank''><b>click here</b></a> to approve {deal_type} deal<br /><br />    </div>    
---		 {table}
---		 <br /><br /><br /><br /> 
---				     <div id="divFooter" class="textFont">    
---					  This email is generated by RightsU    </div>   </body>  </html>' WHERE Template_For='A'

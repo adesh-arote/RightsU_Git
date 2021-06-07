@@ -15,11 +15,11 @@ AS
 BEGIN  
 
 	--DECLARE 
-	--@RecordCode INT =21617,
-	--@module_workflow_detail_code INT = 37243,
+	--@RecordCode INT =2058,
+	--@module_workflow_detail_code INT = 6547,
 	--@module_code INT = 30,
 	--@RedirectToApprovalList VARCHAR(100)='',
-	--@AutoLoginUser VARCHAR(100) = 203,
+	--@AutoLoginUser VARCHAR(100) = 143,
 	--@Is_Error CHAR(1) = 'N'
 
 	SET NOCOUNT ON; 
@@ -28,7 +28,8 @@ BEGIN
 	IF OBJECT_ID('tempdb..#TempCursorOnRej') IS NOT NULL DROP TABLE #TempCursorOnRej
 
 	BEGIN TRY
-		DECLARE @Approved_by VARCHAR(MAX) SET @Approved_by=''
+		DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+		DECLARE @Approved_by VARCHAR(MAX) = ''
 		DECLARE @cur_first_name NVARCHAR(500)
 		DECLARE @cur_security_group_name NVARCHAR(500)
 		DECLARE @cur_email_id VARCHAR(500)
@@ -45,8 +46,11 @@ BEGIN
 		DECLARE @BU_Code Int = 0
 		DECLARE  @DefaultSiteUrl_Param NVARCHAR(500) = ''
 		DECLARE @DefaultSiteUrl VARCHAR(500) SET @DefaultSiteUrl = ''  
+		DECLARE @Is_CustomUsers_WF_SendMail VARCHAR(10) = ''
 		DECLARE @Email_Config_Code INT
-		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='AIN'
+		DECLARE @Appr_by NVARCHAR(MAX) = ''
+
+		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='ASCM'
 
 		SELECT @Approved_by = --ISNULL(U.First_Name,'') + ' ' + ISNULL(U.Middle_Name,'') + ' ' + ISNULL(U.Last_Name,'') 
 		ISNULL(UPPER(LEFT(U.First_Name,1))+LOWER(SUBSTRING(U.First_Name,2,LEN(U.First_Name))), '') 
@@ -236,7 +240,33 @@ BEGIN
 			WHERE MWD.Is_Done = 'Y' AND MWD.Module_Code = @module_code AND MWD.Record_Code = @RecordCode 
 				  AND MWD.Module_Workflow_Detail_Code < @module_workflow_detail_code
 		END
+		SELECT @Is_CustomUsers_WF_SendMail = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_CustomUsers_WF_SendMail'
+		DECLARE @Email_Config_Code_V18 VARCHAR(10)
+		SELECT @Email_Config_Code_V18 = Email_Config_Code from Email_Config where [Key] = 'ASCM'
+		IF(@Is_CustomUsers_WF_SendMail = 'Y' AND @Is_Deal_Approved = 0)
+		BEGIN
+			DECLARE @ENL TABLE (
+				BUCode INT,
+				User_Code INT,
+				EmailId NVARCHAR(MAX)
+			)
+			INSERT INTO @ENL (BUCode, User_Code, EmailId)
+			EXEC USP_Get_EmailConfig_Users 'ASCM', 'Y'
 
+			INSERT INTO #TempCursorOnRej(Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code)
+			SELECT DISTINCT usr.Email_id,
+			ISNULL(UPPER(LEFT(usr.First_Name,1))+LOWER(SUBSTRING(usr.First_Name,2,LEN(usr.First_Name))), '') 
+			+ ' ' + ISNULL(UPPER(LEFT(usr.Middle_Name,1))+LOWER(SUBSTRING(usr.Middle_Name,2,LEN(usr.Middle_Name))), '') 
+			+ ' ' + ISNULL(UPPER(LEFT(usr.Last_Name,1))+LOWER(SUBSTRING(usr.Last_Name,2,LEN(usr.Last_Name))), '') 
+			+ '   ('+ ISNULL(SG.Security_Group_Name,'') + ')',
+			SG.Security_Group_Name, '', usr.Security_Group_Code, usr.Users_Code 
+			FROM @ENL ec
+			INNER JOIN Users usr ON usr.Users_Code  = EC.User_Code
+			INNER JOIN Security_Group SG ON SG.Security_Group_Code = Usr.Security_Group_Code
+			
+		END
+		--select * from #TempCursorOnRej
+		--return
 		/* CURSOR START */
 		DECLARE cur_on_rejection CURSOR KEYSET FOR 
 		SELECT Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code FROM #TempCursorOnRej
@@ -282,16 +312,17 @@ BEGIN
 
 					IF(@Is_Deal_Approved > 0)  /* IF DEAL IS NOT APPROVED BY ALL WORKFLOW */
 					BEGIN  
-						print '1'
-						--SELECT @DefaultSiteUrl = @DefaultSiteUrl + '/Login.aspx?RedirectToApproval=Y&UserCode=' + CAST(@cur_user_code AS VARCHAR(500)) + 
-						--'&ModuleCode=' + CAST(@module_code AS VARCHAR(500))
+
 						select @body1 = template_desc FROM Email_template WHERE Template_For='I'
+						SELECT @Appr_by = dbo.UFN_Get_UsernName_Last_Approved(@RecordCode, @module_code, 'I')
+
 						SET @body1 = replace(@body1,'{login_name}',@cur_first_name)  
 						set @body1 = REPLACE(@body1,'{deal_no}',@DealNo)  
 						set @body1 = REPLACE(@body1,'{deal_type}',@DealType)  
 						set @body1 = replace(@body1,'{click here}',@DefaultSiteUrl)  
 						set @body1 = replace(@body1,'{link}',@DefaultSiteUrl)  
-						SET @body1 = REPLACE(@body1, '{next_approval}',@NextApprovalName) 		
+						SET @body1 = REPLACE(@body1, '{next_approval}',@NextApprovalName) 	
+						SET @body1 = REPLACE(@body1, '{approved_by}',@Appr_by) 	
 						SET @MailSubjectCr = @DealType + ' Deal - (' + @DealNo + ') is sent for approve to next approval'   
 					END  
 					ELSE IF(@Is_Deal_Approved = 0) /* IF DEAL APPROVED BY ALL WORKFLOW */
@@ -414,25 +445,26 @@ BEGIN
 				,@body = @body1,@body_format = 'HTML';    
 
 				IF (@RedirectToApprovalList = 'WA')
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Waiting for Archive', @Cur_email_id
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Waiting for Archive'
 				ELSE IF (@RedirectToApprovalList = 'AR')
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Archived', @Cur_email_id
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Archived'
 				ELSE IF (@RedirectToApprovalList = 'A')
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Rejected For Archive', @Cur_email_id
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Rejected For Archive'
 				ELSE
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Send for Approval', @Cur_email_id
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Send for Approval'
 				
 			END  
-			FETCH NEXT FROM cur_on_rejection INTO @cur_email_id, @cur_first_name, @cur_security_group_name, 
-			@cur_next_level_group ,@cur_security_group_code ,@cur_user_code  
+			FETCH NEXT FROM cur_on_rejection INTO @cur_email_id, @cur_first_name, @cur_security_group_name, @cur_next_level_group ,@cur_security_group_code ,@cur_user_code  
 		END
 		CLOSE cur_on_rejection  
 		DEALLOCATE cur_on_rejection  
 		/* CURSOR END */
+
+		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 
     	IF OBJECT_ID('tempdb..#TempCursorOnRej') IS NOT NULL DROP TABLE #TempCursorOnRej
 

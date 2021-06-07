@@ -94,22 +94,25 @@
     #divTitle_Code > div{
         width : 100% !important;
     }*/
-    .navigation_tabs{
-        overflow:visible !important;
+    .navigation_tabs {
+        overflow: visible !important;
     }
-      .SumoSelect > .optWrapper.multiple > .options li.opt{
-        font-weight : 100 !important;
+
+    .SumoSelect > .optWrapper.multiple > .options li.opt {
+        font-weight: 100 !important;
     }
-       .select-all{
-        font-weight : 100 !important;
+
+    .select-all {
+        font-weight: 100 !important;
     }
-         .SumoSelect > .CaptionCont > span{
-         font-weight : 100 !important;
+
+    .SumoSelect > .CaptionCont > span {
+        font-weight: 100 !important;
     }
-         #popupFade .modal_header{
-        background:#c3c3c3;
+
+    #popupFade .modal_header {
+        background: #c3c3c3;
     }
-        
 </style>
 <script src="~/Custom_Scripts/Acq_Deal_Pushback.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
@@ -124,16 +127,16 @@
                     </div>
                     <div class="paging_area clearfix">
                         <span class="pull-left" id="lblTotal"></span>
-                       
+
                         <div id="Pagination" class="pagination"></div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:
-                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();"  onblur="setDefaultPaging('txtPageSize')"/>
+                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')" />
                         </span>
                         @*@if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
-                        {
-                                <a class="btn btn-primary pull-right" href="#" data-toggle="modal" id="btnAdd" onclick="Add('popEditRevHB');">Add</a>
-                        }*@
+                            {
+                                    <a class="btn btn-primary pull-right" href="#" data-toggle="modal" id="btnAdd" onclick="Add('popEditRevHB');">Add</a>
+                            }*@
                     </div>
                     <div class="scale_table_block">
                         <div id="dvAcq_Pushback_List" class="deal clearfix">
@@ -148,13 +151,25 @@
                         @Html.Partial("_Approved_List")
                         <br />
                     }
+
                     else if (Obj_Deal_Schema_View.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
                     {
                         <div class="bottom_action">
                             <ul class="form_link_nav clearfix">
                                 <li>
-                                    <input type="button" id="btnCancel_Pushback" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                           onclick="location.href='@Url.Action("Cancel", "Acq_Pushback")    '">
+
+                                    @if (Obj_Deal_Schema_View.Mode == GlobalParams.DEAL_MODE_VIEW && Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                    {
+                                        <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })    '">
+
+                                    }
+                                    else
+                                    {
+                                        <input type="button" id="btnCancel_Pushback" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="location.href='@Url.Action("Cancel", "Acq_Pushback")    '">
+                                    }
+
                                 </li>
                             </ul>
                         </div>

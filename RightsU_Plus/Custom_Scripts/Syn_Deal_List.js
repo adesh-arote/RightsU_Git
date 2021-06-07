@@ -36,8 +36,14 @@
 function BindAdvanced_Search_Controls(callfrom) {
 
     //Here call from PGL - Pageload (document ready), BTC - Button(Search) Click
-    var SelectedBU = $("#ddlBUUnit").val();
-    $('#ddlSrchBU').val(SelectedBU);
+    if (Is_AllowMultiBUsyndeal != 'Y') {
+        var SelectedBU = $("#ddlBUUnit").val();
+        $('#ddlSrchBU').val(SelectedBU);
+    }
+    else {
+        var SelectedBUMulti = $("#ddlGenBUMultiSelect").val();
+        $('#ddlSrchBUMultiSelect').val(SelectedBUMulti);
+    }
     if (callfrom == 'BTC') {
         $('#divSearch').slideToggle(400);
         // OnChangeBindTitle('L');
@@ -45,7 +51,7 @@ function BindAdvanced_Search_Controls(callfrom) {
     var Is_async = true;
     if (tmp_IsAdvanced == 'Y')
         Is_async = false;
-    if (parseInt($("#ddlSrchBU option").length) == 0) {
+    if (parseInt($("#ddlSrchBU option").length) == 0 || (parseInt($("#ddlSrchBUMultiSelect option").length) == 0)) {
         $.ajax({
             type: "POST",
             url: URL_BindAdvanced_Search_Controls,
@@ -61,13 +67,19 @@ function BindAdvanced_Search_Controls(callfrom) {
                     redirectToLogin();
                 }
                 else {
+                    $("#ddlSrchBUMultiSelect").empty();
                     $(result.USP_Result).each(function (index, item) {
                         if (this.Data_For == 'DTP' || this.Data_For == 'DTC')
                             $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'DTG')
                             $("#ddlSrchDealTag").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'BUT')
-                            $("#ddlSrchBU").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            if (Is_AllowMultiBUsyndeal != 'Y') {
+                                $("#ddlSrchBU").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            }
+                            else {
+                                $("#ddlSrchBUMultiSelect").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            }
                         if (this.Data_For == 'DIR')
                             $("#ddlSrchDirector").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'LAV')
@@ -79,12 +91,27 @@ function BindAdvanced_Search_Controls(callfrom) {
                     var obj_Search = $(result.Obj_Acq_Syn_List_Search);
                     $("#ddlSrchDealType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlSrchDealTag").val(obj_Search[0].Status_Search).attr("selected", "true").trigger("chosen:updated");
-                    if ($('#ddlBUUnit').val() == obj_Search[0].BUCodes_Search) {
-                        $("#ddlSrchBU").val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
-                        $('#ddlBUUnit').val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+                    if (Is_AllowMultiBUsyndeal != 'Y') {
+                        if ($('#ddlBUUnit').val() == obj_Search[0].BUCodes_Search) {
+                            $("#ddlSrchBU").val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+                            $('#ddlBUUnit').val(obj_Search[0].BUCodes_Search).attr("selected", "true").trigger("chosen:updated");
+                        }
+
+
+                        else {
+                            $("#ddlSrchBU").val(SelectedBU).attr("selected", "true").trigger("chosen:updated");
+                        }
                     }
                     else {
-                        $("#ddlSrchBU").val(SelectedBU).attr("selected", "true").trigger("chosen:updated");
+                        if ($('#ddlGenBUMultiSelect').val() == obj_Search[0].BUCodes_Search) {
+                            debugger;
+                            $("#ddlSrchBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
+                            $("#ddlGenBUMultiSelect").val(obj_Search[0].BUCodes_Search)[0].sumo.reload();
+                        }
+                        else {
+                            $('#ddlSrchBUMultiSelect').val(SelectedBUMulti)[0].sumo.reload();
+                        }
+
                     }
 
                     $("#ddlSrchDirector").val(obj_Search[0].DirectorCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
@@ -144,17 +171,30 @@ function Show_Error_Popup(search_Titles, Page_Size, Page_No, Syn_Deal_Code) {
 }
 /*Bind the Grid*/
 function LoadDeals(pagenumber, isAdvanced, showAll) {
-
+    debugger;
     var BUCode = $('#ddlBUUnit').val();
     if (showLD == 'Y')
         showLoading();
     var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N';
     tmp_pageNo = pagenumber;
     tmp_IsAdvanced = isAdvanced;
+    //if (isAdvanced == 'N')
+    //    $('#divSearch').hide();
+    //else if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+    //    BindAdvanced_Search_Controls('PGL');
+
     if (isAdvanced == 'N')
         $('#divSearch').hide();
-    else if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
-        BindAdvanced_Search_Controls('PGL');
+    else {
+        if (Is_AllowMultiBUsyndeal != 'Y') {
+            if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
+                BindAdvanced_Search_Controls('PGL');
+        }
+        else {
+            if (isAdvanced == 'Y' && parseInt($("#ddlSrchBUMultiSelect option").length) == 0)
+                BindAdvanced_Search_Controls('PGL');
+        }
+    }
     //if ($('#ddlSrchTitle').val())
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
     if ($('#txtTitleSearch').val())
@@ -165,6 +205,28 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
         tmpLicensor = $('#ddlSrchLicensor').val().join(',');
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
+    var BUCode = "";
+    if (Is_AllowMultiBUsyndeal != 'Y') {
+        BUCode = $('#ddlBUUnit').val();
+    }
+    else {
+        if ($('#ddlGenBUMultiSelect').val())
+            BUCode = $('#ddlGenBUMultiSelect').val().join(',');
+    }
+    var strBU = "";
+    if (Is_AllowMultiBUsyndeal != 'Y') {
+        strBU = $('#ddlSrchBU').val();
+    }
+    else {
+        if ($('#ddlSrchBUMultiSelect').val())
+            strBU = $('#ddlSrchBUMultiSelect').val().join(',');
+    }
+    if (BUCode == "undefined" || BUCode == "" || BUCode == null) {
+        debugger;
+        showAlert('E', "Business Unit Cannot be Blank.");
+        hideLoading();
+        return false;
+    }
     $.ajax({
         type: "POST",
         url: URL_PartialDealList,
@@ -186,11 +248,11 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
             strTitles: tmpTitle,
             strDirector: tmpDirector,
             strLicensor: tmpLicensor,
-            strBU: $('#ddlSrchBU').val(),
+            strBU: strBU,
             strShowAll: ShowAll,
             strIncludeArchiveDeal: tmpArchiveChecked,
             ClearSession: $('#hdnClearAll').val(),
-            strBUCode: $('#ddlBUUnit').val()
+            strBUCode: BUCode//$('#ddlBUUnit').val()
         }),
         success: function (result) {
             if (result == "true") {
@@ -235,7 +297,7 @@ function validateSearch() {
     //if ($('#ddlSrchTitle').val())
     //    tmpTitle = $('#ddlSrchTitle').val().join(',');
     if ($("#txtTitleSearch").val())
-        tmpTitle = $('#txtTitleSearch').val()
+        tmpTitle = $('#txtTitleSearch').val();
     if ($('#ddlSrchDirector').val())
         tmpDirector = $('#ddlSrchDirector').val().join(',');
     if ($('#ddlSrchLicensor').val())
@@ -246,7 +308,14 @@ function validateSearch() {
     var ddlTagStatus = $('#ddlSrchDealTag').val();
     var ddlBU = $('#ddlSrchBU').val();
     var ddlDealType = $('#ddlSrchDealType').val();
-
+    if (Is_AllowMultiBUsyndeal == 'Y') {
+        var ddlBUMulti = $('#ddlSrchBUMultiSelect').val();
+        if (ddlBUMulti == null || ddlBUMulti == "") {
+            showAlert('E', "Business Unit Cannot be Blank.");
+            return false;
+        }
+        $('#ddlGenBUMultiSelect').val(ddlBUMulti);
+    }
     if ($('#chkArchiveDeal:checked').val())
         tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
 
@@ -274,8 +343,13 @@ function ShowAll() {
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
-    OnChangeBindTitle();
-
+    $('#ddlGenBUMultiSelect').val('1');
+    $("#ddlGenBUMultiSelect")[0].sumo.reload();
+    $('#ddlSrchBUMultiSelect').val('1');
+    $("#ddlSrchBUMultiSelect")[0].sumo.reload();
+    OnChangeBindTitle('ShowAll');
+    //$("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+    //$("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
     $("#ddlSrchDirector").find("option").attr("selected", false);
     $("#ddlSrchDirector").val('')[0].sumo.reload();
     $("#ddlSrchLicensor").find("option").attr("selected", false);
@@ -299,9 +373,12 @@ function ClearAll() {
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
     $("#chkArchiveDeal").prop("checked", false);
     $("#chkSubDeal").prop("checked", false);
-    
-    
+
+
     OnChangeBindTitle();
+
+    $("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+    $("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
 
     $("#ddlSrchDirector").find("option").attr("selected", false);
     $("#ddlSrchDirector").val('')[0].sumo.reload();
@@ -322,13 +399,34 @@ function SetMinDt() {
 
 function OnChangeBindTitle(callFrom) {
     var dealTypeVal = $('#ddlSrchDealType').val();
-    var ddlBU = $('#ddlSrchBU').val();
-    if (callFrom != 'L') {
-        $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
+    if (Is_AllowMultiBUsyndeal != 'Y') {
+        var ddlBU = $('#ddlSrchBU').val();
+        if (callFrom != 'L') {
+            $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
+        }
+        else {
+            dealTypeVal = '0';
+            ddlBU = $('#ddlBUUnit').val();
+        }
     }
     else {
-        dealTypeVal = '0';
-        ddlBU = $('#ddlBUUnit').val();
+        var ddlBUMulti = $('#ddlSrchBUMultiSelect').val();
+        if (callFrom == 'ShowAll') {
+            ddlBUMulti = ["1"];
+            $('#ddlGenBUMultiSelect').val('1');
+            $("#ddlGenBUMultiSelect")[0].sumo.reload();
+        }
+        else if (callFrom == 'TP' && ddlBUMulti == null) {
+            ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+        }
+        else if (callFrom != 'L') {
+            $('#ddlGenBUMultiSelect').val(ddlBUMulti);
+            $("#ddlGenBUMultiSelect")[0].sumo.reload();
+        }
+        else {
+            dealTypeVal = '0';
+            ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+        }
     }
 
     //$("#ddlSrchTitle").find("option").attr("selected", false);
@@ -342,7 +440,9 @@ function OnChangeBindTitle(callFrom) {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
             dealTypeCode: dealTypeVal,
-            BUCode: ddlBU
+            BUCode: ddlBU,
+            ddlBUMulti: ddlBUMulti,
+            TitleSearch: $('#txtTitleSearch').val()
         }),
         async: true,
         success: function (result) {
@@ -350,8 +450,13 @@ function OnChangeBindTitle(callFrom) {
                 redirectToLogin();
             }
             else {
-
-                $("#txtTitleSearch").val('');
+                if (Is_AllowMultiBUsyndeal === 'Y') {
+                    $('#txtTitleSearch').val(result.Title_Name);
+                    $('#hdnTitleSearch').val(result.Title_Code);
+                }
+                else {
+                    $("#txtTitleSearch").val('');
+                }
             }
         },
         error: function (result) {

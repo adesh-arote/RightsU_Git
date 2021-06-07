@@ -366,7 +366,9 @@ font-family:'Glyphicons';
 .glyphicon-save-file:before {
     content: "\e202";
 }
-
+.glyphicon-sd-video:before {
+    content: "\e186";
+}
 
 /*td a.glyphicon { padding: 3px 1px; }*/
  .glyphicon_Music {
@@ -1483,6 +1485,44 @@ button.close {
 		 width:900px;
 	 }
  }
+@media (min-width:960px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 308px;
+    }
+}
+
+@media (min-width:960px) and (max-width:1300px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 233px;
+    }
+}
+@media (min-width:1300px) and (max-width:1440px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 308px;
+    }
+}
+
+@media (min-width:1440px) and (max-width:1500px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 385px;
+    }
+}
+
+@media (min-width:1500px) {
+    .MuBUList {
+        margin-top: 20px;
+        float: left;
+        margin-left: 470px;
+    }
+}
 .tooltip {
     position: absolute;
     z-index: 1070;

@@ -14,6 +14,8 @@
     $(document).ready(function () {
         $('#spanRecordCount').html('@objMessageKey.TotalRecords: @ViewBag.RecordCount');
         $('#spanRecordCount').css("float", "right");
+        $('#ddlTitle_Code').SumoSelect();
+        $('#ddlTitle_Code')[0].sumo.reload();
     });
      function SetPaging(txtPageSize) {
         debugger
@@ -52,6 +54,16 @@
         }
     }
 </script>
+
+<style>
+    .SumoSelect, #divddlTitle_Code {
+        width: 100% !important;
+    }
+
+        #divddlTitle_Code > div {
+            width: 100% !important;
+        }
+</style>
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
@@ -84,7 +96,7 @@
                 count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
                 foreach (var item in Model)
                 {
-                 
+
                     <tr>
                         @*@if (item.Episode_From == null && item.Episode_To == null)
                             {
@@ -158,9 +170,21 @@
             using (Html.BeginForm("Save", "Acq_Material", "", FormMethod.Post))
             {
                 <tr>
-                    <td align="center">New</td>
+                    <td align="center">
+                        <input type="hidden" id="hdnIsAcqSynMaterialMultiTitle" value="@ViewBag.Is_Acq_Syn_Material_MultiTitle" />
+                        New
+                    </td>
                     <td>
-                        @Html.DropDownList("Title_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:250px;", @class = "form_input chosen-select" })
+                        @if (ViewBag.Is_Acq_Syn_Material_MultiTitle == "Y")
+                        {
+                            <div id="divddlTitle_Code">
+                                @Html.DropDownList("Title_Code", TempData["Title_Code"] as IEnumerable<SelectListItem>, new { style = "width:250px; ", @id = "ddlTitle_Code", multiple = "multiple" })
+                            </div>
+                        }
+                        else
+                        {
+                            @Html.DropDownList("Title_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:250px;", @class = "form_input chosen-select" })
+                        }
                         @Html.Hidden("hdnTitleName")
                     </td>
                     <td>
@@ -187,7 +211,7 @@
             count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
             foreach (var item in Model)
             {
-                
+
                 if (ViewBag.Acq_Deal_Material_Code == item.Acq_Deal_Material_Code)
                 {
                     if (ViewBag.CommandName == "Edit")
@@ -285,8 +309,8 @@
                         </td>
 
                         <td align="center">
-                                <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick=' if(checkeditmode()) window.location.href="@Url.Action("Edit", "Acq_Material", new { Acq_Deal_Material_Code = item.Acq_Deal_Material_Code }) " '></a>
-                                <a title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash" onclick='return OnDeleteClick(@item.Acq_Deal_Material_Code);'></a>
+                            <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick=' if(checkeditmode()) window.location.href="@Url.Action("Edit", "Acq_Material", new { Acq_Deal_Material_Code = item.Acq_Deal_Material_Code }) " '></a>
+                            <a title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash" onclick='return OnDeleteClick(@item.Acq_Deal_Material_Code);'></a>
                         </td>
                     </tr>
                 }

@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[USP_Get_Unutilized_Run] 
-	-- =============================================
+-- =============================================
 -- Author:		Rajesh Godse
 -- Create date: 12 Jan 2015
 -- Description:	Get run details for current year based on title
@@ -41,6 +41,7 @@ BEGIN
 	INNER JOIN Title t ON ADRT.Title_Code = t.Title_Code
 	WHERE GETDATE() between [Start_Date] and End_Date AND DATEDIFF(MONTH,[Start_Date],@enddate) > 0) test
 	--select * from #RunDetail
+	--return
 	CREATE TABLE #RunDetailFilter
 	(
 		Row_Numbe INT,
@@ -56,7 +57,7 @@ BEGIN
 		Total_balance INT
 	)
 
-	DECLARE @Business_Unit_Code INT
+	
 	DECLARE @EmailId NVARCHAR(50)
 	DECLARE @Emailbody AS NVARCHAR(MAX)=''
 	DECLARE @Title AS NVARCHAR(MAX)
@@ -71,30 +72,43 @@ BEGIN
 	DECLARE @Users_Code INT
 	DECLARE @Email_Config_Code INT
 	SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='CUR'
-	--Cursor Start
-	--DECLARE cPointer CURSOR FOR SELECT Users_Email_id, Business_Unit_Code FROM Deal_Expiry_Email WHERE Alert_Type = 'U'
-	--Change
-	--UPDATE System_Parameter_New SET Parameter_Value='5,8' WHERE Parameter_Name='UnutilizedRun_Business_Unit'
-	DECLARE cPointer CURSOR FOR SELECT User_Mail_Id, BuCode,Users_Code,Channel_Codes FROM [dbo].[UFN_Get_Bu_Wise_User]('CUR')
+
+	--SELECT * FROM UFN_Get_EmailConfig_Users('CUR')
+
+	DECLARE @Business_Unit_Code INT,
+	@To_Users_Code NVARCHAR(MAX),
+	@To_User_Mail_Id  NVARCHAR(MAX),
+	@CC_Users_Code  NVARCHAR(MAX),
+	@CC_User_Mail_Id  NVARCHAR(MAX),
+	@BCC_Users_Code  NVARCHAR(MAX),
+	@BCC_User_Mail_Id  NVARCHAR(MAX)
+	
+	DECLARE @Tbl2 TABLE (
+		Id INT,
+		BuCode INT,
+		To_Users_Code NVARCHAR(MAX),
+		To_User_Mail_Id  NVARCHAR(MAX),
+		CC_Users_Code  NVARCHAR(MAX),
+		CC_User_Mail_Id  NVARCHAR(MAX),
+		BCC_Users_Code  NVARCHAR(MAX),
+		BCC_User_Mail_Id  NVARCHAR(MAX),
+		Channel_Codes NVARCHAR(MAX)
+	)
+
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+
+	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+	EXEC USP_Get_EmailConfig_Users 'CUR', 'N'
+
+	DECLARE cPointer CURSOR FOR SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
 	--Change
 	OPEN cPointer
-		FETCH NEXT FROM cPointer INTO @EmailId, @Business_Unit_Code, @Users_Code, @Channel_Codes																																																					WHILE @@FETCH_STATUS = 0
+		FETCH NEXT FROM cPointer INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			
+		
 			DECLARE @ParameterValue as NVARCHAR(20)
-			--'UnutilizedRun_Business_Unit' is not needed as we have already selected Bu from Email_Config_Detail_User table
-			--SELECT @ParameterValue = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name='UnutilizedRun_Business_Unit'
 			
-			--IF EXISTS(
-			----Change
-			--SELECT number FROM dbo.fn_Split_withdelemiter(@ParameterValue,',') where number=@Business_Unit_Code 
-			----Old
-			----SELECT * FROM 
-			----Deal_Expiry_Email WHERE Alert_Type = 'U' AND Business_Unit_Code = @Business_Unit_Code
-			---- AND Business_Unit_Code in
-			----(SELECT number FROM dbo.fn_Split_withdelemiter(@ParameterValue,','))
-			--)
-			--BEGIN
 				SET @ParameterValue = ''
 				Select @ParameterValue = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'UnutilizedRun_Program_Category'
 				
@@ -191,26 +205,31 @@ BEGIN
 			
 				IF(@Emailbody IS NOT NULL AND @Emailbody != '')
 				BEGIN
+				
 				EXEC msdb.dbo.sp_send_dbmail 
 				@profile_name = @DatabaseEmail_Profile,
-				@recipients =  @EmailId,
+				@recipients =  @To_User_Mail_Id,
+				@copy_recipients = @CC_User_Mail_Id,
+				@blind_copy_recipients = @BCC_User_Mail_Id,
 				@subject = 'Unutilized Run Details',
 				@body = @Emailbody, 
 				@body_format = 'HTML';
 				  
-				--Change
-				INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-				SELECT @Email_Config_Code,GETDATE(),'N',@EmailTable,@Users_Code,'Channel Unutilized Run',@EmailId
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@EmailTable, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Channel Unutilized Run'
+				
 				END
 				--Change
 				--Sending mail end
 				SET @EmailTable = ''
 				SET @Emailbody = ''
 			--END
-			FETCH NEXT FROM cPointer INTO @EmailId, @Business_Unit_Code, @Users_Code, @Channel_Codes
+			FETCH NEXT FROM cPointer INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 		END
 	CLOSE cPointer
 	DEALLOCATE cPointer
+
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 
 	IF OBJECT_ID('tempdb..#RunDetail') IS NOT NULL DROP TABLE #RunDetail
 	IF OBJECT_ID('tempdb..#RunDetailFilter') IS NOT NULL DROP TABLE #RunDetailFilter

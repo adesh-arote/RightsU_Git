@@ -639,44 +639,69 @@ BEGIN
 		IF(OBJECT_ID('TEMPDB..#TempMailData') IS NOT NULL)
 			DROP TABLE #TempMailData
 
+		DECLARE @To_Users_Code NVARCHAR(MAX),@CC_Users_Code  NVARCHAR(MAX),@BCC_Users_Code  NVARCHAR(MAX)
+
 		CREATE TABLE #TempMailData
 		(
 			RowNo INT IDENTITY(1,1),
 			Channel_Codes VARCHAR(MAX),
-			User_Email_Id VARCHAR(MAX),
+			To_User_Mail_Id NVARCHAR(MAX), CC_User_Mail_Id NVARCHAR(MAX), BCC_User_Mail_Id NVARCHAR(MAX),
 			Record_Count INT,
 			Email_Data NVARCHAR(MAX),
-			IsMailSent CHAR(1) DEFAULT('N'),
-			User_Code INT
+			IsMailSent CHAR(1) DEFAULT('N')
 		)
+		-----------------------------------------------
+		DECLARE @Tbl2 TABLE (
+			Id INT,
+			BuCode INT,
+			To_Users_Code NVARCHAR(MAX),
+			To_User_Mail_Id  NVARCHAR(MAX),
+			CC_Users_Code  NVARCHAR(MAX),
+			CC_User_Mail_Id  NVARCHAR(MAX),
+			BCC_Users_Code  NVARCHAR(MAX),
+			BCC_User_Mail_Id  NVARCHAR(MAX),
+			Channel_Codes NVARCHAR(MAX)
+		)
+		DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+		INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+		EXEC USP_Get_EmailConfig_Users 'CUR', 'N'
 
+						
+	-----------------------------------------------------------
 		IF(@IsChannelwiseMail = 'Y')
 		BEGIN
 			PRINT ' Send seperate mail for every channel'
-			INSERT INTO #TempMailData(Channel_Codes, User_Email_Id, Record_Count, Email_Data, User_Code)
-			SELECT distinct	','+ cast(c.Channel_Code as varchar(10)) + ',',
-			U.email_id, 0, '' , u.Users_Code
-			from [dbo].[UFN_Get_Bu_Wise_User]('MSE') buUsers
-			INNER JOIN Users u on u.Users_Code = buUsers.Users_Code
-			INNER JOIN Security_Group SG ON SG.security_group_code = U.security_group_code
-			inner join Channel c on ','+buUsers.Channel_Codes+ ',' like '%,'+ cast(c.Channel_Code as varchar(20)) +',%'
+			INSERT INTO #TempMailData(channel_codes, to_user_mail_id, cc_user_mail_id, bcc_user_mail_id, record_count, email_data)
+			SELECT DISTINCT p.number , To_User_Mail_Id, CC_User_Mail_Id, BCC_User_Mail_Id,  0, ''
+			FROM @Tbl2 A
+			CROSS APPLY dbo.fn_Split_withdelemiter(A.Channel_Codes, ',') p
+			--INSERT INTO #TempMailData(Channel_Codes, User_Email_Id, Record_Count, Email_Data, User_Code)
+			--SELECT distinct	','+ cast(c.Channel_Code as varchar(10)) + ',',
+			--U.email_id, 0, '' , u.Users_Code
+			--from [dbo].[UFN_Get_Bu_Wise_User]('MSE') buUsers
+			--INNER JOIN Users u on u.Users_Code = buUsers.Users_Code
+			--INNER JOIN Security_Group SG ON SG.security_group_code = U.security_group_code
+			--inner join Channel c on ','+buUsers.Channel_Codes+ ',' like '%,'+ cast(c.Channel_Code as varchar(20)) +',%'
 		END
 		ELSE
 		BEGIN
-			PRINT ' Send single mail for All Channel'
-			INSERT INTO #TempMailData(Channel_Codes, User_Email_Id, Record_Count, Email_Data, User_Code)
-			SELECT distinct
-			','+ buUsers.Channel_Codes + ',',
-			U.email_id, 0, '' , u.Users_Code
-			from [dbo].[UFN_Get_Bu_Wise_User]('MSE') buUsers
-			INNER JOIN Users u on u.Users_Code = buUsers.Users_Code
-			INNER JOIN Security_Group SG ON SG.security_group_code = U.security_group_code
-		END
+			insert into #TempMailData(channel_codes, to_user_mail_id, cc_user_mail_id, bcc_user_mail_id, record_count, email_data)
+			select channel_Codes, To_User_Mail_Id, CC_User_Mail_Id, BCC_User_Mail_Id,  0, '' from @Tbl2
 
+			--PRINT ' Send single mail for All Channel'
+			--INSERT INTO #TempMailData(Channel_Codes, User_Email_Id, Record_Count, Email_Data, User_Code)
+			--SELECT distinct
+			--','+ buUsers.Channel_Codes + ',',
+			--U.email_id, 0, '' , u.Users_Code
+			--from [dbo].[UFN_Get_Bu_Wise_User]('MSE') buUsers
+			--INNER JOIN Users u on u.Users_Code = buUsers.Users_Code
+			--INNER JOIN Security_Group SG ON SG.security_group_code = U.security_group_code
+		END
+	
 		DECLARE @Music_Schedule_Transaction_Code INT = 0, @Exception VARCHAR(250), @Content NVARCHAR(1000), @Episode_No INT, @Airing_Date VARCHAR(50), @Airing_Time VARCHAR(50),
 		@Channel_Code BIGINT, @Channel_Name NVARCHAR(200), @Music_Title_Name NVARCHAR(2000), @Movie_Album NVARCHAR(1000), @Music_Label_Name VARCHAR(100)
 
-		DECLARE @trTable NVARCHAR(MAX) = '', @RowNo INT = 0, @User_Email_Id VARCHAR(MAX) = '', @totalException BIGINT = 0
+		DECLARE @trTable NVARCHAR(MAX) = '', @RowNo INT = 0, @User_Email_Id VARCHAR(MAX) = '', @cc_user_mail_id  NVARCHAR(MAX) = '', @bcc_user_mail_id   NVARCHAR(MAX) = '', @totalException BIGINT = 0
 		SET @trTable = '<tr>      
 			<th align="center" width="15%" class="tblHead"><b>Exception<b></th>    
 			<th align="center" width="15%" class="tblHead"><b>Content<b></th>      
@@ -755,6 +780,7 @@ BEGIN
 		CLOSE curMailData
 		DEALLOCATE curMailData
 
+
 		IF(@totalException > 0)
 		BEGIN
 			IF EXISTS (SELECT * FROM #TempMailData WHERE Record_Count > 0)
@@ -769,7 +795,7 @@ BEGIN
 				SET @mailBody = REPLACE(@mailBody, '{Link}', @DefaultSiteUrl)
 				
 				SELECT @RowNo = 0, @trTable = '', @User_Email_Id = ''
-				SELECT TOP 1 @RowNo =  RowNo, @trTable = Email_Data, @User_Email_Id = User_Email_Id, @Users_Code = User_Code
+				SELECT TOP 1 @RowNo =  RowNo, @trTable = Email_Data, @User_Email_Id = to_user_mail_id, @cc_user_mail_id = cc_user_mail_id, @bcc_user_mail_id = bcc_user_mail_id
 				FROM #TempMailData WHERE IsMailSent = 'N' AND Record_Count > 0
 				
 				WHILE(@RowNo > 0 AND @trTable <> '' AND @User_Email_Id <> '')
@@ -780,16 +806,34 @@ BEGIN
 					PRINT '  @User_Email_Id : ' + @User_Email_Id
 					PRINT '  @mailBodyWithData : ' + @mailBodyWithData
 
+					
 					EXEC msdb.dbo.sp_send_dbmail 
-					@profile_name=@dbEmail_Profile, @recipients=@User_Email_Id,
-					@subject='Music Schedule Exception', @body_format = 'HTML', @body=@mailBodyWithData
+					@profile_name = @dbEmail_Profile,
+					@recipients =  @User_Email_Id,
+					@copy_recipients = @CC_User_Mail_Id,
+					@blind_copy_recipients = @BCC_User_Mail_Id,
+					@subject = 'Music Schedule Exception',
+					@body = @mailBodyWithData, 
+					@body_format = 'HTML';
 
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code,GETDATE(),'N','<table class="tblFormat" >'+@trTable+'</table>',@Users_Code,'Music Schedule Exception',@User_Email_Id
-
+		
+					SELECT  @User_Email_Id = ISNULL(STUFF((SELECT ';' + A.number FROM dbo.fn_Split_withdelemiter(@User_Email_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,''),
+							@To_Users_Code = ISNULL( STUFF(( SELECT ',' + CAST(U.Users_Code AS NVARCHAR(MAX)) FROM dbo.fn_Split_withdelemiter(@User_Email_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,''),
+							@CC_User_Mail_Id = ISNULL(STUFF((SELECT ';' + A.number FROM dbo.fn_Split_withdelemiter(@CC_User_Mail_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,''),
+							@CC_Users_Code = ISNULL( STUFF(( SELECT ',' + CAST(U.Users_Code AS NVARCHAR(MAX)) FROM dbo.fn_Split_withdelemiter(@CC_User_Mail_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,''),
+							@BCC_User_Mail_Id = ISNULL(STUFF((SELECT ';' + A.number FROM dbo.fn_Split_withdelemiter(@BCC_User_Mail_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,''),
+							@BCC_Users_Code = ISNULL( STUFF(( SELECT ',' + CAST(U.Users_Code AS NVARCHAR(MAX)) FROM dbo.fn_Split_withdelemiter(@BCC_User_Mail_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,'')
+	
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,'<table class=''tblFormat'' >'+@trTable+'</table>', ISNULL(@To_Users_Code,''), ISNULL(@User_Email_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''), 'Music Schedule Exception'
+				
 					UPDATE #TempMailData SET IsMailSent = 'Y' WHERE RowNo = @RowNo
-					SELECT @RowNo = 0, @trTable = '', @User_Email_Id = ''
-					SELECT TOP 1 @RowNo =  RowNo, @trTable = Email_Data, @User_Email_Id = User_Email_Id FROM #TempMailData WHERE IsMailSent = 'N' AND Record_Count > 0
+
+					SELECT @RowNo = 0, @trTable = '', @User_Email_Id = '', @cc_user_mail_id = '', @bcc_user_mail_id = ''
+					SELECT TOP 1 @RowNo =  RowNo, @trTable = Email_Data, @User_Email_Id = to_user_mail_id,
+					@cc_user_mail_id = CC_User_Mail_Id, @bcc_user_mail_id = BCC_User_Mail_Id
+					FROM #TempMailData WHERE IsMailSent = 'N' AND Record_Count > 0
+
 					print 'End - @RowNo - '+cast(@RowNo as varchar(50))
 				END
 				PRINT ' All Mail Sent'
@@ -808,6 +852,9 @@ BEGIN
 		PRINT 'Music Schedule Exception Mail Process Ended'
 		PRINT '==============================================================================================================================================='	
 	END
+
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
+
 	IF OBJECT_ID('tempdb..#AllMusicLabelDealData') IS NOT NULL DROP TABLE #AllMusicLabelDealData
 	IF OBJECT_ID('tempdb..#CurrentMusicLabelDealData') IS NOT NULL DROP TABLE #CurrentMusicLabelDealData
 	IF OBJECT_ID('tempdb..#ExistingException') IS NOT NULL DROP TABLE #ExistingException

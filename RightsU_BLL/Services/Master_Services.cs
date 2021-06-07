@@ -1862,6 +1862,25 @@ namespace RightsU_BLL
         }
     }
 
+    public class Module_Workflow_Detail_Service
+    {
+        private readonly Module_Workflow_Detail_Repository objModule_Workflow_Detail;
+
+        public Module_Workflow_Detail_Service(string Connection_Str)
+        {
+            this.objModule_Workflow_Detail = new Module_Workflow_Detail_Repository(Connection_Str);
+        }
+        public IQueryable<Module_Workflow_Detail> SearchFor(Expression<Func<Module_Workflow_Detail, bool>> predicate)
+        {
+            return objModule_Workflow_Detail.SearchFor(predicate);
+        }
+
+        public Module_Workflow_Detail GetById(int id)
+        {
+            return objModule_Workflow_Detail.GetById(id);
+        }
+    }
+
     public class Sponsor_Service
     {
         private readonly Sponsor_Repository objSponsor;
@@ -2421,7 +2440,7 @@ namespace RightsU_BLL
             return objExtCol.GetById(id);
         }
     }
-    public class Extended_Columns_Value_Service
+    public class Extended_Columns_Value_Service : BusinessLogic<Extended_Columns_Value>
     {
         private readonly Extended_Columns_Value_Repository objExtCol;
 
@@ -2437,6 +2456,32 @@ namespace RightsU_BLL
         public Extended_Columns_Value GetById(int id)
         {
             return objExtCol.GetById(id);
+        }
+        public bool Save(Extended_Columns_Value objUPD, out dynamic resultSet)
+        {
+            return base.Save(objUPD, objExtCol, out resultSet);
+        }
+        public bool Delete(Extended_Columns_Value objUPD, out dynamic resultSet)
+        {
+            return base.Delete(objUPD, objExtCol, out resultSet);
+        }
+
+        public override bool Validate(Extended_Columns_Value objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(Extended_Columns_Value objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(Extended_Columns_Value objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
         }
     }
     public class Map_Extended_Columns_Service : BusinessLogic<Map_Extended_Columns>
@@ -6674,6 +6719,26 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+    public class Platform_Broadcast_Service
+    {
+        private readonly Platform_Broadcast_Repository obj_Repository;
+
+        public Platform_Broadcast_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Platform_Broadcast_Repository(Connection_Str);
+        }
+
+        public IQueryable<Platform_Broadcast> SearchFor(Expression<Func<Platform_Broadcast, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Platform_Broadcast GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
     public class Revenue_Vertical_Service
     {
         private readonly Revenue_Vertical_Repository obj_Repository;

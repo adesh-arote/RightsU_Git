@@ -30,6 +30,7 @@ namespace RightsU_InterimDb.Models
     	    public string Ref_Display_Field { get; set; }
     	    public string Ref_Value_Field { get; set; }
     	    public string Additional_Condition { get; set; }
+    	    public string Is_Add_OnScreen { get; set; }
     
         public virtual ICollection<Extended_Columns_Value> Extended_Columns_Value { get; set; }
         public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }

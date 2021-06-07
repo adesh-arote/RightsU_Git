@@ -33,8 +33,8 @@
         z-index: auto;
     }
 
-    .sumo_ddlTitle{
-        width:189px;
+    .sumo_ddlTitle {
+        width: 189px;
     }
 </style>
 <script>
@@ -42,7 +42,7 @@
     var TitleCode;
     var URL_BindSynDealListReport = '@Url.Action("BindSynDealListReport", "Reports")';
     URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNo", "Reports")';
-
+    var Is_AllowMultiBUsyndealreport = '@ViewBag.Is_AllowMultiBUsyndealreport';
     $(document).ready(function () {
         $('#txtStart').change(function () {
             SetMinDt();
@@ -52,9 +52,23 @@
             SetMaxDt();
         });
         $('#ddlTitle').SumoSelect();
-     
+
         $("#ddlBusinessUnit").change(function () {
             $('#txtTitle').val('');
+        });
+
+
+        $("#ddlBusinessUnitMultiSelect").change(function () {
+            $("#txtTitle").val('');
+        });
+
+        $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
+        $('#ddlBusinessUnitMultiSelect').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css({ paddingRight: '35px', lineHeight: '15px' });
         });
     });
 
@@ -77,8 +91,28 @@
             var DealSegment = $('#ddlDealSegment').val();
         else
             var DealSegment = "";
+
+        var IsAllowTypeOfFilm = $('#IsAllowTypeOfFilm').val();
+        if (IsAllowTypeOfFilm == "Y")
+            var TypeOfFilm = $('#ddlTypeOfFilm').val();
+        else
+            var TypeOfFilm = "";
+
         var expiredDeal = $('#chk_expiredDeals').is(":checked");
-        var businessUnitcode = $('#ddlBusinessUnit').val();
+        if ('@ViewBag.Is_AllowMultiBUsyndealreport' != "Y")
+        {
+            var businessUnitcode = $('#ddlBusinessUnit').val();
+        }
+        else
+        {
+            var ddlBUMulti = $('#ddlBusinessUnitMultiSelect').val();
+            if (ddlBUMulti == 0 || ddlBUMulti == "undefined" || ddlBUMulti == "" || ddlBUMulti == null) {
+                showAlert('E', "Business Unit Cannot be Blank.");
+                return false;
+            }
+            if ($('#ddlBusinessUnitMultiSelect').val())
+                businessUnitcode = $('#ddlBusinessUnitMultiSelect').val().join(',');
+        }
         var DealNo = $('#txtDealNo').val();
         var status = $('#ddlStatus').val();
         if ($('#txtTitle').val() != '0')
@@ -91,7 +125,7 @@
         var IsPushBack = "";
         var returnVal = true;
 
-    
+
         if ($('#chkRight').is(':checked') == true) {
             IsCheckRight = "Y";
         }
@@ -151,7 +185,8 @@
                     isExpiredDeal: expiredDeal,
                     isTheatrical: isTheatrical,
                     dateformat: $('#ddlDateFormat').val(),
-                    IsCheckRight: IsCheckRight            
+                    IsCheckRight: IsCheckRight,
+                    TypeOfFilm: TypeOfFilm
                 }),
                 async: false,
                 success: function (result) {
@@ -278,9 +313,21 @@
         AssignDateJQuery();
     }
     function PopulateTitleNameForSynDeal(keyword) {
+        debugger;
         if ($('#txtTitle').val().length == "0")
         {
             $('#hdnTitleCode').val(0);
+        }
+        var BU_Code = "";
+        if (Is_AllowMultiBUsyndealreport != "Y")
+        {
+            debugger;
+            BU_Code = $('#ddlBusinessUnit').val();
+        }
+        else
+        {
+            if ($('#ddlBusinessUnitMultiSelect').val())
+            BU_Code = $('#ddlBusinessUnitMultiSelect').val().join(",");
         }
         var selectedtxt = $('#txtTitle').val()
         var txt = selectedtxt.split('﹐');
@@ -297,10 +344,17 @@
                 },
                 source: function (request, response) {
                     var param = {
-                        BU_Code : $('#ddlBusinessUnit').val(),
+                        BU_Code :BU_Code,
                         keyword: $('#txtTitle').val()
 
                     };
+                    if (param.BU_Code == "undefined" || param.BU_Code == "" || param.BU_Code == null) {
+                        debugger;
+                        showAlert('E', "Business Unit Cannot be Blank.");
+                        $('#txtTitle').removeClass('loader');
+                        if ($('#txtTitle').val(''));
+                        return false;
+                    }
                     $.ajax({
                         url: URL_PopulateTitleNameForSynDeal,
                         data: JSON.stringify(param),
@@ -382,7 +436,7 @@
                     <h2 dir='@objMessageKey.LayoutDirection'>@objMessageKey.SyndicationDealListReport</h2>
                 </div>
             }
-            else if(Convert.ToInt32(ViewBag.Code) == 165)
+            else if (Convert.ToInt32(ViewBag.Code) == 165)
             {
                 <div class="title_block dotted_border clearfix">
                     <h2 dir='@objMessageKey.LayoutDirection'>@objMessageKey.TheatricalSyndicationReport</h2>
@@ -414,7 +468,14 @@
                         <tr style="width:100%">
                             <td style="width:11%"><b>@objMessageKey.BusinessUnit :</b></td>
                             <td style="width:16%;">
-                                @Html.DropDownList("BusinessUnit",ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                                @if (ViewBag.Is_AllowMultiBUsyndealreport != "Y")
+                                {
+                                    @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("BusinessUnitMulti", ViewBag.BusinessUnitList as MultiSelectList, new { @id = "ddlBusinessUnitMultiSelect", @multiple = "multiple" })
+                                }
                             </td>
                             <td style="width: 7%;"><b>@objMessageKey.Title :</b></td>
                             <td style="width:18%">
@@ -422,7 +483,7 @@
                                 <input type="text" id="txtTitle" class="search" maxlength="100" style="width:96%;" placeholder="@objMessageKey.Title" onkeyup="PopulateTitleNameForSynDeal(event)" autocomplete="on" />
                                 <input type="hidden" id="hdnTitleCode" value="0" />
                             </td>
-                          
+
 
                             <td style="width:5%"><b>@objMessageKey.EndDate : </b></td>
                             <td style="width:15%">
@@ -430,7 +491,7 @@
                                        title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
                             </td>
                             <td style="width:17%;">
-                                <input type="checkbox" id="chk_expiredDeals" style="cursor: pointer;"/>&nbsp; @objMessageKey.IncludeExpiredDeals
+                                <input type="checkbox" id="chk_expiredDeals" style="cursor: pointer;" />&nbsp; @objMessageKey.IncludeExpiredDeals
                             </td>
 
                             <td style="width:28%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
@@ -439,16 +500,26 @@
                         <tr>
                             <td style="width:8%"><b>@objMessageKey.DateFormat:</b></td>
                             <td style="width:17%">
+                                <input id="IsAllowTypeOfFilm"
+                                       type="hidden"
+                                       value=@ViewBag.IsAllowTypeOfFilm />
+                                <input id="AllowDealSegment"
+                                       type="hidden"
+                                       value=@ViewBag.AllowDealSegment />
                                 @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
                             </td>
-                            <input id="AllowDealSegment"
-                                   type="hidden"
-                                   value=@ViewBag.AllowDealSegment />
                             @if (ViewBag.AllowDealSegment == "Y")
                             {
                                 <td style="width:7%"><b>Deal Segment :</b></td>
                                 <td style="width:16%">
                                     @Html.DropDownList("DealSegment", ViewBag.Deal_Segment as SelectList, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select" })
+                                </td>
+                            }
+                            @if (ViewBag.IsAllowTypeOfFilm == "Y")
+                            {
+                                <td style="width:7%"><b>Type of Film :</b></td>
+                                <td style="width:16%">
+                                    @Html.DropDownList("TypeOfFilm", ViewBag.TypeOfFilm as SelectList, "Please Select", new { @id = "ddlTypeOfFilm", @class = "form_input chosen-select" })
                                 </td>
                             }
                         </tr>

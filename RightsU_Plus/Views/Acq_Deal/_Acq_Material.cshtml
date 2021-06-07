@@ -24,7 +24,7 @@
     var URL_Edit = '@Url.Action("Edit", "Acq_Material")';
 
     $(document).ready(function () {
-       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?acq_Material');
+        // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?acq_Material');
         if (recordLockingCode_G > 0)
             Call_RefreshRecordReleaseTime(recordLockingCode_G,URL_Global_Refresh_Lock);
 
@@ -126,7 +126,21 @@
     function RequiredFieldValidation()
     {
         var returnVal = true;
-        var Title_Code = $("#Title_Code").val();
+        var Is_Acq_Syn_Material_MultiTitle = $("#hdnIsAcqSynMaterialMultiTitle").val();
+        if(Is_Acq_Syn_Material_MultiTitle == "Y")
+        {
+            var strAddTitle_Code = $("#ddlTitle_Code").val();
+            if(strAddTitle_Code == "")
+            {
+                $('#ddlTitle_Code').addClass('required');
+                returnVal = false;
+            }
+        }
+        else
+        {
+            var Title_Code = $("#Title_Code").val();
+        }
+
         var Material_Type_Code = $("#Material_Type_Code").val();
         var Material_Medium_Code = $("#Material_Medium_Code").val();
         var Quantity = $("#Quantity").val();
@@ -160,7 +174,7 @@
         return returnVal;
     }
     /*Save/Update Payment Terms */
-    function SaveMaterial(Acq_Deal_Material_Code,Title_Code,Material_Type_Code,Material_Medium_Code,Quantity,Title_Codes)
+    function SaveMaterial(Acq_Deal_Material_Code,Title_Code,Material_Type_Code,Material_Medium_Code,Quantity,Title_Codes, strAddTitle_Code)
     {
         var pageNo = $('#hdnpage_index').val();
         showLoading();
@@ -177,7 +191,8 @@
                 Material_Type_Code: Material_Type_Code,
                 Material_Medium_Code: Material_Medium_Code,
                 Quantity:Quantity,
-                Title_Codes:Title_Codes
+                Title_Codes:Title_Codes,
+                strAddTitle_Code:strAddTitle_Code
             }),
             success: function (result) {
                 if (result == "true")
@@ -190,6 +205,12 @@
                     {
                         showAlert('E', "@objMessageKey.CombinationconflictswithotherMaterialrecords.");
                         return false;
+                    }
+                    else if(result != "N" && result != "Y")
+                    {
+                        debugger;
+                        var strResult = result;
+                        showAlert('E', strResult + " "+ "@objMessageKey.CombinationconflictswithotherMaterialrecords.");
                     }
                     else {
                         //$('#dvDealAcqMaterialList').empty();
@@ -218,13 +239,28 @@
             var Acq_Deal_Material_Code = 0
             if (NewRow == 1)
                 Acq_Deal_Material_Code = $("#Acq_Deal_Material_Code").val();
+            var strAddTitle_Code = '', Title_Codes = '';
+            var Is_Acq_Syn_Material_MultiTitle = $("#hdnIsAcqSynMaterialMultiTitle").val();
+            if(Is_Acq_Syn_Material_MultiTitle == "Y")
+            {
+                strAddTitle_Code = ($("#ddlTitle_Code").val()).join(',');
+                //Title_Codes = ($("#ddlTitle_Code option:selected").text()).join(',');
 
-            var Title_Codes= $("#Title_Code option:selected").text();
-            var Title_Code = $("#Title_Code").val();
+                var items = [];
+                $('#ddlTitle_Code option:selected').each(function(){ items.push($(this).text()); });
+                Title_Codes = items.join(',');
+                var Title_Code = 0;
+            }
+            else
+            {
+                var Title_Codes= $("#Title_Code option:selected").text();
+                var Title_Code = $("#Title_Code").val();
+            }
+
             var Material_Type_Code = $("#Material_Type_Code").val();
             var Material_Medium_Code = $("#Material_Medium_Code").val();
             var Quantity = $("#Quantity").val();
-            SaveMaterial(Acq_Deal_Material_Code,Title_Code,Material_Type_Code,Material_Medium_Code,Quantity,Title_Codes);
+            SaveMaterial(Acq_Deal_Material_Code,Title_Code,Material_Type_Code,Material_Medium_Code,Quantity,Title_Codes,strAddTitle_Code);
         }
     }
     function OnDeleteClick(Acq_Deal_Material_Code)
@@ -423,7 +459,7 @@
                             <div class="pagination" id="Pagination"></div>
                             <span class="pull-right">
                                 @objMessageKey.PageSize:
-                                <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();" 
+                                <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();"
                                        onfocus="CheckEditMode()" onblur="setDefaultPaging('txtPageSize')" />
                             </span>
                         </div>
@@ -445,8 +481,16 @@
                         <li>
                             @if (ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
                             {
-                                <input type="button" id="btnCancelDeal" title="Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                       onclick="if(CheckEditMode())  location.href='@Url.Action("Cancel", "Acq_Material")    '">
+                                if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                {
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                }
+                                else
+                                {
+                                    <input type="button" id="btnCancelDeal" title="Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="if(CheckEditMode())  location.href='@Url.Action("Cancel", "Acq_Material")    '">
+                                }
                             }
                         </li>
                     </ul>

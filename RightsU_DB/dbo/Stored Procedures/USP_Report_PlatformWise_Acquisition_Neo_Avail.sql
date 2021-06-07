@@ -1,7 +1,6 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Report_PlatformWise_Acquisition_Neo_Avail]
+﻿CREATE PROCEDURE [dbo].[USP_Report_PlatformWise_Acquisition_Neo_Avail]
 (
-
+--DECLARE
 	@Title_Code VARCHAR(MAX), 
 	@Platform_Code VARCHAR(MAX), 
     @Country_Code VARCHAR(MAX), 
@@ -41,19 +40,19 @@ AS
 -- =============================================
 BEGIN
 
-	--SELECT @Title_Code = '1228',
-	--	@Platform_Code = '72',--'1, 3, 4, 6, 7, 16, 17, 20, 21, 22, 23, 24, 29, 32, 33, 34, 49, 50, 51, 53, 54, 56, 57, 60, 61, 62, 63, 64, 65, 66, 67, 69, 71, 72, 73, 75, 76, 78, 79, 111, 112, 113, 114, 115, 116, 120, 121, 122, 123, 124, 125, 127, 128, 130, 132, 133, 134, 135, 138, 139, 140, 141, 143, 145, 146, 147, 149, 150, 151, 152, 154, 155, 157, 162, 163, 164, 165, 166, 167, 170, 173, 174, 175, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 207, 208, 209, 210, 213, 214, 215, 216, 217, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 234, 235, 236, 238, 239, 240, 241, 242, 243, 244, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 258, 259, 260, 261, 262, 263, 264, 265, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 280, 281, 282, 284, 285, 286, 287, 288, 289, 291, 292, 293, 294, 295, 296, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 315, 316, 317, 318, 319, 320, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393', 
-	--	@Country_Code='3',--'1, 10, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 12, 120, 121, 122, 123, 124, 125, 127, 128, 13, 130, 131, 132, 133, 134, 135, 137, 138, 139, 14, 140, 141, 142, 143, 145, 146, 147, 148, 149, 15, 16, 160, 164, 166, 167, 168, 169, 17, 170, 18, 182, 183, 184, 188, 189, 19, 190, 191, 192, 193, 2, 20, 200, 204, 205, 206, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 22, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 23, 230, 231, 232, 235, 236, 237, 238, 239, 24, 246, 247, 248, 249, 250, 251, 252, 255, 256, 257, 258, 264, 265, 266, 267, 268, 269, 27, 270, 271, 272, 273, 275, 276, 277, 278, 279, 28, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 293, 294, 295, 296, 299, 3, 30, 300, 301, 302, 304, 305, 306, 307, 308, 309, 31, 310, 311, 312, 313, 32, 35, 36, 37, 38, 39, 4, 40, 41, 42, 44, 47, 48, 5, 50, 51, 52, 53, 54, 55, 57, 58, 59, 6, 60, 61, 62, 65, 66, 67, 73, 74, 75, 76, 77, 8, 82, 83, 84, 85, 93, 94, 95, 96, 97, 98, 99, 314, 315, 316, 317, 318, 319, 320, 321, 322, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 341', 
+	--SELECT @Title_Code = '36432',
+	--	@Platform_Code = '',--'1, 3, 4, 6, 7, 16, 17, 20, 21, 22, 23, 24, 29, 32, 33, 34, 49, 50, 51, 53, 54, 56, 57, 60, 61, 62, 63, 64, 65, 66, 67, 69, 71, 72, 73, 75, 76, 78, 79, 111, 112, 113, 114, 115, 116, 120, 121, 122, 123, 124, 125, 127, 128, 130, 132, 133, 134, 135, 138, 139, 140, 141, 143, 145, 146, 147, 149, 150, 151, 152, 154, 155, 157, 162, 163, 164, 165, 166, 167, 170, 173, 174, 175, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 207, 208, 209, 210, 213, 214, 215, 216, 217, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 234, 235, 236, 238, 239, 240, 241, 242, 243, 244, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 258, 259, 260, 261, 262, 263, 264, 265, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 280, 281, 282, 284, 285, 286, 287, 288, 289, 291, 292, 293, 294, 295, 296, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 315, 316, 317, 318, 319, 320, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393', 
+	--	@Country_Code='',--'1, 10, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 12, 120, 121, 122, 123, 124, 125, 127, 128, 13, 130, 131, 132, 133, 134, 135, 137, 138, 139, 14, 140, 141, 142, 143, 145, 146, 147, 148, 149, 15, 16, 160, 164, 166, 167, 168, 169, 17, 170, 18, 182, 183, 184, 188, 189, 19, 190, 191, 192, 193, 2, 20, 200, 204, 205, 206, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 22, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 23, 230, 231, 232, 235, 236, 237, 238, 239, 24, 246, 247, 248, 249, 250, 251, 252, 255, 256, 257, 258, 264, 265, 266, 267, 268, 269, 27, 270, 271, 272, 273, 275, 276, 277, 278, 279, 28, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 293, 294, 295, 296, 299, 3, 30, 300, 301, 302, 304, 305, 306, 307, 308, 309, 31, 310, 311, 312, 313, 32, 35, 36, 37, 38, 39, 4, 40, 41, 42, 44, 47, 48, 5, 50, 51, 52, 53, 54, 55, 57, 58, 59, 6, 60, 61, 62, 65, 66, 67, 73, 74, 75, 76, 77, 8, 82, 83, 84, 85, 93, 94, 95, 96, 97, 98, 99, 314, 315, 316, 317, 318, 319, 320, 321, 322, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 341', 
 	--	@Is_Original_Language = 1,
-	--	@Title_Language_Code = '2',
+	--	@Title_Language_Code = '0',
 	--	@Date_Type = 'FL',
-	--	@StartDate = '29-Aug-2019',
+	--	@StartDate = '12-Feb-2021',
 	--	@EndDate = '',
 	--	@StartMonth = '',
 	--	@EndYear = '',
-	--	@RestrictionRemarks='N',
-	--	@OthersRemarks='false',
-	--	@BU_Code=1,
+	--	@RestrictionRemarks='true',
+	--	@OthersRemarks='true',
+	--	@BU_Code='1,5,6,7,8,9,10',
 	--	@Platform_ExactMatch = '',
 	--	@MustHave_Platform = '',
 	--	@Exclusivity = 'B',
@@ -61,12 +60,12 @@ BEGIN
 	--	@Region_ExactMatch = '',
 	--	@Region_MustHave = '',
 	--	@Region_Exclusion = '',
-	--	@Subtit_Language_Code = '1',
+	--	@Subtit_Language_Code = '0',
 	--	@Dubbing_Language_Code = '',
-	--	@Dubbing_Subtitling = 'S',
+	--	@Dubbing_Subtitling = '',
 	--	@Is_SubLicense = 'N',
 	--	@Is_Approved  = 'A',
-	--	@Deal_Type_Code = '1,33,10' ,
+	--	@Deal_Type_Code = '11' ,
 	--	@Episode_From = 0,
 	--	@Episode_To = 0,
 	--	@Is_IFTA_Cluster = 'N'
@@ -245,9 +244,12 @@ BEGIN
 		   (STUFF((
 			SELECT DISTINCT ',' + adr_Tmp.Restriction_Remarks 
 			FROM Acq_Deal AD_Tmp
+			INNER JOIN Acq_Deal_Movie Adm_Tmp ON AD_Tmp.Acq_Deal_Code = Adm_Tmp.Acq_Deal_Code AND AD_Tmp.Master_Deal_Movie_Code_ToLink = ADM.Acq_Deal_Movie_Code
 			INNER JOIN Acq_Deal_Rights ADR_Tmp ON adr_Tmp.Acq_Deal_Code = AD_Tmp.Acq_Deal_Code 
-			WHERE AD_Tmp.Is_Master_Deal = 'N' AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
-			(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ad.Acq_Deal_Code)
+			INNER JOIN Acq_Deal_Rights_Title ADRT_Tmp ON ADR_Tmp.Acq_Deal_Rights_Code = ADRT_Tmp.Acq_Deal_Rights_Code AND ADRT_Tmp.Title_Code = Adm_Tmp.Title_Code 
+			AND ISNULL(Adm_Tmp.Episode_Starts_From,0) = ISNULL(ADRT_Tmp.Episode_From,0) AND ISNULL(Adm_Tmp.Episode_End_To,0) = ISNULL(ADRT_Tmp.Episode_To,0)
+			WHERE AD_Tmp.Is_Master_Deal = 'N' --AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
+			--(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ad.Acq_Deal_Code)
 			FOR XML PATH(''),type).value('.', 'nvarchar(max)'),1,1,'')) 
 			, ar.Actual_Right_Start_Date, ar.Actual_Right_End_Date
 			,ar.Is_Exclusive, ISNULL(ar.Sub_License_Code, 0)
@@ -653,6 +655,8 @@ BEGIN
 	AND hb.Holdback_Release_Date > GETDATE()) Or hb.Holdback_Type = 'R')
 	LEFT JOIN Acq_Deal_Rights_Holdback_Platform hbp On hb.Acq_Deal_Rights_Holdback_Code = hbp.Acq_Deal_Rights_Holdback_Code and AA.Platform_Code = hbp.Platform_Code
 	LEFT JOIN Acq_Deal_Rights_Holdback_Territory hbt On hb.Acq_Deal_Rights_Holdback_Code = hbt.Acq_Deal_Rights_Holdback_Code AND AA.Country_Code = hbt.Country_Code
+	Where ((hb.Holdback_Type = 'D' And CAST(ISNULL(TD.Rights_End_Date, '31Dec9999') AS DATE) >= CAST(hb.Holdback_Release_Date as DATE) AND CAST(hb.Holdback_Release_Date as DATE) >= GETDATE()) Or hb.Holdback_Type = 'R')
+	OR ISNULL(hb.Holdback_Release_Date,'') = ''
 	--Where (hb.Holdback_Type = 'D' And CAST(ISNULL(TD.Rights_End_Date, '31Dec9999') AS DATETIME) > hb.Holdback_Release_Date AND hb.Holdback_Release_Date > GETDATE()) Or hb.Holdback_Type = 'R'
 	
 	Select Distinct Title_Code InTo #MainTit_AP From #TMP_MAIN_AP
@@ -769,6 +773,7 @@ BEGIN
 	FROM #TMP_MAIN_AP t2
 	---------holdback added for generate string-----
 	CREATE TABLE #Temp_Country_Names_Neo(
+		Row_ID INT IDENTITY(1,1),
 		Territory_Code INT,
 		Country_Cd INT,
 		Country_Codes VARCHAR(2000),
@@ -844,16 +849,27 @@ BEGIN
 
 	print '2'
 	TRUNCATE TABLE #Temp_Country_Names_Neo
+	------------Commented by Aditya implementation on next line
+	--INSERT INTO #Temp_Country_Names_Neo(Country_Cd)
+	--SELECT DISTINCT Country_Code FROM #TMP_MAIN_AP Where ISNULL(Country_Names, '') = ''
 	
-	INSERT INTO #Temp_Country_Names_Neo(Country_Cd)
-	SELECT DISTINCT Country_Code FROM #TMP_MAIN_AP Where ISNULL(Country_Names, '') = ''
+	--UPDATE tmc SET tmc.Country_Names = cur.Country_Name FROM Country cur
+	--INNER JOIN #Temp_Country_Names_Neo tmc ON cur.Country_Code = tmc.Country_Cd
+
+	--UPDATE tm SET tm.Country_Names = tmc.Country_Names, tm.Region_Type = 'C' FROM #TMP_MAIN_AP tm 
+	--INNER JOIN #Temp_Country_Names_Neo tmc ON tm.Country_Code = tmc.Country_Cd AND ISNULL(tm.Country_Names, '') = '' AND ISNULL(Region_Type, '') <> 'T' 
 	
-	UPDATE tmc SET tmc.Country_Names = cur.Country_Name FROM Country cur
-	INNER JOIN #Temp_Country_Names_Neo tmc ON cur.Country_Code = tmc.Country_Cd
+	INSERT INTO #Temp_Country_Names_Neo(Country_Codes)
+	SELECT DISTINCT Country_Cd_Str FROM #TMP_MAIN_AP Where ISNULL(Country_Names, '') = ''
+	
+	
+	UPDATE tmc SET tmc.Country_Names = c.Region_Name FROM  #Temp_Country_Names_Neo tmc 
+	Cross Apply DBO.UFN_Get_Report_Territory(tmc.Country_Codes, tmc.Row_ID) c
 
 	UPDATE tm SET tm.Country_Names = tmc.Country_Names, tm.Region_Type = 'C' FROM #TMP_MAIN_AP tm 
-	INNER JOIN #Temp_Country_Names_Neo tmc ON tm.Country_Code = tmc.Country_Cd AND ISNULL(tm.Country_Names, '') = '' AND ISNULL(Region_Type, '') <> 'T' 
+	INNER JOIN #Temp_Country_Names_Neo tmc ON tm.Country_Cd_Str = tmc.Country_Codes AND ISNULL(tm.Country_Names, '') = '' AND ISNULL(Region_Type, '') <> 'T' 
 	
+
 	PRINT 'PA-STEP-9.4- Delete Duplicate Records ' + convert(varchar(30),getdate() ,109)
 	---------- PARTIATIOn BY QUERY FOR DELETING DUPLICATE RECORDS
 
@@ -1008,10 +1024,9 @@ BEGIN
 	BEGIN
 		-----------------Query to get title details
 		SELECT t.Title_Code, t.Title_Language_Code, 
-		t.Title_Name
-		--CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
-		,
-			Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
+		--t.Title_Name
+		CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
+		,Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
 			Star_Cast = [dbo].[UFN_GetStarCastForTitle](t.Title_Code),
 			Director = [dbo].[UFN_GetDirectorForTitle](t.Title_Code),
 			COALESCE(t.Duration_In_Min, '0') Duration_In_Min, COALESCE(t.Year_Of_Production, '') Year_Of_Production 
@@ -1062,7 +1077,14 @@ BEGIN
 	print 'PA-STEP-13 .1.1'
 	SELECT DISTINCT 
 			trt.Title_Name, pt.Platform_Hiearachy AS Platform_Name, '' AS Col1, tm.Country_Names As Col2, '' As Col3, 
-			CAST(tm.Right_Start_Date AS DATETIME) Rights_Start_Date, 
+			--CAST(tm.Right_Start_Date AS DATETIME) Rights_Start_Date, 
+			Cast(
+				CASE 
+					WHEN ISNULL(tm.Holdback_Release_Date,'')='' OR CAST(tm.Right_Start_Date as DATETIME) > CAST(tm.Holdback_Release_Date as DATETIME)
+				THEN tm.Right_Start_Date 
+				ELSE DateAdd(D, 1, tm.Holdback_Release_Date) 
+				END As DateTime
+			) As Right_Start_Date,
 			CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME) Rights_End_Date,
 			Title_Language_Names, Sub_Language_Names, Dub_Language_Names, trt.Genres_Name, trt.Star_Cast, trt.Director, trt.Duration_In_Min, trt.Year_Of_Production, 
 			trr.Restriction_Remarks Restriction_Remark, trr.Sub_Deal_Restriction_Remark,
@@ -1084,7 +1106,8 @@ BEGIN
 			LEFT JOIN Sub_License sl ON tm.Sub_License_Code = sl.Sub_License_Code
 			LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 			LEFT JOIN #MainAH_AP hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
-
+			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME)) OR
+			ISNULL(tm.Holdback_Release_Date,'') = ''
 		DROP TABLE #Temp_Right_Remarks_AP
 	END
 	ELSE
@@ -1093,7 +1116,14 @@ BEGIN
 	print 'PA-STEP-13 .1.2'
 		SELECT DISTINCT 
 			trt.Title_Name, pt.Platform_Hiearachy AS Platform_Name, '' AS Col1,  tm.Country_Names As Col2, '' As Col3,  
-			CAST(tm.Right_Start_Date AS DATETIME) Rights_Start_Date, 
+			--CAST(tm.Right_Start_Date AS DATETIME) Rights_Start_Date, 
+			Cast(
+				CASE 
+					WHEN ISNULL(tm.Holdback_Release_Date,'')='' OR CAST(tm.Right_Start_Date as DATETIME) > CAST(tm.Holdback_Release_Date as DATETIME)
+				THEN tm.Right_Start_Date 
+				ELSE DateAdd(D, 1, tm.Holdback_Release_Date) 
+				END As DateTime
+			) As Right_Start_Date,
 			CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME) Rights_End_Date,
 			Title_Language_Names , Sub_Language_Names, Dub_Language_Names, trt.Genres_Name, trt.Star_Cast, trt.Director, trt.Duration_In_Min, trt.Year_Of_Production, 
 			'' Restriction_Remark, '' Sub_Deal_Restriction_Remark,
@@ -1113,6 +1143,8 @@ BEGIN
 		LEFT JOIN Sub_License sl ON ISNULL(tm.Sub_License_Code, 0) = ISNULL(sl.Sub_License_Code, 0)
 		LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 		LEFT JOIN #MainAH_AP hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
+		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME)) OR
+		ISNULL(tm.Holdback_Release_Date,'') = ''
 	END
 	------------------ END
 	
