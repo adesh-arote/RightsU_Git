@@ -148,7 +148,7 @@ namespace RightsU_Plus.Controllers
             if (!string.IsNullOrEmpty(searchText))
             {
                 List<int?> lstChannelCode = objChannelService.GetList().Where(x => x.Channel_Name.ToUpper().Contains(searchText.ToUpper())).Select(y => y.Channel_Code).ToList();
-                List<int> lstUserCode = objUserService.GetAll().Where(x => x.First_Name.ToUpper().Contains(searchText.ToUpper()) || x.Last_Name.ToUpper().Contains(searchText.ToUpper())).
+                List<int?> lstUserCode = objUserService.GetAll().Where(x => x.First_Name.ToUpper().Contains(searchText.ToUpper()) || x.Last_Name.ToUpper().Contains(searchText.ToUpper())).
                     Select(y => y.Users_Code).ToList();
                 //lstBVException_Searched = lstBVException.Where(w => w.BVException_Channel
                 //    .Any(a => a.Channel.Channel_Name.ToUpper().Contains(searchText.ToUpper()))

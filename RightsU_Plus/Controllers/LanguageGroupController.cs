@@ -191,7 +191,7 @@ namespace RightsU_Plus.Controllers
             RightsU_Dapper.Entity.Language objLG = new RightsU_Dapper.Entity.Language();
             if (Language_Group_Code > 0)
             {
-                objL = objLanguageGroupService.GetLanguageGroupByID(Language_Group_Code);
+                objL = objLanguageGroupService.GetLanguageGroupByID(Language_Group_Code, new Type[] { typeof(Language_Group_Details) });
                 //objL.EntityState = State.Modified;
                 //objLanguageGroupService.UpdateMusic_Deal(objL);
             }
@@ -242,8 +242,10 @@ namespace RightsU_Plus.Controllers
             objL.Last_Action_By = objLoginUser.Users_Code;
             objL.Is_Active = "Y";
             objL.Language_Group_Name = Language_Group_Name;
-            
-            
+            //objL.Language_Group_Details.First().Language_Code [] = LanguageCodes;
+
+
+
             if (status != "E")
             {
                 try
@@ -258,7 +260,7 @@ namespace RightsU_Plus.Controllers
                     bool isValid = true;
                     if (isValid)
                     {
-                        lstLanguage_Group_Searched = lstLanguage_Group = objLanguageGroupService.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();
+                        lstLanguage_Group_Searched = lstLanguage_Group = objLanguageGroupService.GetList(new Type[] { typeof(Language_Group_Details) }).OrderByDescending(x => x.Last_Updated_Time).ToList();
                     }
                 }
                 catch (Exception e)

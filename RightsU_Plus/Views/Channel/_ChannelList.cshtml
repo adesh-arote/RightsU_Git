@@ -17,6 +17,9 @@
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
     }
+    List<RightsU_Dapper.Entity.Country> objChannel = new List<RightsU_Dapper.Entity.Country>();
+    RightsU_Dapper.BLL.Services.Country_Service objCountryService = new RightsU_Dapper.BLL.Services.Country_Service();
+    List<RightsU_Dapper.Entity.Country> lstCountry = objCountryService.GetList().ToList();
 }
 <script>
     @*$(document).ready(function () {
@@ -76,8 +79,10 @@
                 string strCountry = "";
                 if (item.Channel_Territory.Count > 0)
                 {
+                    List<int?> lstCountryCode = item.Channel_Territory.Select(x=>x.Country_Code).ToList();
 
-                    strCountry = string.Join(", ", item.Channel_Territory.Select(s => s.Country.Country_Name).ToList());
+                    strCountry = string.Join(",", lstCountry.Where(w => lstCountryCode.Contains(w.Country_Code)).Select(c => c.Country_Name).ToList());
+                     //= string.Join(", ", item.Channel_Territory.Select(s => s.Country.Country_Name).ToList());
                 }
 
                 if (item.Is_Active == "N")

@@ -14,6 +14,7 @@ namespace RightsU_Dapper.Entity
         public int? Talent_Role_Code { get; set; }
         [ForeignKeyReference(typeof(Talent))]
         public Nullable<int> Talent_Code { get; set; }
+        [ForeignKeyReference(typeof(Role))]
         public Nullable<int> Role_Code { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]

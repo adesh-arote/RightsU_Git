@@ -1538,7 +1538,7 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public void Update(Language_Group entity)
         {
-            Language_Group oldObj = Get(entity.Language_Group_Code);
+            Language_Group oldObj = Get(entity.Language_Group_Code,new Type[] { typeof(Language_Group_Details) });
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Language_Group entity)
@@ -1559,7 +1559,7 @@ namespace RightsU_Dapper.DAL.Repository
         // public Language_Repository(string conStr) : base(conStr) { }
         public Language Get(int? Id, Type[] RelationList = null)
         {
-            var obj = new { Language_Group_Code = Id };
+            var obj = new { Language_Code = Id };
             return base.GetById<Language>(obj, RelationList);
         }
         public void Add(Language entity)
@@ -2448,7 +2448,7 @@ namespace RightsU_Dapper.DAL.Repository
 
         public IEnumerable<Channel> GetAll(Type[] additionalTypes = null)
         {
-            return base.GetAll<Channel>();
+            return base.GetAll<Channel>(additionalTypes);
         }
         public IEnumerable<Channel> SearchFor(object param)
         {
@@ -2489,7 +2489,7 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public User Get(int? Id, Type[] RelationList = null)
         {
-            var obj = new { User_Code = Id };
+            var obj = new { Users_Code = Id };
             return base.GetById<User>(obj, RelationList);
         }
         public void Add(User entity)

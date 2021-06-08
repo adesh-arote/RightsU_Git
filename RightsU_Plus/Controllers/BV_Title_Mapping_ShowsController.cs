@@ -152,7 +152,7 @@ namespace RightsU_Plus.Controllers
         {
             string Program_Category = Convert.ToString(objSystem_Parameter_New_Service.GetList().Where(x => x.Parameter_Name == "Show_Program_Category").Select(s => s.Parameter_Value).FirstOrDefault());
 
-            MultiSelectList lst = new MultiSelectList(objBV_HouseId_DataService.GetList().Where(x => x.Is_Mapped == "N" && (x.IsIgnore == "N" || x.IsIgnore == null)).OrderBy(o => o.BV_Title).Select(i => new { BV_Title = i.BV_Title }).Distinct().ToList(), "BV_Title", "BV_Title", "Select some options");  // && Program_Category.Contains(x.Program_Category)
+            SelectList lst = new SelectList(objBV_HouseId_DataService.GetList().Where(x => x.Is_Mapped == "N" && (x.IsIgnore == "N" || x.IsIgnore == null)).OrderBy(o => o.BV_Title).Select(i => new { BV_Title = i.BV_Title }).Distinct().ToList(), "BV_Title", "BV_Title", "Select some options");  // && Program_Category.Contains(x.Program_Category)
             return lst;
         }
         public JsonResult BindDDL()

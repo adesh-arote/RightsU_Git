@@ -6,7 +6,7 @@ namespace RightsU_Dapper.Entity
     using Dapper.SimpleLoad;
     using Dapper.SimpleSave;
 
-    [Table("Genre")]
+    [Table("Genres")]
     public partial class Genre
     {
         public Genre()
@@ -16,7 +16,7 @@ namespace RightsU_Dapper.Entity
             this.Programs = new HashSet<Program>();
             this.Title_Alternate_Genres = new HashSet<Title_Alternate_Genres>();
         }
-
+        [PrimaryKey]
         public int? Genres_Code { get; set; }
         public string Genres_Name { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
@@ -25,11 +25,13 @@ namespace RightsU_Dapper.Entity
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
-
+        [OneToMany]
         public virtual ICollection<Channel> Channels { get; set; }
+        [OneToMany]
         public virtual ICollection<Title_Geners> Title_Geners { get; set; }
+        [OneToMany]
         public virtual ICollection<Program> Programs { get; set; }
+        [OneToMany]
         public virtual ICollection<Title_Alternate_Genres> Title_Alternate_Genres { get; set; }
-
     }
 }

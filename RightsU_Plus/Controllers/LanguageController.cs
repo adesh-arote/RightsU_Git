@@ -245,7 +245,14 @@ namespace RightsU_Plus.Controllers
             objGenre.Is_Active = "Y";
             objGenre.Language_Name = Language_Name;
             dynamic resultSet;
-            objLanguageService.AddEntity(objGenre);
+            if (Language_Code > 0)
+            {
+                objLanguageService.UpdateEntity(objGenre);
+            }
+            else
+            {
+                objLanguageService.AddEntity(objGenre);
+            }
             bool isValid = true;// objService.Save(objGenre, out resultSet);
 
             if (isValid)

@@ -61,6 +61,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objCurrency_Service"] = value; }
         }
+        Type[] RelationList = new Type[] { typeof(Currency_Exchange_Rate)};
 
         #endregion
 
@@ -175,7 +176,7 @@ namespace RightsU_Plus.Controllers
                 RightsU_Dapper.Entity.Currency objCurrency = objCurrencyService.GetTalentByID(currencyCode);
                 objCurrency.Is_Active = doActive;
                 //objCurrency.EntityState = State.Modified;
-                objCurrencyService.UpdateMusic_Deal(objCurrency);
+                objCurrencyService.UpdateCurrency(objCurrency);
                 dynamic resultSet;
                 // bool isValid = objService.Save(objCurrency, out resultSet);
                 bool isValid = true;
@@ -230,7 +231,7 @@ namespace RightsU_Plus.Controllers
             }
 
             if (currencyCode > 0)
-                objCurrency = objCurrencyService.GetTalentByID(currencyCode);
+                objCurrency = objCurrencyService.GetTalentByID(currencyCode, RelationList);
 
             ViewBag.CommandName = commandName;
             ViewBag.EnableBaseCurrency = enableBaseCurrency;
@@ -262,7 +263,7 @@ namespace RightsU_Plus.Controllers
             string status = "S", message = "";
 
             if (currencyCode > 0)
-                status = "Test";
+                status = "S";
             //objCurrency.EntityState = State.Modified;
             else
             {
@@ -280,6 +281,14 @@ namespace RightsU_Plus.Controllers
             objCurrency.Is_Active = "Y";
 
             dynamic resultSet;
+            if (currencyCode > 0)
+            {
+                objCurrencyService.UpdateCurrency(objCurrency);
+            }
+            else
+            {
+                objCurrencyService.AddEntity(objCurrency);
+            }
             //if (!objCurrency_Service.Save(objCurrency, out resultSet))
             if(1 == 2)
             {
@@ -334,19 +343,21 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveExchangeRate(string dummyGuid, DateTime effectiveDate, decimal exchangeRate)
         {
-            string status = "S", message = "";
+            string status = "S", message = "",Operation = "" ; 
 
             Currency_Exchange_Rate objCER = objCurrency.Currency_Exchange_Rate.Where(w => w.Dummy_Guid == dummyGuid).FirstOrDefault();
             if (objCER == null)
             {
+                Operation = "Add";
                 objCER = new Currency_Exchange_Rate();
                 //objCER.EntityState = State.Added;
                 objCurrency.Currency_Exchange_Rate.Add(objCER);
             }
             else
             {
+                Operation = "Edit";
                 if (objCER.Currency_Exchange_Rate_Code > 0)
-                    status = "Test";
+                    status = "S";
                // objCurrency.Currency_Exchange_Rate.up
                 //objCurrencyService.UpdateMusic_Deal()
                     //objCER.EntityState = State.Modified;
@@ -354,11 +365,11 @@ namespace RightsU_Plus.Controllers
             
                 objCER.Effective_Start_Date = effectiveDate;
             objCER.Exchange_Rate = exchangeRate;
-            if (objCER == null)
+            if (Operation == "Add" )
             {
                 objCurrency_Exchange_RateService.AddEntity(objCER);
             }
-            else
+            else if(Operation == "Edit")
             {
                 objCurrency_Exchange_RateService.UpdateMusic_Deal(objCER);
             }

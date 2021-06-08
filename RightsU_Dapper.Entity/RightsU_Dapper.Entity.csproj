@@ -64,6 +64,9 @@
   <ItemGroup>
     <Compile Include="Deal\Deal_Creation.cs" />
     <Compile Include="Deal\Deal_Schema.cs" />
+    <Compile Include="IPR\IPR_Opp.cs" />
+    <Compile Include="IPR\IPR_Rep_Channel.cs" />
+    <Compile Include="IPR\IPR_Opp_Channel.cs" />
     <Compile Include="IPR\IPR_Country.cs" />
     <Compile Include="IPR\IPR_REP.cs" />
     <Compile Include="Master_Entities\Music_Title.cs" />
@@ -228,7 +231,7 @@
     <Compile Include="Master_Entities\Vendor_Country.cs" />
     <Compile Include="Music_Deal_Entities\USP_List_Music_Deal_Result.cs" />
     <Compile Include="Music_Deal_Entities\Music_Deal.cs" />
-    <Compile Include="Music_Deal_Entities\Music_Deal_Channel.cs" />
+    <Compile Include="Master_Entities\Music_Deal_Channel.cs" />
     <Compile Include="Music_Deal_Entities\Music_Deal_Country.cs" />
     <Compile Include="Music_Deal_Entities\Music_Deal_DealType.cs" />
     <Compile Include="Music_Deal_Entities\Music_Deal_Language.cs" />

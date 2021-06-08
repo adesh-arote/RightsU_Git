@@ -4,7 +4,13 @@
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
-    }  
+    }
+    List<RightsU_Dapper.Entity.Deal_Type> objDealType = new List<RightsU_Dapper.Entity.Deal_Type>();
+    RightsU_Dapper.BLL.Services.Deal_Type_Service objDealTypeService = new RightsU_Dapper.BLL.Services.Deal_Type_Service();
+    List<RightsU_Dapper.Entity.Deal_Type> lstDealType = objDealTypeService.GetList().ToList();
+    List<RightsU_Dapper.Entity.Genre> objGenreType = new List<RightsU_Dapper.Entity.Genre>();
+    RightsU_Dapper.BLL.Services.Genres_Service objGenreService = new RightsU_Dapper.BLL.Services.Genres_Service();
+    List<RightsU_Dapper.Entity.Genre> lstGenre = objGenreService.GetList().ToList();
 }
 <table class="table table-bordered table-hover" id="tblProgram">
     <thead>
@@ -76,17 +82,19 @@
                             @*<span> @Html.Raw(item.Program_Name.Replace("A", "<span class='highlighted'>" + "A" + "</span>")) </span>*@
                             <span>@item.Program_Name</span>
                         </td>
-
+                        string strDealTypeName = "", strGenreName = "";
                         <td>
-                            @if (@item.Deal_Type != null)
+                            @if (@item.Deal_Type_Code != null)
                             {
-                                @item.Deal_Type.Deal_Type_Name
+                                strDealTypeName = lstDealType.Where(x => x.Deal_Type_Code == item.Deal_Type_Code).Select(w => w.Deal_Type_Name).FirstOrDefault();
+                            <span> @strDealTypeName</span>
                             }
                         </td>
                         <td>
-                            @if (@item.Genre != null)
+                            @if (@item.Genres_Code != null)
                             {
-                                @item.Genre.Genres_Name
+                                strGenreName = lstGenre.Where(x => x.Genres_Code == item.Genres_Code).Select(w => w.Genres_Name).FirstOrDefault();
+                            <span>@strGenreName</span>
                             }
                         </td>
                         <td align="center">

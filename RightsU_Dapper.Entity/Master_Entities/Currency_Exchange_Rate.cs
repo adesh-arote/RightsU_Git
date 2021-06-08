@@ -16,7 +16,11 @@ namespace RightsU_Dapper.Entity
         public System.DateTime Effective_Start_Date { get; set; }
         public Nullable<System.DateTime> System_End_Date { get; set; }
         public Nullable<decimal> Exchange_Rate { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string _Dummy_Guid { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string Dummy_Guid
         {
             get
@@ -26,6 +30,8 @@ namespace RightsU_Dapper.Entity
                 return _Dummy_Guid;
             }
         }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         private string GetDummy_Guid()
         {
             return Guid.NewGuid().ToString();

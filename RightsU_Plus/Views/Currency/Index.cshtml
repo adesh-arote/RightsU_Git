@@ -335,6 +335,7 @@
         });
     }
     function SaveCurrency() {
+        debugger;
         if (!checkCurrentAction())
             return false;
         var returnVal = true;
@@ -361,6 +362,9 @@
 
         if (returnVal) {
             var currencyCode = $('#hdnCurrencyCode').val();
+            if (currencyCode == "") {
+                currencyCode = 0;
+            }
             var isBaseCurrency = $('#chkBaseCurrency').prop("checked");
             $.ajax({
                 type: "POST",

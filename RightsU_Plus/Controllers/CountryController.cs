@@ -79,7 +79,7 @@ namespace RightsU_Plus.Controllers
             RecordCount = lstCountry_Searched.Count;
             //Country_Service objCountrySerivce = new Country_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Dapper.Entity.Language> lstlanguage = new List<RightsU_Dapper.Entity.Language>();
-            lstlanguage = (List<RightsU_Dapper.Entity.Language>)objLanguageService.GetList(new Type[] { typeof(Language) });
+            lstlanguage = (List<RightsU_Dapper.Entity.Language>)objLanguageService.GetList(); //new Type[] { typeof(Country_Language) }
             ViewBag.Countries = new SelectList(lstlanguage, "language_Code", "language_Name");
 
             if (RecordCount > 0)

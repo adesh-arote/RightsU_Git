@@ -354,7 +354,7 @@ namespace RightsU_Dapper.BLL.Services
         {
             objCurrency_Repository.Add(obj);
         }
-        public void UpdateMusic_Deal(Currency obj)
+        public void UpdateCurrency(Currency obj)
         {
             objCurrency_Repository.Update(obj);
         }

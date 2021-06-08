@@ -7,7 +7,7 @@
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
     RightsU_Dapper.BLL.Services.Channel_Service objService = new RightsU_Dapper.BLL.Services.Channel_Service();
-    List<RightsU_Dapper.Entity.Channel> lstChannel = objService.GetAll().ToList();
+    List<RightsU_Dapper.Entity.Channel> lstChannel = objService.GetList().ToList();
 
     RightsU_Dapper.BLL.Services.User_Service objUserService = new RightsU_Dapper.BLL.Services.User_Service();
     List<RightsU_Dapper.Entity.User> lstUser = objUserService.GetAll().ToList();

@@ -272,7 +272,7 @@ namespace RightsU_Plus.Controllers
         }
         private void FetchData()
         {
-            lstChannel_Searched = lstChannel = objChannelService.GetList().OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstChannel_Searched = lstChannel = objChannelService.GetList(RelationList).OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
         #endregion
 

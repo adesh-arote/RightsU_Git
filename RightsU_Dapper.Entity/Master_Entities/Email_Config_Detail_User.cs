@@ -2,6 +2,7 @@
 namespace RightsU_Dapper.Entity
 {
     using Dapper.SimpleSave;
+    using Dapper.SimpleLoad;
     using System;
     using System.Collections.Generic;
 
@@ -29,16 +30,35 @@ namespace RightsU_Dapper.Entity
         public string ToUser_MailID { get; set; }
         public string CCUser_MailID { get; set; }
         public string BCCUser_MailID { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string Business_Unit_Names { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string User_Names { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string CC_User_Names { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string BCC_User_Names { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string Security_Group_Names { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string Channel_Names { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public int temp_Id { get; set; }
-
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public virtual Email_Config_Detail Email_Config_Detail { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string _Dummy_Guid { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         public string Dummy_Guid
         {
             get
@@ -48,7 +68,8 @@ namespace RightsU_Dapper.Entity
                 return _Dummy_Guid;
             }
         }
-
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         private string GetDummy_Guid()
         {
             return Guid.NewGuid().ToString();

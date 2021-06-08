@@ -49,7 +49,7 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForProgram.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstProgram_Searched = lstProgram = (List<RightsU_Dapper.Entity.Program>)objProgramService.GetList(RelationList);
+            lstProgram_Searched = lstProgram = (List<RightsU_Dapper.Entity.Program>)objProgramService.GetList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameAsc, Value = "NA" });
@@ -63,10 +63,10 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Program_Code = programCode;
             ViewBag.CommandName = commandName;
-            var DealTypeCode = objProgramService.GetList(RelationList).Where(x => x.Program_Code == programCode).Select(x => x.Deal_Type_Code).FirstOrDefault();
-            var GenreCode = objProgramService.GetList(RelationList).Where(x => x.Program_Code == programCode).Select(x => x.Genres_Code).FirstOrDefault();
-            ViewBag.DealType = new SelectList(objDeal_TypeService.GetList(RelationList).Where(x => x.Is_Active == "Y").ToList(), "Deal_Type_Code", "Deal_Type_Name", DealTypeCode);
-            ViewBag.Genre = new SelectList(objGenresService.GetList(RelationList).Where(x => x.Is_Active == "Y").ToList(), "Genres_Code", "Genres_Name", GenreCode);
+            var DealTypeCode = objProgramService.GetList().Where(x => x.Program_Code == programCode).Select(x => x.Deal_Type_Code).FirstOrDefault();
+            var GenreCode = objProgramService.GetList().Where(x => x.Program_Code == programCode).Select(x => x.Genres_Code).FirstOrDefault();
+            ViewBag.DealType = new SelectList(objDeal_TypeService.GetList().Where(x => x.Is_Active == "Y").ToList(), "Deal_Type_Code", "Deal_Type_Name", DealTypeCode);
+            ViewBag.Genre = new SelectList(objGenresService.GetList().Where(x => x.Is_Active == "Y").ToList(), "Genres_Code", "Genres_Name", GenreCode);
             List<RightsU_Dapper.Entity.Program> lst = new List<RightsU_Dapper.Entity.Program>();
             int RecordCount = 0;
             RecordCount = lstProgram_Searched.Count;

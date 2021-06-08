@@ -110,7 +110,7 @@ namespace RightsU_Plus.Controllers
                 Session["selectedBccSession"] = value;
             }
         }
-        Type[] RelationList = new Type[] { typeof(Email_Config_Detail) };
+        Type[] RelationList = new Type[] { typeof(Email_Config_Detail), typeof(Email_Config_Detail_User) };
         public ActionResult Index()
         {
             objECD = null;
@@ -121,6 +121,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.Show_Hide_Buttons = GetUserModuleRights();//objProcedureService.USP_MODULE_RIGHTS(GlobalParams.ModuleCodeForEmailConfig, objLoginUser.Security_Group_Code, objLoginUser.Users_Code).FirstOrDefault();
             List<Email_Config> lstEC = objEmail_ConfigService.GetList(RelationList).ToList();
+
             lstEC.ForEach(f =>
             {
                 f.User_Count = (f.Email_Config_Detail.FirstOrDefault() ?? new Email_Config_Detail()).Email_Config_Detail_User.Select(s => new
