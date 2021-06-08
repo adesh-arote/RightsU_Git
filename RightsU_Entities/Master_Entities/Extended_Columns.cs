@@ -11,7 +11,7 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class Extended_Columns
     {
         public Extended_Columns()
@@ -19,7 +19,8 @@ namespace RightsU_Entities
             this.Extended_Columns_Value = new HashSet<Extended_Columns_Value>();
             this.Map_Extended_Columns = new HashSet<Map_Extended_Columns>();
         }
-    
+
+        public State EntityState { get; set; }
         public int Columns_Code { get; set; }
         public string Columns_Name { get; set; }
         public string Control_Type { get; set; }
@@ -30,7 +31,8 @@ namespace RightsU_Entities
         public string Ref_Display_Field { get; set; }
         public string Ref_Value_Field { get; set; }
         public string Additional_Condition { get; set; }
-    
+        public string Is_Add_OnScreen { get; set; }
+
         public virtual ICollection<Extended_Columns_Value> Extended_Columns_Value { get; set; }
         public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }
     }

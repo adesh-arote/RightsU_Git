@@ -118,7 +118,7 @@
                             <div class="pagination" id="Pagination"></div>
                             <span class="pull-right">
                                 @objMessageKey.PageSize:
-                                <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();" 
+                                <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();"
                                        onfocus="CheckEditMode()" onblur="setDefaultPaging('txtPageSize')" />
                             </span>
                         </div>
@@ -140,8 +140,16 @@
                         <li>
                             @if (ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
                             {
-                                <input type="button" id="btnCancelDeal" title="Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                       onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Acq_Attachment")'">
+                                if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                {
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                }
+                                else
+                                {
+                                    <input type="button" id="btnCancelDeal" title="Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Acq_Attachment")'">
+                                }
                             }
                         </li>
                     </ul>

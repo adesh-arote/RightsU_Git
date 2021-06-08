@@ -412,28 +412,28 @@
                                             <input type="hidden" id="hdn_DealTypeCode" value="@objSchema.Deal_Type_Code" />
                                             @objMessageKey.CurrencyExchangeRate:
                                             @{
-    bool disTxt = false;
-    if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
-    {
-        disTxt = true;
-    }
-    else
-    {
-        if (ViewBag.Currency == "INR") { disTxt = true; }
-    }
-    string currExRate = Convert.ToString(ViewBag.CurrencyExchangeRate);
-    <input type="text" style="width: 80px;" id="txtCurrencyExchangeRate" value="@currExRate" disabled="@disTxt" onkeyup="UpdateCurrExRate()" />
+                                                bool disTxt = false;
+                                                if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                                                {
+                                                    disTxt = true;
+                                                }
+                                                else
+                                                {
+                                                    if (ViewBag.Currency == "INR") { disTxt = true; }
+                                                }
+                                                string currExRate = Convert.ToString(ViewBag.CurrencyExchangeRate);
+                                                <input type="text" style="width: 80px;" id="txtCurrencyExchangeRate" value="@currExRate" disabled="@disTxt" onkeyup="UpdateCurrExRate()" />
                                                 @Html.Hidden("hdnCurrencyExchangeRate", @currExRate)
                                             }
                                             @ViewBag.Currency
                                         </td>
                                         <td>
                                             @*<div class="pull-right">
-                                                @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
-                                                {<a title="Add Cost" href="#" class="btn btn-primary" data-toggle="modal" onclick="AddEditCost(0,'Add');">Add</a>}
-                                                }
+                                                    @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                                    {<a title="Add Cost" href="#" class="btn btn-primary" data-toggle="modal" onclick="AddEditCost(0,'Add');">Add</a>}
+                                                    }
 
-                                            </div>*@
+                                                </div>*@
                                         </td>
                                     </tr>
                                 </tbody>
@@ -457,26 +457,34 @@
                                 <ul class="form_link_nav clearfix">
                                     @if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
                                     {
-                                    <li>
-                                        <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save">
-                                        <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
-                                    </li>
+                                        <li>
+                                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save">
+                                            <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+                                        </li>
                                         if (objSchema.Deal_Workflow_Flag == GlobalParams.DEAL_MODE_REOPEN || objSchema.Mode == GlobalParams.DEAL_MODE_REOPEN)
                                         {
-                                    <li>
-                                        <input type="submit" id="btnSaveApproveDeal" class="btn btn-primary" value="@objMessageKey.SaveApprove" onclick="SetHidden();">
-                                    </li>
+                                            <li>
+                                                <input type="submit" id="btnSaveApproveDeal" class="btn btn-primary" value="@objMessageKey.SaveApprove" onclick="SetHidden();">
+                                            </li>
                                         }
-                                    <li>
-                                        <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="CancelSaveDeal()" />
-                                        @*  <input type="button" id="btnCancelDeal" class="btn btn-primary" value="Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Cost")    '">*@
-                                    </li>
+                                        <li>
+                                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="CancelSaveDeal()" />
+                                            @*  <input type="button" id="btnCancelDeal" class="btn btn-primary" value="Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Cost")    '">*@
+                                        </li>
                                     }
                                     else
                                     {
-                                    <li>
-                                        <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Cost")    '" />
-                                    </li>
+                                        <li>
+                                            @if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                            {
+                                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                                       onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                            }
+                                            else
+                                            {
+                                                <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Cost")    '" />
+                                            }
+                                        </li>
                                     }
 
                                 </ul>

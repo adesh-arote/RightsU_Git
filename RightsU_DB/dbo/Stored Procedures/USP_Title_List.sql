@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Title_List]      
+﻿CREATE PROCEDURE [dbo].[USP_Title_List]      
 (       
 --DECLARE      
     @Deal_Type_code int ,      
@@ -16,7 +15,8 @@ CREATE PROCEDURE [dbo].[USP_Title_List]
 AS      
 --DECLARE  
 -- @Deal_Type_code int ,      
---    @TitleName NVARCHAR(2000),      
+--    @TitleName NVARCHAR(2000),  
+--	@OriginalTitleName NVARCHAR(MAX),    
 --    @BUCode INT,      
 --    @PageNo INT,      
 --    @RecordCount Int ,      
@@ -25,12 +25,13 @@ AS
 -- @AdvanceSearch NVARCHAR(max),  
 -- @ExactMatch varchar(max) = ''  
   
---set @Deal_Type_code = 1      
+--set @Deal_Type_code = 1  
+--Set @OriginalTitleName =''    
 --set @TitleName = ''      
 --set @PageNo =  1      
 --set  @RecordCount = 10      
 --set @IsPaging = 'Y'      
---set @PageSize = 10  
+--set @PageSize = 100 
 --SET @AdvanceSearch = ''  
 --SET @ExactMatch = ''      
   
@@ -83,6 +84,8 @@ BEGIN
                                             from Title T      
                                             INNER join Deal_Type DT on DT.Deal_Type_Code = T.Deal_Type_Code  
            INNER join Language L on T.Title_Language_Code = L.Language_Code  
+		   LEFT JOIN MAP_Extended_Columns MEC ON T.Title_Code = MEC.Record_Code
+		   LEFT JOIN  Extended_Columns_Value ECV ON MEC.Columns_Code = ECV.Columns_Code
            LEFT JOIN Program P ON T.Program_Code = P.Program_Code  
                                             where 1=1       
                                             '+ @Condition +'  '+@AdvanceSearch+'  
@@ -119,8 +122,8 @@ BEGIN
     --Select @RecordCount = Count(*) From #Temp      
          
          
-    Declare @Sql NVARCHAR(MAX)      
-    Set @Sql = '      
+    Declare @Sql_1  NVARCHAR(MAX) ,@Sql_2 NVARCHAR(MAX)      
+    Set @Sql_1 = '      
         SELECT Title_Name, Original_Title, Title_Code, Language_Name, Year_Of_Production, Program_Name, CountryName, Original_Language, TalentName, Producer, Director, Title_Image      
     ,Is_Active, Deal_Type_Code, Deal_Type_Name, Synopsis, Genre      
         FROM (      
@@ -173,22 +176,26 @@ BEGIN
                     )      
            ),1,2,'''')) as Director      
            , [dbo].[UFN_Get_Title_Genre](T.Title_Code) as Genre, ISNULL(T.Title_Image,'' '') As Title_Image, T.Last_UpDated_Time, T.Inserted_On      
-           ,Case When T.Is_Active=''Y'' then ''Active'' Else ''Deactive'' END AS Is_Active, T.Deal_Type_Code, DT.Deal_Type_Name, Tmp.Row_Num        
+           ,Case When T.Is_Active=''Y'' then ''Active'' Else ''Deactive'' END AS Is_Active, T.Deal_Type_Code, DT.Deal_Type_Name, Tmp.Row_Num   '
+	SET @Sql_2 ='	        
     from Title T      
     INNER join Deal_Type DT on DT.Deal_Type_Code = T.Deal_Type_Code     
     LEFT join [Language] L on T.Title_Language_Code  = L.Language_Code   
 	LEFT join [Language] OL on T.Original_Language_Code  = OL.Language_Code    
+	LEFT JOIN MAP_Extended_Columns MEC ON T.Title_Code = MEC.Record_Code
+	LEFT JOIN  Extended_Columns_Value ECV ON MEC.Columns_Code = ECV.Columns_Code
     LEFT join Title_Country TC on T.Title_Code = TC.Title_Code   
  INNER JOIN #Temp Tmp on T.Title_Code = Tmp.RowId    
  left join Program P on T.Program_code = P.Program_Code   
       where 1=1  '+ @Condition +'  '+@AdvanceSearch+'    
           ) tbl  
         WHERE tbl.Title_Code in (Select RowId From #Temp)      
-        ORDER BY tbl.Row_Num   
+        ORDER BY tbl.Row_Num
     '      
  --order by ISNULL(tbl.Last_UpDated_Time,tbl.Inserted_On) DESC      
-    PRINT @Sql      
-    Exec(@Sql)      
+    --PRINT @Sql      
+	--Select @Condition
+    Exec(@Sql_1 + @Sql_2)      
     --Drop Table #Temp      
   
     --SELECT Title_Name ,      

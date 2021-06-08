@@ -35,6 +35,12 @@ namespace RightsU_Plus.Controllers
             set { Session["Session_Title_List"] = value; }
         }
 
+        public USP_Title_List_Result obj_Title_List
+        {
+            get { return (USP_Title_List_Result)Session["obj_Title_List"]; }
+            set { Session["obj_Title_List"] = value; }
+        }
+
         public int PageNo
         {
             get
@@ -230,9 +236,11 @@ namespace RightsU_Plus.Controllers
         //public JsonResult BindGrid(string TitleName = "", string DealTypeCode = "1", int PageIndex = 0)
         public PartialViewResult BindGrid(string TitleName = "", string DealTypeCode = "0", int PageIndex = 0, int Selected_BU = 1, string IsShowAll = "", int PageSize = 0, string isSearch = "", string isTAdvanced = "", string GenericSearch = "")
         {
+
             string[] searchString;
             string ExactMatchStr = GenericSearch;
             GenericSearch = !string.IsNullOrEmpty(GenericSearch.Trim()) ? GenericSearch.Trim().Replace("'", "''") : "";
+            var Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").First().Parameter_Value;
 
             if (GenericSearch == "" && objPage_Properties.isSearch == "Y")
                 searchString = objPage_Properties.genericSearch.Split(new string[] { ",", ";", "/", " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -243,6 +251,7 @@ namespace RightsU_Plus.Controllers
             string newLanguage = "";
             string newLProgram = "";
             string newOrigtitleString = "";
+            string newTyopOfFilm = "";
 
             for (int i = 1; i <= searchString.Length; i++)
             {
@@ -252,6 +261,10 @@ namespace RightsU_Plus.Controllers
                     {
                         newLanguage += "Language_Name Like N" + "'" + "%" + (searchString[i - 1]) + "%" + "'" + "";
                         newString += "T.Title_Name Like N" + "'" + "%" + (searchString[i - 1]) + "%" + "'" + "";
+                        if (Is_AcqSyn_Type_Of_Film == "Y")
+                        {
+                            newTyopOfFilm += "ECV.Columns_Value Like N" + "'" + "%" + (searchString[i - 1]) + "%" + "'" + "";
+                        }
                         newLProgram += "P.Program_Name Like N" + "'" + "%" + (searchString[i - 1]) + "%" + "'" + "";
                         newOrigtitleString += "T.Original_Title Like N" + "'" + "%" + (searchString[i - 1]) + "%" + "'" + "";
                     }
@@ -270,6 +283,7 @@ namespace RightsU_Plus.Controllers
             //    a = a.Substring(0, a.Length - 1);
             //}
             // TitleName.Replace("/", " ");
+            ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").First().Parameter_Value;
             TitleName.Trim(' ');
             TitleName.TrimEnd(',');
             string sql = "";
@@ -344,6 +358,8 @@ namespace RightsU_Plus.Controllers
                     sql += " AND T.Title_Code in (select TT.Title_Code from Title_Talent TT  where Talent_Code in (" + objPage_Properties.StarCastCodes_Search + ") AND Role_Code = " + GlobalParams.RoleCode_StarCast + ")";
                 if (objPage_Properties.ProgramCode_Search != "")
                     sql += " AND T.Program_Code IN(" + objPage_Properties.ProgramCode_Search + ")";
+                if (objPage_Properties.Column_Name != "")
+                    sql += " AND MEC.Columns_Value_Code IN(" + objPage_Properties.Column_Name + ")";
                 //if (objPage_Properties.TitleName != "")
                 //    sql += " AND T.Title_Name ='" + objPage_Properties.TitleName + "'";
                 //    TitleList = objUSP.USP_Title_List(objPage_Properties.TitleName, PageNo, objRecordCount, "Y", PageSize,
@@ -354,15 +370,15 @@ namespace RightsU_Plus.Controllers
             }
             else if (objPage_Properties.isSearch == "Y")
             {
-                sql = "AND (T.Deal_Type_Code In(select DT.Deal_Type_Code from Deal_Type DT where Deal_Type_Name like N'" + objPage_Properties.genericSearch + "%') or T.Title_Language_Code IN(select L.Language_Code from [Language] L where " + newLanguage + " ) or " + newString + " OR T.Program_Code IN(select P.Program_Code from [Program] P where " + newLProgram + ") OR " + newOrigtitleString + " )";
-                TitleList = objUSP.USP_Title_List(Convert.ToInt32(objPage_Properties.DealTypeCode), "","", Selected_BU, objPage_Properties.PageNo, objRecordCount, "Y", recordPerPage, sql, ExactMatchStr).ToList();
+                sql = "AND (T.Deal_Type_Code In(select DT.Deal_Type_Code from Deal_Type DT where Deal_Type_Name like N'" + objPage_Properties.genericSearch + "%') or T.Title_Language_Code IN(select L.Language_Code from [Language] L where " + newLanguage + " ) or " + newString + " OR T.Program_Code IN(select P.Program_Code from [Program] P where " + newLProgram + ") OR " + newOrigtitleString + " OR " + newTyopOfFilm + " )";
+                TitleList = objUSP.USP_Title_List(Convert.ToInt32(objPage_Properties.DealTypeCode), "", "", Selected_BU, objPage_Properties.PageNo, objRecordCount, "Y", recordPerPage, sql, ExactMatchStr).ToList();
             }
             else
-                TitleList = objUSP.USP_Title_List(Convert.ToInt32(objPage_Properties.DealTypeCode), "","", Selected_BU, objPage_Properties.PageNo, objRecordCount, "Y", recordPerPage, sql).ToList();
+                TitleList = objUSP.USP_Title_List(Convert.ToInt32(objPage_Properties.DealTypeCode), "", "", Selected_BU, objPage_Properties.PageNo, objRecordCount, "Y", recordPerPage, sql).ToList();
             //TitleList = objUSP.USP_Title_List(objPage_Properties.TitleName, PageNo, objRecordCount, "Y", PageSize, "", "", "", "", "", "", "", "", "", "", "").ToList();
             // or T.Program_Code IN(select P.Program_Code from [Program] P where Program_Name like N'" + objPage_Properties.genericSearch + "%')
             RecordCount = Convert.ToInt32(objRecordCount.Value);
-            
+
             ViewBag.RecordCount = RecordCount;
 
             if (objPage_Properties.PageNo <= 0)
@@ -396,13 +412,14 @@ namespace RightsU_Plus.Controllers
             objPage_Properties.TitleName = "";
             objPage_Properties.OrigTitleName = "";
             objPage_Properties.ProgramCode_Search = "";
+            objPage_Properties.Column_Name = "";
         }
         public PartialViewResult BindLanguage()
         {
             objTitle = new RightsU_Entities.Title();
 
             int Original_Language_code = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "Title_OriginalLanguage").Select(i => i.Parameter_Value).FirstOrDefault());
-                        
+
             List<SelectListItem> lstLanguageList = new List<SelectListItem>();
             List<SelectListItem> lstDealType = new List<SelectListItem>();
             List<SelectListItem> lstExtendedColumns = new List<SelectListItem>();
@@ -424,7 +441,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.IsTitleDurationMandatory = IsTitleDurationMandatory;
             List<USP_Get_Title_PreReq_Result> lstUSP_Get_Title_PreReq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Title_PreReq("DT", 1, 0, "").ToList();
             lstDealType = new SelectList(lstUSP_Get_Title_PreReq.Where(x => x.Data_For == "DT"), "Display_Value", "Display_Text").ToList();
-            ViewBag.LstExtendedColumns = lstExtendedColumns;           
+            ViewBag.LstExtendedColumns = lstExtendedColumns;
             ViewBag.Language = lstLanguageList;
             ViewBag.DealType = lstDealType;
             ViewBag.PageNo = objPage_Properties.PageNo;
@@ -437,7 +454,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.DealTypeCodeSearch = "0";
             ViewBag.PageSizeCreate = recordPerPage;
             ViewBag.CodeForEmbeddedMusic = GlobalParams.CodeForEmbeddedMusic;
-             return PartialView("_Create", objTitle);
+            return PartialView("_Create", objTitle);
         }
         private List<SelectListItem> BindMusicLabel()
         {
@@ -449,7 +466,7 @@ namespace RightsU_Plus.Controllers
             //lstMusicLabel.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
             return lstMusicLabel;
         }
-       
+
         private void BindTitleType(string DealTypeCode = "0")
         {
             int a = Convert.ToInt32(DealTypeCode);
@@ -542,7 +559,7 @@ namespace RightsU_Plus.Controllers
             return Json(arr_Title_List);
         }
 
-        public JsonResult SaveTitle(string hdnTxtTitleName, string hdnddlLanguage, string hdnddlDealType,string hdnProgramCategory, string hdnTxtDuration, string Type, string hdnMusicLabel)
+        public JsonResult SaveTitle(string hdnTxtTitleName, string hdnddlLanguage, string hdnddlDealType, string hdnProgramCategory, string hdnTxtDuration, string Type, string hdnMusicLabel)
         {
             dynamic resultSet;
             objTitle.Title_Name = hdnTxtTitleName;
@@ -577,12 +594,12 @@ namespace RightsU_Plus.Controllers
             }
             //}
             new Title_Service(objLoginEntity.ConnectionStringName).Save(objTitle, out resultSet);
-          
+
             string str_Program_Category_Required = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Parameter_Name == "Is_Program_Category_Required" && i.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
             if (str_Program_Category_Required == "Y")
             {
-                  string str_Program_Category_Code = hdnProgramCategory;
-                  string str_Program_Category_Value = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Parameter_Name == "Program_Category_Value" && i.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
+                string str_Program_Category_Code = hdnProgramCategory;
+                string str_Program_Category_Value = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Parameter_Name == "Program_Category_Value" && i.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
 
                 if (str_Program_Category_Code == "")
                     str_Program_Category_Code = "0";
@@ -590,7 +607,7 @@ namespace RightsU_Plus.Controllers
                 int program_Category_value_Code = Convert.ToInt32(str_Program_Category_Value);
                 Map_Extended_Columns objMapExtendedColumns = new Map_Extended_Columns();
                 objMapExtendedColumns.Columns_Code = program_Category_value_Code;
-                objMapExtendedColumns.Columns_Value_Code =Convert.ToInt32(str_Program_Category_Code) ;
+                objMapExtendedColumns.Columns_Value_Code = Convert.ToInt32(str_Program_Category_Code);
                 objMapExtendedColumns.Table_Name = "TITLE";
                 objMapExtendedColumns.Record_Code = objTitle.Title_Code;
                 objMapExtendedColumns.Is_Multiple_Select = "N";
@@ -606,7 +623,7 @@ namespace RightsU_Plus.Controllers
             return Json(objJson);
         }
 
-        public JsonResult ValidateIsDuplicate(string TitleName, string DealTypeCode,string ProgramCategoryCode)
+        public JsonResult ValidateIsDuplicate(string TitleName, string DealTypeCode, string ProgramCategoryCode)
         {
             TitleName = TitleName.Trim(' ');
             int Count = 0;
@@ -619,6 +636,31 @@ namespace RightsU_Plus.Controllers
                 objJson.Add("Message", "");
 
             return Json(objJson);
+        }
+
+        public JsonResult OnChangeBindTitle(int? DealTypeCode)
+        {
+            return Json(Bind_Tiitle(DealTypeCode), JsonRequestBehavior.AllowGet);
+        }
+        private MultiSelectList Bind_Tiitle(int? DealTypeCode)
+        {
+            Title_Service objTS = new Title_Service(objLoginEntity.ConnectionStringName);
+            MultiSelectList lstTitle = new MultiSelectList(objTS.SearchFor(T => T.Is_Active == "Y" &&
+                                                 T.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code == DealTypeCode && AM.Title_Code == T.Title_Code)
+        )
+                                     .Select(R => new { Title_Name = R.Title_Name, Title_Code = R.Title_Code }), "Title_Code", "Title_Name");//, obj_Title_List.Title_Code.Split(','));
+            return lstTitle;
+        }
+        public JsonResult Bind_Title_List(string Searched_Title = "", string DealTypeCode = "")
+        {
+            List<string> terms = Searched_Title.Split('﹐').ToList();
+            terms = terms.Select(s => s.Trim()).ToList();
+            string searchString = terms.LastOrDefault().ToString().Trim();
+            //string[] arrsearchString = searchString.ToUpper().Split(',');
+
+            var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code.ToString() == DealTypeCode && AM.Title_Code == x.Title_Code)).Where(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()))
+               .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
+            return Json(result);
         }
 
         public JsonResult DeactivateTitle(string TitleCode, string Type)
@@ -841,7 +883,7 @@ namespace RightsU_Plus.Controllers
                 //sql = "AND (T.Deal_Type_Code In(select DT.Deal_Type_Code from Deal_Type DT where Deal_Type_Name like '" + objPage_Properties.genericSearch + "%') or T.Title_Language_Code IN(select L.Language_Code from [Language] L where Language_Name like '%" + objPage_Properties.genericSearch + "%') or Title_Name like '%" + objPage_Properties.genericSearch + "%')";
                 parm[0] = new ReportParameter("Deal_Type_code", Convert.ToString(objPage_Properties.DealTypeCode));
                 parm[1] = new ReportParameter("TitleName", "");
-                parm[1] = new ReportParameter("OriginalTitleName"," ");
+                parm[1] = new ReportParameter("OriginalTitleName", " ");
                 parm[2] = new ReportParameter("BUCode", Convert.ToString(0));
                 parm[3] = new ReportParameter("PageNo", Convert.ToString(1));
                 parm[4] = new ReportParameter("RecordCount", Convert.ToString(0));
@@ -856,7 +898,7 @@ namespace RightsU_Plus.Controllers
             {
                 parm[0] = new ReportParameter("Deal_Type_code", Convert.ToString(objPage_Properties.DealTypeCode));
                 parm[1] = new ReportParameter("TitleName", "");
-                parm[1] = new ReportParameter("OriginalTitleName"," ");
+                parm[1] = new ReportParameter("OriginalTitleName", " ");
                 parm[2] = new ReportParameter("BUCode", Convert.ToString(0));
                 parm[3] = new ReportParameter("PageNo", Convert.ToString(1));
                 parm[4] = new ReportParameter("RecordCount", Convert.ToString(0));
@@ -1022,7 +1064,7 @@ namespace RightsU_Plus.Controllers
         }
         public void AdvanceSearch(string SrchStarCast = "", string SrchLanguage = "",
         string SrchYearOfRelease = "", string SrchTitle = "", string SrchCountry = "", string SrchDirector = "",
-        string SrhDealTypeCode = "", string srchProgram = "", string SrchOrigLang = "", string SrchOrigTitle = "")
+        string SrhDealTypeCode = "", string srchProgram = "", string SrchOrigLang = "", string SrchOrigTitle = "", string sechTypeofFilm = "")
         {
             objPage_Properties.StarCastCodes_Search = SrchStarCast;
             objPage_Properties.LanguagesCodes_Search = SrchLanguage;
@@ -1038,6 +1080,8 @@ namespace RightsU_Plus.Controllers
             objPage_Properties.isAdvanced = "Y";
             objPage_Properties.DealTypeCode = SrhDealTypeCode;
             objPage_Properties.ProgramCode_Search = srchProgram;
+            objPage_Properties.Column_Name = sechTypeofFilm;
+
 
         }
         //public JsonResult BindAdvanced_Search_Controls()
@@ -1089,6 +1133,10 @@ namespace RightsU_Plus.Controllers
                 "Display_Value", "Display_Text");
             SelectList lstProgram = new SelectList(new Program_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
             .Select(i => new { Display_Value = i.Program_Code, Display_Text = i.Program_Name }).ToList(), "Display_Value", "Display_Text");
+            //lstDealType = new SelectList(lstUSP_Get_Title_PreReq.Where(x => x.Data_For == "DT"), "Display_Value", "Display_Text").ToList();
+            var lst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name == "Type of Film").First().Columns_Code;
+            SelectList lstTypeOfFilm = new SelectList(new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == lst)
+           .Select(i => new { Display_Value = i.Columns_Value_Code, Display_Text = i.Columns_Value }).ToList(), "Display_Value", "Display_Text");
 
 
             objJson.Add("lstTStarCast", lstTStarCast);
@@ -1100,6 +1148,8 @@ namespace RightsU_Plus.Controllers
             objJson.Add("lstCountry", lstCountry);
             objJson.Add("lstDealType", lstDealType);
             objJson.Add("lstProgram", lstProgram);
+            objJson.Add("lstTypeOfFilm", lstTypeOfFilm);
+            //ViewData["hdnFlag"] = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").First().Parameter_Value;
 
             if (objPage_Properties.LanguagesCodes_Search != "" && objPage_Properties.LanguagesCodes_Search != null)
                 objPage_Properties.LanguagesCodes_Search = objPage_Properties.LanguagesCodes_Search;
@@ -1132,6 +1182,11 @@ namespace RightsU_Plus.Controllers
                 objPage_Properties.ProgramCode_Search = objPage_Properties.ProgramCode_Search;
             else
                 objPage_Properties.ProgramCode_Search = "";
+
+            if (objPage_Properties.Column_Name != null)
+                objPage_Properties.Column_Name = objPage_Properties.Column_Name;
+            else
+                objPage_Properties.Column_Name = "";
 
             objJson.Add("objPage_Properties", objPage_Properties);
             return Json(objJson);
@@ -1203,6 +1258,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.SrchTitle = objPage_Properties.TitleName;
             ViewBag.SrchOrigTitle = objPage_Properties.OrigTitleName;
             ViewBag.Program_Code = objPage_Properties.ProgramCode_Search;
+            ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").First().Parameter_Value;
             BindDDL();
             BindTitleType();
 
@@ -1249,6 +1305,7 @@ namespace RightsU_Plus.Controllers
                 set { _OrigTitleName = value; }
             }
             public string DealTypeCode { get; set; }
+            public string Column_Name { get; set; }
             public string StarCastCodes_Search { get; set; }
             public string LanguagesCodes_Search { get; set; }
             public string OrigLangCodes_Search { get; set; }

@@ -10,6 +10,10 @@
     [Roles]                 VARCHAR (500)  NULL,
     [Is_Ignore]             CHAR (1)       NULL,
     [Mapped_By]             CHAR (1)       NULL,
+    [Music_Album_Code]      INT            NULL,
+    [Music_Album]           NVARCHAR (MAX) NULL,
     CONSTRAINT [PK_DM_Master_Log] PRIMARY KEY CLUSTERED ([DM_Master_Log_Code] ASC)
 );
+
+
 

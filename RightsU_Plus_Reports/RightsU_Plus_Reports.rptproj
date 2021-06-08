@@ -56,6 +56,7 @@
     <DataSource Include="DS_Reports.rds" />
   </ItemGroup>
   <ItemGroup>
+    <Report Include="Movie_Availability_Report.rdl" />
     <Report Include="rptAcquisition_Deal_List.rdl" />
     <Report Include="rptAcquisition_Expiry.rdl" />
     <Report Include="rptAcquisition_Query.rdl" />
@@ -116,6 +117,7 @@
     <Report Include="rpt_Episodic_Cost.rdl" />
     <Report Include="rpt_Self_Avail.rdl" />
     <Report Include="rpt_Syn_Deal_Version_History.rdl" />
+    <Report Include="Show_Availability_Report.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
 </Project>

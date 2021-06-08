@@ -86,6 +86,7 @@
           <Property Name="Is_Auto_Push" Type="char" MaxLength="1" />
           <Property Name="Deal_Segment_Code" Type="int" />
           <Property Name="Revenue_Vertical_Code" Type="int" />
+          <Property Name="Confirming_Party" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -491,6 +492,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Original_Right_Type" Type="char" MaxLength="1" />
           <Property Name="Promoter_Flag" Type="char" MaxLength="1" />
           <Property Name="Right_Status" Type="char" MaxLength="1" />
+          <Property Name="Is_Under_Production" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Acq_Deal_Rights_Blackout">
           <Key>
@@ -2733,6 +2735,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Ref_Display_Field" Type="varchar" MaxLength="100" />
           <Property Name="Ref_Value_Field" Type="varchar" MaxLength="100" />
           <Property Name="Additional_Condition" Type="varchar" MaxLength="1000" />
+          <Property Name="Is_Add_OnScreen" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Extended_Columns_Value">
           <Key>
@@ -3828,6 +3831,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Platform_Hiearachy" Type="varchar" MaxLength="2000" />
           <Property Name="Is_Sport_Right" Type="char" MaxLength="1" />
           <Property Name="Is_Applicable_Syn_Run" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Platform_Broadcast">
+          <Key>
+            <PropertyRef Name="Platform_Broadcast_Code" />
+          </Key>
+          <Property Name="Platform_Broadcast_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Platform_Code" Type="int" />
+          <Property Name="Broadcast_Mode_Code" Type="int" />
         </EntityType>
         <EntityType Name="Platform_Group">
           <Key>
@@ -5207,6 +5218,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Title_Image" Type="varchar" MaxLength="2000" />
           <Property Name="Music_Label_Code" Type="int" />
           <Property Name="Program_Code" Type="int" />
+          <Property Name="Original_Title_Code" Type="int" />
         </EntityType>
         <EntityType Name="Title_Alternate">
           <Key>
@@ -12692,6 +12704,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Is_Auto_Push" Type="char" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
+          <Parameter Name="Confirming_Party" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_Insert_Acq_Deal_Pushback_Dubbing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Pushback_Code" Type="int" Mode="In" />
@@ -13570,6 +13583,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Is_Auto_Push" Type="char" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
+          <Parameter Name="Confirming_Party" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_Update_IPR_Opp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IPR_Opp_Code" Type="int" Mode="In" />
@@ -14235,6 +14249,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Party_Group" EntityType="Self.Party_Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Payment_Terms" EntityType="Self.Payment_Terms" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Platform" EntityType="Self.Platform" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Platform_Broadcast" EntityType="Self.Platform_Broadcast" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Platform_Group" EntityType="Self.Platform_Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Platform_Group_Details" EntityType="Self.Platform_Group_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Program" EntityType="Self.Program" Schema="dbo" store:Type="Tables" />
@@ -20743,6 +20758,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="DM_Master_Import_Code" Mode="In" Type="Int32" />
             <Parameter Name="CallFor" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Platform_Broadcast" EntityType="RightsU_NeoModel.Platform_Broadcast" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -20832,6 +20848,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Deal_Segment" Relationship="RightsU_NeoModel.FK_Acq_Deal_Deal_Segment" FromRole="Acq_Deal" ToRole="Deal_Segment" />
           <Property Name="Revenue_Vertical_Code" Type="Int32" />
           <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical" FromRole="Acq_Deal" ToRole="Revenue_Vertical" />
+          <Property Name="Confirming_Party" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -20990,6 +21007,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Acq_Deal_Rights_Promoter" Relationship="RightsU_NeoModel.FK__Acq_Deal___Acq_D__4DE0370C" FromRole="Acq_Deal_Rights" ToRole="Acq_Deal_Rights_Promoter" />
           <Property Name="Promoter_Flag" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Right_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Under_Production" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Acq_Deal_Rights_Blackout">
           <Key>
@@ -22326,6 +22344,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Additional_Condition" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
           <NavigationProperty Name="Extended_Columns_Value" Relationship="RightsU_NeoModel.FK_Extended_Columns_Value_Extended_Columns" FromRole="Extended_Columns" ToRole="Extended_Columns_Value" />
           <NavigationProperty Name="Map_Extended_Columns" Relationship="RightsU_NeoModel.FK_Map_Extended_Columns_Extended_Columns" FromRole="Extended_Columns" ToRole="Map_Extended_Columns" />
+          <Property Name="Is_Add_OnScreen" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Extended_Columns_Value">
           <Key>
@@ -23586,6 +23605,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="MHRequestDetails" Relationship="RightsU_NeoModel.FK_MHRequestDetails_Title" FromRole="Title" ToRole="MHRequestDetail" />
           <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title" FromRole="Title" ToRole="MHCueSheetSong" />
           <NavigationProperty Name="Title_Milestone" Relationship="RightsU_NeoModel.FK__Title_Mil__Title__334C3C61" FromRole="Title" ToRole="Title_Milestone" />
+          <Property Name="Original_Title_Code" Type="Int32" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -35512,6 +35532,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="DisplayText" Nullable="true" />
           <Property Type="String" Name="CallFor" Nullable="true" />
         </ComplexType>
+        <EntityType Name="Platform_Broadcast">
+          <Key>
+            <PropertyRef Name="Platform_Broadcast_Code" />
+          </Key>
+          <Property Name="Platform_Broadcast_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Platform_Code" Type="Int32" />
+          <Property Name="Broadcast_Mode_Code" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -35521,6 +35549,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <MappingFragment StoreEntitySet="Acq_Deal">
+                <ScalarProperty Name="Confirming_Party" ColumnName="Confirming_Party" />
                 <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
                 <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
                 <ScalarProperty Name="Is_Auto_Push" ColumnName="Is_Auto_Push" />
@@ -35578,6 +35607,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <ModificationFunctionMapping>
                 <InsertFunction FunctionName="RightsU_NeoModel.Store.USP_INSERT_ACQ_DEAL">
+                  <ScalarProperty Name="Confirming_Party" ParameterName="Confirming_Party" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" />
                   <ScalarProperty Name="Is_Auto_Push" ParameterName="Is_Auto_Push" />
@@ -35630,6 +35660,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                   <ResultBinding Name="Agreement_No" ColumnName="Agreement_No" />
                 </InsertFunction>
                 <UpdateFunction FunctionName="RightsU_NeoModel.Store.USP_UPDATE_ACQ_DEAL">
+                  <ScalarProperty Name="Confirming_Party" ParameterName="Confirming_Party" Version="Current" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" Version="Current" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" Version="Current" />
                   <ScalarProperty Name="Is_Auto_Push" ParameterName="Is_Auto_Push" Version="Current" />
@@ -35784,6 +35815,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal_Rights">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Rights">
               <MappingFragment StoreEntitySet="Acq_Deal_Rights">
+                <ScalarProperty Name="Is_Under_Production" ColumnName="Is_Under_Production" />
                 <ScalarProperty Name="Right_Status" ColumnName="Right_Status" />
                 <ScalarProperty Name="Promoter_Flag" ColumnName="Promoter_Flag" />
                 <ScalarProperty Name="Original_Right_Type" ColumnName="Original_Right_Type" />
@@ -37110,6 +37142,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Extended_Columns">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Columns">
               <MappingFragment StoreEntitySet="Extended_Columns">
+                <ScalarProperty Name="Is_Add_OnScreen" ColumnName="Is_Add_OnScreen" />
                 <ScalarProperty Name="Columns_Code" ColumnName="Columns_Code" />
                 <ScalarProperty Name="Columns_Name" ColumnName="Columns_Name" />
                 <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
@@ -38249,6 +38282,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Titles">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Title">
               <MappingFragment StoreEntitySet="Title">
+                <ScalarProperty Name="Original_Title_Code" ColumnName="Original_Title_Code" />
                 <ScalarProperty Name="Program_Code" ColumnName="Program_Code" />
                 <ScalarProperty Name="Music_Label_Code" ColumnName="Music_Label_Code" />
                 <ScalarProperty Name="Title_Image" ColumnName="Title_Image" />
@@ -44559,6 +44593,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Platform_Broadcast">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Platform_Broadcast">
+              <MappingFragment StoreEntitySet="Platform_Broadcast">
+                <ScalarProperty Name="Broadcast_Mode_Code" ColumnName="Broadcast_Mode_Code" />
+                <ScalarProperty Name="Platform_Code" ColumnName="Platform_Code" />
+                <ScalarProperty Name="Platform_Broadcast_Code" ColumnName="Platform_Broadcast_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

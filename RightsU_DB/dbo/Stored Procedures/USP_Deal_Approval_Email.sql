@@ -72,6 +72,39 @@ BEGIN
 	DECLARE @DatabaseEmail_Profile varchar(MAX)	, @EmailUser_Body NVARCHAR(MAX), @Users_Email_Id Varchar(MAX),@Emailbody NVARCHAR(Max), @DefaultSiteUrl VARCHAR(MAX)
 	DECLARE @EmailHead NVARCHAR(max), @EMailFooter NVARCHAR(max),  @MailSubjectCr AS NVARCHAR(MAX)
 	DECLARE @AcqSyn NVARCHAR(MAX) = 'Acquisition'
+	DECLARE @Email_Config_Code INT
+	SELECT @Email_Config_Code = Email_Config_Code FROM Email_Config where [Key] = 'NDA'
+	DECLARE @Users_Code INT
+	SELECT @Users_Code = Users_Code FROM [dbo].[UFN_Get_Bu_Wise_User]('NDA')
+
+	-----------------------------------------------------------
+	DECLARE 
+	@To_Users_Code NVARCHAR(MAX),
+	@To_User_Mail_Id  NVARCHAR(MAX),
+	@CC_Users_Code  NVARCHAR(MAX),
+	@CC_User_Mail_Id  NVARCHAR(MAX),
+	@BCC_Users_Code  NVARCHAR(MAX),
+	@BCC_User_Mail_Id  NVARCHAR(MAX),
+	@Channel_Codes NVARCHAR(MAX)
+	
+	DECLARE @Tbl2 TABLE (
+		Id INT,
+		BuCode INT,
+		To_Users_Code NVARCHAR(MAX),
+		To_User_Mail_Id  NVARCHAR(MAX),
+		CC_Users_Code  NVARCHAR(MAX),
+		CC_User_Mail_Id  NVARCHAR(MAX),
+		BCC_Users_Code  NVARCHAR(MAX),
+		BCC_User_Mail_Id  NVARCHAR(MAX),
+		Channel_Codes NVARCHAR(MAX)
+	)
+
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+
+	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+	EXEC USP_Get_EmailConfig_Users 'NDA', 'N'
+	--------------------------------------------------------
+
 	IF(@mailFor = 'AP')
 	BEGIN
 
@@ -125,7 +158,7 @@ BEGIN
 
 			DECLARE curOuter CURSOR FOR SELECT DISTINCT Email_Id FROM  Approval_Email_BU
 			OPEN curOuter 
-			
+			--Select * from Approval_Email_BU
 			FETCH NEXT FROM curOuter Into @Users_Email_Id
 				SET @RowCount=0
 				SET @EmailUser_Body=''
@@ -139,7 +172,7 @@ BEGIN
 					Declare curInner cursor For select Agreement_No,Deal_Desc,Deal_Type,Agreement_Date,Party
 					from #DealDetails
 					Where Business_Unit_Code IN(select Business_Unit_Code from Approval_Email_BU where Email_Id=@Users_Email_Id)
-
+					
 						OPEN curInner
 						Fetch Next From curInner Into @Agreement_No,@Deal_Desc,@Deal_Type,@Agreement_Date,@Party
 						WHILE @@Fetch_Status = 0 
@@ -203,6 +236,10 @@ BEGIN
 							 @subject = @MailSubjectCr,
 							 @body = @EmailUser_Body, 
 							 @body_format = 'HTML';
+
+							INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_User_Mail_Id, [Subject])
+							SELECT @Email_Config_Code, @Emailbody, ISNULL(@Users_Email_Id ,''), @MailSubjectCr
+
 					END
 					SET @EmailUser_Body=''
 				
@@ -259,10 +296,12 @@ BEGIN
 						SELECT @DefaultSiteUrl = DefaultSiteUrl from System_Param
 
 						DECLARE curOuter CURSOR FOR 
-						SELECT DISTINCT Users_Email_id FROM Deal_Expiry_Email WHERE Alert_Type = 'U'
+						SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
+
 						OPEN curOuter 
 			
-						FETCH NEXT FROM curOuter INTO @Users_Email_Id
+						FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+
 						SET @RowCount=0
 						SET @EmailUser_Body=''
 				
@@ -272,7 +311,7 @@ BEGIN
 							SET @Emailbody = '<table class="tblFormat">'
 							DECLARE curInner CURSOR FOR 
 							SELECT Agreement_No ,Agreement_Date ,Deal_Desc ,Primary_Vendor, Title_Names ,Deal_Creation_Date ,Deal_Added_Since FROM #DealDetailsAdded
-									WHERE Title_Names IS NOT NULL AND  Business_Unit_Code IN ( SELECT Business_Unit_Code FROM Deal_Expiry_Email WHERE Users_Email_id = @Users_Email_Id AND  Alert_Type = 'U')
+									WHERE Title_Names IS NOT NULL AND  Business_Unit_Code IN ( SELECT Business_Unit_Codes FROM Email_Config_Detail_User ECDU INNER JOIN Email_Config_Detail ECD ON ECDU.Email_Config_Detail = ECD.Email_Config_Detail_Code INNER JOIN Email_Config EC ON ECD.Email_Config_Code = EC.Email_Config_Code  WHERE ToUser_MailID = @Users_Email_Id AND  EC.[Key] = 'NDA')
 
 							OPEN curInner
 							Fetch Next From curInner Into @Agreement_No,@Agreement_Date,@Deal_Desc,@Primary_Vendor,@Title_Names,@Deal_Creation_Date,@Deal_Added_Since
@@ -340,15 +379,21 @@ BEGIN
 							IF(@RowCount!=0)
 							BEGIN
 									 EXEC msdb.dbo.sp_send_dbmail 
-									 @profile_name = @DatabaseEmail_Profile,
-									 @recipients =  @Users_Email_Id,
-									 @subject = @MailSubjectCr,
-									 @body = @EmailUser_Body, 
-									 @body_format = 'HTML';
+										@profile_name = @DatabaseEmail_Profile,
+										@recipients =  @To_User_Mail_Id,
+										@copy_recipients = @CC_User_Mail_Id,
+										@blind_copy_recipients = @BCC_User_Mail_Id,
+										@subject = @MailSubjectCr,
+										@body = @EmailUser_Body, 
+										@body_format = 'HTML';
+									
+							INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+							SELECT @Email_Config_Code,@Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  @MailSubjectCr
+
 							END
 							SET @EmailUser_Body=''
 				
-							FETCH NEXT FROM curOuter INTO @Users_Email_Id
+							FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 						END
 
 						CLOSE curOuter
@@ -434,10 +479,11 @@ BEGIN
 						SELECT @DefaultSiteUrl = DefaultSiteUrl from System_Param
 
 						DECLARE curOuter CURSOR FOR 
-						SELECT DISTINCT Users_Email_id FROM Deal_Expiry_Email WHERE Alert_Type = 'U'
+						SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
+	
 						OPEN curOuter 
 			
-						FETCH NEXT FROM curOuter INTO @Users_Email_Id
+						FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 						SET @RowCount=0
 						SET @EmailUser_Body=''
 				
@@ -446,9 +492,7 @@ BEGIN
 							SET @Index=0
 							SET @Emailbody = '<table class="tblFormat">'
 							DECLARE curInner CURSOR FOR 
-							SELECT Agreement_No ,Agreement_Date ,Deal_Desc ,Primary_Vendor, Title_Names, Deal_Creation_Date ,Deal_Rejection_Date ,Deal_Rejected_Since FROM #DealDetailRejected
-									WHERE Title_Names IS NOT NULL AND  Business_Unit_Code IN ( SELECT Business_Unit_Code FROM Deal_Expiry_Email WHERE Users_Email_id = @Users_Email_Id AND  Alert_Type = 'U')
-
+							SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
 							OPEN curInner
 							Fetch Next From curInner Into @Agreement_No,@Agreement_Date,@Deal_Desc,@Primary_Vendor,@Title_Names, @Deal_Creation_Date,@Deal_Rejection_Date,@Deal_Rejected_Since
 							WHILE @@Fetch_Status = 0 
@@ -516,16 +560,24 @@ BEGIN
 							--SELECT @EmailUser_Body
 							IF(@RowCount!=0)
 							BEGIN
-									 EXEC msdb.dbo.sp_send_dbmail 
-									 @profile_name = @DatabaseEmail_Profile,
-									 @recipients = @Users_Email_Id,
-									 @subject = @MailSubjectCr,
-									 @body = @EmailUser_Body, 
-									 @body_format = 'HTML';
+									
+									  EXEC msdb.dbo.sp_send_dbmail 
+										@profile_name = @DatabaseEmail_Profile,
+										@recipients =  @To_User_Mail_Id,
+										@copy_recipients = @CC_User_Mail_Id,
+										@blind_copy_recipients = @BCC_User_Mail_Id,
+										@subject = @MailSubjectCr,
+										@body = @EmailUser_Body, 
+										@body_format = 'HTML';
+														
+								INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+								SELECT @Email_Config_Code,@Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  @MailSubjectCr
+
+
 							END
 							SET @EmailUser_Body=''
 				
-							FETCH NEXT FROM curOuter INTO @Users_Email_Id
+							FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 						END
 
 						CLOSE curOuter
@@ -568,6 +620,9 @@ BEGIN
 					GOTO Branch_DetailsRejected_Stage_One;
 				END
 	END
+
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
+
 
 	IF OBJECT_ID('tempdb..#DealDetailRejected') IS NOT NULL DROP TABLE #DealDetailRejected
 	IF OBJECT_ID('tempdb..#DealDetails') IS NOT NULL DROP TABLE #DealDetails

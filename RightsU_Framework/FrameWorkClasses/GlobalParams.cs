@@ -138,6 +138,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForAcqDealListReport = 108;
         public const int ModuleCodeForSynDealListReport = 109;
         public const int ModuleCodeForMovieAvailabilityReport = 127;
+        public const int ModuleCodeForMovieAvailabilityNewReport = 247;
         public const int ModuleCodeForProgramAvailabilityReport = 134;
         public const int ModuleCodeForTheatricalAvailabilityReport = 121;
         public const int ModuleCodeForIndiacastMovieAvailabilityReport = 184;
@@ -1770,7 +1771,7 @@ namespace UTOFrameWork.FrameworkClasses
             else if (ReportName == "Title_Availability_Languagewise_3")
                 ReportPath = ReportFolder + "/rptMovie_Availability";
             else if (ReportName == "Title_Availability_Languagewise_V18")
-                ReportPath = ReportFolder + "/rptMovie_Availability_V18";
+                ReportPath = ReportFolder + "/Movie_Availability_Report";//--/rptMovie_Availability_V18
             else if (ReportName == "Title_Availability_Languagewise_V18_Demo")
                 ReportPath = ReportFolder + "/rptMovie_Availability_V18_Demo";
             else if (ReportName == "Acquisition_Expiry_Reports")
@@ -1782,7 +1783,7 @@ namespace UTOFrameWork.FrameworkClasses
             else if (ReportName == "Title_Availability_Show_3")
                 ReportPath = ReportFolder + "/rptShow_Availability";
             else if (ReportName == "Title_Availability_Show_3_V18")
-                ReportPath = ReportFolder + "/rptShow_Availability_V18";
+                ReportPath = ReportFolder + "/Show_Availability_Report";//--/rptShow_Availability_V18
             else if (ReportName == "Title_Availability_Show_3_V18_Demo")
                 ReportPath = ReportFolder + "/rptShow_Availability_V18_Demo";
             else if (ReportName == "rptDealContent")

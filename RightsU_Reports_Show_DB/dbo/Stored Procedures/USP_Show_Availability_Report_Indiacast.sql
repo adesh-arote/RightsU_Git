@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[USP_Show_Availability_Report_Indiacast]
 (
+--DECLARE
  @Title_Code VARCHAR(MAX)='0', 
 	@Is_Original_Language bit, 
 	@Title_Language_Code VARCHAR(MAX),
@@ -51,6 +52,8 @@ BEGIN
 
 	DECLARE @Indiacast_Avail_India_Code varchar(5)
 	SELECT  @Indiacast_Avail_India_Code = Parameter_Value FROM System_Parameter_New where Parameter_Name ='India_Avail'
+
+	--Select * from TestParam
 --Create Table TestParam(
 --	Params Varchar(Max)
 --)
@@ -103,7 +106,46 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets FROM
 	-- interfering with SELECT statements.
 	
-
+--select 
+--@Title_Code='36432',
+--	@Is_Original_Language='1',
+--	@Title_Language_Code='',
+--	@Episode_From='1',
+--	@Episode_To='100000',
+--	@Show_EpisodeWise='N',
+--	@Date_Type='FL',
+--	@Start_Date='15-Feb-2021',
+--	@End_Date='',
+--	@Platform_Group_Code='',
+--	@Platform_Code='',
+--	@Platform_ExactMatch='',
+--	@Platform_MustHave='0',
+--	@Is_IFTA_Cluster='N',
+--	@Territory_Code='',
+--	@Country_Code='',
+--	@Region_ExactMatch='',
+--	@Region_MustHave='',
+--	@Region_Exclusion='',
+--	@Dubbing_Subtitling='',
+--	@Subtit_Language_Code='',
+--	@Subtitling_Group_Code='',
+--	@Subtitling_ExactMatch='',
+--	@Subtitling_MustHave='',
+--	@Subtitling_Exclusion='',
+--	@Dubbing_Group_Code='',
+--	@Dubbing_ExactMatch='',
+--	@Dubbing_MustHave='',
+--	@Dubbing_Exclusion='',
+--	@Dubbing_Language_Code='',
+--	@Restriction_Remarks='false',
+--	@Others_Remarks='false',
+--	@Exclusivity='B',
+--	@SubLicense_Code='',
+--	@BU_Code='0',
+--	@Is_Digital='1'
+	----@Country_Level ='Y',
+	----@Territory_Level ='N',
+	----@TabName ='IF'
 
 	SET NOCOUNT ON;
 	SET FMTONLY OFF;
@@ -459,32 +501,40 @@ BEGIN
 	CREATE TABLE #Temp_Right_Remarks 
 	(
 		Acq_Deal_Rights_Code INT, 
-		Restriction_Remarks VARCHAR(4000), 
-		Remarks VARCHAR(4000), 
-		Rights_Remarks VARCHAR(4000),
-		Sub_Deal_Restriction_Remark VARCHAR(8000), 
-		Sub_License_Name Varchar(100)
+		Restriction_Remarks nvarchar(max), 
+		Remarks nvarchar(max), 
+		Rights_Remarks nvarchar(max),
+		Sub_Deal_Restriction_Remark nvarchar(max), 
+		Sub_License_Name nvarchar(max),
+		Category_Name  VARCHAR(1000),
+		Deal_Type_Name VARCHAR(1000)
 	)
 
 	IF(@Restriction_Remarks = 'Y' OR @Others_Remarks = 'Y' )
 	Begin
 		
-		Insert InTo #Temp_Right_Remarks(Acq_Deal_Rights_Code, Restriction_Remarks, Remarks, Rights_Remarks, Sub_Deal_Restriction_Remark, Sub_License_Name)
+		Insert InTo #Temp_Right_Remarks(Acq_Deal_Rights_Code, Restriction_Remarks, Remarks, Rights_Remarks, Sub_Deal_Restriction_Remark, Sub_License_Name,Category_Name,Deal_Type_Name)
 		SELECT ar.Acq_Deal_Rights_Code, ar.Restriction_Remarks, 
 			   ad.Remarks, ad.Rights_Remarks, 
 			   (
 					STUFF((SELECT DISTINCT ',' + adr_Tmp.Restriction_Remarks 
 					FROM Acq_Deal AD_Tmp
+					INNER JOIN Acq_Deal_Movie Adm_Tmp ON AD_Tmp.Acq_Deal_Code = Adm_Tmp.Acq_Deal_Code AND AD_Tmp.Master_Deal_Movie_Code_ToLink = ADM.Acq_Deal_Movie_Code
 					INNER JOIN Acq_Deal_Rights ADR_Tmp ON adr_Tmp.Acq_Deal_Code = AD_Tmp.Acq_Deal_Code 
-					WHERE AD_Tmp.Is_Master_Deal = 'N' AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
-					(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ar.Acq_Deal_Code)
+					INNER JOIN Acq_Deal_Rights_Title ADRT_Tmp ON ADR_Tmp.Acq_Deal_Rights_Code = ADRT_Tmp.Acq_Deal_Rights_Code AND ADRT_Tmp.Title_Code = Adm_Tmp.Title_Code 
+					AND ISNULL(Adm_Tmp.Episode_Starts_From,0) = ISNULL(ADRT_Tmp.Episode_From,0) AND ISNULL(Adm_Tmp.Episode_End_To,0) = ISNULL(ADRT_Tmp.Episode_To,0)
+					WHERE AD_Tmp.Is_Master_Deal = 'N' --AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
+					--(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ar.Acq_Deal_Code)
 					FOR XML PATH(''),type).value('.', 'nvarchar(max)'),1,1,'')
 				) As Sub_Deal_Restriction_Remark, 
-		CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END
+		CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END,C.Category_Name,DT.Deal_Type_Name
 		FROM Acq_Deal_Rights ar
 		INNER JOIN #Avail_Raw ar1 On ar1.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 		Inner Join Acq_Deal ad On ar.Acq_Deal_Code = ad.Acq_Deal_Code
+		INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code
 		Inner Join Sub_License sl On ar.Sub_License_Code = sl.Sub_License_Code
+		INNER JOin Category C ON ad.Category_Code = C.Category_Code
+		INNER JOin Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code
 		Inner Join #Tmp_SL tsl On tsl.SubLicense_Code = ar.Sub_License_Code And tsl.SubLicense_Code = sl.Sub_License_Code
 		WHERE --ad.Is_Master_Deal = 'Y'
 		--AND ar.Is_Tentative = 'N'
@@ -505,13 +555,15 @@ BEGIN
 	Else
 	Begin
 		
-		Insert InTo #Temp_Right_Remarks(Acq_Deal_Rights_Code, Restriction_Remarks, Remarks, Rights_Remarks, Sub_Deal_Restriction_Remark, Sub_License_Name)
+		Insert InTo #Temp_Right_Remarks(Acq_Deal_Rights_Code, Restriction_Remarks, Remarks, Rights_Remarks, Sub_Deal_Restriction_Remark, Sub_License_Name,Category_Name,Deal_Type_Name)
 		Select ar.Acq_Deal_Rights_Code, '', '', '', '', 
-		CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END
+		CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END,C.Category_Name,DT.Deal_Type_Name
 		FROM Acq_Deal_Rights ar
 		INNER JOIN #Avail_Raw ar1 On ar1.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 		Inner Join Acq_Deal ad On ar.Acq_Deal_Code = ad.Acq_Deal_Code
 		Inner Join Sub_License sl On ar.Sub_License_Code = sl.Sub_License_Code
+		INNER JOin Category C ON ad.Category_Code = C.Category_Code
+		INNER JOin Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code
 		Inner Join #Tmp_SL tsl On tsl.SubLicense_Code = ar.Sub_License_Code And tsl.SubLicense_Code = sl.Sub_License_Code
 		WHERE --ad.Is_Master_Deal = 'Y'
 		--AND ar.Is_Tentative = 'N'
@@ -554,7 +606,11 @@ BEGIN
 		Country_Cd_Str		Varchar(3000),
 		Region_Type			Varchar(1),
 		Country_Names		Varchar(Max),
-		Group_No			Int
+		Group_No			Int,
+		Acq_Deal_Rights_Holdback_Code INT, 
+		Holdback_Type		Char(1), 
+		Holdback_Release_Date Date, 
+		Holdback_On_Platform_Code Int
 	)
 
 	
@@ -629,7 +685,97 @@ BEGIN
 	--Select * From #TMP_MAIN
 
 	END
-	
+	print 'STEP-14 Generate Holdback Data ' + convert(varchar(30),getdate() ,109)	
+	BEGIN
+		Update tm
+		Set tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code, tm.Holdback_Type = hb.Holdback_Type, 
+			tm.Holdback_Release_Date = hb.Holdback_Release_Date, tm.Holdback_On_Platform_Code = hb.Holdback_On_Platform_Code
+		From Acq_Deal_Rights_Holdback hb
+		INNER JOIN #Avail_Raw ar On hb.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
+		INNER JOIN Acq_Deal_Rights_Holdback_Platform hbp On hb.Acq_Deal_Rights_Holdback_Code = hbp.Acq_Deal_Rights_Holdback_Code
+		INNER JOIN Acq_Deal_Rights_Holdback_Territory hbt On hb.Acq_Deal_Rights_Holdback_Code = hbt.Acq_Deal_Rights_Holdback_Code
+		INNER JOIN #TMP_MAIN tm On tm.Avail_Raw_Code = ar.Avail_Raw_Code AND tm.Platform_Code = hbp.Platform_Code AND tm.Country_Code = hbt.Country_Code
+		Where ((hb.Holdback_Type = 'D' And CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATE) >= CAST(hb.Holdback_Release_Date AS DATE) AND CAST(hb.Holdback_Release_Date AS DATE) >= GETDATE()) Or hb.Holdback_Type = 'R')
+		OR ISNULL(hb.Holdback_Release_Date,'') = ''
+		
+		Select Distinct Title_Code InTo #MainTit From #TMP_MAIN
+
+		Select Distinct Acq_Deal_Rights_Holdback_Code, Holdback_Type, Cast('' As NVarchar(Max)) HBComments,  Cast(0 As Int) HB_Run_After_Release_No, Cast(0 As Int) HB_Run_After_Release_Units
+		InTo #MainAH 
+		From #TMP_MAIN Where Acq_Deal_Rights_Holdback_Code Is Not Null
+
+		Update thb
+		Set thb.HBComments = Case When hb.HB_Run_After_Release_No < 0 Then 'Before ' Else 'After ' End + Cast (ABS(hb.HB_Run_After_Release_No) AS VArchar(10)) + 
+							 Case hb.HB_Run_After_Release_Units When 1 Then ' Days' When 2 Then ' Weeks' When 3 Then ' Months' When 4 Then ' Years' End + ' On ',
+			thb.HB_Run_After_Release_No = hb.HB_Run_After_Release_No,
+			thb.HB_Run_After_Release_Units = hb.HB_Run_After_Release_Units
+		From #MainAH thb
+		INNER JOIN Acq_Deal_Rights_Holdback hb On thb.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
+
+		Create Table #ReleaseCountry(
+			Title_Release_Code Int, 
+			Country_Code Int
+		)
+		
+		Insert InTo #ReleaseCountry(Title_Release_Code, Country_Code)
+		Select Distinct tr.Title_Release_Code, Country_Code 
+		From Title_Release tr
+		INNER JOIN #MainTit mt On tr.Title_Code = mt.Title_Code
+		INNER JOIN Title_Release_Region trr On tr.Title_Release_Code = trr.Title_Release_Code And Country_Code Is Not Null
+		UNION
+		Select Distinct tr.Title_Release_Code, trd.Country_Code 
+		From Title_Release tr
+		INNER JOIN #MainTit mt On tr.Title_Code = mt.Title_Code
+		INNER JOIN Title_Release_Region trr On tr.Title_Release_Code = trr.Title_Release_Code And Territory_Code Is Not Null
+		INNER JOIN Territory_Details trd On trr.Territory_Code = trd.Territory_Code
+
+		--Select tr.*
+		Update tm Set tm.Holdback_Release_Date = Case mh.HB_Run_After_Release_Units 
+													  When 1 Then DATEADD(DAY, mh.HB_Run_After_Release_No, tr.Release_Date)
+													  When 2 Then DATEADD(WEEK, mh.HB_Run_After_Release_No, tr.Release_Date)
+													  When 3 Then DATEADD(MONTH, mh.HB_Run_After_Release_No, tr.Release_Date)
+													  When 4 Then DATEADD(YEAR, mh.HB_Run_After_Release_No, tr.Release_Date)
+													  Else tr.Release_Date
+												 End
+		From Title_Release tr
+		INNER JOIN #MainTit mt On tr.Title_Code = mt.Title_Code
+		INNER JOIN Title_Release_Platforms trp On tr.Title_Release_Code = trp.Title_Release_Code
+		INNER JOIN #ReleaseCountry trc On tr.Title_Release_Code = trc.Title_Release_Code
+		INNER JOIN #TMP_MAIN tm On tm.Title_Code = tr.Title_Code AND tm.Title_Code = mt.Title_Code 
+								   AND tm.Holdback_On_Platform_Code = trp.Platform_Code AND tm.Country_Code = trc.Country_Code
+								   AND tm.Holdback_Type = 'R'
+		Inner Join #MainAH mh On tm.Acq_Deal_Rights_Holdback_Code = mh.Acq_Deal_Rights_Holdback_Code
+		Where 
+			Case mh.HB_Run_After_Release_Units 
+				When 1 Then DATEADD(DAY, mh.HB_Run_After_Release_No, tr.Release_Date)
+				When 2 Then DATEADD(WEEK, mh.HB_Run_After_Release_No, tr.Release_Date)
+				When 3 Then DATEADD(MONTH, mh.HB_Run_After_Release_No, tr.Release_Date)
+				When 4 Then DATEADD(YEAR, mh.HB_Run_After_Release_No, tr.Release_Date)
+				Else tr.Release_Date
+			End >= Cast(GetDate() As Date)
+
+		Delete mh
+		From Title_Release tr
+		INNER JOIN #MainTit mt On tr.Title_Code = mt.Title_Code
+		INNER JOIN Title_Release_Platforms trp On tr.Title_Release_Code = trp.Title_Release_Code
+		INNER JOIN #ReleaseCountry trc On tr.Title_Release_Code = trc.Title_Release_Code
+		INNER JOIN #TMP_MAIN tm On tm.Title_Code = tr.Title_Code AND tm.Title_Code = mt.Title_Code 
+								   AND tm.Holdback_On_Platform_Code = trp.Platform_Code AND tm.Country_Code = trc.Country_Code
+								   AND tm.Holdback_Type = 'R'
+		Inner Join #MainAH mh On tm.Acq_Deal_Rights_Holdback_Code = mh.Acq_Deal_Rights_Holdback_Code
+		Where 
+			Case mh.HB_Run_After_Release_Units 
+				When 1 Then DATEADD(DAY, mh.HB_Run_After_Release_No, tr.Release_Date)
+				When 2 Then DATEADD(WEEK, mh.HB_Run_After_Release_No, tr.Release_Date)
+				When 3 Then DATEADD(MONTH, mh.HB_Run_After_Release_No, tr.Release_Date)
+				When 4 Then DATEADD(YEAR, mh.HB_Run_After_Release_No, tr.Release_Date)
+				Else tr.Release_Date
+			End < Cast(GetDate() As Date)
+
+		Drop Table #MainTit
+		Drop Table #ReleaseCountry
+
+	END
 	print 'STEP-6 UPDATE Language Names ' + convert(varchar(30),getdate() ,109)	
 	BEGIN
 
@@ -671,11 +817,16 @@ BEGIN
 			Title_Language_Names Varchar(2000),
 			Sub_Language_Names Varchar(4000),
 			Dub_Language_Names Varchar(4000),
+			Acq_Deal_Rights_Holdback_Code INT, 
+			Holdback_Type		Char(1), 
+			Holdback_Release_Date Date, 
+			Holdback_On_Platform_Code Int,
+			Reverse_Holdback NVarchar(Max),
 			Group_no Int
 		)
 
-	INSERT INTO #Temp_Main_Ctr(Title_Code, Platform_Code, Avail_Raw_Code, Is_Title_Language, Sub_Language_Code, Dub_Language_code)
-	SELECT DISTINCT Title_Code, Platform_Code, Avail_Raw_Code, Is_Title_Language, Sub_Language_Code, Dub_Language_code
+	INSERT INTO #Temp_Main_Ctr(Title_Code, Platform_Code, Avail_Raw_Code, Is_Title_Language, Sub_Language_Code, Dub_Language_code,Acq_Deal_Rights_Holdback_Code, Holdback_Type, Holdback_Release_Date, Holdback_On_Platform_Code)
+	SELECT DISTINCT Title_Code, Platform_Code, Avail_Raw_Code, Is_Title_Language, Sub_Language_Code, Dub_Language_code,Acq_Deal_Rights_Holdback_Code, Holdback_Type, Holdback_Release_Date, Holdback_On_Platform_Code
 	FROM #TMP_MAIN
 
 
@@ -914,6 +1065,11 @@ BEGIN
 				  AND t1.Is_Title_Language = t2.Is_Title_Language
 				  AND IsNull(t1.Sub_Language_Code, 0) = IsNull(t2.Sub_Language_Code, 0)
 				  AND IsNull(t1.Dub_Language_code, 0) = IsNull(t2.Dub_Language_code, 0)
+				  -------- Conditions for  Holdback
+				  AND IsNull(t1.Acq_Deal_Rights_Holdback_Code, 0) = IsNull(t2.Acq_Deal_Rights_Holdback_Code, 0)
+				  AND IsNull(t1.Holdback_Type, '') = IsNull(t2.Holdback_Type, '')
+				  AND IsNull(t1.Holdback_Release_Date, '') = IsNull(t2.Holdback_Release_Date, '') 
+				  AND IsNull(t1.Holdback_On_Platform_Code, 0) = IsNull(t2.Holdback_On_Platform_Code, 0) 
 				FOR XML PATH('')
 			), 1, 1, ''
 		)
@@ -995,7 +1151,8 @@ BEGIN
 	print 'STEP-12 Query to get title details' + convert(varchar(30),getdate() ,109)	
 	BEGIN
 		-----------------Query to get title details
-		SELECT t.Title_Code, t.Title_Language_Code, --t.Title_Name,
+		SELECT t.Title_Code, t.Title_Language_Code, 
+		--t.Title_Name,
 		CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
 			,Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
 			Star_Cast = [dbo].[UFN_GetStarCastForTitle](t.Title_Code),
@@ -1040,8 +1197,28 @@ BEGIN
 		Sub_License VARCHAR(100), 
 		Platform_Avail VARCHAR(3),
 		Episode_From INT,
-		Episode_To INT
+		Episode_To INT,
+		Category_Name VARCHAR(1000),
+		Deal_Type_Name VARCHAR(1000),
+		HoldbackOn  NVARCHAR(MAX),
+		Holdback_Type		Char(1), 
+		Holdback_Release_Date Date, 
+		Reverse_Holdback NVarchar(Max)
 	)
+	print 'STEP-12.01 REVERSE HOLDBACK ' + convert(varchar(30),getdate() ,109)	
+		BEGIN
+
+			Select Distinct Title_Code , Cast('' As NVarchar(Max)) strRHB --Country_Cd_Str, Platform_Str, 
+			InTo #TempRHB From #Temp_Main_Ctr
+			Update #TempRHB Set strRHB = [dbo].[UFN_GET_SYNRHB](Title_Code)
+
+			Update a Set a.Reverse_Holdback = b.strRHB 
+			From #Temp_Main_Ctr a 
+			Inner Join #TempRHB b On a.Title_Code = b.Title_Code --AND a.Country_Cd_Str = b.Country_Cd_Str AND a.Platform_Str = b.Platform_Str
+		
+			Drop Table #TempRHB
+
+		END
 
 	------------------ Final Output
 	DECLARE @strSQLNEO AS VARCHAR(MAX)
@@ -1115,27 +1292,48 @@ BEGIN
 			--ar.Episode_To, 
 			pt.Platform_Hiearachy COLLATE SQL_Latin1_General_CP1_CI_AS  AS Platform_Name, 
 			 tm.Country_Names COLLATE SQL_Latin1_General_CP1_CI_AS  AS Country_Name, 
-			CAST(AR.Start_Date AS DATETIME) Right_Start_Date, 
+			--CAST(AR.Start_Date AS DATETIME) Right_Start_Date, 
+			Cast(
+				CASE 
+					WHEN ISNULL(tm.Holdback_Release_Date,'')='' OR ar.Start_Date > tm.Holdback_Release_Date
+				THEN ar.Start_Date 
+				ELSE DateAdd(D, 1, tm.Holdback_Release_Date) 
+				END As DateTime
+			) As Right_Start_Date,
 			CAST(ISNULL(AR.End_Date, '31Dec9999') AS DATETIME) Rights_End_Date,
 			Case When tm.Is_Title_Language = 1 Then trt.Language_Name Else '' End COLLATE SQL_Latin1_General_CP1_CI_AS  Title_Language_Names, 
 			Sub_Language_Names, Dub_Language_Names, trt.Genres_Name COLLATE SQL_Latin1_General_CP1_CI_AS Genres_Name, trt.Star_Cast COLLATE SQL_Latin1_General_CP1_CI_AS Star_Cast, 
 			trt.Director COLLATE SQL_Latin1_General_CP1_CI_AS Director, trt.Duration_In_Min, trt.Year_Of_Production, 
 			trr.Restriction_Remarks Restriction_Remark, trr.Sub_Deal_Restriction_Remark,
 			trr.Remarks, trr.Rights_Remarks, CASE WHEN ar.Is_Exclusive = 1 THEN 'Exclusive' ELSE 'Non Exclusive' END AS Exclusive, 
-			trr.Sub_License_Name AS Sub_License, 'Yes' Platform_Avail
+			trr.Sub_License_Name AS Sub_License, 'Yes' Platform_Avail,trr.Category_Name,trr.Deal_Type_Name
+			,CASE WHEN ISNULL(pt1.Platform_Hiearachy,'') = '' OR ar.Start_Date > tm.Holdback_Release_Date THEN '' ELSE hb.HBComments + pt1.Platform_Hiearachy END COLLATE SQL_Latin1_General_CP1_CI_AS As HoldbackOn, 
+			tm.Holdback_Type COLLATE SQL_Latin1_General_CP1_CI_AS AS Holdback_Type, 
+			CASE 
+				WHEN ISNULL(CONVERT(varchar(50), Holdback_Release_Date ),'') = '' OR ar.Start_Date > Holdback_Release_Date 
+					THEN '' 
+				ELSE CONVERT(VARCHAR(20), Holdback_Release_Date, 103) END 
+			COLLATE SQL_Latin1_General_CP1_CI_AS AS  Holdback_Release_Date, --, pt1.Platform_Hiearachy As Holdback_On_Platform
+			Reverse_Holdback COLLATE SQL_Latin1_General_CP1_CI_AS As Reverse_Holdback
 		FROM 
 			#Temp_Main_Ctr tm
 			INNER JOIN #Avail_Raw ar On tm.Avail_Raw_Code = ar.Avail_Raw_Code
 			INNER JOIN #Temp_Right_Remarks trr ON trr.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 			INNER JOIN #Temp_Titles trt ON trt.Title_Code = tm.Title_Code
 			INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code
+			LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
+			LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
+			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME)) OR
+			ISNULL(tm.Holdback_Release_Date,'') = ''
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Episode_From, Episode_To, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Country_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Sub_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, Dub_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Genres_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Star_Cast COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Director COLLATE SQL_Latin1_General_CP1_CI_AS, Duration_In_Min, Year_Of_Production, Restriction_Remark, 
-		Sub_Deal_Restriction_Remark, Remarks, Rights_Remarks, Exclusive, 'No' AS Sub_License, Platform_Avail 
+		Sub_Deal_Restriction_Remark, Remarks, Rights_Remarks, Exclusive, 'No' AS Sub_License, Platform_Avail,Category_Name,Deal_Type_Name,
+		HoldbackOn AS HoldbackOn , Holdback_Type AS Holdback_Type,  ISNULL(REPLACE(CONVERT(varchar(15), Holdback_Release_Date, 106),' ','/'),'')  AS Holdback_Release_Date,--, '' As Holdback_On_Platform
+		Reverse_Holdback AS Reverse_Holdback
 		FROM #FINALAVAIlREPORT
 	END
 	ELSE
@@ -1149,51 +1347,98 @@ BEGIN
 			--ar.Episode_To, 
 			pt.Platform_Hiearachy COLLATE SQL_Latin1_General_CP1_CI_AS  AS Platform_Name, 
 			tm.Country_Names COLLATE SQL_Latin1_General_CP1_CI_AS AS Country_Name,
-			CAST(ar.Start_Date AS DATETIME) Right_Start_Date, 
+			--CAST(ar.Start_Date AS DATETIME) Right_Start_Date, 
+			Cast(
+				CASE 
+					WHEN ISNULL(tm.Holdback_Release_Date,'')='' OR CAST(ar.Start_Date as DATETIME) > CAST(tm.Holdback_Release_Date as DATETIME)
+				THEN ar.Start_Date 
+				ELSE DateAdd(D, 1, tm.Holdback_Release_Date) 
+				END As DateTime
+			) As Right_Start_Date,
 			CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME) Rights_End_Date,
 			Case When tm.Is_Title_Language = 1 Then trt.Language_Name Else '' End COLLATE SQL_Latin1_General_CP1_CI_AS    Title_Language_Names , 
 			Sub_Language_Names, Dub_Language_Names, trt.Genres_Name COLLATE SQL_Latin1_General_CP1_CI_AS Genres_Name, trt.Star_Cast COLLATE SQL_Latin1_General_CP1_CI_AS Star_Cast, 
 			trt.Director COLLATE SQL_Latin1_General_CP1_CI_AS Director, trt.Duration_In_Min, trt.Year_Of_Production, 
 			'' Restriction_Remark, '' Sub_Deal_Restriction_Remark,
 			'' Remarks, '' Rights_Remarks, CASE WHEN ar.Is_Exclusive = 1 THEN 'Exclusive' ELSE 'Non Exclusive' END AS Exclusive, 
-			trr.Sub_License_Name AS Sub_License, 'Yes' Platform_Avail
+			trr.Sub_License_Name AS Sub_License, 'Yes' Platform_Avail,trr.Category_Name,trr.Deal_Type_Name
+			,CASE WHEN ISNULL(pt1.Platform_Hiearachy,'') = '' OR ar.Start_Date > tm.Holdback_Release_Date THEN '' ELSE hb.HBComments + pt1.Platform_Hiearachy END 
+			COLLATE SQL_Latin1_General_CP1_CI_AS As HoldbackOn
+			, tm.Holdback_Type COLLATE SQL_Latin1_General_CP1_CI_AS  AS Holdback_Type, 
+				CASE 
+				WHEN ISNULL(CONVERT(varchar(50), Holdback_Release_Date ),'') = '' OR ar.Start_Date > Holdback_Release_Date 
+					THEN '' 
+				ELSE CONVERT(VARCHAR(20), Holdback_Release_Date, 103) END COLLATE SQL_Latin1_General_CP1_CI_AS AS Holdback_Release_Date
+			, --, pt1.Platform_Hiearachy As Holdback_On_Platform
+			Reverse_Holdback COLLATE SQL_Latin1_General_CP1_CI_AS As Reverse_Holdback
 		FROM #Temp_Main_Ctr tm
 		INNER JOIN #Avail_Raw ar On tm.Avail_Raw_Code = ar.Avail_Raw_Code
 		INNER JOIN #Temp_Right_Remarks trr ON trr.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 		INNER JOIN #Temp_Titles trt ON trt.Title_Code = tm.Title_Code
 		INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code
+		LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
+		LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
+		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME))
+		OR ISNULL(tm.Holdback_Release_Date,'') = ''
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Episode_From, Episode_To, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Country_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Sub_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, Dub_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Genres_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Star_Cast COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Director COLLATE SQL_Latin1_General_CP1_CI_AS, Duration_In_Min, Year_Of_Production, Restriction_Remark, 
-		Sub_Deal_Restriction_Remark, Remarks, Rights_Remarks, Exclusive, 'No' AS Sub_License, Platform_Avail 
+		Sub_Deal_Restriction_Remark, Remarks, Rights_Remarks, Exclusive, 'No' AS Sub_License, Platform_Avail,Category_Name,Deal_Type_Name,
+		HoldbackOn AS HoldbackOn , Holdback_Type AS Holdback_Type,  ISNULL(REPLACE(CONVERT(varchar(15), Holdback_Release_Date, 106),' ','/'),'')  AS Holdback_Release_Date,--, '' As Holdback_On_Platform
+		Reverse_Holdback AS Reverse_Holdback
 		FROM #FINALAVAIlREPORT
 	END
 	------------------ END
 
 
-	print 'STEP-14 Final query ' + convert(varchar(30),getdate() ,109)	
-	--DROP TABLE #Temp_Country_Names
-	DROP TABLE #Avail_Raw
-	DROP TABLE #Temp_Title
-	DROP TABLE #Temp_Main_Ctr
-	DROP TABLE #Temp_Titles
-	--DROP TABLE #Temp_Right
-	DROP TABLE #Temp_Country
-	DROP TABLE #Temp_Platform
-	DROP TABLE #Temp_Title_Language
-	DROP TABLE #Avail_Acq
-	DROP TABLE #Temp_Sub_MH
-	DROP TABLE #Temp_Dub_MH
-	DROP TABLE #Tbl_Ret
+	print 'STEP-14 Final query ' + convert(varchar(30),getdate() ,109)
+	IF OBJECT_ID('tempdb..#Temp_Country_Names') IS NOT NULL DROP TABLE #Temp_Country_Names
+	----DROP TABLE #Temp_Country_Names
+	IF OBJECT_ID('tempdb..#Avail_Raw') IS NOT NULL DROP TABLE #Avail_Raw
+	--DROP TABLE #Avail_Raw
+	IF OBJECT_ID('tempdb..#Temp_Title') IS NOT NULL DROP TABLE #Temp_Title
+	--DROP TABLE #Temp_Title
+	IF OBJECT_ID('tempdb..#Temp_Main_Ctr') IS NOT NULL DROP TABLE #Temp_Main_Ctr
+	--DROP TABLE #Temp_Main_Ctr
+	IF OBJECT_ID('tempdb..#Temp_Titles') IS NOT NULL DROP TABLE #Temp_Titles
+	--DROP TABLE #Temp_Titles
+	IF OBJECT_ID('tempdb..#Temp_Right') IS NOT NULL DROP TABLE #Temp_Right
+	----DROP TABLE #Temp_Right
+	IF OBJECT_ID('tempdb..#Temp_Country') IS NOT NULL DROP TABLE #Temp_Country
+	IF OBJECT_ID('tempdb..#Temp_Platform') IS NOT NULL DROP TABLE #Temp_Platform
+	IF OBJECT_ID('tempdb..#Temp_Title_Language') IS NOT NULL DROP TABLE #Temp_Title_Language
+	IF OBJECT_ID('tempdb..#Avail_Acq') IS NOT NULL DROP TABLE #Avail_Acq
+	IF OBJECT_ID('tempdb..#Temp_Sub_MH') IS NOT NULL DROP TABLE #Temp_Sub_MH
+	IF OBJECT_ID('tempdb..#Temp_Dub_MH') IS NOT NULL DROP TABLE #Temp_Dub_MH
+	IF OBJECT_ID('tempdb..#Tbl_Ret') IS NOT NULL DROP TABLE #Tbl_Ret
+	IF OBJECT_ID('tempdb..#MainAH') IS NOT NULL DROP TABLE #MainAH
+	IF OBJECT_ID('tempdb..#Temp_Sub_Language') IS NOT NULL DROP TABLE #Temp_Sub_Language
+	IF OBJECT_ID('tempdb..#Temp_DUB_Language') IS NOT NULL DROP TABLE #Temp_DUB_Language
+	IF OBJECT_ID('tempdb..#Tmp_SL') IS NOT NULL DROP TABLE #Tmp_SL
+	IF OBJECT_ID('tempdb..#Temp_Avail_Languages') IS NOT NULL DROP Table #Temp_Avail_Languages
+	IF OBJECT_ID('tempdb..#Temp_Right_Remarks') IS NOT NULL DROP Table #Temp_Right_Remarks
+	IF OBJECT_ID('tempdb..#FINALAVAIlREPORT') IS NOT NULL DROP table #FINALAVAIlREPORT
+	IF OBJECT_ID('tempdb..#TMP_MAIN') IS NOT NULL DROP TABLE #TMP_MAIN
+	IF OBJECT_ID('tempdb..#MainTit') IS NOT NULL DROP TABLE #MainTit
+	--DROP TABLE #Temp_Country
+	--DROP TABLE #Temp_Platform
+	--DROP TABLE #Temp_Title_Language
+	--DROP TABLE #Avail_Acq
+	--DROP TABLE #Temp_Sub_MH
+	--DROP TABLE #Temp_Dub_MH
+	--DROP TABLE #Tbl_Ret
+	--DROP TABLE #MainAH
 	--DROP TABLE #Temp_Sub_Language
 	--DROP table #Temp_DUB_Language
-	--DROP TABLE #Tmp_SL
-	--DROP Table #Temp_Avail_Languages
-	--DROP Table #Temp_Right_Remarks
-	--DROP table #FINALAVAIlREPORT
+	----DROP TABLE #Tmp_SL
+	----DROP Table #Temp_Avail_Languages
+	----DROP Table #Temp_Right_Remarks
+	----DROP table #FINALAVAIlREPORT
+	----DROP TABLE #TMP_MAIN
+	----DROP TABLE #MainTit
 END
 
 	--Exec USP_Show_Availability_Report_Indiacast
@@ -1233,6 +1478,3 @@ END
 	--@SubLicense_Code='',
 	--@BU_Code='0',
 	--@Is_Digital='1'
-
-
-

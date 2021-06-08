@@ -7,7 +7,7 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
-   
+
 }
 
 <script>
@@ -32,16 +32,16 @@
                         Obj_Deal_Schema_View.Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW &&
                         Obj_Deal_Schema_View.Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
                     {<div class="scale_table_block">
-                        <table class="table">
-                            <tr>
-                                <td style="width: 10%;">
-                                    <div class="pull-right">
-                                        <a class="btn btn-primary" href="#" id="btnAdd" onclick="Add_Ancillary('popEditRevHB');">@objMessageKey.Add</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                            <table class="table">
+                                <tr>
+                                    <td style="width: 10%;">
+                                        <div class="pull-right">
+                                            <a class="btn btn-primary" href="#" id="btnAdd" onclick="Add_Ancillary('popEditRevHB');">@objMessageKey.Add</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     }
                     <div class="paging_area clearfix">
                         <span class="pull-left" id="lblTotal">@objMessageKey.TotalRecords: 0</span>
@@ -67,8 +67,16 @@
                     <div class="bottom_action">
                         <ul class="form_link_nav clearfix">
                             <li>
-                                <input type="button" id="btnCancel_Ancillary" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                       onclick="location.href='@Url.Action("Cancel", "Acq_Ancillary")    '" />
+                                @if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                {
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                }
+                                else
+                                {
+                                    <input type="button" id="btnCancel_Ancillary" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("Cancel", "Acq_Ancillary")    '" />
+                                }
                             </li>
                         </ul>
                     </div>

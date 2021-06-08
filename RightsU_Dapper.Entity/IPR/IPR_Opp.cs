@@ -4,19 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper.SimpleSave;
-
+using Dapper.SimpleLoad;
+using RightsU_Entities;
 namespace RightsU_Dapper.Entity
 {
     [Table("IPR_Opp")]
+
     public partial class IPR_Opp
     {
         public IPR_Opp()
         {
-            //this.IPR_Opp_Attachment = new HashSet<IPR_Opp_Attachment>();
-            //this.IPR_Opp_Email_Freq = new HashSet<IPR_Opp_Email_Freq>();
-            //this.IPR_Opp_Business_Unit = new HashSet<IPR_Opp_Business_Unit>();
+            this.IPR_Opp_Attachment = new HashSet<IPR_Opp_Attachment>();
+            this.IPR_Opp_Email_Freq = new HashSet<IPR_Opp_Email_Freq>();
+            this.IPR_Opp_Business_Unit = new HashSet<IPR_Opp_Business_Unit>();
             this.IPR_Opp_Channel = new HashSet<IPR_Opp_Channel>();
         }
+
         [PrimaryKey]
         public int? IPR_Opp_Code { get; set; }
         public string Version { get; set; }
@@ -48,14 +51,25 @@ namespace RightsU_Dapper.Entity
         public Nullable<int> Created_By { get; set; }
         public string Workflow_Status { get; set; }
         public Nullable<int> IPR_Opp_Status_Code { get; set; }
-
-        //public virtual IPR_APP_STATUS IPR_APP_STATUS { get; set; }
-        //public virtual IPR_CLASS IPR_CLASS { get; set; }
-        //public virtual ICollection<IPR_Opp_Attachment> IPR_Opp_Attachment { get; set; }
-        //public virtual ICollection<IPR_Opp_Email_Freq> IPR_Opp_Email_Freq { get; set; }
-        //public virtual IPR_Opp_Status IPR_Opp_Status { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        public virtual IPR_APP_STATUS IPR_APP_STATUS { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        public virtual IPR_CLASS IPR_CLASS { get; set; }
+        [OneToMany]
+        public virtual ICollection<IPR_Opp_Attachment> IPR_Opp_Attachment { get; set; }
+        [OneToMany]
+        public virtual ICollection<IPR_Opp_Email_Freq> IPR_Opp_Email_Freq { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        public virtual IPR_Opp_Status IPR_Opp_Status { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
         public virtual IPR_REP IPR_REP { get; set; }
-        //public virtual ICollection<IPR_Opp_Business_Unit> IPR_Opp_Business_Unit { get; set; }
+        [OneToMany]
+        public virtual ICollection<IPR_Opp_Business_Unit> IPR_Opp_Business_Unit { get; set; }
+        [OneToMany]
         public virtual ICollection<IPR_Opp_Channel> IPR_Opp_Channel { get; set; }
     }
 }

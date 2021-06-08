@@ -7,13 +7,19 @@ CREATE PROCEDURE [dbo].[USP_Email_Run_Utilization]
 	@BU_Code INT=2,
 	@Channel_Codes VARCHAR(1000)
 )
--- =============================================
--- Author:		SAGAR MAHAJAN
--- Create date: 21 Sept 2015
--- Description:	Email Notification
--- =============================================	
+ --=============================================
+ --Author:		SAGAR MAHAJAN
+ --Create date: 21 Sept 2015
+ --Description:	Email Notification
+ --=============================================	
 AS
 BEGIN	
+	--DECLARE 
+	--@Call_From CHAR(1) ='',
+	--@Title_Codes VARCHAR(1000) ='',
+	--@BU_Code INT=2,
+	--@Channel_Codes VARCHAR(1000)=''
+
 	SET NOCOUNT ON;
 	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL
 	BEGIN
@@ -26,19 +32,43 @@ BEGIN
 	SELECT @Email_Config_Code = Email_Config_Code FROM Email_Config where [Key] = 'LMR'
 	--SELECT @Channel_Codes = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name='Run_Expiry_ChannelCode'
 	--SELECT @BU_Code = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name='Run_Expiry_BusinessUnit'
-	SELECT User_Mail_Id, BuCode, Users_Code, Channel_Codes INTO #Temp from [dbo].[UFN_Get_Bu_Wise_User]('LMR')
+	--SELECT User_Mail_Id, BuCode, Users_Code, Channel_Codes INTO #Temp from [dbo].[UFN_Get_Bu_Wise_User]('LMR')
+	
+	--------
 
-	SELECT DISTINCT BuCode from #Temp
-	SELECT DISTINCT Channel_Codes from #Temp
+	DECLARE @Business_Unit_Code INT,
+	@To_Users_Code NVARCHAR(MAX),
+	@To_User_Mail_Id  NVARCHAR(MAX),
+	@CC_Users_Code  NVARCHAR(MAX),
+	@CC_User_Mail_Id  NVARCHAR(MAX),
+	@BCC_Users_Code  NVARCHAR(MAX),
+	@BCC_User_Mail_Id  NVARCHAR(MAX)
 
-	SET @BU_Code = STUFF((SELECT DISTINCT ',' + CAST(BuCode AS VARCHAR(MAX)) 
-				FROM #Temp FOR XML PATH('') ), 1, 1, '')
+	DECLARE @Tbl2 TABLE (
+		Id INT,
+		BuCode INT,
+		To_Users_Code NVARCHAR(MAX),
+		To_User_Mail_Id  NVARCHAR(MAX),
+		CC_Users_Code  NVARCHAR(MAX),
+		CC_User_Mail_Id  NVARCHAR(MAX),
+		BCC_Users_Code  NVARCHAR(MAX),
+		BCC_User_Mail_Id  NVARCHAR(MAX),
+		Channel_Codes NVARCHAR(MAX)
+	)
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 
-	SET @Channel_Codes = STUFF((SELECT DISTINCT ',' + CAST(Channel_Codes AS VARCHAR(MAX)) 
-						FROM #Temp FOR XML PATH('') ), 1, 1, '')
+	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+	EXEC USP_Get_EmailConfig_Users 'LMR', 'N'
 
-	PRINT @Channel_Codes
-	PRINT  @BU_Code
+	--SET @BU_Code = STUFF((SELECT DISTINCT ',' + CAST(BuCode AS VARCHAR(MAX)) 
+	--			FROM @Tbl2 FOR XML PATH('') ), 1, 1, '')
+
+	SET @Channel_Codes = STUFF((SELECT DISTINCT ',' + P.number
+									FROM @Tbl2 A 
+									CROSS APPLY  dbo.fn_Split_withdelemiter(A.Channel_Codes,',') p
+							FOR XML PATH('') ), 1, 1, '')
+
+
 	IF OBJECT_ID('tempdb..#Html_Table') IS NOT NULL
 	BEGIN
 		DROP TABLE #Html_Table
@@ -172,6 +202,8 @@ BEGIN
 			END
 	CLOSE CUR_Channel
 	DEALLOCATE CUR_Channel
+	--SELECT * FROM #Result1
+	--RETURN
 	---------------------------------------------------------------------------------
 	DECLARE CUR_Report CURSOR FOR 
 				--SELECT  
@@ -202,8 +234,10 @@ BEGIN
 				SET  @Agreement_No = @Deal_no				
 				SET  @Temp_Right_Period = @Rights_Period				
 				SET @Temp_Title_Name = @Title_Name
-				FETCH NEXT FROM CUR_Report INTO 
-					@Deal_no,@Title_Name,@Right_Start_date,@Right_End_date,@Channel_Name,@Schedule_Run,@No_Of_Runs ,@Balance_Runs,@Count_No_Of_Schedule , @Deal_Description, @Vendor_Name
+				FETCH NEXT FROM CUR_Report 
+					INTO @Deal_no,@Title_Name,@Right_Start_date,@Right_End_date,@Channel_Name,@Schedule_Run,@No_Of_Runs ,@Balance_Runs,@Count_No_Of_Schedule , @Deal_Description, @Vendor_Name
+				
+				--INTO @Deal_no,@Title_Name,@Right_Start_date,@Right_End_date,@Channel_Name,@Schedule_Run,@No_Of_Runs ,@Balance_Runs,@Count_No_Of_Schedule , @Deal_Description, @Vendor_Name
 			END
 	CLOSE CUR_Report
 	DEALLOCATE CUR_Report
@@ -221,11 +255,11 @@ BEGIN
 			--SELECT @DefaultSiteUrl = DefaultSiteUrl FROM System_Param			
 	DECLARE @EMailFooter NVARCHAR(200),@EmailHead NVARCHAR(max)
 			SET @EMailFooter ='&nbsp;</br>&nbsp;</br>Regards,</br>
-RightsU Support</br>
-U-TO Solutions</body></html>'
+			RightsU Support</br>
+			U-TO Solutions</body></html>'
 			DECLARE @DatabaseEmail_Profile varchar(200)	
 			SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
-			SELECT @DatabaseEmail_Profile AS  DatabaseEmail_Profile
+		
 			
 			Print @Emailbody
 			DECLARE @EmailUser_Body NVARCHAR(Max)=''
@@ -251,30 +285,35 @@ U-TO Solutions</body></html>'
 	IF(@EmailUser_Body != '')
 	BEGIN
 		DECLARE curOuter CURSOR FOR 
-					SELECT DISTINCT BuCode, User_Mail_Id, Users_Code from #Temp
-		--SELECT DISTINCT Business_Unit_Code,Users_Email_id FROM Deal_Expiry_Email 
-		--WHERE Business_Unit_Code Is not Null And Alert_Type = 'L'
+					SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
+	
 		OPEN curOuter 
-		FETCH NEXT FROM curOuter INTO @BU_Code, @Users_Email_Id, @Users_Code
+		FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 		WHILE (@@Fetch_Status = 0) 
 		BEGIN		
-			EXEC msdb.dbo.sp_send_dbmail 
+
+			   EXEC msdb.dbo.sp_send_dbmail 
 				@profile_name = @DatabaseEmail_Profile,
-				@recipients =  @Users_Email_Id,
+				@recipients =  @To_User_Mail_Id,
+				@copy_recipients = @CC_User_Mail_Id,
+				@blind_copy_recipients = @BCC_User_Mail_Id,
 				@subject = @MailSubjectCr,
 				@body = @Emailbody, 
-				@body_format = 'HTML';  
-				--PRINT '@recipients : ' + cast(@Users_Email_Id  AS VARCHAR)
-				--select @Emailbody AS Emailbody
-			INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-			SELECT @Email_Config_Code, GETDATE(), 'N', @EmailUser_Body, @Users_Code, 'Last Month Run Utilization', @Users_Email_Id
-		FETCH NEXT FROM curOuter INTO @BU_Code,@Users_Email_Id, @Users_Code
+				@body_format = 'HTML';
+
+
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@EmailUser_Body, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Last Month Run Utilization'
+
+			FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 		END -- End of Fetch outer
 		CLOSE curOuter
 		DEALLOCATE curOuter	
 	END
 	----------------------------------------------------------------------------------
-	
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
+
+
 	IF OBJECT_ID('tempdb..#Html_Table') IS NOT NULL DROP TABLE #Html_Table
 	IF OBJECT_ID('tempdb..#Result') IS NOT NULL DROP TABLE #Result
 	IF OBJECT_ID('tempdb..#Result1') IS NOT NULL DROP TABLE #Result1

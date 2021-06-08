@@ -1034,7 +1034,78 @@
                                 <label>@objLoginUser.DefaultEntityName</label>
                             </span>
                         </li>
-    
+                        <li data-placement="left" id="Email-Head-Icon">
+                            <label class="glyphicon glyphicon-bell" id="NotifyEmail"></label>
+                            @if (count > 99)
+                            {
+                                <span class="TotalEmailCount" id="TotalEmailCount">99+</span>
+                            }
+                            else
+                            {
+                                <span class="TotalEmailCount" id="TotalEmailCount">@count</span>
+                            }
+                            <input type="hidden" id="hdnTotalEmailCount" value="@count" />
+                            <ul id="EmailPanel" class="NotifyEmailPanel" style="display: none;">
+                                <li class="emailPNL">
+                                    <span class="bold">Notifications</span>
+                                </li>
+                                @{ 
+                                       List<Email_Config> lstEmailConfig = new Email_Config_Service(objLoginEntity.ConnectionStringName)
+                                        .SearchFor(x => x.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y")
+                                                            .OrderBy(x => x.Email_Type).ToList();
+
+                                    List<Email_Notification_Log> lstEmail_Notification_Log = (List<Email_Notification_Log>)Session["lstEmail_Notification_Log"];
+
+                                    var EmailConfig = new List<Email_Config>();
+
+                                    foreach (Email_Config objEmail in lstEmailConfig)
+                                    {
+                                        objEmail.TotalCount = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName)
+                                            .SearchFor(x => x.User_Code == objLoginUser.Users_Code
+                                            && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
+                                            && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
+                                            )
+                                            .Count();
+                                        objEmail.Count = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N"
+                                        && x.User_Code == objLoginUser.Users_Code && string.IsNullOrEmpty(x.Email_Body) == false
+                                        && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
+                                        && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
+                                        )
+                                        .Count();
+                                    }
+                                    EmailConfig = lstEmailConfig;
+                                }
+
+                                @{int NoNotiCount = 0;}
+                                <div id="DivEmailConfig">
+
+                                    @foreach (Email_Config item in EmailConfig)
+                                    {
+                                        if (item.TotalCount > 0)
+                                        {
+                                            NoNotiCount = 1;
+                                            <li class="liEmail" onclick="EmailPopup('@item.Email_Config_Code','@item.Email_Type','@item.Count');">
+                                                <a href="#">@item.Email_Type</a>
+                                                <span class="EmailCount" title="Unseen Message" id="TotalECount_@item.Email_Config_Code">@item.Count</span>
+                                            </li>
+                                        }
+                                    }
+
+                                    @if (NoNotiCount == 0)
+                                    {
+                                        <li>
+                                            <span>No new notifications</span>
+                                        </li>
+                                    }
+                                </div>
+                                @if (NoNotiCount > 0)
+                                {
+                                    <li class="emailPNL" style="text-align:center">
+                                        <a id="MarkAsRead" onclick="MarkAllRead()">Mark all as Read</a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
 
                         <li data-placement="left" id="User-Head-Icon">
                             <label class="glyphicon glyphicon-user2" id="collapse1"></label>

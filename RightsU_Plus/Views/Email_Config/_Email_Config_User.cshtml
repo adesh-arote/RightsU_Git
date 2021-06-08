@@ -10,6 +10,7 @@
         border: #bbb 1px solid;
         z-index: 100;
     }
+
         #popupFade form .modal_block {
             padding: 3px 10px;
         }
@@ -28,7 +29,6 @@
     .SumoSelect {
         width: 150px !important;
     }
-   
 </style>
 <input type="hidden" value="@ViewBag.IsBusinessUnit" id="hdnIsBusinessUnit" />
 <input type="hidden" value="@ViewBag.IsChannel" id="hdnIsChannel" />
@@ -92,8 +92,8 @@
                         <div id="divGrp" style="width:152px;">
                             <select id="lstGroup" style="width:150px;display:none" class="form_input chosen-select"></select>
                         </div>
-                        <div id="divUserEmail" style="width:152px;">                           
-                            <input type="text" id="txtuseremail" spellcheck="false" placeholder="Use a comma to seprate multiple emails" style="width:150px;height:30px;display:none;overflow-y:scroll;"/>
+                        <div id="divUserEmail" style="width:152px;">
+                            <textarea type="text" id="txtuseremail" spellcheck="false" placeholder="Use a comma to seprate multiple emails" style="width:150px;height:30px;display:none;overflow-y:scroll;" />
                         </div>
                     </td>
                     <td>
@@ -101,7 +101,7 @@
                             <select id="lstCcUser" style="width:150px;" multiple></select>
                         </div>
                         <div id="divCcuserEmail" style="width:152px;">
-                            <input type="text" id="txtccuseremail" spellcheck="false" placeholder="Use a comma to seprate multiple emails" style="width:150px;height:30px;display:none;overflow-y:scroll;" />         
+                            <textarea type="text" id="txtccuseremail" spellcheck="false" placeholder="Use a comma to seprate multiple emails" style="width:150px;height:30px;display:none;overflow-y:scroll;" />
                         </div>
                     </td>
                     <td>
@@ -109,7 +109,7 @@
                             <select id="lstBccUser" style="width:150px;" multiple></select>
                         </div>
                         <div id="divBccuserEmail" style="width:152px;">
-                            <input type="text"  id="txtbccuseremail" spellcheck="false" placeholder="Use a comma to seprate multiple emails" style="width:150px;height:30px;display:none;overflow-y:scroll;" />
+                            <textarea type="text" id="txtbccuseremail" spellcheck="false" placeholder="Use a comma to seprate multiple emails" style="width:150px;height:30px;display:none;overflow-y:scroll;" />
                         </div>
                     </td>
                     @if (ViewBag.IsChannel == "Y")
@@ -164,7 +164,7 @@
                                     Is_User = false;
                                     Is_Group = false;
                                     Is_Email = true;
-                                }                               
+                                }
                             }
 
                             @Html.RadioButton("Type", "U", Is_User, new { style = "cursor: pointer;", onclick = "PopulateUser()" }) &nbsp; Users &nbsp;
@@ -179,27 +179,27 @@
                             </div>
                             <div id="divGrp" style="width:152px;">
                                 <select id="lstGroup" style="width:150px;display:none" class="form_input chosen-select"></select>
-                            </div>                            
+                            </div>
                             <div id="divUserEmail" style="width:152px;">
-                                <input type="text" id="txtuseremail" spellcheck="false" value="@((item.ToUser_MailID??"").Replace(";",","))" style="width:150px;height:30px;display:none;overflow-y:scroll;"/>
-                            </div>                            
+                                <textarea type="text" id="txtuseremail" spellcheck="false"  style="width:150px;height:30px;display:none;overflow-y:scroll;">@((item.ToUser_MailID??"").Replace(";",","))</textarea>
+                            </div>
                         </td>
                         <td>
                             <div id="divCc" style="width:152px;">
                                 <select id="lstCcUser" style="width:150px;" multiple></select>
-                            </div>                             
-                            <div id="divCcuserEmail" style="width:152px;">
-                                <input type="text" id="txtccuseremail" spellcheck="false" value="@((item.CCUser_MailID??"").Replace(";", ","))" style="width:150px;height:30px;display:none;overflow-y:scroll;"/>
                             </div>
-                             
+                            <div id="divCcuserEmail" style="width:152px;">
+                                <textarea type="text" id="txtccuseremail" spellcheck="false" style="width:150px;height:30px;display:none;overflow-y:scroll;">@((item.CCUser_MailID??"").Replace(";", ","))</textarea>
+                            </div>
+
                         </td>
                         <td>
                             <div id="divBcc" style="width:152px;">
                                 <select id="lstBccUser" style="width:150px;" multiple></select>
-                            </div>                      
+                            </div>
                             <div id="divBccuserEmail" style="width:152px;">
-                               <input type="text" id="txtbccuseremail" spellcheck="false" value="@((item.BCCUser_MailID??"").Replace(";", ","))" style="width:150px;height:30px;display:none;overflow-y:scroll;" />
-                            </div>                       
+                                <textarea type="text" id="txtbccuseremail" spellcheck="false"style="width:150px;height:30px;display:none;overflow-y:scroll;">@((item.BCCUser_MailID ?? "").Replace(";", ","))</textarea>
+                            </div>
                         </td>
                         @if (ViewBag.IsChannel == "Y")
                         {
@@ -219,75 +219,81 @@
                             <a title="" href="#" class="glyphicon glyphicon-remove-circle" data-original-title="Cancel" onclick="BindUserGrid('CANCEL');"></a>
                         </td>
                     </tr>
-                                }
-                                else
-                                {
-                                    <tr>
-                                        @if (ViewBag.IsBusinessUnit == "Y")
-                                        {
-                                            <td><span class="expand_fields">@item.Business_Unit_Names</span></td>
-                                        }
-                                        <td>                                           
-                                            <span>@(item.User_Type == "U" ? "User" : (item.User_Type == "G" ? "Group" : "Email"))</span>
-                                        </td>
-                                        <td>
-                                            @if (item.User_Type == "G")
-                                            {
-                                                <span style="cursor: pointer;" onclick="showCountryList()">@item.Security_Group_Names</span>
-                                                <a id="@(count)_aViewUsers" title="View Users" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>
-                                                <input id="@(count)_hdnUserNames" value="@item.User_Names" type="hidden" />
+                }
+                else
+                {
+                    <tr>
+                        @if (ViewBag.IsBusinessUnit == "Y")
+                        {
+                            <td><span class="expand_fields">@item.Business_Unit_Names</span></td>
+                        }
+                        <td>
+                            <span>@(item.User_Type == "U" ? "User" : (item.User_Type == "G" ? "Group" : "Email"))</span>
+                        </td>
+                        <td>
+                            @if (item.User_Type == "G")
+                            {
+                                <span style="cursor: pointer;" onclick="showCountryList()">@item.Security_Group_Names</span>
+                                <a id="@(count)_aViewUsers" title="View Users" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>
+                                <input id="@(count)_hdnUserNames" value="@item.User_Names" type="hidden" />
 
-                                            }
-                                            else if (item.User_Type == "U")
-                                            {
-                                                <span class="expand_fields">@item.User_Names</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="expand_fields">@item.ToUser_MailID.Replace(";", ",")</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.User_Type == "E")
-                                            {
-                                                <span class="expand_fields">@item.CCUser_MailID.Replace(";", ",")</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="expand_fields">@item.CC_User_Names</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.User_Type == "E")
-                                            {
-                                                <span class="expand_fields">@item.BCCUser_MailID.Replace(";", ",")</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="expand_fields">@item.BCC_User_Names</span>
-                                            }
-                                        </td>
-                                        @if (ViewBag.IsChannel == "Y")
-                                        {
-                                            <td><span class="expand_fields">@item.Channel_Names</span></td>
-                                        }
-                                        @if (ViewBag.CommandName != "VIEW")
-                                        {
-                                            <td>
-                                                @if (ViewBag.Show_Hide_Buttons.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
-                                                {
-                                                    <a href="#" class="glyphicon glyphicon-pencil" title="Edit" onclick="BindUserGrid('EDIT','@item.Dummy_Guid')"></a>
-                                                }
-                                                @if (ViewBag.Show_Hide_Buttons.Contains("~" + GlobalParams.RightCodeForDelete + "~"))
-                                                {
-                                                    <a href="#" class="glyphicon glyphicon-trash" title="Delete" onclick="DeleteConfirmation('@item.Dummy_Guid')"></a>
-                                                }
-                                            </td>
-                                        }
-                                    </tr>
-                                        }
-                                    }
+                            }
+                            else if (item.User_Type == "U")
+                            {
+                                <span class="expand_fields">@item.User_Names</span>
+                            }
+                            else
+                            {
+                                <span class="expand_fields">
+                                    @Html.Raw(Html.Encode(item.ToUser_MailID).Replace(";", "<br />"))
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.User_Type == "E")
+                            {
+                                <span class="expand_fields">
+                                    @Html.Raw(Html.Encode(item.CCUser_MailID).Replace(";", "<br />"))
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="expand_fields">@item.CC_User_Names</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.User_Type == "E")
+                            {
+                                <span class="expand_fields">
+                                    @Html.Raw(Html.Encode(item.BCCUser_MailID).Replace(";", "<br />"))
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="expand_fields">@item.BCC_User_Names</span>
+                            }
+                        </td>
+                        @if (ViewBag.IsChannel == "Y")
+                        {
+                            <td><span class="expand_fields">@item.Channel_Names</span></td>
+                        }
+                        @if (ViewBag.CommandName != "VIEW")
+                        {
+                            <td>
+                                @if (ViewBag.Show_Hide_Buttons.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                                {
+                                    <a href="#" class="glyphicon glyphicon-pencil" title="Edit" onclick="BindUserGrid('EDIT','@item.Dummy_Guid')"></a>
                                 }
+                                @if (ViewBag.Show_Hide_Buttons.Contains("~" + GlobalParams.RightCodeForDelete + "~"))
+                                {
+                                    <a href="#" class="glyphicon glyphicon-trash" title="Delete" onclick="DeleteConfirmation('@item.Dummy_Guid')"></a>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        }
     </tbody>
 </table>
 <div id="popupFade">
@@ -311,7 +317,7 @@
 </div>
 <script>
     $('.expand_fields').expander({
-        slicePoint: 25,
+        slicePoint: 12,
         expandPrefix: '',
         expandText: '...read more',
         collapseTimer: 0,

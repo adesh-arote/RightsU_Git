@@ -71,13 +71,31 @@ namespace RightsU_Plus.Controllers
             else
                 ViewBag.Record_Locking_Code = 0;
             //return View("Index", objDeal.Acq_Deal_Material.ToList());
+
+            int prevAcq_Deal = 0;
+            if (objDeal_Schema.Mode == GlobalParams.DEAL_MODE_VIEW && TempData["prevAcqDeal"] != null)
+            {
+                prevAcq_Deal = Convert.ToInt32(TempData["prevAcqDeal"]);
+                TempData.Keep("prevAcqDeal");
+            }
+            ViewBag.prevAcq_Deal = prevAcq_Deal;
             return PartialView("~/Views/Acq_Deal/_Acq_Material.cshtml", objDeal.Acq_Deal_Material.ToList());
         }
 
         public PartialViewResult Create(string isAdd, int txtPageSize, int pageNo)
         {
             ViewBag.CommandName = "Add";
-            BindTitle("");
+            string Is_Acq_Syn_Material_MultiTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_Material_MultiTitle").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_Syn_Material_MultiTitle == "Y")
+            {
+                ViewBag.Is_Acq_Syn_Material_MultiTitle = Is_Acq_Syn_Material_MultiTitle;
+                var lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(objDeal.Acq_Deal_Code, objDeal_Schema.Deal_Type_Code, "A").ToList();
+                TempData["Title_Code"] = new MultiSelectList(lst, "Title_Code", "Title_Name");
+            }
+            else
+            {
+                BindTitle("");
+            }
             BindMaterialType(0);
             BindMaterialMediumType(0);
             if (isAdd == "1")
@@ -174,7 +192,7 @@ namespace RightsU_Plus.Controllers
                 objDeal_Schema.Cost_PageSize = 50;
                 pageSize = 50;
             }
-             PageNo = page_No + 1;
+            PageNo = page_No + 1;
             ICollection<Acq_Deal_Material> lst_Acq_Deal_Material;
             Acq_Deal_Material_Service objAcq_Deal_Material_Service = new Acq_Deal_Material_Service(objLoginEntity.ConnectionStringName);
             if (PageNo == 1)
@@ -206,7 +224,7 @@ namespace RightsU_Plus.Controllers
 
         #region Methods
 
-        public string SaveMaterial(int Acq_Deal_Material_Code, int Title_Code, int Material_Type_Code, int Material_Medium_Code, int Quantity, string Title_Codes)
+        public string SaveMaterial(int Acq_Deal_Material_Code, int Title_Code, int Material_Type_Code, int Material_Medium_Code, int Quantity, string Title_Codes, string strAddTitle_Code = "")
         {
             string ReturnMessage = "Y";
             if (Acq_Deal_Material_Code == 0)
@@ -231,21 +249,70 @@ namespace RightsU_Plus.Controllers
                     objAcq_Deal_Material.Episode_From = 1;
                     objAcq_Deal_Material.Episode_To = 1;
                 }
-                //
+
                 objAcq_Deal_Material.Material_Type_Code = Material_Type_Code;
                 objAcq_Deal_Material.Material_Medium_Code = Material_Medium_Code;
                 objAcq_Deal_Material.Quantity = Quantity;
 
-                if (CheckDuplicateMaterial(objAcq_Deal_Material, "Add", Title_Codes))
+                string Is_Acq_Syn_Material_MultiTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_Material_MultiTitle").Select(x => x.Parameter_Value).FirstOrDefault();
+
+                if (Is_Acq_Syn_Material_MultiTitle == "Y")
                 {
-                    objAcq_Deal_Material.EntityState = State.Added;
-                    dynamic resultSet;
-                    objAcq_Deal_Material_Service.Save(objAcq_Deal_Material, out resultSet);
+                    var lstTitleCode = strAddTitle_Code.Split(',');
+                    var lstTitleName = Title_Codes.Split(',');
+                    int i = 0;
+                    bool IsDuplicate = false;
+                    List<string> lstTitles = new List<string>();
+
+                    foreach (var titleCode in lstTitleCode)
+                    {
+                        objAcq_Deal_Material.Title_Code = Convert.ToInt32(titleCode);
+                        objAcq_Deal_Material.Episode_From = 1;
+                        objAcq_Deal_Material.Episode_To = 1;
+
+                        if (!CheckDuplicateMaterial(objAcq_Deal_Material, "Add", lstTitleName[i]))
+                        {
+                            lstTitles.Add(lstTitleName[i]);
+                            IsDuplicate = true;
+                        }
+                        i++;
+                    }
+                    if (IsDuplicate)
+                    {
+                        ReturnMessage = string.Join(",", lstTitles);
+                        return ReturnMessage;
+                    }
+                    i = 0;
+                    foreach (var titleCode in lstTitleCode)
+                    {
+
+                        objAcq_Deal_Material.Title_Code = Convert.ToInt32(titleCode);
+                        objAcq_Deal_Material.Episode_From = 1;
+                        objAcq_Deal_Material.Episode_To = 1;
+
+                        if (CheckDuplicateMaterial(objAcq_Deal_Material, "Add", lstTitleName[i]))
+                        {
+                            objAcq_Deal_Material.EntityState = State.Added;
+                            dynamic resultSet;
+                            objAcq_Deal_Material_Service.Save(objAcq_Deal_Material, out resultSet);
+                        }
+                        i++;
+                    }
                 }
                 else
                 {
-                    ReturnMessage = "N";
+                    if (CheckDuplicateMaterial(objAcq_Deal_Material, "Add", Title_Codes))
+                    {
+                        objAcq_Deal_Material.EntityState = State.Added;
+                        dynamic resultSet;
+                        objAcq_Deal_Material_Service.Save(objAcq_Deal_Material, out resultSet);
+                    }
+                    else
+                    {
+                        ReturnMessage = "N";
+                    }
                 }
+
 
             }
             else
@@ -409,7 +476,7 @@ namespace RightsU_Plus.Controllers
         private void BindTitle(string selectedTitleCode)
         {
             List<SelectListItem> lst = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(objDeal.Acq_Deal_Code, objDeal_Schema.Deal_Type_Code, "A").ToList(), "Title_Code", "Title_Name", selectedTitleCode).ToList();
-            lst.Insert(0, new SelectListItem() { Value = "0", Text = objMessageKey.PleaseSelect});
+            lst.Insert(0, new SelectListItem() { Value = "0", Text = objMessageKey.PleaseSelect });
             ViewBag.lstTitle = lst;
         }
 

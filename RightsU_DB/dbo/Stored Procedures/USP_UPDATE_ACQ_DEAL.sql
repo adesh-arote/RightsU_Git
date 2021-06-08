@@ -51,6 +51,7 @@ CREATE PROCEDURE [dbo].[USP_UPDATE_ACQ_DEAL]
 ,@Is_Auto_Push CHAR(1)
 ,@Deal_Segment_Code INT
 ,@Revenue_Vertical_Code INT
+,@Confirming_Party NVARCHAR(MAX)
 )
 AS
 -- =============================================
@@ -109,6 +110,7 @@ UPDATE [Acq_Deal]
 	  ,[Is_Auto_Push] = @Is_Auto_Push
 	  ,[Deal_Segment_Code] = @Deal_Segment_Code
 	  ,[Revenue_Vertical_Code] = @Revenue_Vertical_Code
+	  ,[Confirming_Party] = @Confirming_Party
  WHERE Acq_Deal_Code = @Acq_Deal_Code
 
 END

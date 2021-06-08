@@ -1,5 +1,4 @@
-﻿
-CREATE Function [dbo].[UFN_Get_Report_Territory](@Country_Codes Varchar(2000), @RowId Int)
+﻿CREATE Function [dbo].[UFN_Get_Report_Territory](@Country_Codes Varchar(2000), @RowId Int)
 Returns @Tbl_Ret TABLE (
 	Region_Code Int,
 	Cluster_Name NVarchar(MAX),
@@ -47,7 +46,6 @@ Begin
 		)
 	), 'N', ''
 	From Report_Territory trc1
-	where trc1.Is_Active ='Y'
 
 	Update @Temp_Territory Set In_Percent = Round((DB_Cnt * @InclPercent) / 100.0, 0)
 
@@ -97,11 +95,14 @@ Begin
 			Set @Territories = Ltrim(STUFF(
 			(
 				Select Distinct ', ' + rt.Report_Territory_Name + ' (Partial)' From @Temp_Territory tt
-				Inner Join Report_Territory rt On tt.Report_Territory_Code = rt.Report_Territory_Code And NIn_Cnt <> 0
+				Inner Join Report_Territory rt On tt.Report_Territory_Code = rt.Report_Territory_Code And NIn_Cnt <> 0 And rt.Report_Territory_Code <> @WorldCode
 				FOR XML PATH('')
 			), 1, 1, ''))
 
-			Set @Territories = 'World Excluding ' + @Territories
+			IF(ISNULL(@Territories, '') <> '')
+			BEGIN
+				Set @Territories = 'World Excluding ' + @Territories
+			END
 
 		End
 		Else

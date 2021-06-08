@@ -50,6 +50,7 @@ CREATE PROCEDURE [dbo].[USP_INSERT_ACQ_DEAL]
 ,@Is_Auto_Push CHAR(1)
 ,@Deal_Segment_Code INT
 ,@Revenue_Vertical_Code INT
+,@Confirming_Party NVARCHAR(MAX)
 )
 AS
 -- =============================================
@@ -109,7 +110,8 @@ INSERT INTO [Acq_Deal]
 		,[Channel_Cluster_Code]
 		,[Is_Auto_Push]
 		,[Deal_Segment_Code]
-		,[Revenue_Vertical_Code] )
+		,[Revenue_Vertical_Code]
+		,[Confirming_Party] )
 	Select [dbo].[UFN_Auto_Genrate_Agreement_No]('A', @Agreement_Date, ISNULL(@Master_Deal_Movie_Code_ToLink, 0)) [Agreement_No]
 		,@Version
 		,@Agreement_Date
@@ -160,6 +162,7 @@ INSERT INTO [Acq_Deal]
 		,@Is_Auto_Push
 		,@Deal_Segment_Code
 		,@Revenue_Vertical_Code
+		,@Confirming_Party
 
 		SELECT Acq_Deal_Code,Agreement_No
 		FROM Acq_Deal WHERE Acq_Deal_Code=SCOPE_IDENTITY()

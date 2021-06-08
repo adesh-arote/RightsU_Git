@@ -1,5 +1,4 @@
-﻿
-CREATE PROC [dbo].[USP_List_Rights]
+﻿CREATE PROC [dbo].[USP_List_Rights]
 (
 	@Right_Type Char(2), 
 	@View_Type Char(1), 
@@ -24,8 +23,8 @@ BEGIN
 	SET NOCOUNT ON 
 
 	--DECLARE @Right_Type Char(2) = 'AR', 
-	--@View_Type Char(1) = 'D', 
-	--@Deal_Code Int =  674, 
+	--@View_Type Char(1) = 'G', 
+	--@Deal_Code Int =  16550, 
 	--@Deal_Movie_Codes Varchar(5000) = '',
 	--@RegionCodes varchar(5000) = '',
 	--@PlatformCodes varchar(5000)= '',
@@ -115,7 +114,7 @@ BEGIN
 		Title_Name NVARCHAR(MAX),
 		Platform_Name NVARCHAR(MAX),
 		Is_Holdback VARCHAR(5),
-		Is_Exclusive VARCHAR(5),
+		Is_Exclusive VARCHAR(100),
 		Is_Sublicencing VARCHAR(5),
 		Rights_Start_Date DATETIME,
 		Rights_End_Date DATETIME,
@@ -154,7 +153,7 @@ BEGIN
 		Title_Name NVARCHAR(MAX),
 		Platform_Name NVARCHAR(MAX),
 		Is_Holdback VARCHAR(5),
-		Is_Exclusive VARCHAR(5),
+		Is_Exclusive VARCHAR(100),
 		Is_Sublicencing VARCHAR(5),
 		Rights_Start_Date DATETIME,
 		Rights_End_Date DATETIME,
@@ -585,6 +584,9 @@ BEGIN
 			AND SDM.Episode_From = TT.Episode_From AND SDM.Episode_End_To = TT.Episode_To
 	END
 
+	DECLARE @Is_Acq_Syn_CoExclusive CHAR(1) = ''
+	SELECT @Is_Acq_Syn_CoExclusive = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'Is_Acq_Syn_CoExclusive' 
+
 	IF(@Right_Type = 'AR')
 	BEGIN
 		UPDATE TR SET TR.Is_Holdback = 'No', 
@@ -609,6 +611,16 @@ BEGIN
 		FROM Acq_Deal_Rights ADR WITH(NOLOCK)
 		INNER JOIN #TempRights TR ON ADR.Acq_Deal_Rights_Code = tr.Rights_Code
 		WHERE Acq_Deal_Code = @Deal_Code
+
+		IF (@Is_Acq_Syn_CoExclusive = 'Y')
+		BEGIN
+			UPDATE TR SET
+				TR.Is_Exclusive = CASE ISNULL(ADR.Is_Exclusive, 'N') WHEN 'Y' THEN 'Exclusive' WHEN 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END
+			FROM Acq_Deal_Rights ADR WITH(NOLOCK)
+			INNER JOIN #TempRights TR ON ADR.Acq_Deal_Rights_Code = tr.Rights_Code
+			WHERE Acq_Deal_Code = @Deal_Code
+		END
+
 	END
 	ELSE IF(@Right_Type = 'AP')
 	BEGIN
@@ -657,6 +669,16 @@ BEGIN
 		FROM Syn_Deal_Rights SDR WITH(NOLOCK)
 		INNER JOIN #TempRights TR ON SDR.Syn_Deal_Rights_Code = tr.Rights_Code
 		WHERE Syn_Deal_Code = @Deal_Code
+
+		IF (@Is_Acq_Syn_CoExclusive = 'Y' AND @Right_Type = 'SR')
+		BEGIN
+			UPDATE TR SET
+				TR.Is_Exclusive = CASE ISNULL(SDR.Is_Exclusive, 'N') WHEN 'Y' THEN 'Exclusive' WHEN 'N' THEN 'Non-Exclusive' ELSE 'Co-Exclusive' END
+			FROM Syn_Deal_Rights SDR WITH(NOLOCK)
+			INNER JOIN #TempRights TR ON SDR.Syn_Deal_Rights_Code = tr.Rights_Code
+			WHERE Syn_Deal_Code = @Deal_Code
+		END
+
 	END
 
 	DECLARE @Type CHAR(1) = ''

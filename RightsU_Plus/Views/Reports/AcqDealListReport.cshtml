@@ -19,6 +19,7 @@
     var URL_PopulateTitleNameForAcqDeal = '@Url.Action("PopulateTitleNameForAcqDeal", "Reports")';
 
     var URL_BindAcqDealListReport = '@Url.Action("BindAcqDealListReport", "Reports")';
+    var Is_AllowMultiBUacqdealreport = '@ViewBag.Is_AllowMultiBUacqdealreport';
     $(document).ready(function () {
         $('#txtStart').change(function () {
             SetMinDt();
@@ -29,6 +30,19 @@
         $("#ddlBusinessUnit").change(function () {
             $("#txtTitle").val('');
         });
+
+        $("#ddlBusinessUnitMultiSelect").change(function () {
+            $("#txtTitle").val('');
+        });
+
+        $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
+        $('#ddlBusinessUnitMultiSelect').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css({ paddingRight: '35px', lineHeight: '15px' });
+        });
     });
 
     function btnShow_OnClick() {
@@ -36,13 +50,38 @@
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
-        var businessUnitcode = $('#ddlBusinessUnit').val();
+        if ('@ViewBag.Is_AllowMultiBUacqdealreport' != "Y")
+        {
+            var businessUnitcode = $('#ddlBusinessUnit').val();
+        }
+        else
+        {
+            var ddlBUMulti = $('#ddlBusinessUnitMultiSelect').val();
+            if (ddlBUMulti == 0 || ddlBUMulti == "undefined" || ddlBUMulti == "" || ddlBUMulti == null) {
+                showAlert('E', "Business Unit Cannot be Blank.");
+                return false;
+            }
+            if ($('#ddlBusinessUnitMultiSelect').val())
+                businessUnitcode = $('#ddlBusinessUnitMultiSelect').val().join(',');
+        }
         var DealNo = $('#txtDealNo').val();
         var AllowDealSegment = $('#AllowDealSegment').val();
+        var IsAllowTypeOfFilm = $('#IsAllowTypeOfFilm').val();
         if (AllowDealSegment == "Y")
             var DealSegment = $('#ddlDealSegment').val();
         else
             var DealSegment = "";
+
+        if (AllowDealSegment == "Y")
+            var DealSegment = $('#ddlDealSegment').val();
+        else
+            var DealSegment = "";
+
+        if (IsAllowTypeOfFilm == "Y")
+            var TypeOfFilm = $('#ddlTypeOfFilm').val();
+        else
+            var TypeOfFilm = "";
+
         var DealType = "";
         var Dealtag = $('#ddlStatus').val();
         if ($('#txtTitle').val() != '0')
@@ -94,7 +133,7 @@
         //    else
         //        IsPushBack = "Y";
         //}                                ------commented by sayali on 2aug2018  discussion with dheeraj sir implement this straight forward login checked then yes
-       
+
         if (DealNo == "0") {
             $('#txtDealNo').addClass('required');
             returnVal = false;
@@ -121,7 +160,8 @@
                     subDeal: subDeal,
                     masterDeal: masterDeal,
                     dateformat: $('#ddlDateFormat').val(),
-                    IsCheckRight: IsCheckRight
+                    IsCheckRight: IsCheckRight,
+                    TypeOfFilm: TypeOfFilm
                 }),
                 async: false,
                 success: function (result) {
@@ -165,8 +205,20 @@
         AssignDateJQuery();
     }
     function PopulateTitleNameForAcqDeal(keyword) {
+        debugger;
         if ($('#txtTitle').val().length == "0") {
             $('#hdnTitleCode').val(0);
+        }
+        var BU_Code = "";
+        if (Is_AllowMultiBUacqdealreport != "Y")
+        {
+            debugger;
+            BU_Code = $('#ddlBusinessUnit').val();
+        }
+        else
+        {
+            if ($('#ddlBusinessUnitMultiSelect').val())
+            BU_Code = $('#ddlBusinessUnitMultiSelect').val().join(",");
         }
         var selectedtxt = $('#txtTitle').val()
         var txt = selectedtxt.split('﹐');
@@ -183,11 +235,19 @@
                     $(this).addClass('loader');
                 },
                 source: function (request, response) {
-                    var param = {
-                        BU_Code: $('#ddlBusinessUnit').val(),
+                    var param = {       
+                        BU_Code: BU_Code,
                         keyword: $('#txtTitle').val()
 
                     };
+                    if (param.BU_Code == "undefined" || param.BU_Code == "" || param.BU_Code == null) {
+                        debugger;
+                        showAlert('E', "Business Unit Cannot be Blank.");
+                        $('#txtTitle').removeClass('loader');
+                        if ($('#txtTitle').val(''));
+                        return false;
+                    }
+                    debugger;
                     $.ajax({
                         url: URL_PopulateTitleNameForAcqDeal,
                         data: JSON.stringify(param),
@@ -196,6 +256,7 @@
                         contentType: "application/json; charset=utf-8",
                         dataFilter: function (data) { return data; },
                         success: function (data) {
+                            debugger;
                             if (data.length == 0) {
                                 data[0] = '@objMessageKey.ResultNotFound';
                                 response($.map(data, function (v, i) {
@@ -316,8 +377,15 @@
                         </tr>
                         <tr style="width:100%">
                             <td style="width:11%"><b>@objMessageKey.BusinessUnit :</b></td>
-                            <td style="width:16%;">                               
-                                @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                            <td style="width:16%;">
+                                @if (ViewBag.Is_AllowMultiBUacqdealreport != "Y")
+                                {
+                                    @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("BusinessUnitMulti", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnitMultiSelect", @multiple = "multiple" })
+                                }
                             </td>
                             <td style="width:7%"><b>@objMessageKey.Title :</b></td>
                             <td style="width:18%">
@@ -340,16 +408,30 @@
                         <tr style="width:100%">
                             <td style="width:8%"><b>@objMessageKey.DateFormat:</b></td>
                             <td style="width:17%">
+                                <input id="AllowDealSegment"
+                                       type="hidden"
+                                       value=@ViewBag.AllowDealSegment />
+                                <input id="IsAllowTypeOfFilm"
+                                       type="hidden"
+                                       value=@ViewBag.IsAllowTypeOfFilm />
                                 @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
                             </td>
-                            <input id="AllowDealSegment"
-                                   type="hidden"
-                                   value=@ViewBag.AllowDealSegment />
+
+
                             @if (ViewBag.AllowDealSegment == "Y")
                             {
                                 <td style="width:7%"><b>Deal Segment :</b></td>
                                 <td style="width:16%">
                                     @Html.DropDownList("DealSegment", ViewBag.Deal_Segment as SelectList, "Please Select", new { @id = "ddlDealSegment", @class = "form_input chosen-select" })
+                                </td>
+                            }
+
+
+                            @if (ViewBag.IsAllowTypeOfFilm == "Y")
+                            {
+                                <td style="width:7%"><b>Type of Film :</b></td>
+                                <td style="width:16%">
+                                    @Html.DropDownList("TypeOfFilm", ViewBag.TypeOfFilm as SelectList, "Please Select", new { @id = "ddlTypeOfFilm", @class = "form_input chosen-select" })
                                 </td>
                             }
                             <td></td>

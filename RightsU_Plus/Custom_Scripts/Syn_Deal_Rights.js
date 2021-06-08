@@ -581,9 +581,9 @@ function BindDropdown(radioType, CallFrom) {
     var selected_Sub_Lang = '';
     var selected_Dub_Lang = '';
     if (CallFrom == 'PF') {
-        if (selectedCodes != "") 
+        if (selectedCodes != "")
             selectedCodes = $('#' + selectedId).val();
-          }
+    }
 
     $.ajax({
         type: "POST",
@@ -720,7 +720,7 @@ function BindListandDdl() {
 
                 $("#lbSub_Language").val(result.Selected_SL_Code.split(',')).attr("selected", "true")[0].sumo.reload();
                 $("#lbDub_Language").val(result.Selected_DL_Code.split(',')).attr("selected", "true")[0].sumo.reload();
-              
+
                 if (Is_Theatrical_Right_G != 'Y')
                     BindPlatform();
                 initializeTooltip();
@@ -839,7 +839,7 @@ $(document).ready(function () {
                 async: false,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
-                data:'',
+                data: '',
                 success: function (result) {
                     if (result == "true")
                         redirectToLogin();
@@ -891,7 +891,7 @@ $(document).ready(function () {
             });
         }
         else {
-     
+
             BindPlatform();
             TreeViewSelectedChange(document.getElementById('Rights_Platform'));
         }
@@ -936,7 +936,7 @@ $(document).ready(function () {
             });
         }
         else {
-            
+
             BindPlatform();
             TreeViewSelectedChange(document.getElementById('Rights_Platform'));
         }
@@ -1082,7 +1082,7 @@ function CalculateDaysBetweenTwoDates(startDate, endDate) {
     return diffDays;
 }
 function CalculatePerpetuityEndDate() {
-   
+
     var strSD = $('#txtPerpetuity_Date').val();
     if (strSD != '' && $('#hdnTerm_Perputity').val() != undefined && $('#hdnTerm_Perputity').val() != '' && $('#txtPerpetuity_EndDate').val() != undefined) {
         var startDate = new Date(MakeDateFormate(strSD));
@@ -1130,7 +1130,7 @@ function handleOk() {
                 }
                 $('#tabRights li[href="#tabHoldback"]').trigger('click');
                 $('#hdnHB_Code').val(j.toString());
-       
+
                 BindPlatform();
             },
             error: function (result) { }
@@ -1160,7 +1160,7 @@ function handleOk() {
                 count -= 1;
                 $('#spnHoldBackCount').text(count);
                 if ($('#Is_Theatrical_Right').prop('checked') == false) {
-                  
+
                     BindPlatform();
                 }
                 hideLoading();
@@ -1192,7 +1192,7 @@ function handleOk() {
                 var count = parseInt($('#spnBlackOutCount').text());
                 count -= 1;
                 $('#spnBlackOutCount').text(count);
-              
+
                 initializeDatepicker();
             },
             error: function (result) {
@@ -1243,7 +1243,7 @@ function CheckHBRegionWithRightsRegion() {
     $("#lbTerritory option:selected").prop('disabled', false);
     $("#lbTerritory option").removeAttr('disabled')
 
-  //  $('#lbTerritory')[0].sumo.enable();
+    //  $('#lbTerritory')[0].sumo.enable();
     var region_type = $("#rdoCountryHB").prop('checked') ? $("#rdoCountryHB").val() : $("#rdoTerritoryHB").val();
     var region_Code = '';
     if ($("#lbTerritory option:selected").length > 0) {
@@ -1474,7 +1474,7 @@ function Show_Validation_Popup(search_Titles, Page_Size, Page_No) {
 function SetTheatrical(CallFrom) {
     debugger
     //HERE  CallFROM  C- Means Change Event    
-   
+
     var ShowMsg = false;
     var isCheck = false;
     var tvCodes = $('#hdnTVCodes').val();
@@ -1511,7 +1511,7 @@ function SetTheatrical(CallFrom) {
         //    showAlert("I", confirmMsg);
         //    return false;
         //}
-        
+
     }
     else {
         ReSetTheatrical();
@@ -1622,7 +1622,7 @@ function ReSetTheatrical() {
         $('#lblTheatrical').hide();
         $("#lblCountry").text('Country');
         $('#hdnTVCodes').val('');
-      
+
         BindPlatform();
         $('#' + TreeId_G).show();
         $('#tdExclusiveRight').css("width", "100px");
@@ -1704,7 +1704,7 @@ function OnClickTentative(control) {
 }
 
 function CalculateROFRDate() {
-   
+
     var txtStartDate = $('#Start_Date');
     var txtEndDate = $('#End_Date');
     var txtTermYear = $('#Term_YY');
@@ -1873,7 +1873,7 @@ function CalculateROFRDays() {
 }
 
 function OnFocusLostTerm() {
-   
+
     var canAssign = true;
     if ($('#Is_Tentative').prop('checked'))
         canAssign = false
@@ -2179,10 +2179,10 @@ function ClearHidden() {
 function ValidateSave() {
     debugger;
     var IsValidSave = true;
-        if ($('#hdnEditRecord').val() != '') {
-            IsValidSave = false;
-            showAlert('E', ShowMessage.PleaseCompleteAddEdit);
-        }
+    if ($('#hdnEditRecord').val() != '') {
+        IsValidSave = false;
+        showAlert('E', ShowMessage.PleaseCompleteAddEdit);
+    }
 
     $('.required').removeClass('required');
     $("[required='required']").removeAttr("required");
@@ -2199,15 +2199,17 @@ function ValidateSave() {
 
     //------------------ TITLE
     var Excl = $('.exc:checked').val();
-   var temp=  $('#hdnIs_Exclusive').val(Excl);
-   if (Excl == "Y")
-   {
-       $('#hdnIs_Exclusive').empty().val(true);
-   }
-   else
-   {
-       $('#hdnIs_Exclusive').empty().val(false);
-   }
+
+    // var temp = $('#hdnIs_Exclusive').val(Excl);
+    $('#hdnIs_Exclusive').empty().val(Excl);
+    //if (Excl == "Y") {
+    //    $('#hdnIs_Exclusive').empty().val(true);
+    //}
+    //else {
+    //    $('#hdnIs_Exclusive').empty().val(false);
+    //}
+
+
     var selectedTitles = '';
     if ($("#lbTitles").val() != null)
         selectedTitles = $("#lbTitles").val().join(',');
@@ -2443,7 +2445,7 @@ function ValidateSave() {
     }
 
     msgSyn = Validate_Acq_Right_Title_Platform($("#hdnTVCodes").val(), selectedTitles, Term, isTentative,
-                                                   $('#Start_Date').val(), $('#End_Date').val())
+        $('#Start_Date').val(), $('#End_Date').val())
     if (msgSyn != '') {
         showAlert('E', msgSyn);
         return false;
@@ -2582,21 +2584,20 @@ function handleCancel() {
         }
         MessageFrom = '';
         $('#Is_Theatrical_Right').prop('checked', !isCheck);
-       // $('#hdnIs_Theatrical_Right').val(!isCheck);
+        // $('#hdnIs_Theatrical_Right').val(!isCheck);
     }
     if (CommandName == "COPY_HB") {
         $.ajax({
             type: "POST",
             url: URL_CancelHoldbackCopy,
-            async:false,
+            async: false,
             success: function (result) {
                 //debugger;
                 CommandName = "";
                 if (result == "true") {
                     redirectToLogin();
                 }
-                else
-                {
+                else {
                     $('#btnSaveDeal').click();
                 }
             },
@@ -2701,8 +2702,8 @@ function CloseRestRemarks() {
         BindPartialTabs(pageRights_List);
     else {
         var tabName = $('#hdnTabName').val();
-        if (tabName == 'GNR') {  
-            $(".modal-open").css('overflow','auto'); 
+        if (tabName == 'GNR') {
+            $(".modal-open").css('overflow', 'auto');
         }
         BindPartialTabs(tabName);
     }

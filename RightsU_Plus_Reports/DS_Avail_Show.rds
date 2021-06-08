@@ -2,7 +2,7 @@
 <RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="DS_Avail_Show">
   <ConnectionProperties>
     <Extension>SQL</Extension>
-    <ConnectString>Data Source=192.168.0.115;Initial Catalog=RightsU_Reports_Show</ConnectString>
+    <ConnectString>Data Source=192.168.0.115;Initial Catalog=RightsU_Reports_V18_Shows</ConnectString>
   </ConnectionProperties>
   <DataSourceID>dd927e2d-8e76-4c4e-ae82-aed60b407a39</DataSourceID>
 </RptDataSource>
