@@ -28,5 +28,6 @@ namespace RightsU_Entities
         public string IsActive { get; set; }
         public string Description { get; set; }
         public string IS_System_Admin { get; set; }
+        public string Client_Name { get; set; }
     }
 }
