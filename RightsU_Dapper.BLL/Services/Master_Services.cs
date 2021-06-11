@@ -2728,4 +2728,144 @@ namespace RightsU_Dapper.BLL.Services
             objLanguage_Repository.Delete(obj);
         }
     }
+    public class Music_Title_Services
+    {
+        Music_Title_Repository objMusic_Title_Repository = new Music_Title_Repository();
+        public Music_Title_Services()
+        {
+            this.objMusic_Title_Repository = new Music_Title_Repository();
+        }
+        public Music_Title GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Title_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Title> GetAll(Type[] additionalTypes = null)
+        {
+            return objMusic_Title_Repository.GetAll();
+        }
+        public void AddEntity(Music_Title obj)
+        {
+            objMusic_Title_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Title obj)
+        {
+            objMusic_Title_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Title obj)
+        {
+            objMusic_Title_Repository.Delete(obj);
+        }
+    }
+    public class Music_Override_Reason_Services
+    {
+        Music_Override_Reason_Repository objMusic_Override_Reason_Repository = new Music_Override_Reason_Repository();
+        public Music_Override_Reason_Services()
+        {
+            this.objMusic_Override_Reason_Repository = new Music_Override_Reason_Repository();
+        }
+        public Music_Override_Reason GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Override_Reason_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Override_Reason> GetAll(Type[] additionalTypes = null)
+        {
+            return objMusic_Override_Reason_Repository.GetAll();
+        }
+        public void AddEntity(Music_Override_Reason obj)
+        {
+            objMusic_Override_Reason_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Override_Reason obj)
+        {
+            objMusic_Override_Reason_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Override_Reason obj)
+        {
+            objMusic_Override_Reason_Repository.Delete(obj);
+        }
+    }
+    public class Music_Schedule_Transaction_Services
+    {
+        Music_Schedule_Transaction_Repository objMusic_Schedule_Transaction_Repository = new Music_Schedule_Transaction_Repository();
+        public Music_Schedule_Transaction_Services()
+        {
+            this.objMusic_Schedule_Transaction_Repository = new Music_Schedule_Transaction_Repository();
+        }
+        public Music_Schedule_Transaction GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Schedule_Transaction_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Schedule_Transaction> GetAll(Type[] additionalTypes = null)
+        {
+            return objMusic_Schedule_Transaction_Repository.GetAll();
+        }
+        public void AddEntity(Music_Schedule_Transaction obj)
+        {
+            objMusic_Schedule_Transaction_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Schedule_Transaction obj)
+        {
+            objMusic_Schedule_Transaction_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Schedule_Transaction obj)
+        {
+            objMusic_Schedule_Transaction_Repository.Delete(obj);
+        }
+    }
+    public class Error_Code_Master_Services
+    {
+        Error_Code_Master_Repository objError_Code_Master_Repository = new Error_Code_Master_Repository();
+        public Error_Code_Master_Services()
+        {
+            this.objError_Code_Master_Repository = new Error_Code_Master_Repository();
+        }
+        public Error_Code_Master GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objError_Code_Master_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Error_Code_Master> GetAll(Type[] additionalTypes = null)
+        {
+            return objError_Code_Master_Repository.GetAll();
+        }
+        public void AddEntity(Error_Code_Master obj)
+        {
+            objError_Code_Master_Repository.Add(obj);
+        }
+        public void UpdateEntity(Error_Code_Master obj)
+        {
+            objError_Code_Master_Repository.Update(obj);
+        }
+        public void DeleteEntity(Error_Code_Master obj)
+        {
+            objError_Code_Master_Repository.Delete(obj);
+        }
+    }
+    public class Title_Content_Services
+    {
+        Title_Content_Repository objTitle_Content_Repository = new Title_Content_Repository();
+        public Title_Content_Services()
+        {
+            this.objTitle_Content_Repository = new Title_Content_Repository();
+        }
+        public Title_Content GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objTitle_Content_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Title_Content> GetAll(Type[] additionalTypes = null)
+        {
+            return objTitle_Content_Repository.GetAll();
+        }
+        public void AddEntity(Title_Content obj)
+        {
+            objTitle_Content_Repository.Add(obj);
+        }
+        public void UpdateEntity(Title_Content obj)
+        {
+            objTitle_Content_Repository.Update(obj);
+        }
+        public void DeleteEntity(Title_Content obj)
+        {
+            objTitle_Content_Repository.Delete(obj);
+        }
+    }
 }

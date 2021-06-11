@@ -2735,4 +2735,169 @@ namespace RightsU_Dapper.DAL.Repository
             base.DeleteEntity(entity);
         }
     }
+    public class Music_Title_Repository : MainRepository<Music_Title>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Title> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Title>(additionalTypes);
+        }
+        public IEnumerable<Music_Title> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Title>(param);
+        }
+        public Music_Title Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Title_Code = Id };
+            return base.GetById<Music_Title>(obj, RelationList);
+        }
+        public void Add(Music_Title entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Title entity)
+        {
+            Music_Title oldObj = Get(entity.Music_Title_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Title entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Override_Reason_Repository : MainRepository<Music_Override_Reason>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Override_Reason> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Override_Reason>(additionalTypes);
+        }
+        public IEnumerable<Music_Override_Reason> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Override_Reason>(param);
+        }
+        public Music_Override_Reason Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Override_Reason_Code = Id };
+            return base.GetById<Music_Override_Reason>(obj, RelationList);
+        }
+        public void Add(Music_Override_Reason entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Override_Reason entity)
+        {
+            Music_Override_Reason oldObj = Get(entity.Music_Override_Reason_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Override_Reason entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Schedule_Transaction_Repository : MainRepository<Music_Schedule_Transaction>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Schedule_Transaction> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Schedule_Transaction>(additionalTypes);
+        }
+        public IEnumerable<Music_Schedule_Transaction> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Schedule_Transaction>(param);
+        }
+        public Music_Schedule_Transaction Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Schedule_Transaction_Code = Id };
+            return base.GetById<Music_Schedule_Transaction>(obj, RelationList);
+        }
+        public void Add(Music_Schedule_Transaction entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Schedule_Transaction entity)
+        {
+            Music_Schedule_Transaction oldObj = Get(Convert.ToInt32(entity.Music_Schedule_Transaction_Code));
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Schedule_Transaction entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Error_Code_Master_Repository : MainRepository<Error_Code_Master>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Error_Code_Master> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Error_Code_Master>(additionalTypes);
+        }
+        public IEnumerable<Error_Code_Master> SearchFor(object param)
+        {
+            return base.SearchForEntity<Error_Code_Master>(param);
+        }
+        public Error_Code_Master Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Error_Code_Master_Code = Id };
+            return base.GetById<Error_Code_Master>(obj, RelationList);
+        }
+        public void Add(Error_Code_Master entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Error_Code_Master entity)
+        {
+            Error_Code_Master oldObj = Get(entity.Error_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Error_Code_Master entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Title_Content_Repository : MainRepository<Title_Content>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Title_Content> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Title_Content>(additionalTypes);
+        }
+        public IEnumerable<Title_Content> SearchFor(object param)
+        {
+            return base.SearchForEntity<Title_Content>(param);
+        }
+        public Title_Content Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Title_Content_Code = Id };
+            return base.GetById<Title_Content>(obj, RelationList);
+        }
+        public void Add(Title_Content entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Title_Content entity)
+        {
+            Title_Content oldObj = Get(entity.Title_Content_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Title_Content entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
 }

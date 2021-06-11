@@ -75,6 +75,13 @@
     <Compile Include="IPR\IPR_TYPE.cs" />
     <Compile Include="IPR\USP_List_IPR_Opp_Result.cs" />
     <Compile Include="IPR\USP_List_IPR_Result.cs" />
+    <Compile Include="Master_Entities\Error_Code_Master.cs" />
+    <Compile Include="Master_Entities\Content_Music_Link.cs" />
+    <Compile Include="Master_Entities\BV_Schedule_Transaction.cs" />
+    <Compile Include="Master_Entities\Music_Schedule_Transaction.cs" />
+    <Compile Include="Master_Entities\Music_Override_Reason.cs" />
+    <Compile Include="Master_Entities\USP_Music_Exception_Handling_Result.cs" />
+    <Compile Include="Master_Entities\USP_Music_Exception_Dashboard_Result.cs" />
     <Compile Include="Master_Entities\Music_Title.cs" />
     <Compile Include="Master_Entities\Music_Title_Label.cs" />
     <Compile Include="Master_Entities\Music_Label.cs" />
