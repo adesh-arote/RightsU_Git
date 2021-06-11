@@ -176,7 +176,7 @@ namespace RightsU_Plus.Controllers
                 RightsU_Dapper.Entity.Currency objCurrency = objCurrencyService.GetTalentByID(currencyCode);
                 objCurrency.Is_Active = doActive;
                 //objCurrency.EntityState = State.Modified;
-                objCurrencyService.UpdateCurrency(objCurrency);
+                objCurrencyService.AddEntity(objCurrency);
                 dynamic resultSet;
                 // bool isValid = objService.Save(objCurrency, out resultSet);
                 bool isValid = true;
@@ -389,7 +389,11 @@ namespace RightsU_Plus.Controllers
             if (objCER != null)
             {
                 if (objCER.Currency_Exchange_Rate_Code > 0)
+                {
                     status = "Test";
+                    objCurrency.Currency_Exchange_Rate.Remove(objCER);
+                    //objCurrency_Exchange_RateService.DeleteMusic_Deal(objCER);
+                }
                 //objCER.EntityState = State.Deleted;
                 else
                     objCurrency.Currency_Exchange_Rate.Remove(objCER);
