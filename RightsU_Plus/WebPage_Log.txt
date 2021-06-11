@@ -25903,3 +25903,87 @@
 19 March 2021 13:55:47
   :Calling Index method of Acq_DealController
 -------------------------------
+10 June 2021 13:55:22
+  :Index method of Acq_ListController is executing
+-------------------------------
+10 June 2021 13:55:22
+  :Condition 1 executing
+-------------------------------
+10 June 2021 13:55:22
+  :Condition 1 executed
+-------------------------------
+10 June 2021 13:55:22
+  :Condition 2 executing
+-------------------------------
+10 June 2021 13:55:22
+  :Condition 2 executed
+-------------------------------
+10 June 2021 13:55:22
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+10 June 2021 13:55:22
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+10 June 2021 13:55:22
+  :BindBUList() method is executing
+-------------------------------
+10 June 2021 13:55:23
+  :BindBUList() method has been executed
+-------------------------------
+10 June 2021 13:55:23
+  :Condition 4 executing
+-------------------------------
+10 June 2021 13:55:23
+  :Condition 4 executed
+-------------------------------
+10 June 2021 13:55:23
+  :Index method of Acq_ListController has been executed
+-------------------------------
+10 June 2021 13:55:28
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+10 June 2021 13:55:28
+  :USP_List_Acq is executing
+-------------------------------
+10 June 2021 13:55:31
+  :USP_List_Acq has been executed
+-------------------------------
+10 June 2021 13:55:31
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+10 June 2021 14:30:32
+  :Index method of Acq_ListController is executing
+-------------------------------
+10 June 2021 14:30:32
+  :Condition 1 executing
+-------------------------------
+10 June 2021 14:30:32
+  :Condition 1 executed
+-------------------------------
+10 June 2021 14:30:32
+  :Condition 2 executing
+-------------------------------
+10 June 2021 14:30:32
+  :Condition 2 executed
+-------------------------------
+10 June 2021 14:30:32
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+10 June 2021 14:30:33
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+10 June 2021 14:30:33
+  :BindBUList() method is executing
+-------------------------------
+10 June 2021 14:30:34
+  :BindBUList() method has been executed
+-------------------------------
+10 June 2021 14:30:34
+  :Condition 4 executing
+-------------------------------
+10 June 2021 14:30:34
+  :Condition 4 executed
+-------------------------------
+10 June 2021 14:30:34
+  :Index method of Acq_ListController has been executed
+-------------------------------
