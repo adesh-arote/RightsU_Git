@@ -242,14 +242,23 @@ namespace RightsU_Plus.Controllers
              objProgram.Last_Action_By = objLoginUser.Users_Code;
              objProgram.Is_Active = "Y";
              objProgram.Program_Name = programName;
-             dynamic resultSet;
-            if (programCode > 0)
+             string resultSet;
+            bool isDuplicate = objProgramService.Validate(objProgram, out resultSet);
+            if (isDuplicate)
             {
-                objProgramService.UpdateCategory(objProgram);
+                if (programCode > 0)
+                {
+                    objProgramService.UpdateCategory(objProgram);
+                }
+                else
+                {
+                    objProgramService.AddEntity(objProgram);
+                }
             }
             else
             {
-                objProgramService.AddEntity(objProgram);
+                status = "";
+                message = resultSet;
             }
                 // bool isValid = objService.Save(objProgram, out resultSet);
                 bool isValid = true;

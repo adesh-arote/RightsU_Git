@@ -309,29 +309,40 @@ namespace RightsU_Plus.Controllers
             {
                 Added_Territory_Details.ToList<Territory_Details>().ForEach(t => objTerritory.Territory_Details.Add(t));
                 Deleted_Territory_Details.ToList<Territory_Details>().ForEach(t => objTerritory.Territory_Details.Remove(t));
-
-                try
+                string resultset = "";
+                bool isDuplicate = objTerritory_Service.Validate(objTerritory, out resultset);
+                if (isDuplicate)
                 {
-                    if (objTerritory.Territory_Code == 0)
-                        objTerritory_Services.AddEntity(objTerritory);
-                    else
-                        objTerritory_Services.UpdateEntity(objTerritory);
+                    try
+                    {
+                        if (objTerritory.Territory_Code == 0)
+                            objTerritory_Services.AddEntity(objTerritory);
+                        else
+                            objTerritory_Services.UpdateEntity(objTerritory);
 
-                    int recordLockingCode = Convert.ToInt32(objCollection["hdnRecodLockingCode"]);
-                    CommonUtil objCommonUtil = new CommonUtil();
-                    objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
-                    objTerritory = null;
-                    objTerritory_Service = null;
-                    //lstTerritory_Searched = lstTerritory = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Territory(objLoginUser.System_Language_Code).OrderBy(o => o.Last_Updated_Time).ToList<RightsU_Entities.USP_List_Territory_Result>();
-                    lstTerritory_Searched = lstTerritory = objUSP_List_Territory_Service.USP_List_Territory(objLoginUser.System_Language_Code).OrderBy(o => o.Last_Updated_Time).ToList<RightsU_Dapper.Entity.USP_List_Territory_Result>();
+                        int recordLockingCode = Convert.ToInt32(objCollection["hdnRecodLockingCode"]);
+                        CommonUtil objCommonUtil = new CommonUtil();
+                        objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
+                        objTerritory = null;
+                        objTerritory_Service = null;
+                        //lstTerritory_Searched = lstTerritory = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Territory(objLoginUser.System_Language_Code).OrderBy(o => o.Last_Updated_Time).ToList<RightsU_Entities.USP_List_Territory_Result>();
+                        lstTerritory_Searched = lstTerritory = objUSP_List_Territory_Service.USP_List_Territory(objLoginUser.System_Language_Code).OrderBy(o => o.Last_Updated_Time).ToList<RightsU_Dapper.Entity.USP_List_Territory_Result>();
 
+                    }
+                    catch (Exception)
+                    {
+                        status = "E";
+                        message = resultset;
+                    }
                 }
-                catch (Exception)
+
+                else
                 {
                     status = "E";
-                    message = "";
-                }
+                    message = resultset;
+                    //message = "";
 
+                }
             }
             var obj = new
             {

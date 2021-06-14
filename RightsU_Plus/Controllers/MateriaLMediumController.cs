@@ -231,63 +231,93 @@ namespace RightsU_Plus.Controllers
             int MaterialMediumCode = Convert.ToInt32(objFormCollection["MaterialMediumCode"]);
             //Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
             RightsU_Dapper.Entity.Material_Medium objMaterialMedium = new RightsU_Dapper.Entity.Material_Medium();
-            if (MaterialMediumCode != 0)
+            string resultSet;
+            bool isDuplicatee = objMaterial_Medium_Service.Validate(objMaterialMedium, out resultSet);
+            if (isDuplicatee)
             {
-                string str_Material_Medium_Name = objFormCollection["Material_Medium_Name"].ToString().Trim();
-                if (objFormCollection["Duration"] != "")
+
+
+                if (MaterialMediumCode != 0)
                 {
-                    int_Duration = Convert.ToInt32(objFormCollection["Duration"]);
-                }
-                string str_Type = objFormCollection["Type"].ToString();
-                string str_QC = objFormCollection["QC"].ToString();
-                objMaterialMedium = objMaterial_Medium_Service.GetRightRuleByID(MaterialMediumCode);
-                objMaterialMedium.Material_Medium_Name = str_Material_Medium_Name;
-                if (str_Type == "NA" || str_Type == "")
-                {
-                    objMaterialMedium.Type = null;
-                    objMaterialMedium.Duration = 0;
+                    string str_Material_Medium_Name = objFormCollection["Material_Medium_Name"].ToString().Trim();
+                    if (objFormCollection["Duration"] != "")
+                    {
+                        int_Duration = Convert.ToInt32(objFormCollection["Duration"]);
+                    }
+                    string str_Type = objFormCollection["Type"].ToString();
+                    string str_QC = objFormCollection["QC"].ToString();
+                    objMaterialMedium = objMaterial_Medium_Service.GetRightRuleByID(MaterialMediumCode);
+                    objMaterialMedium.Material_Medium_Name = str_Material_Medium_Name;
+                    if (str_Type == "NA" || str_Type == "")
+                    {
+                        objMaterialMedium.Type = null;
+                        objMaterialMedium.Duration = 0;
+                    }
+                    else
+                    {
+                        objMaterialMedium.Type = str_Type;
+                        objMaterialMedium.Duration = int_Duration;
+                    }
+                    objMaterialMedium.Is_Qc_Required = str_QC;
+                    objMaterialMedium.Last_Action_By = objLoginUser.Users_Code;
+
+                    //if (isDuplicatee)
+                    //{
+                    objMaterial_Medium_Service.UpdateGenres(objMaterialMedium);
+                    //}
+                    //else
+                    //{
+                    //    status = "";
+                    //    message = resultSet;
+                    //}
+                    //objMaterialMedium.EntityState = State.Modified;
                 }
                 else
                 {
-                    objMaterialMedium.Type = str_Type;
-                    objMaterialMedium.Duration = int_Duration;
+                    string str_Material_Medium_Name = objFormCollection["Material_Medium_Name"].ToString().Trim();
+                    if (objFormCollection["Duration"] != "")
+                    {
+                        int_Duration = Convert.ToInt32(objFormCollection["Duration"]);
+                    }
+                    string str_Type = objFormCollection["Type"].ToString();
+                    string chr_QC = objFormCollection["QC"].ToString();
+
+                    objMaterialMedium = new RightsU_Dapper.Entity.Material_Medium();
+                    objMaterialMedium.Is_Active = "Y";
+                    objMaterialMedium.Material_Medium_Name = str_Material_Medium_Name;
+                    if (str_Type == "NA")
+                    {
+                        objMaterialMedium.Type = null;
+                        objMaterialMedium.Duration = 0;
+                    }
+                    else
+                    {
+                        objMaterialMedium.Type = str_Type;
+                        objMaterialMedium.Duration = int_Duration;
+                    }
+                    objMaterialMedium.Is_Qc_Required = chr_QC;
+                    objMaterialMedium.Inserted_By = objLoginUser.Users_Code;
+                    objMaterialMedium.Inserted_On = System.DateTime.Now;
+                    isDuplicatee = objMaterial_Medium_Service.Validate(objMaterialMedium, out resultSet);
+                    //if (isDuplicatee)
+                    //{
+                    objMaterial_Medium_Service.AddEntity(objMaterialMedium);
+                    //}
+                    //else
+                    //{
+                    //    status = "";
+                    //    message = resultSet;
+                    //}
+                    // objMaterialMedium.EntityState = State.Added;
                 }
-                objMaterialMedium.Is_Qc_Required = str_QC;
-                objMaterialMedium.Last_Action_By = objLoginUser.Users_Code;
-                objMaterial_Medium_Service.UpdateGenres(objMaterialMedium);
-                //objMaterialMedium.EntityState = State.Modified;
             }
             else
             {
-                string str_Material_Medium_Name = objFormCollection["Material_Medium_Name"].ToString().Trim();
-                if (objFormCollection["Duration"] != "")
-                {
-                    int_Duration = Convert.ToInt32(objFormCollection["Duration"]);
-                }
-                string str_Type = objFormCollection["Type"].ToString();
-                string chr_QC = objFormCollection["QC"].ToString();
-
-                objMaterialMedium = new RightsU_Dapper.Entity.Material_Medium();
-                objMaterialMedium.Is_Active = "Y";
-                objMaterialMedium.Material_Medium_Name = str_Material_Medium_Name;
-                if (str_Type == "NA")
-                {
-                    objMaterialMedium.Type = null;
-                    objMaterialMedium.Duration = 0;
-                }
-                else
-                {
-                    objMaterialMedium.Type = str_Type;
-                    objMaterialMedium.Duration = int_Duration;
-                }
-                objMaterialMedium.Is_Qc_Required = chr_QC;
-                objMaterialMedium.Inserted_By = objLoginUser.Users_Code;
-                objMaterialMedium.Inserted_On = System.DateTime.Now;
-                objMaterial_Medium_Service.AddEntity(objMaterialMedium);
-               // objMaterialMedium.EntityState = State.Added;
+                status = "";
+                message = resultSet;
             }
             objMaterialMedium.Last_Updated_Time = System.DateTime.Now;
-            dynamic resultSet;
+            
             //bool isDuplicate = objService.Validate(objMaterialMedium, out resultSet);
             //bool isDuplicate = objMaterial_Medium_Service.Validate(objMaterialMedium);
             bool isDuplicate = true;

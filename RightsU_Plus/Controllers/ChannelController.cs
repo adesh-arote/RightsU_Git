@@ -663,10 +663,19 @@ namespace RightsU_Plus.Controllers
                     objChannel.Channel_Territory.Add(objTR);
                 }
             }
-            dynamic resultSet;
+            string resultSet;
+            bool isDuplicate = objChannelService.Validate(objChannel, out resultSet);
             try
             {
-                objChannelService.AddEntity(objChannel);
+                if (isDuplicate)
+                {
+                    objChannelService.AddEntity(objChannel);
+                }
+                else
+                {
+                    status = "";
+                    message = resultSet;
+                }
                 bool isValid = true;//objService.Save(objChannel, out resultSet);
                 if (isValid)
                 {

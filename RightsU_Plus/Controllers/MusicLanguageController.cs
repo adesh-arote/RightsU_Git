@@ -213,8 +213,17 @@ namespace RightsU_Plus.Controllers
             objMusicLanguage.Last_Action_By = objLoginUser.Users_Code;
             objMusicLanguage.Is_Active = "Y";
             objMusicLanguage.Language_Name = languageName;
-            dynamic resultSet;
-            objMusicLanguageService.AddEntity(objMusicLanguage);
+            string resultSet;
+            bool isDuplicate = objMusicLanguageService.Validate(objMusicLanguage, out resultSet);
+            if (isDuplicate)
+            {
+                objMusicLanguageService.AddEntity(objMusicLanguage);
+            }
+            else
+            {
+                status = "";
+                message = resultSet;
+            }
             bool isValid = true;// objService.Save(objMusicLanguage, out resultSet);
             if (isValid)
             {

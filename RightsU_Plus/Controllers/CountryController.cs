@@ -295,18 +295,26 @@ namespace RightsU_Plus.Controllers
                 message = objMessageKey.RecordAddedSuccessfully;
 
 
-            dynamic resultSet;
+            string resultSet;
+            bool isDuplicate = objCountryService.Validate(objCountry, out resultSet);
             try
-
             {
                 objCountry.Country_Code = 0;
-                if (objCountry.Country_Code == 0 || objCountry.Country_Code == null)
+                if (isDuplicate)
                 {
-                    objCountryService.AddEntity(objCountry);
+                    if (objCountry.Country_Code == 0 || objCountry.Country_Code == null)
+                    {
+                        objCountryService.AddEntity(objCountry);
+                    }
+                    else
+                    {
+                        objCountryService.UpdateGenres(objCountry);
+                    }
                 }
                 else
                 {
-                    objCountryService.UpdateGenres(objCountry);
+                    status = "";
+                    message = resultSet;
                 }
             }
             catch(Exception e)

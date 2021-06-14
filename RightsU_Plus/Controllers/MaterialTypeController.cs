@@ -248,19 +248,26 @@ namespace RightsU_Plus.Controllers
                 //objMaterialType.EntityState = State.Added;         
             }
             objMaterialType.Last_Updated_Time = System.DateTime.Now;
-            dynamic resultSet;
-            if (materialTypeCode != 0)
+            string resultSet;
+            bool isDuplicate = objMaterialTypeService.Validate(objMaterialType, out resultSet);
+            if (isDuplicate)
             {
-                objMaterialTypeService.UpdateGenres(objMaterialType);
+                if (materialTypeCode != 0)
+                {
+                    objMaterialTypeService.UpdateGenres(objMaterialType);
+                }
+                else
+                {
+                    objMaterialTypeService.AddEntity(objMaterialType);
+                }
             }
             else
             {
-                objMaterialTypeService.AddEntity(objMaterialType);
+                status = "";
+                message = resultSet;
             }
                 //bool isDuplicate = objService.Validate(objMaterialType, out resultSet);
-                bool isDuplicate = true;
-            if (isDuplicate)
-            {
+            
                 //bool isValid = objService.Save(objMaterialType, out resultSet);
                 bool isValid = true;
                 if (isValid)
@@ -282,13 +289,7 @@ namespace RightsU_Plus.Controllers
                     status = "E";
                     message = "";
                 }
-            }
-            else
-            {
-                
-                status = "E";
-                message = "";
-            }
+           
             var obj = new
             {
                 recordCount = lstMaterialType.Count(),

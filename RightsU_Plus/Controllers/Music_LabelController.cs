@@ -278,9 +278,9 @@ namespace RightsU_Plus.Controllers
                 //objMusic_Label.EntityState = State.Added;
             }
             objMusic_Label.Last_Updated_Time = System.DateTime.Now;
-            dynamic resultSet;
-            //bool isDuplicate = objService.Validate(objMusic_Label, out resultSet);
-            bool isDuplicate = true;
+            string resultSet;
+            bool isDuplicate = objMusicLabelService.Validate(objMusic_Label, out resultSet);
+            
             if (isDuplicate)
             {
                 if (Music_LabelCode != 0)
@@ -322,7 +322,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 status = "E";
-                message = "";
+                message = resultSet;
             }
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

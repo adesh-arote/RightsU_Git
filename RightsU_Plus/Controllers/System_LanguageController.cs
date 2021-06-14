@@ -131,17 +131,26 @@ namespace RightsU_Plus.Controllers
                 });
                 //Insert End
 
-                dynamic resultSet;
+                string resultSet;
                 //objSL.EntityState = State.Modified;
                 try
                 {
-                    if(SysLanguageCode > 0)
+                    bool isDuplicate = objSystemLanguageService.Validate(objSL, out resultSet);
+                    if (isDuplicate)
                     {
-                        objSystemLanguageService.UpdateEntity(objSL);
+                        if (SysLanguageCode > 0)
+                        {
+                            objSystemLanguageService.UpdateEntity(objSL);
+                        }
+                        else
+                        {
+                            objSystemLanguageService.AddEntity(objSL);
+                        }
                     }
                     else
                     {
-                        objSystemLanguageService.AddEntity(objSL);
+                        status = "";
+                        message = resultSet;
                     }
                     CommonUtil objCommonUtil = new CommonUtil();
                     objCommonUtil.Release_Record(RecordlockingCode, objLoginEntity.ConnectionStringName);
@@ -293,8 +302,17 @@ namespace RightsU_Plus.Controllers
             objSystemLanguage.Inserted_On = System.DateTime.Now;
             objSystemLanguage.Last_Updated_Time = System.DateTime.Now;
             objSystemLanguage.Last_Action_By = objLoginUser.Users_Code;
-            dynamic resultSet;
-            objSystemLanguageService.AddEntity(objSystemLanguage);
+            string resultSet;
+            bool isDuplicate = objSystemLanguageService.Validate(objSystemLanguage, out resultSet);
+            if (isDuplicate)
+            {
+                objSystemLanguageService.AddEntity(objSystemLanguage);
+            }
+            else
+            {
+                status = "";
+                message = resultSet;
+            }
             bool isValid = true;// objService.Save(objSystemLanguage, out resultSet);
             if (isValid)
             {

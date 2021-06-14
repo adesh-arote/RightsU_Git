@@ -223,15 +223,23 @@ namespace RightsU_Plus.Controllers
                 objRight_Rule.IS_First_Air = false;
             }
         
-         dynamic resultSet;
-
-            if (ObjRightRuleMVC.Right_Rule_Code > 0)
+         string resultSet;
+            bool isDuplicate = objRightRuleService.Validate(objRight_Rule, out resultSet);
+            if (isDuplicate)
             {
-                objRightRuleService.UpdateGenres(objRight_Rule);
+                if (ObjRightRuleMVC.Right_Rule_Code > 0)
+                {
+                    objRightRuleService.UpdateGenres(objRight_Rule);
+                }
+                else
+                {
+                    objRightRuleService.AddEntity(objRight_Rule);
+                }
             }
             else
             {
-                objRightRuleService.AddEntity(objRight_Rule);
+                status = "";
+                message = resultSet;
             }
                 //bool isValid = objRight_Rule_Service.Save(objRight_Rule, out resultSet);
                 bool isValid = true;

@@ -216,14 +216,23 @@ namespace RightsU_Plus.Controllers
             objCategory.Is_Active = "Y";
             objCategory.Category_Name = categoryName;
 
-            dynamic resultSet;
-            if (categoryCode > 0)
+            string resultSet;
+            bool isDuplicate = objCategoryService.Validate(objCategory, out resultSet);
+            if (isDuplicate)
             {
-                objCategoryService.UpdateCategory(objCategory);
+                if (categoryCode > 0)
+                {
+                    objCategoryService.UpdateCategory(objCategory);
+                }
+                else
+                {
+                    objCategoryService.AddEntity(objCategory);
+                }
             }
             else
             {
-                objCategoryService.AddEntity(objCategory);
+                status = "E";
+                message = resultSet;
             }
                 //bool isValid = objService.Save(objCategory, out resultSet);
                 bool isValid = true;

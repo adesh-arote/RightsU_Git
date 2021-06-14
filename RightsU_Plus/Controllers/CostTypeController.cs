@@ -215,14 +215,23 @@ namespace RightsU_Plus.Controllers
             objCostType.Is_Active = "Y";
             objCostType.Cost_Type_Name = costTypeName;
 
-            dynamic resultSet;
-            if (costTypeCode > 0)
+            string resultSet;
+            bool isDuplicate = objCostType_Service.Validate(objCostType, out resultSet);
+            if (isDuplicate)
             {
-                objCostType_Service.UpdateGenres(objCostType);
+                if (costTypeCode > 0)
+                {
+                    objCostType_Service.UpdateGenres(objCostType);
+                }
+                else
+                {
+                    objCostType_Service.AddEntity(objCostType);
+                }
             }
             else
             {
-                objCostType_Service.AddEntity(objCostType);
+                status = "E";
+                message = resultSet;
             }
                 //bool isValid = objService.Save(objCostType, out resultSet);
 

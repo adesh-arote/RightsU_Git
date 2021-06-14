@@ -210,15 +210,23 @@ namespace RightsU_Plus.Controllers
             objDocumentType.Last_Action_By = objLoginUser.Users_Code;
             objDocumentType.Is_Active = "Y";
             objDocumentType.Document_Type_Name = documentTypeName.Trim();
-            dynamic resultSet;
-            // bool isValid = objService.Save(objDocumentType, out resultSet);
-            if (documentTypeCode > 0)
+            string resultSet;
+             bool isDuplicate = objDocumentType_Service.Validate(objDocumentType, out resultSet);
+            if (isDuplicate)
             {
-                objDocumentType_Service.UpdateGenres(objDocumentType);
+                if (documentTypeCode > 0)
+                {
+                    objDocumentType_Service.UpdateGenres(objDocumentType);
+                }
+                else
+                {
+                    objDocumentType_Service.AddEntity(objDocumentType);
+                }
             }
             else
             {
-                objDocumentType_Service.UpdateGenres(objDocumentType);
+                status = "";
+                message = resultSet;
             }
                 bool isValid = true;
             if (isValid)

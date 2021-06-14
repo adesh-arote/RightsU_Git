@@ -343,12 +343,13 @@ namespace RightsU_Plus.Controllers
             //Royalty_Recoupment_Service objRoyaltyService = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
 
 
-            dynamic resultSet;
+            string resultSet;
             string status = "S", message = "";
-
+            bool isDuplicate = objRoyaltyRecoupmentService.Validate(objRoyalty, out resultSet);
             objRoyaltyRecoupmentService.AddEntity(objRoyalty);
-            bool valid = true;// objRoyalty_Service.Save(objRoyalty, out resultSet);
-            if(valid)
+            /*bool valid = true*/;// objRoyalty_Service.Save(objRoyalty, out resultSet);
+            
+            if(isDuplicate)
             {
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();
@@ -362,7 +363,11 @@ namespace RightsU_Plus.Controllers
                     message = objMessageKey.RecordAddedSuccessfully;
                 }
             }
-
+            else
+            {
+                status = "";
+                message = resultSet;
+            }
 
             var obj = new
             {

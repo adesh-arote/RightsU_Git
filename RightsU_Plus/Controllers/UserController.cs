@@ -660,7 +660,7 @@ namespace RightsU_Plus.Controllers
             }
             objU.Created_By = objLoginUser.Users_Code;
 
-            dynamic resultSet;
+            string resultSet;
             string status = "S", message = "Record {ACTION} successfully";
 
             ICollection<Users_Business_Unit> BuisnessUnitList = new HashSet<Users_Business_Unit>();
@@ -745,8 +745,18 @@ namespace RightsU_Plus.Controllers
             var Added_Users_Configuration = CompareLists<Users_Configuration>(UsersConfigurationList.ToList<Users_Configuration>(), objU.Users_Configuration.ToList<Users_Configuration>(), comparerUsersConfiguration, ref Deleted_Users_Configuration, ref Updated_Users_Configuration);
             Added_Users_Configuration.ToList<Users_Configuration>().ForEach(t => objU.Users_Configuration.Add(t));
             Deleted_Users_Configuration.ToList<Users_Configuration>().ForEach(t => objU.Users_Configuration.Remove(t));
-
-            objUserService.AddEntity(objU);
+            
+            bool isDuplicate = objUserService.Validate(objU, out resultSet);
+            if (isDuplicate)
+            {
+                objUserService.AddEntity(objU);
+            }
+            else
+            {
+                status = "";
+                message = resultSet;
+            }
+            
             bool valid = true;//ObjUserService.Save(objU, out resultSet);
             if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) == 0 && valid)
             {

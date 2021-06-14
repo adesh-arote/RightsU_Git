@@ -212,8 +212,18 @@ namespace RightsU_Plus.Controllers
             objPaymentTerm.Last_Action_By = objLoginUser.Users_Code;
             objPaymentTerm.Is_Active = "Y";
             objPaymentTerm.Payment_Terms = paymentTermName.Trim();
-            dynamic resultSet;
-            objPaymentTermsService.AddEntity(objPaymentTerm);
+            string resultSet;
+            bool isDuplicate = objPaymentTermsService.Validate(objPaymentTerm, out resultSet);
+            if (isDuplicate)
+            {
+                    objPaymentTermsService.AddEntity(objPaymentTerm);
+            }
+            else
+            {
+                status = "E";
+                message = resultSet;
+            }
+            
             bool isValid = true;// objService.Save(objPaymentTerm, out resultSet);
             if (isValid)
             {

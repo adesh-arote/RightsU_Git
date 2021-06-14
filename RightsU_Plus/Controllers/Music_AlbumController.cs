@@ -92,7 +92,7 @@ namespace RightsU_Plus.Controllers
 
             if(commandName == "ADD")
             {
-                List<RightsU_Dapper.Entity.Talent> lstTalent = objTalentService.GetList(RelationList).Where(w => w.Talent_Role.Any(a => a.Role_Code == GlobalParams.Role_code_StarCast)).OrderBy(o => o.Talent_Name).ToList();
+                List<RightsU_Dapper.Entity.Talent> lstTalent = objTalentService.GetList().Where(w => w.Talent_Role.Any(a => a.Role_Code == GlobalParams.Role_code_StarCast)).OrderBy(o => o.Talent_Name).ToList();
                 ViewBag.TalentList = new MultiSelectList(lstTalent, "Talent_Code", "Talent_Name");
             }
             if (commandName == "EDIT")
@@ -238,9 +238,7 @@ namespace RightsU_Plus.Controllers
             objMusic_Album.Last_UpDated_Time = DateTime.Now;
             objMusic_Album.Music_Album_Name = Music_Album_Name;
             objMusic_Album.Album_Type = Music_Album_Type;
-         
-
-            dynamic resultSet;
+            
             string status = "S", message = "Record {ACTION} successfully";
             ICollection<Music_Album_Talent> TalentList = new HashSet<Music_Album_Talent>();
             if (Talent_Code != null)
@@ -254,41 +252,46 @@ namespace RightsU_Plus.Controllers
                     TalentList.Add(objMAT);
                 }
             }
-            if (Music_Album_Code > 0)
-            {
-                objMusic_AlbumService.UpdateEntity(objMusic_Album);
-            }
-            else
-            {
-                objMusic_AlbumService.AddEntity(objMusic_Album);
-            }
-                IEqualityComparer<Music_Album_Talent> comparerTalent_Code = new RightsU_Dapper.BLL.LambdaComparer<RightsU_Dapper.Entity.Music_Album_Talent>((x, y) => x.Talent_Code == y.Talent_Code); //&& x.EntityState != State.Deleted);
-            var Deleted_Music_Album_Talent = new List<Music_Album_Talent>();
-            var Updated_Music_Album_Talent = new List<Music_Album_Talent>();
-            var Added_Music_Album_Talent = CompareLists<Music_Album_Talent>(TalentList.ToList<Music_Album_Talent>(), objMusic_Album.Music_Album_Talent.ToList<Music_Album_Talent>(), comparerTalent_Code, ref Deleted_Music_Album_Talent, ref Updated_Music_Album_Talent);
-            Added_Music_Album_Talent.ToList<Music_Album_Talent>().ForEach(t => objMusic_Album.Music_Album_Talent.Add(t));
-            Deleted_Music_Album_Talent.ToList<Music_Album_Talent>().ForEach(t => objMusic_Album.Music_Album_Talent.Remove(t));
-            if (Music_Album_Code > 0)
-            {
-                objMusic_AlbumService.UpdateEntity(objMusic_Album);
-            }
-            else
-            {
-                objMusic_AlbumService.AddEntity(objMusic_Album);
-            }
-            bool valid = true;//ObjMusicAlbumService.Save(objMusic_Album, out resultSet);
-
-            if (valid)
+            string resultSet;
+            bool isDuplicate = objMusic_AlbumService.Validate(objMusic_Album, out resultSet);
+            if (isDuplicate)
             {
                 if (Music_Album_Code > 0)
                 {
-                    message = message.Replace("{ACTION}", "updated");
+                    objMusic_AlbumService.UpdateEntity(objMusic_Album);
                 }
                 else
                 {
-                    message = message.Replace("{ACTION}", "added");
+                    objMusic_AlbumService.AddEntity(objMusic_Album);
                 }
-                FetchData();
+                IEqualityComparer<Music_Album_Talent> comparerTalent_Code = new RightsU_Dapper.BLL.LambdaComparer<RightsU_Dapper.Entity.Music_Album_Talent>((x, y) => x.Talent_Code == y.Talent_Code); //&& x.EntityState != State.Deleted);
+                var Deleted_Music_Album_Talent = new List<Music_Album_Talent>();
+                var Updated_Music_Album_Talent = new List<Music_Album_Talent>();
+                var Added_Music_Album_Talent = CompareLists<Music_Album_Talent>(TalentList.ToList<Music_Album_Talent>(), objMusic_Album.Music_Album_Talent.ToList<Music_Album_Talent>(), comparerTalent_Code, ref Deleted_Music_Album_Talent, ref Updated_Music_Album_Talent);
+                Added_Music_Album_Talent.ToList<Music_Album_Talent>().ForEach(t => objMusic_Album.Music_Album_Talent.Add(t));
+                Deleted_Music_Album_Talent.ToList<Music_Album_Talent>().ForEach(t => objMusic_Album.Music_Album_Talent.Remove(t));
+                if (Music_Album_Code > 0)
+                {
+                    objMusic_AlbumService.UpdateEntity(objMusic_Album);
+                }
+                else
+                {
+                    objMusic_AlbumService.AddEntity(objMusic_Album);
+                }
+                bool valid = true;//ObjMusicAlbumService.Save(objMusic_Album, out resultSet);
+
+                if (valid)
+                {
+                    if (Music_Album_Code > 0)
+                    {
+                        message = message.Replace("{ACTION}", "updated");
+                    }
+                    else
+                    {
+                        message = message.Replace("{ACTION}", "added");
+                    }
+                    FetchData();
+                }
             }
             else
             {

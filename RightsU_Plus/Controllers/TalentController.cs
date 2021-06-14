@@ -286,9 +286,18 @@ namespace RightsU_Plus.Controllers
 
             if (status != "E")
             {
-                dynamic resultSet;
+                string resultSet;
                 //bool isValid = objService.Save(objTalent, out resultSet);
-                objTalent_Service.UpdateMusic_Deal(objTalent);
+                bool isDuplicate = objTalent_Service.Validate(objTalent, out resultSet);
+                if (isDuplicate)
+                {
+                    objTalent_Service.UpdateMusic_Deal(objTalent);
+                }
+                else
+                {
+                    status = "";
+                    message = resultSet;
+                }
                 bool isValid = true;
                 if (isValid)
                 {
@@ -381,10 +390,18 @@ namespace RightsU_Plus.Controllers
            // Deleted_Talent_Role.ToList().ForEach(t => objTalent.Talent_Role.Remove(t));
             #endregion
 
-            dynamic resultSet;
-
+            string resultSet;
+            bool isDuplicate = objTalent_Service.Validate(objTalent, out resultSet);
             //bool isValid = objService.Save(objTalent, out resultSet);
-            objTalent_Service.AddEntity(objTalent);
+            if (isDuplicate)
+            {
+                objTalent_Service.AddEntity(objTalent);
+            }
+            else
+            {
+                status = "";
+                message = resultSet;
+            }
             bool isValid = true;
             if (isValid)
             {

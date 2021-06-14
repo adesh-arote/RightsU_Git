@@ -244,14 +244,23 @@ namespace RightsU_Plus.Controllers
             objGenre.Last_Action_By = objLoginUser.Users_Code;
             objGenre.Is_Active = "Y";
             objGenre.Language_Name = Language_Name;
-            dynamic resultSet;
-            if (Language_Code > 0)
+            string resultSet;
+            bool isDuplicate = objLanguageService.Validate(objGenre, out resultSet);
+            if (isDuplicate)
             {
-                objLanguageService.UpdateEntity(objGenre);
+                if (Language_Code > 0)
+                {
+                    objLanguageService.UpdateEntity(objGenre);
+                }
+                else
+                {
+                    objLanguageService.AddEntity(objGenre);
+                }
             }
             else
             {
-                objLanguageService.AddEntity(objGenre);
+                status = "";
+                message = resultSet;
             }
             bool isValid = true;// objService.Save(objGenre, out resultSet);
 

@@ -213,15 +213,24 @@ namespace RightsU_Plus.Controllers
             objGradeMaster.Last_Action_By = objLoginUser.Users_Code;
             objGradeMaster.Is_Active = "Y";
             objGradeMaster.Grade_Name = gradeName;
-            dynamic resultSet;
+            string resultSet;
+            bool isDuplicate = objGradeMaster_Service.Validate(objGradeMaster, out resultSet);
             //bool isValid = objService.Save(objGradeMaster, out resultSet);
-            if (gradeCode > 0)
+            if (isDuplicate)
             {
-                objGradeMaster_Service.UpdateMusic_Deal(objGradeMaster);   
+                if (gradeCode > 0)
+                {
+                    objGradeMaster_Service.UpdateMusic_Deal(objGradeMaster);
+                }
+                else
+                {
+                    objGradeMaster_Service.AddEntity(objGradeMaster);
+                }
             }
             else
             {
-                objGradeMaster_Service.AddEntity(objGradeMaster);
+                status = "";
+                message = resultSet;
             }
             bool isValid = true;
 

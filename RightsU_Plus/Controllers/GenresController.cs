@@ -217,18 +217,26 @@ namespace RightsU_Plus.Controllers
             objGenre.Last_Action_By = objLoginUser.Users_Code;
             objGenre.Is_Active = "Y";
             objGenre.Genres_Name = genresName;
-            dynamic resultSet;
-            if (genresCode > 0)
+            string resultSet;
+            bool isDuplicate = objGenres_Service.Validate(objGenre, out resultSet);
+            if (isDuplicate)
             {
-                objGenres_Service.UpdateGenres(objGenre);
+                if (genresCode > 0)
+                {
+                    objGenres_Service.UpdateGenres(objGenre);
+                }
+                else
+                {
+                    objGenres_Service.AddEntity(objGenre);
+                }
             }
             else
             {
-                objGenres_Service.AddEntity(objGenre);
+                status = "E";
+                message = resultSet;
             }
                 //bool isValid = objService.Save(objGenre, out resultSet);
                 bool isValid = true;
-
             if (isValid)
             {                
                     lstGenre_Searched = lstGenre = objGenres_Service.GetList().OrderByDescending(x => x.Last_Updated_Time).ToList();

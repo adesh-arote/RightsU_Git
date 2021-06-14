@@ -209,15 +209,24 @@ namespace RightsU_Plus.Controllers
             objPartyCategory.Is_Active = "Y";
             objPartyCategory.Last_Updated_On = DateTime.Now;
             objPartyCategory.Last_Updated_By = objLoginUser.Users_Code;
-            if (PartyCategoryCode > 0)
+            string resultSet;
+            bool isDuplicate = objParty_CategoryService.Validate(objPartyCategory, out resultSet);
+            if (isDuplicate)
             {
-                objParty_CategoryService.UpdateCategory(objPartyCategory);
+                if (PartyCategoryCode > 0)
+                {
+                    objParty_CategoryService.UpdateCategory(objPartyCategory);
+                }
+                else
+                {
+                    objParty_CategoryService.AddEntity(objPartyCategory);
+                }
             }
             else
             {
-                objParty_CategoryService.AddEntity(objPartyCategory);
+                status = "";
+                message = resultSet;
             }
-                dynamic resultSet;
 
             //bool isValid = objService.Save(objPartyCategory, out resultSet);
             bool isValid = true;

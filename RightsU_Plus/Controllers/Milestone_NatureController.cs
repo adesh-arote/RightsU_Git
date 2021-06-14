@@ -215,14 +215,23 @@ namespace RightsU_Plus.Controllers
             objMilestoneNature.Last_Action_By= objLoginUser.Users_Code;
             objMilestoneNature.Is_Active = "Y";
             objMilestoneNature.Milestone_Nature_Name= MilestoneNatureName;
-            dynamic resultSet;
-            if (MilestoneNatureCode > 0)
+            string resultSet;
+            bool isDuplicate = objMileStoneNatureService.Validate(objMilestoneNature, out resultSet);
+            if (isDuplicate)
             {
-                objMileStoneNatureService.UpdateCategory(objMilestoneNature);
+                if (MilestoneNatureCode > 0)
+                {
+                    objMileStoneNatureService.UpdateCategory(objMilestoneNature);
+                }
+                else
+                {
+                    objMileStoneNatureService.AddEntity(objMilestoneNature);
+                }
             }
             else
             {
-                objMileStoneNatureService.AddEntity(objMilestoneNature);
+                status = "";
+                message = resultSet;
             }
                 //bool isValid = objMileStoneNatureService.Save(objMilestoneNature, out resultSet);
                 bool isValid = true;

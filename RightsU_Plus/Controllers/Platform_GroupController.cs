@@ -341,7 +341,7 @@ namespace RightsU_Plus.Controllers
             objPlatformGroup.Is_Active = "Y";
             objPlatformGroup.Platform_Group_Name = PlatformGroupName;
 
-            dynamic resultSet;
+            string resultSet;
             string status = "S", message = "Record {ACTION} successfully";
             ICollection<RightsU_Dapper.Entity.Platform_Group_Details> BuisnessUnitList = new HashSet<RightsU_Dapper.Entity.Platform_Group_Details>();
             if (PlatformCodes != null)
@@ -372,13 +372,22 @@ namespace RightsU_Plus.Controllers
             Added_SecurityGroupRel.ToList<Platform_Group_Details>().ForEach(t => objPlatformGroup.Platform_Group_Details.Add(t));
             Deleted_SecurityGroupRel.ToList<Platform_Group_Details>().ForEach(t => objPlatformGroup.Platform_Group_Details.Remove(t));
             #endregion
-            if (platformGroupCode > 0)
+            bool isDuplicate = objPlatform_GroupService.Validate(objPlatformGroup, out resultSet);
+            if (isDuplicate)
             {
-                objPlatform_GroupService.UpdateCategory(objPlatformGroup);
+                if (platformGroupCode > 0)
+                {
+                    objPlatform_GroupService.UpdateCategory(objPlatformGroup);
+                }
+                else
+                {
+                    objPlatform_GroupService.AddEntity(objPlatformGroup);
+                }
             }
             else
             {
-                objPlatform_GroupService.AddEntity(objPlatformGroup);
+                status = "";
+                message = resultSet;
             }
 
                 //bool isValid = objService.Save(objPlatformGroup, out resultSet);

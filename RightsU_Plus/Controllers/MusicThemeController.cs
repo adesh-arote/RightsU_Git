@@ -234,8 +234,18 @@ namespace RightsU_Plus.Controllers
             objMusicTheme.Last_Action_By = objLoginUser.Users_Code;
             objMusicTheme.Is_Active = "Y";
             objMusicTheme.Music_Theme_Name = MusicTheme_Name;
-            dynamic resultSet;
-            objMusic_Theme_Service.AddEntity(objMusicTheme);
+            string resultSet;
+            bool isDuplicate = objMusic_Theme_Service.Validate(objMusicTheme, out resultSet);
+            if (isDuplicate)
+            {
+                objMusic_Theme_Service.AddEntity(objMusicTheme);
+            }
+            else
+            {
+                status = "";
+                message = resultSet;
+            }
+            
             bool isValid = true; //objService.Save(objMusicTheme, out resultSet);
             if (isValid)
             {

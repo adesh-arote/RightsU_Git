@@ -262,10 +262,8 @@ namespace RightsU_Plus.Controllers
         {
             string status = "S", message = "";
 
-            if (currencyCode > 0)
-                status = "S";
-            //objCurrency.EntityState = State.Modified;
-            else
+
+            if (currencyCode <= 0)
             {
                 objCurrency_Service = null;
                 // objCurrency.EntityState = State.Added;
@@ -280,35 +278,35 @@ namespace RightsU_Plus.Controllers
             objCurrency.Last_Action_By = objLoginUser.Users_Code;
             objCurrency.Is_Active = "Y";
 
-            dynamic resultSet;
-            if (currencyCode > 0)
+            string resultSet;
+            bool isDuplicate = objCurrencyService.Validate(objCurrency, out resultSet);
+            if (isDuplicate)
             {
-                objCurrencyService.UpdateCurrency(objCurrency);
-            }
-            else
-            {
-                objCurrencyService.AddEntity(objCurrency);
-            }
-            //if (!objCurrency_Service.Save(objCurrency, out resultSet))
-            if(1 == 2)
-            {
-                status = "E";
-                message = "";
-            }
-            else
-            {
+                if (currencyCode > 0)
+                {
+                    objCurrencyService.UpdateCurrency(objCurrency);
+                }
+                else
+                {
+                    objCurrencyService.AddEntity(objCurrency);
+                }
                 if (currencyCode > 0)
                     message = objMessageKey.Recordupdatedsuccessfully;
                 else
                     message = objMessageKey.Recordsavedsuccessfully;
-
-                objCurrency = null;
-                objCurrency_Service = null;
-                int recordLockingCode = Convert.ToInt32(Record_Code);
-                CommonUtil objCommonUtil = new CommonUtil();
-                objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
-                FetchData();
             }
+            else
+            {
+                status = "E";
+                message = resultSet;
+            }
+
+            objCurrency = null;
+            objCurrency_Service = null;
+            int recordLockingCode = Convert.ToInt32(Record_Code);
+            CommonUtil objCommonUtil = new CommonUtil();
+            objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
+            FetchData();
 
             var obj = new
             {

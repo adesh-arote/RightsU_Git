@@ -44,13 +44,18 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objTalent_Repository.GetAll();
         }
-        private bool ValidateDuplicate(Talent objToValidate, out dynamic resultSet)
+        public bool Validate(Talent objToValidate, out string resultSet)
         {
-            //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
-            //{
-            //    resultSet = "Talent already exists";
-            //    return false;
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Talent objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
+            {
+                resultSet = "Talent already exists";
+                return false;
+            }
+
             resultSet = "";
             return true;
         }
@@ -113,13 +118,18 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objLanguageGroup_Repository.GetAll(additionalTypes);
         }
-        private bool ValidateDuplicate(Language_Group objToValidate, out dynamic resultSet)
+        public bool Validate(Language_Group objToValidate, out string resultSet)
         {
-            //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
-            //{
-            //    resultSet = "Talent already exists";
-            //    return false;
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Language_Group objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Language_Group_Name == objToValidate.Language_Group_Name && s.Language_Group_Code != objToValidate.Language_Group_Code).Count() > 0)
+            {
+                resultSet = "Language group already exists";
+                return false;
+            }
+
             resultSet = "";
             return true;
         }
@@ -162,33 +172,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objLanguage_Repository.Delete(obj);
         }
-        //public override bool Validate(Language objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateUpdate(Language objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateDelete(Language objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        private bool ValidateDuplicate(Language objToValidate, out dynamic resultSet)
+        public bool Validate(Language objToValidate, out string resultSet)
         {
-            //if (SearchFor(s => s.Language_Name == objToValidate.Language_Name && s.Language_Code != objToValidate.Language_Code).Count() > 0)
-            //{
-            //    resultSet = "Language already exists";
-            //    return false;
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Language objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Language_Name == objToValidate.Language_Name && s.Language_Code != objToValidate.Language_Code).Count() > 0)
+            {
+                resultSet = "Language already exists";
+                return false;
+            }
 
             resultSet = "";
             return true;
         }
-
     }
     public class Promoter_Remarks_Service
     {
@@ -227,44 +225,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objPromoter_Remarks_Repository.Delete(obj);
         }
-        //public bool Delete(Promoter_Remarks objToDelete, out dynamic resultSet)
-        //{
-        //    return base.Delete(objToDelete, objPromoter_Remarks_Repository, out resultSet);
-        //}
+        public bool Validate(Promoter_Remarks objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Promoter_Remarks objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Promoter_Remark_Desc == objToValidate.Promoter_Remark_Desc && s.Promoter_Remarks_Code != objToValidate.Promoter_Remarks_Code).Count() > 0)
+            {
+                resultSet = "Promoter remarks already exists";
+                return false;
+            }
 
-        //public override bool Validate(Promoter_Remarks objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateUpdate(Promoter_Remarks objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateDelete(Promoter_Remarks objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        //private bool ValidateDuplicate(Promoter_Remarks objToValidate, out dynamic resultSet)
-        //{
-        //    if (objToValidate.EntityState != State.Deleted)
-        //    {
-        //        int duplicateRecordCount = SearchFor(s => s.Promoter_Remark_Desc.ToUpper() == objToValidate.Promoter_Remark_Desc.ToUpper() &&
-        //            s.Promoter_Remarks_Code != objToValidate.Promoter_Remarks_Code).Count();
-
-        //        if (duplicateRecordCount > 0)
-        //        {
-        //            resultSet = "Promoter Remark already exists";
-        //            return false;
-        //        }
-        //    }
-
-        //    resultSet = "";
-        //    return true;
-        //}
+            resultSet = "";
+            return true;
+        }
     }
     public class Grade_Master_Service
     {
@@ -301,35 +276,17 @@ namespace RightsU_Dapper.BLL.Services
         {
             objGrade_Master_Remarks_Repository.Delete(obj);
         }
-        //public override bool Validate(Grade_Master objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateUpdate(Grade_Master objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateDelete(Grade_Master objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        private bool ValidateDuplicate(Grade_Master objToValidate, out dynamic resultSet)
+        public bool Validate(Grade_Master objToValidate, out string resultSet)
         {
-            //if (objToValidate.EntityState != State.Deleted)
-            //{
-            //    int duplicateRecordCount = SearchFor(s => s.Grade_Name.ToUpper() == objToValidate.Grade_Name.ToUpper() &&
-            //        s.Grade_Code != objToValidate.Grade_Code).Count();
-
-            //    if (duplicateRecordCount > 0)
-            //    {
-            //        resultSet = "Grade already exists";
-            //        return false;
-            //    }
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Grade_Master objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Grade_Name == objToValidate.Grade_Name && s.Grade_Code != objToValidate.Grade_Code).Count() > 0)
+            {
+                resultSet = "Grade already exists";
+                return false;
+            }
 
             resultSet = "";
             return true;
@@ -371,13 +328,17 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objCurrency_Repository.GetAll();
         }
-        private bool ValidateDuplicate(Currency objToValidate, out dynamic resultSet)
+        public bool Validate(Currency objToValidate, out string resultSet)
         {
-            //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
-            //{
-            //    resultSet = "Talent already exists";
-            //    return false;
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Currency objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Currency_Name == objToValidate.Currency_Name && s.Currency_Code != objToValidate.Currency_Code).Count() > 0)
+            {
+                resultSet = "Currency already exists";
+                return false;
+            }
             resultSet = "";
             return true;
         }
@@ -418,13 +379,18 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objGenres_Repository.GetAll();
         }
-        private bool ValidateDuplicate(Genre objToValidate, out dynamic resultSet)
+        public bool Validate(Genre objToValidate, out string resultSet)
         {
-            //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
-            //{
-            //    resultSet = "Talent already exists";
-            //    return false;
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Genre objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Genres_Name == objToValidate.Genres_Name && s.Genres_Code != objToValidate.Genres_Code).Count() > 0)
+            {
+                resultSet = "Genre already exists";
+                return false;
+            }
+
             resultSet = "";
             return true;
         }
@@ -465,13 +431,18 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objCostType_Repository.GetAll();
         }
-        private bool ValidateDuplicate(Cost_Type objToValidate, out dynamic resultSet)
+        public bool Validate(Cost_Type objToValidate, out string resultSet)
         {
-            //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
-            //{
-            //    resultSet = "Talent already exists";
-            //    return false;
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Cost_Type objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Cost_Type_Name == objToValidate.Cost_Type_Name && s.Cost_Type_Code != objToValidate.Cost_Type_Code).Count() > 0)
+            {
+                resultSet = "Cost type already exists";
+                return false;
+            }
+
             resultSet = "";
             return true;
         }
@@ -512,13 +483,18 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objDocumentType_Repository.GetAll();
         }
-        private bool ValidateDuplicate(Document_Type objToValidate, out dynamic resultSet)
+        public bool Validate(Document_Type objToValidate, out string resultSet)
         {
-            //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
-            //{
-            //    resultSet = "Talent already exists";
-            //    return false;
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Document_Type objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Document_Type_Name == objToValidate.Document_Type_Name && s.Document_Type_Code != objToValidate.Document_Type_Code).Count() > 0)
+            {
+                resultSet = "Document type already exists";
+                return false;
+            }
+
             resultSet = "";
             return true;
         }
@@ -560,59 +536,18 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objRightRule_Repository.GetAll();
         }
-
-
-        //private readonly Right_Rule_Repository objRepository;
-
-        //public Right_Rule_Service(string Connection_Str)
-        //{
-        //    this.objRepository = new Right_Rule_Repository(Connection_Str);
-        //}
-        //public IQueryable<Right_Rule> SearchFor(Expression<Func<Right_Rule, bool>> predicate)
-        //{
-        //    return objRepository.SearchFor(predicate);
-        //}
-
-        //public Right_Rule GetById(int id)
-        //{
-        //    return objRepository.GetById(id);
-        //}
-
-        //public bool Save(Right_Rule objToSave, out dynamic resultSet)
-        //{
-        //    return base.Save(objToSave, objRepository, out resultSet);
-        //}
-        //public bool Update(Right_Rule objToUpdate, out dynamic resultSet)
-        //{
-        //    return base.Update(objToUpdate, objRepository, out resultSet);
-        //}
-
-        //public bool Delete(Right_Rule objToDelete, out dynamic resultSet)
-        //{
-        //    return base.Delete(objToDelete, objRepository, out resultSet);
-        //}
-
-        //public override bool Validate(Right_Rule objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateUpdate(Right_Rule objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateDelete(Right_Rule objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-        private bool ValidateDuplicate(Right_Rule objToValidate, out dynamic resultSet)
+        public bool Validate(Right_Rule objToValidate, out string resultSet)
         {
-            //if (SearchFor(s => s.Right_Rule_Name == objToValidate.Right_Rule_Name && s.Right_Rule_Code != objToValidate.Right_Rule_Code).Count() > 0)
-            //{
-            //    resultSet = "Right Rule already exists";
-            //    return false;
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Right_Rule objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Right_Rule_Name == objToValidate.Right_Rule_Name && s.Right_Rule_Code != objToValidate.Right_Rule_Code).Count() > 0)
+            {
+                resultSet = "Right rule already exists";
+                return false;
+            }
+
             resultSet = "";
             return true;
         }
@@ -654,33 +589,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objCountry_Repository.GetAll();
         }
+        public bool Validate(Country objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Country objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Country_Name == objToValidate.Country_Name && s.Country_Code != objToValidate.Country_Code).Count() > 0)
+            {
+                resultSet = "Country already exists";
+                return false;
+            }
 
-        //    //public override bool Validate(Country objToValidate, out dynamic resultSet)
-        //    //{
-        //    //    return ValidateDuplicate(objToValidate, out resultSet);
-        //    //}
-
-        //    //public override bool ValidateUpdate(Country objToValidate, out dynamic resultSet)
-        //    //{
-        //    //    return ValidateDuplicate(objToValidate, out resultSet);
-        //    //}
-
-        //    //public override bool ValidateDelete(Country objToValidate, out dynamic resultSet)
-        //    //{
-        //    //    return ValidateDuplicate(objToValidate, out resultSet);
-        //    //}
-        //    private bool ValidateDuplicate(Country objToValidate, out dynamic resultSet)
-        //    {
-        //        //if (SearchFor(s => s.Country_Name.Trim() == objToValidate.Country_Name.Trim() && s.Country_Code != objToValidate.Country_Code).Count() > 0)
-        //        //{
-        //        //    resultSet = "Country already exists";
-        //        //    return false;
-        //        //}
-
-        //        resultSet = "";
-        //        return true;
-        //    }
-
+            resultSet = "";
+            return true;
+        }
     }
     public class Currency_Exchange_Rate_Service
     {
@@ -718,16 +641,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objCurrency_Exchange_Rate_Repository.GetAll();
         }
-        private bool ValidateDuplicate(Currency_Exchange_Rate objToValidate, out dynamic resultSet)
-        {
-            //if (SearchFor(s => s.Talent_Name == objToValidate.Talent_Name && s.Talent_Code != objToValidate.Talent_Code).Count() > 0)
-            //{
-            //    resultSet = "Talent already exists";
-            //    return false;
-            //}
-            resultSet = "";
-            return true;
-        }
+        //public bool Validate(Currency_Exchange_Rate objToValidate, out string resultSet)
+        //{
+        //    return ValidateDuplicate(objToValidate, out resultSet);
+        //}
+        //private bool ValidateDuplicate(Currency_Exchange_Rate objToValidate, out string resultSet)
+        //{
+        //    if (GetList().Where(s => s.Curre == objToValidate.Country_Name && s.Country_Code != objToValidate.Country_Code).Count() > 0)
+        //    {
+        //        resultSet = "Country already exists";
+        //        return false;
+        //    }
+
+        //    resultSet = "";
+        //    return true;
+        //}
     }
     public class Entity_Service
     {
@@ -789,66 +717,17 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objMaterial_Medium_Repository.GetAll();
         }
-
-        //private readonly Material_Medium_Repository objRepository;
-
-        //public Material_Medium_Service(string Connection_Str)
-        //{
-        //    this.objRepository = new Material_Medium_Repository(Connection_Str);
-        //}
-        //public IQueryable<Material_Medium> SearchFor(Expression<Func<Material_Medium, bool>> predicate)
-        //{
-        //    return objRepository.SearchFor(predicate);
-        //}
-
-        //public Material_Medium GetById(int id)
-        //{
-        //    return objRepository.GetById(id);
-        //}
-        //public bool Save(Material_Medium objToSave, out dynamic resultSet)
-        //{
-        //    return base.Save(objToSave, objRepository, out resultSet);
-        //}
-
-        //public bool Update(Material_Medium objToUpdate, out dynamic resultSet)
-        //{
-        //    return base.Update(objToUpdate, objRepository, out resultSet);
-        //}
-
-        //public bool Delete(Material_Medium objToDelete, out dynamic resultSet)
-        //{
-        //    return base.Delete(objToDelete, objRepository, out resultSet);
-        //}
-
-        //public override bool Validate(Material_Medium objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateUpdate(Material_Medium objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateDelete(Material_Medium objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        private bool ValidateDuplicate(Material_Medium objToValidate, out dynamic resultSet)
+        public bool Validate(Material_Medium objToValidate, out string resultSet)
         {
-            //if (objToValidate.EntityState != State.Deleted)
-            //{
-            //    int duplicateRecordCount = SearchFor(s => s.Material_Medium_Name.ToUpper() == objToValidate.Material_Medium_Name.ToUpper() &&
-            //        s.Material_Medium_Code != objToValidate.Material_Medium_Code).Count();
-
-            //    if (duplicateRecordCount > 0)
-            //    {
-            //        resultSet = "Material Medium already exists";
-            //        return false;
-            //    }
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Material_Medium objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Material_Medium_Name == objToValidate.Material_Medium_Name && s.Material_Medium_Code != objToValidate.Material_Medium_Code).Count() > 0)
+            {
+                resultSet = "Material medium already exists";
+                return false;
+            }
 
             resultSet = "";
             return true;
@@ -891,66 +770,17 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objMaterial_Type_Repository.GetAll();
         }
-        //private readonly Material_Type_Repository objRepository;
-
-        //public Material_Type_Service(string Connection_Str)
-        //{
-        //    this.objRepository = new Material_Type_Repository(Connection_Str);
-        //}
-        //public IQueryable<Material_Type> SearchFor(Expression<Func<Material_Type, bool>> predicate)
-        //{
-        //    return objRepository.SearchFor(predicate);
-        //}
-
-        //public Material_Type GetById(int id)
-        //{
-        //    return objRepository.GetById(id);
-        //}
-
-        //public bool Save(Material_Type objToSave, out dynamic resultSet)
-        //{
-        //    return base.Save(objToSave, objRepository, out resultSet);
-        //}
-
-        //public bool Update(Material_Type objToUpdate, out dynamic resultSet)
-        //{
-        //    return base.Update(objToUpdate, objRepository, out resultSet);
-        //}
-
-        //public bool Delete(Material_Type objToDelete, out dynamic resultSet)
-        //{
-        //    return base.Delete(objToDelete, objRepository, out resultSet);
-        //}
-
-        //public override bool Validate(Material_Type objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateUpdate(Material_Type objToValidate, out dynamic resultSet)
-        //{
-        //    return ValidateDuplicate(objToValidate, out resultSet);
-        //}
-
-        //public override bool ValidateDelete(Material_Type objToValidate, out dynamic resultSet)
-        //{
-        //    resultSet = "";
-        //    return true;
-        //}
-
-        private bool ValidateDuplicate(Material_Type objToValidate, out dynamic resultSet)
+        public bool Validate(Material_Type objToValidate, out string resultSet)
         {
-            //if (objToValidate.EntityState != State.Deleted)
-            //{
-            //    int duplicateRecordCount = SearchFor(s => s.Material_Type_Name.ToUpper() == objToValidate.Material_Type_Name.ToUpper() &&
-            //        s.Material_Type_Code != objToValidate.Material_Type_Code).Count();
-
-            //    if (duplicateRecordCount > 0)
-            //    {
-            //        resultSet = "Material Type already exists";
-            //        return false;
-            //    }
-            //}
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Material_Type objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Material_Type_Name == objToValidate.Material_Type_Name && s.Material_Type_Code != objToValidate.Material_Type_Code).Count() > 0)
+            {
+                resultSet = "Material type already exists";
+                return false;
+            }
 
             resultSet = "";
             return true;
@@ -988,6 +818,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objCategory_Repository.GetAll();
         }
+        public bool Validate(Category objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Category objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Category_Name == objToValidate.Category_Name && s.Category_Code != objToValidate.Category_Code).Count() > 0)
+            {
+                resultSet = "Category already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class System_Parameter_New_Service
     {
@@ -1021,6 +866,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objSystem_Parameter_New_Repository.GetAll();
         }
+        //public bool Validate(System_Parameter_New objToValidate, out string resultSet)
+        //{
+        //    return ValidateDuplicate(objToValidate, out resultSet);
+        //}
+        //private bool ValidateDuplicate(System_Parameter_New objToValidate, out string resultSet)
+        //{
+        //    if (GetList().Where(s => s.s == objToValidate.Material_Type_Name && s.Material_Type_Code != objToValidate.Material_Type_Code).Count() > 0)
+        //    {
+        //        resultSet = "Material type already exists";
+        //        return false;
+        //    }
+
+        //    resultSet = "";
+        //    return true;
+        //}
     }
     public class Platform_Group_Service
     {
@@ -1054,6 +914,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objPlatform_Group_Repository.GetAll(additionalTypes);
         }
+        public bool Validate(Platform_Group objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Platform_Group objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Platform_Group_Name == objToValidate.Platform_Group_Name && s.Platform_Group_Code != objToValidate.Platform_Group_Code).Count() > 0)
+            {
+                resultSet = "Platform group already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Platform_Service
     {
@@ -1065,6 +940,21 @@ namespace RightsU_Dapper.BLL.Services
         public Platform GetPlatformByID(int? ID, Type[] RelationList = null)
         {
             return objPlatform_Repository.Get(ID, RelationList);
+        }
+        public bool Validate(Platform objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Platform objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Platform_Name == objToValidate.Platform_Name && s.Platform_Code != objToValidate.Platform_Code).Count() > 0)
+            {
+                resultSet = "Platform already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class Milestone_Nature_Service
@@ -1098,6 +988,21 @@ namespace RightsU_Dapper.BLL.Services
         public IEnumerable<Milestone_Nature> GetList(Type[] additionalTypes = null)
         {
             return objMilestone_Nature_Repository.GetAll();
+        }
+        public bool Validate(Milestone_Nature objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Milestone_Nature objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Milestone_Nature_Name == objToValidate.Milestone_Nature_Name && s.Milestone_Nature_Code != objToValidate.Milestone_Nature_Code).Count() > 0)
+            {
+                resultSet = "Milestone nature already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class Platform_Group_Details_Service
@@ -1166,6 +1071,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objProgram_Repository.GetAll(additionalTypes);
         }
+        public bool Validate(Program objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Program objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Program_Name == objToValidate.Program_Name && s.Program_Code != objToValidate.Program_Code).Count() > 0)
+            {
+                resultSet = "Program already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Deal_Type_Service
     {
@@ -1199,6 +1119,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objDeal_Type_Repository.GetAll(additionalTypes);
         }
+        public bool Validate(Deal_Type objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Deal_Type objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Deal_Type_Name == objToValidate.Deal_Type_Name && s.Deal_Type_Code != objToValidate.Deal_Type_Code).Count() > 0)
+            {
+                resultSet = "Deal type already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Party_Category_Service
     {
@@ -1231,6 +1166,21 @@ namespace RightsU_Dapper.BLL.Services
         public IEnumerable<Party_Category> GetList(Type[] additionalTypes = null)
         {
             return objParty_Category_Repository.GetAll(additionalTypes);
+        }
+        public bool Validate(Party_Category objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Party_Category objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Party_Category_Name == objToValidate.Party_Category_Name && s.Party_Category_Code != objToValidate.Party_Category_Code).Count() > 0)
+            {
+                resultSet = "Party Category already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class BV_HouseId_Data_Service
@@ -1432,6 +1382,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objChannel_Repository.GetAll(additionalTypes);
         }
+        public bool Validate(Channel objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Channel objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Channel_Name == objToValidate.Channel_Name && s.Channel_Code != objToValidate.Channel_Code).Count() > 0)
+            {
+                resultSet = "Channel already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Security_Group_Service
     {
@@ -1466,6 +1431,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objSecurity_Group_Repository.GetAll(additionalTypes);
         }
+        public bool Validate(Security_Group objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Security_Group objToValidate, out string resultSet)
+        {
+            if (GetList().Where(s => s.Security_Group_Name == objToValidate.Security_Group_Name && s.Security_Group_Code != objToValidate.Security_Group_Code).Count() > 0)
+            {
+                resultSet = "Security group already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Payment_Term_Service
     {
@@ -1494,7 +1474,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objPayment_Term_Repository.Delete(obj);
         }
+        public bool Validate(Payment_Term objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Payment_Term objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Payment_Terms == objToValidate.Payment_Terms && s.Payment_Terms_Code != objToValidate.Payment_Terms_Code).Count() > 0)
+            {
+                resultSet = "Payment term already exists";
+                return false;
+            }
 
+            resultSet = "";
+            return true;
+        }
     }
     public class Royalty_Recoupment_Service
     {
@@ -1523,7 +1517,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objRoyalty_Recoupment_Repository.Delete(obj);
         }
+        public bool Validate(Royalty_Recoupment objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Royalty_Recoupment objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Royalty_Recoupment_Name == objToValidate.Royalty_Recoupment_Name && s.Royalty_Recoupment_Code != objToValidate.Royalty_Recoupment_Code).Count() > 0)
+            {
+                resultSet = "Royalty recoupment already exists";
+                return false;
+            }
 
+            resultSet = "";
+            return true;
+        }
     }
     public class Royalty_Recoupment_Details_Service
     {
@@ -1581,7 +1589,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objUser_Repository.Delete(obj);
         }
+        public bool Validate(User objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(User objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Login_Name == objToValidate.Login_Name && s.Users_Code != objToValidate.Users_Code).Count() > 0)
+            {
+                resultSet = "User already exists";
+                return false;
+            }
 
+            resultSet = "";
+            return true;
+        }
     }
     public class Users_Exclusive_Rights_Service
     {
@@ -1639,7 +1661,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objBusiness_Unit_Repository.Delete(obj);
         }
+        public bool Validate(Business_Unit objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Business_Unit objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Business_Unit_Name == objToValidate.Business_Unit_Name && s.Business_Unit_Code != objToValidate.Business_Unit_Code).Count() > 0)
+            {
+                resultSet = "Business unit already exists";
+                return false;
+            }
 
+            resultSet = "";
+            return true;
+        }
     }
     public class Users_Password_Detail_Service
     {
@@ -1697,7 +1733,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objSAP_WBS_Repository.Delete(obj);
         }
+        //public bool Validate(SAP_WBS objToValidate, out string resultSet)
+        //{
+        //    return ValidateDuplicate(objToValidate, out resultSet);
+        //}
+        //private bool ValidateDuplicate(SAP_WBS objToValidate, out string resultSet)
+        //{
+        //    if (GetAll().Where(s => s.S == objToValidate.Security_Group_Name && s.Security_Group_Code != objToValidate.Security_Group_Code).Count() > 0)
+        //    {
+        //        resultSet = "Security group already exists";
+        //        return false;
+        //    }
 
+        //    resultSet = "";
+        //    return true;
+        //}
     }
     public class BVException_Service
     {
@@ -1726,7 +1776,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objBVException_Repository.Delete(obj);
         }
+        //public bool Validate(BVException objToValidate, out string resultSet)
+        //{
+        //    return ValidateDuplicate(objToValidate, out resultSet);
+        //}
+        //private bool ValidateDuplicate(BVException objToValidate, out string resultSet)
+        //{
+        //    if (GetAll().Where(s => s.BV == objToValidate.Security_Group_Name && s.Security_Group_Code != objToValidate.Security_Group_Code).Count() > 0)
+        //    {
+        //        resultSet = "Security group already exists";
+        //        return false;
+        //    }
 
+        //    resultSet = "";
+        //    return true;
+        //}
     }
 
     public class System_Language_Service
@@ -1755,6 +1819,21 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteEntity(System_Language obj)
         {
             objSystem_Language_Repository.Delete(obj);
+        }
+        public bool Validate(System_Language objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(System_Language objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.System_Language_Message == objToValidate.System_Language_Message && s.System_Language_Code != objToValidate.System_Language_Code).Count() > 0)
+            {
+                resultSet = "System language already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
 
@@ -2103,6 +2182,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objAmort_Rule_Repository.Delete(obj);
         }
+        //public bool Validate(Amort_Rule objToValidate, out string resultSet)
+        //{
+        //    return ValidateDuplicate(objToValidate, out resultSet);
+        //}
+        //private bool ValidateDuplicate(Amort_Rule objToValidate, out string resultSet)
+        //{
+        //    if (GetAll().Where(s => s.Amort == objToValidate.System_Language_Message && s.System_Language_Code != objToValidate.System_Language_Code).Count() > 0)
+        //    {
+        //        resultSet = "System language already exists";
+        //        return false;
+        //    }
+
+        //    resultSet = "";
+        //    return true;
+        //}
     }
     public class USPBindJobAndExecute_Service
     {
@@ -2269,6 +2363,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objMusic_Language_Repository.Delete(obj);
         }
+        public bool Validate(Music_Language objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Music_Language objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Music_Deal_Language == objToValidate.Music_Deal_Language && s.Music_Language_Code != objToValidate.Music_Language_Code).Count() > 0)
+            {
+                resultSet = "Music Language already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
 
 
@@ -2326,6 +2435,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objMusic_Label_Repository.Delete(obj);
         }
+        public bool Validate(Music_Label objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Music_Label objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Music_Label_Name == objToValidate.Music_Label_Name && s.Music_Label_Code != objToValidate.Music_Label_Code).Count() > 0)
+            {
+                resultSet = "Music label already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Title_Service
     {
@@ -2354,6 +2478,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objTitle_Repository.Delete(obj);
         }
+        public bool Validate(Title objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Title objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Title_Name == objToValidate.Title_Name && s.Title_Code != objToValidate.Title_Code).Count() > 0)
+            {
+                resultSet = "Title already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Music_Album_Service
     {
@@ -2381,6 +2520,21 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteEntity(Music_Album obj)
         {
             objMusic_Album_Repository.Delete(obj);
+        }
+        public bool Validate(Music_Album objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Music_Album objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Music_Album_Name == objToValidate.Music_Album_Name && s.Music_Album_Code != objToValidate.Music_Album_Code).Count() > 0)
+            {
+                resultSet = "Music Album already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class Music_Album_Talent_Service
@@ -2437,6 +2591,21 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteEntity(Music_Theme obj)
         {
             objMusic_Theme_Repository.Delete(obj);
+        }
+        public bool Validate(Music_Theme objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Music_Theme objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Music_Theme_Name == objToValidate.Music_Theme_Name && s.Music_Theme_Code != objToValidate.Music_Theme_Code).Count() > 0)
+            {
+                resultSet = "Music theme already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class Vendor_Service
@@ -2561,6 +2730,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objParty_Group_Repository.Delete(obj);
         }
+        public bool Validate(Party_Group objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Party_Group objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Party_Group_Name == objToValidate.Party_Group_Name && s.Party_Group_Code != objToValidate.Party_Group_Code).Count() > 0)
+            {
+                resultSet = "Party group already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Vendor_Contacts_Service
     {
@@ -2629,6 +2813,21 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteEntity(Territory obj)
         {
             objTerritory_Repository.Delete(obj);
+        }
+        public bool Validate(Territory objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Territory objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Territory_Name == objToValidate.Territory_Name && s.Territory_Code != objToValidate.Territory_Code).Count() > 0)
+            {
+                resultSet = "Territory already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class Territory_Details_Services
@@ -2699,6 +2898,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objAddtional_Expense_Repository.Delete(obj);
         }
+        public bool Validate(Additional_Expense objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Additional_Expense objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Additional_Expense_Name == objToValidate.Additional_Expense_Name && s.Additional_Expense_Code != objToValidate.Additional_Expense_Code).Count() > 0)
+            {
+                resultSet = "Additional expense already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Language_Services
     {
@@ -2727,6 +2941,21 @@ namespace RightsU_Dapper.BLL.Services
         {
             objLanguage_Repository.Delete(obj);
         }
+        public bool Validate(Language objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Language objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Language_Name == objToValidate.Language_Name && s.Language_Code != objToValidate.Language_Code).Count() > 0)
+            {
+                resultSet = "Language already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
     }
     public class Music_Title_Services
     {
@@ -2754,6 +2983,21 @@ namespace RightsU_Dapper.BLL.Services
         public void DeleteEntity(Music_Title obj)
         {
             objMusic_Title_Repository.Delete(obj);
+        }
+        public bool Validate(Music_Title objToValidate, out string resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Music_Title objToValidate, out string resultSet)
+        {
+            if (GetAll().Where(s => s.Music_Title_Name == objToValidate.Music_Title_Name && s.Music_Title_Code != objToValidate.Music_Title_Code).Count() > 0)
+            {
+                resultSet = "Music title already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class Music_Override_Reason_Services
@@ -2869,3 +3113,4 @@ namespace RightsU_Dapper.BLL.Services
         }
     }
 }
+

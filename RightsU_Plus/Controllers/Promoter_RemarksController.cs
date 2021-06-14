@@ -213,13 +213,21 @@ namespace RightsU_Plus.Controllers
             objPR.Last_Action_By = objLoginUser.Users_Code;
             objPR.Is_Active = "Y";
             objPR.Promoter_Remark_Desc = Promoter_Remarks;
-            dynamic resultSet;
+            string resultSet;
+            bool isDuplicate = objPromoter_Remarks_Service.Validate(objPR, out resultSet);
             //bool isValid = objService.Save(objPR, out resultSet);
-            if (Promoter_Remarks_Code == 0)
-                objPromoter_Remarks_Service.AddEntity(objPR);
+            if (isDuplicate)
+            {
+                if (Promoter_Remarks_Code == 0)
+                    objPromoter_Remarks_Service.AddEntity(objPR);
+                else
+                    objPromoter_Remarks_Service.UpdateMusic_Deal(objPR);
+            }
             else
-                objPromoter_Remarks_Service.UpdateMusic_Deal(objPR);
-
+            {
+                status = "";
+                message = resultSet;
+            }
             bool isValid = true;
 
             if (isValid)

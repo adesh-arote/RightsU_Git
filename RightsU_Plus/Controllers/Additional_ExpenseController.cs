@@ -206,8 +206,17 @@ namespace RightsU_Plus.Controllers
            objAdditionalExpense.Is_Active = "Y";
            objAdditionalExpense.Additional_Expense_Name = additionalExpenseName.Trim();
             objAdditionalExpense.SAP_GL_Group_Code = sapGLGroupCode.Trim();
-            dynamic resultSet;
-            objAdditionalExpenseService.AddEntity(objAdditionalExpense);
+            string resultSet;
+            bool isDuplicate = objAdditionalExpenseService.Validate(objAdditionalExpense, out resultSet);
+            if (isDuplicate)
+            {
+                objAdditionalExpenseService.AddEntity(objAdditionalExpense);
+            }
+            else
+            {
+                status = "";
+                message = resultSet;
+            }
             bool isValid = true;// objService.Save(objAdditionalExpense, out resultSet);
 
             if (isValid)
