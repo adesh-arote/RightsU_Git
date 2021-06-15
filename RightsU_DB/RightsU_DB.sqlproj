@@ -1461,6 +1461,7 @@
     <Build Include="dbo\Stored Procedures\USP_Insert_Email_Notification_Log.sql" />
     <Build Include="dbo\Stored Procedures\USP_Get_EmailConfig_Users.sql" />
     <Build Include="dbo\Views\System_Parameter_New.sql" />
+    <Build Include="dbo\Tables\System_Parameter.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
