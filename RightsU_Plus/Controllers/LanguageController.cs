@@ -256,6 +256,11 @@ namespace RightsU_Plus.Controllers
                 {
                     objLanguageService.AddEntity(objGenre);
                 }
+                if (Language_Code > 0)
+                     message = objMessageKey.Recordupdatedsuccessfully;
+                    //message = message.Replace("{ACTION}", "updated");    
+                else
+                    message = objMessageKey.Recordsavedsuccessfully;
             }
             else
             {
@@ -276,17 +281,17 @@ namespace RightsU_Plus.Controllers
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();
             objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
-            if (Language_Code > 0)
-                if (status == "E")
-                    message = objMessageKey.Languagealreadyexists;
-                else
-                    message = objMessageKey.Recordupdatedsuccessfully;
-            //message = message.Replace("{ACTION}", "updated");
-            else
-                if (status == "E")
-                    message = objMessageKey.Languagealreadyexists;
-                else
-                    message = objMessageKey.Recordsavedsuccessfully;
+            //if (Language_Code > 0)
+            //    if (status == "E")
+            //        message = objMessageKey.Languagealreadyexists;
+            //    else
+            //        message = objMessageKey.Recordupdatedsuccessfully;
+            ////message = message.Replace("{ACTION}", "updated");
+            //else
+            //    if (status == "E")
+            //        message = objMessageKey.Languagealreadyexists;
+            //    else
+            //        message = objMessageKey.Recordsavedsuccessfully;
                 //message = message.Replace("{ACTION}", "saved");
 
             var obj = new

@@ -753,11 +753,11 @@ namespace RightsU_Dapper.BLL.Services
         {
             objMaterial_Type_Repository.Add(obj);
         }
-        public void UpdateGenres(Material_Type obj)
+        public void UpdateEntity(Material_Type obj)
         {
             objMaterial_Type_Repository.Update(obj);
         }
-        public void DeleteMusic_Deal(Material_Type obj)
+        public void DeleteEntity(Material_Type obj)
         {
             objMaterial_Type_Repository.Delete(obj);
         }
@@ -1826,7 +1826,7 @@ namespace RightsU_Dapper.BLL.Services
         }
         private bool ValidateDuplicate(System_Language objToValidate, out string resultSet)
         {
-            if (GetAll().Where(s => s.System_Language_Message == objToValidate.System_Language_Message && s.System_Language_Code != objToValidate.System_Language_Code).Count() > 0)
+            if (GetAll().Where(s => s.Language_Name == objToValidate.Language_Name && s.System_Language_Code != objToValidate.System_Language_Code).Count() > 0)
             {
                 resultSet = "System language already exists";
                 return false;

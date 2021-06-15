@@ -18,7 +18,7 @@ namespace RightsU_Dapper.Entity
         public string Is_Theatrical_Territory { get; set; }
         public string Is_Active { get; set; }
         public string Disable_Message { get; set; }
-        public string Last_Updated_Time { get; set; }
+        public Nullable<System.DateTime> Last_Updated_Time { get; set; }
     }
 }
 

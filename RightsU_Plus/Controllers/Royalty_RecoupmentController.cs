@@ -346,11 +346,13 @@ namespace RightsU_Plus.Controllers
             string resultSet;
             string status = "S", message = "";
             bool isDuplicate = objRoyaltyRecoupmentService.Validate(objRoyalty, out resultSet);
-            objRoyaltyRecoupmentService.AddEntity(objRoyalty);
+            
             /*bool valid = true*/;// objRoyalty_Service.Save(objRoyalty, out resultSet);
             
             if(isDuplicate)
             {
+                objRoyaltyRecoupmentService.AddEntity(objRoyalty);
+
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);

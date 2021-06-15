@@ -75,6 +75,8 @@
     <Compile Include="IPR\IPR_TYPE.cs" />
     <Compile Include="IPR\USP_List_IPR_Opp_Result.cs" />
     <Compile Include="IPR\USP_List_IPR_Result.cs" />
+    <Compile Include="Master_Entities\Deal_Tag.cs" />
+    <Compile Include="Master_Entities\Deal_Workflow_Status.cs" />
     <Compile Include="Master_Entities\Error_Code_Master.cs" />
     <Compile Include="Master_Entities\Content_Music_Link.cs" />
     <Compile Include="Master_Entities\BV_Schedule_Transaction.cs" />
