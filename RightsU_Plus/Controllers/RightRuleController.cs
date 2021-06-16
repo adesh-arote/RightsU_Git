@@ -229,15 +229,13 @@ namespace RightsU_Plus.Controllers
                 if (ObjRightRuleMVC.Right_Rule_Code > 0)
                 {
                     objRightRuleService.UpdateGenres(objRight_Rule);
+                    message = objMessageKey.Recordupdatedsuccessfully;
                 }
                 else
                 {
                     objRightRuleService.AddEntity(objRight_Rule);
-                }
-                if (ObjRightRuleMVC.Right_Rule_Code > 0)
-                    message = objMessageKey.Recordupdatedsuccessfully;
-                else
                     message = objMessageKey.RecordAddedSuccessfully;
+                }    
             }
             else
             {

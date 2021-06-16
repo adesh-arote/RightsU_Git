@@ -259,10 +259,12 @@ namespace RightsU_Plus.Controllers
                 if (Music_Album_Code > 0)
                 {
                     objMusic_AlbumService.UpdateEntity(objMusic_Album);
+                    message = objMessageKey.Recordupdatedsuccessfully;
                 }
                 else
                 {
                     objMusic_AlbumService.AddEntity(objMusic_Album);
+                    message = objMessageKey.Recordsavedsuccessfully;
                 }
                 //if (Music_Album_Code > 0)
                 //    message = 
@@ -273,28 +275,29 @@ namespace RightsU_Plus.Controllers
                 Added_Music_Album_Talent.ToList<Music_Album_Talent>().ForEach(t => objMusic_Album.Music_Album_Talent.Add(t));
                 Deleted_Music_Album_Talent.ToList<Music_Album_Talent>().ForEach(t => objMusic_Album.Music_Album_Talent.Remove(t));
                
-                bool valid = true;//ObjMusicAlbumService.Save(objMusic_Album, out resultSet);
+                //bool valid = true;//ObjMusicAlbumService.Save(objMusic_Album, out resultSet);
 
-                if (valid)
-                {
-                    if (Music_Album_Code > 0)
-                    {
-                        message = message.Replace("{ACTION}", "updated");
-                    }
-                    else
-                    {
-                        message = message.Replace("{ACTION}", "added");
-                    }
+                //if (valid)
+                //{
+                //    if (Music_Album_Code > 0)
+                //    {
+                //        message = message.Replace("{ACTION}", "updated");
+                //    }
+                //    else
+                //    {
+                //        message = message.Replace("{ACTION}", "added");
+                //    }
                     FetchData();
-                }
+                //}
             }
             else
             {
                 status = "E";
-                if (Music_Album_Code > 0)
-                    message = message.Replace("Record {ACTION} successfully", "");
-                else
-                    message = message.Replace("Record {ACTION} successfully", "");
+                message = resultSet;
+                //if (Music_Album_Code > 0)
+                //    message = message.Replace("Record {ACTION} successfully", "");
+                //else
+                //    message = message.Replace("Record {ACTION} successfully", "");
             };
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

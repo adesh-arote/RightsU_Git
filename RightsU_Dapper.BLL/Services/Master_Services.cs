@@ -560,7 +560,7 @@ namespace RightsU_Dapper.BLL.Services
         {
             this.objCountry_Repository = new Country_Repository();
         }
-        public Country GetRightRuleByID(int? ID, Type[] RelationList = null)
+        public Country GetCountryByID(int? ID, Type[] RelationList = null)
         {
             return objCountry_Repository.Get(ID, RelationList);
         }
@@ -587,7 +587,7 @@ namespace RightsU_Dapper.BLL.Services
         }
         public IEnumerable<Country> GetList(Type[] additionalTypes = null)
         {
-            return objCountry_Repository.GetAll();
+            return objCountry_Repository.GetAll(additionalTypes);
         }
         public bool Validate(Country objToValidate, out string resultSet)
         {

@@ -378,15 +378,13 @@ namespace RightsU_Plus.Controllers
                 if (platformGroupCode > 0)
                 {
                     objPlatform_GroupService.UpdateCategory(objPlatformGroup);
+                    message = objMessageKey.Recordsavedsuccessfully;
                 }
                 else
                 {
                     objPlatform_GroupService.AddEntity(objPlatformGroup);
-                }
-                if (platformGroupCode > 0)
-                    message = objMessageKey.Recordupdatedsuccessfully;
-                else
                     message = objMessageKey.RecordAddedSuccessfully;
+                }      
             }
             else
             {

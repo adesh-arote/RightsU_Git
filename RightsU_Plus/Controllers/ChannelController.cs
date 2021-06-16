@@ -129,7 +129,7 @@ namespace RightsU_Plus.Controllers
                 lstChannel_Searched = lstChannelEdit = objChannelService.GetList().Where(a => a.Channel_Code == ChannelCode).ToList();
 
                 //Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Dapper.Entity.Country objCountry = objCountryService.GetRightRuleByID(ChannelCode);
+                RightsU_Dapper.Entity.Country objCountry = objCountryService.GetCountryByID(ChannelCode);
 
                 //var genList = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
                 //ViewBag.GenereList = new SelectList(genList, "Genres_Code", "Genres_Name", objChannel.Genre.Genres_Code);
@@ -299,7 +299,7 @@ namespace RightsU_Plus.Controllers
             lstChannel_Searched = lstChannelEdit = objChannelService.GetList().Where(a => a.Channel_Code == ChannelCode).ToList();
 
             //Country_Service objCountryService = new Country_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Dapper.Entity.Country objCountry = objCountryService.GetRightRuleByID(ChannelCode);
+            RightsU_Dapper.Entity.Country objCountry = objCountryService.GetCountryByID(ChannelCode);
 
             //var genList = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).ToList();
             //ViewBag.GenereList = new SelectList(genList, "Genres_Code", "Genres_Name", objChannel.Genre.Genres_Code);

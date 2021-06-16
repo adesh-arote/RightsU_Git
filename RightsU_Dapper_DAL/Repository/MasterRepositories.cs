@@ -2019,7 +2019,7 @@ namespace RightsU_Dapper.DAL.Repository
 
         public IEnumerable<Country> GetAll(Type[] additionalTypes = null)
         {
-            return base.GetAll<Country>();
+            return base.GetAll<Country>(additionalTypes);
         }
         public IEnumerable<Country> SearchFor(object param)
         {
@@ -2038,7 +2038,7 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public void Update(Country entity)
         {
-            Country oldObj = Get(entity.Country_Code);
+            Country oldObj = Get(entity.Country_Code, new Type[] { typeof(Country_Language) }); 
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Country entity)

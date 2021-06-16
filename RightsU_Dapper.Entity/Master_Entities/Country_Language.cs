@@ -8,13 +8,12 @@ namespace RightsU_Dapper.Entity
     [Table("Country_Language")]
     public partial class Country_Language
     {
-        //public State EntityState { get; set; }
-        public int Country_Language_Code { get; set; }
+        [PrimaryKey]
+        public int? Country_Language_Code { get; set; }
+        [ForeignKeyReference(typeof(Country))]
         public Nullable<int> Country_Code { get; set; }
+        [ForeignKeyReference(typeof(Language))]
         public Nullable<int> Language_Code { get; set; }
-
-        //public virtual Country Country { get; set; }
-        //public virtual Language Language { get; set; }
     }
 }
 

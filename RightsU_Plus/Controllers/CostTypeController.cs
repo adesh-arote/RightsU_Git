@@ -222,15 +222,13 @@ namespace RightsU_Plus.Controllers
                 if (costTypeCode > 0)
                 {
                     objCostType_Service.UpdateGenres(objCostType);
+                    message = objMessageKey.Recordupdatedsuccessfully;
                 }
                 else
                 {
                     objCostType_Service.AddEntity(objCostType);
-                }
-                if (costTypeCode > 0)
-                    message = objMessageKey.Recordupdatedsuccessfully;
-                else
                     message = objMessageKey.Recordsavedsuccessfully;
+                }        
             }
             else
             {

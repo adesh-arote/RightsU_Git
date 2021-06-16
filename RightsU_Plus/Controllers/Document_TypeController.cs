@@ -217,15 +217,13 @@ namespace RightsU_Plus.Controllers
                 if (documentTypeCode > 0)
                 {
                     objDocumentType_Service.UpdateGenres(objDocumentType);
+                    message = objMessageKey.Recordupdatedsuccessfully;
                 }
                 else
                 {
                     objDocumentType_Service.AddEntity(objDocumentType);
-                }
-                if (documentTypeCode > 0)
-                    message = objMessageKey.Recordupdatedsuccessfully;
-                else
                     message = objMessageKey.Recordsavedsuccessfully;
+                }
             }
             else
             {

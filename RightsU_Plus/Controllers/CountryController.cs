@@ -56,6 +56,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objCountry_Service"] = value; }
         }
+        Type[] RelationList = new Type[] { typeof(Country_Language)};
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForCountry);
@@ -79,7 +80,7 @@ namespace RightsU_Plus.Controllers
             RecordCount = lstCountry_Searched.Count;
             //Country_Service objCountrySerivce = new Country_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Dapper.Entity.Language> lstlanguage = new List<RightsU_Dapper.Entity.Language>();
-            lstlanguage = (List<RightsU_Dapper.Entity.Language>)objLanguageService.GetList(); //new Type[] { typeof(Country_Language) }
+            lstlanguage = (List<RightsU_Dapper.Entity.Language>)objLanguageService.GetList(RelationList); //new Type[] { typeof(Country_Language) }
             ViewBag.Countries = new SelectList(lstlanguage, "language_Code", "language_Name");
 
             if (RecordCount > 0)
@@ -175,17 +176,17 @@ namespace RightsU_Plus.Controllers
             objCountry_Service = null;
 
             if (countryCode > 0)
-                objCountry = objCountry_Service.GetRightRuleByID(countryCode);
+                objCountry = objCountry_Service.GetCountryByID(countryCode, RelationList);
 
-            List<RightsU_Dapper.Entity.Language> lstLanguage = objLanguageService.GetList().Where(w => w.Is_Active == "Y").OrderBy(o => o.Language_Name).ToList();
+            List<RightsU_Dapper.Entity.Language> lstLanguage = objLanguageService.GetList(RelationList).Where(w => w.Is_Active == "Y").OrderBy(o => o.Language_Name).ToList();
             var languageCodes = objCountry.Country_Language.Select(s => s.Language_Code).ToArray();
             ViewBag.LanguageList = new MultiSelectList(lstLanguage, "Language_Code", "Language_Name", languageCodes);
 
-            List<RightsU_Dapper.Entity.Country> lstBaseCountry = objCountryService.GetList().Where(w => w.Is_Active == "Y" && w.Is_Domestic_Territory == "Y").OrderBy(o => o.Country_Name).ToList();
+            List<RightsU_Dapper.Entity.Country> lstBaseCountry = objCountryService.GetList(RelationList).Where(w => w.Is_Active == "Y" && w.Is_Domestic_Territory == "Y").OrderBy(o => o.Country_Name).ToList();
             var parentCountryCode = objCountry.Parent_Country_Code;
             ViewBag.BaseCountryList = new SelectList(lstBaseCountry, "Country_Code", "Country_Name", parentCountryCode);
 
-            objCountry.Base_Country_Count = objCountryService.GetList().Where(s => s.Is_Domestic_Territory == "Y").Count();
+            objCountry.Base_Country_Count = objCountryService.GetList(RelationList).Where(s => s.Is_Domestic_Territory == "Y").Count();
 
             return PartialView("~/Views/Country/_AddEditCountry.cshtml", objCountry);
         }
@@ -199,7 +200,7 @@ namespace RightsU_Plus.Controllers
             if (isLocked)
             {
                 //Country_Service objService = new Country_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Dapper.Entity.Country objCountry = objCountryService.GetRightRuleByID(countryCode);
+                RightsU_Dapper.Entity.Country objCountry = objCountryService.GetCountryByID(countryCode);
                 objCountry.Is_Active = doActive;
                 objCountryService.UpdateGenres(objCountry);
                 //objCountry.EntityState = State.Modified;
@@ -282,6 +283,7 @@ namespace RightsU_Plus.Controllers
                     Country_Language objCL = new Country_Language();
                     //objCL.EntityState = State.Added;
                     objCL.Language_Code = Convert.ToInt32(langaugeCode);
+
                     languageList.Add(objCL);
                 }
             }
@@ -303,15 +305,13 @@ namespace RightsU_Plus.Controllers
                     if (objCountry.Country_Code == 0 || objCountry.Country_Code == null)
                     {
                         objCountryService.AddEntity(objCountry);
+                        message = objMessageKey.RecordAddedSuccessfully;
                     }
                     else
                     {
                         objCountryService.UpdateGenres(objCountry);
-                    }
-                    if (objCountry.Country_Code > 0)
                         message = objMessageKey.Recordupdatedsuccessfully;
-                    else
-                        message = objMessageKey.RecordAddedSuccessfully;
+                    }     
                 }
                 else
                 {
