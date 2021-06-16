@@ -217,13 +217,17 @@ namespace RightsU_Plus.Controllers
             if (isDuplicate)
             {
                     objPaymentTermsService.AddEntity(objPaymentTerm);
+                if (paymentTermcode > 0)
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                else
+                    message = objMessageKey.Recordsavedsuccessfully;
             }
             else
             {
                 status = "E";
                 message = resultSet;
             }
-            
+           
             bool isValid = true;// objService.Save(objPaymentTerm, out resultSet);
             if (isValid)
             {

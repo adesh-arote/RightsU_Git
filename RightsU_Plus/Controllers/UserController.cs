@@ -15,7 +15,6 @@ using System.IO;
 using System.Configuration;
 using RightsU_Dapper.BLL.Services;
 using RightsU_Dapper.Entity;
-using RightsU_Dapper.Entity;
 
 namespace RightsU_Plus.Controllers
 {
@@ -750,10 +749,15 @@ namespace RightsU_Plus.Controllers
             if (isDuplicate)
             {
                 objUserService.AddEntity(objU);
-            }
+                if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) > 0)
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                else
+                    message = objMessageKey.RecordAddedSuccessfully;
+
+                }
             else
             {
-                status = "";
+                status = "E";
                 message = resultSet;
             }
             
@@ -777,15 +781,14 @@ namespace RightsU_Plus.Controllers
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
-                if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) > 0)
-                {
-                    message = objMessageKey.Recordupdatedsuccessfully;
-                    //message = message.Replace("{ACTION}", "updated");
-                }
-                else
+                //if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) > 0)
+                //{
+                //    message = objMessageKey.Recordupdatedsuccessfully;
+                //    //message = message.Replace("{ACTION}", "updated");
+                //}
+                if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) <= 0)
                 {
                     //message = message.Replace("{ACTION}", "added");
-                    message = objMessageKey.RecordAddedSuccessfully;
                     string IsLDAPAuthReq = ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().Trim().ToUpper();
                     if (IsLDAPAuthReq == "N")
                     {

@@ -51,6 +51,10 @@ namespace RightsU_Dapper.BLL.Services
             //USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSP_Repository.USP_Validate_Episode(title_with_Episode, Program_Type);
         }
+        public IEnumerable<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
+        {
+            return objUSP_Repository.USP_Get_Platform_Tree_Hierarchy(platformCodes, search_Platform_Name);
+        }
         //public virtual void USP_UpdateContentHouseID(Nullable<int> BV_HouseId_Data_Code, Nullable<int> MappedDealTitleCode)
         //{
         //    //USP_DAL objUSPDAL = new USP_DAL(conStr);

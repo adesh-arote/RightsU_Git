@@ -227,6 +227,10 @@ namespace RightsU_Plus.Controllers
                 {
                     objCostType_Service.AddEntity(objCostType);
                 }
+                if (costTypeCode > 0)
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                else
+                    message = objMessageKey.Recordsavedsuccessfully;
             }
             else
             {

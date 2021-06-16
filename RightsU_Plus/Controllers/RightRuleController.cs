@@ -193,7 +193,6 @@ namespace RightsU_Plus.Controllers
             {
                 objRight_Rule = objRightRuleService.GetRightRuleByID(ObjRightRuleMVC.Right_Rule_Code);               
                 objRight_Rule.Last_Action_By = objLoginUser.Users_Code;
-                objRightRuleService.UpdateGenres(objRight_Rule);
                // objRight_Rule.EntityState = State.Modified;
             }
             else
@@ -235,10 +234,14 @@ namespace RightsU_Plus.Controllers
                 {
                     objRightRuleService.AddEntity(objRight_Rule);
                 }
+                if (ObjRightRuleMVC.Right_Rule_Code > 0)
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                else
+                    message = objMessageKey.RecordAddedSuccessfully;
             }
             else
             {
-                status = "";
+                status = "E";
                 message = resultSet;
             }
                 //bool isValid = objRight_Rule_Service.Save(objRight_Rule, out resultSet);
@@ -250,14 +253,7 @@ namespace RightsU_Plus.Controllers
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                     CommonUtil objCommonUtil = new CommonUtil();
                     objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
-                    status = "S";
-                    message = objMessageKey.Recordupdatedsuccessfully;
                     ViewBag.Alert = message;
-                }
-                else
-                {
-                    status = "S";
-                    message = objMessageKey.RecordAddedSuccessfully;
                 }
             }
             else
@@ -307,9 +303,20 @@ namespace RightsU_Plus.Controllers
             objRight_Rule.Last_Action_By = objLoginUser.Users_Code;
             objRight_Rule.Last_Updated_Time = System.DateTime.Now;
             // objRight_Rule.EntityState = State.Modified;
-            objRightRuleService.UpdateGenres(objRight_Rule);
-             dynamic resultSet;
+            
+             string resultSet;
             string status = "S", message = "Record {ACTION} successfully";
+            bool isDuplicate = objRightRuleService.Validate(objRight_Rule, out resultSet);
+            if (isDuplicate)
+            {
+                objRightRuleService.UpdateGenres(objRight_Rule); 
+            }
+            else
+            {
+                status = "";
+                message = resultSet;
+            }
+            
             ViewBag.RightRuleCode = "";
             ViewBag.Action = "";
             RedirectToAction("index");
@@ -324,8 +331,6 @@ namespace RightsU_Plus.Controllers
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                 lstRight_Rule.Where(w => w.Right_Rule_Code == Convert.ToInt32(Right_Rule_Code)).First();
                 lstRight_Rule_Searched.Where(w => w.Right_Rule_Code == Convert.ToInt32(Right_Rule_Code)).First();
-                status = "S";
-                message = objMessageKey.Recordupdatedsuccessfully;
                 ViewBag.Alert = message; 
             }
             else

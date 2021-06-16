@@ -222,6 +222,10 @@ namespace RightsU_Plus.Controllers
                 {
                     objDocumentType_Service.AddEntity(objDocumentType);
                 }
+                if (documentTypeCode > 0)
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                else
+                    message = objMessageKey.Recordsavedsuccessfully;
             }
             else
             {

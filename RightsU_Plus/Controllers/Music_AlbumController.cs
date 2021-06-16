@@ -264,20 +264,15 @@ namespace RightsU_Plus.Controllers
                 {
                     objMusic_AlbumService.AddEntity(objMusic_Album);
                 }
+                //if (Music_Album_Code > 0)
+                //    message = 
                 IEqualityComparer<Music_Album_Talent> comparerTalent_Code = new RightsU_Dapper.BLL.LambdaComparer<RightsU_Dapper.Entity.Music_Album_Talent>((x, y) => x.Talent_Code == y.Talent_Code); //&& x.EntityState != State.Deleted);
                 var Deleted_Music_Album_Talent = new List<Music_Album_Talent>();
                 var Updated_Music_Album_Talent = new List<Music_Album_Talent>();
                 var Added_Music_Album_Talent = CompareLists<Music_Album_Talent>(TalentList.ToList<Music_Album_Talent>(), objMusic_Album.Music_Album_Talent.ToList<Music_Album_Talent>(), comparerTalent_Code, ref Deleted_Music_Album_Talent, ref Updated_Music_Album_Talent);
                 Added_Music_Album_Talent.ToList<Music_Album_Talent>().ForEach(t => objMusic_Album.Music_Album_Talent.Add(t));
                 Deleted_Music_Album_Talent.ToList<Music_Album_Talent>().ForEach(t => objMusic_Album.Music_Album_Talent.Remove(t));
-                if (Music_Album_Code > 0)
-                {
-                    objMusic_AlbumService.UpdateEntity(objMusic_Album);
-                }
-                else
-                {
-                    objMusic_AlbumService.AddEntity(objMusic_Album);
-                }
+               
                 bool valid = true;//ObjMusicAlbumService.Save(objMusic_Album, out resultSet);
 
                 if (valid)

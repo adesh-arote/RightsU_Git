@@ -173,7 +173,7 @@ namespace RightsU_Plus.Controllers
             objPlatform_Group_Service = null;
 
             if (Platform_Group_Code > 0)
-                objPlatform_Group = objPlatform_Group_Service.GetPlatformGroupByID(Platform_Group_Code);
+                objPlatform_Group = objPlatform_Group_Service.GetPlatformGroupByID(Platform_Group_Code, new Type[] { typeof(Platform_Group_Details) });
 
             string strPlatform_Code = string.Join(",", objPlatform_Group_DetailsService.GetList().Where(x => x.Platform_Group_Code == Platform_Group_Code).ToList().Select(x => Convert.ToString(x.Platform_Code)));
 
@@ -312,7 +312,7 @@ namespace RightsU_Plus.Controllers
 
         private void FetchData()
         {
-            lstPlatform_Group_Searched = lstPlatform_Group = objPlatform_GroupService.GetList().OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstPlatform_Group_Searched = lstPlatform_Group = objPlatform_GroupService.GetList(new Type[] { typeof(Platform_Group_Details) }).OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
 
         public ActionResult SavePlatform_Group(FormCollection objFormCollection)
@@ -383,6 +383,10 @@ namespace RightsU_Plus.Controllers
                 {
                     objPlatform_GroupService.AddEntity(objPlatformGroup);
                 }
+                if (platformGroupCode > 0)
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                else
+                    message = objMessageKey.RecordAddedSuccessfully;
             }
             else
             {
@@ -395,10 +399,7 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 status = "S";
-                if (platformGroupCode > 0)
-                    message = objMessageKey.Recordupdatedsuccessfully;
-                else
-                    message = objMessageKey.RecordAddedSuccessfully;
+                
                 ViewBag.Alert = message;
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();

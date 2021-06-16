@@ -289,17 +289,11 @@ namespace RightsU_Plus.Controllers
             Deleted_Country_Language.ToList<Country_Language>().ForEach(t => objCountry.Country_Language.Remove(t));
             #endregion
 
-            if (objCountry.Country_Code > 0)
-                message = objMessageKey.Recordupdatedsuccessfully;
-            else
-                message = objMessageKey.RecordAddedSuccessfully;
-
-
             string resultSet;
             bool isDuplicate = objCountryService.Validate(objCountry, out resultSet);
             try
             {
-                objCountry.Country_Code = 0;
+                //objCountry.Country_Code = 0;
                 if (isDuplicate)
                 {
                     if (objCountry.Country_Code == 0 || objCountry.Country_Code == null)
@@ -310,6 +304,10 @@ namespace RightsU_Plus.Controllers
                     {
                         objCountryService.UpdateGenres(objCountry);
                     }
+                    if (objCountry.Country_Code > 0)
+                        message = objMessageKey.Recordupdatedsuccessfully;
+                    else
+                        message = objMessageKey.RecordAddedSuccessfully;
                 }
                 else
                 {

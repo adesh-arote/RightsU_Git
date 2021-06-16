@@ -239,6 +239,22 @@ namespace RightsU_Plus.Controllers
             if (isDuplicate)
             {
                 objMusic_Theme_Service.AddEntity(objMusicTheme);
+                if (MusicTheme_Code > 0)
+                {
+                    if (status == "E")
+                        message = objMessageKey.CouldNotupdatedRecord;
+                    else
+                        message = objMessageKey.Recordupdatedsuccessfully;
+                    //message = message.Replace("{ACTION}", "updated");
+                }
+                else
+                {
+                    if (status == "E")
+                        message = objMessageKey.CouldNotsavedRecord;
+                    else
+                        message = objMessageKey.Recordsavedsuccessfully;
+                    //message = message.Replace("{ACTION}", "saved");
+                }
             }
             else
             {
@@ -256,22 +272,7 @@ namespace RightsU_Plus.Controllers
                 status = "E";
                 message = "";
             }
-            if (MusicTheme_Code > 0)
-            {
-                if (status == "E")
-                    message = objMessageKey.CouldNotupdatedRecord;
-                else
-                    message = objMessageKey.Recordupdatedsuccessfully;
-                //message = message.Replace("{ACTION}", "updated");
-            }
-            else
-            {
-                if (status == "E")
-                    message = objMessageKey.CouldNotsavedRecord;
-                else
-                    message = objMessageKey.Recordsavedsuccessfully;
-                //message = message.Replace("{ACTION}", "saved");
-            }
+            
 
             int recordLockingCode = Convert.ToInt32(Record_Code);
             CommonUtil objCommonUtil = new CommonUtil();

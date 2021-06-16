@@ -2900,4 +2900,37 @@ namespace RightsU_Dapper.DAL.Repository
             base.DeleteEntity(entity);
         }
     }
+    public class Talent_Role_Repository : MainRepository<Talent_Role>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Talent_Role> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Talent_Role>(additionalTypes);
+        }
+        public IEnumerable<Talent_Role> SearchFor(object param)
+        {
+            return base.SearchForEntity<Talent_Role>(param);
+        }
+        public Talent_Role Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Talent_Role_Code = Id };
+            return base.GetById<Talent_Role>(obj, RelationList);
+        }
+        public void Add(Talent_Role entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Talent_Role entity)
+        {
+            Talent_Role oldObj = Get(entity.Talent_Role_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Talent_Role entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
 }
