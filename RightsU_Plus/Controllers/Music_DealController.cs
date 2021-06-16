@@ -101,7 +101,7 @@ namespace RightsU_Plus.Controllers
                     .SingleOrDefault();
 
             ViewBag.IsMuciVersionSPN = MusicDealVersion;
-            var lstDealTag = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Deal_Tag_Code).ToList(), "Deal_Tag_Code", "Deal_Tag_Description");
+            var lstDealTag = new SelectList(new RightsU_BLL.Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Deal_Tag_Code).ToList(), "Deal_Tag_Code", "Deal_Tag_Description");
             ViewBag.DealTagList = lstDealTag;
 
             Music_Deal_Service objservice = new Music_Deal_Service(objLoginEntity.ConnectionStringName);

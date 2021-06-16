@@ -152,6 +152,138 @@ namespace RightsU_Dapper.DAL.Repository
     //        base.DeleteAllEntity(ListEntity);
     //    }
     //}
+    public class Music_Deal_LinkShow_Dapper_Repository : MainRepository<Music_Deal_LinkShow_Dapper>
+    {
+        public Music_Deal_LinkShow_Dapper Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Deal_LinkShow_Code = Id };
+            return base.GetById<Music_Deal_LinkShow_Dapper>(obj, RelationList);
+        }
+        public void Add(Music_Deal_LinkShow_Dapper entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Deal_LinkShow_Dapper entity)
+        {
+            Music_Deal_LinkShow_Dapper oldObj = Get(entity.Music_Deal_LinkShow_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Deal_LinkShow_Dapper entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Music_Deal_LinkShow_Dapper> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Deal_LinkShow_Dapper>(additionalTypes);
+        }
+        public IEnumerable<Music_Deal_LinkShow_Dapper> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Deal_LinkShow_Dapper>(param);
+        }
+    }
+    public class Music_Deal_Vendor_Dapper_Repository : MainRepository<Music_Deal_Vendor_Dapper>
+    {
+        public Music_Deal_Vendor_Dapper Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Deal_Vendor_Code = Id };
+            return base.GetById<Music_Deal_Vendor_Dapper>(obj, RelationList);
+        }
+        public void Add(Music_Deal_Vendor_Dapper entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Deal_Vendor_Dapper entity)
+        {
+            Music_Deal_Vendor_Dapper oldObj = Get(entity.Music_Deal_Vendor_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Deal_Vendor_Dapper entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Music_Deal_Vendor_Dapper> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Deal_Vendor_Dapper>(additionalTypes);
+        }
+        public IEnumerable<Music_Deal_Vendor_Dapper> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Deal_Vendor_Dapper>(param);
+        }
+    }
+    public class Deal_Tag_Repository : MainRepository<Deal_Tag>
+    {
+        public Deal_Tag Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Deal_Tag_Code = Id };
+            return base.GetById<Deal_Tag>(obj, RelationList);
+        }
+        public void Add(Deal_Tag entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Deal_Tag entity)
+        {
+            Deal_Tag oldObj = Get(entity.Deal_Tag_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Deal_Tag entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Deal_Tag> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Deal_Tag>(additionalTypes);
+        }
+        public IEnumerable<Deal_Tag> SearchFor(object param)
+        {
+            return base.SearchForEntity<Deal_Tag>(param);
+        }
+    }
+    public class Deal_Workflow_Status_Repository : MainRepository<Deal_Workflow_Status>
+    {
+        public Deal_Workflow_Status Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Deal_Workflow_Status_Code = Id };
+            return base.GetById<Deal_Workflow_Status>(obj, RelationList);
+        }
+        public void Add(Deal_Workflow_Status entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Deal_Workflow_Status entity)
+        {
+            Deal_Workflow_Status oldObj = Get(entity.Deal_Workflow_Status_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Deal_Workflow_Status entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Deal_Workflow_Status> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Deal_Workflow_Status>(additionalTypes);
+        }
+        public IEnumerable<Deal_Workflow_Status> SearchFor(object param)
+        {
+            return base.SearchForEntity<Deal_Workflow_Status>(param);
+        }
+    }
+    public class USP_Assign_Workflow_Repository : ProcRepository
+    {
+        public string USP_Assign_Workflow(Nullable<int> record_Code, Nullable<int> module_Code, Nullable<int> login_User, string remarks_Approval)
+        {
+            var param = new DynamicParameters();    
+          
+            param.Add("@Record_Code", record_Code);
+            param.Add("@Module_Code", module_Code);
+            param.Add("@Login_User", login_User);
+            param.Add("@Remarks_Approval", remarks_Approval);
+
+            string Result = base.ExecuteScalar("USP_Assign_Workflow", param);
+            return Result;
+
+        }
+    }
     public class Vendor_Repository : MainRepository<Vendor>
     {
         public Vendor Get(int? Id, Type[] RelationList = null)

@@ -79,4 +79,130 @@ namespace RightsU_Dapper.BLL.Services
             objMusic_Deal_Platform_Repository.DeleteAllEntity(list);
         }
     }
+    public class Music_Deal_LinkShow_Dapper_Service
+    {
+        Music_Deal_LinkShow_Dapper_Repository objMusic_Deal_LinkShow_Dapper_Repository = new Music_Deal_LinkShow_Dapper_Repository();
+        public Music_Deal_LinkShow_Dapper_Service()
+        {
+            this.objMusic_Deal_LinkShow_Dapper_Repository = new Music_Deal_LinkShow_Dapper_Repository();
+        }
+        public Music_Deal_LinkShow_Dapper GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Deal_LinkShow_Dapper_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Deal_LinkShow_Dapper> GetAll(Type[] additionalTypes = null)
+        {
+            return objMusic_Deal_LinkShow_Dapper_Repository.GetAll(additionalTypes);
+        }
+        public void AddEntity(Music_Deal_LinkShow_Dapper obj)
+        {
+            objMusic_Deal_LinkShow_Dapper_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Deal_LinkShow_Dapper obj)
+        {
+            objMusic_Deal_LinkShow_Dapper_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Deal_LinkShow_Dapper obj)
+        {
+            objMusic_Deal_LinkShow_Dapper_Repository.Delete(obj);
+        }
+    }
+    public class Music_Deal_Vendor_Dapper_Service
+    {
+        Music_Deal_Vendor_Dapper_Repository objMusic_Deal_Vendor_Dapper_Repository = new Music_Deal_Vendor_Dapper_Repository();
+        public Music_Deal_Vendor_Dapper_Service()
+        {
+            this.objMusic_Deal_Vendor_Dapper_Repository = new Music_Deal_Vendor_Dapper_Repository();
+        }
+        public Music_Deal_Vendor_Dapper GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objMusic_Deal_Vendor_Dapper_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Music_Deal_Vendor_Dapper> GetAll(Type[] additionalTypes = null)
+        {
+            return objMusic_Deal_Vendor_Dapper_Repository.GetAll(additionalTypes);
+        }
+        public void AddEntity(Music_Deal_Vendor_Dapper obj)
+        {
+            objMusic_Deal_Vendor_Dapper_Repository.Add(obj);
+        }
+        public void UpdateEntity(Music_Deal_Vendor_Dapper obj)
+        {
+            objMusic_Deal_Vendor_Dapper_Repository.Update(obj);
+        }
+        public void DeleteEntity(Music_Deal_Vendor_Dapper obj)
+        {
+            objMusic_Deal_Vendor_Dapper_Repository.Delete(obj);
+        }
+    }
+    public class Deal_Tag_Service
+    {
+        Deal_Tag_Repository objDeal_Tag_Repository = new Deal_Tag_Repository();
+        public Deal_Tag_Service()
+        {
+            this.objDeal_Tag_Repository = new Deal_Tag_Repository();
+        }
+        public Deal_Tag GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objDeal_Tag_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Deal_Tag> GetAll(Type[] additionalTypes = null)
+        {
+            return objDeal_Tag_Repository.GetAll(additionalTypes);
+        }
+        public void AddEntity(Deal_Tag obj)
+        {
+            objDeal_Tag_Repository.Add(obj);
+        }
+        public void UpdateEntity(Deal_Tag obj)
+        {
+            objDeal_Tag_Repository.Update(obj);
+        }
+        public void DeleteEntity(Deal_Tag obj)
+        {
+            objDeal_Tag_Repository.Delete(obj);
+        }
+    }
+
+    public class Deal_Workflow_Status_Service
+    {
+        Deal_Workflow_Status_Repository objDeal_Workflow_Status_Repository = new Deal_Workflow_Status_Repository();
+        public Deal_Workflow_Status_Service()
+        {
+            this.objDeal_Workflow_Status_Repository = new Deal_Workflow_Status_Repository();
+        }
+        public Deal_Workflow_Status GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objDeal_Workflow_Status_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Deal_Workflow_Status> GetAll(Type[] additionalTypes = null)
+        {
+            return objDeal_Workflow_Status_Repository.GetAll(additionalTypes);
+        }
+        public void AddEntity(Deal_Workflow_Status obj)
+        {
+            objDeal_Workflow_Status_Repository.Add(obj);
+        }
+        public void UpdateEntity(Deal_Workflow_Status obj)
+        {
+            objDeal_Workflow_Status_Repository.Update(obj);
+        }
+        public void DeleteEntity(Deal_Workflow_Status obj)
+        {
+            objDeal_Workflow_Status_Repository.Delete(obj);
+        }
+    }
+    public class USP_Assign_Workflow_Service
+    {
+        USP_Assign_Workflow_Repository objUSP_Assign_Workflow_Repository = new USP_Assign_Workflow_Repository();
+
+        public USP_Assign_Workflow_Service()
+        {
+            this.objUSP_Assign_Workflow_Repository = new USP_Assign_Workflow_Repository();
+        }
+        public string USP_Assign_Workflow(Nullable<int> record_Code, Nullable<int> module_Code, Nullable<int> login_User, string remarks_Approval)
+        {
+            return objUSP_Assign_Workflow_Repository.USP_Assign_Workflow(record_Code, module_Code, login_User, remarks_Approval);
+        }
+    }
 }

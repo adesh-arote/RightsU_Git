@@ -18,7 +18,7 @@ namespace RightsU_Dapper.Entity
             this.Programs = new HashSet<Program>();
             this.Title_Alternate = new HashSet<Title_Alternate>();
             //this.Provisional_Deal = new HashSet<Provisional_Deal>();
-            //this.Music_Deal_DealType = new HashSet<Music_Deal_DealType>();
+            this.Music_Deal_DealType = new HashSet<Music_Deal_DealType_Dapper>();
         }
         [PrimaryKey]
         public int? Deal_Type_Code { get; set; }
@@ -50,6 +50,7 @@ namespace RightsU_Dapper.Entity
         [OneToMany]
         public virtual ICollection<Title_Alternate> Title_Alternate { get; set; }
         //public virtual ICollection<Provisional_Deal> Provisional_Deal { get; set; }
-        //public virtual ICollection<Music_Deal_DealType> Music_Deal_DealType { get; set; }
+        [OneToMany]
+        public virtual ICollection<Music_Deal_DealType_Dapper> Music_Deal_DealType { get; set; }
     }
 }

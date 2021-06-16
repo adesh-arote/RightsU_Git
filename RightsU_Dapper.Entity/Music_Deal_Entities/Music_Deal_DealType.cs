@@ -21,7 +21,8 @@ namespace RightsU_Dapper.Entity
         [ForeignKeyReference(typeof(Music_Deal_Dapper))]
         public int Music_Deal_Code { get; set; }
         public int Deal_Type_Code { get; set; }
-    
+        //public virtual Deal_Type Deal_Type { get; set; }
+
         //public virtual Music_Deal_Dapper Music_Deal { get; set; }
     }
 }

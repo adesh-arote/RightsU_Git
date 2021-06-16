@@ -11,7 +11,7 @@ namespace RightsU_Dapper.Entity
         public Business_Unit()
         {
             this.Acq_Deal = new HashSet<Acq_Deal>();
-            //this.Users_Business_Unit = new HashSet<Users_Business_Unit>();
+            this.Users_Business_Unit = new HashSet<Users_Business_Unit>();
             //this.Workflow_BU = new HashSet<Workflow_BU>();
             //this.Workflow_Module_BU = new HashSet<Workflow_Module_BU>();
             //this.Workflows = new HashSet<Workflow>();
@@ -28,7 +28,8 @@ namespace RightsU_Dapper.Entity
         public string Is_Active { get; set; }
 
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
-        //public virtual ICollection<Users_Business_Unit> Users_Business_Unit { get; set; }
+        [OneToMany]
+        public virtual ICollection<Users_Business_Unit> Users_Business_Unit { get; set; }
         //public virtual ICollection<Workflow_BU> Workflow_BU { get; set; }
         //public virtual ICollection<Workflow_Module_BU> Workflow_Module_BU { get; set; }
         //public virtual ICollection<Workflow> Workflows { get; set; }

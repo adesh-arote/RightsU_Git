@@ -87,7 +87,11 @@ namespace RightsU_Plus.Controllers
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    lst = lstCountry_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                {
+                    lst = lstCountry_Searched.OrderByDescending(o => o.Last_Updated_Time).ToList();
+                    lst = lst.OrderByDescending(x => x.Last_Updated_Time).ToList();
+                    lst = lstCountry_Searched.ToList().OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                }
                 else if (sortType == "NA")
                     lst = lstCountry_Searched.OrderBy(o => o.Country_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else
@@ -120,7 +124,7 @@ namespace RightsU_Plus.Controllers
         }
         private void FetchData()
         {
-            lstCountry_Searched = lstCountry = objProcedureService.USP_List_Country(objLoginUser.System_Language_Code).OrderBy(o => o.Last_Updated_Time).ToList<RightsU_Dapper.Entity.USP_List_Country_Result>();
+            lstCountry_Searched = lstCountry = objProcedureService.USP_List_Country(objLoginUser.System_Language_Code).ToList<RightsU_Dapper.Entity.USP_List_Country_Result>();
         }
         private string GetUserModuleRights()
         {
@@ -255,7 +259,7 @@ namespace RightsU_Plus.Controllers
                 objCountry.Parent_Country_Code = null;
             }
 
-            if (objCountry.Country_Code == 0)
+            if (objCountry.Country_Code == 0 || objCountry.Country_Code == null)
             {
                 // objCountry.EntityState = State.Added;
                 objCountry.Inserted_On = DateTime.Now;

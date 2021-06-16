@@ -670,6 +670,7 @@ namespace RightsU_Plus.Controllers
                 if (isDuplicate)
                 {
                     objChannelService.AddEntity(objChannel);
+                    message = objMessageKey.RecordAddedSuccessfully;
                 }
                 else
                 {
@@ -680,7 +681,7 @@ namespace RightsU_Plus.Controllers
                 if (isValid)
                 {
                     //message = message.Replace("{ACTION}", "added");
-                    message = objMessageKey.RecordAddedSuccessfully;
+                    //message = objMessageKey.RecordAddedSuccessfully;
                     FetchData();
                 }
             }

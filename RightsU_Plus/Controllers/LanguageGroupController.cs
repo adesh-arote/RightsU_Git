@@ -79,7 +79,8 @@ namespace RightsU_Plus.Controllers
             {
                 dynamic languageCode = null;
                 List<RightsU_Dapper.Entity.Language> lstLanguage = objLanguageService.GetList().OrderBy(o => o.Language_Name).ToList();
-             
+
+
                 if (commandName == "EDIT")
                 {
                     languageCode = objLanguage_Group.Language_Group_Details.Select(s => s.Language_Code).ToArray();
@@ -250,14 +251,30 @@ namespace RightsU_Plus.Controllers
             {
                 try
                 {
-                    if (Language_Group_Code == 0)
-                        objLanguageGroupService.AddEntity(objL);
-                    else
-                        objLanguageGroupService.UpdateMusic_Deal(objL);
-
-                    dynamic resultSet;
+                    string resultSet;
+                    bool isDuplicate = objLanguageGroupService.Validate(objL, out resultSet);
                     // bool isValid = objService.Save(objL, out resultSet);
-                    bool isValid = true;
+                    // bool isValid = true;
+                    if (isDuplicate)
+                    {
+                        if (Language_Group_Code == 0)
+                            objLanguageGroupService.AddEntity(objL);
+                        else
+                            objLanguageGroupService.UpdateMusic_Deal(objL);
+                        if (Language_Group_Code > 0)
+                            message = objMessageKey.Recordupdatedsuccessfully;
+                        //message = message.Replace("{ACTION}", "updated");
+                        else
+                            message = objMessageKey.Recordsavedsuccessfully;
+                        //message = message.Replace("{ACTION}", "saved");
+                    }
+                    else
+                    {
+                        status = "E";
+                        message = resultSet;
+                    }
+                    bool isValid = true;// objService.Save(objGenre, out resultSet);
+
                     if (isValid)
                     {
                         lstLanguage_Group_Searched = lstLanguage_Group = objLanguageGroupService.GetList(new Type[] { typeof(Language_Group_Details) }).OrderByDescending(x => x.Last_Updated_Time).ToList();
@@ -270,27 +287,16 @@ namespace RightsU_Plus.Controllers
                     status = "E";
                     message = "";
                 }
-                    
+
                 int recordLockingCode = Convert.ToInt32(Record_Code);
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
 
-                if (Language_Group_Code > 0)
-                    if(status == "E")
-                        message = objMessageKey.languagegroupalreadyexists;
-                    else
-                        message = objMessageKey.Recordupdatedsuccessfully;
-                        //message = message.Replace("{ACTION}", "updated");
-                else
-                    if (status == "E")
-                        message = objMessageKey.languagegroupalreadyexists;
-                    else
-                        message = objMessageKey.Recordsavedsuccessfully;
-                        //message = message.Replace("{ACTION}", "saved");
+
             }
             var obj = new
             {
-                RecordCount= lstLanguage_Group_Searched.Count,
+                RecordCount = lstLanguage_Group_Searched.Count,
                 Status = status,
                 Message = message
             };

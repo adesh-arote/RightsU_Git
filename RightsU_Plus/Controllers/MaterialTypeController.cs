@@ -165,7 +165,7 @@ namespace RightsU_Plus.Controllers
                 RightsU_Dapper.Entity.Material_Type objMaterialType = objMaterialTypeService.GetMaterial_TypeByID(materialTypeCode);
             objMaterialType.Is_Active = doActive;
                 //objMaterialType.EntityState = State.Modified;
-                objMaterialTypeService.UpdateGenres(objMaterialType);
+                objMaterialTypeService.UpdateEntity(objMaterialType);
                 dynamic resultSet;
                 //  bool isValid = objService.Save(objMaterialType, out resultSet);
                 bool isValid = true;
@@ -254,12 +254,18 @@ namespace RightsU_Plus.Controllers
             {
                 if (materialTypeCode != 0)
                 {
-                    objMaterialTypeService.UpdateGenres(objMaterialType);
+                    objMaterialTypeService.UpdateEntity(objMaterialType);
                 }
                 else
                 {
                     objMaterialTypeService.AddEntity(objMaterialType);
                 }
+                if (materialTypeCode > 0)
+                    //message = message.Replace("{ACTION}", "updated");
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                else
+                    //message = message.Replace("{ACTION}", "added");
+                    message = objMessageKey.RecordAddedSuccessfully;
             }
             else
             {
@@ -276,12 +282,7 @@ namespace RightsU_Plus.Controllers
 
                     int recordLockingCode = Convert.ToInt32(objFormCollection["Record_Code"]);
                     DBUtil.Release_Record(recordLockingCode);
-                    if (materialTypeCode > 0)
-                        //message = message.Replace("{ACTION}", "updated");
-                        message = objMessageKey.Recordupdatedsuccessfully;
-                    else
-                        //message = message.Replace("{ACTION}", "added");
-                        message = objMessageKey.RecordAddedSuccessfully;
+                  
                 }
                 else
                 {
