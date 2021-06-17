@@ -7,6 +7,15 @@
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
 }
+<script>
+    $('.expand_Language_Name').expander({
+        slicePoint: 100,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
 <table class="table table-bordered table-hover" id="divLanguageListTable"> 
     <thead>
         <tr>
@@ -22,7 +31,7 @@
         {
             <tr>
                 <td>
-                    <input id="txtLanguageName_0" type="text" value="" maxlength="100" style="width:350px;" />
+                    <input id="txtLanguageName_0" type="text" value=""  maxlength="1000" style="width:90%;" />
                 </td>
                 <td style="text-align:center">
                     <span>@objMessageKey.Active</span>
@@ -46,7 +55,7 @@
                     @if (ViewBag.CommandName == "EDIT" && ViewBag.Language_Code == item.Language_Code)
                     {
                         <td>
-                            <input id="txtLanguageName_@item.Language_Code" type="text" value="@item.Language_Name" maxlength="100" style="width:350px" />
+                            <input id="txtLanguageName_@item.Language_Code" type="text" value="@item.Language_Name" maxlength="1000" style="width:90%" />
                         </td>
                         <td style="text-align:center">
                             <span>@strActive</span>
@@ -59,7 +68,7 @@
                     else
                     {
                         <td>
-                            <span>@item.Language_Name</span>
+                            <span class="expand_Language_Name">@item.Language_Name</span>
                         </td>
                         <td style="text-align:center">
                             <span>@strActive</span>
