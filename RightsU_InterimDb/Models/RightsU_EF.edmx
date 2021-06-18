@@ -3074,7 +3074,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
             <PropertyRef Name="Language_Group_Code" />
           </Key>
           <Property Name="Language_Group_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Language_Group_Name" Type="nvarchar" MaxLength="200" />
+          <Property Name="Language_Group_Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
@@ -22461,7 +22461,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <PropertyRef Name="Language_Group_Code" />
           </Key>
           <Property Name="Language_Group_Code" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
-          <Property Name="Language_Group_Name" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+          <Property Name="Language_Group_Name" Type="String" MaxLength="1000" Unicode="true" FixedLength="false" Nullable="false" />
           <Property Name="Inserted_On" Type="DateTime" Precision="3" />
           <Property Name="Inserted_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
