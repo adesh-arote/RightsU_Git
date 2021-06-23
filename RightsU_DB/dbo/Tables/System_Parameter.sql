@@ -13,6 +13,6 @@
     [Description]       NVARCHAR (4000) NULL,
     [IS_System_Admin]   CHAR (1)        NULL,
     [Client_Name]       NVARCHAR (MAX)  NULL,
-    CONSTRAINT [PK_System_Parameter_New] PRIMARY KEY CLUSTERED ([Id] ASC)
+    CONSTRAINT [PK_System_Parameter] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
