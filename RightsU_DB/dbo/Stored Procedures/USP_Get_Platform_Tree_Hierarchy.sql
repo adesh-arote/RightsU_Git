@@ -1,7 +1,8 @@
 ﻿CREATE Proc [dbo].[USP_Get_Platform_Tree_Hierarchy]
 (
 @PlatformCodes Varchar(2000)
-,@Search_Platform_Name NVARCHAR(500)
+,@Search_Platform_Name NVARCHAR(500),
+@IS_Sport_Rights CHAR(1)
 )
 As
 Begin
