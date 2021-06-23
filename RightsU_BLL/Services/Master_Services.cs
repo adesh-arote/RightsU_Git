@@ -1,6 +1,7 @@
 ﻿using RightsU_DAL;
 using RightsU_Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -9,7 +10,6 @@ namespace RightsU_BLL
     /// <summary>
     /// Add Master Service Classes Here
     /// </summary>
-
     public class Ancillary_Medium_Service
     {
         private readonly Ancillary_Medium_Repository objAD;
@@ -915,7 +915,7 @@ namespace RightsU_BLL
             this.objUsers_Business_Unit = new Users_Business_Unit_Repository(Connection_Str);
         }
 
-        
+
         public IQueryable<Users_Business_Unit> SearchFor(Expression<Func<Users_Business_Unit, bool>> predicate)
         {
             return objUsers_Business_Unit.SearchFor(predicate);
@@ -1082,7 +1082,7 @@ namespace RightsU_BLL
         }
     }
 
-    public class Business_Unit_Service:BusinessLogic<Business_Unit>
+    public class Business_Unit_Service : BusinessLogic<Business_Unit>
     {
         private readonly Business_Unit_Repository objBusiness_Unit_Repository;
 
@@ -6860,7 +6860,6 @@ namespace RightsU_BLL
             return true;
         }
     }
-
 }
 
 

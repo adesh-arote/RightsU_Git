@@ -1,12 +1,12 @@
 ﻿CREATE TYPE [dbo].[Email_Config_Users_UDT] AS TABLE(
-	[Email_Config_Users_UDT_Code] [int] IDENTITY(1,1) NOT NULL,
-	[Email_Config_Code] [int] NULL,
-	[Email_Body] [nvarchar](max) NULL,
-	[To_Users_Code] [nvarchar](max) NULL,
-	[To_User_Mail_Id] [nvarchar](max) NULL,
-	[CC_Users_Code] [nvarchar](max) NULL,
-	[CC_User_Mail_Id] [nvarchar](max) NULL,
-	[BCC_Users_Code] [nvarchar](max) NULL,
-	[BCC_User_Mail_Id] [nvarchar](max) NULL,
-	[Subject] [nvarchar](max) NULL
+	[Email_Config_Users_UDT_Code] INT IDENTITY(1,1) NOT NULL,
+	[Email_Config_Code] INT NULL,
+	[Email_Body] NVARCHAR(MAX) NULL,
+	[To_Users_Code] NVARCHAR(MAX) NULL,
+	[To_User_Mail_Id] NVARCHAR(MAX) NULL,
+	[CC_Users_Code] NVARCHAR(MAX) NULL,
+	[CC_User_Mail_Id] NVARCHAR(MAX) NULL,
+	[BCC_Users_Code] NVARCHAR(MAX) NULL,
+	[BCC_User_Mail_Id] NVARCHAR(MAX) NULL,
+	[Subject] NVARCHAR(MAX) NULL
 )

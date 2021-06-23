@@ -189,6 +189,7 @@ namespace RightsU_Plus.Controllers
                         .SearchFor(x => x.Module_Code == 30 
                                         && x.Record_Code == objAcq_Deal.Acq_Deal_Code 
                                         && x.Group_Code == objLoginUser.Security_Group_Code)
+                        .OrderByDescending(x => x.Module_Workflow_Detail_Code)
                         .Select(x=>x.Is_Done)
                         .FirstOrDefault();
 
@@ -214,7 +215,7 @@ namespace RightsU_Plus.Controllers
                 }
                 return Json(uspResult);
             }
-            catch
+            catch(Exception ex)
             {
                 return Json("Error");
             }
@@ -249,6 +250,7 @@ namespace RightsU_Plus.Controllers
                         .SearchFor(x => x.Module_Code == 35 
                                         && x.Record_Code == objSyn_Deal.Syn_Deal_Code 
                                         && x.Group_Code == objLoginUser.Security_Group_Code)
+                        .OrderByDescending(x => x.Module_Workflow_Detail_Code)
                         .Select(X => X.Is_Done)
                         .FirstOrDefault();
 
@@ -631,6 +633,21 @@ namespace RightsU_Plus.Controllers
                             return Json(objMessageKey.ThedealisalreadyprocessedbyanotherApprover);
                         else if (ChkDealStatus)
                             return Json("Cannot approved deal as rights are in processing state");
+                        else if (Deal_Code == 0)
+                        {
+                            string isApproved = new Module_Workflow_Detail_Service(objLoginEntity.ConnectionStringName)
+                            .SearchFor(x => x.Module_Code == 30
+                                            && x.Record_Code == objAcqDeal.Acq_Deal_Code
+                                            && x.Group_Code == objLoginUser.Security_Group_Code)
+                            .OrderByDescending(x => x.Module_Workflow_Detail_Code)
+                            .Select(x => x.Is_Done)
+                            .FirstOrDefault();
+
+                            if (isApproved == "Y")
+                            {
+                                return Json(objMessageKey.ThedealisalreadyprocessedbyanotherApprover);
+                            }
+                        }
 
                     }
                     else if (moduleCode == GlobalParams.ModuleCodeForSynDeal)
@@ -646,6 +663,22 @@ namespace RightsU_Plus.Controllers
                             return Json(objMessageKey.ThedealisalreadyprocessedbyanotherApprover);
                         else if (ChkDealStatus)
                             return Json("Cannot approved deal as rights are in processing state");
+                        else if (Deal_Code == 0)
+                        {
+                            string isApproved = new Module_Workflow_Detail_Service(objLoginEntity.ConnectionStringName)
+                            .SearchFor(x => x.Module_Code == 35
+                                            && x.Record_Code == objSynDeal.Syn_Deal_Code
+                                            && x.Group_Code == objLoginUser.Security_Group_Code)
+                            .OrderByDescending(x => x.Module_Workflow_Detail_Code)
+                            .Select(x => x.Is_Done)
+                            .FirstOrDefault();
+
+                            if (isApproved == "Y")
+                            {
+                                return Json(objMessageKey.ThedealisalreadyprocessedbyanotherApprover);
+                            }
+                        }
+
                     }
                     else if (moduleCode == GlobalParams.ModuleCodeForMusicDeal)
                     {
