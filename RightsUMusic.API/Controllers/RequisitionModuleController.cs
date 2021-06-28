@@ -552,7 +552,8 @@ namespace RightsUMusic.API.Controllers
             var objParam = new
             {
                 PlaylistName = objMHPlayList.PlaylistName,
-                TitleCode = objMHPlayList.TitleCode
+                //TitleCode = objMHPlayList.TitleCode
+                VendorCode = objUser.Vendor_Code
 
             };
 
