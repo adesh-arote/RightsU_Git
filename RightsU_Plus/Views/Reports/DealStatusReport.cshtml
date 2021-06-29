@@ -25,6 +25,12 @@
     URL_BindDealStatusReport = '@Url.Action("BindDealStatusReport", "Reports")';
 
     $(document).ready(function () {
+        $('#txtStart').change(function () {
+            SetMinDt();
+        });
+        $('#txtEnd').change(function () {
+            SetMaxDt();
+        });
 
         $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
         $('#ddlBusinessUnitMultiSelect').each(function () {
@@ -161,6 +167,33 @@
 
         var startDate = $('#txtStart').val();
         var endDate = $('#txtEnd').val();
+
+
+        const date1 = new Date(MakeDateFormate(startDate));
+        const date2 = new Date(MakeDateFormate(endDate));
+        const diffTime = Math.abs(date2 - date1);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        console.log(diffTime + " milliseconds");
+        console.log(diffDays + " days");
+
+
+
+        if (diffDays > 180) {
+            showAlert("E", "Start Date and End Date should have 6 months gap")
+            returnVal = false;
+        }
+        else if ((startDate != "" && endDate == "")) {
+            $('#txtEnd').attr('required', true);
+            showAlert("E", "Please select End Date")
+            returnVal = false;
+        }
+        else if ((endDate != "" && startDate == "")) {
+            $('#txtStart').attr('required', true);
+            showAlert("E", "Please select Start Date")
+            returnVal = false;
+        }
+
+
         var userName = '';
         if ($('#ddlUserName').val() != null) {
             userName = $('#ddlUserName').val().join();
@@ -213,6 +246,13 @@
 
     }
 
+    function SetMaxDt() {
+        setMinMaxDates('txtStart', '', $('#txtEnd').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtEnd', $('#txtStart').val(), '');
+    }
+
 </script>
 <style>
     #divFilter {
@@ -237,12 +277,16 @@
     td, th {
         padding: 2px;
     }
+
+    #txtStart, #txtEnd {
+        width: 102px !important;
+    }
 </style>
 
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
-            <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.DealVersionHistoryReport</h2>
+            <h2 style="direction:@objMessageKey.LayoutDirection">Deal Status Report</h2>
             <div id="divFilter">
                 <table>
                     <tr>
@@ -281,7 +325,8 @@
                             <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
                                    title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
                         </td>
-                        <td style="width:0%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> 
+                        <td style="width:0%;">
+                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
                             <input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
                         </td>
                     </tr>
