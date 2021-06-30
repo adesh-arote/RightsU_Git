@@ -3008,10 +3008,12 @@ namespace RightsU_Plus.Controllers
             try
             {
                 string strShowExpiredDeals = (isExpiredDeal == true) ? "Y" : "N";
+                if (acqDealCode == "")
+                    acqDealCode = "0";
 
                 if (dealCode == GlobalParams.ModuleCodeForAcqDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[7];
+                    ReportParameter[] parm = new ReportParameter[8];
                     parm[0] = new ReportParameter("ModuleCode", dealCode);
                     parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
                     parm[2] = new ReportParameter("UserCode", userName);
@@ -3019,6 +3021,7 @@ namespace RightsU_Plus.Controllers
                     parm[4] = new ReportParameter("StartDate", startDate);
                     parm[5] = new ReportParameter("EndDate", endDate);
                     parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
+                    parm[7] = new ReportParameter("DateFormat", dateformat);
                     //parm[7] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
                     rptViewer = BindReport(parm, "rptDealStatusReport");
                 }

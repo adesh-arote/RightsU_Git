@@ -243,7 +243,7 @@
         $('#txtStart').val('');
         $('#txtEnd').val('');
         $('#txtAgreementNo').val('');
-
+        $('#hdnAcqDealCode').val('0');
     }
 
     function SetMaxDt() {
@@ -298,7 +298,7 @@
                             @Html.DropDownList("BusinessUnitMulti", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnitMultiSelect", @multiple = "multiple" })
                         </td>
 
-                        <td style="width:8%"><b>@objMessageKey.DateFormat:</b></td>
+                        <td style="width:6%"><b>@objMessageKey.DateFormat:</b></td>
                         <td style="width:12%">
                             @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
                         </td>
@@ -319,18 +319,22 @@
                             <input type="hidden" id="hdnAcqDealCode" value="0" />
                             <input type="hidden" id="hdnAgreementNo" value="0" />
                         </td>
-                        <td style="width:0%"><b>@objMessageKey.StartDate :</b></td>
+                        <td style="width:0%"><b>Activity Date :</b></td>
                         <td style="width:0%">
                             <input type="hidden" id="hdnStartDate" />
                             <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
                                    title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
-                        </td>
+
+                            <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="DD/MM/YYYY"
+                                   title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
+
+
                         <td style="width:0%;">
                             <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
                             <input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
                         </td>
                     </tr>
-                    <tr>
+                    @*<tr>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -339,7 +343,7 @@
                             <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="DD/MM/YYYY"
                                    title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
                         </td>
-                    </tr>
+                    </tr>*@
                 </table>
             </div>
             <div id="divResult">
