@@ -5,7 +5,13 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
-
+    List<RightsU_Dapper.Entity.Talent_Role> objDealType = new List<RightsU_Dapper.Entity.Talent_Role>();
+    RightsU_Dapper.BLL.Services.Talent_Role_Services objTalentRoleService = new RightsU_Dapper.BLL.Services.Talent_Role_Services();
+    List<RightsU_Dapper.Entity.Talent_Role> lstTalentRole = objTalentRoleService.GetAll().ToList();
+    List<RightsU_Dapper.Entity.Role> objRole = new List<RightsU_Dapper.Entity.Role>();
+    RightsU_Dapper.BLL.Services.Role_Service objRoleService = new RightsU_Dapper.BLL.Services.Role_Service();
+    List<RightsU_Dapper.Entity.Role> lstRole = objRoleService.GetList().ToList();
+    string strTalentRoleName = "";
 }
 <script>
     $('.expand_strRoles').expander({
@@ -153,8 +159,13 @@
                         <td>
                             <span>@gender</span>
                         </td>
+                        @{
+                            strTalentRoleName = String.Join(", ", lstRole.Where(y => lstTalentRole.Where(x => x.Talent_Code == item.Talent_Code).Select(x => x.Role_Code).ToList().Contains(y.Role_Code)).Select(y => y.Role_Name).Distinct().ToList());
+                        }
                         <td>
-                            <div class="expand_strRoles">@strRoles</div>
+
+                            <span>@strTalentRoleName</span>
+
                         </td>
                         <td align="center">
                             <span>@strActive</span>

@@ -47,8 +47,8 @@
     <Reference Include="log4net, Version=2.0.12.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.12\lib\net45\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -235,6 +235,7 @@
     <Compile Include="Master_Entities\USP_GetSystem_Language_Message_ByModule_Result.cs" />
     <Compile Include="Master_Entities\USP_List_Amort_Rule_Result.cs" />
     <Compile Include="Master_Entities\USP_List_BMS_log_Result.cs" />
+    <Compile Include="StoredProcedure_Entities\USP_Get_Platform_Tree_Hierarchy_Result.cs" />
     <Compile Include="StoredProcedure_Entities\USP_Validate_Episode_Result.cs" />
     <Compile Include="System_Setting_Entities\Security_Group_Rel.cs" />
     <Compile Include="System_Setting_Entities\Secutiry_Group.cs" />

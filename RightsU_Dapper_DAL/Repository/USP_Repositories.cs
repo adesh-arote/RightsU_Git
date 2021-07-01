@@ -79,6 +79,13 @@ namespace RightsU_Dapper.DAL.Repository
             param.Add("@Deal_Type_Code", Program_Type);
             return base.ExecuteSQLProcedure<USP_Validate_Episode_Result>("USP_GET_TITLE_DATA", param);
         }
+        public IEnumerable<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
+        {
+            var param = new DynamicParameters();
+            param.Add("@PlatformCodes", platformCodes);
+            param.Add("@Search_Platform_Name", search_Platform_Name);
+            return base.ExecuteSQLProcedure<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", param);
+        }
         //public virtual int USP_UpdateContentHouseID(Nullable<int> BV_HouseId_Data_Code, Nullable<int> MappedDealTitleCode)
         //{
         //    var param = new DynamicParameters();

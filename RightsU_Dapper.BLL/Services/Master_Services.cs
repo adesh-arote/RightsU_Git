@@ -560,7 +560,7 @@ namespace RightsU_Dapper.BLL.Services
         {
             this.objCountry_Repository = new Country_Repository();
         }
-        public Country GetRightRuleByID(int? ID, Type[] RelationList = null)
+        public Country GetCountryByID(int? ID, Type[] RelationList = null)
         {
             return objCountry_Repository.Get(ID, RelationList);
         }
@@ -587,7 +587,7 @@ namespace RightsU_Dapper.BLL.Services
         }
         public IEnumerable<Country> GetList(Type[] additionalTypes = null)
         {
-            return objCountry_Repository.GetAll();
+            return objCountry_Repository.GetAll(additionalTypes);
         }
         public bool Validate(Country objToValidate, out string resultSet)
         {
@@ -705,7 +705,7 @@ namespace RightsU_Dapper.BLL.Services
         {
             objMaterial_Medium_Repository.Add(obj);
         }
-        public void UpdateGenres(Material_Medium obj)
+        public void UpdateMaterialMedium(Material_Medium obj)
         {
             objMaterial_Medium_Repository.Update(obj);
         }
@@ -2369,7 +2369,7 @@ namespace RightsU_Dapper.BLL.Services
         }
         private bool ValidateDuplicate(Music_Language objToValidate, out string resultSet)
         {
-            if (GetAll().Where(s => s.Music_Deal_Language == objToValidate.Music_Deal_Language && s.Music_Language_Code != objToValidate.Music_Language_Code).Count() > 0)
+            if (GetAll().Where(s => s.Language_Name == objToValidate.Language_Name && s.Music_Language_Code != objToValidate.Music_Language_Code).Count() > 0)
             {
                 resultSet = "Music Language already exists";
                 return false;
@@ -3108,6 +3108,34 @@ namespace RightsU_Dapper.BLL.Services
             objTitle_Content_Repository.Update(obj);
         }
         public void DeleteEntity(Title_Content obj)
+        {
+            objTitle_Content_Repository.Delete(obj);
+        }
+    }
+    public class Talent_Role_Services
+    {
+        Talent_Role_Repository objTitle_Content_Repository = new Talent_Role_Repository();
+        public Talent_Role_Services()
+        {
+            this.objTitle_Content_Repository = new Talent_Role_Repository();
+        }
+        public Talent_Role GetByID(int? ID, Type[] RelationList = null)
+        {
+            return objTitle_Content_Repository.Get(ID, RelationList);
+        }
+        public IEnumerable<Talent_Role> GetAll(Type[] additionalTypes = null)
+        {
+            return objTitle_Content_Repository.GetAll();
+        }
+        public void AddEntity(Talent_Role obj)
+        {
+            objTitle_Content_Repository.Add(obj);
+        }
+        public void UpdateEntity(Talent_Role obj)
+        {
+            objTitle_Content_Repository.Update(obj);
+        }
+        public void DeleteEntity(Talent_Role obj)
         {
             objTitle_Content_Repository.Delete(obj);
         }

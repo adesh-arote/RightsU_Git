@@ -71,7 +71,7 @@ namespace RightsU_WebApp.UserControl
         public void PopulateTreeNode(string IsView, string Platform_Hiearachy_Search = "")
         {
             USP_Service objUS = new USP_Service(Connection_Str);
-            List<USP_Get_Platform_Tree_Hierarchy_Result> lstPlatforms = objUS.USP_Get_Platform_Tree_Hierarchy(PlatformCodes_Display, Platform_Hiearachy_Search,"").ToList();
+            List<USP_Get_Platform_Tree_Hierarchy_Result> lstPlatforms = objUS.USP_Get_Platform_Tree_Hierarchy(PlatformCodes_Display, Platform_Hiearachy_Search).ToList();
 
             trView.Nodes.Clear();
             trView.ShowLines = true;

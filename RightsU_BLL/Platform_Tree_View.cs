@@ -104,7 +104,7 @@ namespace RightsU_BLL
                 Platform_Hiearachy_Search = "";
                 PlatformCodes_Display = null;
             }
-            List<USP_Get_Platform_Tree_Hierarchy_Result> lstPlatforms = objUS.USP_Get_Platform_Tree_Hierarchy(PlatformCodes_Display, Platform_Hiearachy_Search, IS_Sport_Right).ToList();
+            List<USP_Get_Platform_Tree_Hierarchy_Result> lstPlatforms = objUS.USP_Get_Platform_Tree_Hierarchy(PlatformCodes_Display, Platform_Hiearachy_Search).ToList();
 
             //if (PlatformCodes_Display == "")
             //    trMenuNode.ExpandAll();

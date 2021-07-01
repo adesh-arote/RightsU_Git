@@ -189,10 +189,8 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveMusicLanguage(int music_Language_Code, string languageName, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
-            if (music_Language_Code > 0)
-                message = objMessageKey.Recordupdatedsuccessfully;
-
+            string status = "S", message = "";
+            
            // Music_Language_Service objService = new Music_Language_Service(objLoginEntity.ConnectionStringName);
             RightsU_Dapper.Entity.Music_Language objMusicLanguage = null;
 
@@ -218,10 +216,14 @@ namespace RightsU_Plus.Controllers
             if (isDuplicate)
             {
                 objMusicLanguageService.AddEntity(objMusicLanguage);
+                if (music_Language_Code > 0)
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                else
+                    message = objMessageKey.Recordsavedsuccessfully;
             }
             else
             {
-                status = "";
+                status = "E";
                 message = resultSet;
             }
             bool isValid = true;// objService.Save(objMusicLanguage, out resultSet);
