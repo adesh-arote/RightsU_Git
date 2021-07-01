@@ -4,16 +4,17 @@ namespace RightsU_Dapper.Entity
     using Dapper.SimpleSave;
     using System;
     using System.Collections.Generic;
+    using RightsU_Entities;
 
     [Table("Currency")]
     public partial class Currency
     {
         public Currency()
         {
-            this.Acq_Deal = new HashSet<Acq_Deal>();
+            this.Acq_Deal = new HashSet<RightsU_Entities.Acq_Deal>();
             this.Currency_Exchange_Rate = new HashSet<Currency_Exchange_Rate>();
             this.Material_Order_Details = new HashSet<Material_Order_Details>();
-            this.Syn_Deal = new HashSet<Syn_Deal>();
+            this.Syn_Deal = new HashSet<RightsU_Entities.Syn_Deal>();
             this.Acq_Deal_Cost = new HashSet<Acq_Deal_Cost>();
             this.Syn_Deal_Revenue = new HashSet<Syn_Deal_Revenue>();
         }
@@ -30,13 +31,13 @@ namespace RightsU_Dapper.Entity
         public string Is_Base_Currency { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
+        public virtual ICollection<RightsU_Entities.Acq_Deal> Acq_Deal { get; set; }
         [OneToMany]
         public virtual ICollection<Currency_Exchange_Rate> Currency_Exchange_Rate { get; set; }
         [OneToMany]
         public virtual ICollection<Material_Order_Details> Material_Order_Details { get; set; }
         [OneToMany]
-        public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
+        public virtual ICollection<RightsU_Entities.Syn_Deal> Syn_Deal { get; set; }
         [OneToMany]
         public virtual ICollection<Acq_Deal_Cost> Acq_Deal_Cost { get; set; }
         [OneToMany]

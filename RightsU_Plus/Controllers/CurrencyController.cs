@@ -62,7 +62,6 @@ namespace RightsU_Plus.Controllers
             set { Session["objCurrency_Service"] = value; }
         }
         Type[] RelationList = new Type[] { typeof(Currency_Exchange_Rate)};
-
         #endregion
 
         public ViewResult Index()
@@ -131,7 +130,7 @@ namespace RightsU_Plus.Controllers
 
         private void FetchData()
         {
-            lstCurrency_Searched = lstCurrency = objCurrencyService.GetList().OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstCurrency_Searched = lstCurrency = objCurrencyService.GetList(RelationList).OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
 
         private string GetUserModuleRights()
@@ -326,9 +325,17 @@ namespace RightsU_Plus.Controllers
 
             if (objCurrency.Is_Base_Currency == "")
                 canEdit = canDelete = "N";
+            RightsU_BLL.Acq_Deal_Service objADS = new RightsU_BLL.Acq_Deal_Service(objLoginEntity.ConnectionStringName);
+            int AcqDealCurrencyCnt = objADS.SearchFor(s => s.Currency_Code == objCurrency.Currency_Code).Count();
 
-            if (objCurrency.Acq_Deal.Count() > 0 || objCurrency.Syn_Deal.Count() > 0)
+            RightsU_BLL.Syn_Deal_Service objSDS = new RightsU_BLL.Syn_Deal_Service(objLoginEntity.ConnectionStringName);
+            int SynDealCurrencyCnt = objSDS.SearchFor(s => s.Currency_Code == objCurrency.Currency_Code).Count();
+
+            if (AcqDealCurrencyCnt > 0 || SynDealCurrencyCnt > 0)
                 canDelete = "N";
+
+            //if (objCurrency.Acq_Deal.Count() > 0 || objCurrency.Syn_Deal.Count() > 0)
+            //    canDelete = "N";
 
             ViewBag.CommandName = commandName;
             ViewBag.DummmyGuid = dummyGuid;
