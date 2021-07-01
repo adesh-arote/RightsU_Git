@@ -83,6 +83,29 @@ namespace RightsU_Plus.Controllers
             }
             return Json(result);
         }
+
+        public JsonResult PopulateAgreementNoOnBU_CodeDealStatus(string searchPrefix = "", string module = "", string BU_Code = "")
+        {
+            dynamic result = "";
+            string[] arr_BU = BU_Code.Split(',');
+
+            if (module == GlobalParams.ModuleCodeForSynDeal.ToString())
+            {
+                if (!string.IsNullOrEmpty(searchPrefix))
+                {
+                    result = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Agreement_No.Contains(searchPrefix) && arr_BU.Contains(s.Business_Unit_Code.ToString())).Select(s => new { Text = s.Agreement_No, Code = s.Syn_Deal_Code, s.Business_Unit_Code });
+                }
+            }
+            //if (module == "30")
+            else
+            {
+                if (!string.IsNullOrEmpty(searchPrefix))
+                {
+                    result = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Agreement_No.Contains(searchPrefix) && arr_BU.Contains(s.Business_Unit_Code.ToString())).Select(s => new { Text = s.Agreement_No, Code = s.Acq_Deal_Code });
+                }
+            }
+            return Json(result);
+        }
         public PartialViewResult BindDealVersionHistoryReport(string acqDealCode, string businessUnitcode, string dealCode, string dateformat)
         {
             ReportViewer rptViewer = new ReportViewer();
@@ -2925,6 +2948,106 @@ namespace RightsU_Plus.Controllers
             }
             return Json(result);
         }
+        #endregion
+
+        #region
+
+        public ActionResult DealStatusReport()
+        {
+            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForAcqDealListReport);
+            BindFormatDDL();
+            ViewBag.UserModuleRights = GetUserModuleRights();
+            string rightsForAllBU = GetUserModuleRights();
+            List<SelectListItem> lstDeal = new List<SelectListItem>();
+            lstDeal.Add(new SelectListItem { Text = "Acquisition Deals", Value = GlobalParams.ModuleCodeForAcqDeal.ToString() });
+            lstDeal.Add(new SelectListItem { Text = "Syndication Deals", Value = GlobalParams.ModuleCodeForSynDeal.ToString() });
+            ViewBag.DealList = lstDeal;
+
+            Title_Service objTS = new Title_Service(objLoginEntity.ConnectionStringName);
+            int BU_Code = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code)).Select(s => s.Business_Unit_Code).FirstOrDefault();
+            ViewBag.UserName = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Users_Code", "First_Name").ToList();
+
+            ViewBag.status = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Tag_Code > 0), "Deal_Tag_Code", "Deal_Tag_Description").ToList();
+            ViewBag.AcquisitionDeal = new SelectList(new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit.Users_Business_Unit.All(u => u.Users_Code == objLoginUser.Users_Code))).ToList();
+            if (rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllBusinessUnit + "~") && rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllRegionalGEC + "~"))
+            {
+                ViewBag.BusinessUnitList = GetBusinessUnitList(true, true);
+            }
+            else if (rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllBusinessUnit + "~"))
+            {
+                ViewBag.BusinessUnitList = GetBusinessUnitList(true);
+            }
+            else if (rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllRegionalGEC + "~"))
+            {
+                ViewBag.BusinessUnitList = GetBusinessUnitList(false, true);
+            }
+            else
+            {
+                ViewBag.BusinessUnitList = GetBusinessUnitList();
+            }
+            var AllowDealSegment = ViewBag.AllowDealSegment = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Deal_Segment").Select(x => x.Parameter_Value).FirstOrDefault();
+            var IsAllowTypeOfFilm = ViewBag.IsAllowTypeOfFilm = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").Select(x => x.Parameter_Value).FirstOrDefault();
+
+            if (AllowDealSegment == "Y")
+            {
+                ViewBag.Deal_Segment = new SelectList(new Deal_Segment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList(), "Deal_Segment_Code", "Deal_Segment_Name");
+            }
+
+            if (IsAllowTypeOfFilm == "Y")
+            {
+                ViewBag.TypeOfFilm = new SelectList(new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == 2).Select(x => new { Columns_Value_Code = x.Columns_Value_Code, Columns_Value = x.Columns_Value }).ToList(), "Columns_Value_Code", "Columns_Value");
+            }
+            var Is_AllowMultiBUacqdealreport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdealreport").Select(x => x.Parameter_Value).FirstOrDefault();
+            ViewBag.Is_AllowMultiBUacqdealreport = Is_AllowMultiBUacqdealreport;
+            return View();
+        }
+
+        public PartialViewResult BindDealStatusReport(string dealCode, string businessUnitcode, string dateformat, string acqDealCode, string userName, string startDate, string endDate, bool isExpiredDeal)
+        {
+            ReportViewer rptViewer = new ReportViewer();
+            try
+            {
+                string strShowExpiredDeals = (isExpiredDeal == true) ? "Y" : "N";
+                if (acqDealCode == "")
+                    acqDealCode = "0";
+
+                if (dealCode == GlobalParams.ModuleCodeForAcqDeal.ToString())
+                {
+                    ReportParameter[] parm = new ReportParameter[8];
+                    parm[0] = new ReportParameter("ModuleCode", dealCode);
+                    parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
+                    parm[2] = new ReportParameter("UserCode", userName);
+                    parm[3] = new ReportParameter("AgreementNo", acqDealCode);
+                    parm[4] = new ReportParameter("StartDate", startDate);
+                    parm[5] = new ReportParameter("EndDate", endDate);
+                    parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
+                    parm[7] = new ReportParameter("DateFormat", dateformat);
+                    //parm[7] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    rptViewer = BindReport(parm, "rptDealStatusReport");
+                }
+                else if (dealCode == GlobalParams.ModuleCodeForSynDeal.ToString())
+                {
+                    ReportParameter[] parm = new ReportParameter[8];
+                    parm[0] = new ReportParameter("ModuleCode", dealCode);
+                    parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
+                    parm[2] = new ReportParameter("UserCode", userName);
+                    parm[3] = new ReportParameter("AgreementNo", acqDealCode);
+                    parm[4] = new ReportParameter("StartDate", startDate);
+                    parm[5] = new ReportParameter("EndDate", endDate);
+                    parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
+                    parm[7] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    rptViewer = BindReport(parm, "rptDealStatusReport");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            ViewBag.ReportViewer = rptViewer;
+            return PartialView("~/Views/Shared/ReportViewer.cshtml");
+        }
+
         #endregion
     }
 }
