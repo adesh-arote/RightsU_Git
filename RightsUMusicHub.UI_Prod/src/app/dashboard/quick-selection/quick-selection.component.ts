@@ -51,6 +51,7 @@ export class QuickSelectionComponent implements OnInit {
   public setMHPlaylistName: any;
   public searchedTrack: boolean = false;
   public isPlaylistClicked: boolean = false;
+  public isPlayListEmpty: boolean = false;
 
   constructor(private _requisitionService: RequisitionService, private router: Router, private comparentchildservice: ComParentChildService, private _CommonUiService: CommonUiService, private cdref: ChangeDetectorRef) {
     this.mindatevalue = new Date();
@@ -156,6 +157,7 @@ export class QuickSelectionComponent implements OnInit {
   public episodeDate;
   public showrbtndiv: boolean = true;
   getPlayList() {
+    debugger;
     var playlistbody =
     {
       "TitleCode": 0
@@ -165,6 +167,14 @@ export class QuickSelectionComponent implements OnInit {
       this.removeBlockUI();
       this.playListDetail = response.MHPlayList;
       this.listDetail1 = response.MHPlayList;
+      if (this.playListDetail.length == 0) {
+        this.isPlayListEmpty = true;
+      }
+      else {
+        this.isPlayListEmpty = false;
+      }
+      console.log(this.isPlayListEmpty);
+
       this.gridvalue = this.playListDetail.length == 0 ? '' : this.playListDetail[0];
       for (let i = 0; i < this.playListDetail.length; i++) {
         if (this.playListDetail[i].MHPlayListCode == this.setMHPlaylistCode) {
@@ -352,6 +362,14 @@ export class QuickSelectionComponent implements OnInit {
 
   showRecommendations() {
     debugger;
+    if (this.playListDetail.length == 0) {
+      this.isPlayListEmpty = true;
+    }
+    else {
+      this.isPlayListEmpty = false;
+    }
+    console.log(this.isPlayListEmpty);
+
     this.tabHeaders = "PlayList";
     if (this.episodeType == 'range') {
       let fromdate = this.newMusicConsumptionRequest.TelecastFrom

@@ -50,6 +50,7 @@ export class NewRequestComponent implements OnInit {
   public getGenreList;
   public getChannelList;
   public newSearchRequest;
+  public isPlayListEmpty: boolean = false;
   //public IsCueSheet;
 
   public newMusicConsumptionRequest;
@@ -380,6 +381,14 @@ export class NewRequestComponent implements OnInit {
 
   showRecommendations() {
     debugger;
+
+    if (this.listdetail.length == 0) {
+      this.isPlayListEmpty = true;
+    }
+    else {
+      this.isPlayListEmpty = false;
+    }
+    console.log(this.isPlayListEmpty);
     this.tabHeaders = "PlayList";
     if (this.episodeType == 'range') {
       let fromdate = this.newMusicConsumptionRequest.TelecastFrom
@@ -680,6 +689,7 @@ export class NewRequestComponent implements OnInit {
   }
 
   getPlayList() {
+    debugger;
     var playlistbody =
     {
       "TitleCode": 0
@@ -690,7 +700,7 @@ export class NewRequestComponent implements OnInit {
 
       this.listdetail = response.MHPlayList;
       this.listDetail1 = response.MHPlayList;
-
+      
       for (let i = 0; i < this.listdetail.length; i++) {
         if (this.listdetail[i].MHPlayListCode == this.setMHPlaylistCode) {
           this.listdetail[i].showCss = 'Y';

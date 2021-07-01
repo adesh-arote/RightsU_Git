@@ -341,27 +341,38 @@
                   </div>
                   <div class="col-md-1 slick-next" style="margin-top: 2%;"><i class="fa fa-chevron-right"></i></div>
                 </div> -->
-                <div *ngIf="showPlayList">
-                  <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig" (afterChange)="afterChange($event)"
-                    style="margin-left: 40px;">
-                    <div ngxSlickItem *ngFor="let slide of listdetail;let i=index" class="slide">
-                      <div  class="info-box info-Css" [ngClass]="{'border-css': slide.showCss == 'Y','noborder-css': slide.showCss == 'N'}">
-                        <div class="col-md-10">
-                          <div  (click)="getMusictrackList(slide,i)">
-                            <span class="info-box-icon bg-aqua info-icon-style">
-                              <i class="fa fa-music icon-Css" aria-hidden="true"></i>
-                            </span>
-                            <div class="info-box-content">
-                              <span class="info-box-text tooltip-text" pTooltip="{{slide.PlaylistName}}"
-                                tooltipPosition="left">{{slide.PlaylistName}} <span (click)="deleteFullPlaylist()"><i
-                                    class="fa fa-close close-playList"></i></span></span>
+               
 
+                <div *ngIf="showPlayList">
+                  <div *ngIf="isPlayListEmpty" style="text-align:center;opacity:0.5;font-size:xx-large;">
+                    No Playlist Found
+                  </div>
+                  <div *ngIf="!isPlayListEmpty">
+                    <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig" (afterChange)="afterChange($event)"
+                                        style="margin-left: 40px;">
+                      <div ngxSlickItem *ngFor="let slide of listdetail;let i=index" class="slide">
+                        <div class="info-box info-Css" [ngClass]="{'border-css': slide.showCss == 'Y','noborder-css': slide.showCss == 'N'}" (click)="getMusictrackList(slide,i)">
+                          <div class="col-md-10">
+                            <div (click)="getMusictrackList(slide,i)">
+                              <span class="info-box-icon bg-aqua info-icon-style">
+                                <i class="fa fa-music icon-Css" aria-hidden="true"></i>
+                              </span>
+                              <div class="info-box-content">
+                                <span class="info-box-text tooltip-text" pTooltip="{{slide.PlaylistName}}"
+                                      tooltipPosition="left">
+                                  {{slide.PlaylistName}} <span (click)="deleteFullPlaylist()">
+                                    <i class="fa fa-close close-playList"></i>
+                                  </span>
+                                </span>
+
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </ngx-slick-carousel>
+                    </ngx-slick-carousel>
+                  </div>
+                  
                 </div>
               </p-tabPanel>
               <p-tabPanel [selected]="playListsearch" leftIcon="fa fa-search" tooltip="Add from Library">
@@ -400,12 +411,12 @@
                           [resetFilterOnHide]="true" filter="true"></p-dropdown>
                       </span>&nbsp;
                       <span style="width:8%" (click)="searchTrack()">
-                        <a id="Search_muiscLable" class="btn btn-social btn-sm btn-primary btn-flat" style="height: 30px;">
+                        <a id="Search_muiscLable" class="btn btn-social btn-sm btn-primary btn-flat" style="height: 30px;color:white">
                           <i class="fa fa-search"></i>Search
                         </a>
                       </span>&nbsp;
                       <span style="width:8%" (click)="clearSearch()">
-                        <a id="Search_muiscLable" class="btn btn-social btn-sm btn-primary btn-flat" style="height: 30px;">
+                        <a id="Search_muiscLable" class="btn btn-social btn-sm btn-primary btn-flat" style="height: 30px;color:white">
                           <i class="fa fa-refresh"></i>Clear All
                         </a>
                       </span>

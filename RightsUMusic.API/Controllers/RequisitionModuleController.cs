@@ -560,7 +560,7 @@ namespace RightsUMusic.API.Controllers
             int searchCount = obj.SearchPlayList(objParam).Count();
             if (searchCount > 0)
             {
-                _objRet.Message = "Playlist already created";
+                _objRet.Message = "Playlist with same name is already created";
                 _objRet.IsSuccess = false;
                 return Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
             }
