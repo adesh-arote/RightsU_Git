@@ -1,4 +1,4 @@
-﻿@model RightsU_Entities.Music_Deal
+﻿@model RightsU_Dapper.Entity.Music_Deal
 @using UTOFrameWork.FrameworkClasses
 @{
     ViewBag.Title = "Index";
@@ -9,17 +9,82 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
-    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
-    if (Session[RightsU_Entities.RightsU_Session.MUSIC_DEAL_SCHEMA] != null)
+    RightsU_Dapper.Entity.Deal_Schema objSchema = new RightsU_Dapper.Entity.Deal_Schema();
+    if (Session[RightsU_Dapper.Entity.RightsU_Session.MUSIC_DEAL_SCHEMA] != null)
     {
-        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.MUSIC_DEAL_SCHEMA];
+        objSchema = (RightsU_Dapper.Entity.Deal_Schema)Session[RightsU_Dapper.Entity.RightsU_Session.MUSIC_DEAL_SCHEMA];
         objSchema.Deal_Workflow_Flag = objSchema.Deal_Workflow_Flag.Trim();
     }
     LoginEntity objLoginEntity = new LoginEntity();
     if (Session["objLoginEntity"] != null)
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
-    }    
+    }
+    List<RightsU_Dapper.Entity.Deal_Tag> objDealTag = new List<RightsU_Dapper.Entity.Deal_Tag>();
+    RightsU_Dapper.BLL.Services.Deal_Tag_Service objDealTagService = new RightsU_Dapper.BLL.Services.Deal_Tag_Service();
+    List<RightsU_Dapper.Entity.Deal_Tag> lstDealTag = objDealTagService.GetAll().ToList();
+
+    List<RightsU_Dapper.Entity.Music_Label> objMusicLabel = new List<RightsU_Dapper.Entity.Music_Label>();
+    RightsU_Dapper.BLL.Services.Music_Label_Service objMusicLabelService = new RightsU_Dapper.BLL.Services.Music_Label_Service();
+    List<RightsU_Dapper.Entity.Music_Label> lstMusicLabel = objMusicLabelService.GetAll().ToList();
+
+    List<RightsU_Dapper.Entity.Vendor> objVendor = new List<RightsU_Dapper.Entity.Vendor>();
+    RightsU_Dapper.BLL.Services.Vendor_Service objVendorService = new RightsU_Dapper.BLL.Services.Vendor_Service();
+    List<RightsU_Dapper.Entity.Vendor> lstVendor = objVendorService.GetAll().ToList();
+
+    List<RightsU_Dapper.Entity.Business_Unit> objBusinessUnit = new List<RightsU_Dapper.Entity.Business_Unit>();
+    RightsU_Dapper.BLL.Services.Business_Unit_Service objBusinessUnitService = new RightsU_Dapper.BLL.Services.Business_Unit_Service();
+    List<RightsU_Dapper.Entity.Business_Unit> lstBusinessUnit = objBusinessUnitService.GetAll().ToList();
+
+    List<RightsU_Dapper.Entity.Deal_Type> objDealType = new List<RightsU_Dapper.Entity.Deal_Type>();
+    RightsU_Dapper.BLL.Services.Deal_Type_Service objDealTypeService = new RightsU_Dapper.BLL.Services.Deal_Type_Service();
+    List<RightsU_Dapper.Entity.Deal_Type> lstDealType = objDealTypeService.GetList().ToList();
+
+    List<RightsU_Dapper.Entity.Country> objCountry = new List<RightsU_Dapper.Entity.Country>();
+    RightsU_Dapper.BLL.Services.Country_Service objCountryService = new RightsU_Dapper.BLL.Services.Country_Service();
+    List<RightsU_Dapper.Entity.Country> lstCountry = objCountryService.GetList().ToList();
+
+    RightsU_Dapper.Entity.Right_Rule objRight_Rule = new RightsU_Dapper.Entity.Right_Rule();
+    RightsU_Dapper.BLL.Services.Right_Rule_Service objRight_RuleService = new RightsU_Dapper.BLL.Services.Right_Rule_Service();
+    RightsU_Dapper.Entity.Right_Rule ObjRightRule = objRight_RuleService.GetList().Where(x => x.Right_Rule_Code == Model.Right_Rule_Code).FirstOrDefault();
+
+    List<RightsU_Dapper.Entity.Language> objLanguage = new List<RightsU_Dapper.Entity.Language>();
+    RightsU_Dapper.BLL.Services.Language_Service objLanguageService = new RightsU_Dapper.BLL.Services.Language_Service();
+    List<RightsU_Dapper.Entity.Language> lstLanguage = objLanguageService.GetList().ToList();
+
+    List<RightsU_Dapper.Entity.Music_Deal_Language> lstMusicDealLanguage = new List<RightsU_Dapper.Entity.Music_Deal_Language>();
+    RightsU_Dapper.BLL.Services.Music_Deal_Language_Service objMusicDealLanguageService = new RightsU_Dapper.BLL.Services.Music_Deal_Language_Service();
+    List<RightsU_Dapper.Entity.Music_Deal_Language> lstAllMusicDealLanguage = objMusicDealLanguageService.GetAll().ToList();
+
+    RightsU_Dapper.Entity.Music_Deal objMusicDeal = new RightsU_Dapper.Entity.Music_Deal();
+    RightsU_Dapper.BLL.Services.Music_DealServices objMusicDealService = new RightsU_Dapper.BLL.Services.Music_DealServices();
+    List<RightsU_Dapper.Entity.Music_Deal> lstMusicDeal = objMusicDealService.GetMusic_DealList().ToList();
+
+    List<RightsU_Dapper.Entity.Entity> objEntity = new List<RightsU_Dapper.Entity.Entity>();
+    RightsU_Dapper.BLL.Services.Entity_Service objEntityService = new RightsU_Dapper.BLL.Services.Entity_Service();
+    List<RightsU_Dapper.Entity.Entity> lstEntity = objEntityService.GetAll().ToList();
+
+    List<RightsU_Dapper.Entity.Channel_Category> objChannelCategory = new List<RightsU_Dapper.Entity.Channel_Category>();
+    RightsU_Dapper.BLL.Services.Channel_Category_Service objChannelCategoryService = new RightsU_Dapper.BLL.Services.Channel_Category_Service();
+    List<RightsU_Dapper.Entity.Channel_Category> lstChannelCategory = objChannelCategoryService.GetAll().ToList();
+
+    List<RightsU_Dapper.Entity.Music_Deal_Country> objMusic_Deal_Country = new List<RightsU_Dapper.Entity.Music_Deal_Country>();
+    RightsU_Dapper.BLL.Services.Music_Deal_Country_Service objMusic_Deal_CountryService = new RightsU_Dapper.BLL.Services.Music_Deal_Country_Service();
+    List<RightsU_Dapper.Entity.Music_Deal_Country> lstMusic_Deal_Country = objMusic_Deal_CountryService.GetAll().ToList();
+
+    List<RightsU_Dapper.Entity.Music_Deal_Language> objMusic_Deal_Language = new List<RightsU_Dapper.Entity.Music_Deal_Language>();
+    //RightsU_Dapper.BLL.Services.Music_Deal_Language_Service objMusic_Deal_CountryService = new RightsU_Dapper.BLL.Services.Music_Deal_Language_Service();
+    //List<RightsU_Dapper.Entity.Music_Deal_Language> lstMusic_Deal_Country = objMusic_Deal_CountryService.GetAll().ToList();
+
+    //var objlst = lstRight_Rule.Where(x => x.Right_Rule_Code == Model.Right_Rule_Code).Select(y => y.Is_Active == "Y").FirstOrDefault();
+
+    /*RightsU_Dapper.Entity.Right_Rule ObjRightRule = new RightsU_Dapper.Entity.Right_Rule();*/
+    //lstRight_Rule.Where(x => x.Right_Rule_Code == Model.Right_Rule_Code).FirstOrDefault();
+
+    //List<RightsU_Dapper.Entity.Channel> objRight_Rule = new List<RightsU_Dapper.Entity.Right_Rule>();
+    //RightsU_Dapper.BLL.Services.Right_Rule_Service objRight_RuleService = new RightsU_Dapper.BLL.Services.Right_Rule_Service();
+    //List<RightsU_Dapper.Entity.Right_Rule> lstRight_Rule = objRight_RuleService.GetList().ToList();
+    string strDealTagName = "", strMusicLabel = "", strVendorName = "", strBusinessUnitName = "", strDealTypeName = "", strCountryName = "", strRightRuleName = "", strLanguage = "", strEntityName = "", strChannelName = "", strLanguageName = "";
 }
 <script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
@@ -164,7 +229,7 @@
                         }
                     }
                     @if (objSchema.Deal_Workflow_Flag == "O" || objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_New ||
-     objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Ammended)
+objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Ammended)
                     {
 
                         <div class="stampBg approved nobackground" id="divStamp">
@@ -238,8 +303,12 @@
                                                 @if (ViewBag.IsMuciVersionSPN == "N" && Model.Deal_Tag_Code != null)
                                                 {
                                                     <td>Status</td>
+                                                    {
+                                                        strDealTagName = lstDealTag.Where(x => x.Deal_Tag_Code == objSchema.Deal_Tag_Code).Select(w => w.Deal_Tag_Description).FirstOrDefault();
+                                                    }
                                                     <td>
-                                                       @Model.Deal_Tag.Deal_Tag_Description 
+                                                        <span>@strDealTagName</span>
+                                                       @*@Model.Deal_Tag.Deal_Tag_Description*@ 
                                                     </td>
                                                 }
                                             </tr>
@@ -257,8 +326,12 @@
                                             </tr>
                                             <tr>
                                                 <td>@objMessageKey.MusicLabel</td>
+                                                @{
+                                                    strMusicLabel = lstMusicLabel.Where(x => x.Music_Label_Code == Model.Music_Label_Code).Select(w => w.Music_Label_Name).FirstOrDefault();
+                                                }
                                                 <td>
-                                                    @Model.Music_Label.Music_Label_Name
+                                                    <span>@strMusicLabel</span>
+                                                    @*@Model.Music_Label.Music_Label_Name*@
                                                 </td>
                                                 <td>@objMessageKey.MusicType</td>
                                                 <td>
@@ -278,9 +351,13 @@
                                             </tr>
                                             <tr>
                                                 <td>@objMessageKey.TrackLanguage</td>
+                                                @{ 
+                                                    List<int?> LanguageCode = Model.Music_Deal_Language.Select(a => a.Music_Language_Code).ToList();
+                                                    var strLanguag = string.Join(",", objLanguageService.GetList().Where(a => LanguageCode.Contains(a.Language_Code)).Select(s => s.Language_Name).ToList());
+                                                }
                                                 <td>
                                                     <div>
-                                                        @string.Join(", ", Model.Music_Deal_Language.Select(x => x.Music_Language.Language_Name).ToArray())
+                                                        <span>@strLanguag</span>
                                                     </div>
                                                 </td>
                                                 <td>@objMessageKey.DurationRestrictionPerSong</td>
@@ -290,21 +367,35 @@
                                             </tr>
                                             <tr>
                                                 <td>@objMessageKey.Licensee/@objMessageKey.Assignee</td>
+                                                @{
+                                                        strEntityName = lstEntity.Where(x => x.Entity_Code == Model.Entity_Code).Select(s => s.Entity_Name).FirstOrDefault();
+                                                }
                                                 <td>
-                                                    @Model.Entity.Entity_Name
+                                                    <span>@strEntityName</span>
+                                                    @*@Model.Entity.Entity_Name*@
                                                 </td>
                                                 <td>@objMessageKey.Licensor</td>
+                                                @{ 
+                                                 strVendorName = lstVendor.Where(x => x.Vendor_Code == Model.Primary_Vendor_Code).Select(w => w.Vendor_Name).FirstOrDefault();
+                                                }
                                                 <td>
-                                                    <span style="font-weight: 800">@Model.Vendor.Vendor_Name</span>
+                                                    <span style="font-weight: 800">@strVendorName</span>
+                                                    @*<span style="font-weight: 800">@Model.Vendor.Vendor_Name</span>*@
                                                     <div class="expandable">
-                                                        @string.Join(", ", Model.Music_Deal_Vendor.Where(x => x.Vendor_Code != Model.Primary_Vendor_Code).Select(s => s.Vendor.Vendor_Name).ToArray())
+                                                        
+                                                        @string.Join(", ", lstVendor.Where(x => x.Vendor_Code != Model.Primary_Vendor_Code).Select(s => s.Vendor_Name).ToArray())
+                                                        @*@string.Join(", ", Model.Music_Deal_Vendor.Where(x => x.Vendor_Code != Model.Primary_Vendor_Code).Select(s => s.Vendor.Vendor_Name).ToArray())*@
                                                     </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>@objMessageKey.BusinessUnit</td>
+                                                @{ 
+                                                    strBusinessUnitName = lstBusinessUnit.Where(x => x.Business_Unit_Code == Model.Business_Unit_Code).Select(s => s.Business_Unit_Name).FirstOrDefault();
+                                                }
                                                 <td>
-                                                    @Model.Business_Unit.Business_Unit_Name
+                                                    <span>@strBusinessUnitName</span>
+                                                    @*@Model.Business_Unit.Business_Unit_Name*@
                                                 </td>
                                                 <td>@objMessageKey.ReferenceNo</td>
                                                 <td>
@@ -317,8 +408,12 @@
                                                     <span id="cost">@Model.Agreement_Cost</span>
                                                 </td>
                                                 <td>@objMessageKey.DealFor</td>
+                                                @{ 
+                                                    strDealTypeName = String.Join(", ", lstDealType.Where(y =>y.Deal_Type_Code == Model.Deal_Type_Code ).Select(x => x.Deal_Type_Name).ToList().ToList());
+                                                }
                                                 <td>
-                                                    @string.Join(", ", Model.Music_Deal_DealType.Select(s => s.Deal_Type.Deal_Type_Name).ToArray())
+                                                    <span>@strDealTypeName</span>
+                                                    @*@string.Join(", ", Model.Music_Deal_DealType.Select(s => s.Deal_Type.Deal_Type_Name).ToArray())*@
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -395,7 +490,7 @@
                                                                   <b>Deal For</b>
                                                               </td>
                                                               <td>
-                                                                  @if (Model.Channel_Category != null)
+                                                                  @if (Model.Channel_Category_Code != null)
                                                                   {
                                                                       <b>@objMessageKey.ChannelCategory</b>
                                                                   }
@@ -405,20 +500,25 @@
                                                                   }
                                                               
                                                                   <div>
-                                                                      @if (Model.Channel_Category != null)
+                                                                      @if (Model.Channel_Category_Code != null)
                                                                       {
-                                                                          <span>@Model.Channel_Category.Channel_Category_Name</span>
+                                                                          {
+                                                                              strChannelName = lstChannelCategory.Where(X => X.Channel_Category_Code == Model.Channel_Category_Code).Select(S => S.Channel_Category_Name).FirstOrDefault();
+                                                                          }
+                                                                          <span>@strChannelName</span>
+                                                                          @*<span>@Model.Channel_Category.Channel_Category_Name</span>*@
                                                                           <b>:</b>
                                                                           <span><b>@objMessageKey.ViewCategoryChannels :</b></span>
                                                                           <a id="show_hide" class="glyphicon glyphicon-triangle-right show_hide"></a>
                                                                           <div id="extent" class="MoreActionDiv" style="display:none;">
-                                                                              <span id="lblChannelNames">@string.Join(", ", Model.Music_Deal_Channel.Select(x => x.Channel.Channel_Name).ToArray())</span>
+                                                                              <span id="lblChannelNames">@strChannelName@*@string.Join(", ", Model.Music_Deal_Channel.Select(x => x.Channel.Channel_Name).ToArray())*@</span>
                                                                           </div>
                                                                       }
                                                                       else
                                                                       {
                                                                           <span id="lblChannelNames" class="expandable">
-                                                                              @string.Join(", ", Model.Music_Deal_Channel.Select(x => x.Channel.Channel_Name).ToArray())
+                                                                              @strChannelName
+                                                                              @*@string.Join(", ", Model.Music_Deal_Channel.Select(x => x.Channel.Channel_Name).ToArray())*@
                                                                           </span>
                                                                       }
                                                                   </div>
@@ -454,9 +554,15 @@
                                                       <tbody>
                                                           <tr>
                                                               <td style="width:22%"><b>@objMessageKey.CountryExclusion</b></td>
+                                                              @*@{ 
+                                                                  List<int?> lstCountryCode = objMusic_Deal_Country..Select(x => x.Country_Code).ToList();
+                                                                  string Type = string.Join(",", lstRole.Where(w => lstRoleCode.Contains(w.Role_Code)).Select(c => c.Role_Name).ToList());
+                                                                  @strCountryName = String.Join(", ", lstMusic_Deal_Country.Where(y => y.Music_Deal_Country_Code == ).Select(x => x.Deal_Type_Name).ToList().ToList());
+                                                              }*@
                                                               <td>
                                                                   <div>
-                                                                      @string.Join(", ", Model.Music_Deal_Country.Select(x => x.Country.Country_Name).ToArray())
+                                                                      <span>@strChannelName</span>
+                                                                      @*@string.Join(", ", Model.Music_Deal_Country.Select(x => x.Country.Country_Name).ToArray())*@
                                                                   </div>
                                                               </td>
                                                           </tr>
@@ -530,23 +636,29 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                @if (Model.Right_Rule != null)
-                                                {
-                                                    <td>
-                                                        @Model.Right_Rule.Right_Rule_Name
-                                                    </td>
-                                                    if (Model.Right_Rule.IS_First_Air == true)
-                                                    {
-                                                        <td>@objMessageKey.FromFirstAir</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td align="center">@Model.Right_Rule.Start_Time</td>
-                                                    }
-                                                    <td align="center">@Model.Right_Rule.Play_Per_Day</td>
-                                                    <td align="center">@Model.Right_Rule.Duration_Of_Day</td>
-                                                    <td align="center">@Model.Right_Rule.No_Of_Repeat</td>
-                                                }
+                                        @if (Model.Right_Rule_Code != null)
+                                        {        
+
+                                            <td>
+                                                <span>@ObjRightRule.Right_Rule_Name</span>
+                                                @*@Model.Right_Rule.Right_Rule_Name*@
+                                            </td>
+                                            if (ObjRightRule.IS_First_Air == true)
+                                            {
+                                                <td>@objMessageKey.FromFirstAir</td>
+                                            }
+                                            else
+                                            {
+                                                <td align="center"> @ObjRightRule.Start_Time</td>
+                                                @*<td align="center">@Model.Right_Rule.Start_Time</td>*@
+                                            }
+                                                <td align="center">@ObjRightRule.Play_Per_Day</td>
+                                                <td align="center">@ObjRightRule.Duration_Of_Day</td>
+                                                <td align="center">@ObjRightRule.No_Of_Repeat</td>
+                                            @*<td align="center">@Model.Right_Rule.Play_Per_Day</td>
+                                            <td align="center">@Model.Right_Rule.Duration_Of_Day</td>
+                                            <td align="center">@Model.Right_Rule.No_Of_Repeat</td>*@
+                                        }
                                             </tr>
                                         </tbody>
                                     </table>

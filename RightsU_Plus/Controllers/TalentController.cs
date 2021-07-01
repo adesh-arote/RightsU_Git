@@ -396,15 +396,6 @@ namespace RightsU_Plus.Controllers
             if (isDuplicate)
             {
                 objTalent_Service.AddEntity(objTalent);
-            }
-            else
-            {
-                status = "";
-                message = resultSet;
-            }
-            bool isValid = true;
-            if (isValid)
-            {
                 status = "S";
                 message = objMessageKey.RecordAddedSuccessfully;
                 FetchData();
@@ -412,7 +403,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 status = "E";
-                //message = resultSet;
+                message = resultSet;
             }
 
             var obj = new
@@ -472,7 +463,7 @@ namespace RightsU_Plus.Controllers
         }
         private void FetchData()
         {
-            lstTalent_Searched = lstTalent = objTalent_Service.GetList().OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstTalent_Searched = lstTalent = objTalent_Service.GetList(new Type[] { typeof(Talent_Role) }).OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
     }
 }

@@ -244,8 +244,7 @@ namespace RightsU_Plus.Controllers
             }
                 //bool isValid = objRight_Rule_Service.Save(objRight_Rule, out resultSet);
                 bool isValid = true;
-            if (isValid)
-            {
+            
                 if (ObjRightRuleMVC.Right_Rule_Code > 0)
                 {
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
@@ -253,12 +252,8 @@ namespace RightsU_Plus.Controllers
                     objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                     ViewBag.Alert = message;
                 }
-            }
-            else
-            {
-                status = "E";
-                message = "";
-            }
+            
+           
 
             var obj = new
             {

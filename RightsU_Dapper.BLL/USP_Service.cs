@@ -55,6 +55,23 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objUSP_Repository.USP_Get_Platform_Tree_Hierarchy(platformCodes, search_Platform_Name);
         }
+        public IEnumerable<USP_Music_Exception_Handling_Result> USP_Music_Exception_Handling(string isAired, Nullable<int> pageNo, out int recordCount, string isPaging, Nullable<int> pageSize, string musicTrackCode, string musicLabelCode, string channelCode, string contentCode, string episodeFrom, string episodeTo, string initialResponse, string exceptionStatus, Nullable<int> userCode, string commonSearch, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate)
+        {
+            return objUSP_Repository.USP_Music_Exception_Handling(isAired, pageNo,out recordCount, isPaging, pageSize, musicTrackCode, musicLabelCode, channelCode, contentCode, episodeFrom, episodeTo, initialResponse, exceptionStatus, userCode, commonSearch, startDate, endDate);
+        }
+        public virtual IEnumerable<USP_Music_Exception_Dashboard_Result> USP_Music_Exception_Dashboard(string isAired, string musicTrackCode, string musicLabelCode, string channelCode, string contentCode, string episodeFrom, string episodeTo, string initialResponse, string exceptionStatus, Nullable<int> userCode, string commonSearch, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate)
+        {
+            return objUSP_Repository.USP_Music_Exception_Dashboard(isAired, musicTrackCode, musicLabelCode, channelCode, contentCode, episodeFrom, episodeTo, initialResponse, exceptionStatus, userCode, commonSearch, startDate, endDate);
+        }
+        public IEnumerable<USP_List_Status_History_Result> USP_List_Status_History(Nullable<int> record_Code, Nullable<int> module_Code)
+        {
+            return objUSP_Repository.USP_List_Status_History(record_Code, module_Code);
+        }
+        public IEnumerable<string> USP_Assign_Workflow(Nullable<int> record_Code, Nullable<int> module_Code, Nullable<int> login_User, string remarks_Approval)
+        {
+            return objUSP_Repository.USP_Assign_Workflow(record_Code, module_Code, login_User, remarks_Approval);
+        }
+
         //public virtual void USP_UpdateContentHouseID(Nullable<int> BV_HouseId_Data_Code, Nullable<int> MappedDealTitleCode)
         //{
         //    //USP_DAL objUSPDAL = new USP_DAL(conStr);
@@ -65,6 +82,30 @@ namespace RightsU_Dapper.BLL.Services
         //    USP_DAL objUSPDAL = new USP_DAL(conStr);
         //    objUSPDAL.USP_BV_Title_Mapping_Shows(BV_HouseId_Data_Code);
         //}
+        public IEnumerable<USP_Get_Title_PreReq_Result> USP_Get_Title_PreReq(string data_For, Nullable<int> deal_Type_Code, Nullable<int> business_Unit_Code, string search_String)
+        {
+            return objUSP_Repository.USP_Get_Title_PreReq(data_For, deal_Type_Code, business_Unit_Code, search_String);
+        }
+        public IEnumerable<USP_Get_Talent_Name_Result> USP_Get_Talent_Name()
+        {
+            return objUSP_Repository.USP_Get_Talent_Name();
+        }
+        public IEnumerable<USP_List_Music_Title_Result> USP_List_Music_Title(string musicTitleName, Nullable<int> sysLanguageCode, Nullable<int> pageNo,out int recordCount, string isPaging, Nullable<int> pageSize, string starCastCode, string languageCode, string albumCode, string genresCode, string musicLabelCode, string yearOfRelease, string singerCode, string composerCode, string lyricistCode, string musicNameText, string themeCode, string musicTag, string publicDomain, string ExactMatch = "")
+        {
+           
+            return objUSP_Repository.USP_List_Music_Title(musicTitleName, sysLanguageCode, pageNo,out recordCount, isPaging, pageSize, starCastCode, languageCode, albumCode, genresCode, musicLabelCode, yearOfRelease, singerCode, composerCode, lyricistCode, musicNameText, themeCode, musicTag, publicDomain, ExactMatch);
+        }
+        public IEnumerable<USP_Insert_Music_Title_Import_UDT> USP_Insert_Music_Title_Import_UDT(
+        List<Music_Title_Import_UDT> lstMusic_Title_Import_UDT, int User_Code
+          )
+        {
+            return objUSP_Repository.USP_Insert_Music_Title_Import_UDT(lstMusic_Title_Import_UDT, User_Code);
+        }
+
+        public IEnumerable<USP_Music_Title_Contents_Result> USP_Music_Title_Contents(Nullable<int> Music_Title_Code, string GenericSearch, out int RecordCount, string IsPaging, Nullable<int> PageSize, Nullable<int> PageNo)
+        {
+            return objUSP_Repository.USP_Music_Title_Contents(Music_Title_Code, GenericSearch,out RecordCount, IsPaging, PageSize, PageNo);
+        }
     }
 }
 

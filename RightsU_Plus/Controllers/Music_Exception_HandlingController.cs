@@ -11,14 +11,25 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using RightsU_BLL;
-using RightsU_Entities;
+using RightsU_Dapper.Entity;
+using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.BLL;
+//using RightsU_BLL;
+//using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
     public class Music_Exception_HandlingController : BaseController
     {
+        private readonly Channel_Service objChannelServices = new Channel_Service();
+        private readonly Music_Title_Services objMusic_TitleServices = new Music_Title_Services();
+        private readonly Music_Override_Reason_Services objMusic_Override_ReasonServices = new Music_Override_Reason_Services();
+        private readonly Music_Schedule_Transaction_Services objMusic_Schedule_TransactionServices = new Music_Schedule_Transaction_Services();
+        private readonly Error_Code_Master_Services objError_Code_MasterServices = new Error_Code_Master_Services();
+        private readonly Title_Content_Services objTitle_ContentServices = new Title_Content_Services();
+        private readonly USP_Service objUSPServices = new USP_Service();
+        private readonly Music_Label_Service objMusicLabelService = new Music_Label_Service();
         public Music_Exception_Search objPage_Properties
         {
             get
@@ -83,42 +94,42 @@ namespace RightsU_Plus.Controllers
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusicExceptionHandling);
             ClearAll();
-           
+
             AStart_Date = Convert.ToDateTime(objUSP_Service.USPGetAiredNotAiredDates().Select(x => x.AStart_Date).Single()).ToString("dd/MM/yyyy");
             AEnd_Date = Convert.ToDateTime(objUSP_Service.USPGetAiredNotAiredDates().Select(x => x.AEnd_Date).Single()).ToString("dd/MM/yyyy");
-           NStart_Date = Convert.ToDateTime(objUSP_Service.USPGetAiredNotAiredDates().Select(x => x.NStart_Date).Single()).ToString("dd/MM/yyyy");
-            NEnd_Date= Convert.ToDateTime(objUSP_Service.USPGetAiredNotAiredDates().Select(x => x.NEnd_Date).Single()).ToString("dd/MM/yyyy");
+            NStart_Date = Convert.ToDateTime(objUSP_Service.USPGetAiredNotAiredDates().Select(x => x.NStart_Date).Single()).ToString("dd/MM/yyyy");
+            NEnd_Date = Convert.ToDateTime(objUSP_Service.USPGetAiredNotAiredDates().Select(x => x.NEnd_Date).Single()).ToString("dd/MM/yyyy");
 
             return View("~/Views/Music_Exception_Handling/Index.cshtml");
         }
-        public PartialViewResult BindGrid(string IsAired = "", int PageIndex = 0, int pageSize = 10, string CommonSearch = "", string IsAdvance = "",string StartDate="",string EndDate="")
+        public PartialViewResult BindGrid(string IsAired = "", int PageIndex = 0, int pageSize = 10, string CommonSearch = "", string IsAdvance = "", string StartDate = "", string EndDate = "")
         {
             if (IsAdvance == "N")
             {
                 ClearAll();
                 objPage_Properties.CommonSearch = CommonSearch;
             }
-            
+
             IsAiredForDash = "N";
             int PageNo = PageIndex + 1;
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+            //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             int RecordCount = 0;
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            
+            //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
+
             objPage_Properties.StartDate = Convert.ToDateTime(StartDate == "" ? (IsAired == "Y" ? AStart_Date : NStart_Date) : StartDate);
             objPage_Properties.EndDate = Convert.ToDateTime(EndDate == "" ? (IsAired == "Y" ? AEnd_Date : NEnd_Date) : EndDate);
-            
-            List<USP_Music_Exception_Handling_Result> LstMusicE = new List<USP_Music_Exception_Handling_Result>();
-            LstMusicE = objUSP.USP_Music_Exception_Handling(IsAired, PageNo, objRecordCount, "Y", pageSize, objPage_Properties.MusicTrackCode,
-                objPage_Properties.MusicLabelCode, objPage_Properties.ChannelCode, objPage_Properties.Contents, objPage_Properties.EpsFrom, objPage_Properties.EpsTo
-                , objPage_Properties.InitialResponse, objPage_Properties.Status, objLoginUser.Users_Code, objPage_Properties.CommonSearch,objPage_Properties.StartDate,objPage_Properties.EndDate).ToList();
 
-            RecordCount = Convert.ToInt32(objRecordCount.Value);
+            List<USP_Music_Exception_Handling_Result> LstMusicE = new List<USP_Music_Exception_Handling_Result>();
+            LstMusicE = objUSPServices.USP_Music_Exception_Handling(IsAired, PageNo,out RecordCount, "Y", pageSize, objPage_Properties.MusicTrackCode,
+                objPage_Properties.MusicLabelCode, objPage_Properties.ChannelCode, objPage_Properties.Contents, objPage_Properties.EpsFrom, objPage_Properties.EpsTo
+                , objPage_Properties.InitialResponse, objPage_Properties.Status, objLoginUser.Users_Code, objPage_Properties.CommonSearch, objPage_Properties.StartDate, objPage_Properties.EndDate).ToList();
+
+            //RecordCount = Convert.ToInt32(objRecordCount.Value);
             ViewBag.RecordCount = RecordCount;
             ViewBag.PageSize = pageSize;
             ViewBag.IsAired = IsAired;
-            ViewBag.AStart_Date = StartDate==""? AStart_Date: StartDate;
-            ViewBag.AEnd_Date = EndDate==""? AEnd_Date:EndDate;
+            ViewBag.AStart_Date = StartDate == "" ? AStart_Date : StartDate;
+            ViewBag.AEnd_Date = EndDate == "" ? AEnd_Date : EndDate;
             ViewBag.NStart_Date = StartDate == "" ? NStart_Date : StartDate;
             ViewBag.NEnd_Date = EndDate == "" ? NEnd_Date : EndDate;
             if (PageNo <= 0)
@@ -137,8 +148,8 @@ namespace RightsU_Plus.Controllers
             objPage_Properties.EpsTo = "";
             objPage_Properties.InitialResponse = "";
             objPage_Properties.Status = "";
-            
-           
+
+
         }
         public PartialViewResult ShowAll(string IsAired = "")
         {
@@ -151,14 +162,14 @@ namespace RightsU_Plus.Controllers
         {
             var primeArray = MusicTrackCode.Split('﹐');
             string arrays = "";
-            for(int i = 0; i < primeArray.Length; i++)
+            for (int i = 0; i < primeArray.Length; i++)
             {
-                var a  = Convert.ToString(primeArray[i]);
-                int result = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == a).Select(x => x.Music_Title_Code).FirstOrDefault();
-                if (result != 0)                
+                var a = Convert.ToString(primeArray[i]);
+                int? result =  objMusic_TitleServices.GetAll().Where(x => x.Music_Title_Name == a).Select(x => x.Music_Title_Code).FirstOrDefault();
+                if (result != 0)
                     arrays = arrays + result + ',';
             }
-            var ContentArray = Contents.Replace('﹐',',');
+            var ContentArray = Contents.Replace('﹐', ',');
             objPage_Properties.MusicTrackCode = arrays;
             objPage_Properties.MusicLabelCode = MusicLabelCode;
             objPage_Properties.ChannelCode = ChannelCode;
@@ -177,7 +188,7 @@ namespace RightsU_Plus.Controllers
             List<string> terms = Searched_Title.Split('﹐').ToList();
             terms = terms.Select(s => s.Trim()).ToList();
             string searchString = terms.LastOrDefault().ToString().Trim();
-            var result = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Is_Active == "Y").Distinct()
+            var result = objMusic_TitleServices.GetAll().Where(x => x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Is_Active == "Y").Distinct()
                .Select(x => new { Music_Title_Name = x.Music_Title_Name, Music_Title_Code = 0 }).ToList();
             return Json(result);
 
@@ -188,7 +199,7 @@ namespace RightsU_Plus.Controllers
             List<string> terms = Searched_Content.Split('﹐').ToList();
             terms = terms.Select(s => s.Trim()).ToList();
             string searchString = terms.LastOrDefault().ToString().Trim();
-            var result = new Title_Content_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Episode_Title.ToUpper().Contains(searchString.ToUpper())).Where(x => x.Episode_Title != null).Distinct()
+            var result = objTitle_ContentServices.GetAll().Where(x => x.Episode_Title.ToUpper().Contains(searchString.ToUpper())).Where(x => x.Episode_Title != null).Distinct()
                .Select(x => new { Title_Content_Name = x.Episode_Title, Title_Content_Code = x.Title_Content_Code }).ToList();
             return Json(result);
         }
@@ -196,7 +207,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult SendForApprovalPopup(int Music_Schedule_Transaction_Code, string IsZeroworkflow)
         {
-            List<SelectListItem> lstMORS = new SelectList(new Music_Override_Reason_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Override_Reason_Name != ""), "Music_Override_Reason_Code", "Music_Override_Reason_Name", 0).ToList();
+            List<SelectListItem> lstMORS = new SelectList(objMusic_Override_ReasonServices.GetAll().Where(x => x.Music_Override_Reason_Name != ""), "Music_Override_Reason_Code", "Music_Override_Reason_Name", 0).ToList();
             //lstMORS.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
             ViewBag.Music_Schedule_Transaction_Code = Music_Schedule_Transaction_Code;
             ViewBag.lstMORS = lstMORS;
@@ -206,9 +217,9 @@ namespace RightsU_Plus.Controllers
         public JsonResult SendForApproval(int Music_Schedule_Transaction_Code, int ReasonCode, string IgnoreOrOverride = "", string Remark = "")
         {
             string strMsgType = "", strViewBagMsg = "";
-            Music_Schedule_Transaction_Service objMSTS = new Music_Schedule_Transaction_Service(objLoginEntity.ConnectionStringName);
+           // Music_Schedule_Transaction_Service objMSTS = new Music_Schedule_Transaction_Service(objLoginEntity.ConnectionStringName);
             Music_Schedule_Transaction objMSE = new Music_Schedule_Transaction();
-            objMSE = objMSTS.GetById(Music_Schedule_Transaction_Code);
+            objMSE = objMusic_Schedule_TransactionServices.GetByID(Music_Schedule_Transaction_Code);
             objMSE.Remarks = Remark;
             if (IgnoreOrOverride == "O")
             {
@@ -216,12 +227,13 @@ namespace RightsU_Plus.Controllers
                 objMSE.Initial_Response = "O";
             }
             else
-            objMSE.Initial_Response = "I";
-            objMSE.EntityState = State.Modified;
-            objMSTS.Save(objMSE);
+                objMSE.Initial_Response = "I";
+            //objMSE.EntityState = State.Modified;
+            objMusic_Schedule_TransactionServices.UpdateEntity(objMSE);
+            //objMSTS.Save(objMSE);
 
             string uspResult = "P";
-            uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName).USP_Assign_Workflow(Music_Schedule_Transaction_Code, 154, objLoginUser.Users_Code, "").ElementAt(0));
+            uspResult = Convert.ToString(objUSPServices.USP_Assign_Workflow(Music_Schedule_Transaction_Code, 154, objLoginUser.Users_Code, "").ElementAt(0));
             string[] arrUspResult = uspResult.Split('~');
             //if (Convert.ToInt32(arrUspResult[0].Count()) > 1)
             //{
@@ -239,7 +251,7 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult ShowAriedViewHistory(int Music_Schedule_Transaction_Code, string Mode = "", string IsAired = "")
         {
             // List<Module_Status_History> LSTMSH = new List<Module_Status_History>();
-            List<USP_List_Status_History_Result> LSTMSH = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Status_History(Music_Schedule_Transaction_Code, GlobalParams.ModuleCodeForMusicExceptionHandling).ToList();
+            List<USP_List_Status_History_Result> LSTMSH = objUSPServices.USP_List_Status_History(Music_Schedule_Transaction_Code, GlobalParams.ModuleCodeForMusicExceptionHandling).ToList();
             // LSTMSH = new Module_Status_History_Type_Service().SearchFor(i => i.Record_Code == Music_Schedule_Transaction_Code && i.Module_Code==154).ToList();
             ViewBag.Music_Schedule_Transaction_Code = Music_Schedule_Transaction_Code;
             ViewBag.Mode = Mode;
@@ -258,7 +270,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ShowException(string ErrorCode = "")
         {
-            string ErrorDes = new Error_Code_Master_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Upload_Error_Code == ErrorCode.Trim()).FirstOrDefault().Error_Description;
+            string ErrorDes = objError_Code_MasterServices.GetAll().Where(x => x.Upload_Error_Code == ErrorCode.Trim()).FirstOrDefault().Error_Description;
 
             //if (Mode == "V")
             //{
@@ -276,9 +288,9 @@ namespace RightsU_Plus.Controllers
 
             try
             {
-                Music_Schedule_Transaction_Service objMSTS = new Music_Schedule_Transaction_Service(objLoginEntity.ConnectionStringName);
+                //RightsU_Dapper.BLL.Services.Music_Schedule_Transaction_Services objMSTS = new Music_Schedule_Transaction_Service(objLoginEntity.ConnectionStringName);
                 Music_Schedule_Transaction objMSE = new Music_Schedule_Transaction();
-                objMSE = objMSTS.GetById(Music_Schedule_Transaction_Code);
+                objMSE = objMusic_Schedule_TransactionServices.GetByID(Music_Schedule_Transaction_Code);
                 objMSE.Remarks = Remark;
                 objMSE.Workflow_Status = user_Action;
                 if (IgnoreOrOverride == "O")
@@ -287,14 +299,15 @@ namespace RightsU_Plus.Controllers
                     objMSE.Initial_Response = "O";
                 }
                 else
-                  objMSE.Initial_Response = "I";
+                    objMSE.Initial_Response = "I";
 
                 objMSE.Is_Ignore = IgnoreOrOverride == "O" ? "N" : "Y";
-                objMSE.EntityState = State.Modified;
-                objMSTS.Save(objMSE);
+                //objMSE.EntityState = State.Modified;
+                objMusic_Schedule_TransactionServices.UpdateEntity(objMSE);
+                //objMSTS.Save(objMSE);
 
-                USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
-                string uspResult = Convert.ToString(objUSP.USP_Process_Workflow(Music_Schedule_Transaction_Code, 154, objLoginUser.Users_Code, user_Action.TrimEnd()
+                //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+                string uspResult = Convert.ToString(objUSP_Service.USP_Process_Workflow(Music_Schedule_Transaction_Code, 154, objLoginUser.Users_Code, user_Action.TrimEnd()
                     .TrimStart(), Remark).ElementAt(0));
                 Dictionary<string, object> obj = new Dictionary<string, object>();
 
@@ -310,7 +323,7 @@ namespace RightsU_Plus.Controllers
                     obj.Add("Message", objMessageKey.ApprovedSuccessfully);
                 return Json(obj);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json("Error");
             }
@@ -320,7 +333,7 @@ namespace RightsU_Plus.Controllers
         {
             List<SelectListItem> lstMusicTitle = new List<SelectListItem>();
 
-            lstMusicTitle = new SelectList(new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Music_Title_Code", "Music_Title_Name", objPage_Properties.MusicTrackCode).ToList();
+            lstMusicTitle = new SelectList(objMusic_TitleServices.GetAll().Where(x => x.Is_Active == "Y"), "Music_Title_Code", "Music_Title_Name", objPage_Properties.MusicTrackCode).ToList();
             //lstMusicTitle.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
 
             return lstMusicTitle;
@@ -329,7 +342,7 @@ namespace RightsU_Plus.Controllers
         {
             List<SelectListItem> lstMusicLabel = new List<SelectListItem>();
 
-            lstMusicLabel = new SelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Music_Label_Code", "Music_Label_Name", objPage_Properties.MusicLabelCode).ToList();
+            lstMusicLabel = new SelectList(objMusicLabelService.GetAll().Where(x => x.Is_Active == "Y"), "Music_Label_Code", "Music_Label_Name", objPage_Properties.MusicLabelCode).ToList();
             //lstMusicLabel.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
 
             return lstMusicLabel;
@@ -338,7 +351,7 @@ namespace RightsU_Plus.Controllers
         {
             List<SelectListItem> lstChannel = new List<SelectListItem>();
 
-            lstChannel = new SelectList(new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Channel_Code", "Channel_Name", objPage_Properties.ChannelCode).ToList();
+            lstChannel = new SelectList( objChannelServices.GetList().Where(x => x.Is_Active == "Y"), "Channel_Code", "Channel_Name", objPage_Properties.ChannelCode).ToList();
             // lstChannel.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
 
             return lstChannel;
@@ -346,7 +359,7 @@ namespace RightsU_Plus.Controllers
         private List<SelectListItem> BindContent()
         {
             List<SelectListItem> lstContent = new List<SelectListItem>();
-            lstContent = new SelectList(new Title_Content_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Episode_Title != null).Select(x => new { x.Episode_Title }).Distinct(),
+            lstContent = new SelectList(objTitle_ContentServices.GetAll().Where(x => x.Episode_Title != null).Select(x => new { x.Episode_Title }).Distinct(),
                 "Episode_Title", "Episode_Title", objPage_Properties.Contents).ToList();
             return lstContent;
         }
@@ -389,21 +402,21 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public JsonResult BindDashboard(string IsAired = "",string StartDate="",string EndDate="")
+        public JsonResult BindDashboard(string IsAired = "", string StartDate = "", string EndDate = "")
         {
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+            // USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             int RecordCount = 0;
-            IsAiredForDash = IsAired;           
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
+            IsAiredForDash = IsAired;
+            //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
             objPage_Properties.StartDate = Convert.ToDateTime(StartDate == "" ? (IsAired == "Y" ? AStart_Date : NStart_Date) : StartDate);
             objPage_Properties.EndDate = Convert.ToDateTime(EndDate == "" ? (IsAired == "Y" ? AEnd_Date : NEnd_Date) : EndDate);
             List<USP_Music_Exception_Handling_Result> LstMusicE = new List<USP_Music_Exception_Handling_Result>();
-            LstMusicE = objUSP.USP_Music_Exception_Handling(IsAired, 0, objRecordCount, "N", 0, objPage_Properties.MusicTrackCode,
+            LstMusicE = objUSPServices.USP_Music_Exception_Handling(IsAired, 0, out RecordCount, "N", 0, objPage_Properties.MusicTrackCode,
                     objPage_Properties.MusicLabelCode, objPage_Properties.ChannelCode, objPage_Properties.Contents, objPage_Properties.EpsFrom, objPage_Properties.EpsTo
                     , objPage_Properties.InitialResponse, objPage_Properties.Status, objLoginUser.Users_Code, objPage_Properties.CommonSearch, objPage_Properties.StartDate, objPage_Properties.EndDate).ToList();
-            RecordCount = Convert.ToInt32(objRecordCount.Value);
+           // RecordCount = Convert.ToInt32(RecordCount.Value);
             List<USP_Music_Exception_Dashboard_Result> LstMusicDash = new List<USP_Music_Exception_Dashboard_Result>();
-            LstMusicDash = objUSP.USP_Music_Exception_Dashboard(IsAired, objPage_Properties.MusicTrackCode,
+            LstMusicDash = objUSPServices.USP_Music_Exception_Dashboard(IsAired, objPage_Properties.MusicTrackCode,
                     objPage_Properties.MusicLabelCode, objPage_Properties.ChannelCode, objPage_Properties.Contents, objPage_Properties.EpsFrom, objPage_Properties.EpsTo
                     , objPage_Properties.InitialResponse, objPage_Properties.Status, objLoginUser.Users_Code, objPage_Properties.CommonSearch, objPage_Properties.StartDate, objPage_Properties.EndDate).ToList();
             object[] arrMusicDash = GetChartData(LstMusicDash);
@@ -412,10 +425,10 @@ namespace RightsU_Plus.Controllers
             obj.Add("OpenCount", LstMusicE.Where(x => x.Workflow_Status == "O" || x.Workflow_Status == null || x.Workflow_Status == "R").ToList().Count());
             obj.Add("InProgressCount", LstMusicE.Where(x => x.Workflow_Status == "W").ToList().Count());
             obj.Add("ClosedCount", LstMusicE.Where(x => x.Workflow_Status == "A").ToList().Count());
-            obj.Add("AStart_Date",StartDate==""? AStart_Date:StartDate);
-            obj.Add("AEnd_Date", EndDate==""? AEnd_Date: EndDate);
-            obj.Add("NStart_Date" , StartDate == "" ? NStart_Date:StartDate);
-            obj.Add("NEnd_Date" , EndDate == "" ? NEnd_Date:EndDate);
+            obj.Add("AStart_Date", StartDate == "" ? AStart_Date : StartDate);
+            obj.Add("AEnd_Date", EndDate == "" ? AEnd_Date : EndDate);
+            obj.Add("NStart_Date", StartDate == "" ? NStart_Date : StartDate);
+            obj.Add("NEnd_Date", EndDate == "" ? NEnd_Date : EndDate);
             return Json(obj);
         }
         public PartialViewResult ShowDashboard(string Flag = "")
@@ -504,7 +517,7 @@ namespace RightsU_Plus.Controllers
             return arrMain;
         }
 
-      
+
 
     }
     public partial class Music_Exception_Search

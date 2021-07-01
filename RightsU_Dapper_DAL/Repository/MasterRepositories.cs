@@ -10,35 +10,35 @@ using System.Data;
 
 namespace RightsU_Dapper.DAL.Repository
 {
-    public class Music_Deal_Repository : MainRepository<Music_Deal_Dapper>
+    public class Music_Deal_Repository : MainRepository<Music_Deal>
     {
-        public Music_Deal_Dapper Get(int? Id, Type[] RelationList = null)
+        public Music_Deal Get(int? Id, Type[] RelationList = null)
         {
             var obj = new { Music_Deal_Code = Id };
-            return base.GetById<Music_Deal_Dapper>(obj, RelationList);
+            return base.GetById<Music_Deal>(obj, RelationList);
         }
-        public void Add(Music_Deal_Dapper entity)
+        public void Add(Music_Deal entity)
         {
-            Music_Deal_Dapper oldObj = Get(entity.Music_Deal_Code);
+            Music_Deal oldObj = Get(entity.Music_Deal_Code);
             base.UpdateEntity(oldObj, entity);
             //base.AddEntity(entity);
         }
-        public void Update(Music_Deal_Dapper entity)
+        public void Update(Music_Deal entity)
         {
-            Music_Deal_Dapper oldObj = Get(entity.Music_Deal_Code);
+            Music_Deal oldObj = Get(entity.Music_Deal_Code);
             base.UpdateEntity(oldObj, entity);
         }
-        public void Delete(Music_Deal_Dapper entity)
+        public void Delete(Music_Deal entity)
         {
             base.DeleteEntity(entity);
         }
-        public IEnumerable<Music_Deal_Dapper> GetAll()
+        public IEnumerable<Music_Deal> GetAll()
         {
-            return base.GetAll<Music_Deal_Dapper>();
+            return base.GetAll<Music_Deal>();
         }
-        public IEnumerable<Music_Deal_Dapper> SearchFor(object param)
+        public IEnumerable<Music_Deal> SearchFor(object param)
         {
-            return base.SearchForEntity<Music_Deal_Dapper>(param);
+            return base.SearchForEntity<Music_Deal>(param);
         }
         public IEnumerable<USP_List_Music_Deal_Result> USP_List_Music_Deal(string searchText, string agreement_No, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate, string deal_Type_Code, string status_Code, Nullable<int> business_Unit_Code, Nullable<int> deal_Tag_Code, string workflow_Status, string vendor_Codes, string show_Type_Code, string title_Code, string music_Label_Codes, string isAdvance_Search, Nullable<int> user_Code, int pageNo, Nullable<int> pageSize, out int recordCount)
         {
@@ -106,7 +106,7 @@ namespace RightsU_Dapper.DAL.Repository
             return Result;
 
         }
-        public IEnumerable<Deal_Creation> USP_Insert_Music_Deal(Music_Deal_Dapper entity)
+        public IEnumerable<Deal_Creation> USP_Insert_Music_Deal(Music_Deal entity)
         {
             var param = new DynamicParameters();
 
@@ -152,62 +152,62 @@ namespace RightsU_Dapper.DAL.Repository
     //        base.DeleteAllEntity(ListEntity);
     //    }
     //}
-    public class Music_Deal_LinkShow_Dapper_Repository : MainRepository<Music_Deal_LinkShow_Dapper>
+    public class Music_Deal_LinkShow_Dapper_Repository : MainRepository<Music_Deal_LinkShow>
     {
-        public Music_Deal_LinkShow_Dapper Get(int? Id, Type[] RelationList = null)
+        public Music_Deal_LinkShow Get(int? Id, Type[] RelationList = null)
         {
             var obj = new { Music_Deal_LinkShow_Code = Id };
-            return base.GetById<Music_Deal_LinkShow_Dapper>(obj, RelationList);
+            return base.GetById<Music_Deal_LinkShow>(obj, RelationList);
         }
-        public void Add(Music_Deal_LinkShow_Dapper entity)
+        public void Add(Music_Deal_LinkShow entity)
         {
             base.AddEntity(entity);
         }
-        public void Update(Music_Deal_LinkShow_Dapper entity)
+        public void Update(Music_Deal_LinkShow entity)
         {
-            Music_Deal_LinkShow_Dapper oldObj = Get(entity.Music_Deal_LinkShow_Code);
+            Music_Deal_LinkShow oldObj = Get(entity.Music_Deal_LinkShow_Code);
             base.UpdateEntity(oldObj, entity);
         }
-        public void Delete(Music_Deal_LinkShow_Dapper entity)
+        public void Delete(Music_Deal_LinkShow entity)
         {
             base.DeleteEntity(entity);
         }
-        public IEnumerable<Music_Deal_LinkShow_Dapper> GetAll(Type[] additionalTypes = null)
+        public IEnumerable<Music_Deal_LinkShow> GetAll(Type[] additionalTypes = null)
         {
-            return base.GetAll<Music_Deal_LinkShow_Dapper>(additionalTypes);
+            return base.GetAll<Music_Deal_LinkShow>(additionalTypes);
         }
-        public IEnumerable<Music_Deal_LinkShow_Dapper> SearchFor(object param)
+        public IEnumerable<Music_Deal_LinkShow> SearchFor(object param)
         {
-            return base.SearchForEntity<Music_Deal_LinkShow_Dapper>(param);
+            return base.SearchForEntity<Music_Deal_LinkShow>(param);
         }
     }
-    public class Music_Deal_Vendor_Dapper_Repository : MainRepository<Music_Deal_Vendor_Dapper>
+    public class Music_Deal_Vendor_Dapper_Repository : MainRepository<Music_Deal_Vendor>
     {
-        public Music_Deal_Vendor_Dapper Get(int? Id, Type[] RelationList = null)
+        public Music_Deal_Vendor Get(int? Id, Type[] RelationList = null)
         {
             var obj = new { Music_Deal_Vendor_Code = Id };
-            return base.GetById<Music_Deal_Vendor_Dapper>(obj, RelationList);
+            return base.GetById<Music_Deal_Vendor>(obj, RelationList);
         }
-        public void Add(Music_Deal_Vendor_Dapper entity)
+        public void Add(Music_Deal_Vendor entity)
         {
             base.AddEntity(entity);
         }
-        public void Update(Music_Deal_Vendor_Dapper entity)
+        public void Update(Music_Deal_Vendor entity)
         {
-            Music_Deal_Vendor_Dapper oldObj = Get(entity.Music_Deal_Vendor_Code);
+            Music_Deal_Vendor oldObj = Get(entity.Music_Deal_Vendor_Code);
             base.UpdateEntity(oldObj, entity);
         }
-        public void Delete(Music_Deal_Vendor_Dapper entity)
+        public void Delete(Music_Deal_Vendor entity)
         {
             base.DeleteEntity(entity);
         }
-        public IEnumerable<Music_Deal_Vendor_Dapper> GetAll(Type[] additionalTypes = null)
+        public IEnumerable<Music_Deal_Vendor> GetAll(Type[] additionalTypes = null)
         {
-            return base.GetAll<Music_Deal_Vendor_Dapper>(additionalTypes);
+            return base.GetAll<Music_Deal_Vendor>(additionalTypes);
         }
-        public IEnumerable<Music_Deal_Vendor_Dapper> SearchFor(object param)
+        public IEnumerable<Music_Deal_Vendor> SearchFor(object param)
         {
-            return base.SearchForEntity<Music_Deal_Vendor_Dapper>(param);
+            return base.SearchForEntity<Music_Deal_Vendor>(param);
         }
     }
     public class Deal_Tag_Repository : MainRepository<Deal_Tag>
@@ -1599,9 +1599,9 @@ namespace RightsU_Dapper.DAL.Repository
         }
     }
 
-    public class Music_Deal_Platform_Repository : MainRepository<Music_Deal_Platform_Dapper>
+    public class Music_Deal_Platform_Repository : MainRepository<Music_Deal_Platform>
     {
-        public void DeleteAll(List<Music_Deal_Platform_Dapper> ListEntity)
+        public void DeleteAll(List<Music_Deal_Platform> ListEntity)
         {
             base.DeleteAllEntity(ListEntity);
         }
@@ -1631,7 +1631,7 @@ namespace RightsU_Dapper.DAL.Repository
 
         public IEnumerable<Talent> GetAll(Type[] additionalTypes = null)
         {
-            return base.GetAll<Talent>();
+            return base.GetAll<Talent>(additionalTypes);
         }
         public IEnumerable<Talent> SearchFor(object param)
         {
@@ -2038,7 +2038,7 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public void Update(Country entity)
         {
-            Country oldObj = Get(entity.Country_Code, new Type[] { typeof(Country_Language) }); 
+            Country oldObj = Get(entity.Country_Code,new Type[] { typeof(Country_Language)});
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Country entity)
@@ -3061,6 +3061,336 @@ namespace RightsU_Dapper.DAL.Repository
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Talent_Role entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Deal_Vendor_Repository : MainRepository<Music_Deal_Vendor>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Deal_Vendor> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Deal_Vendor>(additionalTypes);
+        }
+        public IEnumerable<Music_Deal_Vendor> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Deal_Vendor>(param);
+        }
+        public Music_Deal_Vendor Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Talent_Role_Code = Id };
+            return base.GetById<Music_Deal_Vendor>(obj, RelationList);
+        }
+        public void Add(Music_Deal_Vendor entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Deal_Vendor entity)
+        {
+            Music_Deal_Vendor oldObj = Get(entity.Music_Deal_Vendor_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Deal_Vendor entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Channel_Category_Repository : MainRepository<Channel_Category>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Channel_Category> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Channel_Category>(additionalTypes);
+        }
+        public IEnumerable<Channel_Category> SearchFor(object param)
+        {
+            return base.SearchForEntity<Channel_Category>(param);
+        }
+        public Channel_Category Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Channel_Category_Code = Id };
+            return base.GetById<Channel_Category>(obj, RelationList);
+        }
+        public void Add(Channel_Category entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Channel_Category entity)
+        {
+            Channel_Category oldObj = Get(entity.Channel_Category_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Channel_Category entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Deal_Country_Repository : MainRepository<Music_Deal_Country>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Deal_Country> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Deal_Country>(additionalTypes);
+        }
+        public IEnumerable<Music_Deal_Country> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Deal_Country>(param);
+        }
+        public Music_Deal_Country Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Deal_Country_Code = Id };
+            return base.GetById<Music_Deal_Country>(obj, RelationList);
+        }
+        public void Add(Music_Deal_Country entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Deal_Country entity)
+        {
+            Music_Deal_Country oldObj = Get(entity.Music_Deal_Country_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Deal_Country entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Title_Label_Repository : MainRepository<Music_Title_Label>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Title_Label> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Title_Label>(additionalTypes);
+        }
+        public IEnumerable<Music_Title_Label> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Title_Label>(param);
+        }
+        public Music_Title_Label Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Title_Label_Code = Id };
+            return base.GetById<Music_Title_Label>(obj, RelationList);
+        }
+        public void Add(Music_Title_Label entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Title_Label entity)
+        {
+            Music_Title_Label oldObj = Get(entity.Music_Title_Label_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Title_Label entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Title_Talent_Repository : MainRepository<Music_Title_Talent>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Title_Talent> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Title_Talent>(additionalTypes);
+        }
+        public IEnumerable<Music_Title_Talent> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Title_Talent>(param);
+        }
+        public Music_Title_Talent Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Deal_Country_Code = Id };
+            return base.GetById<Music_Title_Talent>(obj, RelationList);
+        }
+        public void Add(Music_Title_Talent entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Title_Talent entity)
+        {
+            Music_Title_Talent oldObj = Get(entity.Music_Title_Talent_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Title_Talent entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Type_Repository : MainRepository<Music_Type>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Type> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Type>(additionalTypes);
+        }
+        public IEnumerable<Music_Type> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Type>(param);
+        }
+        public Music_Type Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Type_Code = Id };
+            return base.GetById<Music_Type>(obj, RelationList);
+        }
+        public void Add(Music_Type entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Type entity)
+        {
+            Music_Type oldObj = Get(entity.Music_Type_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Type entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Title_Language_Repository : MainRepository<Music_Title_Language>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Title_Language> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Title_Language>(additionalTypes);
+        }
+        public IEnumerable<Music_Title_Language> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Title_Language>(param);
+        }
+        public Music_Title_Language Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Title_Language_Code = Id };
+            return base.GetById<Music_Title_Language>(obj, RelationList);
+        }
+        public void Add(Music_Title_Language entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Title_Language entity)
+        {
+            Music_Title_Language oldObj = Get(entity.Music_Title_Language_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Title_Language entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Title_Theme_Repository : MainRepository<Music_Title_Theme>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Title_Theme> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Title_Theme>(additionalTypes);
+        }
+        public IEnumerable<Music_Title_Theme> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Title_Theme>(param);
+        }
+        public Music_Title_Theme Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Title_Theme_Code = Id };
+            return base.GetById<Music_Title_Theme>(obj, RelationList);
+        }
+        public void Add(Music_Title_Theme entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Title_Theme entity)
+        {
+            Music_Title_Theme oldObj = Get(entity.Music_Title_Theme_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Title_Theme entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Deal_Language_Repository : MainRepository<Music_Deal_Language>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Deal_Language> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Deal_Language>(additionalTypes);
+        }
+        public IEnumerable<Music_Deal_Language> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Deal_Language>(param);
+        }
+        public Music_Deal_Language Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Deal_Language_Code = Id };
+            return base.GetById<Music_Deal_Language>(obj, RelationList);
+        }
+        public void Add(Music_Deal_Language entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Deal_Language entity)
+        {
+            Music_Deal_Language oldObj = Get(entity.Music_Deal_Language_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Deal_Language entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    public class Music_Deal_DealType_Repository : MainRepository<Music_Deal_DealType>
+    {
+        //public Grade_Master_Repository(string conStr) : base(conStr) { }
+
+        public IEnumerable<Music_Deal_DealType> GetAll(Type[] additionalTypes = null)
+        {
+            return base.GetAll<Music_Deal_DealType>(additionalTypes);
+        }
+        public IEnumerable<Music_Deal_DealType> SearchFor(object param)
+        {
+            return base.SearchForEntity<Music_Deal_DealType>(param);
+        }
+        public Music_Deal_DealType Get(int? Id, Type[] RelationList = null)
+        {
+            var obj = new { Music_Deal_Code = Id };
+            return base.GetById<Music_Deal_DealType>(obj, RelationList);
+        }
+        public void Add(Music_Deal_DealType entity)
+        {
+            //Talent oldObj = Get(entity.Talent_Code);
+            //base.UpdateEntity(oldObj, entity);
+            base.AddEntity(entity);
+        }
+        public void Update(Music_Deal_DealType entity)
+        {
+            Music_Deal_DealType oldObj = Get(entity.Music_Deal_Type_Code);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Music_Deal_DealType entity)
         {
             base.DeleteEntity(entity);
         }

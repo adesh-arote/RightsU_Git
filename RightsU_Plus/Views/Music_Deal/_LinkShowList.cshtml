@@ -1,17 +1,16 @@
-﻿@using UTOFrameWork.FrameworkClasses;
-@model List<RightsU_Entities.USP_Music_Deal_Link_Show_Result>
+﻿@model List<RightsU_Dapper.Entity.USP_Music_Deal_Link_Show_Result>
+@using UTOFrameWork.FrameworkClasses;
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
-    }     
+    }
 }
 <style>
     .mark {
         background-color: yellow;
     }
-    
 </style>
 <div class="scale_table_block" id="divLinkShow">
     <table class="table table-bordered table-hover" id="tblLinkShow">
@@ -64,21 +63,21 @@
                                     channelNameSelected = arrChannels[0];
                                     channelNameUnselected = arrChannels[1];
                                 }
-                                
+
                                 <span class="mark">@(string.IsNullOrEmpty(channelNameUnselected) ? channelNameSelected : channelNameSelected + ", ")</span>
                                 <span> @(channelNameUnselected)</span>
                             </div>
                         </td>
                     </tr>
-                                            i++;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td colspan="@colspanCount">@objMessageKey.Norecordfound</td>
-                                        </tr>
-                                    }
+                    i++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="@colspanCount">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
