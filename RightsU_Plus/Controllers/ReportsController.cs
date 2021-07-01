@@ -3013,7 +3013,7 @@ namespace RightsU_Plus.Controllers
 
                 if (dealCode == GlobalParams.ModuleCodeForAcqDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[8];
+                    ReportParameter[] parm = new ReportParameter[9];
                     parm[0] = new ReportParameter("ModuleCode", dealCode);
                     parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
                     parm[2] = new ReportParameter("UserCode", userName);
@@ -3022,12 +3022,12 @@ namespace RightsU_Plus.Controllers
                     parm[5] = new ReportParameter("EndDate", endDate);
                     parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
                     parm[7] = new ReportParameter("DateFormat", dateformat);
-                    //parm[7] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    parm[8] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
                     rptViewer = BindReport(parm, "rptDealStatusReport");
                 }
                 else if (dealCode == GlobalParams.ModuleCodeForSynDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[8];
+                    ReportParameter[] parm = new ReportParameter[9];
                     parm[0] = new ReportParameter("ModuleCode", dealCode);
                     parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
                     parm[2] = new ReportParameter("UserCode", userName);
@@ -3035,7 +3035,8 @@ namespace RightsU_Plus.Controllers
                     parm[4] = new ReportParameter("StartDate", startDate);
                     parm[5] = new ReportParameter("EndDate", endDate);
                     parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
-                    parm[7] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    parm[7] = new ReportParameter("DateFormat", dateformat);
+                    parm[8] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
                     rptViewer = BindReport(parm, "rptDealStatusReport");
                 }
             }
