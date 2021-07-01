@@ -1464,6 +1464,8 @@
     <Build Include="dbo\Stored Procedures\USP_Get_EmailConfig_Users.sql" />
     <Build Include="dbo\Tables\System_Parameter.sql" />
     <Build Include="dbo\Views\System_Parameter_New.sql" />
+    <Build Include="dbo\Stored Procedures\USPDealStatusReport.sql" />
+    <Build Include="dbo\Stored Procedures\USPDealStatusReportFilter.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
