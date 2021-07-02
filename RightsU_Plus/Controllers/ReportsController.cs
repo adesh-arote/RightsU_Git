@@ -2950,7 +2950,7 @@ namespace RightsU_Plus.Controllers
         }
         #endregion
 
-        #region
+        #region --- Deal Status Report----
 
         public ActionResult DealStatusReport()
         {
@@ -3047,6 +3047,19 @@ namespace RightsU_Plus.Controllers
 
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
+        }
+
+        public  JsonResult BindUserDropdown(string businessUnitcode)
+        {
+            dynamic result = "";
+            string[] arr_BUCodes = businessUnitcode.Split(',');
+
+
+            int[] arrUsers =  new Users_Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arr_BUCodes.Contains(x.Business_Unit_Code.ToString())).Select(s => s.Users_Code ?? 0).ToArray();
+
+            result = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && arrUsers.Contains(x.Users_Code)), "Users_Code", "First_Name").ToList();
+
+            return Json(result);
         }
 
         #endregion

@@ -488,6 +488,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -505,7 +506,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Agreement_Number.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -535,7 +539,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Content_Category.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -565,7 +572,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Licensor.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -596,7 +606,8 @@
                                 <TextRun>
                                   <Value>=Fields!Agreement_Date.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <Format>=Parameters!DateFormat.Value</Format>
                                   </Style>
                                 </TextRun>
@@ -629,7 +640,8 @@
                                 <TextRun>
                                   <Value>=Fields!Version.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -661,7 +673,8 @@
                                 <TextRun>
                                   <Value>=Fields!Status.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -693,7 +706,8 @@
                                 <TextRun>
                                   <Value>=Fields!Last_Updated_On.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <Format>=Parameters!DateFormat.Value</Format>
                                   </Style>
                                 </TextRun>
@@ -726,7 +740,8 @@
                                 <TextRun>
                                   <Value>=Fields!User.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -758,7 +773,8 @@
                                 <TextRun>
                                   <Value>=Fields!Remarks.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -799,13 +815,17 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
+                  <FixedData>true</FixedData>
                   <KeepWithGroup>After</KeepWithGroup>
+                  <RepeatOnNewPage>true</RepeatOnNewPage>
                 </TablixMember>
                 <TablixMember>
                   <Group Name="Details" />
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
+            <FixedRowHeaders>true</FixedRowHeaders>
+            <NoRowsMessage>No Records Found</NoRowsMessage>
             <DataSetName>DataSet1</DataSetName>
             <Height>1.2cm</Height>
             <Width>36.16005cm</Width>
@@ -825,7 +845,7 @@
                   <Width>0.31806cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>18.91708cm</Width>
+                  <Width>16.53583cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1607,9 +1627,9 @@
             <PageBreak>
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
-            <Top>1.66742cm</Top>
+            <Top>1.78193cm</Top>
             <Height>4.16031cm</Height>
-            <Width>23.36145cm</Width>
+            <Width>20.9802cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -1618,7 +1638,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>2.85374in</Height>
+        <Height>3.33947in</Height>
         <Style />
       </Body>
       <Width>20.47045in</Width>
@@ -1661,6 +1681,11 @@
     </ReportParameter>
     <ReportParameter Name="AgreementNo">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
       <AllowBlank>true</AllowBlank>
       <Prompt>Agreement No</Prompt>
     </ReportParameter>
@@ -1671,6 +1696,11 @@
     </ReportParameter>
     <ReportParameter Name="Show_Expired">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
       <AllowBlank>true</AllowBlank>
       <Prompt>Show Expired</Prompt>
     </ReportParameter>
