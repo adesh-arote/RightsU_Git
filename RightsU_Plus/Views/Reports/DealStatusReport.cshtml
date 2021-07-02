@@ -23,13 +23,14 @@
 <script>
     URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNoOnBU_CodeDealStatus", "Reports")';
     URL_BindDealStatusReport = '@Url.Action("BindDealStatusReport", "Reports")';
+    URL_BindUserDropdown = '@Url.Action("BindUserDropdown", "Reports")';
 
     $(document).ready(function () {
-        $('#txtStart').change(function () {
-            SetMinDt();
+        $('#txtStart_DS').change(function () {
+            SetMinDtDS();
         });
-        $('#txtEnd').change(function () {
-            SetMaxDt();
+        $('#txtEnd_DS').change(function () {
+            SetMaxDtDS();
         });
 
         $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
@@ -44,6 +45,13 @@
         $("#ddlUserName").SumoSelect();
         $("#ddlUserName")[0].sumo.reload();
         $("#ddlUserName_chosen").hide();
+
+        $("#ddlDeal").change(function () {
+            debugger;
+            $('#txtAgreementNo').val('');
+            $('#hdnAcqDealCode').val('0');
+        });
+
     });
 
     function populateAgreementNo(evt) {
@@ -149,6 +157,10 @@
         var businessUnitcode = $('#ddlBusinessUnitMultiSelect').val().join(',');
 
         var acqDealCode = $('#hdnAcqDealCode').val();
+        if ($("#txtAgreementNo").val() == "") {
+            acqDealCode = "0";
+        }
+        
         var returnVal = true;
         if (businessUnitcode == 0 || businessUnitcode == undefined) {
             $('#ddlBusinessUnitMultiSelect').attr('required', true);
@@ -165,8 +177,8 @@
         //        showAlert("E", "Invalid Agreement No.", 'txtAgreementNo')
         //}
 
-        var startDate = $('#txtStart').val();
-        var endDate = $('#txtEnd').val();
+        var startDate = $('#txtStart_DS').val();
+        var endDate = $('#txtEnd_DS').val();
 
 
         const date1 = new Date(MakeDateFormate(startDate));
@@ -183,12 +195,12 @@
             returnVal = false;
         }
         else if ((startDate != "" && endDate == "")) {
-            $('#txtEnd').attr('required', true);
+            $('#txtEnd_DS').attr('required', true);
             showAlert("E", "Please select End Date")
             returnVal = false;
         }
         else if ((endDate != "" && startDate == "")) {
-            $('#txtStart').attr('required', true);
+            $('#txtStart_DS').attr('required', true);
             showAlert("E", "Please select Start Date")
             returnVal = false;
         }
@@ -239,18 +251,58 @@
         debugger;
         $("#ddlUserName").val("0");
         $("#ddlUserName")[0].sumo.reload();
+        
 
-        $('#txtStart').val('');
-        $('#txtEnd').val('');
+        $('#txtStart_DS').val('');
+        $('#txtEnd_DS').val('');
+
+        SetMinDtDS();
+        SetMaxDtDS();
         $('#txtAgreementNo').val('');
         $('#hdnAcqDealCode').val('0');
     }
 
-    function SetMaxDt() {
-        setMinMaxDates('txtStart', '', $('#txtEnd').val());
+    function SetMaxDtDS() {
+        setMinMaxDates('txtStart_DS', '', $('#txtEnd_DS').val());
     }
-    function SetMinDt() {
-        setMinMaxDates('txtEnd', $('#txtStart').val(), '');
+    function SetMinDtDS() {
+        setMinMaxDates('txtEnd_DS', $('#txtStart_DS').val(), '');
+    }
+
+    function BindUserDropdown() {
+        debugger;
+        var returnVal = true;
+        var businessUnitcode = $('#ddlBusinessUnitMultiSelect').val().join(',');
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindUserDropdown,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    businessUnitcode: businessUnitcode,
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $("#ddlUserName").empty();
+                        $(result).each(function (index, item) {
+                            $("#ddlUserName").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlUserName").SumoSelect();
+                        $("#ddlUserName")[0].sumo.reload();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
     }
 
 </script>
@@ -278,7 +330,7 @@
         padding: 2px;
     }
 
-    #txtStart, #txtEnd {
+    #txtStart_DS, #txtEnd_DS {
         width: 102px !important;
     }
 </style>
@@ -295,7 +347,7 @@
                         </td>
                         <td style="width:8%;"><label class="bold">@objMessageKey.BusinessUnit</label></td>
                         <td style="width:13%;">
-                            @Html.DropDownList("BusinessUnitMulti", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnitMultiSelect", @multiple = "multiple" })
+                            @Html.DropDownList("BusinessUnitMulti", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnitMultiSelect", @multiple = "multiple", @onchange = "BindUserDropdown()" })
                         </td>
 
                         <td style="width:6%"><b>@objMessageKey.DateFormat:</b></td>
@@ -322,10 +374,10 @@
                         <td style="width:0%"><b>Activity Date :</b></td>
                         <td style="width:0%">
                             <input type="hidden" id="hdnStartDate" />
-                            <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
+                            <input type="text" class="isDatepicker" id="txtStart_DS" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
                                    title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
 
-                            <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="DD/MM/YYYY"
+                            <input type="text" class="isDatepicker" id="txtEnd_DS" name="End_Date" placeholder="DD/MM/YYYY"
                                    title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
 
 
@@ -340,7 +392,7 @@
                         <td></td>
                         <td style="width:0%"><b>@objMessageKey.EndDate: </b></td>
                         <td style="width:0%">
-                            <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="DD/MM/YYYY"
+                            <input type="text" class="isDatepicker" id="txtEnd_DS" name="End_Date" placeholder="DD/MM/YYYY"
                                    title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
                         </td>
                     </tr>*@
