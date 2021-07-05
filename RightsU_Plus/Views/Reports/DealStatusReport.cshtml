@@ -50,6 +50,20 @@
             debugger;
             $('#txtAgreementNo').val('');
             $('#hdnAcqDealCode').val('0');
+
+            $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
+            $('#ddlBusinessUnitMultiSelect').each(function () {
+                $(this)[0].sumo.reload();
+                $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+                $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+                $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+                $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css({ paddingRight: '35px', lineHeight: '15px' });
+            });
+            $("#ddlBusinessUnitMultiSelect")[0].sumo.reload();
+
+            $("#ddlUserName").SumoSelect();
+            $("#ddlUserName")[0].sumo.reload();
+            $("#ddlUserName_chosen").hide();
         });
 
     });
@@ -296,6 +310,8 @@
                         });
                         $("#ddlUserName").SumoSelect();
                         $("#ddlUserName")[0].sumo.reload();
+
+                      
                     }
                 },
                 error: function (result) {
