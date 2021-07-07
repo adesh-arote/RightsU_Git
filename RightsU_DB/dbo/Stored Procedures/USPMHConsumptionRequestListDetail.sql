@@ -110,7 +110,10 @@ SET FMTONLY OFF
 			 Where MRD.MHRequestCode = MR.MHRequestCode
 			 FOR XML PATH(''), TYPE)
 			.value('.','NVARCHAR(MAX)'),1,2,' '),'' ) MusicLabel,
-	ISNULL(MR.MHRequestCode,0) AS RequestCode,ISNULL(T.Title_Name,'') AS Title_Name ,ISNULL(MR.EpisodeFrom,'') AS EpisodeFrom,ISNULL(MR.EpisodeTo,'') AS EpisodeTo,CONVERT(DATE, ISNULL(MR.TelecastFrom,'')) AS TelecastFrom,ISNULL(MR.TelecastTo,'') AS TelecastTo,COUNT(MRD.MHRequestCode) AS CountRequest,ISNULL(MRS.RequestStatusName,'') AS Status,ISNULL(U.Login_Name,'') AS Login_Name,ISNULL(C.Channel_Name,'') AS ChannelName,
+	ISNULL(MR.MHRequestCode,0) AS RequestCode,ISNULL(T.Title_Name,'') AS Title_Name ,ISNULL(MR.EpisodeFrom,'') AS EpisodeFrom,ISNULL(MR.EpisodeTo,'') AS EpisodeTo,CONVERT(DATE, ISNULL(MR.TelecastFrom,'')) AS TelecastFrom,ISNULL(MR.TelecastTo,'') AS TelecastTo,COUNT(MRD.MHRequestCode) AS CountRequest,
+	CASE WHEN MRD.IsApprove = 'P' THEN 'Pending'
+	WHEN MRD.IsApprove = 'Y' THEN 'Approve'
+	ELSE 'Reject' END AS Status,ISNULL(U.Login_Name,'') AS Login_Name,ISNULL(C.Channel_Name,'') AS ChannelName,
 	ISNULL(MR.RequestedDate,'') AS RequestDate--, MRD.MusicTitleCode
 	--INTO #tempRequest
 	FROM MHRequest MR WITH(NOLOCK)
@@ -125,7 +128,7 @@ SET FMTONLY OFF
 	AND
 	--((REPLACE(CONVERT(NVARCHAR,CreatedOn, 106),' ', '-') BETWEEN REPLACE(CONVERT(NVARCHAR,@FromDate, 106),' ', '-') AND REPLACE(CONVERT(NVARCHAR,@ToDate, 106),' ', '-')))
 	((CAST(MR.RequestedDate AS DATE) BETWEEN @FromDate AND @ToDate))
-	GROUP BY MRD.MHRequestCode,MR.RequestID,T.Title_Name ,MR.EpisodeFrom,MR.EpisodeTo,MR.TelecastFrom,MR.TelecastTo,MRS.RequestStatusName,MRS.RequestStatusName,U.Login_Name,MR.RequestedDate,MR.MHRequestCode,C.Channel_Name
+	GROUP BY MRD.MHRequestCode,MR.RequestID,T.Title_Name ,MR.EpisodeFrom,MR.EpisodeTo,MR.TelecastFrom,MR.TelecastTo,MRD.IsApprove,MRS.RequestStatusName,U.Login_Name,MR.RequestedDate,MR.MHRequestCode,C.Channel_Name
 
 	SELECT @RecordCount = COUNT(*) FROM #TempConsumptionList
 	Print 'Recordcount= ' +CAST(@RecordCount AS NVARCHAR)
@@ -170,3 +173,5 @@ END
 --DECLARE @RecordCount INT
 --EXEC USPMHConsumptionRequestList 1,1287,'L','Y',10,1,@RecordCount OUTPUT,'','','','','',''
 --PRINT 'RecordCount: '+CAST( @RecordCount AS NVARCHAR)
+GO
+

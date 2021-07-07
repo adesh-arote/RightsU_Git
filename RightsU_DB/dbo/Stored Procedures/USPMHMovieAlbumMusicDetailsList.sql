@@ -7,8 +7,10 @@ BEGIN
 SET FMTONLY OFF
 	
 	--DECLARE 
-	--@RequestTypeCode INT = 3,
+	--@RequestTypeCode INT = 2,
 	--@UsersCode INT = 293
+
+	
 
 	IF(@RequestTypeCode = 2)
 	BEGIN
@@ -16,7 +18,12 @@ SET FMTONLY OFF
 		CASE WHEN MRD.MovieAlbum = ''A'' THEN ''Album'' ELSE ''Movie'' END AS MovieAlbum,
 		CASE 
 			WHEN MRD.CreateMap = ''C'' THEN ''Create'' WHEN MRD.CreateMap = ''M'' THEN ''Map'' ELSE ''Pending'' 
-		END AS CreateMap,ISNULL(MRS.RequestStatusName,'''') AS Status,ISNULL(U.Login_Name,'''') AS RequestedBy,ISNULL(MR.RequestedDate,'''') AS RequestDate, MRD.Remarks
+		END AS CreateMap,
+		CASE 
+			WHEN MRD.IsApprove = ''P'' THEN ''Pending''
+			WHEN MRD.IsApprove = ''Y'' THEN ''Approve''
+			ELSE ''Reject'' 
+		END AS Status,ISNULL(U.Login_Name,'''') AS RequestedBy,ISNULL(MR.RequestedDate,'''') AS RequestDate, MRD.Remarks
 		FROM MHRequest MR
 		LEFT JOIN MHRequestStatus MRS ON MRS.MHRequestStatusCode = MR.MHRequestStatusCode
 		LEFT JOIN MHRequestDetails MRD ON MRD.MHRequestCode = MR.MHRequestCode
@@ -32,7 +39,12 @@ SET FMTONLY OFF
 		CASE WHEN MRD.MovieAlbum = ''A'' THEN ''Album'' ELSE ''Movie'' END AS MovieAlbum,
 		CASE 
 			WHEN MRD.CreateMap = ''C'' THEN ''Create'' WHEN MRD.CreateMap = ''M'' THEN ''Map'' ELSE ''Pending'' 
-		END AS CreateMap,ISNULL(MRS.RequestStatusName,'''') AS Status,ISNULL(U.Login_Name,'''') AS RequestedBy,ISNULL(MR.RequestedDate,'''') AS RequestDate, MRD.Remarks
+		END AS CreateMap,
+		CASE 
+			WHEN MRD.IsApprove = ''P'' THEN ''Pending''
+			WHEN MRD.IsApprove = ''Y'' THEN ''Approve''
+			ELSE ''Reject'' 
+		END AS Status,ISNULL(U.Login_Name,'''') AS RequestedBy,ISNULL(MR.RequestedDate,'''') AS RequestDate, MRD.Remarks
 		FROM MHRequest MR
 		LEFT JOIN MHRequestStatus MRS ON MRS.MHRequestStatusCode = MR.MHRequestStatusCode
 		LEFT JOIN MHRequestDetails MRD ON MRD.MHRequestCode = MR.MHRequestCode
@@ -43,7 +55,5 @@ SET FMTONLY OFF
 		WHERE MR.MHRequestTypeCode = '+ @RequestTypeCode +' AND MR.VendorCode In (Select Vendor_Code From MHUsers Where Users_Code = '+ @UsersCode +') ORDER BY CAST(RequestedDate AS DATETIME) DESC')
 	END
 END
-
---SELECT * FROM MHRequest
 GO
 

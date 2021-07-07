@@ -19,7 +19,6 @@ AS
 BEGIN
 SET FMTONLY OFF  
 	
-	--BEGIN
 	--DECLARE
 	--@MusicLabelCode INT = 0,
 	--@MusicTrack NVARCHAR(50) = '',
@@ -27,16 +26,16 @@ SET FMTONLY OFF
 	--@GenreCode INT = 0,
 	--@TalentName NVARCHAR(50)= '',
 	--@Tag NVARCHAR(50) = '',
-	--@MHPlayListCode INT = 1,
-	--@PagingRequired NVARCHAR(2) = 'Y',
-	--@PageSize INT = 2,
-	--@PageNo INT = 1,
+	--@MHPlayListCode INT = 2,
+	--@PagingRequired NVARCHAR(2) = 'N',
+	--@PageSize INT = 25,
+	--@PageNo INT = 0,
 	--@ChannelCode INT = 1,
 	--@TitleCode INT = 8504,
 	--@MusicLanguageCode INT = 0,
 	--@RecordCount INT,
-	--@SortBy NVARCHAR(50) = 'Music_Title_Code',
-	--@Order NVARCHAR(50) = 'DESC'  
+	--@SortBy NVARCHAR(50) = 'MusicTrack',
+	--@Order NVARCHAR(50) = 'ASC'  
 
 	IF(OBJECT_ID('TEMPDB..#TempMusicTrackList') IS NOT NULL)
 		DROP TABLE #TempMusicTrackList
@@ -59,14 +58,15 @@ SET FMTONLY OFF
 	Music_Album_Code INT,
 	MusicTrack NVARCHAR(MAX),
 	Movie NVARCHAR(MAX),
-	Genre NVARCHAR(50),
+	Genre NVARCHAR(MAX),
 	Tag NVARCHAR(MAX),
-	MusicLabel NVARCHAR(50),
+	MusicLabel NVARCHAR(MAX),
 	--Talent NVARCHAR(MAX),
 	StarCast NVARCHAR(MAX),
 	Singers NVARCHAR(MAX),
 	MusicComposer NVARCHAR(MAX),
-	MusicLanguage NVARCHAR(MAX)
+	MusicLanguage NVARCHAR(MAX),
+	MHPlayListSongCode INT
 	)
 
 	CREATE TABLE #TempMusicTrackListFinal(
@@ -75,14 +75,15 @@ SET FMTONLY OFF
 	Music_Album_Code INT,
 	MusicTrack NVARCHAR(MAX),
 	Movie NVARCHAR(MAX),
-	Genre NVARCHAR(50),
+	Genre NVARCHAR(MAX),
 	Tag NVARCHAR(MAX),
-	MusicLabel NVARCHAR(50),
+	MusicLabel NVARCHAR(MAX),
 	--Talent NVARCHAR(MAX),
 	StarCast NVARCHAR(MAX),
 	Singers NVARCHAR(MAX),
 	MusicComposer NVARCHAR(MAX),
-	MusicLanguage NVARCHAR(MAX)
+	MusicLanguage NVARCHAR(MAX),
+	MHPlayListSongCode INT
 	)
 
 	CREATE TABLE #tempStuff(
@@ -122,7 +123,7 @@ SET FMTONLY OFF
 	INNER JOIN Talent T WITH(NOLOCK) ON T.Talent_Code = MTT.Talent_Code
 	--INNER JOIN Talent_Role TR ON TR.Talent_Code = T.Talent_Code
 	INNER JOIN ROLE R WITH(NOLOCK) ON R.Role_Code = MTT.Role_Code
-	Where R.Role_Code = 2 Order by T.Talent_Code
+	Where R.Role_Code = 2 Order by Talent_Code
 
 	INSERT INTO #tempStuff2(Talent_Code,Talent_Name,Role_Name,Music_Title_Code)
 	Select T.Talent_Code,T.Talent_Name,R.Role_Name,MTT.Music_Title_Code 
@@ -130,7 +131,7 @@ SET FMTONLY OFF
 	INNER JOIN Talent T WITH(NOLOCK) ON T.Talent_Code = MTT.Talent_Code
 	--INNER JOIN Talent_Role TR ON TR.Talent_Code = T.Talent_Code
 	INNER JOIN ROLE R WITH(NOLOCK) ON R.Role_Code = MTT.Role_Code
-	Where R.Role_Code= '13' Order by T.Talent_Code
+	Where R.Role_Code= '13' Order by Talent_Code
 
 	INSERT INTO #tempStuff3(Talent_Code,Talent_Name,Role_Name,Music_Title_Code)
 	Select T.Talent_Code,T.Talent_Name,R.Role_Name,MTT.Music_Title_Code 
@@ -138,13 +139,13 @@ SET FMTONLY OFF
 	INNER JOIN Talent T WITH(NOLOCK) ON T.Talent_Code = MTT.Talent_Code
 	--INNER JOIN Talent_Role TR ON TR.Talent_Code = T.Talent_Code
 	INNER JOIN ROLE R WITH(NOLOCK) ON R.Role_Code = MTT.Role_Code
-	Where R.Role_Name= '21' Order by T.Talent_Code
+	Where R.Role_Name= '21' Order by Talent_Code
 	if(@PageNo = 0)
         Set @PageNo = 1
 
 	IF(@MHPlayListCode > 0)
 	BEGIN
-		INSERT INTO #TempMusicTrackList(Music_Title_Code,Music_Album_Code,MusicTrack,Movie,Genre,Tag,MusicLabel,StarCast,Singers,MusicComposer, MusicLanguage)
+		INSERT INTO #TempMusicTrackList(Music_Title_Code,Music_Album_Code,MusicTrack,Movie,Genre,Tag,MusicLabel,StarCast,Singers,MusicComposer, MusicLanguage,MHPlayListSongCode)
 		SELECT MT.Music_Title_Code,ISNULL(MT.Music_Album_Code,'') AS Music_Album_Code,MT.Music_Title_Name AS MusicTrack,ISNULL(MA.Music_Album_Name,'') AS Movie,ISNULL(G.Genres_Name,'') AS Genre,ISNULL(MT.Music_Tag,'') AS Tag,ISNULL(ML.MusicLabelName,'') AS MusicLabel
 		--,STUFF((SELECT DISTINCT ', ' + CAST(T.Talent_Name AS VARCHAR(Max)) [text()]
 		--	FROM Music_Title_Talent MTT
@@ -170,7 +171,7 @@ SET FMTONLY OFF
 			Where ts.Music_Title_Code = MT.Music_Title_Code
 			FOR XML PATH(''), TYPE)
 			.value('.','NVARCHAR(MAX)'),1,2,' '
-		)  AS MusicComposer, mlng.Language_Name AS MusicLanguage
+		)  AS MusicComposer, mlng.Language_Name AS MusicLanguage, MHPLS.MHPlayListSongCode
 		FROM Music_Title MT WITH(NOLOCK)
 		LEFT JOIN Genres G WITH(NOLOCK) ON G.Genres_Code = MT.Genres_Code
 		INNER JOIN Music_Title_Label MTL WITH(NOLOCK) ON MTL.Music_Title_Code = MT.Music_Title_Code AND MTL.Effective_To IS NULL
@@ -185,14 +186,14 @@ SET FMTONLY OFF
 		SELECT @RecordCount = COUNT(*) FROM #TempMusicTrackList
 		print 'Record Count: ' +CAST(@RecordCount AS NVARCHAR)
 
-		EXEC ('INSERT INTO #TempMusicTrackListFinal(Music_Title_Code,Music_Album_Code,MusicTrack,Movie,Genre,Tag,MusicLabel,StarCast,Singers,MusicComposer)
-				Select Music_Title_Code,Music_Album_Code,MusicTrack,Movie,Genre,Tag,MusicLabel,ISNULL(StarCast,'''') AS StarCast,ISNULL(Singers,'''') AS Singers,ISNULL(MusicComposer,'''') AS MusicComposer 
+		EXEC ('INSERT INTO #TempMusicTrackListFinal(Music_Title_Code,Music_Album_Code,MusicTrack,Movie,Genre,Tag,MusicLabel,StarCast,Singers,MusicComposer,MHPlayListSongCode)
+				Select Music_Title_Code,Music_Album_Code,MusicTrack,Movie,Genre,Tag,MusicLabel,ISNULL(StarCast,'''') AS StarCast,ISNULL(Singers,'''') AS Singers,ISNULL(MusicComposer,'''') AS MusicComposer,MHPlayListSongCode 
 				from #TempMusicTrackList ORDER BY '+ @SortBy + ' '+ @Order)
 
 		DELETE from  #TempMusicTrackListFinal
 		WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
 
-		SELECT Music_Title_Code,Music_Album_Code,MusicTrack,Movie,Genre,Tag,MusicLabel,StarCast,Singers,MusicComposer FROM #TempMusicTrackListFinal
+		SELECT Music_Title_Code,Music_Album_Code,MusicTrack,Movie,Genre,Tag,MusicLabel,StarCast,Singers,MusicComposer,MHPlayListSongCode FROM #TempMusicTrackListFinal
 
 	END
 	ELSE
