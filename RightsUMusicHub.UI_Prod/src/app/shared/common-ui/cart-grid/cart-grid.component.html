@@ -216,7 +216,7 @@
                       alt="Playlists" (click)="playListClick()" />
 
                     <ul class="dropdown-menu dropdown-menu-right grid-menu">
-                      <li class="dropdown-header">Play Lists</li>
+                      <li class="dropdown-header">Playlists</li>
 
                       <li class="searchbody">
                         <!-- <div id="searchbody"> -->
@@ -335,7 +335,7 @@
                       alt="Playlists" (click)="playListClick()" />
 
                     <ul class="dropdown-menu dropdown-menu-right grid-menu">
-                      <li class="dropdown-header">Play Lists</li>
+                      <li class="dropdown-header">Playlists</li>
 
                       <li class="searchbody">
                         <!-- <div id="searchbody"> -->
@@ -529,7 +529,7 @@
 <p-dialog [(visible)]="displayAddNewPlayList" [blockScroll]="true" [positionTop]="60" [modal]="true" [width]="400"
   [draggable]="false">
   <p-header>
-    Play List
+    Playlist
   </p-header>
   <div class="row">
     <div class="col-md-12">
@@ -537,8 +537,8 @@
             
       </div> -->
       <!-- <div class="col-md-9"> -->
-      Play List Name:
-      <input id="input" class="ReqTextBox" type="text" placeholder="Play List" maxlength="50"
+      Playlist Name:
+      <input id="input" class="ReqTextBox" type="text" placeholder="Playlist" maxlength="50"
         [(ngModel)]="newPlayListName" autocomplete="off"
         (ngModelChange)="newPlayListName.trim()==''? newPlayListName='':newPlayListName=newPlayListName" pInputText
         [(ngModel)]="text">
