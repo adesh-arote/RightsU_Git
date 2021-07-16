@@ -367,7 +367,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                status = "";
+                status = "E";
                 message = resultSet;
             }
 

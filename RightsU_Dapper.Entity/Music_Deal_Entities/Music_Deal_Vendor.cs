@@ -14,12 +14,13 @@ namespace RightsU_Dapper.Entity
     using System.Collections.Generic;
 
     [Table("Music_Deal_Vendor")]
-    public partial class Music_Deal_Vendor_Dapper
+    public partial class Music_Deal_Vendor
     {
         [PrimaryKey]
         public int? Music_Deal_Vendor_Code { get; set; }
-        [ForeignKeyReference(typeof(Music_Deal_Dapper))]
+        [ForeignKeyReference(typeof(Music_Deal))]
         public Nullable<int> Music_Deal_Code { get; set; }
+        [ForeignKeyReference(typeof(Vendor))]
         public Nullable<int> Vendor_Code { get; set; }
     
         //public virtual Music_Deal_Dapper Music_Deal { get; set; }

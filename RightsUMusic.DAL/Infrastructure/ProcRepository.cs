@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace RightsUMusic.DAL.Infrastructure
 {
@@ -27,7 +28,7 @@ namespace RightsUMusic.DAL.Infrastructure
                 return (IEnumerable<T>)list.ToList();
             }
         }
-        public IEnumerable<T> ExecuteSQLProcedure<T>(string query, DynamicParameters param)
+        public IEnumerable<T> ExecuteSQLProcedure<T>(string query, IDynamicParameters param)
         {
             using (var connection = dbConnection.Connection())
             {

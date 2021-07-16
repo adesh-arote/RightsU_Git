@@ -1,4 +1,4 @@
-﻿@model RightsU_Entities.Music_Title
+﻿@model RightsU_Dapper.Entity.Music_Title
 @using System.Configuration;
 @using UTOFrameWork.FrameworkClasses
 @{
@@ -65,10 +65,10 @@
     <div class="main_section">
         <section class="rightsU_container clearfix">
             @{
-                RightsU_BLL.Language_Service objLS = new RightsU_BLL.Language_Service(objLoginEntity.ConnectionStringName);
-                RightsU_BLL.Music_Type_Service objMTS = new RightsU_BLL.Music_Type_Service(objLoginEntity.ConnectionStringName);
-    //RightsU_BLL.Talent_Service objT = new RightsU_BLL.Talent_Service(objLoginEntity.ConnectionStringName);
-    //var lstTalent = new RightsU_BLL.USP_Service().USP_Get_Talent_Name().ToList();
+                RightsU_Dapper.BLL.Services.Language_Service objLS = new RightsU_Dapper.BLL.Services.Language_Service();
+                RightsU_Dapper.BLL.Services.Music_Type_Service objMTS = new RightsU_Dapper.BLL.Services.Music_Type_Service();
+                //RightsU_BLL.Talent_Service objT = new RightsU_BLL.Talent_Service(objLoginEntity.ConnectionStringName);
+                //var lstTalent = new RightsU_BLL.USP_Service().USP_Get_Talent_Name().ToList();
             }
             @using (Html.BeginForm("Save", "Title", FormMethod.Post, new { @enctype = "multipart/form-data" }))
             {
@@ -177,7 +177,7 @@
                                                     string TitleType = "";
                                                     if (@Model.Music_Type_Code > 0)
                                                     {
-                                                        TitleType = objMTS.GetById(Model.Music_Type_Code ?? 0).Music_Type_Name;
+                                                        TitleType = objMTS.GetByID(Model.Music_Type_Code ?? 0).Music_Type_Name;
                                                     }
                                                     }
                                                     @Html.Label("MusicType", TitleType)

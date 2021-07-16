@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_Dapper.Entity.Master_Entities
+namespace RightsU_Dapper.Entity
 {
     using System;
     using System.Collections.Generic;

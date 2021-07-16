@@ -75,6 +75,15 @@
     <Compile Include="IPR\IPR_TYPE.cs" />
     <Compile Include="IPR\USP_List_IPR_Opp_Result.cs" />
     <Compile Include="IPR\USP_List_IPR_Result.cs" />
+    <Compile Include="Master_Entities\Music_Platform.cs" />
+    <Compile Include="Master_Entities\USP_List_Music_Title_Result.cs" />
+    <Compile Include="Master_Entities\USP_Get_Title_PreReq_Result.cs" />
+    <Compile Include="Master_Entities\USP_Get_Talent_Name_Result.cs" />
+    <Compile Include="Master_Entities\USP_Validate_Rights_Duplication_UDT.cs" />
+    <Compile Include="Master_Entities\DM_Master_Log.cs" />
+    <Compile Include="Master_Entities\DM_Master_Import.cs" />
+    <Compile Include="Master_Entities\Music_Type.cs" />
+    <Compile Include="Master_Entities\Music_Deal_Vendor.cs" />
     <Compile Include="Master_Entities\Deal_Tag.cs" />
     <Compile Include="Master_Entities\Deal_Workflow_Status.cs" />
     <Compile Include="Master_Entities\Error_Code_Master.cs" />
@@ -120,7 +129,6 @@
     <Compile Include="Master_Entities\USP_List_Country_Result.cs" />
     <Compile Include="Master_Entities\Country.cs" />
     <Compile Include="Master_Entities\Provisional_Deal_Run.cs" />
-    <Compile Include="Master_Entities\Music_Deal.cs" />
     <Compile Include="Master_Entities\Syn_Deal_Run.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Run.cs" />
     <Compile Include="Master_Entities\Right_Rule.cs" />
@@ -235,6 +243,7 @@
     <Compile Include="Master_Entities\USP_GetSystem_Language_Message_ByModule_Result.cs" />
     <Compile Include="Master_Entities\USP_List_Amort_Rule_Result.cs" />
     <Compile Include="Master_Entities\USP_List_BMS_log_Result.cs" />
+    <Compile Include="StoredProcedure_Entities\USP_Music_Title_Contents_Result.cs" />
     <Compile Include="StoredProcedure_Entities\USP_Get_Platform_Tree_Hierarchy_Result.cs" />
     <Compile Include="StoredProcedure_Entities\USP_Validate_Episode_Result.cs" />
     <Compile Include="System_Setting_Entities\Security_Group_Rel.cs" />

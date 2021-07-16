@@ -15,31 +15,31 @@ namespace RightsU_Dapper.BLL.Services
         {
             this.objMusic_Deal_Repository = new Music_Deal_Repository();
         }
-        public Music_Deal_Dapper GetMusic_DealByID(int? ID, Type[] RelationList = null)
+        public Music_Deal GetMusic_DealByID(int? ID, Type[] RelationList = null)
         {
             return objMusic_Deal_Repository.Get(ID, RelationList);
         }
-        public IEnumerable<Music_Deal_Dapper> GetMusic_DealList()
+        public IEnumerable<Music_Deal> GetMusic_DealList()
         {
             return objMusic_Deal_Repository.GetAll();
         }
-        public void AddEntity(Music_Deal_Dapper obj)
+        public void AddEntity(Music_Deal obj)
         {
             Deal_Creation objDC = objMusic_Deal_Repository.USP_Insert_Music_Deal(obj).ToList().FirstOrDefault();
             obj.Agreement_No = objDC.Agreement_No;
             obj.Music_Deal_Code = objDC.Deal_Code;
             objMusic_Deal_Repository.Add(obj);
         }
-        public void UpdateMusic_Deal(Music_Deal_Dapper obj)
+        public void UpdateMusic_Deal(Music_Deal obj)
         {
             objMusic_Deal_Repository.Update(obj);
         }
-        public void DeleteMusic_Deal(Music_Deal_Dapper obj)
+        public void DeleteMusic_Deal(Music_Deal obj)
         {
             objMusic_Deal_Repository.Delete(obj);
         }
 
-        public IEnumerable<Music_Deal_Dapper> SearchFor(object param)
+        public IEnumerable<Music_Deal> SearchFor(object param)
         {
             return objMusic_Deal_Repository.SearchFor(param);
         }
@@ -48,7 +48,7 @@ namespace RightsU_Dapper.BLL.Services
         {
             return objMusic_Deal_Repository.USP_List_Music_Deal(searchText, agreement_No, startDate, endDate, deal_Type_Code, status_Code, business_Unit_Code, deal_Tag_Code, workflow_Status, vendor_Codes, show_Type_Code, title_Code, music_Label_Codes, isAdvance_Search, user_Code, pageNo, pageSize, out recordCount);
         }
-        public IEnumerable<Deal_Creation> USP_Insert_Music_Deal(Music_Deal_Dapper entity)
+        public IEnumerable<Deal_Creation> USP_Insert_Music_Deal(Music_Deal entity)
         {
             return objMusic_Deal_Repository.USP_Insert_Music_Deal(entity);
         }
@@ -74,7 +74,7 @@ namespace RightsU_Dapper.BLL.Services
             this.objMusic_Deal_Platform_Repository = new Music_Deal_Platform_Repository();
         }
 
-        public void DeleteAllMusic_Deal_Platform(List<Music_Deal_Platform_Dapper> list)
+        public void DeleteAllMusic_Deal_Platform(List<Music_Deal_Platform> list)
         {
             objMusic_Deal_Platform_Repository.DeleteAllEntity(list);
         }
@@ -86,23 +86,23 @@ namespace RightsU_Dapper.BLL.Services
         {
             this.objMusic_Deal_LinkShow_Dapper_Repository = new Music_Deal_LinkShow_Dapper_Repository();
         }
-        public Music_Deal_LinkShow_Dapper GetByID(int? ID, Type[] RelationList = null)
+        public Music_Deal_LinkShow GetByID(int? ID, Type[] RelationList = null)
         {
             return objMusic_Deal_LinkShow_Dapper_Repository.Get(ID, RelationList);
         }
-        public IEnumerable<Music_Deal_LinkShow_Dapper> GetAll(Type[] additionalTypes = null)
+        public IEnumerable<Music_Deal_LinkShow> GetAll(Type[] additionalTypes = null)
         {
             return objMusic_Deal_LinkShow_Dapper_Repository.GetAll(additionalTypes);
         }
-        public void AddEntity(Music_Deal_LinkShow_Dapper obj)
+        public void AddEntity(Music_Deal_LinkShow obj)
         {
             objMusic_Deal_LinkShow_Dapper_Repository.Add(obj);
         }
-        public void UpdateEntity(Music_Deal_LinkShow_Dapper obj)
+        public void UpdateEntity(Music_Deal_LinkShow obj)
         {
             objMusic_Deal_LinkShow_Dapper_Repository.Update(obj);
         }
-        public void DeleteEntity(Music_Deal_LinkShow_Dapper obj)
+        public void DeleteEntity(Music_Deal_LinkShow obj)
         {
             objMusic_Deal_LinkShow_Dapper_Repository.Delete(obj);
         }
@@ -114,23 +114,23 @@ namespace RightsU_Dapper.BLL.Services
         {
             this.objMusic_Deal_Vendor_Dapper_Repository = new Music_Deal_Vendor_Dapper_Repository();
         }
-        public Music_Deal_Vendor_Dapper GetByID(int? ID, Type[] RelationList = null)
+        public Music_Deal_Vendor GetByID(int? ID, Type[] RelationList = null)
         {
             return objMusic_Deal_Vendor_Dapper_Repository.Get(ID, RelationList);
         }
-        public IEnumerable<Music_Deal_Vendor_Dapper> GetAll(Type[] additionalTypes = null)
+        public IEnumerable<Music_Deal_Vendor> GetAll(Type[] additionalTypes = null)
         {
             return objMusic_Deal_Vendor_Dapper_Repository.GetAll(additionalTypes);
         }
-        public void AddEntity(Music_Deal_Vendor_Dapper obj)
+        public void AddEntity(Music_Deal_Vendor obj)
         {
             objMusic_Deal_Vendor_Dapper_Repository.Add(obj);
         }
-        public void UpdateEntity(Music_Deal_Vendor_Dapper obj)
+        public void UpdateEntity(Music_Deal_Vendor obj)
         {
             objMusic_Deal_Vendor_Dapper_Repository.Update(obj);
         }
-        public void DeleteEntity(Music_Deal_Vendor_Dapper obj)
+        public void DeleteEntity(Music_Deal_Vendor obj)
         {
             objMusic_Deal_Vendor_Dapper_Repository.Delete(obj);
         }

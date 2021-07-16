@@ -18,8 +18,9 @@ namespace RightsU_Dapper.Entity
     {
         [PrimaryKey]
         public int? Music_Deal_Channel_Code { get; set; }
-        [ForeignKeyReference(typeof(Music_Deal_Dapper))]
+        [ForeignKeyReference(typeof(Music_Deal))]
         public Nullable<int> Music_Deal_Code { get; set; }
+        [ForeignKeyReference(typeof(Channel))]
         public Nullable<int> Channel_Code { get; set; }
         public Nullable<int> Defined_Runs { get; set; }
         public Nullable<int> Scheduled_Runs { get; set; }

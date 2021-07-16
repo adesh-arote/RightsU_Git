@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.Music_Deal_Channel>
+﻿@model List<RightsU_Dapper.Entity.Music_Deal_Channel_Dapper>
 @using UTOFrameWork.FrameworkClasses;
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -10,7 +10,11 @@
     if (Session["objLoginEntity"] != null)
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
-    } 
+    }
+    List<RightsU_Dapper.Entity.Channel> objDealType = new List<RightsU_Dapper.Entity.Channel>();
+    RightsU_Dapper.BLL.Services.Channel_Service objChannelService = new RightsU_Dapper.BLL.Services.Channel_Service();
+    List<RightsU_Dapper.Entity.Channel> lstchannel= objChannelService.GetList().ToList();
+    string strChannelName = "";
 }
 <script>
     $(document).ready(function () {
@@ -42,14 +46,18 @@
             {
                 foreach (var item in Model)
                 {
-                    
-                    if (item.Channel == null)
-                    {
-                        item.Channel = new RightsU_BLL.Channel_Service(objLoginEntity.ConnectionStringName).GetById((int)item.Channel_Code);
-                    }
+
+                    //if (item.Channel == null)
+                    //{
+                    //    item.Channel = new RightsU_BLL.Channel_Service(objLoginEntity.ConnectionStringName).GetById((int)item.Channel_Code);
+                    //}
                     <tr>
                         <td>
-                            @item.Channel.Channel_Name
+                            @{
+                                strChannelName = lstchannel.Where(x => x.Channel_Code == item.Channel_Code).Select(w => w.Channel_Name).FirstOrDefault();
+                            } 
+                            <span>@strChannelName</span>
+                            @*@item.Channel.Channel_Name*@
                             <input type="hidden" id="hdnChannelCode" name="hdnChannelCode" value=@item.Channel_Code>
                         </td>
                         <td>

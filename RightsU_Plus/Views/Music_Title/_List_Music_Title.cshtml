@@ -1,5 +1,5 @@
-﻿@model List<RightsU_Entities.USP_List_Music_Title_Result>
-@using UTOFrameWork.FrameworkClasses
+﻿@using UTOFrameWork.FrameworkClasses
+@model List<RightsU_Dapper.Entity.USP_List_Music_Title_Result>
 @using System.Configuration;
 @{
     Layout = null;
@@ -31,6 +31,7 @@
         right: 659px;
         display: none;
     }
+
     .MoreActionDiv_Singer {
         padding: 7px;
         background: #ffffff; /*#2B5F8E;*/
@@ -45,7 +46,8 @@
         right: 140px;
         display: none;
     }
-     .MoreActionDiv_Lyricist {
+
+    .MoreActionDiv_Lyricist {
         padding: 7px;
         background: #ffffff; /*#2B5F8E;*/
         width: 218px;
@@ -59,6 +61,7 @@
         /*right: 400px;*/
         display: none;
     }
+
     span.not-available, label.not-available {
         font-style: italic;
         opacity: 0.5;
@@ -163,10 +166,10 @@
                                 <h5 class="title_lang Highlight" title="@objMessageKey.Movie / @objMessageKey.Album">
                                     @if (item.Movie_Album != null && item.Movie_Album != "")
                                     {@Html.Label("Movie_Album", item.Movie_Album)}
-                                    else
-                                    {
-                                        <span class="not-available">@objMessageKey.Nomoviealbum</span>
-                                    }
+                                else
+                                {
+                                    <span class="not-available">@objMessageKey.Nomoviealbum</span>
+                                }
                                     @*{@Html.Label("Movie_Album", "No Movie / Album")}*@
                                 </h5>
 
@@ -182,8 +185,8 @@
                                 <h5 class="title_lang" title="@objMessageKey.Length (@objMessageKey.mins)">
                                     @if (item.Duration_In_Min != null && Convert.ToString(item.Duration_In_Min) != "")
                                     {@Html.Label("Duration_In_Min", Convert.ToString(item.Duration_In_Min) + " min")}
-                                    else
-                                    {<span class="not-available">@objMessageKey.NA</span>}
+                                else
+                                {<span class="not-available">@objMessageKey.NA</span>}
                                 </h5>
                             </li>
                             <li><span class="seperator">| </span></li>
@@ -200,11 +203,11 @@
                                             </div>}
                                         else
                                         { @Html.Label("Language_Name", item.Language_Name)}
-                                    }
-                                    else
-                                    {
-                                        <span class="not-available">@objMessageKey.Nolanguage</span>
-                                    }
+                                }
+                                else
+                                {
+                                    <span class="not-available">@objMessageKey.Nolanguage</span>
+                                }
                                 </h5>
                             </li>
                             <li><span class="seperator">| </span></li>
@@ -212,26 +215,26 @@
                                 <h5 class="title_country" title="@objMessageKey.YearOfRelease">
                                     @if (item.Release_Year != null && Convert.ToString(item.Release_Year) != "")
                                     {@Html.Label("Release_Year", Convert.ToString(item.Release_Year))}
-                                    else
-                                    {<span class="not-available">@objMessageKey.NA</span>}
+                                else
+                                {<span class="not-available">@objMessageKey.NA</span>}
                                 </h5>
                             </li>
                             @{
-                                    var MusicTitleVersion = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
-                                    ViewBag.IsMuciVersionSPN = MusicTitleVersion;
+                                var MusicTitleVersion = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
+                                ViewBag.IsMuciVersionSPN = MusicTitleVersion;
                             }
-                        @if (ViewBag.IsMuciVersionSPN == "Y")
-                                {
-                            <li><span class="seperator">| </span></li>
-                            <li>
-                                <h5 class="Public_Domain" title="@objMessageKey.PublicDomain">
-                                  @if(item.Public_Domain != null && item.Public_Domain != "" && item.Public_Domain == "Y")
-                                   { <span>@objMessageKey.Yes</span>}
-                                  else
-                                  {<span class="not-available">@objMessageKey.NO</span> }                                                                                        
-                                </h5>
-                            </li>
-                               }
+                            @if (ViewBag.IsMuciVersionSPN == "Y")
+                            {
+                                <li><span class="seperator">| </span></li>
+                                <li>
+                                    <h5 class="Public_Domain" title="@objMessageKey.PublicDomain">
+                                        @if (item.Public_Domain != null && item.Public_Domain != "" && item.Public_Domain == "Y")
+                                        {<span>@objMessageKey.Yes</span>}
+                                    else
+                                    {<span class="not-available">@objMessageKey.NO</span>}
+                                    </h5>
+                                </li>
+                            }
                         </ul>
                     </td>
                     <td class="title_credits">
@@ -252,9 +255,9 @@
                                             </div>}
                                         else
                                         { @Html.Label("SingerName", Convert.ToString(item.Singer).Trim(' ').Trim(','))}
-                                    }
-                                    else
-                                    { <span class="not-available">@objMessageKey.Nosinger</span>}
+                                }
+                                else
+                                { <span class="not-available">@objMessageKey.Nosinger</span>}
                                 </h5>
                             </li>
                         </ul>
@@ -265,9 +268,9 @@
                                 <h5 class="title_music_composer Highlight">
                                     @if (item.Music_Composer != null && item.Music_Composer != "")
                                     {@Html.Label("Music_Composer", Convert.ToString(item.Music_Composer).Trim(' ').Trim(','))}
-                                    else
-                                    {<span class="not-available">@objMessageKey.Nomusiccomposer</span> }
-                                   
+                                else
+                                {<span class="not-available">@objMessageKey.Nomusiccomposer</span>}
+
                                 </h5>
                             </li>
                             <li><span class="seperator">| </span></li>
@@ -284,10 +287,10 @@
                                                 @Html.Label("Lyricist", Convert.ToString(item.Lyricist).Trim(' ').Trim(','))
                                             </div>}
                                         else
-                                        {  @Html.Label("Lyricist", Convert.ToString(item.Lyricist).Trim(' ').Trim(','))}
-                                    }
-                                    else
-                                    {<span class="not-available">@objMessageKey.Nolyricist</span> }
+                                        { @Html.Label("Lyricist", Convert.ToString(item.Lyricist).Trim(' ').Trim(','))}
+                                }
+                                else
+                                {<span class="not-available">@objMessageKey.Nolyricist</span>}
                                 </h5>
 
                             </li>
@@ -296,8 +299,8 @@
                                 <h5 class="title_music_label Highlight" title="@objMessageKey.MusicLabel">
                                     @if (item.Music_Label != null && Convert.ToString(item.Music_Label) != "")
                                     {@Html.Label("Music_Label", Convert.ToString(item.Music_Label).Trim(' ').Trim(','))}
-                                    else
-                                    {<span class="not-available">@objMessageKey.Nomusiclabel</span> }
+                                else
+                                {<span class="not-available">@objMessageKey.Nomusiclabel</span>}
                                 </h5>
                             </li>
                         </ul>
@@ -337,7 +340,7 @@
                         {
                             if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
                             {
-                                <a title="@objMessageKey.Activate" id="Activate"  class="glyphicon glyphicon-thumbs-up" onclick="Ask_Confirmation('ACTIVATE', @counter )"></a>
+                                <a title="@objMessageKey.Activate" id="Activate" class="glyphicon glyphicon-thumbs-up" onclick="Ask_Confirmation('ACTIVATE', @counter )"></a>
                             }
                         }
                         @if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForMusicTrackContents + "~"))
@@ -352,16 +355,16 @@
     }
 }
 @*<style>
-    mark {
-        padding: 0;
-        background: transparent;
-        background-color: yellow;
-        background-position: right bottom;
-        background-size: 200% 100%;
-        transition: all .5s ease;
-    }
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.8.3/jquery.mark.min.js"></script>*@
+        mark {
+            padding: 0;
+            background: transparent;
+            background-color: yellow;
+            background-position: right bottom;
+            background-size: 200% 100%;
+            transition: all .5s ease;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.8.3/jquery.mark.min.js"></script>*@
 <script>
     var URL_Index = '@Url.Action("Index", "Music_Title")';
     var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Music_Title")';

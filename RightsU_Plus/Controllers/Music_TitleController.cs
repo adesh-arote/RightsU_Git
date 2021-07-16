@@ -11,8 +11,10 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using RightsU_BLL;
-using RightsU_Entities;
+//using RightsU_BLL;
+//using RightsU_Entities;
+using RightsU_Dapper.BLL.Services;
+using RightsU_Dapper.Entity;
 using UTOFrameWork.FrameworkClasses;
 using Microsoft.Reporting.WebForms;
 
@@ -21,6 +23,23 @@ namespace RightsU_Plus.Controllers
 
     public class Music_TitleController : BaseController
     {
+        private readonly System_Parameter_New_Service objSystemParameterNewService = new System_Parameter_New_Service();
+        private readonly Role_Service objRoleService = new Role_Service();
+        private readonly Music_Album_Service objMusicAlbumService = new Music_Album_Service();
+        private readonly USP_Service objUSPService = new USP_Service();
+        private readonly Music_Title_Services objMusicTitleService = new Music_Title_Services();
+        private readonly Music_Language_Service objMusicLanguageService = new Music_Language_Service();
+        private readonly Music_Theme_Service objSMusicThemeService = new Music_Theme_Service();
+        private readonly Music_Type_Service objSMusicTypeService = new Music_Type_Service();
+        private readonly Music_Label_Service objMusicLabelService = new Music_Label_Service();
+        private readonly Music_Title_Label_Service objMusicTitleLabelService = new Music_Title_Label_Service();
+        private readonly Music_Title_Language_Service objMusicTitleLanguageService = new Music_Title_Language_Service();
+        private readonly Music_Title_Theme_Service objMusicTitleThemeService = new Music_Title_Theme_Service();
+        private readonly Music_Title_Talent_Service objMusicTitleTalentService = new Music_Title_Talent_Service();
+        private readonly Talent_Service objTalentService = new Talent_Service();
+        private readonly Title_Service objTitleService = new Title_Service();
+        private readonly Music_Album_Talent_Service objMusicAlbumTalentService = new Music_Album_Talent_Service();
+
         ReportViewer ReportViewer1;
 
         public int PageNo
@@ -75,23 +94,23 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["music_mode"] = value; }
         }
-        public RightsU_Entities.Music_Title objTitle
+        public RightsU_Dapper.Entity.Music_Title objTitle
         {
             get
             {
                 if (Session["Session_Music_Title"] == null)
-                    Session["Session_Music_Title"] = new RightsU_Entities.Music_Title();
-                return (RightsU_Entities.Music_Title)Session["Session_Music_Title"];
+                    Session["Session_Music_Title"] = new RightsU_Dapper.Entity.Music_Title();
+                return (RightsU_Dapper.Entity.Music_Title)Session["Session_Music_Title"];
             }
             set { Session["Session_Music_Title"] = value; }
         }
-        public RightsU_Entities.DM_Master_Import objDMImport
+        public RightsU_Dapper.Entity.DM_Master_Import objDMImport
         {
             get
             {
                 if (Session["Session_DM_Import"] == null)
-                    Session["Session_DM_Import"] = new RightsU_Entities.DM_Master_Import();
-                return (RightsU_Entities.DM_Master_Import)Session["Session_DM_Import"];
+                    Session["Session_DM_Import"] = new RightsU_Dapper.Entity.DM_Master_Import();
+                return (RightsU_Dapper.Entity.DM_Master_Import)Session["Session_DM_Import"];
             }
             set { Session["Session_DM_Import"] = value; }
         }
@@ -105,13 +124,13 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["Music_Title_Search_Page_Properties"] = value; }
         }
-        public Music_Title_Service objTitleS
+        public Music_Title_Services objTitleS
         {
             get
             {
                 if (Session["objMusicTitleS_Service"] == null)
-                    Session["objMusicTitleS_Service"] = new Music_Title_Service(objLoginEntity.ConnectionStringName);
-                return (Music_Title_Service)Session["objMusicTitleS_Service"];
+                    Session["objMusicTitleS_Service"] = new Music_Title_Services();
+                return (Music_Title_Services)Session["objMusicTitleS_Service"];
             }
             set { Session["objMusicTitleS_Service"] = value; }
         }
@@ -135,13 +154,13 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstError_Session"] = value; }
         }
-        private List<RightsU_Entities.DM_Master_Import> lstDMImport
+        private List<RightsU_Dapper.Entity.DM_Master_Import> lstDMImport
         {
             get
             {
                 if (Session["lstDMImport"] == null)
-                    Session["lstDMImport"] = new List<RightsU_Entities.DM_Master_Import>();
-                return (List<RightsU_Entities.DM_Master_Import>)Session["lstDMImport"];
+                    Session["lstDMImport"] = new List<RightsU_Dapper.Entity.DM_Master_Import>();
+                return (List<RightsU_Dapper.Entity.DM_Master_Import>)Session["lstDMImport"];
             }
             set { Session["lstDMImport"] = value; }
         }
@@ -199,23 +218,23 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["SearchedMusicTitle_EDIT"] = value; }
         }
-        private List<RightsU_Entities.USP_Music_Title_Contents_Result> lstMusicTitleContent
+        private List<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result> lstMusicTitleContent
         {
             get
             {
                 if (Session["lstMusicTitleContent"] == null)
-                    Session["lstMusicTitleContent"] = new List<RightsU_Entities.USP_Music_Title_Contents_Result>();
-                return (List<RightsU_Entities.USP_Music_Title_Contents_Result>)Session["lstMusicTitleContent"];
+                    Session["lstMusicTitleContent"] = new List<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result>();
+                return (List<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result>)Session["lstMusicTitleContent"];
             }
             set { Session["lstMusicTitleContent"] = value; }
         }
-        private List<RightsU_Entities.USP_Music_Title_Contents_Result> lstMusicTitleContent_Searched
+        private List<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result> lstMusicTitleContent_Searched
         {
             get
             {
                 if (Session["lstMusicTitleContent_Searched"] == null)
-                    Session["lstMusicTitleContent_Searched"] = new List<RightsU_Entities.USP_Music_Title_Contents_Result>();
-                return (List<RightsU_Entities.USP_Music_Title_Contents_Result>)Session["lstMusicTitleContent_Searched"];
+                    Session["lstMusicTitleContent_Searched"] = new List<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result>();
+                return (List<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result>)Session["lstMusicTitleContent_Searched"];
             }
             set { Session["lstMusicTitleContent_Searched"] = value; }
         }
@@ -230,6 +249,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["MusicTitleCode"] = value; }
         }
+        Type[] RelationList = new Type[] { typeof(Genre), typeof(Music_Title_Label), typeof(Music_Title_Language), typeof(Music_Title_Talent), typeof(Music_Title_Theme), typeof(Music_Type),typeof(Music_Title_Label) };
         public JsonResult CheckRecordLock(int id = 0, int Page_No = 0, string SearchedTitle = "", int PageSize = 10, string commandName = "")
         {
             string strMessage = "";
@@ -275,7 +295,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult Index(int id = 0, int Page_No = 0, string SearchedTitle = "", int PageSize = 10, string commandName = "")
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusic_Title);
-            var MusicTitleVersion = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
+            var MusicTitleVersion = objSystemParameterNewService.GetList(RelationList).Where(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
             ViewBag.IsMuciVersionSPN = MusicTitleVersion;
             Message = string.Empty;
             bool isLocked = true;
@@ -309,14 +329,14 @@ namespace RightsU_Plus.Controllers
                 //ViewBag.PageNo = PageNo;
                 ViewBag.SearchedTitle = SearchedTitle;
                 SearchedTitle_EDIT = SearchedTitle;
-                objTitle = new Music_Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
+                objTitle = objMusicTitleService.GetByID(id);
                 BindDDL();
-                Role_Service objRoleService = new Role_Service(objLoginEntity.ConnectionStringName);
-                string MusicThemeVisibility = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "MusicThemeVisibility").Select(i => i.Parameter_Value).FirstOrDefault();
+                //Role_Service objRoleService = new Role_Service(objLoginEntity.ConnectionStringName);
+                string MusicThemeVisibility = objSystemParameterNewService.GetList().Where(y => y.Parameter_Name == "MusicThemeVisibility").Select(i => i.Parameter_Value).FirstOrDefault();
                 ViewBag.MusicThemeVisibility = MusicThemeVisibility;
-                ViewBag.RolesList = new SelectList(objRoleService.SearchFor(r => r.Role_Type == "T"), "Role_Code", "Role_Name").ToList();
+                ViewBag.RolesList = new SelectList(objRoleService.GetList().Where(r => r.Role_Type == "T"), "Role_Code", "Role_Name").ToList();
                 int Music_Album_Code = Convert.ToInt32(objTitle.Music_Album_Code);
-                string Movie_Album_Name = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Code == objTitle.Music_Album_Code).Select(x => x.Music_Album_Name).FirstOrDefault();
+                string Movie_Album_Name = objMusicAlbumService.GetAll().Where(x => x.Music_Album_Code == objTitle.Music_Album_Code).Select(x => x.Music_Album_Name).FirstOrDefault();
                 ViewBag.MovieAlbum = Movie_Album_Name;
                 ViewBag.MovieAlbumCode = Music_Album_Code;
                 //ViewBag.MovieAlbum = BindMovieAlbum(Music_Album_Code);
@@ -347,13 +367,13 @@ namespace RightsU_Plus.Controllers
             string strFlag = "TT";
             if (Selected_BUCode <= 0)
             {
-                var result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Title_PreReq(strFlag, Selected_deal_type_Code, 0, searchString).Where(x => x.Data_For == "TT" && !terms.Contains(x.Display_Text)).ToList();
+                var result = objUSPService.USP_Get_Title_PreReq(strFlag, Selected_deal_type_Code, 0, searchString).Where(x => x.Data_For == "TT" && !terms.Contains(x.Display_Text)).ToList();
 
                 return Json(result);
             }
             else
             {
-                var result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Title_PreReq(strFlag, Selected_deal_type_Code, Selected_BUCode, searchString).Where(x => x.Data_For == "TT" && !terms.Contains(x.Display_Text)).ToList();
+                var result = objUSPService.USP_Get_Title_PreReq(strFlag, Selected_deal_type_Code, Selected_BUCode, searchString).Where(x => x.Data_For == "TT" && !terms.Contains(x.Display_Text)).ToList();
                 //arr_Title_List = new MultiSelectList(lstUSP_Get_Title_PreReq.Where(x => x.Data_For == "TT"), "Display_Value", "Display_Text", Selected_Title_Codes.Split(','));
 
                 return Json(result);
@@ -363,7 +383,7 @@ namespace RightsU_Plus.Controllers
         {
             List<string> terms = Searched_Title.Split('﹐').ToList();
             terms = terms.Select(s => s.Trim()).ToList();
-            Music_Title_Service objMusicTitle = new Music_Title_Service(objLoginEntity.ConnectionStringName);
+           // Music_Title_Service objMusicTitle = new Music_Title_Service(objLoginEntity.ConnectionStringName);
             //if (objPage_Properties.MusicTitleName != null)
             //    return new MultiSelectList(objTitleS.SearchFor(x => x.Is_Active == "Y")
             //                                   .Select(i => new { Music_Title_Code = i.Music_Title_Code, Music_Title_Name = i.Music_Title_Name }).ToList(), "Music_Title_Code", "Music_Title_Name", objPage_Properties.MusicTitleName.Split(','));
@@ -372,7 +392,7 @@ namespace RightsU_Plus.Controllers
             string searchString = terms.LastOrDefault().ToString().Trim();
 
             //.Where(x => terms.Contains(x.Music_Title_Name)).Select(i => new { Music_Title_Code = i.Music_Title_Code, Music_Title_Name = i.Music_Title_Name }).ToList();
-            var result = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper())).Distinct()
+            var result = objMusicTitleService.GetAll().Where(x => x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper())).Distinct()
                .Select(x => new { Music_Title_Name = x.Music_Title_Name, Music_Title_Code = 0 }).ToList();
 
             return Json(result);
@@ -401,22 +421,22 @@ namespace RightsU_Plus.Controllers
             TempData["SearchedTitle"] = SearchedTitle;
             mode = "V";
             PageNo = Page_No;
-           string PublicDomainView = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Music_Title_Code == objTitle.Music_Title_Code).Select(w=>w.Public_Domain).ToString();
+           string PublicDomainView = objMusicTitleService.GetAll().Where(s => s.Music_Title_Code == objTitle.Music_Title_Code).Select(w=>w.Public_Domain).ToString();
             ViewBag.PublicDomainView = PublicDomainView;
             if (MusicPageSize == 0)
                 MusicPageSize = PageSize;
             ViewBag.PageNo = PageNo;
             ViewBag.SearchedTitle = SearchedTitle;
             //SearchedTitle_EDIT = SearchedTitle;
-            objTitle = new Music_Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
+            objTitle = objMusicTitleService.GetByID(id,RelationList);
             BindDDL();
-            Role_Service objRoleService = new Role_Service(objLoginEntity.ConnectionStringName);
-            ViewBag.RolesList = new SelectList(objRoleService.SearchFor(r => r.Role_Type == "T"), "Role_Code", "Role_Name").ToList();
-            var MusicTitleVersion = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
+            //Role_Service objRoleService = new Role_Service(objLoginEntity.ConnectionStringName);
+            ViewBag.RolesList = new SelectList(objRoleService.GetList().Where(r => r.Role_Type == "T"), "Role_Code", "Role_Name").ToList();
+            var MusicTitleVersion = objSystemParameterNewService.GetList().Where(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
             ViewBag.IsMuciVersionSPN = MusicTitleVersion;
 
 
-            string MusicThemeVisibility = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "MusicThemeVisibility").Select(i => i.Parameter_Value).FirstOrDefault();
+            string MusicThemeVisibility =objSystemParameterNewService.GetList().Where(y => y.Parameter_Name == "MusicThemeVisibility").Select(i => i.Parameter_Value).FirstOrDefault();
             ViewBag.MusicThemeVisibility = MusicThemeVisibility;
             int code = Convert.ToInt32(objTitle.Music_Album_Code);
             BindStarcast(code);
@@ -439,7 +459,7 @@ namespace RightsU_Plus.Controllers
             var language_code = string.Join(",", (objTitle.Music_Title_Language.Where(i => i.Music_Title_Code == objTitle.Music_Title_Code)
                 .Select(i => i.Music_Language_Code).ToList()));
 
-            MultiSelectList lstOriginalLanguage = new MultiSelectList(new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+            MultiSelectList lstOriginalLanguage = new MultiSelectList(objMusicLanguageService.GetAll().Where(x => x.Is_Active == "Y")
                  .Select(i => new { Language_Code = i.Music_Language_Code, Language_Name = i.Language_Name }).ToList(), "Language_Code", "Language_Name",
                  language_code.Split(','));
 
@@ -451,7 +471,7 @@ namespace RightsU_Plus.Controllers
             var theme_code = string.Join(",", (objTitle.Music_Title_Theme.Where(i => i.Music_Title_Code == objTitle.Music_Title_Code)
                 .Select(i => i.Music_Theme_Code).ToList()));
 
-            MultiSelectList lstTheme = new MultiSelectList(new Music_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+            MultiSelectList lstTheme = new MultiSelectList(objSMusicThemeService.GetAll().Where(x => x.Is_Active == "Y")
                  .Select(i => new { Music_Theme_Code = i.Music_Theme_Code, Music_Theme_Name = i.Music_Theme_Name }).ToList(), "Music_Theme_Code", "Music_Theme_Name",
                  theme_code.Split(','));
 
@@ -463,14 +483,14 @@ namespace RightsU_Plus.Controllers
         {
             List<SelectListItem> lstTitleType = new List<SelectListItem>();
 
-            lstTitleType = new SelectList(new Music_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Type == "MT"), "Music_Type_Code", "Music_Type_Name", Convert.ToInt32(objTitle.Music_Type_Code)).ToList();
+            lstTitleType = new SelectList(objSMusicTypeService.GetAll().Where(x => x.Is_Active == "Y" && x.Type == "MT"), "Music_Type_Code", "Music_Type_Name", Convert.ToInt32(objTitle.Music_Type_Code)).ToList();
             lstTitleType.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
 
             return lstTitleType;
         }
         private List<SelectListItem> BindGenres()
         {
-            List<USP_Get_Title_PreReq_Result> lstUSP_Get_Title_PreReq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Title_PreReq("G", 0, 0, "").ToList();
+            List<USP_Get_Title_PreReq_Result> lstUSP_Get_Title_PreReq = objUSPService.USP_Get_Title_PreReq("G", 0, 0, "").ToList();
             List<SelectListItem> lstGenres = new List<SelectListItem>();
             lstGenres = new SelectList(lstUSP_Get_Title_PreReq.Where(x => x.Data_For == "G"), "Display_Value", "Display_Text",
                 Convert.ToInt32(objTitle.Genres_Code)).ToList();
@@ -481,7 +501,7 @@ namespace RightsU_Plus.Controllers
         {
             List<SelectListItem> lstTitleType = new List<SelectListItem>();
 
-            lstTitleType = new SelectList(new Music_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Type == "MV"), "Music_Type_Code", "Music_Type_Name", Convert.ToInt32(objTitle.Music_Version_Code)).ToList();
+            lstTitleType = new SelectList(objSMusicTypeService.GetAll().Where(x => x.Is_Active == "Y" && x.Type == "MV"), "Music_Type_Code", "Music_Type_Name", Convert.ToInt32(objTitle.Music_Version_Code)).ToList();
             lstTitleType.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
 
             return lstTitleType;
@@ -494,12 +514,12 @@ namespace RightsU_Plus.Controllers
             ViewBag.TitleVersion = BindTitleTypeVersion();
             ViewBag.TitleGenres = BindGenres();
             ViewBag.Theme = BindTheme();
-            var lstTalent = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().ToList();
+            var lstTalent = objUSPService.USP_Get_Talent_Name().ToList();
             var lstSinger = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_Code_Singer);
             var lstMusicComposer = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_code_MusicComposer);
             var lstStarCast = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_code_StarCast);
             var lstLyricist = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_code_lyricist);
-            var lstMusicLabel = new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+            var lstMusicLabel = objMusicLabelService.GetAll().Where(x => x.Is_Active == "Y").ToList();
             var singer_code = string.Join(",", (objTitle.Music_Title_Talent.Where(i => i.Music_Title_Code == objTitle.Music_Title_Code && i.Role_Code == GlobalParams.Role_Code_Singer).Select(i => i.Talent_Code).ToList()));
             var composer_code = string.Join(",", (objTitle.Music_Title_Talent.Where(i => i.Music_Title_Code == objTitle.Music_Title_Code && i.Role_Code == GlobalParams.Role_code_MusicComposer).Select(i => i.Talent_Code).ToList()));
             var lyricist_code = string.Join(",", (objTitle.Music_Title_Talent.Where(i => i.Music_Title_Code == objTitle.Music_Title_Code && i.Role_Code == GlobalParams.Role_code_lyricist).Select(i => i.Talent_Code).ToList()));
@@ -510,7 +530,7 @@ namespace RightsU_Plus.Controllers
                 .Select(i => i.Music_Theme_Code).ToList()));
             if (objTitle.Music_Version_Code != null)
             {
-                string version_Name = new Music_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Type_Code == objTitle.Music_Version_Code).FirstOrDefault().Music_Type_Name;
+                string version_Name =objSMusicTypeService.GetAll().Where(x => x.Music_Type_Code == objTitle.Music_Version_Code).FirstOrDefault().Music_Type_Name;
                 ViewBag.version_Name = version_Name;
             }
             if (mode == "V")
@@ -550,7 +570,7 @@ namespace RightsU_Plus.Controllers
                 var Label_code = objTitle.Music_Title_Label.Where(i => i.Music_Title_Code == objTitle.Music_Title_Code && i.Effective_To == null).Select(i => i.Music_Label_Code).FirstOrDefault();
                 if (Label_code != 0 && Label_code != null)
                 {
-                    ViewBag.MusicLabelList = new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Music_Label_Code == Label_code)
+                    ViewBag.MusicLabelList = objMusicLabelService.GetAll().Where(x => x.Is_Active == "Y" && x.Music_Label_Code == Label_code)
                         .FirstOrDefault().Music_Label_Name;
                 }
                 else
@@ -558,7 +578,7 @@ namespace RightsU_Plus.Controllers
                 string GenresName = "";
                 if (objTitle.Genres_Code != null && objTitle.Genres_Code != 0)
                 {
-                    List<USP_Get_Title_PreReq_Result> lstUSP_Get_Title_PreReq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Title_PreReq("G", 0, 0, "").ToList();
+                    List<USP_Get_Title_PreReq_Result> lstUSP_Get_Title_PreReq = objUSPService.USP_Get_Title_PreReq("G", 0, 0, "").ToList();
                     GenresName = lstUSP_Get_Title_PreReq.Where(x => x.Data_For == "G" && x.Display_Value == objTitle.Genres_Code).FirstOrDefault().Display_Text;
                 }
                 ViewBag.GenresName = GenresName;
@@ -566,7 +586,7 @@ namespace RightsU_Plus.Controllers
                 string LanguageName = "";
                 if (language_code != "")
                 {
-                    LanguageName = string.Join(", ", ((new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList()).Where(y => language_code.Split(',')
+                    LanguageName = string.Join(", ", ((objMusicLanguageService.GetAll().Where(x => x.Is_Active == "Y").ToList()).Where(y => language_code.Split(',')
                         .Contains(y.Music_Language_Code.ToString())).Distinct().Select(i => i.Language_Name)));
                 }
                 ViewBag.LanguageName = LanguageName;
@@ -574,7 +594,7 @@ namespace RightsU_Plus.Controllers
                 string ThemeName = "";
                 if (theme_code != "")
                 {
-                    ThemeName = string.Join(", ", ((new Music_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList()).Where(y => theme_code.Split(',')
+                    ThemeName = string.Join(", ", ((objSMusicThemeService.GetAll().Where(x => x.Is_Active == "Y").ToList()).Where(y => theme_code.Split(',')
                         .Contains(y.Music_Theme_Code.ToString())).Distinct().Select(i => i.Music_Theme_Name)));
                 }
                 ViewBag.ThemeName = ThemeName;
@@ -593,52 +613,52 @@ namespace RightsU_Plus.Controllers
         {
             Dictionary<string, object> objJson = new Dictionary<string, object>();
 
-            int Original_Language_code = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "Title_OriginalLanguage").Select(i => i.Parameter_Value).FirstOrDefault());
+            int Original_Language_code = Convert.ToInt32(objSystemParameterNewService.GetList().Where(y => y.Parameter_Name == "Title_OriginalLanguage").Select(i => i.Parameter_Value).FirstOrDefault());
 
-            var lstTalent = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().ToList();
+            var lstTalent = objUSPService.USP_Get_Talent_Name().ToList();
             var lstStarCast = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_code_StarCast);
             var lstSinger = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_Code_Singer);
             var lstComposer = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_code_MusicComposer);
             var lstLyricist = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_code_lyricist);
-            List<USP_Get_Title_PreReq_Result> lstUSP_Get_Title_PreReq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Title_PreReq("G", 0, 0, "").ToList();
+            List<USP_Get_Title_PreReq_Result> lstUSP_Get_Title_PreReq = objUSPService.USP_Get_Title_PreReq("G", 0, 0, "").ToList();
             MultiSelectList lstGenres = new MultiSelectList(lstUSP_Get_Title_PreReq.Where(x => x.Data_For == "G")
                 .Select(i => new { Display_Value = i.Display_Value, Display_Text = i.Display_Text }), "Display_Value", "Display_Text");
             //MultiSelectList lstMLabel = new MultiSelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
             //    .Select(i => new { Display_Value = i.Music_Label_Code, Display_Text = i.Music_Label_Name }).ToList(),
             //    "Display_Value", "Display_Text");
 
-            int?[] arrMusicLabelCodes = new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(s => s.Music_Label_Code).Distinct().ToArray();
-            MultiSelectList lstMLabel = new MultiSelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").
+            int?[] arrMusicLabelCodes = objMusicTitleLabelService.GetAll().Where(x => true).Select(s => s.Music_Label_Code).Distinct().ToArray();
+            MultiSelectList lstMLabel = new MultiSelectList(objMusicLabelService.GetAll().Where(x => x.Is_Active == "Y").
                 Where(x => arrMusicLabelCodes.Contains(x.Music_Label_Code)).Select(i => new { Display_Value = i.Music_Label_Code, Display_Text = i.Music_Label_Name }).ToList(),
                 "Display_Value", "Display_Text");
 
-            int?[] arrMusicLanguageCodes = new Music_Title_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(s => s.Music_Language_Code).Distinct().ToArray();
-            MultiSelectList lstLanguageList = new MultiSelectList(new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").
+            int?[] arrMusicLanguageCodes = objMusicTitleLanguageService.GetAll().Where(x => true).Select(s => s.Music_Language_Code).Distinct().ToArray();
+            MultiSelectList lstLanguageList = new MultiSelectList(objMusicLanguageService.GetAll().Where(x => x.Is_Active == "Y").
                 Where(x => arrMusicLanguageCodes.Contains(x.Music_Language_Code)).Select(i => new { Display_Value = i.Music_Language_Code, Display_Text = i.Language_Name }).ToList(),
                 "Display_Value", "Display_Text");
 
-            int?[] arrMusicThemeCodes = new Music_Title_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(s => s.Music_Theme_Code).Distinct().ToArray();
-            MultiSelectList lstThemeList = new MultiSelectList(new Music_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").
+            int?[] arrMusicThemeCodes = objMusicTitleThemeService.GetAll().Where(x => true).Select(s => s.Music_Theme_Code).Distinct().ToArray();
+            MultiSelectList lstThemeList = new MultiSelectList(objSMusicThemeService.GetAll().Where(x => x.Is_Active == "Y").
                 Where(x => arrMusicThemeCodes.Contains(x.Music_Theme_Code)).Select(i => new { Display_Value = i.Music_Theme_Code, Display_Text = i.Music_Theme_Name }).ToList(),
                 "Display_Value", "Display_Text");
 
-            int?[] arrstarcastCodes = new Music_Title_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Role_Code == GlobalParams.Role_code_StarCast).Select(s => s.Talent_Code).Distinct().ToArray();
-            MultiSelectList lstMStarCast = new MultiSelectList(new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+            int?[] arrstarcastCodes = objMusicTitleTalentService.GetAll().Where(x => true && x.Role_Code == GlobalParams.Role_code_StarCast).Select(s => s.Talent_Code).Distinct().ToArray();
+            MultiSelectList lstMStarCast = new MultiSelectList(objTalentService.GetList().Where(x => x.Is_Active == "Y")
                 .Where(x => arrstarcastCodes.Contains(x.Talent_Code)).Select(i => new { Display_Value = i.Talent_Code, Display_Text = i.Talent_Name }).Distinct().OrderBy(i => i.Display_Value).ToList(),
                 "Display_Value", "Display_Text");
 
-            int?[] arrSingerCodes = new Music_Title_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Role_Code == GlobalParams.Role_Code_Singer).Select(s => s.Talent_Code).Distinct().ToArray();
-            MultiSelectList lstMSinger = new MultiSelectList(new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+            int?[] arrSingerCodes = objMusicTitleTalentService.GetAll().Where(x => true && x.Role_Code == GlobalParams.Role_Code_Singer).Select(s => s.Talent_Code).Distinct().ToArray();
+            MultiSelectList lstMSinger = new MultiSelectList(objTalentService.GetList().Where(x => x.Is_Active == "Y")
                 .Where(x => arrSingerCodes.Contains(x.Talent_Code)).Select(i => new { Display_Value = i.Talent_Code, Display_Text = i.Talent_Name }).Distinct().OrderBy(i => i.Display_Value).ToList(),
                 "Display_Value", "Display_Text");
 
-            int?[] arrComposerCodes = new Music_Title_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Role_Code == GlobalParams.Role_code_MusicComposer).Select(s => s.Talent_Code).Distinct().ToArray();
-            MultiSelectList lstMComposer = new MultiSelectList(new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+            int?[] arrComposerCodes =  objMusicTitleTalentService.GetAll().Where(x => true && x.Role_Code == GlobalParams.Role_code_MusicComposer).Select(s => s.Talent_Code).Distinct().ToArray();
+            MultiSelectList lstMComposer = new MultiSelectList(objTalentService.GetList().Where(x => x.Is_Active == "Y")
                 .Where(x => arrComposerCodes.Contains(x.Talent_Code)).Select(i => new { Display_Value = i.Talent_Code, Display_Text = i.Talent_Name }).Distinct().OrderBy(i => i.Display_Value).ToList(),
                 "Display_Value", "Display_Text");
 
-            int?[] arrLyricistCodes = new Music_Title_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Role_Code == GlobalParams.Role_code_lyricist).Select(s => s.Talent_Code).Distinct().ToArray();
-            MultiSelectList lstMLyricist = new MultiSelectList(new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+            int?[] arrLyricistCodes = objMusicTitleTalentService.GetAll().Where(x => true && x.Role_Code == GlobalParams.Role_code_lyricist).Select(s => s.Talent_Code).Distinct().ToArray();
+            MultiSelectList lstMLyricist = new MultiSelectList(objTalentService.GetList().Where(x => x.Is_Active == "Y")
                 .Where(x => arrLyricistCodes.Contains(x.Talent_Code)).Select(i => new { Display_Value = i.Talent_Code, Display_Text = i.Talent_Name }).Distinct().OrderBy(i => i.Display_Value).ToList(),
                 "Display_Value", "Display_Text");
 
@@ -738,7 +758,7 @@ namespace RightsU_Plus.Controllers
             List<SelectListItem> lstMusicLabel = new List<SelectListItem>();
             if (objTitle.Music_Title_Label.Count > 0)
                 Label_code = Convert.ToInt32(objTitle.Music_Title_Label.Where(i => i.Music_Title_Code == objTitle.Music_Title_Code && i.Effective_To == null).FirstOrDefault().Music_Label_Code);
-            lstMusicLabel = new SelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Music_Label_Code", "Music_Label_Name", Label_code).ToList();
+            lstMusicLabel = new SelectList(objMusicLabelService.GetAll().Where(x => x.Is_Active == "Y"), "Music_Label_Code", "Music_Label_Name", Label_code).ToList();
             //lstMusicLabel.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
             return lstMusicLabel;
         }
@@ -758,7 +778,7 @@ namespace RightsU_Plus.Controllers
             {
 
                 //Music_Title_Service objTS = new Music_Title_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Music_Title objTitle = objTitleS.SearchFor(x => x.Music_Title_Code == Title_Code).Distinct().FirstOrDefault();
+                RightsU_Dapper.Entity.Music_Title objTitle = objMusicTitleService.GetAll().Where(x => x.Music_Title_Code == Title_Code).Distinct().FirstOrDefault();
 
                 //if (Type == "N")
                 //    Count = (from Acq_Deal_Movie obj in objTitle.Acq_Deal_Movie where obj.Title_Code == Title_Code && (obj.Is_Closed != "X" || obj.Is_Closed != "Y") select obj).ToList().Distinct().Count();
@@ -769,9 +789,9 @@ namespace RightsU_Plus.Controllers
                 else
                 {
 
-                    objTitle.EntityState = State.Modified;
+                    //objTitle.EntityState = State.Modified;
                     objTitle.Is_Active = Type;
-                    objTitleS.Save(objTitle);
+                    //objTitleS.Save(objTitle);
 
 
                     if (Type == "N")
@@ -791,7 +811,7 @@ namespace RightsU_Plus.Controllers
         }
         public ActionResult List(string SearchedTitle = "", string IsMenu = "Y")
         {
-            lstTalent = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().ToList();
+            lstTalent = objUSPService.USP_Get_Talent_Name().ToList();
 
             if (Locking_Messgae == "")
                 ViewBag.Locking_Message = "";
@@ -816,7 +836,7 @@ namespace RightsU_Plus.Controllers
                 PageNo = 0;
             }
 
-            var MusicTitleVersion = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
+            var MusicTitleVersion = objSystemParameterNewService.GetList().Where(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
             ViewBag.IsMuciVersionSPN = MusicTitleVersion;
             ViewBag.SearchText = objPage_Properties.SearchText; ;
             ViewBag.AdvanceSearch = objPage_Properties.isAdvanced;
@@ -826,10 +846,10 @@ namespace RightsU_Plus.Controllers
                 ViewBag.PageNo = PageNo;
             ViewBag.PageSize = (objPage_Properties.Page_Size == 0) ? 10 : objPage_Properties.Page_Size;
 
-            ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-            string c = addRights.FirstOrDefault();
+            string addRights = objUSPService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            string c = addRights;
             ViewBag.VisibilityforAdd = c;
-            string MusicThemeVisibility = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "MusicThemeVisibility").Select(i => i.Parameter_Value).FirstOrDefault();
+            string MusicThemeVisibility =objSystemParameterNewService.GetList().Where(y => y.Parameter_Name == "MusicThemeVisibility").Select(i => i.Parameter_Value).FirstOrDefault();
             ViewBag.MusicThemeVisibility = MusicThemeVisibility;
             DBUtil.Release_Record(Record_Locking_Code);
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusic_Title);
@@ -839,10 +859,10 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult AddMusicTitle()
         {
 
-            int Original_Language_code = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "Title_OriginalLanguage").Select(i => i.Parameter_Value).FirstOrDefault());
+            int Original_Language_code = Convert.ToInt32(objSystemParameterNewService.GetList().Where(y => y.Parameter_Name == "Title_OriginalLanguage").Select(i => i.Parameter_Value).FirstOrDefault());
             //List<SelectListItem> lstLanguageList = new List<SelectListItem>();
 
-            MultiSelectList lstMusicLanguage = new MultiSelectList(new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+            MultiSelectList lstMusicLanguage = new MultiSelectList(objMusicLanguageService.GetAll().Where(x => x.Is_Active == "Y")
                  .Select(i => new { Language_Code = i.Music_Language_Code, Language_Name = i.Language_Name }).ToList(), "Language_Code", "Language_Name");
 
             //lstLanguageList = new SelectList(new Language_Service().SearchFor(x => x.Is_Active == "Y"), "Language_Code", "Language_Name", Original_Language_code).ToList();
@@ -855,7 +875,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.PageSize = MusicPageSize;
          
             List<SelectListItem> lstMusicLabel = new List<SelectListItem>();
-            lstMusicLabel = new SelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Music_Label_Code", "Music_Label_Name", 0).ToList();
+            lstMusicLabel = new SelectList(objMusicLabelService.GetAll().Where(x => x.Is_Active == "Y"), "Music_Label_Code", "Music_Label_Name", 0).ToList();
             lstMusicLabel.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
             ViewBag.MusicLabelList = lstMusicLabel;
 
@@ -868,7 +888,7 @@ namespace RightsU_Plus.Controllers
         {
             int Count = 0;
             bool dupStringsCount = true;
-            int MusicAlbum = 0;
+            int? MusicAlbum = 0;
             char[] splitchar = { '~' };
             string[] parts = MusicTitleName.Split(splitchar, StringSplitOptions.RemoveEmptyEntries);
             string Music_Album_Code = "";        
@@ -882,30 +902,30 @@ namespace RightsU_Plus.Controllers
                 }
                 if (MusicAlbumCode == 0)
                 {
-                    Music_Album_Code = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == MusicAlbumName).Select(x => x.Music_Album_Code).FirstOrDefault().ToString();
+                    Music_Album_Code = objMusicAlbumService.GetAll().Where(x => x.Music_Album_Name == MusicAlbumName).Select(x => x.Music_Album_Code).FirstOrDefault().ToString();
                     MusicAlbumCode = Convert.ToInt32(Music_Album_Code);
                 }               
                 if (mode == "Add")
                 {
                     int countDuplicate = 0;
-                    countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode).Distinct().Count();
+                    countDuplicate = objMusicTitleService.GetAll().Where(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode).Distinct().Count();
                     Count += countDuplicate;
                 }
                 else if (mode == "Clone")
                 {
                     int countDuplicate = 0;
-                    countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode).Distinct().Count();
+                    countDuplicate = objMusicTitleService.GetAll().Where(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode).Distinct().Count();
                     Count += countDuplicate;
                 }
                 else
                 {
                     int countDuplicate = 0;
-                    countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode && x.Music_Title_Code != objTitle.Music_Title_Code).Distinct().Count();
+                    countDuplicate = objMusicTitleService.GetAll().Where(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode && x.Music_Title_Code != objTitle.Music_Title_Code).Distinct().Count();
                     Count += countDuplicate;
                 }
                 if (MusicAlbumCode != 0)
                 {
-                    MusicAlbum = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == MusicAlbumName).Select(x => x.Music_Album_Code).FirstOrDefault();
+                    MusicAlbum = objMusicAlbumService.GetAll().Where(x => x.Music_Album_Name == MusicAlbumName).Select(x => x.Music_Album_Code).FirstOrDefault();
                 }
             }
            
@@ -933,9 +953,9 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetTitleName(string keyword)
         {
-            var result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Code == 1 && x.Title_Name.Contains(keyword))
+            var result =objTitleService.GetAll().Where(x => x.Deal_Type_Code == 1 && x.Title_Name.Contains(keyword))
                          .Select(R => R.Title_Name).Distinct().ToList()
-                         .Union(new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name.Contains(keyword)).Select(R => R.Music_Title_Name).Distinct().ToList());
+                         .Union(objMusicTitleService.GetAll().Where(x => x.Music_Title_Name.Contains(keyword)).Select(R => R.Music_Title_Name).Distinct().ToList());
             return Json(result);
         }
 
@@ -949,9 +969,9 @@ namespace RightsU_Plus.Controllers
                 Music_Title objMusicTitle = new Music_Title();
                 objMusicTitle.Music_Title_Name = NewMusicTitleName;
                 objMusicTitle.Movie_Album = "";
-                int Music_Version = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Music_Version_Code").Select(x => x.Parameter_Value).FirstOrDefault());
+                int Music_Version = Convert.ToInt32(objSystemParameterNewService.GetList().Where(x => x.Parameter_Name == "Music_Version_Code").Select(x => x.Parameter_Value).FirstOrDefault());
                 objMusicTitle.Music_Version_Code = Music_Version;
-                objMusicTitle.EntityState = State.Added;
+                //objMusicTitle.EntityState = State.Added;
                 //objMusicTitle.Language_Code = Convert.ToInt32(hdnddlLanguage);
                 objMusicTitle.Inserted_By = objLoginUser.Users_Code;
                 objMusicTitle.Inserted_On = DateTime.Now;
@@ -962,15 +982,15 @@ namespace RightsU_Plus.Controllers
                 {
                     objMusicTitle.Music_Album_Code = Convert.ToInt32(MovieAlbumName);
                 }
-                new Music_Title_Service(objLoginEntity.ConnectionStringName).Save(objMusicTitle);
+                //new Music_Title_Service(objLoginEntity.ConnectionStringName).Save(objMusicTitle);
                 TempData["MusicTitleCode"] = objMusicTitle.Music_Title_Code;
 
                 Music_Title_Label objMusicLabel = new Music_Title_Label();
                 objMusicLabel.Music_Label_Code = Convert.ToInt32(hdnMusicLabel);
                 objMusicLabel.Music_Title_Code = objMusicTitle.Music_Title_Code;
-                objMusicLabel.Effective_From = Convert.ToDateTime(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "Music_Label_Effective_From").Select(i => i.Parameter_Value).FirstOrDefault());
-                objMusicLabel.EntityState = State.Added;
-                new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).Save(objMusicLabel);
+                objMusicLabel.Effective_From = Convert.ToDateTime(objSystemParameterNewService.GetList().Where(y => y.Parameter_Name == "Music_Label_Effective_From").Select(i => i.Parameter_Value).FirstOrDefault());
+               // objMusicLabel.EntityState = State.Added;
+               // new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).Save(objMusicLabel);
 
 
                 #region ========= Music Language creation =========
@@ -981,11 +1001,11 @@ namespace RightsU_Plus.Controllers
                     {
                         int lanCode = Convert.ToInt32(languageCodes);
                         Music_Title_Language objTL = new Music_Title_Language();
-                        objTL.EntityState = State.Added;
+                        //objTL.EntityState = State.Added;
                         objTL.Music_Title_Code = objMusicTitle.Music_Title_Code;
                         objTL.Music_Language_Code = Convert.ToInt32(languageCodes);
                         //objTitle.Music_Title_Language.Add(objT);
-                        new Music_Title_Language_Service(objLoginEntity.ConnectionStringName).Save(objTL);
+                        //new Music_Title_Language_Service(objLoginEntity.ConnectionStringName).Save(objTL);
                     }
                 }
                 #endregion
@@ -1002,8 +1022,8 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult BindGrid(string searchText, int pageNo, int recordPerPage, string command, string IsMenu)
         {
             int RecordCount = 0;
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+            //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
+            //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             ViewBag.PageNo = objPage_Properties.PageNo;
             List<USP_List_Music_Title_Result> MusicTitleList;
             //if(objPage_Properties.isAdvanced == "Y")
@@ -1032,7 +1052,7 @@ namespace RightsU_Plus.Controllers
 
                 objPage_Properties = null;
                 objPage_Properties.isAdvanced = "N";
-                MusicTitleList = objUSP.USP_List_Music_Title(sqlStr, objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage, "", "", "", "", "", "", "", "", "", "", "", "","", ExactMatchStr).ToList();
+                MusicTitleList = objUSPService.USP_List_Music_Title(sqlStr, objLoginUser.System_Language_Code, pageNo, out RecordCount, "Y", recordPerPage, "", "", "", "", "", "", "", "", "", "", "", "","", ExactMatchStr).ToList();
                 //MusicTitleList = objUSP.USP_List_Music_Title(sqlStr, pageNo, objRecordCount, "Y", "", "", "", "", "", "", "", "", "", "", "", "", "", searchText);
 
             }
@@ -1040,7 +1060,7 @@ namespace RightsU_Plus.Controllers
             {
                 objPage_Properties = null;
                 objPage_Properties.isAdvanced = "N";
-                MusicTitleList = objUSP.USP_List_Music_Title(searchText, objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage, "", "", "", "", "", "", "", "", "", "", "","", "","").ToList();
+                MusicTitleList = objUSPService.USP_List_Music_Title(searchText, objLoginUser.System_Language_Code, pageNo, out RecordCount, "Y", recordPerPage, "", "", "", "", "", "", "", "", "", "", "","", "","").ToList();
             }
             else
             {
@@ -1053,7 +1073,7 @@ namespace RightsU_Plus.Controllers
                 objPage_Properties.MusicTitleName_Search = string.Join(",", termsMTN);
 
                 objPage_Properties.isAdvanced = "Y";
-                MusicTitleList = objUSP.USP_List_Music_Title("",objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage,
+                MusicTitleList = objUSPService.USP_List_Music_Title("",objLoginUser.System_Language_Code, pageNo, out RecordCount, "Y", recordPerPage,
                     objPage_Properties.StarCastCodes_Search, objPage_Properties.LanguagesCodes_Search, objPage_Properties.AlbumsCodes_Search,
                     objPage_Properties.GenresCodes_Search, objPage_Properties.MusicLabelCodes_Search, objPage_Properties.YearOfRelease,
                     objPage_Properties.SingerCodes_Search, objPage_Properties.ComposerCodes_Search, objPage_Properties.LyricistCodes_Search,
@@ -1061,7 +1081,7 @@ namespace RightsU_Plus.Controllers
                    
             }
 
-            RecordCount = Convert.ToInt32(objRecordCount.Value);
+            //RecordCount = Convert.ToInt32(objRecordCount.Value);
             ViewBag.RecordCount = RecordCount;
             ViewBag.PageNo = pageNo;
             PageNo = pageNo;
@@ -1072,8 +1092,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.Command = command;
             ViewBag.searchText = searchText;
 
-            ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-            string c = addRights.FirstOrDefault();
+            string addRights = objUSPService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            string c = addRights;
             ViewBag.AddVisibility = c;
             return PartialView("_List_Music_Title", MusicTitleList);
 
@@ -1110,7 +1130,7 @@ namespace RightsU_Plus.Controllers
             Warning[] warnings;
             ReportParameter[] parm = new ReportParameter[20];
             int pageSize = 10;
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+            //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             int RecordCount = 0;
             ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
 
@@ -1199,7 +1219,7 @@ namespace RightsU_Plus.Controllers
 
         public void ReportCredential()
         {
-            var rptCredetialList = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.IsActive == "Y" && w.Parameter_Name.Contains("RPT_")).ToList();
+            var rptCredetialList = objSystemParameterNewService.GetList().Where(w => w.IsActive == "Y" && w.Parameter_Name.Contains("RPT_")).ToList();
 
             string ReportingServer = rptCredetialList.Where(x => x.Parameter_Name == "RPT_ReportingServer").Select(x => x.Parameter_Value).FirstOrDefault();//  ConfigurationManager.AppSettings["ReportingServer"];
             string IsCredentialRequired = rptCredetialList.Where(x => x.Parameter_Name == "RPT_IsCredentialRequired").Select(x => x.Parameter_Value).FirstOrDefault();// ConfigurationManager.AppSettings["IsCredentialRequired"];
@@ -1227,12 +1247,12 @@ namespace RightsU_Plus.Controllers
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             try
             {
-                int count = new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Label_Name == MusicLabelName).ToList().Count();
+                int count = objMusicLabelService.GetAll().Where(x => x.Music_Label_Name == MusicLabelName).ToList().Count();
 
                 if (count > 0)
                     throw new DuplicateRecordException("Record Already Exists");
 
-                RightsU_Entities.Music_Label objMusicLabel = new RightsU_Entities.Music_Label();
+                RightsU_Dapper.Entity.Music_Label objMusicLabel = new RightsU_Dapper.Entity.Music_Label();
                 dynamic resultSet;
 
                 objMusicLabel.Music_Label_Name = MusicLabelName;
@@ -1242,13 +1262,16 @@ namespace RightsU_Plus.Controllers
 
 
                 if (objMusicLabel.Music_Label_Code > 0)
-                    objMusicLabel.EntityState = State.Modified;
+                    objMusicLabelService.UpdateEntity(objMusicLabel);
+                //objMusicLabelService.UpdateEntity(objMusicLabel);
+                //objMusicLabel.EntityState = State.Modified;
                 else
-                    objMusicLabel.EntityState = State.Added;
+                    objMusicLabelService.AddEntity(objMusicLabel);
+                    //objMusicLabel.EntityState = State.Added;
 
                 //NEED TO CHANGE
                 dynamic resultSetML;
-                new Music_Label_Service(objLoginEntity.ConnectionStringName).Save(objMusicLabel, out resultSetML);
+                //new Music_Label_Service(objLoginEntity.ConnectionStringName).Save(objMusicLabel, out resultSetML);
                 objJson.Add("Value", objMusicLabel.Music_Label_Code);
                 objJson.Add("Text", objMusicLabel.Music_Label_Name);
                 //objMusicAlbum = null;
@@ -1273,9 +1296,9 @@ namespace RightsU_Plus.Controllers
             {
                 int count = 0;
                 if (Type == "Music Theme")
-                    count = new Music_Theme_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Theme_Name == FieldName.Trim()).ToList().Count();
+                    count = objSMusicThemeService.GetAll().Where(x => x.Music_Theme_Name == FieldName.Trim()).ToList().Count();
                 if (Type == "Music Language")
-                    count = new Music_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Language_Name == FieldName.Trim()).ToList().Count();
+                    count = objMusicLanguageService.GetAll().Where(x => x.Language_Name == FieldName.Trim()).ToList().Count();
 
                 if (count > 0)
                     throw new DuplicateRecordException("Record Already Exists");
@@ -1287,11 +1310,11 @@ namespace RightsU_Plus.Controllers
                     objMusicTheme.Inserted_On = DateTime.Now;
                     objMusicTheme.Inserted_By = objLoginUser.Users_Code;
                     objMusicTheme.Is_Active = "Y";
-                    objMusicTheme.EntityState = State.Added;
+                    //objMusicTheme.EntityState = State.Added;
 
                     //NEED TO CHANGE
                     dynamic resultSetMT;
-                    new Music_Theme_Service(objLoginEntity.ConnectionStringName).Save(objMusicTheme, out resultSetMT);
+                    //new Music_Theme_Service(objLoginEntity.ConnectionStringName).Save(objMusicTheme, out resultSetMT);
                     objJson.Add("Value", objMusicTheme.Music_Theme_Code);
                     objJson.Add("Text", objMusicTheme.Music_Theme_Name);
                 }
@@ -1305,7 +1328,7 @@ namespace RightsU_Plus.Controllers
 
                     //NEED TO CHANGE
                     dynamic resultSetML;
-                    new Music_Language_Service(objLoginEntity.ConnectionStringName).Save(objMusicLan, out resultSetML);
+                    //new Music_Language_Service(objLoginEntity.ConnectionStringName).Save(objMusicLan, out resultSetML);
                     objJson.Add("Value", objMusicLan.Music_Language_Code);
                     objJson.Add("Text", objMusicLan.Language_Name);
                 }
@@ -1342,20 +1365,20 @@ namespace RightsU_Plus.Controllers
         }
 
         [HttpPost]
-        public ActionResult Save(RightsU_Entities.Music_Title objTitleModel, string Language_Code, string Music_Type_Code, string hdnLanguage, string hdnTheme
+        public ActionResult Save(RightsU_Dapper.Entity.Music_Title objTitleModel, string Language_Code, string Music_Type_Code, string hdnLanguage, string hdnTheme
             , string hdnSinger, string hdnComposer, string hdnLyricist, string Music_Label_Code, string Music_Version_Code, string Genres_Code, string hdnStarCast, string Music_Album_Name, string hdnmode, string Public_Domain, int? hdnMusicTitleCode)
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusic_Title);
             HttpPostedFileBase file = Request.Files["uploadFile"];
-            int Music_Album_Code = Convert.ToInt32(new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == Music_Album_Name).Select(x => x.Music_Album_Code).FirstOrDefault());
+            int Music_Album_Code = Convert.ToInt32(objMusicAlbumService.GetAll().Where(x => x.Music_Album_Name == Music_Album_Name).Select(x => x.Music_Album_Code).FirstOrDefault());
             int TitleCode = 0;
             if (hdnmode != "C")
             {
                 TitleCode = Convert.ToInt32(objTitleModel.Music_Title_Code);
-                objTitle = objTitleS.GetById(objTitleModel.Music_Title_Code);
+                objTitle = objTitleS.GetByID(objTitleModel.Music_Title_Code);
             }
 
-            objTitle = objTitleS.GetById(TitleCode);
+            objTitle = objTitleS.GetByID(TitleCode);
             string filename = DateTime.Now.Ticks.ToString() + "_";
             filename += file.FileName;
             if (filename != "" && file.FileName != "")
@@ -1393,9 +1416,9 @@ namespace RightsU_Plus.Controllers
             #region ========= Music Label creation =========
             if (Music_Label_Code != "0" && Music_Label_Code != null)
             {
-                objTitle.Music_Title_Label.ToList().ForEach(i => i.EntityState = State.Deleted);
+                objTitle.Music_Title_Label.ToList().ForEach(i => objTitle.Music_Title_Label.Remove(i));
                 string Music_Label_Codes = Music_Label_Code;
-                Music_Title_Label_Service objMTLService = new Music_Title_Label_Service(objLoginEntity.ConnectionStringName);
+               // Music_Title_Label_Service objMTLService = new Music_Title_Label_Service(objLoginEntity.ConnectionStringName);
                 Music_Title_Label objTL = new Music_Title_Label();
                 objTL.Music_Label_Code = Convert.ToInt32(Music_Label_Codes);
                 if (!string.IsNullOrEmpty(Music_Label_Codes) && TitleCode == 0)
@@ -1405,18 +1428,18 @@ namespace RightsU_Plus.Controllers
                         objT = new Music_Title_Label();
                     if (objT.Music_Label_Code > 0)
                     {
-                        objT.EntityState = State.Unchanged;
+                        //objT.EntityState = State.Unchanged;
                         objTitle.Music_Title_Label.Add(objT);
                     }
                     else
                     {
-                        Music_Title_Label objMTL_Last = objMTLService.SearchFor(w => w.Music_Title_Code == hdnMusicTitleCode && w.Music_Label_Code == objTL.Music_Label_Code && w.Music_Label_Code == objTL.Music_Label_Code && w.Effective_From != null && w.Effective_To == null).
+                        Music_Title_Label objMTL_Last = objMusicTitleLabelService.GetAll().Where(w => w.Music_Title_Code == hdnMusicTitleCode && w.Music_Label_Code == objTL.Music_Label_Code && w.Music_Label_Code == objTL.Music_Label_Code && w.Effective_From != null && w.Effective_To == null).
                           OrderByDescending(o => o.Effective_From).FirstOrDefault();
-                        objT.EntityState = State.Added;
+                       // objT.EntityState = State.Added;
                         if (objMTL_Last == null)
                         {
-                            System_Parameter_New_Service objSystemParamService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
-                            objT.Effective_From = Convert.ToDateTime(objSystemParamService.SearchFor(p => p.Parameter_Name == "Music_Label_Effective_From").ToList().FirstOrDefault().Parameter_Value);
+                            //System_Parameter_New_Service objSystemParamService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
+                            objT.Effective_From = Convert.ToDateTime(objSystemParameterNewService.GetList().Where(p => p.Parameter_Name == "Music_Label_Effective_From").ToList().FirstOrDefault().Parameter_Value);
                         }
                         else
                         {
@@ -1430,10 +1453,10 @@ namespace RightsU_Plus.Controllers
             }
 
             #endregion
-            objTitle.Music_Title_Talent.ToList().ForEach(i => i.EntityState = State.Deleted);
-            objTitle.Music_Title_Language.ToList().ForEach(i => i.EntityState = State.Deleted);
-            objTitle.Music_Title_Theme.ToList().ForEach(i => i.EntityState = State.Deleted);
-
+            objTitle.Music_Title_Talent.ToList().ForEach(i => objTitle.Music_Title_Talent.Remove(i));
+            objTitle.Music_Title_Language.ToList().ForEach(i => objTitle.Music_Title_Language.Remove(i));
+            objTitle.Music_Title_Theme.ToList().ForEach(i => objTitle.Music_Title_Theme.Remove(i));
+            //t => objTalent.Talent_Role.Remove(t)
             #region ========= Singer creation =========
             string[] Singer_Codes = hdnSinger.Split(new char[] { ',' }, StringSplitOptions.None);
             foreach (string singercodes in Singer_Codes)
@@ -1443,11 +1466,12 @@ namespace RightsU_Plus.Controllers
                     Music_Title_Talent objT = (Music_Title_Talent)objTitle.Music_Title_Talent.Where(t => t.Talent_Code == Convert.ToInt32(singercodes) && t.Role_Code == GlobalParams.Role_Code_Singer).Select(i => i).FirstOrDefault();
                     if (objT == null)
                         objT = new Music_Title_Talent();
-                    if (objT.Music_Title_Talent_Code > 0)
-                        objT.EntityState = State.Unchanged;
-                    else
+                    //if (objT.Music_Title_Talent_Code > 0)
+                    //objMusicTitleTalentService.UpdateEntity
+                    //objT.EntityState = State.Unchanged;
+                    if (objT.Music_Title_Talent_Code == 0)
                     {
-                        objT.EntityState = State.Added;
+                        //objT.EntityState = State.Added;
                         objT.Music_Title_Code = TitleCode;
                         objT.Talent_Code = Convert.ToInt32(singercodes);
                         objT.Role_Code = GlobalParams.Role_Code_Singer;
@@ -1466,11 +1490,11 @@ namespace RightsU_Plus.Controllers
                     Music_Title_Talent objT = (Music_Title_Talent)objTitle.Music_Title_Talent.Where(t => t.Talent_Code == Convert.ToInt32(composercodes) && t.Role_Code == GlobalParams.Role_code_MusicComposer).Select(i => i).FirstOrDefault();
                     if (objT == null)
                         objT = new Music_Title_Talent();
-                    if (objT.Music_Title_Talent_Code > 0)
-                        objT.EntityState = State.Unchanged;
-                    else
+                    //if (objT.Music_Title_Talent_Code > 0)
+                    //    objT.EntityState = State.Unchanged;
+                    if (objT.Music_Title_Talent_Code == 0)
                     {
-                        objT.EntityState = State.Added;
+                        //objT.EntityState = State.Added;
                         objT.Talent_Code = Convert.ToInt32(composercodes);
                         objT.Music_Title_Code = TitleCode;
                         objT.Role_Code = GlobalParams.Role_code_MusicComposer;
@@ -1489,11 +1513,12 @@ namespace RightsU_Plus.Controllers
                     Music_Title_Talent objT = (Music_Title_Talent)objTitle.Music_Title_Talent.Where(t => t.Talent_Code == Convert.ToInt32(lyricistCodes) && t.Role_Code == GlobalParams.Role_code_lyricist).Select(i => i).FirstOrDefault();
                     if (objT == null)
                         objT = new Music_Title_Talent();
-                    if (objT.Music_Title_Talent_Code > 0)
-                        objT.EntityState = State.Unchanged;
-                    else
+                    //if (objT.Music_Title_Talent_Code > 0)
+                    //    objT.EntityState = State.Unchanged;
+                    //else
+                    if (objT.Music_Title_Talent_Code == 0)
                     {
-                        objT.EntityState = State.Added;
+                        //objT.EntityState = State.Added;
                         objT.Music_Title_Code = TitleCode;
                         objT.Talent_Code = Convert.ToInt32(lyricistCodes);
                         objT.Role_Code = GlobalParams.Role_code_lyricist;
@@ -1513,11 +1538,12 @@ namespace RightsU_Plus.Controllers
                     Music_Title_Talent objT = (Music_Title_Talent)objTitle.Music_Title_Talent.Where(t => t.Talent_Code == Convert.ToInt32(starCastcodes) && t.Role_Code == GlobalParams.Role_code_StarCast).Select(i => i).FirstOrDefault();
                     if (objT == null)
                         objT = new Music_Title_Talent();
-                    if (objT.Music_Title_Talent_Code > 0)
-                        objT.EntityState = State.Unchanged;
-                    else
+                    //if (objT.Music_Title_Talent_Code > 0)
+                    //    objT.EntityState = State.Unchanged;
+                    //else
+                    if (objT.Music_Title_Talent_Code == 0)
                     {
-                        objT.EntityState = State.Added;
+                        //objT.EntityState = State.Added;
                         objT.Music_Title_Code = TitleCode;
                         objT.Talent_Code = Convert.ToInt32(starCastcodes);
                         objT.Role_Code = GlobalParams.Role_code_StarCast;
@@ -1537,11 +1563,12 @@ namespace RightsU_Plus.Controllers
                     Music_Title_Language objT = (Music_Title_Language)objTitle.Music_Title_Language.Where(t => t.Music_Language_Code == lanCode).Select(i => i).FirstOrDefault();
                     if (objT == null)
                         objT = new Music_Title_Language();
-                    if (objT.Music_Title_Language_Code > 0)
-                        objT.EntityState = State.Unchanged;
-                    else
+                    //if (objT.Music_Title_Language_Code > 0)
+                    //    objT.EntityState = State.Unchanged;
+                    //else
+                    if (objT.Music_Title_Language_Code == 0)
                     {
-                        objT.EntityState = State.Added;
+                        //objT.EntityState = State.Added;
                         objT.Music_Title_Code = TitleCode;
                         objT.Music_Language_Code = Convert.ToInt32(languageCodes);
                         objTitle.Music_Title_Language.Add(objT);
@@ -1562,11 +1589,11 @@ namespace RightsU_Plus.Controllers
                         Music_Title_Theme objT = (Music_Title_Theme)objTitle.Music_Title_Theme.Where(t => t.Music_Theme_Code == themeCode).Select(i => i).FirstOrDefault();
                         if (objT == null)
                             objT = new Music_Title_Theme();
-                        if (objT.Music_Title_Theme_Code > 0)
-                            objT.EntityState = State.Unchanged;
-                        else
+                        //if (objT.Music_Title_Theme_Code > 0)
+                        //    objT.EntityState = State.Unchanged;
+                        if (objT.Music_Title_Theme_Code == 0)
                         {
-                            objT.EntityState = State.Added;
+                            //objT.EntityState = State.Added;
                             objT.Music_Title_Code = TitleCode;
                             objT.Music_Theme_Code = Convert.ToInt32(themeCodes);
                             objTitle.Music_Title_Theme.Add(objT);
@@ -1578,18 +1605,20 @@ namespace RightsU_Plus.Controllers
 
             objTitleModel.Music_Title_Code = TitleCode;
             if (objTitle.Music_Title_Code > 0)
-                objTitle.EntityState = State.Modified;
+                objMusicTitleService.UpdateEntity(objTitleModel);
+            //objTitle.EntityState = State.Modified;
             else
             {
-                objTitle.EntityState = State.Added;
+                objMusicTitleService.AddEntity(objTitleModel);
+                //objTitle.EntityState = State.Added;
                 objTitle.Is_Active = "Y";
             }
 
 
 
-            objTitleS.Save(objTitle);
+            //objTitleS.Save(objTitle);
             objTitleS = null;
-            if (objTitle.EntityState == State.Added)
+            if (objTitle.Music_Title_Code == 0)
             {
                 Message = objMessageKey.RecordAddedSuccessfully;
             }
@@ -1598,8 +1627,8 @@ namespace RightsU_Plus.Controllers
                 Message = objMessageKey.MusicTrackupdatedsuccessfully;
             }
             DBUtil.Release_Record(Record_Locking_Code);
-            ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-            string c = addRights.FirstOrDefault();
+            /*ObjectResult<*/string addRights = objUSPService.USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            string c = addRights;
             ViewBag.VisibilityforAdd = c;
             ViewBag.Message = objMessageKey.MusicTrackupdatedsuccessfully;
             PageNo = (PageNo == 0) ? 1 : PageNo;
@@ -1642,7 +1671,7 @@ namespace RightsU_Plus.Controllers
         }
         public void SampleDownload()
         {
-            var MusicTitleVersion = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
+            var MusicTitleVersion = objSystemParameterNewService.GetList().Where(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
             ViewBag.IsMuciVersionSPN = MusicTitleVersion;
             string message = "";
             string filePath = "";
@@ -1818,7 +1847,7 @@ namespace RightsU_Plus.Controllers
                                         lst_Title_Import_UDT.Add(obj_Title_Import_UDT);
                                     }
 
-                                    lstError = new USP_Service(objLoginEntity.ConnectionStringName).USP_Insert_Music_Title_Import_UDT(lst_Title_Import_UDT, Convert.ToInt32(objLoginUser.Users_Code)).ToList();
+                                    lstError = objUSPService.USP_Insert_Music_Title_Import_UDT(lst_Title_Import_UDT, Convert.ToInt32(objLoginUser.Users_Code)).ToList();
                                     if (lstError.Count == 0)
                                     {
                                         //message = "Data Saved successfully";
@@ -1920,7 +1949,7 @@ namespace RightsU_Plus.Controllers
             List<string> terms = keyword.Split('﹐').ToList();
             terms = terms.Select(s => s.Trim()).ToList();
             string searchString = terms.LastOrDefault().ToString().Trim();
-            var result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().Where(w => w.Talent_Name.ToUpper().Contains(searchString.ToUpper()) &&w.Role_Code == GlobalParams.Role_code_StarCast).Distinct()
+            var result = objUSPService.USP_Get_Talent_Name().Where(w => w.Talent_Name.ToUpper().Contains(searchString.ToUpper()) &&w.Role_Code == GlobalParams.Role_code_StarCast).Distinct()
                 .Select(x => new { Talent_Name = x.Talent_Name, Talent_Code = x.Talent_Code }).ToList();
                
             return Json(result);
@@ -1933,7 +1962,7 @@ namespace RightsU_Plus.Controllers
             //string rdoMovieAlbum = frmdata["rdoMovieAlbum"].ToString();
             //string lstStarcast = frmdata["selectedValue"].ToString();
             Music_Album objMusicAlbum = new Music_Album();
-            Music_Album_Service objService = new Music_Album_Service(objLoginEntity.ConnectionStringName);
+            //Music_Album_Service objService = new Music_Album_Service(objLoginEntity.ConnectionStringName);
             string lstStarcast = hdnStarCastList.Trim();
 
             objMusicAlbum.Music_Album_Name = Music_Album_Name;
@@ -1941,9 +1970,9 @@ namespace RightsU_Plus.Controllers
             objMusicAlbum.Inserted_By = objLoginUser.Users_Code;
             objMusicAlbum.Inserted_On = System.DateTime.Now;
             objMusicAlbum.Is_Active = "Y";
-            objMusicAlbum.EntityState = State.Added;
+            //objMusicAlbum.EntityState = State.Added;
 
-            var RoleCode = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).Where(b => b.Role_Name.Contains("Star Cast")).Select(c => c.Role_Code).ToList();
+            var RoleCode =objRoleService.GetList().Where(a => true).Where(b => b.Role_Name.Contains("Star Cast")).Select(c => c.Role_Code).ToList();
 
             //#region --- Talent Role List ---
             List<string> talentlst = new List<string>();
@@ -1958,11 +1987,11 @@ namespace RightsU_Plus.Controllers
                     {
                         int code = Convert.ToInt32(talentcode);
                         Music_Album_Talent objTR = new Music_Album_Talent();
-                        objTR.EntityState = State.Added;
+                        //objTR.EntityState = State.Added;
                         objTR.Talent_Code = Convert.ToInt32(talentcode);
                         objTR.Role_Code = Convert.ToInt32(RoleCode[0]);
                         objTR.Music_Album_Code = objMusicAlbum.Music_Album_Code;
-                        talentlst = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).Where(b => b.Talent_Code == code).Select(c => c.Talent_Name).ToList();
+                        talentlst = objTalentService.GetList().Where(a => true).Where(b => b.Talent_Code == code).Select(c => c.Talent_Name).ToList();
                         strtalents += talentlst[0] + ", ";
                         talentRoleList.Add(objTR);
                     }
@@ -1989,7 +2018,7 @@ namespace RightsU_Plus.Controllers
 
             //NEED TO CHANGE
             dynamic resultSetMA;
-            objService.Save(objMusicAlbum, out resultSetMA);
+            //objMusicAlbumService.Save(objMusicAlbum, out resultSetMA);
             objJson.Add("Value", objMusicAlbum.Music_Album_Code);
             objJson.Add("Text", objMusicAlbum.Music_Album_Name);
 
@@ -2006,7 +2035,7 @@ namespace RightsU_Plus.Controllers
             };
             int id = Convert.ToInt32(Session["EditId"]);
 
-            Talent_Service objTalentService = new Talent_Service(objLoginEntity.ConnectionStringName);
+           // Talent_Service objTalentService = new Talent_Service(objLoginEntity.ConnectionStringName);
 
 
 
@@ -2016,9 +2045,9 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult onChangeDropdown(string value)
         {
-            var TalentList = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true);
-            var MovieAlbum = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true);
-            var MovieAlbumTalent = new Music_Album_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true);
+            var TalentList = objTalentService.GetList().Where(a => true);
+            var MovieAlbum = objMusicAlbumService.GetAll().Where(a => true);
+            var MovieAlbumTalent = objMusicAlbumTalentService.GetAll().Where(a => true);
 
             //var result = from a in MovieAlbum
             //             join b in MovieAlbumTalent on a.Music_Album_Code equals b.Music_Album_Code
@@ -2038,17 +2067,19 @@ namespace RightsU_Plus.Controllers
         }
         public void BindStarcast(int value)
         {
-            var MovieAlbumTalent = new Music_Album_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true);
+            var MovieAlbumTalent = objMusicAlbumTalentService.GetAll().Where(a => true);
             int code = Convert.ToInt32(value);
-            var lstTalentName = MovieAlbumTalent.Where(a => a.Music_Album_Code == code).Select(b => b.Talent).ToList();
-            string strName = string.Join(", ", lstTalentName.Select(s => s.Talent_Name).ToArray());
+            List<int?> TalentCode = MovieAlbumTalent.Where(s=>s.Music_Album_Code == code).Select(a => a.Talent_Code).ToList();
+            string strName = string.Join(", ", objTalentService.GetList().Where(a => TalentCode.Contains(a.Talent_Code) ).Select(s => s.Talent_Name).ToArray());
+            //string lstTalentName = string.Join(", ", MovieAlbumTalent.Where(a => a.Music_Album_Code == code).Select(b => b.Talent.Talent_Name).ToArray());
+            //string strName = string.Join(", ", lstTalentName.Select(s => s.Talent_Name).ToArray());
             ViewBag.StarcastJoins = strName;
         }
         private List<SelectListItem> BindMovieAlbum(int Music_Album_Code = 0)
         {
             List<SelectListItem> lstTitleType = new List<SelectListItem>();
 
-            lstTitleType = new SelectList(new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Music_Album_Code", "Music_Album_Name", Music_Album_Code).ToList();
+            lstTitleType = new SelectList(objMusicAlbumService.GetAll().Where(x => x.Is_Active == "Y"), "Music_Album_Code", "Music_Album_Name", Music_Album_Code).ToList();
             lstTitleType.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
 
             return lstTitleType;
@@ -2059,7 +2090,7 @@ namespace RightsU_Plus.Controllers
             int Count = 0;
             //if (command == "Add")
             //{
-            Count = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == MovieAlbumName).Distinct().Count();
+            Count = objMusicAlbumService.GetAll().Where(x => x.Music_Album_Name == MovieAlbumName).Distinct().Count();
             //}
             //else
             //{
@@ -2085,18 +2116,18 @@ namespace RightsU_Plus.Controllers
         {
 
             int RecordCount = 0;
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            lstMusicTitleContent_Searched = lstMusicTitleContent = new USP_Service(objLoginEntity.ConnectionStringName).USP_Music_Title_Contents(id, searchText, objRecordCount, "Y", RecordPerPage, PageNo).ToList<RightsU_Entities.USP_Music_Title_Contents_Result>();
+            //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
+            lstMusicTitleContent_Searched = lstMusicTitleContent = objUSPService.USP_Music_Title_Contents(id, searchText,out RecordCount, "Y", RecordPerPage, PageNo).ToList<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result>();
 
             var obj = new
             {
-                Record_Count = Convert.ToInt32(objRecordCount.Value)
+                Record_Count = Convert.ToInt32(RecordCount)
             };
             return Json(obj);
         }
         public PartialViewResult BindMusicTitleContentList(int pageNo, int recordPerPage)
         {
-            List<RightsU_Entities.USP_Music_Title_Contents_Result> lst = new List<RightsU_Entities.USP_Music_Title_Contents_Result>();
+            List<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result> lst = new List<RightsU_Dapper.Entity.USP_Music_Title_Contents_Result>();
 
             lst = lstMusicTitleContent_Searched.ToList();
 
@@ -2122,17 +2153,17 @@ namespace RightsU_Plus.Controllers
             objMTL_Session = null;
             string status = "S", message = "", minEffectiveFrom = "";
 
-            objMTL_Session = new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Title_Code == musicTitleCode && w.Effective_From != null && w.Effective_To == null).
+            objMTL_Session = objMusicTitleLabelService.GetAll().Where(w => w.Music_Title_Code == musicTitleCode && w.Effective_From != null && w.Effective_To == null).
                 OrderByDescending(o => o.Music_Title_Label_Code).FirstOrDefault();
 
             if (objMTL_Session.Music_Title_Label_Code == 0)
             {
-                objMTL_Session = new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Title_Code == musicTitleCode && w.Effective_To == null).
+                objMTL_Session = objMusicTitleLabelService.GetAll().Where(w => w.Music_Title_Code == musicTitleCode && w.Effective_To == null).
                 OrderByDescending(o => o.Music_Title_Label_Code).FirstOrDefault();
             }
 
             objMTL_Session.Music_Title_Code = musicTitleCode;
-            List<SelectListItem> lstMusicLabel = new SelectList((new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Active == "Y" && w.Music_Label_Code != objMTL_Session.Music_Label_Code).OrderBy(o => o.Music_Label_Name)), "Music_Label_Code", "Music_Label_Name").ToList();
+            List<SelectListItem> lstMusicLabel = new SelectList((objMusicLabelService.GetAll().Where(w => w.Is_Active == "Y" && w.Music_Label_Code != objMTL_Session.Music_Label_Code).OrderBy(o => o.Music_Label_Name)), "Music_Label_Code", "Music_Label_Name").ToList();
             lstMusicLabel.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
 
             if (objMTL_Session.Effective_From != null)
@@ -2150,7 +2181,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.MusicLabelCode = musicLabelCode;
             ViewBag.CommandName = commandName;
-            List<Music_Title_Label> lstMusicTitleLabel = new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Music_Title_Code == objMTL_Session.Music_Title_Code && w.Effective_From != null).
+            List<Music_Title_Label> lstMusicTitleLabel = objMusicTitleLabelService.GetAll().Where(w => w.Music_Title_Code == objMTL_Session.Music_Title_Code && w.Effective_From != null).
                 OrderByDescending(o => o.Music_Title_Label_Code).ToList();
             ViewBag.HdnEffectiveFrom = Convert.ToDateTime(lstMusicTitleLabel.FirstOrDefault().Effective_From).ToString(GlobalParams.DateFormat_Display);
             return PartialView("~/Views/Music_Title/_MusicLabelHistory.cshtml", lstMusicTitleLabel);
@@ -2160,15 +2191,16 @@ namespace RightsU_Plus.Controllers
             string status = "S", message = "";
             if (musicTitleLabelCode > 0)
                 message = "Effective date updated successfully";
-            Music_Title_Label_Service objMTLService = new Music_Title_Label_Service(objLoginEntity.ConnectionStringName);
-            Music_Title_Label objMTL = objMTLService.GetById((int)objMTL_Session.Music_Title_Label_Code);
-            Music_Title_Service objMTService = new Music_Title_Service(objLoginEntity.ConnectionStringName);
-            Music_Title objMTC = objMTService.GetById((int)objMTL_Session.Music_Title_Code);
-            Music_Title_Label objMTL_Last = objMTLService.SearchFor(w => w.Music_Title_Code == objMTL_Session.Music_Title_Code && w.Effective_From != null && w.Effective_To != null).
+           // Music_Title_Label_Service objMTLService = new Music_Title_Label_Service(objLoginEntity.ConnectionStringName);
+            Music_Title_Label objMTL = objMusicTitleLabelService.GetByID((int)objMTL_Session.Music_Title_Label_Code);
+            //Music_Title_Service objMTService = new Music_Title_Service(objLoginEntity.ConnectionStringName);
+            Music_Title objMTC = objMusicTitleService.GetByID((int)objMTL_Session.Music_Title_Code);
+            Music_Title_Label objMTL_Last = objMusicTitleLabelService.GetAll().Where(w => w.Music_Title_Code == objMTL_Session.Music_Title_Code && w.Effective_From != null && w.Effective_To != null).
               OrderByDescending(o => o.Effective_To).FirstOrDefault();
             if (objMTL_Last != null)
             {
-                objMTL.EntityState = State.Modified;
+                objMusicTitleLabelService.UpdateEntity(objMTL);
+                //objMTL.EntityState = State.Modified;
                 objMTL_Last.Effective_To = Effective_From.AddDays(-1);
                 objMTL.Effective_To = objMTL_Last.Effective_To;
             }
@@ -2183,11 +2215,12 @@ namespace RightsU_Plus.Controllers
             if (status != "E")
             {
                 Music_Title_Label objMT = new Music_Title_Label();
-                objMTL.EntityState = State.Modified;
+                objMusicTitleLabelService.UpdateEntity(objMTL);
+                //objMTL.EntityState = State.Modified;
                 objMTL.Music_Label_Code = musicTitleLabelCode;
                 objMTL.Effective_From = Effective_From;
                 objMTL.Effective_To = null;
-                objMTLService.Save(objMT);
+                //objMTLService.Save(objMT);
             }
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
@@ -2205,8 +2238,8 @@ namespace RightsU_Plus.Controllers
 
             string status = "S", message = objMessageKey.MusicLabelassignedsuccessfully;
 
-            Music_Title_Service objMTService = new Music_Title_Service(objLoginEntity.ConnectionStringName);
-            Music_Title objMT = objMTService.GetById((int)objMTL_Session.Music_Title_Code);
+            //Music_Title_Service objMTService = new Music_Title_Service(objLoginEntity.ConnectionStringName);
+            Music_Title objMT = objMusicTitleService.GetByID((int)objMTL_Session.Music_Title_Code);
 
             if (objMTL_Session.Effective_From != null && effectiveDate != null)
             {
@@ -2220,7 +2253,7 @@ namespace RightsU_Plus.Controllers
             if (status != "E")
             {
                 Music_Title_Label objMTL = new Music_Title_Label();
-                objMTL.EntityState = State.Added;
+                //objMTL.EntityState = State.Added;
                 objMTL.Effective_From = effectiveDate;
                 objMTL.Effective_To = null;
                 objMTL.Music_Label_Code = musicLabelCode;
@@ -2230,11 +2263,11 @@ namespace RightsU_Plus.Controllers
                     ForEach(a =>
                     {
                         a.Effective_To = Convert.ToDateTime(effectiveDate).AddDays(-1);
-                        a.EntityState = State.Modified;
+                       // a.EntityState = State.Modified;
                     });
 
-                objMT.EntityState = State.Modified;
-                objMTService.Save(objMT);
+                //objMT.EntityState = State.Modified;
+                //objMTService.Save(objMT);
                 objMTL_Session = null;
             }
 
@@ -2248,7 +2281,7 @@ namespace RightsU_Plus.Controllers
         {
             dynamic result = "";
 
-            result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y").Distinct()
+            result = objMusicAlbumService.GetAll().Where(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y").Distinct()
                 .Select(x => new { Music_Album_Name = x.Music_Album_Name, Music_Album_Code = x.Music_Album_Code }).ToList();
             //.Where(x => x.Music_Album_Code == music_Album_Code)
             return Json(result);
@@ -2258,7 +2291,7 @@ namespace RightsU_Plus.Controllers
             List<string> terms = keyword.Split('﹐').ToList();
             terms = terms.Select(s => s.Trim()).ToList();
             string searchString = terms.LastOrDefault().ToString().Trim();
-            var result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(searchString.ToUpper()) && x.Is_Active == "Y").Distinct()
+            var result = objMusicAlbumService.GetAll().Where(x => x.Music_Album_Name.ToUpper().Contains(searchString.ToUpper()) && x.Is_Active == "Y").Distinct()
                 .Select(x => new { Music_Album_Name = x.Music_Album_Name, Music_Album_Code = x.Music_Album_Code }).ToList();
 
             return Json(result);
