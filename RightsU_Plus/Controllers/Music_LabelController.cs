@@ -309,7 +309,7 @@ namespace RightsU_Plus.Controllers
                         if (status == "E")
                             message = objMessageKey.CouldNotsavedRecord;
                         else
-                            message = objMessageKey.RecordAddedSuccessfully;
+                            message = objMessageKey.Recordsavedsuccessfully;
                     }
                         //message = message.Replace("{ACTION}", "added");
                 }

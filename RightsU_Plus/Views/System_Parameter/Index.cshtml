@@ -206,6 +206,7 @@
                 }),
                 async: false,
                 success: function (result) {
+                    debugger;
                     if (result == "true") {
                         redirectToLogin();
                     }
@@ -214,7 +215,10 @@
                         if (result.Status == "S") {
                             $('#hdnAction').val("")
                             showAlert("S", result.Message);
-                            SearchSystem_Parameter("");
+                            if ($("#searchCommon").val() != "") {
+                                SearchSystem_Parameter($("#searchCommon").val())
+                            }
+                            //SearchSystem_Parameter("");
                             SetPaging();
                             BindSystem_ParameterList(0, "");
                         }
