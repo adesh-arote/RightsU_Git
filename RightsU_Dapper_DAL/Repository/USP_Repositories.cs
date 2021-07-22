@@ -202,10 +202,15 @@ namespace RightsU_Dapper.DAL.Repository
         List<Music_Title_Import_UDT> lstMusic_Title_Import_UDT, int User_Code
           )
         {
-            var proc = new USP_Insert_Music_Title_Import_UDT();
-            //proc.Music_Title_Import = lstMusic_Title_Import_UDT;
-            proc.User_Code = User_Code;
-            return base.ExecuteSQLStmt<USP_Insert_Music_Title_Import_UDT>("USP_Get_Talent_Name");
+            var parameters = new DynamicParameters();
+            parameters.Add("@Music_Title_Import", lstMusic_Title_Import_UDT);
+            parameters.Add("@User_Code", User_Code);
+            var query = "[USP_Insert_Music_Title_Import_UDT]";
+            return base.ExecuteSQLProcedure<USP_Insert_Music_Title_Import_UDT>(query, parameters);
+            //var proc = new USP_Insert_Music_Title_Import_UDT();
+            ////proc.Music_Title_Import = lstMusic_Title_Import_UDT;
+            //proc.User_Code = User_Code;
+            //return base.ExecuteSQLStmt<USP_Insert_Music_Title_Import_UDT>("USP_Get_Talent_Name");
             //return this.Database.ExecuteStoredProcedure<USP_Insert_Music_Title_Import_UDT>(proc);
         }
         public IEnumerable<USP_Music_Title_Contents_Result> USP_Music_Title_Contents(Nullable<int> Music_Title_Code, string GenericSearch, out int RecordCount, string IsPaging, Nullable<int> PageSize, Nullable<int> PageNo)

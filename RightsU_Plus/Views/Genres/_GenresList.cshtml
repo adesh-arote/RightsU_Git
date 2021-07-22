@@ -4,7 +4,12 @@
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
+        //List<int?> lstGenreCodes = new RightsU_BLL.Genre_Service.SearchFor(w => true).Select(x => x.Currency_Code).ToList();
     }
+    RightsU_Dapper.BLL.Services.Genres_Service objGenreService = new RightsU_Dapper.BLL.Services.Genres_Service();
+    List<int?> lstGenreCodes = objGenreService.GetList().Select(x => x.Genres_Code).ToList();
+    //RightsU_Dapper.BLL.Services.Channel_Service objChannelService = new RightsU_Dapper.BLL.Services.Channel_Service();
+    //List<int?> lstChannelCodes = objChannelService.GetList().Select(x => x.Genres_Code).ToList();
 }           
 <script>
     $('.expand_Genres_Name').expander({
@@ -88,12 +93,16 @@
                             {
                                 bool canDeactivate = true;
                                 string strToolTip = "";
-                                if (item.Channels.Count > 0)
+                                RightsU_Dapper.BLL.Services.Channel_Service objChannelService = new RightsU_Dapper.BLL.Services.Channel_Service();
+                                List<int?> ChannelCode = item.Channels.Select(a => a.Channel_Code).ToList();
+                                var lstChannelCodes =  objChannelService.GetList().Where(a => ChannelCode.Contains(a.Channel_Code)).Select(s => true).ToList();
+
+                                if (lstChannelCodes.Count > 0)
                                 {
                                     canDeactivate = false;
                                     strToolTip = objMessageKey.Cannotdeactivatethisgenreasitisusedinchannel;
                                 }
-                                else if (item.Title_Geners.Count > 0)
+                                else if (lstGenreCodes.Where(x => x.HasValue && x.Value == item.Genres_Code).Count() > 0)
                                 {
                                     canDeactivate = false;
                                     strToolTip = objMessageKey.Cannotdeactivatethisgenreasitisusedintitle;

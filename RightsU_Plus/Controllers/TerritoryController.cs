@@ -90,7 +90,7 @@ namespace RightsU_Plus.Controllers
             //Territory_Services objSerivce = new Territory_Services(objLoginEntity.ConnectionStringName);
             List<RightsU_Dapper.Entity.Country> lstcountry = new List<RightsU_Dapper.Entity.Country>();
 
-            lstcountry = objCountry_Service.GetList().ToList();
+            lstcountry = objCountry_Service.GetList(new Type[] { typeof(Territory_Details) }).ToList();
             //lstcountry = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
             ViewBag.Territories = new SelectList(lstcountry, "Country_Code", "Country_Name");
 
@@ -112,7 +112,7 @@ namespace RightsU_Plus.Controllers
         {
             //List<SelectListItem> lstCountry = new SelectList(new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Theatrical_Territory == isTheatricalTerritory).
             //    OrderBy(o => o.Country_Name), "Country_Code", "Country_Name").ToList();
-            List<SelectListItem> lstCountry = new SelectList(objCountry_Service.GetList().Where(s => s.Is_Theatrical_Territory == isTheatricalTerritory).
+            List<SelectListItem> lstCountry = new SelectList(objCountry_Service.GetList(new Type[] { typeof(Territory_Details) }).Where(s => s.Is_Theatrical_Territory == isTheatricalTerritory).
                 OrderBy(o => o.Country_Name), "Country_Code", "Country_Name").ToList();
             var obj = new
             {
@@ -198,7 +198,7 @@ namespace RightsU_Plus.Controllers
             //List<RightsU_Entities.Country> lstCountry = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Active == "Y"
             //    && w.Is_Theatrical_Territory == objTerritory.Is_Thetrical).OrderBy(o => o.Country_Name).ToList();
 
-            List<RightsU_Dapper.Entity.Country> lstCountry = objCountry_Service.GetList().Where(w => w.Is_Active == "Y"
+            List<RightsU_Dapper.Entity.Country> lstCountry = objCountry_Service.GetList(new Type[] { typeof(Territory_Details) }).Where(w => w.Is_Active == "Y"
              && w.Is_Theatrical_Territory == objTerritory.Is_Thetrical).OrderBy(o => o.Country_Name).ToList();
 
             var countryCode = objTerritory.Territory_Details.Select(s => s.Country_Code).ToArray();

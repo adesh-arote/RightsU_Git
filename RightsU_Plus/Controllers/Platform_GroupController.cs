@@ -320,8 +320,12 @@ namespace RightsU_Plus.Controllers
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForPlatformGroup);
             string PlatformCodes = objFormCollection["hdnTVCodes"].ToString();
 
-            int platformGroupCode = Convert.ToInt32(objFormCollection["hdnPlatformCode"]);
+            string platformGroupCodes = objFormCollection["hdnPlatformCode"].ToString();
             string PlatformGroupName = objFormCollection["txtPlatformGroupName"].ToString().Trim();
+
+            int platformGroupCode = 0;
+            if (platformGroupCodes != "")   
+                platformGroupCode = Convert.ToInt32(platformGroupCodes);
 
             //Platform_Group_Service objService = new Platform_Group_Service(objLoginEntity.ConnectionStringName);
             RightsU_Dapper.Entity.Platform_Group objPlatformGroup = null;

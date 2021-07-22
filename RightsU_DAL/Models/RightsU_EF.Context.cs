@@ -416,7 +416,7 @@ namespace RightsU_DAL
         public DbSet<DM_Title_Resolve_Conflict> DM_Title_Resolve_Conflict { get; set; }
 
 
-        public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
+        public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
         {
             var platformCodesParameter = platformCodes != null ?
                 new ObjectParameter("PlatformCodes", platformCodes) :
@@ -426,9 +426,11 @@ namespace RightsU_DAL
                 new ObjectParameter("Search_Platform_Name", search_Platform_Name) :
                 new ObjectParameter("Search_Platform_Name", typeof(string));
 
-            
+            var IS_Sport_RightParameter = IS_Sport_Right != null ?
+               new ObjectParameter("IS_Sport_Rights", IS_Sport_Right) :
+               new ObjectParameter("IS_Sport_Rights", typeof(string));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter, IS_Sport_RightParameter);
         }
         public virtual ObjectResult<USP_Get_Promoter_Group_Tree_Hierarchy_Result> USP_Get_Promoter_Group_Tree_Hierarchy(string promoter_Group_Codes, string search_Promoter_Group_Name)
         {

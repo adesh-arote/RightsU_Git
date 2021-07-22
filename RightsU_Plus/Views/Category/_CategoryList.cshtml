@@ -5,6 +5,14 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    List<int?> lstAcqCategoryCodes = new RightsU_BLL.Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Select(x => x.Category_Code).ToList();
+
+    List<int?> lstSynCategoryCodes = new RightsU_BLL.Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Select(x => x.Category_Code).ToList();
 }
 <script>
     $('.expand_Category_Name').expander({
@@ -102,12 +110,12 @@
                                 {
                                     bool canDeactivate = true;
                                     string strToolTip = "";
-                                    if (item.Acq_Deal.Count > 0)
+                                    if (lstAcqCategoryCodes.Where(x => x.HasValue && x.Value == item.Category_Code).Count() > 0)
                                     {
                                         canDeactivate = false;
                                         strToolTip = objMessageKey.CannotdeactivatethisCategoryasitisusedinAcquisitionDeal;
                                     }
-                                    else if (item.Syn_Deal.Count > 0)
+                                    else if (lstSynCategoryCodes.Where(x => x.HasValue && x.Value == item.Category_Code).Count() > 0)
                                     {
                                         canDeactivate = false;
                                         strToolTip = objMessageKey.CannotdeactivatethisCategoryasitisusedinSyndicationDeal;

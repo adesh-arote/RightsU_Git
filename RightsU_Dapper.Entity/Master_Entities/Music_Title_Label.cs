@@ -17,7 +17,7 @@ namespace RightsU_Dapper.Entity
         public Nullable<System.DateTime> Effective_From { get; set; }
         public Nullable<System.DateTime> Effective_To { get; set; }
 
-        public virtual Music_Label Music_Label { get; set; }
-        public virtual Music_Title Music_Title { get; set; }
+        //public virtual Music_Label Music_Label { get; set; }
+        //public virtual Music_Title Music_Title { get; set; }
     }
 }

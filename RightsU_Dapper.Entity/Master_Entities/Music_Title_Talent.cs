@@ -12,9 +12,11 @@ namespace RightsU_Dapper.Entity
         //public State EntityState { get; set; }
         [PrimaryKey]
         public int? Music_Title_Talent_Code { get; set; }
-        //[ForeignKeyReference(typeof(Music_Title))]
+        [ForeignKeyReference(typeof(Music_Title))]
         public Nullable<int> Music_Title_Code { get; set; }
+        [ForeignKeyReference(typeof(Talent))]
         public Nullable<int> Talent_Code { get; set; }
+        [ForeignKeyReference(typeof(Role))]
         public Nullable<int> Role_Code { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]

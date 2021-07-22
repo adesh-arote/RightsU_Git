@@ -249,7 +249,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["MusicTitleCode"] = value; }
         }
-        Type[] RelationList = new Type[] { typeof(Genre), typeof(Music_Title_Label), typeof(Music_Title_Language), typeof(Music_Title_Talent), typeof(Music_Title_Theme), typeof(Music_Type),typeof(Music_Title_Label) };
+        Type[] RelationList = new Type[] { typeof(Music_Title_Label), typeof(Music_Title_Language), typeof(Music_Title_Talent), typeof(Music_Title_Theme)};
         public JsonResult CheckRecordLock(int id = 0, int Page_No = 0, string SearchedTitle = "", int PageSize = 10, string commandName = "")
         {
             string strMessage = "";
@@ -791,6 +791,7 @@ namespace RightsU_Plus.Controllers
 
                     //objTitle.EntityState = State.Modified;
                     objTitle.Is_Active = Type;
+                    objMusicTitleService.UpdateEntity(objTitle);
                     //objTitleS.Save(objTitle);
 
 
@@ -1022,6 +1023,7 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult BindGrid(string searchText, int pageNo, int recordPerPage, string command, string IsMenu)
         {
             int RecordCount = 0;
+           
             //ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
             //USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             ViewBag.PageNo = objPage_Properties.PageNo;

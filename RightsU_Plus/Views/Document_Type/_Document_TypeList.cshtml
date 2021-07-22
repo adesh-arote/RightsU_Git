@@ -5,6 +5,14 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    List<int?> lstAcqDocumentCodes = new RightsU_BLL.Acq_Deal_Attachment_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Select(x => x.Document_Type_Code).ToList();
+
+    List<int?> lstSynDocumentCodes = new RightsU_BLL.Syn_Deal_Attachment_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Select(x => x.Document_Type_Code).ToList();
 }
 <table class="table table-bordered table-hover" id="tblDocumentType">
     <thead>
@@ -80,12 +88,12 @@
                                 {
                                     bool canDeactivate = true;
                                     string strToolTip = "";
-                                    if (item.Acq_Deal_Attachment.Count > 0)
+                                    if (lstAcqDocumentCodes.Where(x => x.HasValue && x.Value == item.Document_Type_Code).Count() > 0)
                                     {
                                         canDeactivate = false;
                                         strToolTip = objMessageKey.CannotdeactivatethisDocumentTypeasitisusedinAcquisitionDeal;
                                     }
-                                    else if (item.Syn_Deal_Attachment.Count > 0)
+                                    else if (lstAcqDocumentCodes.Where(x => x.HasValue && x.Value == item.Document_Type_Code).Count() > 0)
                                     {
                                         canDeactivate = false;
                                         strToolTip = objMessageKey.CannotdeactivatethisDocumentTypeasitisusedinSyndicationDeal;

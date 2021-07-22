@@ -497,7 +497,7 @@ namespace RightsU_Dapper.DAL.Repository
         }
         public void Update(Territory entity)
         {
-            Territory oldObj = Get(entity.Territory_Code);
+            Territory oldObj = Get(entity.Territory_Code, new Type[] { typeof(Territory_Details) });
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Territory entity)

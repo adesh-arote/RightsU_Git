@@ -16,8 +16,8 @@ namespace RightsU_Dapper.Entity
     {
         [PrimaryKey]
         public int? Music_Title_Theme_Code { get; set; }
-        [ForeignKeyReference(typeof(Music_Title))]
 
+        [ForeignKeyReference(typeof(Music_Title))]
         public Nullable<int> Music_Title_Code { get; set; }
         [ForeignKeyReference(typeof(Music_Theme))]
         public Nullable<int> Music_Theme_Code { get; set; }

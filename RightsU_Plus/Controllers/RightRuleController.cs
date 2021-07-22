@@ -243,8 +243,7 @@ namespace RightsU_Plus.Controllers
                 message = resultSet;
             }
                 //bool isValid = objRight_Rule_Service.Save(objRight_Rule, out resultSet);
-                bool isValid = true;
-            
+
                 if (ObjRightRuleMVC.Right_Rule_Code > 0)
                 {
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);

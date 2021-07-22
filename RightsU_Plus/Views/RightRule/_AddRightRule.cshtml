@@ -25,12 +25,13 @@
 
 
     function Save_Success(result) {
+        debugger;
         if (result.Status == "S") {
             showAlert("S", result.Message);
             BindPartialView('LIST', 0);
         }
         else {
-
+            showAlert("E", result.Message);
         }
     }
     function isNumeric(e, t) {

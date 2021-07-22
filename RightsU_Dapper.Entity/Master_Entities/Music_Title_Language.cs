@@ -15,7 +15,9 @@ namespace RightsU_Dapper.Entity
     [Table("Music_Title_Language")]
     public partial class Music_Title_Language
     {
-        public int Music_Title_Language_Code { get; set; }
+        [PrimaryKey]
+        public int? Music_Title_Language_Code { get; set; }
+        [ForeignKeyReference(typeof(Music_Title))]
         public Nullable<int> Music_Title_Code { get; set; }
         [ForeignKeyReference(typeof(Music_Language))]
         public Nullable<int> Music_Language_Code { get; set; }
