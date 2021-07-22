@@ -35,6 +35,12 @@
         }
         addNumeric();
         SearchPartyCategory("");
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
         $("#ddlSortType").change(function () {
             if (!checkCurrentAction()) {
                 $('#ddlSortType').val(sort_Type_G).trigger("chosen:updated")

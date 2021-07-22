@@ -7,6 +7,15 @@
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
 }
+<script>
+    $('.expand_Language_Name').expander({
+        slicePoint: 100,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
 <table class="table table-bordered table-hover" id="divLanguageListTable"> 
     <thead>
         <tr>
@@ -59,7 +68,7 @@
                     else
                     {
                         <td>
-                            <span>@item.Language_Name</span>
+                            <span class="expand_Language_Name">@item.Language_Name</span>
                         </td>
                         <td style="text-align:center">
                             <span>@strActive</span>
