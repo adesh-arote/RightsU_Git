@@ -458,6 +458,19 @@ namespace RightsU_Plus.Controllers
             ViewBag.Tab = tab;
             return View();
         }
+        public ActionResult ModalPopup(string ApplicationNo ,int IPRRepCode)
+        {
+            ModalPopupList lstModal = new ModalPopupList();
+            IPR_Opp_Service objIPR_REP_Service = new IPR_Opp_Service(objLoginEntity.ConnectionStringName);
+            IPR_REP_Class_Service objIPR_REP_Class_Service = new IPR_REP_Class_Service(objLoginEntity.ConnectionStringName);
+
+            ViewBag.IPRDomesticClass = objIPR_REP_Class_Service.SearchFor(s => s.IPR_Rep_Code == IPRRepCode && s.IPR_REP.IPR_For == "D" && s.IPR_Class_Code == s.IPR_CLASS.IPR_Class_Code).Select(x => x.IPR_CLASS.Description).ToList();
+            ViewBag.IPRInternationalClass = objIPR_REP_Class_Service.SearchFor(s => s.IPR_Rep_Code == IPRRepCode && s.IPR_REP.IPR_For == "I" && s.IPR_Class_Code == s.IPR_CLASS.IPR_Class_Code).Select(x => x.IPR_CLASS.Description).ToList();
+            lstModal.OppoBy = objIPR_REP_Service.SearchFor(s => s.IPR_REP.Application_No == ApplicationNo && s.IPR_For == "B").Select(s => s).ToList();
+            lstModal.OppoAgainst = objIPR_REP_Service.SearchFor(s => s.IPR_REP.Application_No == ApplicationNo && s.IPR_For == "A").Select(s => s).ToList();
+
+            return PartialView("_OppositionDetailPopup", lstModal);
+        }
 
         public ActionResult ButtonEvent(string MODE, int? IPR_Rep_Code, int? IPR_Opp_Code)
         {
@@ -975,7 +988,12 @@ namespace RightsU_Plus.Controllers
             public int RecordLockingCode { get; set; }
 
         }
-
+       
         #endregion
+    }
+    public class ModalPopupList
+    {
+        public IList<IPR_Opp> OppoBy { get; set; }
+        public IList<IPR_Opp> OppoAgainst { get; set; }
     }
 }

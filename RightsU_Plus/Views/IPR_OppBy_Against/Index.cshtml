@@ -296,6 +296,7 @@
 
     function ValidateSave(isSubmit)
     {
+        debugger;
         var IsValidSave = true;
         $('#hdnIsSubmit').val(isSubmit);
         if($('#Opp_No').val() == '')
@@ -524,22 +525,29 @@
                             if (Model.IPR_For == "B")
                             {
                                 @:Edit Opposition By
-                                            }
+                            }
                             else
                             {
+                                if (ViewBag.Mode == "C")
+                                {
+                                    @:Clone Opposition Against
+                                }
+                                else
+                                {
                                 @:Edit Opposition Against
-                                            }
+                                }
+                            }
                         }
                         else
                         {
                             if (Model.IPR_For == "B")
                             {
                                 @:Add Opposition By
-                                            }
+                            }
                             else
                             {
                                 @:Add Opposition Against
-                                            }
+                            }
                         }
                         <span></span>
                     </h2>

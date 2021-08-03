@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<RightsU_Entities.USP_List_IPR_Result>
 @using UTOFrameWork.FrameworkClasses;
 <script type="text/javascript">
+    var ajaxCallURL = '@Url.Action("ModalPopup", "IPR_List")';
+    var pos = null;
     $(document).ready(function () {
         debugger;
         var a =  $('#hdnPageSizeForDosmestic_temp').val();
@@ -13,6 +15,12 @@
         SetPaging();
         initializeTooltip();
 
+        $('.show_hide').click(function () {
+            debugger
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        });
         //   loadList('D', '0', 'Y', 'N')
     });
 
@@ -110,6 +118,50 @@
         loadList('D', pageNo, 'Y', 'N', recordPerPage)
         SetPaging();
     }
+
+
+    function ModalPopup(ApplicationNo,counter,IPRRepCode) {
+        debugger
+       // var btdId = $("#" + counter + "_ModelPopup");
+
+        pos = $("#" + counter + "_ModelPopup").offset();
+       
+        $.ajax({
+            type: "POST",
+            url: ajaxCallURL,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                ApplicationNo: ApplicationNo,
+                IPRRepCode: IPRRepCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#ModalPopup').html(result);
+                    $('#popupFade').offset({ top: pos.top+20, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top+20, left: pos.left }).fadeIn();
+                    //$('#myModal').modal(options);
+                    //$('#myModal').modal('show');
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function FadeOutPopup() {
+        $('#ModalPopup').empty();
+        $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeOut();
+        return false;
+    }
+</script>
+<script>
     function ValidatePageSize() {
         debugger;
         var recordPerPage = $('#txtPageSize').val()
@@ -132,6 +184,36 @@
         font-style: italic;
         opacity: 0.5;
     }
+
+    #ModalPopup {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+        width: 500px;
+        left: 872.64px !important;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            overflow-y: auto;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_List_Platform {
+            max-height: 300px;
+        }
 </style>
 <div class="paging_area clearfix">
     <input type="hidden" id="hdnPageIndex" />
@@ -179,7 +261,7 @@
                                 </li>
                             </ul>
                         </td>
-                        <td class="applicant_Trademark">
+                        <td class="applicant_Trademark" style="width: 15% !important;">
                             <h5>
                                 <span title="Trademark">
                                     <a href="#" onclick="window.location.href = '@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Rep_Code = objIPRList.IPR_Rep_Code })'">
@@ -193,18 +275,18 @@
                                 </li>
                             </ul>
                         </td>
-                        <td class="applicant_BusinessUnit">
+                        <td class="applicant_BusinessUnit" style="width: 15% !important;">
                             <ul>
                                 <li>
                                     @if (string.IsNullOrEmpty(objIPRList.Business_Unit))
                                     {
-                                    <span class="not-available" title="Business Unit">@GlobalParams.msgNO Business Unit</span>
+                                        <span class="not-available" title="Business Unit">@GlobalParams.msgNO Business Unit</span>
                                     }
                                     else
                                     {
                                         <div class="expandable">
                                             <span title="Business Unit">
-                                                @objIPRList.Business_Unit                                               
+                                                @objIPRList.Business_Unit
                                             </span>
                                         </div>
                                     }
@@ -220,14 +302,14 @@
                                     {
                                         <div class="expandable">
                                             <span title="Channel">
-                                                @objIPRList.Channel_Name                                            
-                                       </span>
-                                    </div>
+                                                @objIPRList.Channel_Name
+                                            </span>
+                                        </div>
                                     }
                                 </li>
                             </ul>
                         </td>
-                        <td class="applicant_status">
+                        <td class="applicant_status" style="width: 20% !important;">
                             <ul>
                                 <li><span title="Type">@objIPRList.Type</span></li>
                                 <li><span class="seperator">| </span></li>
@@ -248,6 +330,14 @@
 
                             @* <h5 title="Class Description"><div class="expandable"><span title="Class Description">@objIPRList.Class_Description</span></div></h5>*@
                         </td>
+                        <td style="width:14%;">
+                            @*<a href="" style="color: blue; text-decoration: underline;">Opposition Details</a>*@
+                            <a title="" href="#" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;" onclick="ModalPopup(@objIPRList.Application_No,@counter,@objIPRList.IPR_Rep_Code)">Opposition Details</a>
+                            @*@Html.Hidden("hdnModalPopup_" + @counter)*@
+                            @*<div id="ModalPopup" class="MoreActionDiv" style="overflow-x:hidden;">
+                                </div>*@
+                        </td>
+
                         <td class="applicant_action">
                             @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
                             {
@@ -271,5 +361,24 @@
 
             </div>
         }
+        <div id="popupFade">
+            <div class="modal-dialog">
+                <div class="modal-content clearfix">
+                    <form class="form">
+                        <div class="form_fields">
+                            <div class="modal_block modal_header">
+                                <a class="close" onclick="FadeOutPopup()">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h5> </h5>
+                            </div>
+                            <div id="ModalPopup" class="MoreActionDiv">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     }
 </div>

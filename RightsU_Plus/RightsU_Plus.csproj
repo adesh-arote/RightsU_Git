@@ -220,6 +220,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
     <Compile Include="Controllers\Availability_Movie_NewController.cs" />
+    <Compile Include="Controllers\IPR_Dashboard.cs" />
     <Compile Include="Controllers\DM_Master_ImportController.cs" />
     <Compile Include="Controllers\DM_Title_Master_ImportController.cs" />
     <Compile Include="Controllers\PartyCategoryController.cs" />
@@ -1272,6 +1273,9 @@
     <Content Include="Views\Availability_Movie_New\_Subtitle_LanguageCriteria.cshtml" />
     <Content Include="Views\Availability_Movie_New\_TitlesCriteria.cshtml" />
     <Content Include="Views\Reports\DealStatusReport.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\IPR_Dashboard\DashBoard.cshtml" />
+    <Content Include="Views\IPR_List\_OppositionDetailPopup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

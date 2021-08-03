@@ -179,6 +179,7 @@ namespace RightsU_Plus.Controllers
                 obj_Dictionary = TempData["QueryString_IPR"] as Dictionary<string, string>;
                 TempData.Keep("QueryString_IPR");
                 Mode = obj_Dictionary["MODE"];
+                ViewBag.Mode = Mode;
                 CurrentTab = obj_Dictionary["Tab"];
                 code = Convert.ToInt32(obj_Dictionary["IPR_Opp_Code"]);
             }
@@ -740,6 +741,10 @@ namespace RightsU_Plus.Controllers
 
         public string Save(IPR_Opp iprOppInstance, FormCollection formCollectionInstance)
         {
+            if(Mode == "C")
+            {
+                iprOppInstance.IPR_Opp_Code = 0;
+            }
             return SaveRecord(iprOppInstance, formCollectionInstance);
         }
 
