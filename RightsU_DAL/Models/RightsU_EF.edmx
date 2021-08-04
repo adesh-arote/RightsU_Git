@@ -3047,7 +3047,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
             <PropertyRef Name="Language_Code" />
           </Key>
           <Property Name="Language_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Language_Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Language_Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
@@ -3074,7 +3074,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
             <PropertyRef Name="Language_Group_Code" />
           </Key>
           <Property Name="Language_Group_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Language_Group_Name" Type="nvarchar" MaxLength="200" />
+          <Property Name="Language_Group_Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
@@ -5011,6 +5011,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="IsActive" Type="char" MaxLength="1" />
           <Property Name="Description" Type="nvarchar" MaxLength="4000" />
           <Property Name="IS_System_Admin" Type="char" MaxLength="1" />
+          <Property Name="Client_Name" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="System_Right">
           <Key>
@@ -22424,7 +22425,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <PropertyRef Name="Language_Code" />
           </Key>
           <Property Name="Language_Code" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
-          <Property Name="Language_Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="Language_Name" Type="String" MaxLength="1000" Unicode="true" FixedLength="false" Nullable="false" />
           <Property Name="Inserted_On" Type="DateTime" Precision="3" />
           <Property Name="Inserted_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
@@ -22460,7 +22461,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <PropertyRef Name="Language_Group_Code" />
           </Key>
           <Property Name="Language_Group_Code" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
-          <Property Name="Language_Group_Name" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+          <Property Name="Language_Group_Name" Type="String" MaxLength="1000" Unicode="true" FixedLength="false" Nullable="false" />
           <Property Name="Inserted_On" Type="DateTime" Precision="3" />
           <Property Name="Inserted_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
@@ -23426,6 +23427,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="IsActive" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
           <Property Name="Description" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
           <Property Name="IS_System_Admin" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Client_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="System_Right">
           <Key>
@@ -38167,6 +38169,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="System_Parameter_New">
             <EntityTypeMapping TypeName="RightsU_NeoModel.System_Parameter_New">
               <MappingFragment StoreEntitySet="System_Parameter_New">
+                <ScalarProperty Name="Client_Name" ColumnName="Client_Name" />
                 <ScalarProperty Name="IS_System_Admin" ColumnName="IS_System_Admin" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

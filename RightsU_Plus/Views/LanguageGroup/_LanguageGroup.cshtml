@@ -23,6 +23,13 @@
         collapseTimer: 0,
         userCollapseText: '<span>[^]</span>'
     });
+    $('.expand_Language_GroupName').expander({
+        slicePoint: 75,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
 </script>
 <table class="table table-bordered table-hover" id="divLanguage_GroupList">
     <thead>
@@ -39,7 +46,7 @@
         {
             <tr>
                 <td>
-                    <input id="txtLanguage_GroupName" type="text" value="" maxlength="250" style="width:200px" />
+                    <input id="txtLanguage_GroupName" type="text" value="" maxlength="1000" style="width:90%;" />
                 </td>
                 <td>
                     <div id="divLanguage">
@@ -68,9 +75,10 @@
                 <tr>
                     @if (ViewBag.CommandName == "EDIT" && ViewBag.Language_Group_Code == item.Language_Group_Code)
                     {
-                        <td>
-                            <input id="txtLanguage_GroupName" type="text" value="@item.Language_Group_Name" maxlength="250" />
-                        </td>
+                    <td>
+                        <input id="txtLanguage_GroupName" type="text" value="@item.Language_Group_Name" maxlength="1000" style="width:90%;" />
+                       
+                    </td>
                         <td>
                             @Html.DropDownList("ddlLanguage", ViewBag.LanguageList as MultiSelectList, new { @id = "ddlLanguage", @multiple = "multiple" })
                         </td>
@@ -85,7 +93,8 @@
                     else
                     {
                         <td>
-                            <span>@item.Language_Group_Name</span>
+                            <span class="expand_Language_GroupName">@item.Language_Group_Name</span>
+                            
                         </td>
 
                         <td>

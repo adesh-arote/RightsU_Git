@@ -1856,7 +1856,8 @@ namespace UTOFrameWork.FrameworkClasses
                 ReportPath = ReportFolder + "/rptExportToExcelBulkImport";
             else if (ReportName == "rpt_Deal_WFStatus_Pending")
                 ReportPath = ReportFolder + "/rpt_Deal_WFStatus_Pending";
-
+            else if (ReportName == "rptDealStatusReport")
+                ReportPath = ReportFolder + "/rptDealStatusReport";
 
             return ReportPath;
         }

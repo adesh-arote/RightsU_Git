@@ -630,7 +630,6 @@
     <Build Include="dbo\Tables\Acq_Deal_Attachment.sql" />
     <Build Include="dbo\Tables\TATStatusLog.sql" />
     <Build Include="dbo\Tables\AT_Syn_Deal_Rights_Subtitling.sql" />
-    <Build Include="dbo\Tables\System_Parameter_New.sql" />
     <Build Include="dbo\Tables\AT_Acq_Deal_Rights_Holdback_Dubbing.sql" />
     <Build Include="dbo\Tables\Email_Notification_Msg.sql" />
     <Build Include="dbo\Tables\Channel_Region.sql" />
@@ -1463,6 +1462,10 @@
     <Build Include="dbo\Functions\UFN_Get_UsernName_Last_Approved.sql" />
     <Build Include="dbo\Stored Procedures\USP_Insert_Email_Notification_Log.sql" />
     <Build Include="dbo\Stored Procedures\USP_Get_EmailConfig_Users.sql" />
+    <Build Include="dbo\Tables\System_Parameter.sql" />
+    <Build Include="dbo\Views\System_Parameter_New.sql" />
+    <Build Include="dbo\Stored Procedures\USPDealStatusReport.sql" />
+    <Build Include="dbo\Stored Procedures\USPDealStatusReportFilter.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

@@ -1642,6 +1642,11 @@ public class MessageKey
     public string LogoutTime { get; set; }
 
     #endregion
+
+    #region
+    public string DealStatusReport { get; set; }
+
+    #endregion
     #endregion
 
 }

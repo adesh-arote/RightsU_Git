@@ -177,7 +177,7 @@
 
         Count = Count + 1;
         <a title="Approve" class="glyphicon glyphicon-check ApproveCounter_@tempCount AT_@DealCode"
-           onclick="return Validate_Record_Site(@DealCode, 'A', this)" id="Approve+@tempCount"
+           onclick="return Validate_Record_Site(@DealCode, 'A', this)" id="A_@tempCount"
            href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = DealCode, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>
         if (Count > 3)
         {

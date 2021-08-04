@@ -531,6 +531,7 @@ BEGIN
 		FROM Acq_Deal_Rights ar
 		INNER JOIN #Avail_Raw ar1 On ar1.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
 		Inner Join Acq_Deal ad On ar.Acq_Deal_Code = ad.Acq_Deal_Code
+		INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code
 		Inner Join Sub_License sl On ar.Sub_License_Code = sl.Sub_License_Code
 		INNER JOin Category C ON ad.Category_Code = C.Category_Code
 		INNER JOin Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code

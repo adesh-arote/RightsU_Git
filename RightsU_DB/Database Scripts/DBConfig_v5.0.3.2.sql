@@ -215,3 +215,26 @@ UPDATE Email_Template SET template_desc = '
 	</body>
 </html>'
  WHERE Template_For='A'
+
+ ---------------------
+
+ALTER TABLE Territory
+ALTER COLUMN Territory_Name_Name NVARCHAR(1000) NOT NULL; 
+ ---------------------
+ALTER TABLE Language_Group
+ALTER COLUMN Language_Group_Name NVARCHAR(1000) NOT NULL; 
+ ---------------------
+IF NOT EXISTS 
+(
+  SELECT * 
+  FROM INFORMATION_SCHEMA.COLUMNS 
+  WHERE table_name = 'System_Parameter_New'
+  AND column_name = 'Client_Name'
+)
+BEGIN
+	ALTER TABLE System_Parameter_New
+	ADD Client_Name NVARCHAR(MAX)
+END
+
+ ---------------------
+
