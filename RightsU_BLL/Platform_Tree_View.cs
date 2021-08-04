@@ -96,7 +96,7 @@ namespace RightsU_BLL
 
 
         int count = 0;
-        public string PopulateTreeNode(string IsView, string Platform_Hiearachy_Search = "")
+        public string PopulateTreeNode(string IsView, string IS_Sport_Right = "", string Platform_Hiearachy_Search = "")
         {
             USP_Service objUS = new USP_Service(_Connection_Str);
             if (IsView == "Y" && Show_Selected == false)
@@ -104,7 +104,7 @@ namespace RightsU_BLL
                 Platform_Hiearachy_Search = "";
                 PlatformCodes_Display = null;
             }
-            List<USP_Get_Platform_Tree_Hierarchy_Result> lstPlatforms = objUS.USP_Get_Platform_Tree_Hierarchy(PlatformCodes_Display, Platform_Hiearachy_Search).ToList();
+            List<USP_Get_Platform_Tree_Hierarchy_Result> lstPlatforms = objUS.USP_Get_Platform_Tree_Hierarchy(PlatformCodes_Display, Platform_Hiearachy_Search, IS_Sport_Right).ToList();
 
             //if (PlatformCodes_Display == "")
             //    trMenuNode.ExpandAll();

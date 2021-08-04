@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_List_Status_History]	
+﻿CREATE PROCEDURE [dbo].[USP_List_Status_History]	
 	@Record_Code INT, 
 	@Module_Code INT
 AS
@@ -10,9 +9,10 @@ AS
 -- Last Updated by: Aditya A. Bandivadekar
 -- Last Change :  Added Version column in output. 
 -- =============================================
+--Select * from Acq_Deal Where Agreement_No = 'A-2021-00017'
 --DECLARE 
---@Record_Code INT = 1824,
---@Module_Code INT = 35
+--@Record_Code INT = 21678,
+--@Module_Code INT = 30
 BEGIN	
 	SET FMTONLY OFF
 	SET NOCOUNT ON;
@@ -74,7 +74,22 @@ BEGIN
 
 		--CLOSE db_cursor  
 		--DEALLOCATE db_cursor 
-
+		IF(@Module_Code = 30)
+		BEGIN
+			UPDATE TMS SET TMS.Remarks = AD.Remarks
+			FROM #Temp_Module_Status_History TMS
+			INNER JOIN Module_Status_History MSH ON TMS.ID = MSH.Module_Status_Code
+			INNER JOIN Acq_Deal AD ON MSH.Record_Code = AD.Acq_Deal_Code
+			WHERE MSH.Module_Code = 30 AND TMS.Status = 'Created'
+		END
+		ELSE
+		BEGIN
+			UPDATE TMS SET TMS.Remarks = AD.Remarks
+			FROM #Temp_Module_Status_History TMS
+			INNER JOIN Module_Status_History MSH ON TMS.ID = MSH.Module_Status_Code
+			INNER JOIN Syn_Deal AD ON MSH.Record_Code = AD.Syn_Deal_Code
+			WHERE MSH.Module_Code = 35 AND TMS.Status = 'Created'
+		END
 		SELECT ID, [Version], [Status], [Date], [By], [Remarks] from #Temp_Module_Status_History ORDER BY [Date] DESC
 
 	END

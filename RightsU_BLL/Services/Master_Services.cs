@@ -1,6 +1,7 @@
 ﻿using RightsU_DAL;
 using RightsU_Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -9,7 +10,6 @@ namespace RightsU_BLL
     /// <summary>
     /// Add Master Service Classes Here
     /// </summary>
-
     public class Ancillary_Medium_Service
     {
         private readonly Ancillary_Medium_Repository objAD;
@@ -915,7 +915,7 @@ namespace RightsU_BLL
             this.objUsers_Business_Unit = new Users_Business_Unit_Repository(Connection_Str);
         }
 
-        
+
         public IQueryable<Users_Business_Unit> SearchFor(Expression<Func<Users_Business_Unit, bool>> predicate)
         {
             return objUsers_Business_Unit.SearchFor(predicate);
@@ -1082,7 +1082,7 @@ namespace RightsU_BLL
         }
     }
 
-    public class Business_Unit_Service:BusinessLogic<Business_Unit>
+    public class Business_Unit_Service : BusinessLogic<Business_Unit>
     {
         private readonly Business_Unit_Repository objBusiness_Unit_Repository;
 
@@ -1859,6 +1859,25 @@ namespace RightsU_BLL
         public Monetisation_Type GetById(int id)
         {
             return objMonetisation_Type.GetById(id);
+        }
+    }
+
+    public class Module_Workflow_Detail_Service
+    {
+        private readonly Module_Workflow_Detail_Repository objModule_Workflow_Detail;
+
+        public Module_Workflow_Detail_Service(string Connection_Str)
+        {
+            this.objModule_Workflow_Detail = new Module_Workflow_Detail_Repository(Connection_Str);
+        }
+        public IQueryable<Module_Workflow_Detail> SearchFor(Expression<Func<Module_Workflow_Detail, bool>> predicate)
+        {
+            return objModule_Workflow_Detail.SearchFor(predicate);
+        }
+
+        public Module_Workflow_Detail GetById(int id)
+        {
+            return objModule_Workflow_Detail.GetById(id);
         }
     }
 
@@ -6700,6 +6719,26 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+    public class Platform_Broadcast_Service
+    {
+        private readonly Platform_Broadcast_Repository obj_Repository;
+
+        public Platform_Broadcast_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Platform_Broadcast_Repository(Connection_Str);
+        }
+
+        public IQueryable<Platform_Broadcast> SearchFor(Expression<Func<Platform_Broadcast, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Platform_Broadcast GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
     public class Revenue_Vertical_Service
     {
         private readonly Revenue_Vertical_Repository obj_Repository;
@@ -6821,7 +6860,6 @@ namespace RightsU_BLL
             return true;
         }
     }
-
 }
 
 

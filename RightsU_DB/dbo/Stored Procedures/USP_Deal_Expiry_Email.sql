@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[USP_Deal_Expiry_Email] 
---DECLARE
-@Expiry_Type Char(1)='D',
-@Alert_Type CHAR(4)='TER'
+	--DECLARE
+	@Expiry_Type Char(1)='D',
+	@Alert_Type CHAR(4)='TER'
 AS
 -- =============================================
 -- Author:		Punam Roddewar
@@ -14,10 +14,6 @@ AS
 -- =============================================     
 BEGIN 
 
---DECLARE
---@Expiry_Type Char(1)='D',
---@Alert_Type CHAR(4)='AROD'
-
 	SET NOCOUNT ON;
 	IF OBJECT_ID('tempdb..#EMAIL_ID_TEMP1') IS NOT NULL
 	BEGIN
@@ -27,8 +23,7 @@ BEGIN
 	BEGIN
 		DROP TABLE #ACQ_EXPIRING_DEALS
 	END
-	--DECLARE @Expiry_Type Char(1), @Alert_Type CHAR(1)
-	--SELECT  @Expiry_Type = 'D', @Alert_Type = 'A'
+
 	DECLARE @Email_Config_Code INT
 	SELECT @Email_Config_Code = Email_Config_Code FROM Email_Config where [Key] = @Alert_Type
 	DECLARE @EXP_Count	int
@@ -311,19 +306,46 @@ BEGIN
 		)
 	END	
 
+	------------
+	DECLARE
+	@To_Users_Code NVARCHAR(MAX),
+	@To_User_Mail_Id  NVARCHAR(MAX),
+	@CC_Users_Code  NVARCHAR(MAX),
+	@CC_User_Mail_Id  NVARCHAR(MAX),
+	@BCC_Users_Code  NVARCHAR(MAX),
+	@BCC_User_Mail_Id  NVARCHAR(MAX),
+	@Channel_Codes  NVARCHAR(MAX)
+	
+	DECLARE @Tbl2 TABLE (
+		Id INT,
+		BuCode INT,
+		To_Users_Code NVARCHAR(MAX),
+		To_User_Mail_Id  NVARCHAR(MAX),
+		CC_Users_Code  NVARCHAR(MAX),
+		CC_User_Mail_Id  NVARCHAR(MAX),
+		BCC_Users_Code  NVARCHAR(MAX),
+		BCC_User_Mail_Id  NVARCHAR(MAX),
+		Channel_Codes NVARCHAR(MAX)
+	)	
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+
+	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+	EXEC USP_Get_EmailConfig_Users @Alert_Type, 'N'
+	
+	------------------
+
 	DECLARE @Users_Code INT
 	--Drop Table #Alert_Range
 	DECLARE @Index INT = 0
 	--Select * from  #DealDetails --------------------------------------------------------------------------------------------------------
 	DECLARE @Business_Unit_Code int,@Users_Email_Id NVARCHAR(MAX),@Emailbody NVARCHAR(Max)
 	--Change
-	DECLARE curOuter CURSOR FOR SELECT BuCode,User_Mail_Id,Users_Code from [dbo].[UFN_Get_Bu_Wise_User](@Alert_Type)
+	DECLARE curOuter CURSOR FOR SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
 	--Change
-	--DECLARE curOuter CURSOR FOR SELECT DISTINCT Business_Unit_Code, Users_Email_id from Deal_Expiry_Email WHERE Business_Unit_Code Is not Null And Alert_Type = @Alert_Type
 	OPEN curOuter 
-	FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @Users_Email_Id,@Users_Code
+	FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 	WHILE @@Fetch_Status = 0 
-	BEGIN		
+	BEGIN	
 		Declare @Temp_tbl_count int
 		Set @Temp_tbl_count=0
 		Set @Emailbody = ''
@@ -339,16 +361,7 @@ BEGIN
 		--Add new cur for slab
 		Declare @Mail_alert_days_Body int
 		Declare curBody cursor For 
-		--select distinct Mail_alert_days,Allow_less_Than from Deal_Expiry_Email
-		--Where Business_Unit_Code = @Business_Unit_Code And Users_Email_id = @Users_Email_Id And  Alert_Type = @Alert_Type
-		--Change
-		--Select Distinct EDA.Mail_Alert_Days,EDA.Allow_less_Than
-		--From Email_Config_Detail_Alert EDA
-		--INNER JOIN Email_Config_Detail ED ON ED.Email_Config_Detail_Code=EDA.Email_Config_Detail_Code
-		--INNER JOIN Email_Config_Detail_User EDU ON ED.Email_Config_Detail_Code=EDU.Email_Config_Detail_Code
-		--INNER JOIN Email_Config E ON E.Email_Config_Code=ED.Email_Config_Code
-		--Where E.[Key] = @Alert_Type
-		--Change
+	
 		select DISTINCT Mail_Alert_Days,Allow_less_Than FROM #Alert_Range
 		OPEN curBody 
 		Fetch Next From curBody Into @Mail_alert_days_Body,@Allow_less_Than
@@ -455,8 +468,8 @@ BEGIN
 			--	<td align="center" width="12%" class="tblHead"><b>Country / Territory<b></td>
 			--	<td align="center" width="40%" class="tblHead"><b>Platform<b></td></tr>'
 
-			SELECT DISTINCT Acq_Deal_Rights_Code,Agreement_No,Title_Name,IsNull(CONVERT(varchar(11),Right_Start_Date, 106),''),IsNull(CONVERT(varchar(11),Right_End_Date,106),''),Country,Platform_code,Platform_name,PlatformCodeCount,Vendor_name,Business_Unit_Code,Expire_In_Days,ROFR_Type,ROFR_Date
-					FROM #DealDetails
+			--SELECT DISTINCT Acq_Deal_Rights_Code,Agreement_No,Title_Name,IsNull(CONVERT(varchar(11),Right_Start_Date, 106),''),IsNull(CONVERT(varchar(11),Right_End_Date,106),''),Country,Platform_code,Platform_name,PlatformCodeCount,Vendor_name,Business_Unit_Code,Expire_In_Days,ROFR_Type,ROFR_Date
+			--		FROM #DealDetails
 			Declare curP cursor For
 					SELECT DISTINCT Acq_Deal_Rights_Code,Agreement_No,Title_Name,IsNull(CONVERT(varchar(11),Right_Start_Date, 106),''),IsNull(CONVERT(varchar(11),Right_End_Date,106),''),Country,Platform_code,Platform_name,PlatformCodeCount,Vendor_name,Business_Unit_Code,Expire_In_Days,ROFR_Type,ROFR_Date
 					FROM #DealDetails
@@ -665,25 +678,31 @@ BEGIN
 			--PRINT @EmailUser_Body
 			IF(@Emailbody!='')
 			BEGIN
+
 				EXEC msdb.dbo.sp_send_dbmail 
 				@profile_name = @DatabaseEmail_Profile,
-				@recipients =  @Users_Email_Id,
-				@subject = @MailSubjectCr,
+				@recipients =  @To_User_Mail_Id,
+				@copy_recipients = @CC_User_Mail_Id,
+				@blind_copy_recipients = @BCC_User_Mail_Id,
+				@subject =@MailSubjectCr,
 				@body = @EmailUser_Body, 
-				@body_format = 'HTML';  
-				
-				--Change
-				INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-				SELECT @Email_Config_Code,GETDATE(),'N',@Emailbody,@Users_Code,@MailSubjectCr,@Users_Email_Id
-				--Change
+				@body_format = 'HTML';
+
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@EmailUser_Body, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''), @MailSubjectCr
+
 			END
 			PRINT '@recipients : ' + cast(@Users_Email_Id  as varchar)
 		END
-	Fetch Next From curOuter Into @Business_Unit_Code, @Users_Email_Id,@Users_Code
+	Fetch Next From curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+
 	End -- End of Fetch outer
 	Close curOuter
 	Deallocate curOuter		
 	
+
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
+
 	DROP TABLE #DealDetails --#ACQ_EXPIRING_DEALS#DealDetails 
 	IF OBJECT_ID('tempdb..#EMAIL_ID_TEMP1') IS NOT NULL
 	BEGIN

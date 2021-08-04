@@ -23,7 +23,7 @@ BEGIN
 	-- =============================================
 	SET @Is_Error = 'N'
 	BEGIN TRY
-
+		DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 		DECLARE @Cur_first_name NVARCHAR(500)
 		DECLARE @Cur_security_group_name NVARCHAR(500) 
 		DECLARE @Cur_email_id NVARCHAR(500) 
@@ -339,8 +339,8 @@ BEGIN
 				@subject = @MailSubjectCr,
 				@body = @body1,@body_format = 'HTML';  
 
-				INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-				SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Send for Approval', @Cur_email_id
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Send for Approval'
 
 				--select @body1
 
@@ -352,6 +352,8 @@ BEGIN
 		DEALLOCATE Cur_On_Rejection
 		/* CURSOR END */
 					 --select @DefaultSiteUrl
+
+		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 		SET @Is_Error='N'
 	END TRY
 	BEGIN CATCH

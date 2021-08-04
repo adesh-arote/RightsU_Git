@@ -76,6 +76,7 @@
     <Report Include="rptCostReport.rdl" />
     <Report Include="rptDealContent.rdl" />
     <Report Include="rptDealExpiry.rdl" />
+    <Report Include="rptDealStatusReport.rdl" />
     <Report Include="rptExportToExcelBulkImport.rdl" />
     <Report Include="rptListIPR.rdl" />
     <Report Include="rptListIPROpp.rdl" />

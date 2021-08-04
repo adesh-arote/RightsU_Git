@@ -244,9 +244,12 @@ BEGIN
 		   (STUFF((
 			SELECT DISTINCT ',' + adr_Tmp.Restriction_Remarks 
 			FROM Acq_Deal AD_Tmp
+			INNER JOIN Acq_Deal_Movie Adm_Tmp ON AD_Tmp.Acq_Deal_Code = Adm_Tmp.Acq_Deal_Code AND AD_Tmp.Master_Deal_Movie_Code_ToLink = ADM.Acq_Deal_Movie_Code
 			INNER JOIN Acq_Deal_Rights ADR_Tmp ON adr_Tmp.Acq_Deal_Code = AD_Tmp.Acq_Deal_Code 
-			WHERE AD_Tmp.Is_Master_Deal = 'N' AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
-			(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ad.Acq_Deal_Code)
+			INNER JOIN Acq_Deal_Rights_Title ADRT_Tmp ON ADR_Tmp.Acq_Deal_Rights_Code = ADRT_Tmp.Acq_Deal_Rights_Code AND ADRT_Tmp.Title_Code = Adm_Tmp.Title_Code 
+			AND ISNULL(Adm_Tmp.Episode_Starts_From,0) = ISNULL(ADRT_Tmp.Episode_From,0) AND ISNULL(Adm_Tmp.Episode_End_To,0) = ISNULL(ADRT_Tmp.Episode_To,0)
+			WHERE AD_Tmp.Is_Master_Deal = 'N' --AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
+			--(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ad.Acq_Deal_Code)
 			FOR XML PATH(''),type).value('.', 'nvarchar(max)'),1,1,'')) 
 			, ar.Actual_Right_Start_Date, ar.Actual_Right_End_Date
 			,ar.Is_Exclusive, ISNULL(ar.Sub_License_Code, 0)
@@ -652,6 +655,8 @@ BEGIN
 	AND hb.Holdback_Release_Date > GETDATE()) Or hb.Holdback_Type = 'R')
 	LEFT JOIN Acq_Deal_Rights_Holdback_Platform hbp On hb.Acq_Deal_Rights_Holdback_Code = hbp.Acq_Deal_Rights_Holdback_Code and AA.Platform_Code = hbp.Platform_Code
 	LEFT JOIN Acq_Deal_Rights_Holdback_Territory hbt On hb.Acq_Deal_Rights_Holdback_Code = hbt.Acq_Deal_Rights_Holdback_Code AND AA.Country_Code = hbt.Country_Code
+	Where ((hb.Holdback_Type = 'D' And CAST(ISNULL(TD.Rights_End_Date, '31Dec9999') AS DATE) >= CAST(hb.Holdback_Release_Date as DATE) AND CAST(hb.Holdback_Release_Date as DATE) >= GETDATE()) Or hb.Holdback_Type = 'R')
+	OR ISNULL(hb.Holdback_Release_Date,'') = ''
 	--Where (hb.Holdback_Type = 'D' And CAST(ISNULL(TD.Rights_End_Date, '31Dec9999') AS DATETIME) > hb.Holdback_Release_Date AND hb.Holdback_Release_Date > GETDATE()) Or hb.Holdback_Type = 'R'
 	
 	Select Distinct Title_Code InTo #MainTit_AP From #TMP_MAIN_AP
@@ -1101,7 +1106,8 @@ BEGIN
 			LEFT JOIN Sub_License sl ON tm.Sub_License_Code = sl.Sub_License_Code
 			LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 			LEFT JOIN #MainAH_AP hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
-			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME))
+			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME)) OR
+			ISNULL(tm.Holdback_Release_Date,'') = ''
 		DROP TABLE #Temp_Right_Remarks_AP
 	END
 	ELSE
@@ -1137,7 +1143,8 @@ BEGIN
 		LEFT JOIN Sub_License sl ON ISNULL(tm.Sub_License_Code, 0) = ISNULL(sl.Sub_License_Code, 0)
 		LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 		LEFT JOIN #MainAH_AP hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
-		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME))
+		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(tm.Rights_End_Date, '31Dec9999') AS DATETIME)) OR
+		ISNULL(tm.Holdback_Release_Date,'') = ''
 	END
 	------------------ END
 	

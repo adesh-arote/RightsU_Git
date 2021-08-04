@@ -868,6 +868,20 @@ WHERE        (Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical')</CommandText>
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="AllowSelfUtilizationInReport">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT TOP (1) Parameter_Value
+FROM     System_Parameter_New
+WHERE  (Parameter_Name = 'Is_SelfUtilization_inReport')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -2618,7 +2632,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Agreement Date</Value>
+                                  <Value>=First(Fields!Agreement_Date.Value, "DataSet1")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -3226,7 +3240,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Rights Start Date</Value>
+                                  <Value>=First(Fields!Rights_Start_Date.Value, "DataSet1")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -3264,7 +3278,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Rights End Date</Value>
+                                  <Value>=First(Fields!Rights_End_Date.Value, "DataSet1")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -3872,7 +3886,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Reverse Holdback Start Date</Value>
+                                  <Value>=First(Fields!Reverse_Holdback_Start_Date.Value, "DataSet1")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -3910,7 +3924,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Reverse Holdback End Date</Value>
+                                  <Value>=First(Fields!Reverse_Holdback_End_Date.Value, "DataSet1")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -6264,12 +6278,12 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 <TablixMember />
                 <TablixMember>
                   <Visibility>
-                    <Hidden>true</Hidden>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowSelfUtilizationInReport") = "Y", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
                   <Visibility>
-                    <Hidden>true</Hidden>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowSelfUtilizationInReport") = "Y", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
               </TablixMembers>
@@ -11635,7 +11649,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>8</NumberOfColumns>
-      <NumberOfRows>11</NumberOfRows>
+      <NumberOfRows>10</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -11778,13 +11792,13 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
           <ParameterName>IsCheckRight</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>10</RowIndex>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>9</RowIndex>
           <ParameterName>DealSegment</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>10</RowIndex>
+          <ColumnIndex>4</ColumnIndex>
+          <RowIndex>9</RowIndex>
           <ParameterName>TypeOfFilm</ParameterName>
         </CellDefinition>
       </CellDefinitions>

@@ -28,6 +28,7 @@ BEGIN
 	IF OBJECT_ID('tempdb..#TempCursorOnRej') IS NOT NULL DROP TABLE #TempCursorOnRej
 
 	BEGIN TRY
+		DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 		DECLARE @Approved_by VARCHAR(MAX) = ''
 		DECLARE @cur_first_name NVARCHAR(500)
 		DECLARE @cur_security_group_name NVARCHAR(500)
@@ -49,7 +50,7 @@ BEGIN
 		DECLARE @Email_Config_Code INT
 		DECLARE @Appr_by NVARCHAR(MAX) = ''
 
-		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='AIN'
+		SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='ASCM'
 
 		SELECT @Approved_by = --ISNULL(U.First_Name,'') + ' ' + ISNULL(U.Middle_Name,'') + ' ' + ISNULL(U.Last_Name,'') 
 		ISNULL(UPPER(LEFT(U.First_Name,1))+LOWER(SUBSTRING(U.First_Name,2,LEN(U.First_Name))), '') 
@@ -244,6 +245,14 @@ BEGIN
 		SELECT @Email_Config_Code_V18 = Email_Config_Code from Email_Config where [Key] = 'ASCM'
 		IF(@Is_CustomUsers_WF_SendMail = 'Y' AND @Is_Deal_Approved = 0)
 		BEGIN
+			DECLARE @ENL TABLE (
+				BUCode INT,
+				User_Code INT,
+				EmailId NVARCHAR(MAX)
+			)
+			INSERT INTO @ENL (BUCode, User_Code, EmailId)
+			EXEC USP_Get_EmailConfig_Users 'ASCM', 'Y'
+
 			INSERT INTO #TempCursorOnRej(Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code)
 			SELECT DISTINCT usr.Email_id,
 			ISNULL(UPPER(LEFT(usr.First_Name,1))+LOWER(SUBSTRING(usr.First_Name,2,LEN(usr.First_Name))), '') 
@@ -251,12 +260,10 @@ BEGIN
 			+ ' ' + ISNULL(UPPER(LEFT(usr.Last_Name,1))+LOWER(SUBSTRING(usr.Last_Name,2,LEN(usr.Last_Name))), '') 
 			+ '   ('+ ISNULL(SG.Security_Group_Name,'') + ')',
 			SG.Security_Group_Name, '', usr.Security_Group_Code, usr.Users_Code 
-			FROM Email_Config ec
-			INNER JOIN Email_Config_Detail ecd ON ecd.Email_Config_Code = ec.Email_Config_Code
-			INNER JOIN Email_Config_Detail_User ecdu ON ecdu.Email_Config_Detail_Code = ecd.Email_Config_Detail_Code
-			INNER JOIN Users usr ON usr.Users_Code IN (select number from fn_Split_withdelemiter(ecdu.User_Codes,',')) AND usr.Is_Active = 'Y'
+			FROM @ENL ec
+			INNER JOIN Users usr ON usr.Users_Code  = EC.User_Code
 			INNER JOIN Security_Group SG ON SG.Security_Group_Code = Usr.Security_Group_Code
-			WHERE ec.email_config_code = @Email_Config_Code_V18 
+			
 		END
 		--select * from #TempCursorOnRej
 		--return
@@ -438,25 +445,26 @@ BEGIN
 				,@body = @body1,@body_format = 'HTML';    
 
 				IF (@RedirectToApprovalList = 'WA')
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Waiting for Archive', @Cur_email_id
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Waiting for Archive'
 				ELSE IF (@RedirectToApprovalList = 'AR')
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Archived', @Cur_email_id
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Archived'
 				ELSE IF (@RedirectToApprovalList = 'A')
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Rejected For Archive', @Cur_email_id
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Rejected For Archive'
 				ELSE
-					INSERT INTO Email_Notification_Log(Email_Config_Code,Created_Time,Is_Read,Email_Body,User_Code,[Subject],Email_Id)
-					SELECT @Email_Config_Code, GETDATE(), 'N', @Email_Table, @Cur_user_code, 'Send for Approval', @Cur_email_id
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Send for Approval'
 				
 			END  
-			FETCH NEXT FROM cur_on_rejection INTO @cur_email_id, @cur_first_name, @cur_security_group_name, 
-			@cur_next_level_group ,@cur_security_group_code ,@cur_user_code  
+			FETCH NEXT FROM cur_on_rejection INTO @cur_email_id, @cur_first_name, @cur_security_group_name, @cur_next_level_group ,@cur_security_group_code ,@cur_user_code  
 		END
 		CLOSE cur_on_rejection  
 		DEALLOCATE cur_on_rejection  
 		/* CURSOR END */
+
+		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 
     	IF OBJECT_ID('tempdb..#TempCursorOnRej') IS NOT NULL DROP TABLE #TempCursorOnRej
 
