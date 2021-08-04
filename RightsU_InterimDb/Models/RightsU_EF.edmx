@@ -12440,6 +12440,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Get_IPR_Class_Tree_Hierarchy" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IPR_ClassCodes" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Get_IPR_Dashboard_Details" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="DashboardType" Type="varchar" Mode="In" />
+          <Parameter Name="SearchFor" Type="nvarchar" Mode="In" />
+          <Parameter Name="User_Code" Type="int" Mode="In" />
+          <Parameter Name="DashboardDays" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Get_Login_Details" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Data_For" Type="varchar(max)" Mode="In" />
           <Parameter Name="Entity_Code" Type="int" Mode="In" />
@@ -20760,6 +20766,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="CallFor" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Platform_Broadcast" EntityType="RightsU_NeoModel.Platform_Broadcast" />
+          <FunctionImport Name="USP_Get_IPR_Dashboard_Details" ReturnType="Collection(RightsU_NeoModel.USP_Get_IPR_Dashboard_Details_Result)">
+            <Parameter Name="DashboardType" Mode="In" Type="String" />
+            <Parameter Name="SearchFor" Mode="In" Type="String" />
+            <Parameter Name="User_Code" Mode="In" Type="Int32" />
+            <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35542,6 +35554,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Platform_Code" Type="Int32" />
           <Property Name="Broadcast_Mode_Code" Type="Int32" />
         </EntityType>
+        <ComplexType Name="USP_Get_IPR_Dashboard_Details_Result">
+          <Property Type="String" Name="Trademark_No" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Trademark_Name" Nullable="true" />
+          <Property Type="String" Name="Applicant_Name" Nullable="true" />
+          <Property Type="DateTime" Name="Renewed_Until" Nullable="false" Precision="23" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44605,6 +44623,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_IPR_Dashboard_Details" FunctionName="RightsU_NeoModel.Store.USP_Get_IPR_Dashboard_Details">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_IPR_Dashboard_Details_Result">
+                <ScalarProperty Name="Trademark_No" ColumnName="Trademark_No" />
+                <ScalarProperty Name="Trademark_Name" ColumnName="Trademark_Name" />
+                <ScalarProperty Name="Applicant_Name" ColumnName="Applicant_Name" />
+                <ScalarProperty Name="Renewed_Until" ColumnName="Renewed_Until" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

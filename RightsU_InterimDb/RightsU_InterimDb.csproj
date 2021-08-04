@@ -1393,6 +1393,9 @@
     <Compile Include="Models\USP_Get_IPR_Class_Tree_Hierarchy_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Get_IPR_Dashboard_Details_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Get_Login_Details_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
