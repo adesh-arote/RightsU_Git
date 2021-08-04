@@ -440,6 +440,7 @@
     <Compile Include="StoreProcedure_Entities\USPTATSLAList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPValidateMHRequestConsumption_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPVWTitleList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_IPR_Dashboard_Details_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Title_Import_Utility_AdvSearch_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_Import_RCData_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_ResolveConflict_Data_Result.cs" />

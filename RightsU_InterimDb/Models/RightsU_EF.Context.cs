@@ -4940,5 +4940,26 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_Import_Utility_AdvSearch_Result>("USP_Get_Title_Import_Utility_AdvSearch", dM_Master_Import_CodeParameter, callForParameter);
         }
+    
+        public virtual ObjectResult<USP_Get_IPR_Dashboard_Details_Result> USP_Get_IPR_Dashboard_Details(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            var dashboardTypeParameter = dashboardType != null ?
+                new ObjectParameter("DashboardType", dashboardType) :
+                new ObjectParameter("DashboardType", typeof(string));
+    
+            var searchForParameter = searchFor != null ?
+                new ObjectParameter("SearchFor", searchFor) :
+                new ObjectParameter("SearchFor", typeof(string));
+    
+            var user_CodeParameter = user_Code.HasValue ?
+                new ObjectParameter("User_Code", user_Code) :
+                new ObjectParameter("User_Code", typeof(int));
+    
+            var dashboardDaysParameter = dashboardDays.HasValue ?
+                new ObjectParameter("DashboardDays", dashboardDays) :
+                new ObjectParameter("DashboardDays", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_IPR_Dashboard_Details_Result>("USP_Get_IPR_Dashboard_Details", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
+        }
     }
 }
