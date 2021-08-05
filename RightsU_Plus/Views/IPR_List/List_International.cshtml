@@ -320,7 +320,10 @@
                             <a title="" href="#" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;" onclick="ModalPopup(@objIPRList.Application_No,@counter)">Opposition Details</a>
                         </td>
                         <td class="applicant_action">
-
+                            @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRightGranted + ",") && @objIPRList.Workflow_Status == "Approved")
+                            {
+                                <a title="Clone" class="glyphicon glyphicon-duplicate" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_CLONE, IPR_Rep_Code = objIPRList.IPR_Rep_Code })"></a>
+                            }
                             @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
                             {
                                 <a title="View" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Rep_Code = objIPRList.IPR_Rep_Code })"></a>

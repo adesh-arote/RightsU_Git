@@ -563,7 +563,15 @@
                     <h2 class="pull-left">
                         @if (Model.IPR_Rep_Code > 0)
                         {
-                            if (Model.IPR_For == "D")
+                            if (ViewBag.Mode == "C" && Model.IPR_For == "D")
+                            {
+                                @:Clone IPR Application <span>( Domestic )</span>
+                            }
+                            else if (ViewBag.Mode == "C" && Model.IPR_For == "I")
+                            {
+                                @:Clone IPR Application <span>( International )</span>
+                            }
+                            else if (Model.IPR_For == "D")
                             {
                                 @:Edit IPR Application <span>( Domestic )</span>
                                 <input type="hidden" name="Add" value="EDIT" id="AddIPR" />

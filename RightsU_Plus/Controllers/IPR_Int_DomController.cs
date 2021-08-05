@@ -238,6 +238,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.imagePage = imagePage;
             ViewBag.message = Message;
             ViewBag.ImageShow = imageshow;
+            ViewBag.Mode = Mode;
 
             if (TempData["RecodLockingCode"] == "" || TempData["RecodLockingCode"] == null)
                 ViewBag.RecordLockingCode = 0;
@@ -779,6 +780,10 @@ namespace RightsU_Plus.Controllers
 
         public string Save(IPR_REP iprREPInstance, FormCollection formCollectionInstance)
         {
+            if (Mode == "C")
+            {
+                iprREPInstance.IPR_Rep_Code = 0;
+            }
             return SaveRecord(iprREPInstance, formCollectionInstance);
         }
 

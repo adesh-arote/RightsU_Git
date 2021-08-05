@@ -85,8 +85,8 @@ GO
 
 
 --------------------------IPR Module Changes------------------------------------------------------------------------------------------------
-INSERT INTO SYSTEM_PARAMETER_NEW(Parameter_Name,Parameter_Value,Inserted_On,Inserted_By,Lock_Time,Last_Updated_Time,Last_Action_By,Channel_Code,Type,IsActive,Description,IS_System_Admin,Client_Name)SELECT 'DB-ITE',90,NULL,NULL,NULL,NULL,NULL,NULL,'U','Y','International trademark expiring in','Y','VMP'INSERT INTO SYSTEM_PARAMETER_NEW(Parameter_Name,Parameter_Value,Inserted_On,Inserted_By,Lock_Time,Last_Updated_Time,Last_Action_By,Channel_Code,Type,IsActive,Description,IS_System_Admin,Client_Name)SELECT 'DB-TE',90,NULL,NULL,NULL,NULL,NULL,NULL,'U','Y','International trademark expiring in','Y','VMP'INSERT INTO Users_Configuration(Dashboard_Key,Dashboard_Value,Users_Code)SELECT 'DB-ITE',30,136INSERT INTO Users_Configuration(Dashboard_Key,Dashboard_Value,Users_Code)SELECT 'DB-TE',30,136INSERT INTO System_Module(Module_Code,Module_Name,Module_Position,Parent_Module_Code,Is_Sub_Module,Url,Target,Css,Can_Workflow_Assign,Is_Active)
-VALUES (249,'IPR Dashboard','CC',113,'N','IPR_Dashboard/Index','mainframe','sub','N','Y')
+INSERT INTO SYSTEM_PARAMETER_NEW(Parameter_Name,Parameter_Value,Inserted_On,Inserted_By,Lock_Time,Last_Updated_Time,Last_Action_By,Channel_Code,Type,IsActive,Description,IS_System_Admin,Client_Name)SELECT 'DB-ITE',90,NULL,NULL,NULL,NULL,NULL,NULL,'U','Y','International trademark expiring in','Y','VMP'INSERT INTO SYSTEM_PARAMETER_NEW(Parameter_Name,Parameter_Value,Inserted_On,Inserted_By,Lock_Time,Last_Updated_Time,Last_Action_By,Channel_Code,Type,IsActive,Description,IS_System_Admin,Client_Name)SELECT 'DB-TE',90,NULL,NULL,NULL,NULL,NULL,NULL,'U','Y','Domestic trademark expiring in','Y','VMP'INSERT INTO Users_Configuration(Dashboard_Key,Dashboard_Value,Users_Code)SELECT 'DB-ITE',30,136INSERT INTO Users_Configuration(Dashboard_Key,Dashboard_Value,Users_Code)SELECT 'DB-TE',30,136INSERT INTO System_Module(Module_Code,Module_Name,Module_Position,Parent_Module_Code,Is_Sub_Module,Url,Target,Css,Can_Workflow_Assign,Is_Active)
+VALUES (249,'IPR Dashboard','CC',113,'N','IPR_Dashboard/Dashboard','mainframe','sub','N','Y')
 
 INSERT INTO System_Module_Right(Module_Code,Right_Code)
 VALUES (249,1),(249,2),(249,6),(249,7)
@@ -100,4 +100,5 @@ SELECT 27,'Y','N',0,GETDATE()
 INSERT INTO Email_Config_Detail_Alert (Email_Config_Detail_Code,Mail_Alert_Days,Allow_Less_Than)
 VALUES(1021,30,'N'),(1021,60,'N'),(1021,90,'Y')
 	
-
+INSERT INTO System_Module_Right(Module_Code,Right_Code)
+SELECT 114,10

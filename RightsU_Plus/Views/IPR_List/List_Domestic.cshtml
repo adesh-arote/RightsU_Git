@@ -198,7 +198,7 @@
         border: #bbb 1px solid;
         z-index: 100;
         width: 500px;
-        left: 872.64px !important;
+        left: 691.94px !important;
     }
 
         #popupFade .modal-dialog ul.fancytree-container {
@@ -339,6 +339,10 @@
                         </td>
 
                         <td class="applicant_action">
+                            @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRightGranted + ",") && @objIPRList.Workflow_Status =="Approved")
+                            {
+                                <a title="Clone" class="glyphicon glyphicon-duplicate" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_CLONE, IPR_Rep_Code = objIPRList.IPR_Rep_Code })"></a>
+                            }
                             @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
                             {
 
