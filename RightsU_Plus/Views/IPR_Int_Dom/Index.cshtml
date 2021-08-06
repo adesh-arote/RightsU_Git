@@ -209,6 +209,7 @@
 
     function BindPlatform()
     {
+        debugger;
         $.ajax({
             type: "POST",
             url: '@Url.Action("BindClassTreeView", "IPR_Int_Dom")',
@@ -223,6 +224,7 @@
                 if (result == "true") {
                     redirectToLogin();
                 }
+                debugger;
                 $('#tree').html(result);
             },
             error: function (result) {}
@@ -563,7 +565,15 @@
                     <h2 class="pull-left">
                         @if (Model.IPR_Rep_Code > 0)
                         {
-                            if (Model.IPR_For == "D")
+                            if (ViewBag.Mode == "C" && Model.IPR_For == "D")
+                            {
+                                @:Clone IPR Application <span>( Domestic )</span>
+                            }
+                            else if (ViewBag.Mode == "C" && Model.IPR_For == "I")
+                            {
+                                @:Clone IPR Application <span>( International )</span>
+                            }
+                            else if (Model.IPR_For == "D")
                             {
                                 @:Edit IPR Application <span>( Domestic )</span>
                                 <input type="hidden" name="Add" value="EDIT" id="AddIPR" />
@@ -610,7 +620,13 @@
                                                     @Html.HiddenFor(m => m.IPR_For)
                                                     <input type="hidden" id="hdnIsSubmit" name="hdnIsSubmit" />
                                                 </td>
-                                                @if (Model.Trademark_No != "" && Model.Trademark_No != null)
+                                                @if (ViewBag.Mode == "C")
+                                                {
+                                                <td colspan="2">
+                                                    New&nbsp;&nbsp;&nbsp; @Model.Version
+                                                </td>
+                                                }
+                                                else if (Model.Trademark_No != "" && Model.Trademark_No != null)
                                                 {
                                                     <td colspan="2">
                                                         @Model.Trademark_No
@@ -627,7 +643,8 @@
                                                         <div id="tree" class="treeClass">
 
                                                         </div>
-                                                        <input type="hidden" id="hdnClassCodes" name="hdnClassCodes" value="@(string.Join(" ,", Model.IPR_REP_CLASS.Select(s=> s.IPR_Class_Code)))" />
+                                                        <input type="hidden" id="hdnClassCodes" name="hdnClassCodes" value="@Model.IPR_REP_CLASS.Select(s=> s.IPR_CLASS.Description))" />
+                                                        @*<input type="hidden" id="hdnClassCodes" name="hdnClassCodes" value="@(string.Join(" ,", Model.IPR_REP_CLASS.Select(s=> s.IPR_Class_Code)))" />*@
                                                     </div>
                                                 </td>
                                             </tr>

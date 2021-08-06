@@ -772,22 +772,16 @@ namespace RightsU_Plus.Controllers
         //private List<USP_Get_Dashboard_Detail_Result> BindStarAcqDeal(string Search)
         private List<USP_Get_IPR_Dashboard_Details_Result> BindDomesticExpiry(string Search)
         {
-            //int? startAcqDealListDays = 0;
-            //startAcqDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ADTS").Select(s => s.Dashboard_Value).FirstOrDefault();
-            //if (startAcqDealListDays == null)
-            //    startAcqDealListDays = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADTS").Select(w => w.Parameter_Value).FirstOrDefault());
-            List<USP_Get_IPR_Dashboard_Details_Result> DomesticList = objUSP_Service.USP_Get_IPR_Dashboard_Detail("D", Search, objLoginUser.Users_Code, 90).ToList();
+            string DomesticExpirydays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-TE").Select(s => s.Dashboard_Value.ToString()).FirstOrDefault();
+            List<USP_Get_IPR_Dashboard_Details_Result> DomesticList = objUSP_Service.USP_Get_IPR_Dashboard_Detail("D", Search, objLoginUser.Users_Code, Convert.ToInt32(DomesticExpirydays)).ToList();
             return DomesticList;
         }
 
         //private List<USP_Get_Dashboard_Detail_Result> BindAproveAcqDeal(string Search)
         private List<USP_Get_IPR_Dashboard_Details_Result> BindInternationalExpiry(string Search)
         {
-            //int? AproveAcqDealListDays = 0;
-            //AproveAcqDealListDays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ADTA").Select(s => s.Dashboard_Value).FirstOrDefault();
-            //if (AproveAcqDealListDays == null)
-            //    AproveAcqDealListDays = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "DB-ADTA").Select(w => w.Parameter_Value).FirstOrDefault());
-            List<USP_Get_IPR_Dashboard_Details_Result> InternationalList = objUSP_Service.USP_Get_IPR_Dashboard_Detail("I", Search, objLoginUser.Users_Code, 90).ToList();
+            string IntTEExpirydays = new Users_Configuration_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Users_Code == objLoginUser.Users_Code && w.Dashboard_Key == "DB-ITE").Select(s => s.Dashboard_Value.ToString()).FirstOrDefault();
+            List<USP_Get_IPR_Dashboard_Details_Result> InternationalList = objUSP_Service.USP_Get_IPR_Dashboard_Detail("I", Search, objLoginUser.Users_Code, Convert.ToInt32(IntTEExpirydays)).ToList();
             return InternationalList;
         }
         private int StartAndExpiryDays()

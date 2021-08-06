@@ -477,7 +477,7 @@ namespace RightsU_Plus.Controllers
             Dictionary<string, string> obj_Dictionary_IPRList = new Dictionary<string, string>();
             obj_Dictionary_IPRList.Add("MODE", MODE);
             obj_Dictionary_IPRList.Add("Tab", tab);
-            if (tab == "B" || tab == "A")
+            if (tab == "B" || tab == "A" || IPR_Opp_Code > 0)
             {
                 obj_Dictionary_IPRList.Add("IPR_Opp_Code", IPR_Opp_Code == null ? "0" : IPR_Opp_Code.ToString());
                 TempData["QueryString_IPR"] = obj_Dictionary_IPRList;

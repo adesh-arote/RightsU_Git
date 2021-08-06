@@ -8,7 +8,7 @@
             <th style="width:20%;">Class</th>
             <th style="width:30%;">Opposition Status</th>
         </tr>
-    </thead>
+    </thead>   
     <tbody>
         @if (Model.OppoBy.Count > 0)
         {
@@ -19,10 +19,10 @@
                         <span >Opposition By</span>
                     </td>
                     <td>
-                        <span>@item.Party_Name</span>
+                        <a title="" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Opp_Code = item.IPR_Opp_Code })"><span style="color:blue;"><u>@item.Party_Name</u></span></a>
                     </td>
                     <td align="center">
-                        <span>@item.Opp_No</span>
+                        <a title="" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Opp_Code = item.IPR_Opp_Code })"><span style="color:blue;"><u>@item.Opp_No</u></span></a>
                     </td>
                     <td align="center">
                         <span>@item.IPR_Class_Code</span>
@@ -62,10 +62,10 @@
                         <span >Opposition Against</span>
                     </td>
                     <td>
-                        <span>@data.Party_Name</span>
+                        <a title="" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Opp_Code = data.IPR_Opp_Code })"><span style="color:blue;"><u>@data.Party_Name</u></span></a>
                     </td>
                     <td align="center">
-                        <span>@data.Opp_No</span>
+                        <a title="" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Opp_Code = data.IPR_Opp_Code })"><span style="color:blue;"><u>@data.Opp_No</u></span></a>
                     </td>
                     <td align="center">
                         <span>@data.IPR_Class_Code</span>
