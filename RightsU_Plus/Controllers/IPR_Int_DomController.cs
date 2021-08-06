@@ -811,6 +811,7 @@ namespace RightsU_Plus.Controllers
             if (Mode == "C")
             {
                 iprREPInstance.IPR_Rep_Code = 0;
+                iprREPInstance.IPR_REP_STATUS_HISTORY.Clear();
             }
             return SaveRecord(iprREPInstance, formCollectionInstance);
         }

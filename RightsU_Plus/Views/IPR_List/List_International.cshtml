@@ -119,7 +119,7 @@
         $('#txtPageSize_Int').attr('required', true)
         return false
     }
-    function ModalPopup(IPROppCode, counter) {
+    function ModalPopup(ApplicationNo, counter,IPRRepCode) {
         debugger
         // var btdId = $("#" + counter + "_ModelPopup");
         pos = $("#" + counter + "_ModelPopup").offset();
@@ -131,8 +131,8 @@
             contentType: "application/json; charset=utf-8",
             dataType: "html",
             data: JSON.stringify({
-                ApplicationNo: IPROppCode,
-                IPRRepCode: counter
+                ApplicationNo: ApplicationNo,
+                IPRRepCode: IPRRepCode
             }),
             success: function (result) {
                 if (result == "true") {
@@ -143,8 +143,6 @@
                     $('#ModalPopup').html(result);
                     $('#popupFade').offset({ top: pos.top+20, left: pos.left }).fadeIn();
                     $('#popupFade').offset({ top: pos.top+20, left: pos.left }).fadeIn();
-                    //$('#myModal').modal(options);
-                    //$('#myModal').modal('show');
                 }
             },
             error: function (result) {
@@ -317,8 +315,11 @@
 
 
                         </td>
+                        @{ 
+                            var ApplicationNo = @objIPRList.Application_No;
+                        }
                         <td style="width:14%;">
-                            <a title="" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;cursor:pointer" onclick="ModalPopup(@objIPRList.Application_No,@counter)">Opposition Details</a>
+                            <a title="" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;cursor:pointer" onclick="ModalPopup('@ApplicationNo',@counter,@objIPRList.IPR_Rep_Code)">Opposition Details</a>
                         </td>
                         <td class="applicant_action">
                             @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRightGranted + ",") && @objIPRList.Workflow_Status == "Approved")
