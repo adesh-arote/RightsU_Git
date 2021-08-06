@@ -179,6 +179,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForCustomer = 211;
         public const int ModuleCodeForAcq_Rights_Template = 213;
         public const int ModuleCodeForDealWorkflowStausPending = 217;
+        public const int ModuleCodeFor_IPR_Dashboard = 249;
 
         #endregion
 

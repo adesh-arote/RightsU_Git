@@ -893,7 +893,10 @@
                                                 <td style="width:20%"><b>Changed On</b></td>
                                                 <td style="width:60%"><b>Changed By</b></td>
                                             </tr>
-
+                                            @if (ViewBag.Mode == "C")
+                                            {
+                                                ViewBag.IPR_Status_History = "";
+                                            }
                                             @foreach (RightsU_Entities.USP_List_IPR_Status_History_Result objStatusHist in ViewBag.IPR_Status_History)
                                             {
                                                 <tr>
