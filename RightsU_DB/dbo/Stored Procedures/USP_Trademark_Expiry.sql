@@ -19,6 +19,8 @@ BEGIN
 	@BCC_Users_Code  NVARCHAR(MAX),
 	@BCC_User_Mail_Id  NVARCHAR(MAX)
 
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+
 	DECLARE @Tbl2 TABLE (
 		Id INT,
 		BuCode INT,
@@ -37,9 +39,7 @@ BEGIN
 	SELECT @Email_Config_Code = Email_Config_Code FROM Email_Config where [Key] = 'TE'
 
 	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
-	EXEC USP_Get_EmailConfig_Users 'CUR', 'N'
-
-	SELECT * FROM @Tbl2
+	EXEC USP_Get_EmailConfig_Users 'TE', 'N'
 
 	DECLARE @Days_Freq INT
 
@@ -68,8 +68,9 @@ BEGIN
 		FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id--, @Channel_Codes
 		WHILE @@FETCH_STATUS = 0
 		BEGIN	
-			SELECT @Body = Template_Desc FROM Email_Template WHERE Template_For = 'Trademark'
 
+			SELECT @Body = Template_Desc FROM Email_Template WHERE Template_For = 'Trademark'
+			
 			SET @Body = REPLACE(@Body,'{Trademark No}',@Trademark_No)  
 			SET @Body = REPLACE(@Body,'{Trademark Name}',@TradeMark_Name)  
 			SET @Body = REPLACE(@Body,'{Applicant Name}',@Applicant_Name)  
@@ -79,6 +80,7 @@ BEGIN
 			SET @Body = replace(@Body,'{Class}',@Class)
 		IF(@Body != '')
 		BEGIN
+			----select @To_User_Mail_Id, @CC_User_Mail_Id, @BCC_User_Mail_Id, @Body, @MailSubject
 			EXEC msdb.dbo.sp_send_dbmail 
 						@profile_name = @DatabaseEmail_Profile,
 						@recipients =  @To_User_Mail_Id,
@@ -88,12 +90,22 @@ BEGIN
 						@body = @Body,
 						@body_format = 'HTML';
 
-			 INSERT INTO email_notification_log (email_config_code, created_time, is_read, email_body, user_code, [subject], email_id) 
-			 SELECT @Email_Config_Code, Getdate(), 'N', @Body,  @To_Users_Code, 'Trademark Expiry', @To_User_Mail_Id 
+			 INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+			 SELECT @Email_Config_Code,@Body, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  ' Trademark Expiry'
+
+
 		END
 
 		FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id--, @Channel_Codes
 		END --End of Fetch outer
 		CLOSE curOuter
 		DEALLOCATE curOuter	
+
+		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 END
+
+
+
+
+
+

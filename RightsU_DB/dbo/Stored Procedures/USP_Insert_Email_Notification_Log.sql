@@ -22,7 +22,7 @@ BEGIN
 	IF OBJECT_ID('tempdb..#Email_Config_Users_UDT') IS NOT NULL  
 		DROP TABLE #Email_Config_Users_UDT 
 
-	SELECT * INTO #Email_Config_Users_UDT FROM @Email_Config_Users_UDT
+	SELECT DISTINCT  * INTO #Email_Config_Users_UDT FROM @Email_Config_Users_UDT
 
 	BEGIN
 			INSERT INTO Email_Notification_Log(Email_Config_Code, Created_Time, Is_Read, Email_Body, [Subject], Email_Id, User_Type)

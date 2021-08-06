@@ -10,16 +10,173 @@
     if (@ViewBag.StartAcqDealList != null)
     { StartAcqDealList = (List<RightsU_Entities.USP_Get_IPR_Dashboard_Details_Result>)ViewBag.StartAcqDealList; }
 
-    if (@ViewBag.StartSynDealList != null)
-    { StartSynDealList = (List<RightsU_Entities.USP_Get_IPR_Dashboard_Details_Result>)ViewBag.StartSynDealList; }
+    if (@ViewBag.AproveAcqDealList != null)
+    { StartSynDealList = (List<RightsU_Entities.USP_Get_IPR_Dashboard_Details_Result>)ViewBag.AproveAcqDealList; }
 
 }
 <html>
 <head>
     <title>RightsU</title>
     <link rel="stylesheet" href="~/CSS/dashboard.css" />
+
+    <style>
+        .dashboardGroup .glyphicon {
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container main_col">
+                @using (Html.BeginForm("Dashboard", "IPR_Dashboard", FormMethod.Post, new { id = "frmIPRDashboard" }))
+                {
+                    <section class="searchDIV clearfix">
+                        @Html.TextBox("Search", TempData["Search"] as string, new { @MaxLength = "200", id = "txtSearch", autocomplete = "off", placeholder = "Search by Trademark No., Trademark Name, Applicant, Expiry Date ..." })
+                        <a href="#">
+                            <span class="glyphicon glyphicon-search" title="Search" onclick="return search()"></span>
+                        </a>
+                        <a href="#" onclick=" window.location.href='@Url.Action("Dashboard", "IPR_Dashboard", new { Search = "" })    ' ">
+                            <span class=" glyphicon glyphicon-refresh" title="Show All" id="ShowAll">
+                            </span>
+                        </a>
+                    </section>
+                }
+                <section class="dashboardGroup clearfix">
+                    @if (ViewBag.StartAcqDealList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="glyphicon-chevron-left" id="btnPrevious_StartAcqDealList"  />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_StartAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.DT, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_StartAcqDealList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_StartAcqDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_StartAcqDealList" value="@ViewBag.StartAcqDealList_PageNo" />
+                            </span>
+
+                            @if (StartAcqDealList.Count > 0)
+                            {
+                                <table id="StartAcqDealList_tbl">
+                                    <tr>
+                                        <th>Trademark No.</th>
+                                        <th>Trademark Name</th>
+                                        <th>Applicant</th>
+                                        <th>Expiry Date</th>
+                                    </tr>
+                                    @foreach (var item in StartAcqDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.Trademark_No
+                                                @*@if (item.Is_Deal_Rights == "Y")
+                                                    {
+                                                        <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.Agreement_No
+                                                    }*@
+                                            </td>
+                                            <td>
+                                                @item.Trademark_Name
+                                                @*<h5 title="@item.TitleName">
+                                                        @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                    </h5>*@
+                                            </td>
+                                            <td>
+                                                @item.Applicant_Name
+                                                @*<div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>*@
+                                            </td>
+                                            @*@if (ViewBag.CostVisibility)
+                                                {
+                                                    <td class="amount">
+                                                        @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                    </td>
+                                                }*@
+                                            <td>
+                                                @item.Renewed_Until.ToString("dd MMM yyyy")
+                                                @*@item.RightPeriod*@
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+                    @if (ViewBag.StartSynDealList != null || ViewBag.StartSynDealList == null)
+                    {
+                        <div class="dashboard syn">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_StartSynDealList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_StartSynDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.AT, "DealExpiryReport", "Reports", new { callFor = "SS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_StartSynDealList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_StartSynDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_StartSynDealList" value="@ViewBag.StartSynDealList_PageNo" />
+                            </span>
+
+                            @if (StartSynDealList.Count > 0)
+                            {
+                                <table id="StartSynDealList_tbl">
+                                    <tr>
+                                        <th>Trademark No.</th>
+                                        <th>Trademark Name</th>
+                                        <th>Applicant</th>
+                                        <th>Expiry Date</th>
+                                    </tr>
+                                    @foreach (var item in StartSynDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @*@if (item.Is_Deal_Rights == "Y")
+                                                    {
+                                                        <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.Agreement_No
+                                                    }*@
+                                                @item.Trademark_No
+                                            </td>
+                                            <td>
+                                                @item.Trademark_Name
+                                            </td>
+                                            <td>
+                                                @item.Applicant_Name
+                                            </td>
+                                            @*@if (ViewBag.CostVisibility)
+                                                {
+                                                    <td class="amount">
+                                                        @String.Format("{0:n}", item.Deal_Movie_Cost)
+
+                                                    </td>
+                                                }*@
+                                            <td>
+                                                @item.Renewed_Until.ToString("dd MMM yyyy")
+                                                @*@item.RightPeriod*@
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+                </section>
+            </div>
+        </section>
+    </div>
     <script type="text/javascript">
         URL_Reload_Current_Page = '@Url.Action("Main", "Base")';
+
         $(document).ready(function () {
             if ('@TempData["ShowAlert"]' != '') {
                 message = '@TempData["ShowAlert"]';
@@ -44,6 +201,7 @@
 
 
             $("#btnNext_StartAcqDealList").click(function () {
+                debugger;
                 if ($(this).attr('onClick') != 'return false') {
                     Paging($("#currentPageIndex_StartAcqDealList").val(), "AS", $("#txtSearch").val().trim(), "N", "StartAcqDealList_tbl");
                 }
@@ -131,6 +289,7 @@
             });
         });
         function ShowHideButton_StartAcqDealList(PageNo, LastPageNo) {
+            debugger;
             if ('@StartAcqDealList.Count' > 0) {
                 if (PageNo > 1) {
                     $("#btnPrevious_StartAcqDealList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
@@ -379,9 +538,10 @@
             }
         }
         function Paging(pageindex, pagetype, SearchText, buttonType, TableName) {
+            debugger;
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("Paging", "Base")',
+                url: '@Url.Action("Paging", "IPR_Dashboard")',
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
@@ -435,160 +595,5 @@
             });
         }
     </script>
-    <style>
-        .dashboardGroup .glyphicon {
-            color: white !important;
-        }
-    </style>
-</head>
-<body>
-    <div class="main_section">
-        <section class="rightsU_container clearfix">
-            <div class="container main_col">
-                @using (Html.BeginForm("Dashboard", "IPR_Dashboard", FormMethod.Post, new { id = "frmIPRDashboard" }))
-                {
-                    <section class="searchDIV clearfix">
-                        @Html.TextBox("Search", TempData["Search"] as string, new { @MaxLength = "200", id = "txtSearch", autocomplete = "off", placeholder = "Search by Trademark No., Trademark Name, Applicant, Expiry Date ..." })
-                        <a href="#">
-                            <span class="glyphicon glyphicon-search" title="Search" onclick="return search()"></span>
-                        </a>
-                        <a href="#" onclick=" window.location.href='@Url.Action("Dashboard", "IPR_Dashboard", new { Search = "" })    ' ">
-                            <span class=" glyphicon glyphicon-refresh" title="Show All" id="ShowAll">
-                            </span>
-                        </a>
-                    </section>
-                }
-                <section class="dashboardGroup clearfix">
-                    @if (ViewBag.StartAcqDealList != null)
-                    {
-                        <div class="dashboard acq">
-                            <span>
-                                @*<input type="button" class="glyphicon-chevron-left" id="btnPrevious_StartAcqDealList"  />*@
-                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_StartAcqDealList" style="float:left;padding-top:1px;"></a>
-
-                                @Html.ActionLink((string)ViewBag.DT, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
-
-                                @*<input type="button" class="pull-right" id="btnNext_StartAcqDealList" value=">>" />*@
-                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_StartAcqDealList" style="float:right;padding-top:1px;"></a>
-                                <input type="hidden" id="currentPageIndex_StartAcqDealList" value="@ViewBag.StartAcqDealList_PageNo" />
-                            </span>
-
-                            @if (StartAcqDealList.Count > 0)
-                            {
-                                <table id="StartAcqDealList_tbl">
-                                    <tr>
-                                        <th>Trademark No.</th>
-                                        <th>Trademark Name</th>
-                                        <th>Applicant</th>                        
-                                        <th>Expiry Date</th>
-                                    </tr>
-                                    @foreach (var item in StartAcqDealList)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @item.Trademark_No
-                                                @*@if (item.Is_Deal_Rights == "Y")
-                                                {
-                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
-                                                }
-                                                else
-                                                {
-                                                    @item.Agreement_No
-                                                }*@
-                                            </td>
-                                            <td>
-                                                @item.Trademark_Name
-                                                @*<h5 title="@item.TitleName">
-                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
-                                                </h5>*@
-                                            </td>
-                                            <td>
-                                                @item.Applicant_Name
-                                                @*<div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>*@
-                                            </td>
-                                            @*@if (ViewBag.CostVisibility)
-                                            {
-                                                <td class="amount">
-                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
-                                                </td>
-                                            }*@
-                                            <td>
-                                                @item.Renewed_Until.ToString("dd-MMM-yyyy")
-                                                @*@item.RightPeriod*@
-                                            </td>
-                                        </tr>
-                                    }
-                                </table>
-                            }
-                            else
-                            {<h1>NO DATA</h1>}
-                        </div>
-                    }
-                    @if (ViewBag.StartSynDealList != null || ViewBag.StartSynDealList == null)
-                    {
-                        <div class="dashboard syn">
-                            <span>
-                                @*<input type="button" class="pull-left" id="btnPrevious_StartSynDealList" value="<<" />*@
-                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_StartSynDealList" style="float:left;padding-top:1px;"></a>
-
-                                @Html.ActionLink((string)ViewBag.AT, "DealExpiryReport", "Reports", new { callFor = "SS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
-
-                                @*<input type="button" class="pull-right" id="btnNext_StartSynDealList" value=">>" />*@
-                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_StartSynDealList" style="float:right;padding-top:1px;"></a>
-                                <input type="hidden" id="currentPageIndex_StartSynDealList" value="@ViewBag.StartSynDealList_PageNo" />
-                            </span>
-
-                            @if (StartSynDealList.Count > 0)
-                            {
-                                <table id="StartSynDealList_tbl">
-                                    <tr>
-                                        <th>Trademark No.</th>
-                                        <th>Trademark Name</th>
-                                        <th>Applicant</th>
-                                        <th>Expiry Date</th>
-                                    </tr>
-                                    @foreach (var item in StartSynDealList)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @*@if (item.Is_Deal_Rights == "Y")
-                                                {
-                                                    <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
-                                                }
-                                                else
-                                                {
-                                                    @item.Agreement_No
-                                                }*@
-                                                @item.Trademark_No
-                                            </td>
-                                            <td>
-                                                @item.Trademark_Name
-                                            </td>
-                                            <td>
-                                               @item.Applicant_Name
-                                            </td>
-                                            @*@if (ViewBag.CostVisibility)
-                                            {
-                                                <td class="amount">
-                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
-
-                                                </td>
-                                            }*@
-                                            <td>
-                                                @item.Renewed_Until
-                                                @*@item.RightPeriod*@
-                                            </td>
-                                        </tr>
-                                    }
-                                </table>
-                            }
-                            else
-                            {<h1>NO DATA</h1>}
-                        </div>
-                    }
-                </section>
-            </div>
-        </section>
-    </div>
 </body>
 </html>
