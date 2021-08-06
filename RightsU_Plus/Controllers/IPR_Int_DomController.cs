@@ -302,7 +302,6 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         #region Tree view
-
         public string PopulateTreeNode(string IsView, string[] selectedPlatformCodes)
         {
             string codes = string.Empty;
@@ -337,7 +336,7 @@ namespace RightsU_Plus.Controllers
                         if (selectedPlatformCodes.Where(x => x == Convert.ToString(objClass.IPR_Class_Code)).Count() > 0)
                         {
                             IsChecked = true;
-                            strChild += ", selected: true";
+                            strChild += ", selected: true, preselected : true";
                         }
                 }
                 if (IsChecked)
@@ -350,9 +349,21 @@ namespace RightsU_Plus.Controllers
                 //        strChild += ", expanded: false";
                 //}
 
-                if (IsView == "Y")
-                    strChild += ", hideCheckbox: true";
+                //if (IsView == "Y")
+                //    strChild += ", hideCheckbox: true";
 
+                if (IsView == "Y")
+                {
+                    if (selectedPlatformCodes.Contains(objClass.IPR_Class_Code.ToString()))
+                    {
+                        strChild += ", unselectableStatus: true";
+                    }
+                    else
+                    {
+                        strChild += ", unselectable: true";
+                    }
+                    //strChild += ", hideCheckbox: false";      
+                }
 
                 if (tvChildData != "")
                     tvChildData += ",";
@@ -362,8 +373,13 @@ namespace RightsU_Plus.Controllers
             }
 
             string IsRef = "";
+            //if (IsView == "Y")
+            //    IsRef += ", hideCheckbox: true";
+
             if (IsView == "Y")
-                IsRef += ", hideCheckbox: true";
+            {
+                IsRef += ", unselectableStatus: true";
+            }
 
 
             if (IsMenuChecked)
@@ -404,11 +420,24 @@ namespace RightsU_Plus.Controllers
                 }
                 if (selectedPlatformCodes != null)
                     if (selectedPlatformCodes.Where(x => x == Convert.ToString(objClass.IPR_Class_Code)).Count() > 0)
-                        strLocalChild += ", selected: true";
+                        strLocalChild += ", selected: true, preselected : true";
 
+
+                //if (IsView == "Y")
+                //    strLocalChild += ", hideCheckbox: true";
 
                 if (IsView == "Y")
-                    strLocalChild += ", hideCheckbox: true";
+                {
+                    if (selectedPlatformCodes.Where(x => x == Convert.ToString(objClass.IPR_Class_Code)).Count() > 0)
+                    {
+                        strLocalChild += ", unselectableStatus: true";
+                    }
+                    else
+                    {
+                        strLocalChild += ", unselectable: true";
+                    }
+
+                }
 
                 if (selectedPlatformCodes != null)
                     strLocalChild += ", expanded: true";
@@ -419,7 +448,6 @@ namespace RightsU_Plus.Controllers
             }
             return IsChecked;
         }
-
         #endregion
 
         [HttpPost]
