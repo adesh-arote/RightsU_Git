@@ -10,8 +10,8 @@
     if (@ViewBag.StartAcqDealList != null)
     { StartAcqDealList = (List<RightsU_Entities.USP_Get_IPR_Dashboard_Details_Result>)ViewBag.StartAcqDealList; }
 
-    if (@ViewBag.StartSynDealList != null)
-    { StartSynDealList = (List<RightsU_Entities.USP_Get_IPR_Dashboard_Details_Result>)ViewBag.StartSynDealList; }
+    if (@ViewBag.AproveAcqDealList != null)
+    { StartSynDealList = (List<RightsU_Entities.USP_Get_IPR_Dashboard_Details_Result>)ViewBag.AproveAcqDealList; }
 
 }
 <html>
@@ -575,7 +575,7 @@
                                                 </td>
                                             }*@
                                             <td>
-                                                @item.Renewed_Until
+                                                @item.Renewed_Until.ToString("dd-MMM-yyyy")
                                                 @*@item.RightPeriod*@
                                             </td>
                                         </tr>
