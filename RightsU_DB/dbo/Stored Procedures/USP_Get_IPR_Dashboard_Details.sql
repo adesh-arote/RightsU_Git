@@ -9,10 +9,15 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	--DECLARE 
-	--@DashboardType varchar(10)='I',
-	--@SearchFor NVARCHAR(1000) ='Colors',
+	--@DashboardType varchar(10)='D',
+	--@SearchFor NVARCHAR(1000) ='Aug',
 	--@User_Code INT = 211,
 	--@DashboardDays INT=1000
+
+	IF (@DashboardType = 'I')
+		SELECT @DashboardDays = Parameter_Value FROM system_parameter WHERE Parameter_Name = 'DB-ITE'
+	ELSE IF (@DashboardType = 'D')
+		SELECT @DashboardDays = Parameter_Value FROM system_parameter WHERE Parameter_Name = 'DB-TE'
 
 	Declare @StartDate AS date
 	Declare @EndDate AS date
@@ -30,9 +35,9 @@ BEGIN
 	SELECT Trademark_No,IR.Trademark,APPLICANT,Renewed_Until from IPR_Rep IR
 	INNER JOIN DM_IPR DI ON IR.Applicant_Code = DI.ID
 	WHERE IPR_For = @DashboardType AND Renewed_Until BETWEEN @StartDate AND @EndDate
-	and( Trademark_No LIKE N'%'+@SearchFor+'%'OR IR.Trademark LIKE N'%'+@SearchFor+'%' OR Applicant LIKE '%'+@SearchFor+'%' OR Renewed_Until LIKE N'%'+@SearchFor+'%')
+	and( Trademark_No LIKE N'%'+@SearchFor+'%'OR IR.Trademark LIKE N'%'+@SearchFor+'%' OR Applicant LIKE '%'+@SearchFor+'%' OR CONVERT(varchar, Renewed_Until, 106) LIKE N'%'+@SearchFor+'%')
 
-	SELECT Trademark_No, Trademark_Name, Applicant_Name, Renewed_Until FROM #Trademark
+	SELECT Trademark_No, Trademark_Name, Applicant_Name,  Renewed_Until FROM #Trademark
 
 	IF OBJECT_ID('tempdb..#Trademark') IS NOT NULL DROP TABLE #Trademark
 END
