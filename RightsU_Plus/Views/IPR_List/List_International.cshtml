@@ -131,7 +131,8 @@
             contentType: "application/json; charset=utf-8",
             dataType: "html",
             data: JSON.stringify({
-                IPROppCode: IPROppCode
+                ApplicationNo: IPROppCode,
+                IPRRepCode: counter
             }),
             success: function (result) {
                 if (result == "true") {
@@ -140,8 +141,8 @@
                 else {
                     debugger;
                     $('#ModalPopup').html(result);
-                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
-                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top+20, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top+20, left: pos.left }).fadeIn();
                     //$('#myModal').modal(options);
                     //$('#myModal').modal('show');
                 }
@@ -182,11 +183,11 @@
         position: absolute;
         display: none;
         width: 300px;
-        overflow: hidden;
+        overflow: auto;
         border: #bbb 1px solid;
-        z-index: 100;
+        /*z-index: 100;*/
         width: 500px;
-        left: 965.64px !important;
+        left: 691.94px !important;
     }
 
         #popupFade .modal-dialog ul.fancytree-container {
@@ -320,7 +321,10 @@
                             <a title="" href="#" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;" onclick="ModalPopup(@objIPRList.Application_No,@counter)">Opposition Details</a>
                         </td>
                         <td class="applicant_action">
-
+                            @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRightGranted + ",") && @objIPRList.Workflow_Status == "Approved")
+                            {
+                                <a title="Clone" class="glyphicon glyphicon-duplicate" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_CLONE, IPR_Rep_Code = objIPRList.IPR_Rep_Code })"></a>
+                            }
                             @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
                             {
                                 <a title="View" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Rep_Code = objIPRList.IPR_Rep_Code })"></a>

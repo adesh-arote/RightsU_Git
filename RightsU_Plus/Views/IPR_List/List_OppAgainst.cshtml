@@ -266,9 +266,9 @@
 
                         </td>
                         <td class="applicant_action" style="width: 20% !important" ;>
-                            @if (@objIPROppList.Show_Hide_Buttons.Contains("~" + GlobalParams.RightCodeForRightGranted + "~"))
+                            @if (@objIPROppList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRightGranted + ","))
                             {
-                            <a title="Clone" class="glyphicon glyphicon-duplicate" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_CLONE, IPR_Opp_Code = objIPROppList.IPR_Opp_Code })"></a>
+                                <a title="Clone" class="glyphicon glyphicon-duplicate" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_CLONE, IPR_Opp_Code = objIPROppList.IPR_Opp_Code })"></a>
                             }
                             @if (@objIPROppList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
                             {
