@@ -465,6 +465,33 @@ namespace RightsU_Plus.Controllers
             return rights;
         }
         #endregion
+        #region--- IPR Report ---
+        public ActionResult IPRReport()
+        {
+            ViewBag.status = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Tag_Code > 0), "Deal_Tag_Code", "Deal_Tag_Description").ToList();
+            IPR_CLASS_Service objIPRClass = new IPR_CLASS_Service(objLoginEntity.ConnectionStringName);
+            ViewBag.Class = objIPRClass.SearchFor(c => c.Parent_Class_Code == 0).Select(x => x.Description).ToList();
+            return View("~/Views/Reports/IPR_Report.cshtml");
+        }
+        public PartialViewResult BindIPRReport(string Trademark,string Organisation , string Domestic, string International, 
+           string RegistrationDate, string DateofExpiry)
+        {
+            ReportParameter[] parm = new ReportParameter[18];
+
+            parm[0] = new ReportParameter("Trademark", Trademark);
+            parm[1] = new ReportParameter("Organisation", Organisation);
+            parm[2] = new ReportParameter("Registration Date", GlobalUtil.MakedateFormat(RegistrationDate));
+            parm[3] = new ReportParameter("Date of Expiry", GlobalUtil.MakedateFormat(DateofExpiry));
+            parm[4] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+            parm[5] = new ReportParameter("Domestic", Domestic);
+            parm[6] = new ReportParameter("International", International);
+            parm[7] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
+            parm[8] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+            ReportViewer rptViewer = BindReport(parm, "ACQUITION_DEAL_LIST_REPORT");
+            ViewBag.ReportViewer = rptViewer;
+            return PartialView("~/Views/Shared/ReportViewer.cshtml");
+        }
+        #endregion
 
         #region --- Syn Deal List Report ---
         public ActionResult SynDealListReport()
