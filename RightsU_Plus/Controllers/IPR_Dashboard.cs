@@ -791,80 +791,70 @@ namespace RightsU_Plus.Controllers
             return DealStartAndExp_Days;
         }
 
-        //public ActionResult Paging(int currentPageIndex, string type, string Search, string Button)
-        //{
-        //    int PageNo;
-        //    int LastPageNo = 1;
-        //    if (Button == "N")
-        //        PageNo = currentPageIndex + 1;
-        //    else
-        //        PageNo = currentPageIndex - 1;
-        //    TempData["PageIndex"] = PageNo;
-        //    ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(GlobalParams.ModuleCodeFor_DashBoard, objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-        //    bool srchaddRights = addRights.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForCost) + "~");
+        public ActionResult Paging(int currentPageIndex, string type, string Search, string Button)
+        {
+            int PageNo;
+            int LastPageNo = 1;
+            if (Button == "N")
+                PageNo = currentPageIndex + 1;
+            else
+                PageNo = currentPageIndex - 1;
+            TempData["PageIndex"] = PageNo;
+            //ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(GlobalParams.ModuleCodeFor_IPR_Dashboard, objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            //bool srchaddRights = addRights.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForCost) + "~");
+            bool srchaddRights = true;
+            List<USP_Get_IPR_Dashboard_Details_Result> List = new List<USP_Get_IPR_Dashboard_Details_Result>();
 
-        //    List<USP_Get_IPR_Dashboard_Details_Result> List = new List<USP_Get_IPR_Dashboard_Details_Result>();
+            if (type.ToUpper() == "D")
+            {
+                List = BindDomesticExpiry(Search);
+                StartAcqDealListCount = List.Count();
+                StartAcqDealList_LastPageNo = ((StartAcqDealListCount / PageSize) - (StartAcqDealListCount % PageSize == 0 ? 1 : 0)) + 1;
+                List = List.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
+                ViewBag.StartAcqDealList = List;
+                ViewBag.StartAcqDealList_PageNo = PageNo;
+                ViewBag.StartAcqDealList_LastPageNo = StartAcqDealList_LastPageNo;
+                LastPageNo = StartAcqDealList_LastPageNo;
+            }
+            else if (type.ToUpper() == "I")
+            {
+                List = BindInternationalExpiry(Search);
+                StartSynDealListCount = List.Count();
+                StartSynDealList_LastPageNo = ((StartSynDealListCount / PageSize) - (StartSynDealListCount % PageSize == 0 ? 1 : 0)) + 1;
+                List = List.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
+                ViewBag.StartSynDealList_PageNo = PageNo;
+                ViewBag.StartSynDealList_LastPageNo = StartSynDealList_LastPageNo;
+                LastPageNo = StartSynDealList_LastPageNo;
+            }
 
-        //    if (type.ToUpper() == "D")
-        //    {
-        //        List = BindDomesticExpiry(Search);
-        //        StartAcqDealListCount = List.Count();
-        //        StartAcqDealList_LastPageNo = ((StartAcqDealListCount / PageSize) - (StartAcqDealListCount % PageSize == 0 ? 1 : 0)) + 1;
-        //        List = List.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
-        //        ViewBag.StartAcqDealList = List;
-        //        ViewBag.StartAcqDealList_PageNo = PageNo;
-        //        ViewBag.StartAcqDealList_LastPageNo = StartAcqDealList_LastPageNo;
-        //        LastPageNo = StartAcqDealList_LastPageNo;
-        //    }
-        //    else if (type.ToUpper() == "I")
-        //    {
-        //        List = BindInternationalExpiry(Search);
-        //        StartSynDealListCount = List.Count();
-        //        StartSynDealList_LastPageNo = ((StartSynDealListCount / PageSize) - (StartSynDealListCount % PageSize == 0 ? 1 : 0)) + 1;
-        //        List = List.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
-        //        ViewBag.StartSynDealList_PageNo = PageNo;
-        //        ViewBag.StartSynDealList_LastPageNo = StartSynDealList_LastPageNo;
-        //        LastPageNo = StartSynDealList_LastPageNo;
-        //    }
+            string Html = "";
+            string html_Deal_No = "";
+            if (srchaddRights == true)
+                Html = Html + " <tr><th>Deal No.</th><th>Title</th><th>Party Name</th><th>Amount</th><th>Period</th></tr>";
+            else
+                Html = Html + " <tr><th>Deal No.</th><th>Title</th><th>Party Name</th><th>Period</th></tr>";
 
-        //    string Html = "";
-        //    string html_Deal_No = "";
-        //    if (srchaddRights == true)
-        //        Html = Html + " <tr><th>Deal No.</th><th>Title</th><th>Party Name</th><th>Amount</th><th>Period</th></tr>";
-        //    else
-        //        Html = Html + " <tr><th>Deal No.</th><th>Title</th><th>Party Name</th><th>Period</th></tr>";
 
-        //    //foreach (USP_Get_IPR_Dashboard_Details_Result Obj in List)
-        //    //{
-        //    //    string Title = Obj.Trademark_No.Length >= 33 ? Obj.Trademark_No.Substring(0, 30) + "..." : Obj.Trademark_No;
-        //    //    string Customer = Obj.Trademark_Name.Length >= 33 ? Obj.Trademark_Name.Substring(0, 30) + "..." : Obj.Trademark_Name;
-        //    //    string Is_Deal_Right = Obj.Is_Deal_Rights != null ? Obj.Is_Deal_Rights : "Y";
-        //    //    string DealUrl = "";
-        //    //    if (type.ToUpper() == "SS" || type.ToUpper() == "SE")
-        //    //    {
-        //    //        DealUrl = Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = Obj.Deal_Code });
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        DealUrl = Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = Obj.Deal_Code });
-        //    //    }
-        //    //    if (Is_Deal_Right == "Y")
-        //    //        html_Deal_No = "<a href='" + DealUrl + "'>" + Obj.Agreement_No + "</a>";
-        //    //    else
-        //    //        html_Deal_No = Obj.Agreement_No;
+            //Trademark No.	Trademark Name  Applicant Expiry Date
+            foreach (USP_Get_IPR_Dashboard_Details_Result Obj in List)
+            {
+                string Trademark_No = Obj.Trademark_No.Length >= 33 ? Obj.Trademark_No.Substring(0, 30) + "..." : Obj.Trademark_No;
+                string Trademark_Name = Obj.Trademark_Name.Length >= 33 ? Obj.Trademark_Name.Substring(0, 30) + "..." : Obj.Trademark_Name;
+                string Applicant = Obj.Applicant_Name.Length >= 33 ? Obj.Applicant_Name.Substring(0, 30) + "..." : Obj.Applicant_Name;
+                string ExpiryDate = Obj.Renewed_Until.ToString("dd MMM yyyy");
+               
+      
 
-        //    //    Html = Html + "<tr>" + "<td><h5>" + html_Deal_No + "</h5></td>"
-        //    //                 + "<td>" + "<h5 title='" + Obj.TitleName + "'>" + Title + "</h5></td>"
-        //    //                 + "<td><div  title='" + Obj.Customer + "'>" + Customer + "</div></td>";
-        //    //    if (srchaddRights == true)
-        //    //    {
-        //    //        Html = Html + " <td class=\"amount\">" + String.Format("{0:n}", Obj.Deal_Movie_Cost) + "</td>";
-        //    //    }
-        //    //    Html = Html + " <td>" + Obj.RightPeriod + "</td>" + "</tr>";
-        //    //}
+                Html = Html + "<tr>" + "<td><h5>" + Trademark_No + "</h5></td>"
+                             + "<td>" + "<h5 title='" + Obj.Trademark_Name + "'>" + Trademark_Name + "</h5></td>"
+                             + "<td><div  title='" + Obj.Applicant_Name + "'>" + Applicant + "</div></td>"
+                             + "<td><div  title='ExpiryDate'>" + ExpiryDate + "</div></td>";
+             
+                Html = Html + "</tr>";
+            }
 
-        //    return Json(new { Html = Html, PageNo = PageNo, LastPageNo = LastPageNo });
-        //}
+            return Json(new { Html = Html, PageNo = PageNo, LastPageNo = LastPageNo });
+        }
         #endregion
 
         private List<int> GetUserRights(bool isGraphical = false)
