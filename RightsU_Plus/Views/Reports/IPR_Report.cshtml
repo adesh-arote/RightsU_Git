@@ -10,37 +10,15 @@
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
 }
-<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
-<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 
 <script>
 
-    var URL_BindAcqDealListReport = '@Url.Action("BindIPRReport", "Reports")';
+    var URL_BindIPRReport = '@Url.Action("BindIPRReport", "Reports")';
     $(document).ready(function () {
-        $('#txtStart').change(function () {
-            SetMinDt();
-        });
-        $('#txtEnd').change(function () {
-            SetMaxDt();
-        });
-        $("#ddlBusinessUnit").change(function () {
-            $("#txtTitle").val('');
-        });
 
-        $("#ddlBusinessUnitMultiSelect").change(function () {
-            $("#txtTitle").val('');
-        });
 
-        $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
-        $('#ddlBusinessUnitMultiSelect').each(function () {
-            $(this)[0].sumo.reload();
-            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
-            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
-            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
-            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css({ paddingRight: '35px', lineHeight: '15px' });
-        });
     });
 
     function btnShow_OnClick() {
@@ -48,51 +26,29 @@
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
-        var Trademark = $('#txtDealNo').val();
-        var Dealtag = $('#ddlStatus').val();
-        var RegistrationDate = $('#txtStart').val();
-        var DateofExpiry = $('#txtEnd').val();
-        var returnVal = true;
-        var subDeal = "", masterDeal = "";
+        var Trademark = $('#txtTrademark').val();
+        var Applicant = $('#ddlApplicant').val();
+        var ClassCode = $('#ddlIPRClass').val();
+        var RegDate = $('#txtRegDate').val();
+        var ExpiryDate = $('#txtExpiryDate').val();
+        var IntDom = $("input[name='IntDom']:checked").val();
 
-        if (($('#chkSubDeal').prop("checked")) == true) {
-            Domestic = "Y";
-        }
-        if (($('#chkMasterDeal').prop("checked")) == true) {
-            International = "Y";
-        }
-        if ($('#chkRight').is(':checked') == true) {
-            IsCheckRight = "Y";
-        }
-        else {
-            IsCheckRight = "N";
-        }
-        if ($('#chkPushback').is(':checked') == true) {
-            IsPushBack = "Y";
-        }
-        else {
-            IsPushBack = "N";
-        }
-        if (DealNo == "0") {
-            $('#txtDealNo').addClass('required');
-            returnVal = false;
-        }
-        if (Dealtag == "")
-            Dealtag = 0;
+        var returnVal = true
+
         if (returnVal) {
             $.ajax({
                 type: "POST",
-                url: URL_BindAcqDealListReport,
+                url: URL_BindIPRReport,
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     Trademark: Trademark,
-                    Organisation: Organisation,
-                    Domestic: Domestic,
-                    International: International,
-                    RegistrationDate: RegistrationDate,
-                    DateofExpiry: DateofExpiry
+                    Applicant: Applicant,
+                    RegDate: RegDate,
+                    ExpiryDate: ExpiryDate,
+                    IntDom: IntDom,
+                    ClassCode: ClassCode
                 }),
                 async: false,
                 success: function (result) {
@@ -110,6 +66,35 @@
             });
         }
     }
+
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+
+    function btnReset_OnClick() {
+        $('#txtTrademark').val("");
+        //$('#ddlApplicant').val();
+        $("#ddlApplicant").val("").attr("selected", "true").trigger("chosen:updated");
+        //$('#ddlIPRClass').val();
+        $("#ddlIPRClass").val("").attr("selected", "true").trigger("chosen:updated");
+        $('#txtRegDate').val("");
+        $('#txtExpiryDate').val("");
+        $("input[name='IntDom'][value='D']").prop("checked", true);
+    }
+
+
 </script>
 <style>
     #divFilter {
@@ -123,79 +108,63 @@
         margin-top: 10px;
     }
 
-    #ddlBusinessUnit_chosen {
-        width: 100%;
-        max-width: 100%;
-    }
-
     input.isDatepicker {
         width: 100px;
         z-index: auto;
+    }
+
+    #ddlApplicant_chosen, #ddlIPRClass_chosen {
+        width: 70% !important;
     }
 </style>
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
             <div class="title_block dotted_border clearfix">
-                <h2 dir='@objMessageKey.LayoutDirection'>@objMessageKey.AcquisitionDealListReport</h2>
+                <h2 dir='@objMessageKey.LayoutDirection'>IPR Report</h2>
             </div>
             <div id="divFilter">
                 <table>
                     <tbody>
-                        <tr style="width:100%">
-                            <td style="width:12%"><b>Trademark : </b></td>
-                            <td style="width:18%">
-                                <input type="text" id="txtDealNo" class="DealNo" />
+                        <tr>
+                            <td style="width:35%">
+                                <b>Trademark :&nbsp;</b>
+                                <input style="width:70%" type="text" id="txtTrademark" />
                             </td>
-                            <td style="width:7%"><b>Organisation :</b></td>
-                            <td style="width:16%;">
-                                @Html.DropDownList("Status", (List<SelectListItem>)ViewBag.status, "Please Select", new { @id = "ddlStatus" }) @*, @class = "form_input chosen-select"*@
+                            <td style="width:35%">
+                                <b>Applicant :&nbsp;</b>
+                                @Html.DropDownList("Applicant", (List<SelectListItem>)ViewBag.Applicant, "Please Select", new { @id = "ddlApplicant", @class = "form_input chosen-select" })
                             </td>
-                            <td style="width:10%">
-                                <label><input type="checkbox" id="chkMasterDeal" checked="checked" />&nbsp;Domestic</label>
-                            </td>
-                            <td style="width:8%">
-                                <label><input type="checkbox" id="chkSubDeal" checked="checked" />&nbsp;International</label>
+                            <td style="width:20%">
+                                <input type="radio" checked="checked" name="IntDom" value="D"> Domestic &nbsp;&nbsp;
+                                <input type="radio" name="IntDom" value="I"> International
                             </td>
                         </tr>
-                        <tr style="width:100%">
-                            <td style="width:8%"><b>Registration Date :</b></td>
-                            <td style="width:12%">
-                                <input type="hidden" id="hdnStartDate" />
-                                <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
-                                       title="Registration Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                        <tr>
+                            <td style="width:30%">
+                                <b>Registration Date :&nbsp;</b>
+                                <input type="text" style="width:60%" class="isDatepicker" id="txtRegDate" placeholder="DD/MM/YYYY" title="Registration Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
                             </td>
-                            <td style="width:7%"><b>Class :</b></td>
-                            <td style="width:16%">
-                                @*@Html.DropDownList("Description", (List<SelectListItem>)ViewBag.Class, "Please Select", new { @id = "ddlTypeOfFilm" })*@
-                                @*@Html.DropDownList("IPR_Class", ViewBag.Class, new { id = "ddlTypeOfFilm" }) @*, @class = "form-control"*@
-                                @*@Html.DropDownListFor("Class", ViewBag.Class as SelectList, "Please Select", new { @id = "ddlTypeOfFilm" })*@ @*, @class = "form_input chosen-select"*@
+                            <td style="width:30%">
+                                <b>Class :&nbsp;</b>
+                                @Html.DropDownList("IPRClass", (List<SelectListItem>)ViewBag.IPRClass, "Please Select", new { @id = "ddlIPRClass", @class = "form_input chosen-select" })
                             </td>
-
+                            <td style="width:30%">
+                                <b>Date Of Expiry :&nbsp;</b>
+                                <input type="text" style="width:60%" class="isDatepicker" id="txtExpiryDate" placeholder="DD/MM/YYYY" title="Date Of Expiry" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            </td>
                         </tr>
-                        <tr style="width:100%">
-
-                            <td style="width:8%"><b>Date of Expiry :</b></td>
-                            <td style="width:12%">
-                                <input type="hidden" id="hdnStartDate" />
-                                <input type="text" class="isDatepicker" id="txtEnd" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
-                                       title="Registration Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                        <tr>
+                            <td>
+                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                                <input type="button" id="btnReset" class="btn btn-primary" value="@objMessageKey.Reset" onclick="btnReset_OnClick()">
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="title_block dotted_border clearfix">
             </div>
-
             <div>
                 <table>
                     <tr align="left" id="trImg">
@@ -209,7 +178,6 @@
                 </table>
             </div>
             <div id="divResult">
-
             </div>
         </div>
     </section>

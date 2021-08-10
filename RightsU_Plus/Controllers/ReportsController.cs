@@ -440,7 +440,7 @@ namespace RightsU_Plus.Controllers
             if (!string.IsNullOrEmpty(keyword))
             {
                 List<string> terms = keyword.Split('﹐').ToList();
-               
+
                 terms = terms.Select(s => s.Trim()).ToList();
                 string searchString = terms.LastOrDefault().ToString().Trim();
 
@@ -468,26 +468,24 @@ namespace RightsU_Plus.Controllers
         #region--- IPR Report ---
         public ActionResult IPRReport()
         {
-            ViewBag.status = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Tag_Code > 0), "Deal_Tag_Code", "Deal_Tag_Description").ToList();
-            IPR_CLASS_Service objIPRClass = new IPR_CLASS_Service(objLoginEntity.ConnectionStringName);
-            ViewBag.Class = objIPRClass.SearchFor(c => c.Parent_Class_Code == 0).Select(x => x.Description).ToList();
+            ViewBag.Applicant = new SelectList(new IPR_ENTITY_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList(), "Entity", "Entity").ToList();
+            ViewBag.IPRClass = new SelectList(new IPR_CLASS_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parent_Class_Code == 0).ToList(), "IPR_Class_Code", "Description").ToList();
+
             return View("~/Views/Reports/IPR_Report.cshtml");
         }
-        public PartialViewResult BindIPRReport(string Trademark,string Organisation , string Domestic, string International, 
-           string RegistrationDate, string DateofExpiry)
-        {
-            ReportParameter[] parm = new ReportParameter[18];
 
-            parm[0] = new ReportParameter("Trademark", Trademark);
-            parm[1] = new ReportParameter("Organisation", Organisation);
-            parm[2] = new ReportParameter("Registration Date", GlobalUtil.MakedateFormat(RegistrationDate));
-            parm[3] = new ReportParameter("Date of Expiry", GlobalUtil.MakedateFormat(DateofExpiry));
-            parm[4] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-            parm[5] = new ReportParameter("Domestic", Domestic);
-            parm[6] = new ReportParameter("International", International);
-            parm[7] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
-            parm[8] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
-            ReportViewer rptViewer = BindReport(parm, "ACQUITION_DEAL_LIST_REPORT");
+        public PartialViewResult BindIPRReport(string Trademark, string Applicant, string RegDate, string ExpiryDate, string IntDom, string ClassCode)
+        {
+            ReportParameter[] parm = new ReportParameter[7];
+            parm[0] = new ReportParameter("Trademark", Trademark ?? " ");
+            parm[1] = new ReportParameter("Registration_Date", GlobalUtil.MakedateFormat(RegDate));
+            parm[2] = new ReportParameter("Renewed_Until", GlobalUtil.MakedateFormat(ExpiryDate));
+            parm[3] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+            parm[4] = new ReportParameter("Organization", Applicant ?? " ");
+            parm[5] = new ReportParameter("Class", ClassCode);
+            parm[6] = new ReportParameter("IntDom", IntDom);
+
+            ReportViewer rptViewer = BindReport(parm, "rptIPR_IntDom_Report");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }
@@ -3076,13 +3074,13 @@ namespace RightsU_Plus.Controllers
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }
 
-        public  JsonResult BindUserDropdown(string businessUnitcode)
+        public JsonResult BindUserDropdown(string businessUnitcode)
         {
             dynamic result = "";
             string[] arr_BUCodes = businessUnitcode.Split(',');
 
 
-            int[] arrUsers =  new Users_Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arr_BUCodes.Contains(x.Business_Unit_Code.ToString())).Select(s => s.Users_Code ?? 0).ToArray();
+            int[] arrUsers = new Users_Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arr_BUCodes.Contains(x.Business_Unit_Code.ToString())).Select(s => s.Users_Code ?? 0).ToArray();
 
             result = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && arrUsers.Contains(x.Users_Code)), "Users_Code", "First_Name").ToList();
 
