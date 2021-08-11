@@ -1,0 +1,184 @@
+﻿@model List<RightsU_Entities.Business_Unit>
+@using UTOFrameWork.FrameworkClasses
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+
+    var URL_BindIPRReport = '@Url.Action("BindIPRReport", "Reports")';
+    $(document).ready(function () {
+
+
+    });
+
+    function btnShow_OnClick() {
+        debugger
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Trademark = $('#txtTrademark').val();
+        var Applicant = $('#ddlApplicant').val();
+        var ClassCode = $('#ddlIPRClass').val();
+        var RegDate = $('#txtRegDate').val();
+        var ExpiryDate = $('#txtExpiryDate').val();
+        var IntDom = $("input[name='IntDom']:checked").val();
+
+        var returnVal = true
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindIPRReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Trademark: Trademark,
+                    Applicant: Applicant,
+                    RegDate: RegDate,
+                    ExpiryDate: ExpiryDate,
+                    IntDom: IntDom,
+                    ClassCode: ClassCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+
+    function btnReset_OnClick() {
+        $('#txtTrademark').val("");
+        //$('#ddlApplicant').val();
+        $("#ddlApplicant").val("").attr("selected", "true").trigger("chosen:updated");
+        //$('#ddlIPRClass').val();
+        $("#ddlIPRClass").val("").attr("selected", "true").trigger("chosen:updated");
+        $('#txtRegDate').val("");
+        $('#txtExpiryDate').val("");
+        $("input[name='IntDom'][value='D']").prop("checked", true);
+    }
+
+
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    input.isDatepicker {
+        width: 100px;
+        z-index: auto;
+    }
+
+    #ddlApplicant_chosen, #ddlIPRClass_chosen {
+        width: 70% !important;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2 dir='@objMessageKey.LayoutDirection'>IPR Report</h2>
+            </div>
+            <div id="divFilter">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width:35%">
+                                <b>Trademark :&nbsp;</b>
+                                <input style="width:70%" type="text" id="txtTrademark" />
+                            </td>
+                            <td style="width:35%">
+                                <b>Applicant :&nbsp;</b>
+                                @Html.DropDownList("Applicant", (List<SelectListItem>)ViewBag.Applicant, "Please Select", new { @id = "ddlApplicant", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:20%">
+                                <input type="radio" checked="checked" name="IntDom" value="D"> Domestic &nbsp;&nbsp;
+                                <input type="radio" name="IntDom" value="I"> International
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:30%">
+                                <b>Registration Date :&nbsp;</b>
+                                <input type="text" style="width:60%" class="isDatepicker" id="txtRegDate" placeholder="DD/MM/YYYY" title="Registration Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            </td>
+                            <td style="width:30%">
+                                <b>Class :&nbsp;</b>
+                                @Html.DropDownList("IPRClass", (List<SelectListItem>)ViewBag.IPRClass, "Please Select", new { @id = "ddlIPRClass", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:30%">
+                                <b>Date Of Expiry :&nbsp;</b>
+                                <input type="text" style="width:60%" class="isDatepicker" id="txtExpiryDate" placeholder="DD/MM/YYYY" title="Date Of Expiry" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                                <input type="button" id="btnReset" class="btn btn-primary" value="@objMessageKey.Reset" onclick="btnReset_OnClick()">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+            <div>
+                <table>
+                    <tr align="left" id="trImg">
+                        <td id='tdShowImg' align='left' style="display: none">
+                            <input type="image" title="@objMessageKey.Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
+                        </td>
+                        <td id='tdHideImg' align="left">
+                            <input type="image" title="@objMessageKey.Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+            </div>
+        </div>
+    </section>
+</div>
