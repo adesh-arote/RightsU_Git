@@ -71,34 +71,18 @@
                                         <tr>
                                             <td>
                                                 @item.Trademark_No
-                                                @*@if (item.Is_Deal_Rights == "Y")
-                                                    {
-                                                        <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
-                                                    }
-                                                    else
-                                                    {
-                                                        @item.Agreement_No
-                                                    }*@
+                                               
                                             </td>
                                             <td>
                                                 @item.Trademark_Name
-                                                @*<h5 title="@item.TitleName">
-                                                        @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
-                                                    </h5>*@
+                                              
                                             </td>
                                             <td>
                                                 @item.Applicant_Name
-                                                @*<div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>*@
                                             </td>
-                                            @*@if (ViewBag.CostVisibility)
-                                                {
-                                                    <td class="amount">
-                                                        @String.Format("{0:n}", item.Deal_Movie_Cost)
-                                                    </td>
-                                                }*@
+                                        
                                             <td>
                                                 @item.Renewed_Until.ToString("dd MMM yyyy")
-                                                @*@item.RightPeriod*@
                                             </td>
                                         </tr>
                                     }
@@ -137,14 +121,7 @@
                                     {
                                         <tr>
                                             <td>
-                                                @*@if (item.Is_Deal_Rights == "Y")
-                                                    {
-                                                        <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
-                                                    }
-                                                    else
-                                                    {
-                                                        @item.Agreement_No
-                                                    }*@
+                                              
                                                 @item.Trademark_No
                                             </td>
                                             <td>
@@ -153,16 +130,10 @@
                                             <td>
                                                 @item.Applicant_Name
                                             </td>
-                                            @*@if (ViewBag.CostVisibility)
-                                                {
-                                                    <td class="amount">
-                                                        @String.Format("{0:n}", item.Deal_Movie_Cost)
-
-                                                    </td>
-                                                }*@
+                                          
                                             <td>
                                                 @item.Renewed_Until.ToString("dd MMM yyyy")
-                                                @*@item.RightPeriod*@
+                            
                                             </td>
                                         </tr>
                                     }
