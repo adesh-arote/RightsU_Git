@@ -239,6 +239,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.message = Message;
             ViewBag.ImageShow = imageshow;
             ViewBag.Mode = Mode;
+            ViewBag.CurrentLoginUserCode = objLoginUser.Users_Code;
 
             if (TempData["RecodLockingCode"] == "" || TempData["RecodLockingCode"] == null)
                 ViewBag.RecordLockingCode = 0;
@@ -637,6 +638,7 @@ namespace RightsU_Plus.Controllers
                 objIPR_REP.EntityState = State.Added;
                 objIPR_REP.Creation_Date = DateTime.Now;
                 objIPR_REP.Version = "0001";
+               
             }
 
             objIPR_REP.Created_By = objLoginUser.Users_Code;
