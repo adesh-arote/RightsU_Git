@@ -164,7 +164,7 @@
                   <Width>6.01769cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>26.55062cm</Width>
+                  <Width>7.65937cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1400,8 +1400,16 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>= iif(Parameters!IntDom.Value= "D",true,false)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>= iif(Parameters!IntDom.Value= "D",false,true)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
               </TablixMembers>
@@ -1416,9 +1424,10 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
+            <NoRowsMessage>No Records Found</NoRowsMessage>
             <DataSetName>DataSet1</DataSetName>
             <Height>1.2cm</Height>
-            <Width>109.30602cm</Width>
+            <Width>90.41477cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2219,11 +2228,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember>
-                  <Visibility>
-                    <Hidden>true</Hidden>
-                  </Visibility>
-                </TablixMember>
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
               </TablixMembers>
@@ -2245,7 +2250,7 @@
         <Height>2.43691in</Height>
         <Style />
       </Body>
-      <Width>43.03387in</Width>
+      <Width>35.59637in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
@@ -2277,10 +2282,6 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>Renewed Until</Prompt>
     </ReportParameter>
-    <ReportParameter Name="Class">
-      <DataType>Integer</DataType>
-      <Prompt>Class</Prompt>
-    </ReportParameter>
     <ReportParameter Name="IntDom">
       <DataType>String</DataType>
       <Prompt>Int Dom</Prompt>
@@ -2295,11 +2296,17 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>Organization</Prompt>
     </ReportParameter>
+    <ReportParameter Name="Class">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Class</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
-      <NumberOfRows>2</NumberOfRows>
+      <NumberOfRows>3</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -2317,11 +2324,6 @@
           <ParameterName>Renewed_Until</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>1</RowIndex>
-          <ParameterName>Class</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>1</RowIndex>
           <ParameterName>IntDom</ParameterName>
@@ -2335,6 +2337,11 @@
           <ColumnIndex>3</ColumnIndex>
           <RowIndex>1</RowIndex>
           <ParameterName>Organization</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>Class</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>
