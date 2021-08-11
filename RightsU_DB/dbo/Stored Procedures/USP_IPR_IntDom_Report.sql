@@ -4,7 +4,7 @@
 	@Registration_Date NVARCHAR(MAX),
 	@Renewed_Until NVARCHAR(MAX),
 	@Organization NVARCHAR(MAX),
-	@Class INT,
+	@Class  NVARCHAR(MAX),
 	@IntDom CHAR(1) = 'D'
 )
 AS
@@ -14,7 +14,7 @@ BEGIN
 	--@Registration_Date NVARCHAR(MAX) = '21-Oct-2011',
 	--@Renewed_Until NVARCHAR(MAX)= '13-Jul-2008',
 	--@Organization NVARCHAR(MAX)= 'Shogakukan - Shueisha Productions Co. Ltd',
-	--@Class INT= '2',
+	--@Class NVARCHAR(MAX)= '02',
 	--@IntDom CHAR(1) = 'D'
 
 	SELECT 
@@ -28,14 +28,12 @@ BEGIN
 				WHERE A.IPR_Rep_Code = IR.IPR_Rep_Code
 				FOR XML PATH('')
 	  ), 1, 1, '') AS 'Content_Category',
-
 	   STUFF((
 				SELECT DISTINCT ', ' + BU.Channel_Name
 				FROM IPR_Rep_Channel A inner join Channel BU ON A.Channel_Code = BU.Channel_Code
 				WHERE A.IPR_Rep_Code = IR.IPR_Rep_Code
 				FOR XML PATH('')
 	  ), 1, 1, '') AS 'Channel',
-
 	  IR.Application_No,
 	  IR.Application_Date,
 	  IC.IPR_Country_Name,
@@ -47,14 +45,14 @@ BEGIN
 	  IR.Trademark_Attorney,
 	  IR.International_Trademark_Attorney,
 	  IR.Class_Comments AS 'Goods_Description',
-
 		STUFF((
-				SELECT DISTINCT ', ' + BU.Description
-				FROM IPR_REP_CLASS A inner join IPR_CLASS BU ON A.IPR_Class_Code = BU.IPR_Class_Code
+				SELECT DISTINCT ', ' +  C.Description from IPR_REP_CLASS A
+				INNER JOIN IPR_CLASS B ON A.IPR_Class_Code = B.IPR_Class_Code
+				INNER JOIN IPR_CLASS C ON C.IPR_Class_Code = B.Parent_Class_Code
 				WHERE A.IPR_Rep_Code = IR.IPR_Rep_Code 
+
 				FOR XML PATH('')
 	  ), 1, 1, '') AS 'Class'
-
 	FROM IPR_Rep IR
 		INNER JOIN IPR_TYPE IT ON IR.IPR_Type_Code = IT.IPR_Type_Code
 		INNER JOIN IPR_Country IC ON IC.IPR_Country_Code = IR.Country_Code
@@ -67,6 +65,12 @@ BEGIN
 			OR IR.Application_Date =  CAST(@Registration_Date AS DATETIME)
 			OR IR.Renewed_Until = CAST(@Renewed_Until AS DATETIME)
 			OR IE.Entity LIKE '%'+ @Organization +'%'
+			OR IR.IPR_Rep_Code IN ( SELECT DISTINCT a.IPR_Rep_Code from IPR_REP_CLASS A
+				INNER JOIN IPR_CLASS B ON A.IPR_Class_Code = B.IPR_Class_Code
+				INNER JOIN IPR_CLASS C ON C.IPR_Class_Code = B.Parent_Class_Code
+				WHERE C.Description =  @Class
+			)
 		)
-
 END
+
+

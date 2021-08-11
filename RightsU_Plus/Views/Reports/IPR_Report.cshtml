@@ -85,9 +85,7 @@
 
     function btnReset_OnClick() {
         $('#txtTrademark').val("");
-        //$('#ddlApplicant').val();
         $("#ddlApplicant").val("").attr("selected", "true").trigger("chosen:updated");
-        //$('#ddlIPRClass').val();
         $("#ddlIPRClass").val("").attr("selected", "true").trigger("chosen:updated");
         $('#txtRegDate').val("");
         $('#txtExpiryDate').val("");
@@ -113,8 +111,12 @@
         z-index: auto;
     }
 
-    #ddlApplicant_chosen, #ddlIPRClass_chosen {
+    #ddlApplicant_chosen {
         width: 70% !important;
+    }
+
+    #ddlIPRClass_chosen {
+        width: 15% !important;
     }
 </style>
 <div class="main_section">
@@ -141,25 +143,22 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="width:30%">
-                                <b>Registration Date :&nbsp;</b>
-                                <input type="text" style="width:60%" class="isDatepicker" id="txtRegDate" placeholder="DD/MM/YYYY" title="Registration Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
-                            </td>
-                            <td style="width:30%">
-                                <b>Class :&nbsp;</b>
+                            <td colspan="3">
+                                <b>Registration Date :&nbsp; &nbsp;</b>
+                                <input type="text" style="width:15%" class="isDatepicker" id="txtRegDate" placeholder="DD/MM/YYYY" title="Registration Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                                &nbsp;&nbsp;
+                                <b>Class :&nbsp;&nbsp;</b>
                                 @Html.DropDownList("IPRClass", (List<SelectListItem>)ViewBag.IPRClass, "Please Select", new { @id = "ddlIPRClass", @class = "form_input chosen-select" })
+                                &nbsp;&nbsp;
+                                <b>Date Of Expiry :&nbsp;&nbsp;</b>
+                                <input type="text" style="width:15%" class="isDatepicker" id="txtExpiryDate" placeholder="DD/MM/YYYY" title="Date Of Expiry" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
                             </td>
-                            <td style="width:30%">
-                                <b>Date Of Expiry :&nbsp;</b>
-                                <input type="text" style="width:60%" class="isDatepicker" id="txtExpiryDate" placeholder="DD/MM/YYYY" title="Date Of Expiry" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
-                            </td>
-                        </tr>
-                        <tr>
                             <td>
                                 <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
                                 <input type="button" id="btnReset" class="btn btn-primary" value="@objMessageKey.Reset" onclick="btnReset_OnClick()">
                             </td>
                         </tr>
+                       
                     </tbody>
                 </table>
             </div>

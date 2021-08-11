@@ -131,7 +131,7 @@ SELECT 'Trademark' , ' <html>        <head>          <style>           table.tbl
 --SELECT 'Contractor','DDL',	'Y'	,'N',	'Y',	'TALENT',	'Talent_Name',	'Talent_Code',	'34'	,'Y'
 
 INSERT INTO System_Module (Module_Code,Module_Name,Module_Position,Parent_Module_Code,Is_Sub_Module,Url,Target,Css,Can_Workflow_Assign,Is_Active)
-SELECT 250,'IPR Report','EZ',40,'N','Reports/IPRReport','mainframe','sub','N','Y'
+SELECT 250,'IPR Report','CD',113,'N','Reports/IPRReport','mainframe','sub','N','Y'
 
 INSERT INTO System_Module_Right(Module_Code,Right_Code)
 VALUES (250,7),(250,152),(250,167)

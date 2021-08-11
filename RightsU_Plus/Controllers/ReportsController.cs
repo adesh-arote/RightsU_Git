@@ -469,7 +469,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult IPRReport()
         {
             ViewBag.Applicant = new SelectList(new IPR_ENTITY_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList(), "Entity", "Entity").ToList();
-            ViewBag.IPRClass = new SelectList(new IPR_CLASS_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parent_Class_Code == 0).ToList(), "IPR_Class_Code", "Description").ToList();
+            ViewBag.IPRClass = new SelectList(new IPR_CLASS_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parent_Class_Code == 0).ToList(), "Description", "Description").ToList();
 
             return View("~/Views/Reports/IPR_Report.cshtml");
         }
@@ -482,8 +482,8 @@ namespace RightsU_Plus.Controllers
             parm[2] = new ReportParameter("Renewed_Until", GlobalUtil.MakedateFormat(ExpiryDate));
             parm[3] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
             parm[4] = new ReportParameter("Organization", Applicant ?? " ");
-            parm[5] = new ReportParameter("Class", ClassCode);
-            parm[6] = new ReportParameter("IntDom", IntDom);
+            parm[5] = new ReportParameter("Class", ClassCode == ""? "00" : ClassCode);
+            parm[6] = new ReportParameter("IntDom", IntDom ?? "D");
 
             ReportViewer rptViewer = BindReport(parm, "rptIPR_IntDom_Report");
             ViewBag.ReportViewer = rptViewer;
