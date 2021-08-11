@@ -24,12 +24,13 @@
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 <style type="text/css">
-    #Tree_Filter_IPR_Class {   
-        width:511px;
-        position:relative!important;
+    #Tree_Filter_IPR_Class {
+        width: 511px;
+        position: relative !important;
     }
-    #IPR_Class{
-        margin:0px 0px 0px 0px!important;
+
+    #IPR_Class {
+        margin: 0px 0px 0px 0px !important;
     }
     /*.chosen-container {
                 margin: 0;
@@ -122,8 +123,9 @@
     .container .top_area {
         border-bottom: none !important;
     }
-    .SumoSelect{
-        width : 87% !important;
+
+    .SumoSelect {
+        width: 87% !important;
     }
 </style>
 
@@ -622,9 +624,9 @@
                                                 </td>
                                                 @if (ViewBag.Mode == "C")
                                                 {
-                                                <td colspan="2">
-                                                    New&nbsp;&nbsp;&nbsp; @Model.Version
-                                                </td>
+                                                    <td colspan="2">
+                                                        New&nbsp;&nbsp;&nbsp; @Model.Version
+                                                    </td>
                                                 }
                                                 else if (Model.Trademark_No != "" && Model.Trademark_No != null)
                                                 {
@@ -684,13 +686,13 @@
                                                 </td>
                                                 <td rowspan="3">
                                                     @*@if (ViewBag.imagePage != "")
-                                                    {
+                                                        {
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <img id="imgLogo" style="height: 100px; width: 180px;" src="~/Images/NoImageFound.jpg" />
-                                                    }*@
+                                                        }
+                                                        else
+                                                        {
+                                                            <img id="imgLogo" style="height: 100px; width: 180px;" src="~/Images/NoImageFound.jpg" />
+                                                        }*@
                                                     @if (ViewBag.ImageShow)
                                                     {
                                                         if (ViewBag.imagePage == "")
@@ -918,9 +920,15 @@
                                             <li>
                                                 <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="Save" onclick="return ValidateSave(false);">
                                             </li>
-                                            <li>
-                                                <input type="submit" id="btnSaveSubmitDeal" class="btn btn-primary" value="Save & Submit" onclick="return ValidateSave(true);">
-                                            </li>
+                                            @if (Model.IPR_Rep_Code > 0)
+                                            {
+                                                if (ViewBag.CurrentLoginUserCode != Model.IPR_REP_STATUS_HISTORY.Where(x => x.IPR_Status == "N").Select(x => x.Changed_By).FirstOrDefault())
+                                                {
+                                                    <li>
+                                                        <input type="submit" id="btnSaveSubmitDeal" class="btn btn-primary" value="Save & Submit" onclick="return ValidateSave(true);">
+                                                    </li>
+                                                }
+                                            }
                                             <li>
                                                 <a type="button" id="btnCancelDeal" class="btn btn-primary" onclick="OnCancelClick();">Cancel</a>
                                             </li>
