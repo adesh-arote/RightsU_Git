@@ -1136,7 +1136,7 @@
 
                                             @if (Model.IPR_Opp_Code > 0)
                                             {
-                                                if (ViewBag.CurrentLoginUserName != objUSP_Service.USP_List_IPR_Opp_Status_History(Model.IPR_Opp_Code).ToList().Where(x => x.IPR_Status == "N").Select(x => x.UserName).FirstOrDefault())
+                                                if (ViewBag.CurrentLoginUserName != objUSP_Service.USP_List_IPR_Opp_Status_History(Model.IPR_Opp_Code).ToList().Where(x => x.IPR_Status == "Created").Select(x => x.UserName).FirstOrDefault())
                                                 {
                                                     <li>
                                                         <input type="submit" id="btnSaveSubmitDeal" class="btn btn-primary" value="Save & Submit" onclick="return ValidateSave(true);">
