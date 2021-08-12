@@ -11,6 +11,13 @@
     {
         FileName = objAtt.File_Name;
     }
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_BLL.USP_Service objUSP_Service = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName);
 }
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
@@ -36,8 +43,8 @@
         $('#hdnRecordLockingCode').val(recordLockingCode)
         if(recordLockingCode > 0)
             Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
-      
-        $("#imgAttachment").on("click", function () {         
+
+        $("#imgAttachment").on("click", function () {
             $("#FileUpload").click();
         });
         initializeDatepicker();
@@ -211,7 +218,7 @@
                             $('#imgLogo').attr({src:   result.ImageUrl});
                             // alert(result.ImageUrl)
                         }
-                       
+
                        // $('#imgLogo').attr('src',result.ImageUrl);
                         initializeExpander();
                     }
@@ -509,8 +516,9 @@
     .container .top_area {
         border-bottom: none !important;
     }
-    .SumoSelect{
-        width : 87% !important;
+
+    .SumoSelect {
+        width: 87% !important;
     }
 </style>
 
@@ -534,7 +542,7 @@
                                 }
                                 else
                                 {
-                                @:Edit Opposition Against
+                                    @:Edit Opposition Against
                                 }
                             }
                         }
@@ -1125,9 +1133,16 @@
                                             <li>
                                                 <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="Save" onclick="return ValidateSave(false);">
                                             </li>
-                                            <li>
-                                                <input type="submit" id="btnSaveSubmitDeal" class="btn btn-primary" value="Save & Submit" onclick="return ValidateSave(true);">
-                                            </li>
+
+                                            @if (Model.IPR_Opp_Code > 0)
+                                            {
+                                                if (ViewBag.CurrentLoginUserName != objUSP_Service.USP_List_IPR_Opp_Status_History(Model.IPR_Opp_Code).ToList().Where(x => x.IPR_Status == "N").Select(x => x.UserName).FirstOrDefault())
+                                                {
+                                                    <li>
+                                                        <input type="submit" id="btnSaveSubmitDeal" class="btn btn-primary" value="Save & Submit" onclick="return ValidateSave(true);">
+                                                    </li>
+                                                }
+                                            }
                                             <li>
                                                 <a id="btnCancelDeal" class="btn btn-primary" onclick="OnCancelClick();">Cancel</a>
                                             </li>
