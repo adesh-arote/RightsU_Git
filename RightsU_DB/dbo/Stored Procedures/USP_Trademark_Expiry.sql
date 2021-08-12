@@ -1,15 +1,15 @@
 ﻿CREATE PROCEDURE [dbo].[USP_Trademark_Expiry]
 -- --=============================================
 -- --Author:		Ayush Dubey
--- --Create date: 05 AUgust 2021
+-- --Create date:	05 AUgust 2021
 -- --Description:	Email Notification
 -- --=============================================	
 AS
 BEGIN
 	SET NOCOUNT ON
-	--Notification of all trademarks exiring in the course of' + {@Days}
-	DECLARE @MailSubject VARCHAR(MAX)= '' , @Days INT = '' ,@Trademark_No VARCHAR(MAX) = '' , @TradeMark_Name VARCHAR(MAX) = '',@Applicant_Name VARCHAR(MAX) = '',@Expiring_On VARCHAR(MAX)
-	,@Created_By VARCHAR(MAX) = '',@Creation_Date VARCHAR(MAX),@Class VARCHAR(MAX) = '',@Email_Table NVARCHAR(MAX), @Body NVARCHAR(MAX)
+
+	IF OBJECT_ID('tempdb..#Tmp_Mail_Alert_Days') IS NOT NULL DROP TABLE #Tmp_Mail_Alert_Days
+	IF OBJECT_ID('tempdb..#IPR_Records') IS NOT NULL DROP TABLE #IPR_Records
 
 	DECLARE @Business_Unit_Code INT,
 	@To_Users_Code NVARCHAR(MAX),
@@ -17,10 +17,9 @@ BEGIN
 	@CC_Users_Code  NVARCHAR(MAX),
 	@CC_User_Mail_Id  NVARCHAR(MAX),
 	@BCC_Users_Code  NVARCHAR(MAX),
-	@BCC_User_Mail_Id  NVARCHAR(MAX)
-
-	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
-
+	@BCC_User_Mail_Id  NVARCHAR(MAX),
+	@Channel_Codes NVARCHAR(MAX)
+	
 	DECLARE @Tbl2 TABLE (
 		Id INT,
 		BuCode INT,
@@ -32,80 +31,143 @@ BEGIN
 		BCC_User_Mail_Id  NVARCHAR(MAX),
 		Channel_Codes NVARCHAR(MAX)
 	)
+
+	DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+
+	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+	EXEC USP_Get_EmailConfig_Users 'TE', 'N'
+
+	CREATE TABLE #IPR_Records(
+		Trademark_No NVARCHAR(MAX),
+		Trademark NVARCHAR(MAX),
+		Applicant NVARCHAR(MAX),
+		Expiring_On NVARCHAR(MAX),
+		Created_By NVARCHAR(MAX),
+		Creation_Date NVARCHAR(MAX),
+		Class NVARCHAR(MAX)
+	)
+
+	DECLARE @Counter INT , @DaysFreq INT, @MailSubject NVARCHAR(100)
+	DECLARE @Trademark_No NVARCHAR(MAX), @Trademark NVARCHAR(MAX), @Applicant NVARCHAR(MAX), @Expiring_On NVARCHAR(MAX), @Created_By NVARCHAR(MAX), @Creation_Date NVARCHAR(MAX), @Class NVARCHAR(MAX)
+	DECLARE @Email_header NVARCHAR(MAX), @Email_footer NVARCHAR(MAX), @trData NVARCHAR(MAX), @Email_body NVARCHAR(MAX)
+
+	SELECT ROW_NUMBER() OVER(ORDER BY ECDA.Mail_Alert_Days) AS num_row, ECDA.Mail_Alert_Days 
+	INTO #Tmp_Mail_Alert_Days
+	FROM email_config EC
+	INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Code = EC.Email_Config_Code
+	INNER JOIN Email_Config_Detail_Alert ECDA ON ECDA.Email_Config_Detail_Code = ECD.Email_Config_Detail_Code
+	WHERE EC.[Key] = 'TE'
+
 	DECLARE @DatabaseEmail_Profile varchar(200)	
 	SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
 
 	DECLARE @Email_Config_Code INT
 	SELECT @Email_Config_Code = Email_Config_Code FROM Email_Config where [Key] = 'TE'
 
-	INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
-	EXEC USP_Get_EmailConfig_Users 'TE', 'N'
+	SET @Counter = 1
+	WHILE ( @Counter <= (SELECT COUNT(*) FROM #Tmp_Mail_Alert_Days))
+	BEGIN
+		DELETE FROM @Email_Config_Users_UDT
 
-	DECLARE @Days_Freq INT
+		SELECT @Email_header ='', @Email_footer  ='', @trData  =''
 
-	SELECT @Days_Freq = ECDA.Mail_Alert_Days FROM email_config EC
-	INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Code = EC.Email_Config_Code
-	INNER JOIN Email_Config_Detail_Alert ECDA ON ECDA.Email_Config_Detail_Code = ECD.Email_Config_Detail_Code
-	WHERE EC.[Key] = 'TE'
+		SELECT @DaysFreq = Mail_Alert_Days FROM #Tmp_Mail_Alert_Days WHERE num_row = @Counter
 
-	SET @MailSubject = 'Notification of all trademarks expiring in the course of the next ' +CAST(@Days_Freq AS varchar(100))+ ' days'
-	SELECT 
-		@Trademark_No = Trademark_No,
-		@TradeMark_Name = IR.Trademark,
-		@Applicant_Name = Applicant,
-		@Expiring_On = Renewed_Until,
-		@Created_By = U.Login_Name,
-		@Creation_Date = Creation_Date,
-		@Class = Class_Comments
-		FROM IPR_REP IR
-	INNER JOIN DM_IPR DI ON IR.Applicant_Code = DI.ID
-	INNER JOIN Users U ON IR.Created_By = U.Users_Code
+		SELECT @Email_header = 
+		'<html><head><style>table.tblFormat {border: 1px solid black;border-collapse: collapse;}td.tblHead {border: 1px solid black;color: #ffffff;background-color: #585858;font-family: verdana;font-size: 12px;}td.tblData {border: 1px solid black;vertical-align: top;font-family: verdana;font-size: 12px;}.textFont {color: black;font-family: verdana;font-size: 12px;}#divFooter {color: gray;} </style>
+		 </head><body><div class="textFont"> Dear User,<br/> <br/>Kindly take note that the below mentioned Trademarks are expiring on the Expiring Dates indicated below. You are requested to take note of the same and determine next steps. If you need any further information regarding any of the below trademarks, please get in touch with your Legal Contact.</div><br/>
+		 <table class="tblFormat"  width="100%">
+		 <tr><td align="center" width="10%" class="tblHead"><b>Trademark No</b></td>
+         <td align="center" width="21%" class="tblHead"><b>Trademark Name</b></td>
+         <td align="center" width="21%" class="tblHead"><b>Applicant Name</b></td>
+         <td align="center" width="10%" class="tblHead"><b>Expiring On</b></td>
+         <td align="center" width="13%" class="tblHead"><b>Created By</b></td>
+         <td align="center" width="10%" class="tblHead"><b>Creation Date</b></td>
+         <td align="center" width="15%" class="tblHead"><b>Class</b></td></tr>'
 
-	DECLARE curOuter CURSOR FOR 
-					SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id  FROM @Tbl2
-	
-		OPEN curOuter 
-		FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id--, @Channel_Codes
+		SET @Email_footer =
+		 '</table><br/><font>Thanks & Regards,</br>RightsU Support</br></br><div id="divFooter" class="textFont">This email is generated by RightsU (Rights Management System)</div></font></body></html>'
+		
+		SET @MailSubject = 'Notification of all trademarks expiring in the course of the next ' + CAST(@DaysFreq AS varchar)+ ' Days'
+
+		--Deleting and fetching the record frequency days wise
+
+		DELETE FROM #IPR_Records
+
+		INSERT INTO #IPR_Records(Trademark_No, Trademark, Applicant, Expiring_On, Created_By, Creation_Date, Class)
+		SELECT 
+		  IR.Trademark_No,
+		  IR.Trademark,
+		  IE.Entity,
+		  CONVERT(VARCHAR, IR.Renewed_Until, 106),
+		  UPPER(LEFT(U.First_Name, 1))+LOWER(SUBSTRING(U.First_Name, 2, LEN(U.First_Name))) +' '+UPPER(LEFT(U.Last_Name, 1))+LOWER(SUBSTRING(U.Last_Name, 2, LEN(U.Last_Name))),
+		  CONVERT(VARCHAR, IR.Creation_Date, 106),
+		  STUFF((
+				SELECT DISTINCT ', ' +  C.Description from IPR_REP_CLASS A
+				INNER JOIN IPR_CLASS B ON A.IPR_Class_Code = B.IPR_Class_Code
+				INNER JOIN IPR_CLASS C ON C.IPR_Class_Code = B.Parent_Class_Code
+				WHERE A.IPR_Rep_Code = IR.IPR_Rep_Code 
+				FOR XML PATH('')
+		  ), 1, 1, '') AS 'Class'
+		FROM IPR_Rep IR
+			INNER JOIN IPR_ENTITY IE ON IE.IPR_Entity_Code = IR.Applicant_Code
+			INNER JOIN Users U ON IR.Created_By = U.Users_Code
+		WHERE IR.Renewed_Until BETWEEN GETDATE() AND DATEADD(DAY,@DaysFreq, GETDATE())
+
+		--Looping throug IPR Records
+
+		DECLARE curIPR_Records CURSOR FOR 
+		SELECT TOP 85 Trademark_No, Trademark, Applicant, Expiring_On, Created_By, Creation_Date, Class FROM #IPR_Records ORDER BY Trademark_No
+
+		OPEN curIPR_Records 
+		FETCH NEXT FROM curIPR_Records INTO @Trademark_No, @Trademark, @Applicant, @Expiring_On, @Created_By, @Creation_Date, @Class
+
 		WHILE @@FETCH_STATUS = 0
-		BEGIN	
-
-			SELECT @Body = Template_Desc FROM Email_Template WHERE Template_For = 'Trademark'
-			
-			SET @Body = REPLACE(@Body,'{Trademark No}',@Trademark_No)  
-			SET @Body = REPLACE(@Body,'{Trademark Name}',@TradeMark_Name)  
-			SET @Body = REPLACE(@Body,'{Applicant Name}',@Applicant_Name)  
-			SET @Body = replace(@Body,'{Expiry On}',@Expiring_On)  
-			SET @Body = replace(@Body,'{Created By}',@Created_By)  
-			SET @Body = replace(@Body,'{Creation Date}',@Creation_Date)
-			SET @Body = replace(@Body,'{Class}',@Class)
-		IF(@Body != '')
 		BEGIN
-			----select @To_User_Mail_Id, @CC_User_Mail_Id, @BCC_User_Mail_Id, @Body, @MailSubject
-			EXEC msdb.dbo.sp_send_dbmail 
-						@profile_name = @DatabaseEmail_Profile,
-						@recipients =  @To_User_Mail_Id,
-						@copy_recipients = @CC_User_Mail_Id,
-						@blind_copy_recipients = @BCC_User_Mail_Id,
-						@subject = @MailSubject,
-						@body = @Body,
-						@body_format = 'HTML';
+			SET @trData= @trData +'<tr>
+								<td align="center" class="tblData">'+ISNull(@Trademark_No,'')+'</td>
+								<td align="center" class="tblData">' +ISNull(@Trademark,'')+' </td>
+								<td align="center" class="tblData">' +ISNull(@Applicant,'')+' </td>
+								<td align="center" class="tblData"">' +ISNull(@Expiring_On,'')+' </td>
+								<td align="center" class="tblData">' +ISNull(@Created_By,'')+' </td>
+								<td align="center" class="tblData">' +ISNull(@Creation_Date,'')+' </td>
+								<td align="center" class="tblData">' +ISNull(@Class,'')+' </td>
+							</tr>'
 
-			 INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
-			 SELECT @Email_Config_Code,@Body, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  ' Trademark Expiry'
+			FETCH NEXT FROM curIPR_Records INTO @Trademark_No, @Trademark, @Applicant, @Expiring_On, @Created_By, @Creation_Date, @Class
+		END 
+		CLOSE curIPR_Records
+		DEALLOCATE curIPR_Records	
 
+		DECLARE cPointer CURSOR FOR SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
+		OPEN cPointer
+			FETCH NEXT FROM cPointer INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				SELECT @Email_body = @Email_header + @trData + @Email_footer
 
-		END
+				EXEC msdb.dbo.sp_send_dbmail 
+					 @profile_name = @DatabaseEmail_Profile,
+					 @recipients =  @To_User_Mail_Id,
+					 @copy_recipients = @CC_User_Mail_Id,
+					 @blind_copy_recipients = @BCC_User_Mail_Id,
+					 @subject = @MailSubject,
+					 @body = @Email_body,
+					 @body_format = 'HTML';
 
-		FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id--, @Channel_Codes
-		END --End of Fetch outer
-		CLOSE curOuter
-		DEALLOCATE curOuter	
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@Email_body, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  ' Trademark Expiry'
+
+			FETCH NEXT FROM cPointer INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+			END
+		CLOSE cPointer
+		DEALLOCATE cPointer
 
 		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
+
+		SET @Counter  = @Counter + 1
+	END
+
+	IF OBJECT_ID('tempdb..#Tmp_Mail_Alert_Days') IS NOT NULL DROP TABLE #Tmp_Mail_Alert_Days
+	IF OBJECT_ID('tempdb..#IPR_Records') IS NOT NULL DROP TABLE #IPR_Records
 END
-
-
-
-
-
-

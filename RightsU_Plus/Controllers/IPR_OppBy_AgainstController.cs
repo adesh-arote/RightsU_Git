@@ -249,6 +249,8 @@ namespace RightsU_Plus.Controllers
                 var businessUnitCodes = objIPR_Opp.IPR_Opp_Business_Unit.Select(s => s.Business_Unit_Code).ToArray();
                 ViewBag.BusinessUnitList = new MultiSelectList(lstBusinessUnit, "Business_Unit_Code", "Business_Unit_Name", businessUnitCodes);
             }
+            ViewBag.CurrentLoginUserName = objLoginUser.First_Name + " " + objLoginUser.Last_Name;
+
 
             if (Mode != GlobalParams.DEAL_MODE_VIEW)
                 return View(objIPR_Opp);
