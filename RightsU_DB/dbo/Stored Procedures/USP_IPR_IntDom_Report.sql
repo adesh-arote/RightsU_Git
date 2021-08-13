@@ -42,6 +42,7 @@ BEGIN
 	  IAS.App_Status AS 'Application_Status',
 	  IR.Renewed_Until,
 	  IE.Entity AS 'Applicant',
+	  IR.Comments AS 'Remarks',
 	  IR.Trademark_Attorney,
 	  IR.International_Trademark_Attorney,
 	  IR.Class_Comments AS 'Goods_Description',
