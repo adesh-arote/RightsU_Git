@@ -134,4 +134,4 @@ INSERT INTO System_Module (Module_Code,Module_Name,Module_Position,Parent_Module
 SELECT 250,'IPR Report','CD',113,'N','Reports/IPRReport','mainframe','sub','N','Y'
 
 INSERT INTO System_Module_Right(Module_Code,Right_Code)
-VALUES (250,7),(250,152),(250,167)
+VALUES (250,7),(250,152)

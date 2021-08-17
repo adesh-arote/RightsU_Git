@@ -332,7 +332,7 @@
                         </td>
                         <td style="width:14%;">
                             @*<a href="" style="color: blue; text-decoration: underline;">Opposition Details</a>*@
-                            <a title="" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;cursor:pointer" onclick="ModalPopup(@objIPRList.Application_No,@counter,@objIPRList.IPR_Rep_Code)">Opposition Details</a>
+                            <a title="" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;cursor:pointer" onclick="ModalPopup('@objIPRList.Application_No.ToString()',@counter,@objIPRList.IPR_Rep_Code)">Opposition Details</a>
                             @*@Html.Hidden("hdnModalPopup_" + @counter)*@
                             @*<div id="ModalPopup" class="MoreActionDiv" style="overflow-x:hidden;">
                                 </div>*@

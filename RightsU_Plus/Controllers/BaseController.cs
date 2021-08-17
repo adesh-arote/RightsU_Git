@@ -736,6 +736,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
+                LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), 0);
                 return View("_Layout");
             }
         }

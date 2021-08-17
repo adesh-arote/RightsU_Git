@@ -92,7 +92,7 @@ BEGIN
 					ad.Acq_Deal_Code,Actual_Right_Start_Date,Actual_Right_End_Date,
 					DATEDIFF(dd,GETDATE(),IsNull(Actual_Right_End_Date, '31Dec9999')) AS Expire_In_Days, 'N' as IsProcessed
 			From Acq_Deal_Rights adr 
-			INNER JOIN Acq_Deal Ad ON Ad.Acq_Deal_Code = adr.Acq_Deal_Code AND Ad.Deal_Workflow_Status = 'A'
+			INNER JOIN Acq_Deal Ad ON Ad.Acq_Deal_Code = adr.Acq_Deal_Code AND Ad.Deal_Workflow_Status = 'A' AND AD.Is_Master_Deal = 'Y'
 			Inner Join Acq_Deal_Rights_Title adrt On adr.Acq_Deal_Rights_Code = adrt.Acq_Deal_Rights_Code
 			Inner Join Acq_Deal_Rights_Platform adrp On adr.Acq_Deal_Rights_Code = adrp.Acq_Deal_Rights_Code
 			Inner Join Acq_Deal_Rights_Territory adrc On adr.Acq_Deal_Rights_Code = adrc.Acq_Deal_Rights_Code
@@ -138,7 +138,7 @@ BEGIN
 				WHERE a1.Acq_Deal_Code=AD.Acq_Deal_Code FOR XML PATH('') ), 1, 1, '') 
 			) as Vendor_Name
 			FROM #ACQ_EXPIRING_DEALS t1
-			INNER join  Acq_Deal AD on ad.Acq_Deal_Code= t1.Acq_Deal_Code
+			INNER join  Acq_Deal AD on ad.Acq_Deal_Code= t1.Acq_Deal_Code AND AD.Is_Master_Deal = 'Y'
 			INNER JOIN Title T ON T.Title_Code = t1.Title_Code
 			Group By AD.Acq_Deal_Code, Acq_Deal_Rights_Code,Ad.Agreement_No,T.Title_Code,T.title_name,
 						Actual_Right_Start_Date,Actual_Right_End_Date,IsProcessed,Business_Unit_Code,Territory_Type,Expire_In_Days--,Vendor_Name
@@ -265,7 +265,7 @@ BEGIN
 				WHERE a1.Acq_Deal_Code=AD.Acq_Deal_Code FOR XML PATH('') ), 1, 1, '') 
 			) AS Vendor_Name
 			FROM #ACQ_TENTATIVE_DEALS t1
-			INNER JOIN  Acq_Deal AD ON ad.Acq_Deal_Code = t1.Acq_Deal_Code
+			INNER JOIN  Acq_Deal AD ON ad.Acq_Deal_Code = t1.Acq_Deal_Code AND AD.Is_Master_Deal = 'Y'
 			INNER JOIN Title T ON T.Title_Code = t1.Title_Code
 			GROUP BY AD.Acq_Deal_Code, Acq_Deal_Rights_Code, Ad.Agreement_No, T.Title_Code, T.title_name,
 						Actual_Right_Start_Date, Actual_Right_End_Date, IsProcessed, Business_Unit_Code, Territory_Type, Expire_In_Days--,Vendor_Name
@@ -281,10 +281,11 @@ BEGIN
 		SET @Deal_heading ='ROFR'
 		INSERT INTO #DealDetails(Agreement_No,Title_Code,Title_Name,Right_Start_Date,Right_End_Date,Platform_Code,Platform_name,
 				Country,Is_Processed,PlatformCodeCount,Acq_Deal_Rights_Code,Expire_In_Days,Business_Unit_Code,Vendor_Name,ROFR_Date, ROFR_Type)
-		SELECT DISTINCT  Agreement_No, Title_Code, Title_name, Right_Start_Date, Right_End_Date, PlatformCodes, Platform_Name,
+		SELECT DISTINCT  b.Agreement_No, Title_Code, Title_name, Right_Start_Date, Right_End_Date, PlatformCodes, Platform_Name,
 				Country,'N' as IsProcessed,Platform_Count,cast (Acq_Deal_Rights_Code as varchar(1000)), ROFR_In_Days,
-				IsNull(Business_Unit_Code,0),Vendor_Name , b.ROFR_Date , b.ROFR_Type
+				IsNull(b.Business_Unit_Code,0),Vendor_Name , b.ROFR_Date , b.ROFR_Type
 		FROM VW_ACQ_EXPIRING_DEALS b
+		INNER JOIN  Acq_Deal AD ON ad.Acq_Deal_Code = b.Acq_Deal_Code AND AD.Is_Master_Deal = 'Y'
 		Where ROFR_In_Days Is Not Null And ROFR_In_Days > 0
 		And Exists (
 			Select 1 From #Alert_Range tmp Where b.ROFR_In_Days Between tmp.Start_Range And tmp.End_Range
