@@ -403,7 +403,7 @@ namespace RightsU_WebApp.Controllers
             ViewBag.Title_Code_Search = Title_Code_Search;
             ViewBag.View_Type = View_Type_Search;
             BindAllViewBag("", "", "", "", "", "", "", 0, 0);
-            return View("~/Views/Acq_Deal/_Acq_Pushback.cshtml", new Acq_Deal_Pushback());
+            return PartialView("~/Views/Acq_Deal/_Acq_Pushback.cshtml", new Acq_Deal_Pushback());
         }
         public JsonResult Save_Pushback(Acq_Deal_Pushback obj, string hdnTitleList, string hdnRights_Platform_Code, int? Year, int? Month, int? Day,
                 string hdnTerritory_Type, string hdn_Dubbing_Type, string hdn_SubTitling_Type, string hdnTerritoryList,
@@ -1077,7 +1077,7 @@ namespace RightsU_WebApp.Controllers
             //List<USP_List_Rights_Result> lst = BindGrid(Title_Code_Search, View_Type);
             int a = selected_Country_Territory_Code.Split(',').Count();
             ViewBag.RCount = a;
-            return View("~/Views/Acq_Deal/_Acq_Pushback.cshtml", objAcq_Deal_Pushback);
+            return PartialView("~/Views/Acq_Deal/_Acq_Pushback.cshtml", objAcq_Deal_Pushback);
         }
 
 
@@ -1147,7 +1147,7 @@ namespace RightsU_WebApp.Controllers
             //List<USP_List_Rights_Result> lst = BindGrid(Title_Code_Search, View_Type);
             int a = selected_Country_Territory_Code.Split(',').Count();
             ViewBag.RCount = a;
-            return View("~/Views/Acq_Deal/_Acq_Pushback.cshtml", objAcq_Deal_Pushback);
+            return PartialView("~/Views/Acq_Deal/_Acq_Pushback.cshtml", objAcq_Deal_Pushback);
         }
 
 
