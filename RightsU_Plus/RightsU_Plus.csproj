@@ -1273,7 +1273,6 @@
     <Content Include="Views\Availability_Movie_New\_Subtitle_LanguageCriteria.cshtml" />
     <Content Include="Views\Availability_Movie_New\_TitlesCriteria.cshtml" />
     <Content Include="Views\Reports\DealStatusReport.cshtml" />
-    <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\IPR_Dashboard\DashBoard.cshtml" />
     <Content Include="Views\IPR_List\_OppositionDetailPopup.cshtml" />
     <Content Include="Views\Reports\IPR_Report.cshtml" />
