@@ -337,7 +337,9 @@ BEGIN
 			Deal_Movie_Code, 
 			Deal_Rights_Code, 
 			Right_Start_Date, 
-			Right_End_Date FROM Syn_Acq_Mapping SAM ORDER BY Syn_Acq_Mapping_Code DESC
+			Right_End_Date FROM Syn_Acq_Mapping SAM 
+			where (SELECT MAX(AT_Acq_Deal_Code) FROM AT_Acq_Deal WHERE Acq_Deal_Code =  SAM.Deal_Code and Version = (SELECT MAX(Version) FROM AT_Acq_Deal WHERE Acq_Deal_Code =  SAM.Deal_Code )) is not null
+			ORDER BY Syn_Acq_Mapping_Code DESC
 
 
 

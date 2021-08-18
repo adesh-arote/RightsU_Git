@@ -1103,7 +1103,7 @@ BEGIN
 			Last_Action_By = @Login_User_Code, Last_Updated_Time=GETDATE() 
 			WHERE Acq_Deal_Code = @lastDealCode
 
-			EXEC USP_Assign_Workflow @lastDealCode, 30, @Login_User_Code
+			EXEC USP_Assign_Workflow @lastDealCode, 30, @Login_User_Code, 'ok'
 		END
 	END
 
