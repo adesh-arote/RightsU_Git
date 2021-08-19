@@ -64,7 +64,7 @@
     </Reference>
     <Reference Include="AvailEntity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\AvailEntity.dll</HintPath>
+      <HintPath>..\..\..\..\Users\ayush\Downloads\AvailEntity\AvailEntity.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
