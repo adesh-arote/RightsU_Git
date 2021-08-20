@@ -633,7 +633,7 @@ BEGIN
 	CLOSE cursorTermination_Deals;
 	DEALLOCATE cursorTermination_Deals;
 
-	EXEC USP_Assign_Workflow @lastDealCode, 35, @Login_User_Code , 'ok'
+	EXEC USP_Assign_Workflow @lastDealCode, 35, @Login_User_Code , ''
 
 	SELECT Deal_Code, Title_Code, Episode_No, Termination_Date, Is_Error, Error_Details FROM #Termination_Deals_Status
 
