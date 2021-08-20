@@ -3235,6 +3235,1710 @@ namespace RightsU_Plus.Controllers
                 {
                     platformsToBeSkipped.Add(eachAvailViewModels[0].Platform60_Name);
                 }
+                var platform_61 = eachAvailViewModels.Where(avail => avail.Platform61_Value == "No").Count();
+                if (platform_61 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform61_Name);
+                }
+                var platform_62 = eachAvailViewModels.Where(avail => avail.Platform62_Value == "No").Count();
+                if (platform_62 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform62_Name);
+                }
+                var platform_63 = eachAvailViewModels.Where(avail => avail.Platform63_Value == "No").Count();
+                if (platform_63 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform63_Name);
+                }
+                var platform_64 = eachAvailViewModels.Where(avail => avail.Platform64_Value == "No").Count();
+                if (platform_64 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform64_Name);
+                }
+                var platform_65 = eachAvailViewModels.Where(avail => avail.Platform65_Value == "No").Count();
+                if (platform_65 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform65_Name);
+                }
+                var platform_66 = eachAvailViewModels.Where(avail => avail.Platform66_Value == "No").Count();
+                if (platform_66 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform66_Name);
+                }
+                var platform_67 = eachAvailViewModels.Where(avail => avail.Platform67_Value == "No").Count();
+                if (platform_67 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform67_Name);
+                }
+                var platform_68 = eachAvailViewModels.Where(avail => avail.Platform68_Value == "No").Count();
+                if (platform_68 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform68_Name);
+                }
+                var platform_69 = eachAvailViewModels.Where(avail => avail.Platform69_Value == "No").Count();
+                if (platform_69 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform69_Name);
+                }
+                var platform_70 = eachAvailViewModels.Where(avail => avail.Platform70_Value == "No").Count();
+                if (platform_70 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform70_Name);
+                }
+                var platform_71 = eachAvailViewModels.Where(avail => avail.Platform71_Value == "No").Count();
+                if (platform_71 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform71_Name);
+                }
+                var platform_72 = eachAvailViewModels.Where(avail => avail.Platform72_Value == "No").Count();
+                if (platform_72 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform72_Name);
+                }
+                var platform_73 = eachAvailViewModels.Where(avail => avail.Platform73_Value == "No").Count();
+                if (platform_73 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform73_Name);
+                }
+                var platform_74 = eachAvailViewModels.Where(avail => avail.Platform74_Value == "No").Count();
+                if (platform_74 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform74_Name);
+                }
+                var platform_75 = eachAvailViewModels.Where(avail => avail.Platform75_Value == "No").Count();
+                if (platform_75 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform75_Name);
+                }
+                var platform_76 = eachAvailViewModels.Where(avail => avail.Platform76_Value == "No").Count();
+                if (platform_76 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform76_Name);
+                }
+                var platform_77 = eachAvailViewModels.Where(avail => avail.Platform77_Value == "No").Count();
+                if (platform_77 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform77_Name);
+                }
+                var platform_78 = eachAvailViewModels.Where(avail => avail.Platform78_Value == "No").Count();
+                if (platform_78 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform78_Name);
+                }
+                var platform_79 = eachAvailViewModels.Where(avail => avail.Platform79_Value == "No").Count();
+                if (platform_79 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform79_Name);
+                }
+                var platform_80 = eachAvailViewModels.Where(avail => avail.Platform80_Value == "No").Count();
+                if (platform_80 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform80_Name);
+                }
+                var platform_81 = eachAvailViewModels.Where(avail => avail.Platform81_Value == "No").Count();
+                if (platform_81 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform81_Name);
+                }
+                var platform_82 = eachAvailViewModels.Where(avail => avail.Platform82_Value == "No").Count();
+                if (platform_82 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform82_Name);
+                }
+                var platform_83 = eachAvailViewModels.Where(avail => avail.Platform83_Value == "No").Count();
+                if (platform_83 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform83_Name);
+                }
+                var platform_84 = eachAvailViewModels.Where(avail => avail.Platform84_Value == "No").Count();
+                if (platform_84 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform84_Name);
+                }
+                var platform_85 = eachAvailViewModels.Where(avail => avail.Platform85_Value == "No").Count();
+                if (platform_85 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform85_Name);
+                }
+                var platform_86 = eachAvailViewModels.Where(avail => avail.Platform86_Value == "No").Count();
+                if (platform_86 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform86_Name);
+                }
+                var platform_87 = eachAvailViewModels.Where(avail => avail.Platform87_Value == "No").Count();
+                if (platform_87 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform87_Name);
+                }
+                var platform_88 = eachAvailViewModels.Where(avail => avail.Platform88_Value == "No").Count();
+                if (platform_88 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform88_Name);
+                }
+                var platform_89 = eachAvailViewModels.Where(avail => avail.Platform89_Value == "No").Count();
+                if (platform_89 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform89_Name);
+                }
+                var platform_90 = eachAvailViewModels.Where(avail => avail.Platform90_Value == "No").Count();
+                if (platform_90 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform90_Name);
+                }
+                var platform_91 = eachAvailViewModels.Where(avail => avail.Platform91_Value == "No").Count();
+                if (platform_91 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform91_Name);
+                }
+                var platform_92 = eachAvailViewModels.Where(avail => avail.Platform92_Value == "No").Count();
+                if (platform_92 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform92_Name);
+                }
+                var platform_93 = eachAvailViewModels.Where(avail => avail.Platform93_Value == "No").Count();
+                if (platform_93 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform93_Name);
+                }
+                var platform_94 = eachAvailViewModels.Where(avail => avail.Platform94_Value == "No").Count();
+                if (platform_94 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform94_Name);
+                }
+                var platform_95 = eachAvailViewModels.Where(avail => avail.Platform95_Value == "No").Count();
+                if (platform_95 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform95_Name);
+                }
+                var platform_96 = eachAvailViewModels.Where(avail => avail.Platform96_Value == "No").Count();
+                if (platform_96 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform96_Name);
+                }
+                var platform_97 = eachAvailViewModels.Where(avail => avail.Platform97_Value == "No").Count();
+                if (platform_97 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform97_Name);
+                }
+                var platform_98 = eachAvailViewModels.Where(avail => avail.Platform98_Value == "No").Count();
+                if (platform_98 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform98_Name);
+                }
+                var platform_99 = eachAvailViewModels.Where(avail => avail.Platform99_Value == "No").Count();
+                if (platform_99 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform99_Name);
+                }
+                var platform_100 = eachAvailViewModels.Where(avail => avail.Platform100_Value == "No").Count();
+                if (platform_100 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform100_Name);
+                }
+                var platform_101 = eachAvailViewModels.Where(avail => avail.Platform101_Value == "No").Count();
+                if (platform_101 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform101_Name);
+                }
+                var platform_102 = eachAvailViewModels.Where(avail => avail.Platform102_Value == "No").Count();
+                if (platform_102 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform102_Name);
+                }
+                var platform_103 = eachAvailViewModels.Where(avail => avail.Platform103_Value == "No").Count();
+                if (platform_103 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform103_Name);
+                }
+                var platform_104 = eachAvailViewModels.Where(avail => avail.Platform104_Value == "No").Count();
+                if (platform_104 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform104_Name);
+                }
+                var platform_105 = eachAvailViewModels.Where(avail => avail.Platform105_Value == "No").Count();
+                if (platform_105 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform105_Name);
+                }
+                var platform_106 = eachAvailViewModels.Where(avail => avail.Platform106_Value == "No").Count();
+                if (platform_106 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform106_Name);
+                }
+                var platform_107 = eachAvailViewModels.Where(avail => avail.Platform107_Value == "No").Count();
+                if (platform_107 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform107_Name);
+                }
+                var platform_108 = eachAvailViewModels.Where(avail => avail.Platform108_Value == "No").Count();
+                if (platform_108 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform108_Name);
+                }
+                var platform_109 = eachAvailViewModels.Where(avail => avail.Platform109_Value == "No").Count();
+                if (platform_109 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform109_Name);
+                }
+                var platform_110 = eachAvailViewModels.Where(avail => avail.Platform110_Value == "No").Count();
+                if (platform_110 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform110_Name);
+                }
+                var platform_111 = eachAvailViewModels.Where(avail => avail.Platform111_Value == "No").Count();
+                if (platform_111 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform111_Name);
+                }
+                var platform_112 = eachAvailViewModels.Where(avail => avail.Platform112_Value == "No").Count();
+                if (platform_112 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform112_Name);
+                }
+                var platform_113 = eachAvailViewModels.Where(avail => avail.Platform113_Value == "No").Count();
+                if (platform_113 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform113_Name);
+                }
+                var platform_114 = eachAvailViewModels.Where(avail => avail.Platform114_Value == "No").Count();
+                if (platform_114 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform114_Name);
+                }
+                var platform_115 = eachAvailViewModels.Where(avail => avail.Platform115_Value == "No").Count();
+                if (platform_115 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform115_Name);
+                }
+                var platform_116 = eachAvailViewModels.Where(avail => avail.Platform116_Value == "No").Count();
+                if (platform_116 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform116_Name);
+                }
+                var platform_117 = eachAvailViewModels.Where(avail => avail.Platform117_Value == "No").Count();
+                if (platform_117 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform117_Name);
+                }
+                var platform_118 = eachAvailViewModels.Where(avail => avail.Platform118_Value == "No").Count();
+                if (platform_118 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform118_Name);
+                }
+                var platform_119 = eachAvailViewModels.Where(avail => avail.Platform119_Value == "No").Count();
+                if (platform_119 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform119_Name);
+                }
+                var platform_120 = eachAvailViewModels.Where(avail => avail.Platform120_Value == "No").Count();
+                if (platform_120 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform120_Name);
+                }
+                var platform_121 = eachAvailViewModels.Where(avail => avail.Platform121_Value == "No").Count();
+                if (platform_121 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform121_Name);
+                }
+                var platform_122 = eachAvailViewModels.Where(avail => avail.Platform122_Value == "No").Count();
+                if (platform_122 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform122_Name);
+                }
+                var platform_123 = eachAvailViewModels.Where(avail => avail.Platform123_Value == "No").Count();
+                if (platform_123 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform123_Name);
+                }
+                var platform_124 = eachAvailViewModels.Where(avail => avail.Platform124_Value == "No").Count();
+                if (platform_124 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform124_Name);
+                }
+                var platform_125 = eachAvailViewModels.Where(avail => avail.Platform125_Value == "No").Count();
+                if (platform_125 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform125_Name);
+                }
+                var platform_126 = eachAvailViewModels.Where(avail => avail.Platform126_Value == "No").Count();
+                if (platform_126 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform126_Name);
+                }
+                var platform_127 = eachAvailViewModels.Where(avail => avail.Platform127_Value == "No").Count();
+                if (platform_127 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform127_Name);
+                }
+                var platform_128 = eachAvailViewModels.Where(avail => avail.Platform128_Value == "No").Count();
+                if (platform_128 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform128_Name);
+                }
+                var platform_129 = eachAvailViewModels.Where(avail => avail.Platform129_Value == "No").Count();
+                if (platform_129 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform129_Name);
+                }
+                var platform_130 = eachAvailViewModels.Where(avail => avail.Platform130_Value == "No").Count();
+                if (platform_130 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform130_Name);
+                }
+                var platform_131 = eachAvailViewModels.Where(avail => avail.Platform131_Value == "No").Count();
+                if (platform_131 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform131_Name);
+                }
+                var platform_132 = eachAvailViewModels.Where(avail => avail.Platform132_Value == "No").Count();
+                if (platform_132 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform132_Name);
+                }
+                var platform_133 = eachAvailViewModels.Where(avail => avail.Platform133_Value == "No").Count();
+                if (platform_133 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform133_Name);
+                }
+                var platform_134 = eachAvailViewModels.Where(avail => avail.Platform134_Value == "No").Count();
+                if (platform_134 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform134_Name);
+                }
+                var platform_135 = eachAvailViewModels.Where(avail => avail.Platform135_Value == "No").Count();
+                if (platform_135 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform135_Name);
+                }
+                var platform_136 = eachAvailViewModels.Where(avail => avail.Platform136_Value == "No").Count();
+                if (platform_136 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform136_Name);
+                }
+                var platform_137 = eachAvailViewModels.Where(avail => avail.Platform137_Value == "No").Count();
+                if (platform_137 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform137_Name);
+                }
+                var platform_138 = eachAvailViewModels.Where(avail => avail.Platform138_Value == "No").Count();
+                if (platform_138 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform138_Name);
+                }
+                var platform_139 = eachAvailViewModels.Where(avail => avail.Platform139_Value == "No").Count();
+                if (platform_139 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform139_Name);
+                }
+                var platform_140 = eachAvailViewModels.Where(avail => avail.Platform140_Value == "No").Count();
+                if (platform_140 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform140_Name);
+                }
+                var platform_141 = eachAvailViewModels.Where(avail => avail.Platform141_Value == "No").Count();
+                if (platform_141 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform141_Name);
+                }
+                var platform_142 = eachAvailViewModels.Where(avail => avail.Platform142_Value == "No").Count();
+                if (platform_142 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform142_Name);
+                }
+                var platform_143 = eachAvailViewModels.Where(avail => avail.Platform143_Value == "No").Count();
+                if (platform_143 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform143_Name);
+                }
+                var platform_144 = eachAvailViewModels.Where(avail => avail.Platform144_Value == "No").Count();
+                if (platform_144 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform144_Name);
+                }
+                var platform_145 = eachAvailViewModels.Where(avail => avail.Platform145_Value == "No").Count();
+                if (platform_145 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform145_Name);
+                }
+                var platform_146 = eachAvailViewModels.Where(avail => avail.Platform146_Value == "No").Count();
+                if (platform_146 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform146_Name);
+                }
+                var platform_147 = eachAvailViewModels.Where(avail => avail.Platform147_Value == "No").Count();
+                if (platform_147 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform147_Name);
+                }
+                var platform_148 = eachAvailViewModels.Where(avail => avail.Platform148_Value == "No").Count();
+                if (platform_148 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform148_Name);
+                }
+                var platform_149 = eachAvailViewModels.Where(avail => avail.Platform149_Value == "No").Count();
+                if (platform_149 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform149_Name);
+                }
+                var platform_150 = eachAvailViewModels.Where(avail => avail.Platform150_Value == "No").Count();
+                if (platform_150 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform150_Name);
+                }
+                var platform_151 = eachAvailViewModels.Where(avail => avail.Platform151_Value == "No").Count();
+                if (platform_151 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform151_Name);
+                }
+                var platform_152 = eachAvailViewModels.Where(avail => avail.Platform152_Value == "No").Count();
+                if (platform_152 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform152_Name);
+                }
+                var platform_153 = eachAvailViewModels.Where(avail => avail.Platform153_Value == "No").Count();
+                if (platform_153 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform153_Name);
+                }
+                var platform_154 = eachAvailViewModels.Where(avail => avail.Platform154_Value == "No").Count();
+                if (platform_154 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform154_Name);
+                }
+                var platform_155 = eachAvailViewModels.Where(avail => avail.Platform155_Value == "No").Count();
+                if (platform_155 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform155_Name);
+                }
+                var platform_156 = eachAvailViewModels.Where(avail => avail.Platform156_Value == "No").Count();
+                if (platform_156 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform156_Name);
+                }
+                var platform_157 = eachAvailViewModels.Where(avail => avail.Platform157_Value == "No").Count();
+                if (platform_157 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform157_Name);
+                }
+                var platform_158 = eachAvailViewModels.Where(avail => avail.Platform158_Value == "No").Count();
+                if (platform_158 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform158_Name);
+                }
+                var platform_159 = eachAvailViewModels.Where(avail => avail.Platform159_Value == "No").Count();
+                if (platform_159 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform159_Name);
+                }
+                var platform_160 = eachAvailViewModels.Where(avail => avail.Platform160_Value == "No").Count();
+                if (platform_160 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform160_Name);
+                }
+                var platform_161 = eachAvailViewModels.Where(avail => avail.Platform161_Value == "No").Count();
+                if (platform_161 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform161_Name);
+                }
+                var platform_162 = eachAvailViewModels.Where(avail => avail.Platform162_Value == "No").Count();
+                if (platform_162 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform162_Name);
+                }
+                var platform_163 = eachAvailViewModels.Where(avail => avail.Platform163_Value == "No").Count();
+                if (platform_163 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform163_Name);
+                }
+                var platform_164 = eachAvailViewModels.Where(avail => avail.Platform164_Value == "No").Count();
+                if (platform_164 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform164_Name);
+                }
+                var platform_165 = eachAvailViewModels.Where(avail => avail.Platform165_Value == "No").Count();
+                if (platform_165 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform165_Name);
+                }
+                var platform_166 = eachAvailViewModels.Where(avail => avail.Platform166_Value == "No").Count();
+                if (platform_166 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform166_Name);
+                }
+                var platform_167 = eachAvailViewModels.Where(avail => avail.Platform167_Value == "No").Count();
+                if (platform_167 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform167_Name);
+                }
+                var platform_168 = eachAvailViewModels.Where(avail => avail.Platform168_Value == "No").Count();
+                if (platform_168 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform168_Name);
+                }
+                var platform_169 = eachAvailViewModels.Where(avail => avail.Platform169_Value == "No").Count();
+                if (platform_169 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform169_Name);
+                }
+                var platform_170 = eachAvailViewModels.Where(avail => avail.Platform170_Value == "No").Count();
+                if (platform_170 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform170_Name);
+                }
+                var platform_171 = eachAvailViewModels.Where(avail => avail.Platform171_Value == "No").Count();
+                if (platform_171 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform171_Name);
+                }
+                var platform_172 = eachAvailViewModels.Where(avail => avail.Platform172_Value == "No").Count();
+                if (platform_172 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform172_Name);
+                }
+                var platform_173 = eachAvailViewModels.Where(avail => avail.Platform173_Value == "No").Count();
+                if (platform_173 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform173_Name);
+                }
+                var platform_174 = eachAvailViewModels.Where(avail => avail.Platform174_Value == "No").Count();
+                if (platform_174 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform174_Name);
+                }
+                var platform_175 = eachAvailViewModels.Where(avail => avail.Platform175_Value == "No").Count();
+                if (platform_175 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform175_Name);
+                }
+                var platform_176 = eachAvailViewModels.Where(avail => avail.Platform176_Value == "No").Count();
+                if (platform_176 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform176_Name);
+                }
+                var platform_177 = eachAvailViewModels.Where(avail => avail.Platform177_Value == "No").Count();
+                if (platform_177 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform177_Name);
+                }
+                var platform_178 = eachAvailViewModels.Where(avail => avail.Platform178_Value == "No").Count();
+                if (platform_178 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform178_Name);
+                }
+                var platform_179 = eachAvailViewModels.Where(avail => avail.Platform179_Value == "No").Count();
+                if (platform_179 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform179_Name);
+                }
+                var platform_180 = eachAvailViewModels.Where(avail => avail.Platform180_Value == "No").Count();
+                if (platform_180 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform180_Name);
+                }
+                var platform_181 = eachAvailViewModels.Where(avail => avail.Platform181_Value == "No").Count();
+                if (platform_181 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform181_Name);
+                }
+                var platform_182 = eachAvailViewModels.Where(avail => avail.Platform182_Value == "No").Count();
+                if (platform_182 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform182_Name);
+                }
+                var platform_183 = eachAvailViewModels.Where(avail => avail.Platform183_Value == "No").Count();
+                if (platform_183 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform183_Name);
+                }
+                var platform_184 = eachAvailViewModels.Where(avail => avail.Platform184_Value == "No").Count();
+                if (platform_184 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform184_Name);
+                }
+                var platform_185 = eachAvailViewModels.Where(avail => avail.Platform185_Value == "No").Count();
+                if (platform_185 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform185_Name);
+                }
+                var platform_186 = eachAvailViewModels.Where(avail => avail.Platform186_Value == "No").Count();
+                if (platform_186 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform186_Name);
+                }
+                var platform_187 = eachAvailViewModels.Where(avail => avail.Platform187_Value == "No").Count();
+                if (platform_187 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform187_Name);
+                }
+                var platform_188 = eachAvailViewModels.Where(avail => avail.Platform188_Value == "No").Count();
+                if (platform_188 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform188_Name);
+                }
+                var platform_189 = eachAvailViewModels.Where(avail => avail.Platform189_Value == "No").Count();
+                if (platform_189 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform189_Name);
+                }
+                var platform_190 = eachAvailViewModels.Where(avail => avail.Platform190_Value == "No").Count();
+                if (platform_190 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform190_Name);
+                }
+                var platform_191 = eachAvailViewModels.Where(avail => avail.Platform191_Value == "No").Count();
+                if (platform_191 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform191_Name);
+                }
+                var platform_192 = eachAvailViewModels.Where(avail => avail.Platform192_Value == "No").Count();
+                if (platform_192 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform192_Name);
+                }
+                var platform_193 = eachAvailViewModels.Where(avail => avail.Platform193_Value == "No").Count();
+                if (platform_193 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform193_Name);
+                }
+                var platform_194 = eachAvailViewModels.Where(avail => avail.Platform194_Value == "No").Count();
+                if (platform_194 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform194_Name);
+                }
+                var platform_195 = eachAvailViewModels.Where(avail => avail.Platform195_Value == "No").Count();
+                if (platform_195 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform195_Name);
+                }
+                var platform_196 = eachAvailViewModels.Where(avail => avail.Platform196_Value == "No").Count();
+                if (platform_196 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform196_Name);
+                }
+                var platform_197 = eachAvailViewModels.Where(avail => avail.Platform197_Value == "No").Count();
+                if (platform_197 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform197_Name);
+                }
+                var platform_198 = eachAvailViewModels.Where(avail => avail.Platform198_Value == "No").Count();
+                if (platform_198 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform198_Name);
+                }
+                var platform_199 = eachAvailViewModels.Where(avail => avail.Platform199_Value == "No").Count();
+                if (platform_199 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform199_Name);
+                }
+                var platform_200 = eachAvailViewModels.Where(avail => avail.Platform200_Value == "No").Count();
+                if (platform_200 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform200_Name);
+                }
+                var platform_201 = eachAvailViewModels.Where(avail => avail.Platform201_Value == "No").Count();
+                if (platform_201 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform201_Name);
+                }
+                var platform_202 = eachAvailViewModels.Where(avail => avail.Platform202_Value == "No").Count();
+                if (platform_202 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform202_Name);
+                }
+                var platform_203 = eachAvailViewModels.Where(avail => avail.Platform203_Value == "No").Count();
+                if (platform_203 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform203_Name);
+                }
+                var platform_204 = eachAvailViewModels.Where(avail => avail.Platform204_Value == "No").Count();
+                if (platform_204 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform204_Name);
+                }
+                var platform_205 = eachAvailViewModels.Where(avail => avail.Platform205_Value == "No").Count();
+                if (platform_205 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform205_Name);
+                }
+                var platform_206 = eachAvailViewModels.Where(avail => avail.Platform206_Value == "No").Count();
+                if (platform_206 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform206_Name);
+                }
+                var platform_207 = eachAvailViewModels.Where(avail => avail.Platform207_Value == "No").Count();
+                if (platform_207 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform207_Name);
+                }
+                var platform_208 = eachAvailViewModels.Where(avail => avail.Platform208_Value == "No").Count();
+                if (platform_208 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform208_Name);
+                }
+                var platform_209 = eachAvailViewModels.Where(avail => avail.Platform209_Value == "No").Count();
+                if (platform_209 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform209_Name);
+                }
+                var platform_210 = eachAvailViewModels.Where(avail => avail.Platform210_Value == "No").Count();
+                if (platform_210 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform210_Name);
+                }
+                var platform_211 = eachAvailViewModels.Where(avail => avail.Platform211_Value == "No").Count();
+                if (platform_211 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform211_Name);
+                }
+                var platform_212 = eachAvailViewModels.Where(avail => avail.Platform212_Value == "No").Count();
+                if (platform_212 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform212_Name);
+                }
+                var platform_213 = eachAvailViewModels.Where(avail => avail.Platform213_Value == "No").Count();
+                if (platform_213 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform213_Name);
+                }
+                var platform_214 = eachAvailViewModels.Where(avail => avail.Platform214_Value == "No").Count();
+                if (platform_214 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform214_Name);
+                }
+                var platform_215 = eachAvailViewModels.Where(avail => avail.Platform215_Value == "No").Count();
+                if (platform_215 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform215_Name);
+                }
+                var platform_216 = eachAvailViewModels.Where(avail => avail.Platform216_Value == "No").Count();
+                if (platform_216 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform216_Name);
+                }
+                var platform_217 = eachAvailViewModels.Where(avail => avail.Platform217_Value == "No").Count();
+                if (platform_217 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform217_Name);
+                }
+                var platform_218 = eachAvailViewModels.Where(avail => avail.Platform218_Value == "No").Count();
+                if (platform_218 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform218_Name);
+                }
+                var platform_219 = eachAvailViewModels.Where(avail => avail.Platform219_Value == "No").Count();
+                if (platform_219 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform219_Name);
+                }
+                var platform_220 = eachAvailViewModels.Where(avail => avail.Platform220_Value == "No").Count();
+                if (platform_220 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform220_Name);
+                }
+                var platform_221 = eachAvailViewModels.Where(avail => avail.Platform221_Value == "No").Count();
+                if (platform_221 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform221_Name);
+                }
+                var platform_222 = eachAvailViewModels.Where(avail => avail.Platform222_Value == "No").Count();
+                if (platform_222 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform222_Name);
+                }
+                var platform_223 = eachAvailViewModels.Where(avail => avail.Platform223_Value == "No").Count();
+                if (platform_223 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform223_Name);
+                }
+                var platform_224 = eachAvailViewModels.Where(avail => avail.Platform224_Value == "No").Count();
+                if (platform_224 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform224_Name);
+                }
+                var platform_225 = eachAvailViewModels.Where(avail => avail.Platform225_Value == "No").Count();
+                if (platform_225 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform225_Name);
+                }
+                var platform_226 = eachAvailViewModels.Where(avail => avail.Platform226_Value == "No").Count();
+                if (platform_226 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform226_Name);
+                }
+                var platform_227 = eachAvailViewModels.Where(avail => avail.Platform227_Value == "No").Count();
+                if (platform_227 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform227_Name);
+                }
+                var platform_228 = eachAvailViewModels.Where(avail => avail.Platform228_Value == "No").Count();
+                if (platform_228 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform228_Name);
+                }
+                var platform_229 = eachAvailViewModels.Where(avail => avail.Platform229_Value == "No").Count();
+                if (platform_229 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform229_Name);
+                }
+                var platform_230 = eachAvailViewModels.Where(avail => avail.Platform230_Value == "No").Count();
+                if (platform_230 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform230_Name);
+                }
+                var platform_231 = eachAvailViewModels.Where(avail => avail.Platform231_Value == "No").Count();
+                if (platform_231 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform231_Name);
+                }
+                var platform_232 = eachAvailViewModels.Where(avail => avail.Platform232_Value == "No").Count();
+                if (platform_232 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform232_Name);
+                }
+                var platform_233 = eachAvailViewModels.Where(avail => avail.Platform233_Value == "No").Count();
+                if (platform_233 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform233_Name);
+                }
+                var platform_234 = eachAvailViewModels.Where(avail => avail.Platform234_Value == "No").Count();
+                if (platform_234 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform234_Name);
+                }
+                var platform_235 = eachAvailViewModels.Where(avail => avail.Platform235_Value == "No").Count();
+                if (platform_235 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform235_Name);
+                }
+                var platform_236 = eachAvailViewModels.Where(avail => avail.Platform236_Value == "No").Count();
+                if (platform_236 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform236_Name);
+                }
+                var platform_237 = eachAvailViewModels.Where(avail => avail.Platform237_Value == "No").Count();
+                if (platform_237 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform237_Name);
+                }
+                var platform_238 = eachAvailViewModels.Where(avail => avail.Platform238_Value == "No").Count();
+                if (platform_238 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform238_Name);
+                }
+                var platform_239 = eachAvailViewModels.Where(avail => avail.Platform239_Value == "No").Count();
+                if (platform_239 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform239_Name);
+                }
+                var platform_240 = eachAvailViewModels.Where(avail => avail.Platform240_Value == "No").Count();
+                if (platform_240 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform240_Name);
+                }
+                var platform_241 = eachAvailViewModels.Where(avail => avail.Platform241_Value == "No").Count();
+                if (platform_241 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform241_Name);
+                }
+                var platform_242 = eachAvailViewModels.Where(avail => avail.Platform242_Value == "No").Count();
+                if (platform_242 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform242_Name);
+                }
+                var platform_243 = eachAvailViewModels.Where(avail => avail.Platform243_Value == "No").Count();
+                if (platform_243 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform243_Name);
+                }
+                var platform_244 = eachAvailViewModels.Where(avail => avail.Platform244_Value == "No").Count();
+                if (platform_244 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform244_Name);
+                }
+                var platform_245 = eachAvailViewModels.Where(avail => avail.Platform245_Value == "No").Count();
+                if (platform_245 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform245_Name);
+                }
+                var platform_246 = eachAvailViewModels.Where(avail => avail.Platform246_Value == "No").Count();
+                if (platform_246 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform246_Name);
+                }
+                var platform_247 = eachAvailViewModels.Where(avail => avail.Platform247_Value == "No").Count();
+                if (platform_247 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform247_Name);
+                }
+                var platform_248 = eachAvailViewModels.Where(avail => avail.Platform248_Value == "No").Count();
+                if (platform_248 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform248_Name);
+                }
+                var platform_249 = eachAvailViewModels.Where(avail => avail.Platform249_Value == "No").Count();
+                if (platform_249 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform249_Name);
+                }
+                var platform_250 = eachAvailViewModels.Where(avail => avail.Platform250_Value == "No").Count();
+                if (platform_250 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform250_Name);
+                }
+                var platform_251 = eachAvailViewModels.Where(avail => avail.Platform251_Value == "No").Count();
+                if (platform_251 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform251_Name);
+                }
+                var platform_252 = eachAvailViewModels.Where(avail => avail.Platform252_Value == "No").Count();
+                if (platform_252 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform252_Name);
+                }
+                var platform_253 = eachAvailViewModels.Where(avail => avail.Platform253_Value == "No").Count();
+                if (platform_253 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform253_Name);
+                }
+                var platform_254 = eachAvailViewModels.Where(avail => avail.Platform254_Value == "No").Count();
+                if (platform_254 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform254_Name);
+                }
+                var platform_255 = eachAvailViewModels.Where(avail => avail.Platform255_Value == "No").Count();
+                if (platform_255 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform255_Name);
+                }
+                var platform_256 = eachAvailViewModels.Where(avail => avail.Platform256_Value == "No").Count();
+                if (platform_256 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform256_Name);
+                }
+                var platform_257 = eachAvailViewModels.Where(avail => avail.Platform257_Value == "No").Count();
+                if (platform_257 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform257_Name);
+                }
+                var platform_258 = eachAvailViewModels.Where(avail => avail.Platform258_Value == "No").Count();
+                if (platform_258 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform258_Name);
+                }
+                var platform_259 = eachAvailViewModels.Where(avail => avail.Platform259_Value == "No").Count();
+                if (platform_259 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform259_Name);
+                }
+                var platform_260 = eachAvailViewModels.Where(avail => avail.Platform260_Value == "No").Count();
+                if (platform_260 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform260_Name);
+                }
+                var platform_261 = eachAvailViewModels.Where(avail => avail.Platform261_Value == "No").Count();
+                if (platform_261 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform261_Name);
+                }
+                var platform_262 = eachAvailViewModels.Where(avail => avail.Platform262_Value == "No").Count();
+                if (platform_262 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform262_Name);
+                }
+                var platform_263 = eachAvailViewModels.Where(avail => avail.Platform263_Value == "No").Count();
+                if (platform_263 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform263_Name);
+                }
+                var platform_264 = eachAvailViewModels.Where(avail => avail.Platform264_Value == "No").Count();
+                if (platform_264 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform264_Name);
+                }
+                var platform_265 = eachAvailViewModels.Where(avail => avail.Platform265_Value == "No").Count();
+                if (platform_265 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform265_Name);
+                }
+                var platform_266 = eachAvailViewModels.Where(avail => avail.Platform266_Value == "No").Count();
+                if (platform_266 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform266_Name);
+                }
+                var platform_267 = eachAvailViewModels.Where(avail => avail.Platform267_Value == "No").Count();
+                if (platform_267 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform267_Name);
+                }
+                var platform_268 = eachAvailViewModels.Where(avail => avail.Platform268_Value == "No").Count();
+                if (platform_268 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform268_Name);
+                }
+                var platform_269 = eachAvailViewModels.Where(avail => avail.Platform269_Value == "No").Count();
+                if (platform_269 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform269_Name);
+                }
+                var platform_270 = eachAvailViewModels.Where(avail => avail.Platform270_Value == "No").Count();
+                if (platform_270 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform270_Name);
+                }
+                var platform_271 = eachAvailViewModels.Where(avail => avail.Platform271_Value == "No").Count();
+                if (platform_271 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform271_Name);
+                }
+                var platform_272 = eachAvailViewModels.Where(avail => avail.Platform272_Value == "No").Count();
+                if (platform_272 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform272_Name);
+                }
+                var platform_273 = eachAvailViewModels.Where(avail => avail.Platform273_Value == "No").Count();
+                if (platform_273 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform273_Name);
+                }
+                var platform_274 = eachAvailViewModels.Where(avail => avail.Platform274_Value == "No").Count();
+                if (platform_274 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform274_Name);
+                }
+                var platform_275 = eachAvailViewModels.Where(avail => avail.Platform275_Value == "No").Count();
+                if (platform_275 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform275_Name);
+                }
+                var platform_276 = eachAvailViewModels.Where(avail => avail.Platform276_Value == "No").Count();
+                if (platform_276 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform276_Name);
+                }
+                var platform_277 = eachAvailViewModels.Where(avail => avail.Platform277_Value == "No").Count();
+                if (platform_277 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform277_Name);
+                }
+                var platform_278 = eachAvailViewModels.Where(avail => avail.Platform278_Value == "No").Count();
+                if (platform_278 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform278_Name);
+                }
+                var platform_279 = eachAvailViewModels.Where(avail => avail.Platform279_Value == "No").Count();
+                if (platform_279 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform279_Name);
+                }
+                var platform_280 = eachAvailViewModels.Where(avail => avail.Platform280_Value == "No").Count();
+                if (platform_280 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform280_Name);
+                }
+                var platform_281 = eachAvailViewModels.Where(avail => avail.Platform281_Value == "No").Count();
+                if (platform_281 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform281_Name);
+                }
+                var platform_282 = eachAvailViewModels.Where(avail => avail.Platform282_Value == "No").Count();
+                if (platform_282 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform282_Name);
+                }
+                var platform_283 = eachAvailViewModels.Where(avail => avail.Platform283_Value == "No").Count();
+                if (platform_283 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform283_Name);
+                }
+                var platform_284 = eachAvailViewModels.Where(avail => avail.Platform284_Value == "No").Count();
+                if (platform_284 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform284_Name);
+                }
+                var platform_285 = eachAvailViewModels.Where(avail => avail.Platform285_Value == "No").Count();
+                if (platform_285 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform285_Name);
+                }
+                var platform_286 = eachAvailViewModels.Where(avail => avail.Platform286_Value == "No").Count();
+                if (platform_286 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform286_Name);
+                }
+                var platform_287 = eachAvailViewModels.Where(avail => avail.Platform287_Value == "No").Count();
+                if (platform_287 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform287_Name);
+                }
+                var platform_288 = eachAvailViewModels.Where(avail => avail.Platform288_Value == "No").Count();
+                if (platform_288 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform288_Name);
+                }
+                var platform_289 = eachAvailViewModels.Where(avail => avail.Platform289_Value == "No").Count();
+                if (platform_289 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform289_Name);
+                }
+                var platform_290 = eachAvailViewModels.Where(avail => avail.Platform290_Value == "No").Count();
+                if (platform_290 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform290_Name);
+                }
+                var platform_291 = eachAvailViewModels.Where(avail => avail.Platform291_Value == "No").Count();
+                if (platform_291 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform291_Name);
+                }
+                var platform_292 = eachAvailViewModels.Where(avail => avail.Platform292_Value == "No").Count();
+                if (platform_292 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform292_Name);
+                }
+                var platform_293 = eachAvailViewModels.Where(avail => avail.Platform293_Value == "No").Count();
+                if (platform_293 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform293_Name);
+                }
+                var platform_294 = eachAvailViewModels.Where(avail => avail.Platform294_Value == "No").Count();
+                if (platform_294 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform294_Name);
+                }
+                var platform_295 = eachAvailViewModels.Where(avail => avail.Platform295_Value == "No").Count();
+                if (platform_295 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform295_Name);
+                }
+                var platform_296 = eachAvailViewModels.Where(avail => avail.Platform296_Value == "No").Count();
+                if (platform_296 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform296_Name);
+                }
+                var platform_297 = eachAvailViewModels.Where(avail => avail.Platform297_Value == "No").Count();
+                if (platform_297 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform297_Name);
+                }
+                var platform_298 = eachAvailViewModels.Where(avail => avail.Platform298_Value == "No").Count();
+                if (platform_298 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform298_Name);
+                }
+                var platform_299 = eachAvailViewModels.Where(avail => avail.Platform299_Value == "No").Count();
+                if (platform_299 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform299_Name);
+                }
+                var platform_300 = eachAvailViewModels.Where(avail => avail.Platform300_Value == "No").Count();
+                if (platform_300 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform300_Name);
+                }
+                var platform_301 = eachAvailViewModels.Where(avail => avail.Platform301_Value == "No").Count();
+                if (platform_301 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform301_Name);
+                }
+                var platform_302 = eachAvailViewModels.Where(avail => avail.Platform302_Value == "No").Count();
+                if (platform_302 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform302_Name);
+                }
+                var platform_303 = eachAvailViewModels.Where(avail => avail.Platform303_Value == "No").Count();
+                if (platform_303 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform303_Name);
+                }
+                var platform_304 = eachAvailViewModels.Where(avail => avail.Platform304_Value == "No").Count();
+                if (platform_304 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform304_Name);
+                }
+                var platform_305 = eachAvailViewModels.Where(avail => avail.Platform305_Value == "No").Count();
+                if (platform_305 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform305_Name);
+                }
+                var platform_306 = eachAvailViewModels.Where(avail => avail.Platform306_Value == "No").Count();
+                if (platform_306 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform306_Name);
+                }
+                var platform_307 = eachAvailViewModels.Where(avail => avail.Platform307_Value == "No").Count();
+                if (platform_307 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform307_Name);
+                }
+                var platform_308 = eachAvailViewModels.Where(avail => avail.Platform308_Value == "No").Count();
+                if (platform_308 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform308_Name);
+                }
+
+                var platform_309 = eachAvailViewModels.Where(avail => avail.Platform309_Value == "No").Count();
+                if (platform_309 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform309_Name);
+                }
+                var platform_310 = eachAvailViewModels.Where(avail => avail.Platform310_Value == "No").Count();
+                if (platform_310 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform310_Name);
+                }
+                var platform_311 = eachAvailViewModels.Where(avail => avail.Platform311_Value == "No").Count();
+                if (platform_311 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform311_Name);
+                }
+                var platform_312 = eachAvailViewModels.Where(avail => avail.Platform312_Value == "No").Count();
+                if (platform_312 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform312_Name);
+                }
+                var platform_313 = eachAvailViewModels.Where(avail => avail.Platform313_Value == "No").Count();
+                if (platform_313 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform313_Name);
+                }
+                var platform_314 = eachAvailViewModels.Where(avail => avail.Platform314_Value == "No").Count();
+                if (platform_314 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform314_Name);
+                }
+                var platform_315 = eachAvailViewModels.Where(avail => avail.Platform315_Value == "No").Count();
+                if (platform_315 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform315_Name);
+                }
+                var platform_316 = eachAvailViewModels.Where(avail => avail.Platform316_Value == "No").Count();
+                if (platform_316 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform316_Name);
+                }
+                var platform_317 = eachAvailViewModels.Where(avail => avail.Platform317_Value == "No").Count();
+                if (platform_317 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform317_Name);
+                }
+                var platform_318 = eachAvailViewModels.Where(avail => avail.Platform318_Value == "No").Count();
+                if (platform_318 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform318_Name);
+                }
+                var platform_319 = eachAvailViewModels.Where(avail => avail.Platform319_Value == "No").Count();
+                if (platform_319 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform319_Name);
+                }
+                var platform_320 = eachAvailViewModels.Where(avail => avail.Platform320_Value == "No").Count();
+                if (platform_320 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform320_Name);
+                }
+                var platform_321 = eachAvailViewModels.Where(avail => avail.Platform321_Value == "No").Count();
+                if (platform_321 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform321_Name);
+
+                }
+                var platform_322 = eachAvailViewModels.Where(avail => avail.Platform322_Value == "No").Count();
+                if (platform_322 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform322_Name);
+                }
+                var platform_323 = eachAvailViewModels.Where(avail => avail.Platform323_Value == "No").Count();
+                if (platform_323 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform323_Name);
+                }
+                var platform_324 = eachAvailViewModels.Where(avail => avail.Platform324_Value == "No").Count();
+                if (platform_324 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform324_Name);
+                }
+                var platform_325 = eachAvailViewModels.Where(avail => avail.Platform325_Value == "No").Count();
+                if (platform_325 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform325_Name);
+                }
+                var platform_326 = eachAvailViewModels.Where(avail => avail.Platform326_Value == "No").Count();
+                if (platform_326 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform326_Name);
+                }
+                var platform_327 = eachAvailViewModels.Where(avail => avail.Platform327_Value == "No").Count();
+                if (platform_327 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform327_Name);
+                }
+                var platform_328 = eachAvailViewModels.Where(avail => avail.Platform328_Value == "No").Count();
+                if (platform_328 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform328_Name);
+                }
+                var platform_329 = eachAvailViewModels.Where(avail => avail.Platform329_Value == "No").Count();
+                if (platform_329 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform329_Name);
+                }
+                var platform_330 = eachAvailViewModels.Where(avail => avail.Platform330_Value == "No").Count();
+                if (platform_330 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform330_Name);
+                }
+                var platform_331 = eachAvailViewModels.Where(avail => avail.Platform331_Value == "No").Count();
+                if (platform_331 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform331_Name);
+                }
+                var platform_332 = eachAvailViewModels.Where(avail => avail.Platform332_Value == "No").Count();
+                if (platform_332== totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform332_Name);
+                }
+                var platform_333 = eachAvailViewModels.Where(avail => avail.Platform333_Value == "No").Count();
+                if (platform_333 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform333_Name);
+                }
+                var platform_334 = eachAvailViewModels.Where(avail => avail.Platform334_Value == "No").Count();
+                if (platform_334 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform334_Name);
+                }
+                var platform_335 = eachAvailViewModels.Where(avail => avail.Platform335_Value == "No").Count();
+                if (platform_335 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform335_Name);
+                }
+                var platform_336 = eachAvailViewModels.Where(avail => avail.Platform336_Value == "No").Count();
+                if (platform_336 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform336_Name);
+                }
+                var platform_337 = eachAvailViewModels.Where(avail => avail.Platform337_Value == "No").Count();
+                if (platform_337 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform337_Name);
+                }
+                var platform_338 = eachAvailViewModels.Where(avail => avail.Platform338_Value == "No").Count();
+                if (platform_338 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform338_Name);
+                }
+                var platform_339 = eachAvailViewModels.Where(avail => avail.Platform339_Value == "No").Count();
+                if (platform_339 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform339_Name);
+                }
+                var platform_340 = eachAvailViewModels.Where(avail => avail.Platform340_Value == "No").Count();
+                if (platform_340 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform340_Name);
+                }
+                var platform_341 = eachAvailViewModels.Where(avail => avail.Platform341_Value == "No").Count();
+                if (platform_341 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform341_Name);
+                }
+                var platform_342 = eachAvailViewModels.Where(avail => avail.Platform342_Value == "No").Count();
+                if (platform_342 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform342_Name);
+                }
+                var platform_343 = eachAvailViewModels.Where(avail => avail.Platform343_Value == "No").Count();
+                if (platform_343 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform343_Name);
+                }
+                var platform_344 = eachAvailViewModels.Where(avail => avail.Platform344_Value == "No").Count();
+                if (platform_344 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform344_Name);
+                }
+                var platform_345 = eachAvailViewModels.Where(avail => avail.Platform345_Value == "No").Count();
+                if (platform_345 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform345_Name);
+                }
+                var platform_346 = eachAvailViewModels.Where(avail => avail.Platform346_Value == "No").Count();
+                if (platform_346 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform346_Name);
+                }
+                var platform_347 = eachAvailViewModels.Where(avail => avail.Platform347_Value == "No").Count();
+                if (platform_347 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform347_Name);
+                }
+                var platform_348 = eachAvailViewModels.Where(avail => avail.Platform348_Value == "No").Count();
+                if (platform_348 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform348_Name);
+                }
+                var platform_349 = eachAvailViewModels.Where(avail => avail.Platform349_Value == "No").Count();
+                if (platform_349 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform349_Name);
+                }
+
+                var platform_350 = eachAvailViewModels.Where(avail => avail.Platform350_Value == "No").Count();
+                if (platform_350 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform350_Name);
+                }
+                var platform_351 = eachAvailViewModels.Where(avail => avail.Platform351_Value == "No").Count();
+                if (platform_351 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform351_Name);
+                }
+                var platform_352 = eachAvailViewModels.Where(avail => avail.Platform352_Value == "No").Count();
+                if (platform_352 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform352_Name);
+                }
+                var platform_353 = eachAvailViewModels.Where(avail => avail.Platform353_Value == "No").Count();
+                if (platform_353 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform353_Name);
+                }
+                var platform_354 = eachAvailViewModels.Where(avail => avail.Platform354_Value == "No").Count();
+                if (platform_354 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform354_Name);
+                }
+                var platform_355 = eachAvailViewModels.Where(avail => avail.Platform355_Value == "No").Count();
+                if (platform_355 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform355_Name);
+                }
+                var platform_356 = eachAvailViewModels.Where(avail => avail.Platform356_Value == "No").Count();
+                if (platform_356 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform356_Name);
+                }
+                var platform_357 = eachAvailViewModels.Where(avail => avail.Platform357_Value == "No").Count();
+                if (platform_357 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform357_Name);
+                }
+                var platform_358 = eachAvailViewModels.Where(avail => avail.Platform358_Value == "No").Count();
+                if (platform_358 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform358_Name);
+                }
+                var platform_359 = eachAvailViewModels.Where(avail => avail.Platform359_Value == "No").Count();
+                if (platform_359 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform359_Name);
+                }
+                var platform_360 = eachAvailViewModels.Where(avail => avail.Platform360_Value == "No").Count();
+                if (platform_360 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform360_Name);
+                }
+                var platform_361 = eachAvailViewModels.Where(avail => avail.Platform361_Value == "No").Count();
+                if (platform_361 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform361_Name);
+                }
+                var platform_362 = eachAvailViewModels.Where(avail => avail.Platform362_Value == "No").Count();
+                if (platform_362 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform362_Name);
+                }
+                var platform_363 = eachAvailViewModels.Where(avail => avail.Platform363_Value == "No").Count();
+                if (platform_363 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform363_Name);
+                }
+                var platform_364 = eachAvailViewModels.Where(avail => avail.Platform364_Value == "No").Count();
+                if (platform_364 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform364_Name);
+                }
+                var platform_365 = eachAvailViewModels.Where(avail => avail.Platform365_Value == "No").Count();
+                if (platform_365 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform365_Name);
+                }
+                var platform_366 = eachAvailViewModels.Where(avail => avail.Platform366_Value == "No").Count();
+                if (platform_366 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform366_Name);
+                }
+                var platform_367 = eachAvailViewModels.Where(avail => avail.Platform367_Value == "No").Count();
+                if (platform_367 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform367_Name);
+                }
+                var platform_368 = eachAvailViewModels.Where(avail => avail.Platform368_Value == "No").Count();
+                if (platform_368 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform368_Name);
+                }
+                var platform_369 = eachAvailViewModels.Where(avail => avail.Platform369_Value == "No").Count();
+                if (platform_369 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform369_Name);
+                }
+                var platform_370 = eachAvailViewModels.Where(avail => avail.Platform370_Value == "No").Count();
+                if (platform_370 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform370_Name);
+                }
+                var platform_371 = eachAvailViewModels.Where(avail => avail.Platform371_Value == "No").Count();
+                if (platform_371 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform371_Name);
+                }
+                var platform_372 = eachAvailViewModels.Where(avail => avail.Platform372_Value == "No").Count();
+                if (platform_372 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform372_Name);
+                }
+                var platform_373 = eachAvailViewModels.Where(avail => avail.Platform373_Value == "No").Count();
+                if (platform_373 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform373_Name);
+                }
+                var platform_374 = eachAvailViewModels.Where(avail => avail.Platform374_Value == "No").Count();
+                if (platform_374 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform374_Name);
+                }
+                var platform_375 = eachAvailViewModels.Where(avail => avail.Platform375_Value == "No").Count();
+                if (platform_375 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform375_Name);
+                }
+                var platform_376 = eachAvailViewModels.Where(avail => avail.Platform376_Value == "No").Count();
+                if (platform_376 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform376_Name);
+                }
+                var platform_377 = eachAvailViewModels.Where(avail => avail.Platform377_Value == "No").Count();
+                if (platform_377 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform377_Name);
+                }
+                var platform_378 = eachAvailViewModels.Where(avail => avail.Platform378_Value == "No").Count();
+                if (platform_378 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform378_Name);
+                }
+                var platform_379 = eachAvailViewModels.Where(avail => avail.Platform379_Value == "No").Count();
+                if (platform_379 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform379_Name);
+                }
+                var platform_380 = eachAvailViewModels.Where(avail => avail.Platform380_Value == "No").Count();
+                if (platform_380 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform380_Name);
+                }
+                var platform_381 = eachAvailViewModels.Where(avail => avail.Platform381_Value == "No").Count();
+                if (platform_381 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform381_Name);
+                }
+                var platform_382 = eachAvailViewModels.Where(avail => avail.Platform382_Value == "No").Count();
+                if (platform_382 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform382_Name);
+                }
+                var platform_383 = eachAvailViewModels.Where(avail => avail.Platform383_Value == "No").Count();
+                if (platform_383 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform383_Name);
+                }
+                var platform_384 = eachAvailViewModels.Where(avail => avail.Platform384_Value == "No").Count();
+                if (platform_384 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform384_Name);
+                }
+                var platform_385 = eachAvailViewModels.Where(avail => avail.Platform385_Value == "No").Count();
+                if (platform_385 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform385_Name);
+                }
+                var platform_386 = eachAvailViewModels.Where(avail => avail.Platform386_Value == "No").Count();
+                if (platform_386 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform386_Name);
+                }
+                var platform_387 = eachAvailViewModels.Where(avail => avail.Platform387_Value == "No").Count();
+                if (platform_387 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform387_Name);
+                }
+                var platform_388 = eachAvailViewModels.Where(avail => avail.Platform388_Value == "No").Count();
+                if (platform_388 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform388_Name);
+                }
+                var platform_389 = eachAvailViewModels.Where(avail => avail.Platform389_Value == "No").Count();
+                if (platform_389 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform389_Name);
+                }
+                var platform_390 = eachAvailViewModels.Where(avail => avail.Platform390_Value == "No").Count();
+                if (platform_390 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform390_Name);
+                }
+                var platform_391 = eachAvailViewModels.Where(avail => avail.Platform391_Value == "No").Count();
+                if (platform_391 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform391_Name);
+                }
+                var platform_392 = eachAvailViewModels.Where(avail => avail.Platform392_Value == "No").Count();
+                if (platform_392 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform392_Name);
+                }
+                var platform_393 = eachAvailViewModels.Where(avail => avail.Platform393_Value == "No").Count();
+                if (platform_393 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform393_Name);
+                }
+                var platform_394 = eachAvailViewModels.Where(avail => avail.Platform394_Value == "No").Count();
+                if (platform_394 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform394_Name);
+                }
+                var platform_395 = eachAvailViewModels.Where(avail => avail.Platform395_Value == "No").Count();
+                if (platform_395 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform395_Name);
+                }
+                var platform_396 = eachAvailViewModels.Where(avail => avail.Platform396_Value == "No").Count();
+                if (platform_396 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform396_Name);
+                }
+                var platform_397 = eachAvailViewModels.Where(avail => avail.Platform397_Value == "No").Count();
+                if (platform_397 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform397_Name);
+                }
+                var platform_398 = eachAvailViewModels.Where(avail => avail.Platform398_Value == "No").Count();
+                if (platform_398 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform398_Name);
+                }
+                var platform_399 = eachAvailViewModels.Where(avail => avail.Platform399_Value == "No").Count();
+                if (platform_399 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform399_Name);
+
+                }
+                var platform_400 = eachAvailViewModels.Where(avail => avail.Platform400_Value == "No").Count();
+                if (platform_400 == totalAvailLines)
+                {
+                    platformsToBeSkipped.Add(eachAvailViewModels[0].Platform400_Name);
+                }
                 #endregion
 
                 if (eachAvailViewModels.Count > 0)
