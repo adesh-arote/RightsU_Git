@@ -1651,6 +1651,9 @@
     <Compile Include="Models\USP_Title_List_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Title_Objection_List_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Uploaded_File_Detail_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

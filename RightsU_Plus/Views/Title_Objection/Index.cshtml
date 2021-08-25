@@ -1,0 +1,55 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+   
+}
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="divTitleObjection">
+
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Title_Objection")';
+    $(document).ready(function () {
+        BindPartialView("LIST", 0);
+    });
+
+    function BindPartialView(key, TitleObjectionCode) {
+        debugger
+        //if (key == "ADDEDIT") {
+        //    Search = $('#searchCommon').val();
+        //    $('#hdnSearch').val($('#searchCommon').val());
+        //}
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                TitleObjectionCode: TitleObjectionCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleObjection').empty();
+                    $('#divTitleObjection').html(result);
+                  
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>

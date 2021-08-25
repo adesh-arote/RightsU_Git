@@ -309,6 +309,7 @@
     <Compile Include="Controllers\IPR_OppBy_AgainstController.cs" />
     <Compile Include="Controllers\Music_TitleController.cs" />
     <Compile Include="Controllers\Syn_DealController.cs" />
+    <Compile Include="Controllers\Title_ObjectionController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="Controllers\WebAPIController.cs" />
@@ -1276,6 +1277,9 @@
     <Content Include="Views\IPR_Dashboard\DashBoard.cshtml" />
     <Content Include="Views\IPR_List\_OppositionDetailPopup.cshtml" />
     <Content Include="Views\Reports\IPR_Report.cshtml" />
+    <Content Include="Views\Title_Objection\Index.cshtml" />
+    <Content Include="Views\Title_Objection\_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_Title_Objection_List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,4 +1,4 @@
-ALTER PROC USP_Title_Objection_List
+﻿CREATE PROC USP_Title_Objection_List
 (
 	@CallFrom CHAR(1) = 'A',
 	@Title_Codes VARCHAR(1000) = '',

@@ -1579,5 +1579,11 @@ namespace RightsU_DAL
             return objContext.USP_Get_Title_Import_Utility_AdvSearch(dM_Master_Import_Code, callFor);
         }
 
+        public virtual ObjectResult<USP_Title_Objection_List_Result> USP_Title_Objection_List(string callFrom, string title_Codes, string licensor_Codes)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Objection_List(callFrom, title_Codes, licensor_Codes);
+        }
+
     }
 }

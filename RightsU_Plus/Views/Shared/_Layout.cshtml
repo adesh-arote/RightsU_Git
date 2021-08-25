@@ -903,6 +903,12 @@
                                     <a class="glyphicon glyphicon-headphones" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Music_Deal_List", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForMusicDeal })"></a>
                                 </li>
                             }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForTitleObjection))
+                            {
+                                <li title="Title Objection" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-plus" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Title_Objection", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForTitleObjection })"></a>
+                                </li>
+                            }
                             if (Is_Approve == "Yes")
                             {
                                 <li class="check_button  showhidetooltip menu_margin" onclick="javascript: togglePanelVisibility('pnlApprovalList');" title="@objMessageKey.ApprovalList" data-placement="@dataPlacement">
@@ -913,15 +919,15 @@
                             }
 
                             @*<li class="seperator"></li>
-                            <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-calendar" href="#"></a>
-                            </li>
-                            <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-phone" href="#"></a>
-                            </li>
-                            <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-tent" href="#"></a>
-                            </li>*@
+                <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-calendar" href="#"></a>
+                </li>
+                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-phone" href="#"></a>
+                </li>
+                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-tent" href="#"></a>
+                </li>*@
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title) ||
                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))

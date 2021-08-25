@@ -1,0 +1,286 @@
+﻿@using UTOFrameWork.FrameworkClasses
+
+<script>
+    var IsCall = 'Y', Command_Name = "";
+
+    var URL_BindTitleObjectionList = '@Url.Action("BindTitleObjectionList", "Title_Objection")';
+    var URL_SearchTitleObjection = '@Url.Action("SearchTitleObjection", "Title_Objection")';
+    var URL_AddTitleObjectionList = '@Url.Action("AddTitleObjectionList", "Title_Objection")';
+
+    $(document).ready(function () {
+        addNumeric();
+        $('#searchCommon').keypress(function (e) {
+            debugger;
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+
+        SearchTitleObjection();
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+        if (pageNo == 0)
+            pageNo = 1;
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindTitleObjectionList();
+        else
+            IsCall = 'Y';
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+        BindTitleObjectionList()
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function pageBinding() {
+        BindTitleObjectionList()
+        SetPaging();
+    }
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+        $('#hdnPageNo').val(1);
+
+        var Licensor_Codes = $('#ddlLicensor').val();
+        var Title_Codes = $('#ddlTitle').val();
+
+        if (Licensor_Codes === '' && Title_Codes === '') {
+            $('#ddlLicensor,#ddlTitle').attr('required', true)
+            return false;
+        }
+        SearchTitleObjection(searchText);
+    }
+    
+    function BindTitleObjectionList() {
+        debugger;
+        var pageNo=$('#hdnPageNo').val(), recordPerPage = $('#txtPageSize').val();
+  
+        if(pageNo == undefined)
+            pageNo = 1;
+        else
+            pageNo = $('#hdnPageNo').val();
+
+        if(recordPerPage == undefined)
+            recordPerPage = 10;
+        else
+            recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindTitleObjectionList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleObjectionList').empty();
+                    $('#divTitleObjectionList').html(result);
+                    initializeExpander();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SearchTitleObjection() {
+        debugger;
+        showLoading();
+
+        var Licensor_Codes = $('#ddlLicensor').val();
+        var Title_Codes = $('#ddlTitle').val();
+        var Type = $("input[name='AcqSyn']:checked").val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_SearchTitleObjection,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Type: Type,
+                Title_Codes: Title_Codes,
+                Licensor_Codes: Licensor_Codes
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindTitleObjectionList();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function AddTitleObjection() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_AddTitleObjectionList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: '',
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        BindTitleObjectionList();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function CancelTitleObjection() {
+        BindTitleObjectionList();
+    }
+</script>
+
+<div class="">
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            Title Objection
+            <span></span>
+        </h2>
+
+    </div>
+    <div class="search_area" style="background-color:#eee">
+        <table class="table">
+            <tr>
+                <td>
+                    <input type="radio" checked="checked" name="AcqSyn" value="A"> Acquisition &nbsp;&nbsp;
+                    <input type="radio" name="AcqSyn" value="S"> Syndication
+                </td>
+                <td>
+                    <b>Title :&nbsp;</b>
+                    @Html.DropDownList("Title", (List<SelectListItem>)ViewBag.ddlTitle, "Please Select", new { @id = "ddlTitle" })
+                </td>
+                <td>
+                    <b>Licensor :&nbsp;</b>
+                    @Html.DropDownList("Licensor", (List<SelectListItem>)ViewBag.ddlLicensor, "Please Select", new { @id = "ddlLicensor" })
+                </td>
+                <td>
+                    <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <div class="grid_area">
+        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+        <div class="paging_area clearfix">
+            <span class="pull-left">Total Records: </span>
+            <span class="pull-left" id="lblRecordCount"></span>
+            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+            <div id="Pagination" class="pagination">
+            </div>
+            <span class="pull-right">
+                Page Size:
+                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+            </span>
+        </div>
+        <div class="tab-content clearfix table-wrapper scale_table_container">
+            <div class="scale_table_block">
+                <input type="hidden" id="hdnTitleObjectionCode" value="0" />
+                <div id="divTitleObjectionList" class="deal clearfix">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

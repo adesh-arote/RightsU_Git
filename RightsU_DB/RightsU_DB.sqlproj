@@ -1466,6 +1466,7 @@
     <Build Include="dbo\Stored Procedures\USP_Trademark_Expiry.sql" />
     <Build Include="dbo\Stored Procedures\USP_Get_IPR_Dashboard_Details.sql" />
     <Build Include="dbo\Stored Procedures\USP_IPR_IntDom_Report.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Title_Objection_List.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

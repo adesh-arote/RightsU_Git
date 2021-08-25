@@ -5281,5 +5281,21 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_IPR_Dashboard_Details_Result>("USP_Get_IPR_Dashboard_Details", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
         }
+        public virtual ObjectResult<USP_Title_Objection_List_Result> USP_Title_Objection_List(string callFrom, string title_Codes, string licensor_Codes)
+        {
+            var callFromParameter = callFrom != null ?
+                new ObjectParameter("CallFrom", callFrom) :
+                new ObjectParameter("CallFrom", typeof(string));
+
+            var title_CodesParameter = title_Codes != null ?
+                new ObjectParameter("Title_Codes", title_Codes) :
+                new ObjectParameter("Title_Codes", typeof(string));
+
+            var licensor_CodesParameter = licensor_Codes != null ?
+                new ObjectParameter("Licensor_Codes", licensor_Codes) :
+                new ObjectParameter("Licensor_Codes", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_List_Result>("USP_Title_Objection_List", callFromParameter, title_CodesParameter, licensor_CodesParameter);
+        }
     }
 }

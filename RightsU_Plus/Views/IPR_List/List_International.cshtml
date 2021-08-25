@@ -167,6 +167,7 @@
         font-style: italic;
         opacity: 0.5;
     }
+
     span.not-available {
         font-style: italic;
         opacity: 0.5;
@@ -315,11 +316,11 @@
 
 
                         </td>
-                        @{ 
+                        @{
                             var ApplicationNo = @objIPRList.Application_No;
                         }
                         <td style="width:14%;">
-                            <a title="" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;cursor:pointer" onclick="ModalPopup(@objIPRList.Application_No,@counter)">Opposition Details</a>
+                            <a title="" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;cursor:pointer" onclick="ModalPopup('@ApplicationNo',@counter,@objIPRList.IPR_Rep_Code)">Opposition Details</a>
                         </td>
                         <td class="applicant_action">
                             @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRightGranted + ",") && @objIPRList.Workflow_Status == "Approved")

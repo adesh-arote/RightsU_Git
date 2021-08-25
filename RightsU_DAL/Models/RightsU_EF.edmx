@@ -13540,6 +13540,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="AdvanceSearch" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="ExactMatch" Type="varchar(max)" Mode="In" />
         </Function>
+        <Function Name="USP_Title_Objection_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CallFrom" Type="char" Mode="In" />
+          <Parameter Name="Title_Codes" Type="varchar" Mode="In" />
+          <Parameter Name="Licensor_Codes" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USP_UPDATE_ACQ_DEAL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Version" Type="varchar" Mode="In" />
@@ -20771,6 +20776,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="SearchFor" Mode="In" Type="String" />
             <Parameter Name="User_Code" Mode="In" Type="Int32" />
             <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Title_Objection_List" ReturnType="Collection(RightsU_NeoModel.USP_Title_Objection_List_Result)">
+            <Parameter Name="CallFrom" Mode="In" Type="String" />
+            <Parameter Name="Title_Codes" Mode="In" Type="String" />
+            <Parameter Name="Licensor_Codes" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -35560,6 +35570,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Applicant_Name" Nullable="true" />
           <Property Type="DateTime" Name="Renewed_Until" Nullable="false" Precision="23" />
         </ComplexType>
+        <ComplexType Name="USP_Title_Objection_List_Result">
+          <Property Type="Int32" Name="Acq_Deal_Code" Nullable="false" />
+          <Property Type="String" Name="Agreement_No" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Deal_Desc" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Licensor" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Title" Nullable="true" MaxLength="566" />
+          <Property Type="Int32" Name="Year_Of_Production" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44630,6 +44648,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Trademark_Name" ColumnName="Trademark_Name" />
                 <ScalarProperty Name="Applicant_Name" ColumnName="Applicant_Name" />
                 <ScalarProperty Name="Renewed_Until" ColumnName="Renewed_Until" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Title_Objection_List" FunctionName="RightsU_NeoModel.Store.USP_Title_Objection_List">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Title_Objection_List_Result">
+                <ScalarProperty Name="Acq_Deal_Code" ColumnName="Acq_Deal_Code" />
+                <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
+                <ScalarProperty Name="Deal_Desc" ColumnName="Deal_Desc" />
+                <ScalarProperty Name="Licensor" ColumnName="Licensor" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Year_Of_Production" ColumnName="Year_Of_Production" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
