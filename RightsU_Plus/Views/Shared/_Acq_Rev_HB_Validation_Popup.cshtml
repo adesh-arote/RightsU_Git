@@ -1,0 +1,152 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Validate_Rev_HB_Duplication_UDT_Acq>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#lbSearchTitles').SumoSelect();
+        $('#lbSearchTitles')[0].sumo.reload();
+        $('#txtPageSizes').val('@ViewBag.PageSize');
+        $('#txtPageSizes').numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 3,
+            maxDecimalPlaces: 0
+        });
+        debugger
+        if ($('#Paginations'))
+            debugger
+            SetPaging_Popup();
+        if ($("#lbSearchTitles").val() != null)
+            $("#hdnSearchTitles").val($("#lbSearchTitles").val().join(','));
+    });
+
+    var IsCall = 'Y';
+    function SetPaging_Popup() {
+        debugger;
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback_Popup };
+        opt["items_per_page"] = '@ViewBag.PageSize';
+        opt["num_display_entries"] = 5;
+        opt["num"] = '@ViewBag.PageSize';
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Paginations").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback_Popup(page_index, jq) {
+        debugger
+        $("#hdnPageIndex").val(page_index);
+        if (IsCall == 'Y') {
+            Show_Validation_Popup($("#hdnSearchTitles").val(), $('#txtPageSizes').val(), page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+
+    function SearchResult() {
+        $("#hdnSearchTitles").val('');
+        if ($("#lbSearchTitles").val() != null)
+            $("#hdnSearchTitles").val($("#lbSearchTitles").val().join(','));
+
+        Show_Validation_Popup($("#hdnSearchTitles").val(), $('#txtPageSizes').val(), 0)
+    }
+
+    function applyPaging() {
+        debugger;
+        if ($('#txtPageSizes').val() == '' || parseInt($('#txtPageSizes').val()) == 0)
+            //showAlert('E', 'Please enter valid page size');
+        {
+            $('#txtPageSizes').addClass('required');
+            return false;
+        }
+        else {
+            Show_Validation_Popup($("#hdnSearchTitles").val(), $('#txtPageSizes').val(), 0)
+        }
+    }
+
+</script>
+<style>
+    .SumoSelect{
+        width:86% !important;
+    }
+    #btnSearch{
+        vertical-align : top;
+    }
+    .pagination .current.prev, .pagination .current.next {
+        z-index: 1 !important;
+    }
+</style>
+<span class="textFont divSearch_ErrorPopup_textFont">Title : </span>
+@Html.ListBox("lbSearchTitles", ViewBag.SearchTitles as MultiSelectList)
+@Html.Hidden("hdnSearchTitles")
+@Html.Hidden("hdnPageIndex")
+<input type="button" id="btnSearch" class="button" value="Search" onclick="return SearchResult();">
+
+<br /><br />
+<div class="paging_area clearfix">
+    <span class="pull-left">Total Records:  @ViewBag.RecordCount</span>
+    <div id="Paginations" class="pagination"></div>
+    <span class="pull-right">Page Size : @Html.TextBox("txtPageSizes",5, new { @onchange = "applyPaging()", @style = "width:35px" })</span>
+</div>
+
+@*<div style="overflow:scroll; height:600px;">*@
+    <div style="overflow-y:auto; max-height:200px;">
+        <table class="table table-bordered table-hover" style="display: table;" id="tblMileStone">
+            <tr>
+                <th class="movie">Title Name</th>
+                <th>Platform</th>
+                <th>Agreement No</th>
+                <th>Period</th>
+                <th>Region</th>
+                <th>Title Language</th>
+                <th>Subtitling</th>
+                <th>Dubbing</th>
+            </tr>
+            @{
+                foreach (var objAcqList in Model)
+                {
+                    <tr>
+                        <td width="15%">@objAcqList.Title_Name</td>
+                        <td width="15%">
+                            <div class="expandable">
+                                @objAcqList.Platform_Name
+                        </div>
+                    </td>
+                    <td width="12%">
+                        <div class="expandable">@objAcqList.Agreement_No</div>
+                    </td>
+                    <td width="8%">
+                        @objAcqList.Right_Start_Date.Value.ToString("dd MMM yyyy")
+                    @if (objAcqList.Right_End_Date != null)
+                    {
+                        @: To @objAcqList.Right_End_Date.Value.ToString("dd MMM yyyy")
+                    }
+                </td>
+                <td width="15%">
+                    <div class="expandable">@objAcqList.Country_Name</div>
+                </td>
+                <td width="5%">@objAcqList.Is_Title_Language_Right</td>
+                <td width="15%">
+                    <div class="expandable">@objAcqList.Subtitling_Language</div>
+                </td>
+                <td width="15%">
+                    <div class="expandable">@objAcqList.Dubbing_Language</div>
+                </td>
+            </tr>
+                }
+            }
+
+        </table>
+    </div>

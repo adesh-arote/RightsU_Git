@@ -336,7 +336,10 @@ function Bind_Grid(rd_value, page_index, IsCallFromPaging, showAll) {
         regionCode = "";
     else
         regionCode = $('#ddlRegionn').val().join(',');;
-
+    //if (Viewbag.DupRecords > 0) {
+    //    Show_Validation_Popup("", "5", 0);
+    //    return false;
+    //}
 
     var platformcode = $('#hdnTVCode').val();
     if (showAll == "N") {
@@ -405,7 +408,9 @@ function Bind_Grid(rd_value, page_index, IsCallFromPaging, showAll) {
                     if (result == "true") {
                         redirectToLogin();
                     }
+                    debugger;
                     $('#dvAcq_Pushback_List').html(result);
+                    //OnSuccess();
                     SetPaging(txtpageSize);
                     setNumericForPagingSize();
                     initializeExpander();
@@ -418,7 +423,45 @@ function Bind_Grid(rd_value, page_index, IsCallFromPaging, showAll) {
             });
 }
 }
-
+function OnSuccess(Error_Message) {
+    //debugger;
+    //hideLoading();
+    //if (Error_Message == "ERROR") {
+    //    Show_Validation_Popup("", 5, 0);
+    //}
+    //else if (message != "") {
+    //    MessageFrom = "SV"
+    //    showAlert('S', message, 'OK');
+    //}
+}
+function Show_Validation_Popup(search_Titles, Page_Size, Page_No) {
+    debugger;
+    $.ajax({
+        type: "POST",
+        url: "Acq_Pushback/Show_Validation_Popup",//'@Url.Action("Show_Validation_Popup", "Acq_Pushback")',
+        traditional: true,
+        async: false,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            searchForTitles: search_Titles,
+            PageSize: Page_Size,
+            PageNo: Page_No
+        }),
+        success: function (result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            $("#BindValidationPopup").html(result);
+        },
+        error: function (x, e) {
+        }
+    });
+    $('#popupValidationError').modal();
+    initializeChosen();
+    setChosenWidth('#lbSearchTitles', '500px');
+    initializeExpander();
+}
 function ValidateSave() {
     showLoading();
     var Isvalid = true;

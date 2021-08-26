@@ -28,6 +28,19 @@ namespace RightsU_WebApp.Controllers
             }
             set { Session[RightsU_Session.ACQ_DEAL_SCHEMA] = value; }
         }
+        public List<USP_Validate_Rev_HB_Duplication_UDT_Acq> lstDupRecords
+        {
+            get
+            {
+                if (Session["lstDupRecords"] == null)
+                    Session["lstDupRecords"] = new List<USP_Validate_Rev_HB_Duplication_UDT_Acq>();
+                return (List<USP_Validate_Rev_HB_Duplication_UDT_Acq>)Session["lstDupRecords"];
+            }
+            set
+            {
+                Session["lstDupRecords"] = value;
+            }
+        }
         public List<USP_List_Rights_Result> lstAcqPushback
         {
             get
@@ -63,6 +76,7 @@ namespace RightsU_WebApp.Controllers
         #region --- Page Load ---
         public PartialViewResult Index(string CallFrom)
         {
+            lstDupRecords = null;
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForAcqDeal);
             ViewBag.Mode = "LIST";
             ViewBag.TitleList = BindTitle(objDeal_Schema.Pushback_Titles ?? "");
@@ -106,8 +120,8 @@ namespace RightsU_WebApp.Controllers
             {
                 regioncode = objDeal_Schema.Pushback_Region.Split(',');
             }
-            string[] arrSelectedCountryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => acqdealpushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "I").Where(w => regioncode.Contains("C"  + "" + w.Country_Code.ToString() + "" )).Select(s => "C"  + "" + s.Country_Code.ToString() + "").ToArray();
-            string[] arrSelectedTerritoryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => acqdealpushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "G").Where(w => regioncode.Contains("T" + "" + w.Territory_Code.ToString() + "" )).Select(s => "T" + "" + s.Territory_Code.ToString() + "").ToArray();
+            string[] arrSelectedCountryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => acqdealpushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "I").Where(w => regioncode.Contains("C" + "" + w.Country_Code.ToString() + "")).Select(s => "C" + "" + s.Country_Code.ToString() + "").ToArray();
+            string[] arrSelectedTerritoryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => acqdealpushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "G").Where(w => regioncode.Contains("T" + "" + w.Territory_Code.ToString() + "")).Select(s => "T" + "" + s.Territory_Code.ToString() + "").ToArray();
 
             int?[] countryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => acqdealpushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "I").Select(s => s.Country_Code).ToArray();
             int?[] territoryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => acqdealpushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "G").Select(s => s.Territory_Code).ToArray();
@@ -116,13 +130,13 @@ namespace RightsU_WebApp.Controllers
             if (arrSelectedCountryCode.Count() > 0)
                 lsts.Where(s => s.GroupName == "Country" && arrSelectedCountryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
 
-            lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "C" + "" + s.Territory_Code.ToString() + ""}).ToList());
+            lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "C" + "" + s.Territory_Code.ToString() + "" }).ToList());
             if (arrSelectedTerritoryCode.Count() > 0)
                 lsts.Where(s => s.GroupName == "Territory" && arrSelectedTerritoryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
             string[] arrcountryCode = arrSelectedCountryCode.Select(x => x.Replace("C", "")).ToArray();
             string Country_Terr_Name = string.Join(",", new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrcountryCode.Contains(x.Country_Code.ToString())).Select(s => s.Country_Name).ToArray());
             string[] arrterritoryCode = arrSelectedTerritoryCode.Select(x => x.Replace("T", "")).ToArray();
-            Country_Terr_Name = Country_Terr_Name + ","+  string.Join(",", new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => arrterritoryCode.Contains(s.Territory_Code.ToString())).Select(s => s.Territory_Name).ToArray());
+            Country_Terr_Name = Country_Terr_Name + "," + string.Join(",", new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => arrterritoryCode.Contains(s.Territory_Code.ToString())).Select(s => s.Territory_Name).ToArray());
             string[] regionname = new string[] { "" };
             if (Country_Terr_Name != "")
                 regionname = Country_Terr_Name.TrimStart(',').TrimEnd(',').Split(',');
@@ -134,7 +148,7 @@ namespace RightsU_WebApp.Controllers
             ViewBag.Region = lsts;
             ViewBag.RegionId = "ddlRegionn";
             ViewBag.Deal_Mode = objDeal_Schema.Mode;
-          //  ViewBag.RightsFlag = "AR";
+            //  ViewBag.RightsFlag = "AR";
             ViewBag.Exclusive_Rights = new SelectList(new[]
                 {
                     new { Code = "B", Name = "Both" },
@@ -156,8 +170,8 @@ namespace RightsU_WebApp.Controllers
                 int?[] countryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => acqdealpushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "I").Select(s => s.Country_Code).ToArray();
                 int?[] territoryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => acqdealpushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "G").Select(s => s.Territory_Code).ToArray();
 
-                List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C"  + "" + s.Country_Code.ToString() + ""}).ToList();
-                lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + ""}).ToList());
+                List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + "" }).ToList();
+                lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + "" }).ToList());
                 htmldata = CustomHtmlHelpers.getGroupHtml(lsts);
             }
             else
@@ -169,8 +183,8 @@ namespace RightsU_WebApp.Controllers
                 int?[] countryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => pushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "I").Select(s => s.Country_Code).ToArray();
                 int?[] territoryCode = new Acq_Deal_Pushback_Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => pushbackCode.Contains(x.Acq_Deal_Pushback_Code) && x.Territory_Type == "G").Select(s => s.Territory_Code).ToArray();
 
-                List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + ""}).ToList();
-                lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + ""}).ToList());
+                List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + "" }).ToList();
+                lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + "" }).ToList());
                 htmldata = CustomHtmlHelpers.getGroupHtml(lsts);
                 string strPlatform = string.Join(",", new Acq_Deal_Pushback_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Acq_Deal_Code == objDeal_Schema.Deal_Code).SelectMany(x => x.Acq_Deal_Pushback_Platform).Select(w => w.Platform_Code).ToArray());
                 hdntitleCode = string.Join(",", titlecode);
@@ -184,7 +198,7 @@ namespace RightsU_WebApp.Controllers
         }
         public PartialViewResult BindRightsPlatformTreePopup(string TitleCode, string platformcode)
         {
-            if(DPlatformCode != "")
+            if (DPlatformCode != "")
                 platformcode = DPlatformCode;
             DPlatformCode = null;
             string strPlatform;
@@ -271,8 +285,8 @@ namespace RightsU_WebApp.Controllers
             int totalRcord = 0;
             ObjectParameter objPageNo = new ObjectParameter("PageNo", PageNo);
             ObjectParameter objTotalRecord = new ObjectParameter("TotalRecord", totalRcord);
-            List<USP_List_Rights_Result> lst = objUSPS.USP_List_Rights("AP", objDeal_Schema.Pushback_View, objDeal_Schema.Deal_Code, 
-                objDeal_Schema.Pushback_Titles,RegionCode,PlatformCode,"", objPageNo, txtpageSize, objTotalRecord, "").ToList();
+            List<USP_List_Rights_Result> lst = objUSPS.USP_List_Rights("AP", objDeal_Schema.Pushback_View, objDeal_Schema.Deal_Code,
+                objDeal_Schema.Pushback_Titles, RegionCode, PlatformCode, "", objPageNo, txtpageSize, objTotalRecord, "").ToList();
 
             ViewBag.RecordCount = Convert.ToInt32(objTotalRecord.Value);
             ViewBag.PageNo = Convert.ToInt32(objPageNo.Value);
@@ -295,6 +309,10 @@ namespace RightsU_WebApp.Controllers
             lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + "" }).ToList());
             lsts.Where(s => s.GroupName == "Territory" && arrSelectedTerritoryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
             ViewBag.Region = lsts;
+            //if(lstDupRecords.Count() > 0)
+            //{
+            //    Errormessage = 
+            //}
             return PartialView("~/Views/Acq_Deal/_List_Pushback.cshtml", lst);
         }
         public PartialViewResult BindPlatformTreePopup(int rightCode)
@@ -396,18 +414,18 @@ namespace RightsU_WebApp.Controllers
 
         #region --- Add/Edit/Delete Pushback ---
         [HttpPost]
-        public ActionResult Add(string Title_Code_Search, string View_Type_Search)
+        public PartialViewResult Add(string Title_Code_Search, string View_Type_Search)
         {
             ViewBag.Mode = "ADD";
             BindPlatformTreeView(new string[] { "0" });
             ViewBag.Title_Code_Search = Title_Code_Search;
             ViewBag.View_Type = View_Type_Search;
             BindAllViewBag("", "", "", "", "", "", "", 0, 0);
-            return View("~/Views/Acq_Deal/_Acq_Pushback.cshtml", new Acq_Deal_Pushback());
+            return PartialView("~/Views/Acq_Deal/_Acq_Pushback.cshtml", new Acq_Deal_Pushback());
         }
         public JsonResult Save_Pushback(Acq_Deal_Pushback obj, string hdnTitleList, string hdnRights_Platform_Code, int? Year, int? Month, int? Day,
                 string hdnTerritory_Type, string hdn_Dubbing_Type, string hdn_SubTitling_Type, string hdnTerritoryList,
-            string hdn_Dubb_LanguageList, string hdn_Sub_LanguageList, int? TCODE, int? Episode_From, int? Episode_To, int? PCODE, string Title_Code_Search, string View_Type_Search, string hdnRight_Start_Date, string hdnRight_End_Date, int? page_index, int? txtpageSize,string type)
+            string hdn_Dubb_LanguageList, string hdn_Sub_LanguageList, int? TCODE, int? Episode_From, int? Episode_To, int? PCODE, string Title_Code_Search, string View_Type_Search, string hdnRight_Start_Date, string hdnRight_End_Date, int? page_index, int? txtpageSize, string type)
         {
             string msg = obj.Acq_Deal_Pushback_Code > 0 ? "U" : "A";
             ViewBag.Mode = type;
@@ -463,7 +481,7 @@ namespace RightsU_WebApp.Controllers
                     objFirstRight.Right_Type = obj.Right_Type;
                     objFirstRight.Is_Title_Language_Right = obj.Is_Title_Language_Right;
                     objFirstRight.Remarks = obj.Remarks;
-                    objFirstRight = CreatePushbackObject(objFirstRight, hdnTitleList, hdnRights_Platform_Code, Year ?? 0, Month ?? 0,Day ?? 0,
+                    objFirstRight = CreatePushbackObject(objFirstRight, hdnTitleList, hdnRights_Platform_Code, Year ?? 0, Month ?? 0, Day ?? 0,
                         hdnTerritory_Type, hdn_Dubbing_Type, hdn_SubTitling_Type, hdnTerritoryList, hdn_Dubb_LanguageList, hdn_Sub_LanguageList, hdnRight_Start_Date, hdnRight_End_Date, ref objADPS);
                     objFirstRight.EntityState = State.Added;
                     objDeal.Acq_Deal_Pushback.Add(objFirstRight);
@@ -485,6 +503,7 @@ namespace RightsU_WebApp.Controllers
                     objDeal.SaveGeneralOnly = false;
                     objDeal.EntityState = State.Modified;
                     dynamic resultSet;
+                    
                     objADS.Save(objDeal, out resultSet);
                 }
             }
@@ -501,19 +520,159 @@ namespace RightsU_WebApp.Controllers
                 Acq_Deal_Pushback_Service objADPS = new Acq_Deal_Pushback_Service(objLoginEntity.ConnectionStringName);
                 Acq_Deal_Pushback objAcq_Deal_Pushback = CreatePushbackObject(obj, hdnTitleList, hdnRights_Platform_Code, Year ?? 0, Month ?? 0, Day ?? 0,
                     hdnTerritory_Type, hdn_Dubbing_Type, hdn_SubTitling_Type, hdnTerritoryList, hdn_Dubb_LanguageList, hdn_Sub_LanguageList, hdnRight_Start_Date, hdnRight_End_Date, ref objADPS);
-              
+                objAcq_Deal_Pushback = CreateRightObject(objAcq_Deal_Pushback, obj);
                 objADPS.Save(objAcq_Deal_Pushback, out resultSet);
+                lstDupRecords = resultSet;
+                //if (lstDupRecords.Count() > 0)
+                //{
+                //    return ShowValidationPopup(resultSet);
+                //}
+                //if (lstDupRecords.Count() > 0)
+                //{
+                //    Show_Validation_Popup("","5",1);
+                //}
                 objAcq_Deal_Pushback = null;
                 objADPS = null;
             }
             string status = msg, errorMessag = "";
             Dictionary<string, object> obj_Dictionary = new Dictionary<string, object>();
             obj_Dictionary.Add("Status", status);
+            
+            if(lstDupRecords.Count() > 0)
+            {
+                errorMessag = "ERROR";
+            }
             obj_Dictionary.Add("Error_Message", errorMessag);
             return Json(obj_Dictionary);
             //return RedirectToAction("Index", new { CallFrom = msg, Selected_Title_Code = Title_Code_Search });            
         }
+        private bool ShowValidationPopup(dynamic resultSet)
+        {
+            lstDupRecords = resultSet;
 
+            if (lstDupRecords.Count > 0)
+                return false;
+
+            return true;
+        }
+        public ActionResult Show_Validation_Popup(string searchForTitles, string PageSize, int PageNo)
+        {
+            MultiSelectList arr_Title_List = new MultiSelectList(lstDupRecords.Select(s => new { Title_Name = s.Title_Name }).Distinct().ToList(), "Title_Name", "Title_Name", searchForTitles.Split(','));
+            ViewBag.SearchTitles = arr_Title_List;
+
+            PageNo += 1;
+            ViewBag.PageNo = PageNo;
+            ViewBag.PageSize = PageSize;
+            int Record_Count = 0;
+            List<USP_Validate_Rev_HB_Duplication_UDT_Acq> lstDuplicates = (new GlobalController()).Acq_Rev_HB_Validation_Popup(lstDupRecords, searchForTitles, PageSize, PageNo, out Record_Count);
+            ViewBag.RecordCount = Record_Count;
+
+            return PartialView("_Acq_Rev_HB_Validation_Popup", lstDuplicates);
+        }
+        private Acq_Deal_Pushback CreateRightObject(Acq_Deal_Pushback objExistingRights, Acq_Deal_Pushback objMVCRights)
+        {
+           
+            Deal_Rights_UDT objDRUDT = new Deal_Rights_UDT();
+
+            objDRUDT.Title_Code = objExistingRights.Acq_Deal_Pushback_Title.Select(x=>x.Title_Code).First();
+            objDRUDT.Platform_Code = objExistingRights.Acq_Deal_Pushback_Platform.Select(x=>x.Platform_Code).First();
+            //objDRUDT.Deal_Rights_Code = objPage_Properties.TCODE > 0 ? 0 : objPage_Properties.RCODE; //objExistingRights.Acq_Deal_Rights_Code;
+            objDRUDT.Deal_Rights_Code = objExistingRights.Acq_Deal_Pushback_Code;
+            objDRUDT.Deal_Code = objExistingRights.Acq_Deal_Code = objDeal_Schema.Deal_Code;
+            //objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive ? "Y" : "N";
+            //objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive;
+            //objExistingRights.Is = Is_Under_Production;
+            //objDRUDT.Is_Theatrical_Right = objExistingRights.Is = Is_Theatrical_Right ? "Y" : "N";
+
+            objDRUDT.Is_Title_Language_Right = objExistingRights.Is_Title_Language_Right;  /*? "Y" : "N";*/
+            //objDRUDT.Sub_License_Code = objMVCRights.Sub_License_Code;
+            //objDRUDT.Is_Sub_License = objExistingRights.Is_Sub_License = chkSubLicensing.Checked ? "Y" : "N";
+
+            //if (objMVCRights.Sub_License_Code > 0)
+            //if (form["hdnSub_License_Code"] != "0" && form["hdnSub_License_Code"] != null && form["hdnSub_License_Code"] != "" && form["hdnSub_License_Code"] != "-1")
+            //{
+            //    objDRUDT.Sub_License_Code = objExistingRights.Sub_License_Code = Convert.ToInt32(form["hdnSub_License_Code"]);
+            //    objDRUDT.Is_Sub_License = objExistingRights.Is_Sub_License = "Y";
+            //}
+            //else
+            //{
+            //    objDRUDT.Sub_License_Code = objExistingRights.Sub_License_Code = null;
+            //    objDRUDT.Is_Sub_License = objExistingRights.Is_Sub_License = "N";
+            //}
+
+            //objDRUDT.Is_Theatrical_Right = objExistingRights.Is_Theatrical_Right = objMVCRights.Is_Theatrical_Right.ToUpper() == "TRUE" ? "Y" : "N";
+            if (objMVCRights.Right_Type == "M" && (objExistingRights.Right_Type == "Y" || objExistingRights.Right_Type == "U"))
+                objExistingRights.Right_Start_Date = objExistingRights.Right_End_Date = objExistingRights.Right_Start_Date = objExistingRights.Right_End_Date = null;
+
+            objDRUDT.Right_Type = objExistingRights.Right_Type = objMVCRights.Right_Type;
+            objExistingRights.Right_Type = objMVCRights.Right_Type;
+            objDRUDT.Term = objExistingRights.Term;//= "";
+            objDRUDT.Milestone_Type_Code = objExistingRights.Milestone_Type_Code = null;
+            objDRUDT.Milestone_No_Of_Unit = objExistingRights.Milestone_No_Of_Unit = null;
+            objDRUDT.Milestone_Unit_Type = objExistingRights.Milestone_Unit_Type = null;
+
+            objExistingRights.LstDeal_Pushback_UDT = new List<Deal_Rights_UDT>();
+            objExistingRights.LstDeal_Pushback_UDT.Add(objDRUDT);
+
+
+            bool newTitle = false;
+            objExistingRights.LstDeal_Pushback_Title_UDT.Clear();
+            foreach (Acq_Deal_Pushback_Title objTitle in objExistingRights.Acq_Deal_Pushback_Title)
+            {
+                //if (objTitle.Title_Code == objPage_Properties.TCODE
+                //    && objTitle.Episode_From == objPage_Properties.Episode_From && objTitle.Episode_To == objPage_Properties.Episode_To) { }
+                //else if (objTitle.EntityState != State.Deleted)
+                if (objTitle.EntityState != State.Deleted)
+                {
+                    Deal_Rights_Title_UDT objDeal_Rights_Title_UDT = new Deal_Rights_Title_UDT();
+                    objDeal_Rights_Title_UDT.Deal_Rights_Code = (objTitle.Acq_Deal_Pushback_Code == null) ? 0 : objTitle.Acq_Deal_Pushback_Code;
+                    objDeal_Rights_Title_UDT.Title_Code = (objTitle.Title_Code == null) ? 0 : objTitle.Title_Code;
+                    objDeal_Rights_Title_UDT.Episode_From = objTitle.Episode_From;
+                    objDeal_Rights_Title_UDT.Episode_To = objTitle.Episode_To;
+                    objExistingRights.LstDeal_Pushback_Title_UDT.Add(objDeal_Rights_Title_UDT);
+                    newTitle = true;
+                }
+            }
+
+            objExistingRights.LstDeal_Pushback_Platform_UDT = new List<Deal_Rights_Platform_UDT>(
+                            objExistingRights.Acq_Deal_Pushback_Platform.Where(t => t.EntityState != State.Deleted && (t.Platform_Code != objExistingRights.Acq_Deal_Pushback_Platform.Select(x=>x.Platform_Code).First() || newTitle)).Select(x =>
+                            new Deal_Rights_Platform_UDT
+                            {
+                                Deal_Rights_Code = (x.Acq_Deal_Pushback_Code == null) ? 0 : x.Acq_Deal_Pushback_Code,
+                                Platform_Code = (x.Platform_Code == null) ? 0 : x.Platform_Code
+                            }));
+
+            objExistingRights.LstDeal_Pushback_Territory_UDT = new List<Deal_Rights_Territory_UDT>(
+                            objExistingRights.Acq_Deal_Pushback_Territory.Where(t => t.EntityState != State.Deleted).Select(x =>
+                            new Deal_Rights_Territory_UDT
+                            {
+                                Deal_Rights_Code = (x.Acq_Deal_Pushback_Code == null) ? 0 : x.Acq_Deal_Pushback_Code,
+                                Territory_Code = (x.Territory_Code == null) ? 0 : x.Territory_Code,
+                                Country_Code = (x.Country_Code == null) ? 0 : x.Country_Code,
+                                Territory_Type = (x.Territory_Type == null) ? "I" : x.Territory_Type
+                            }));
+
+            objExistingRights.LstDeal_Pushback_Subtitling_UDT = new List<Deal_Rights_Subtitling_UDT>(
+                            objExistingRights.Acq_Deal_Pushback_Subtitling.Where(t => t.EntityState != State.Deleted).Select(x =>
+                            new Deal_Rights_Subtitling_UDT
+                            {
+                                Deal_Rights_Code = (x.Acq_Deal_Pushback_Code == null) ? 0 : x.Acq_Deal_Pushback_Code,
+                                Subtitling_Code = (x.Language_Code == null) ? 0 : x.Language_Code,
+                                Language_Type = (x.Language_Type == null) ? "L" : x.Language_Type,
+                                Language_Group_Code = (x.Language_Group_Code == null) ? 0 : x.Language_Group_Code
+                            }));
+
+            objExistingRights.LstDeal_Pushback_Dubbing_UDT = new List<Deal_Rights_Dubbing_UDT>(
+                            objExistingRights.Acq_Deal_Pushback_Dubbing.Where(t => t.EntityState != State.Deleted).Select(x =>
+                            new Deal_Rights_Dubbing_UDT
+                            {
+                                Deal_Rights_Code = (x.Acq_Deal_Pushback_Code == null) ? 0 : x.Acq_Deal_Pushback_Code,
+                                Dubbing_Code = (x.Language_Code == null) ? 0 : x.Language_Code,
+                                Language_Type = (x.Language_Type == null) ? "L" : x.Language_Type,
+                                Language_Group_Code = (x.Language_Group_Code == null) ? 0 : x.Language_Group_Code
+                            }));
+            return objExistingRights;
+        }
         private Acq_Deal_Pushback CreatePushbackObject(Acq_Deal_Pushback objDeal_Pushback, string hdnMMovies, string hdnRights_Platform, int? Year, int? Month, int? Day,
                string hdnTerritory_Type, string hdn_Dubbing_Type, string hdn_SubTitling_Type, string hdnTerritoryList, string hdn_Dubb_LanguageList, string hdn_Sub_LanguageList, string Right_Start_Date, string Right_End_Date, ref Acq_Deal_Pushback_Service objADPS)
         {
@@ -599,8 +758,8 @@ namespace RightsU_WebApp.Controllers
                 }
             }
             #endregion
-        #region=========Save platform=====
-        string strSelectedPlatforms = hdnRights_Platform.Trim().Replace("_", "").Replace(" ", "").Replace("_0", "");
+            #region=========Save platform=====
+            string strSelectedPlatforms = hdnRights_Platform.Trim().Replace("_", "").Replace(" ", "").Replace("_0", "");
             if (strSelectedPlatforms.Trim() != "")
             {
                 objAcq_Deal_Pushback.Acq_Deal_Pushback_Platform.ToList().ForEach(i => i.EntityState = State.Deleted);
@@ -996,7 +1155,7 @@ namespace RightsU_WebApp.Controllers
                         msg = objMessageKey.ReverseHoldbackDeletedSuccessfully;
                 }
             }
-            catch (Exception ex){}
+            catch (Exception ex) { }
             ViewBag.Mode = "LIST";
             objDeal_Schema.List_Pushback.Clear();
             FillForm(View_Type, Title_Code_Serch, txtpageSize, PageNo);
@@ -1005,14 +1164,14 @@ namespace RightsU_WebApp.Controllers
             ObjectParameter objPageNo = new ObjectParameter("PageNo", PageNo);
             ObjectParameter objTotalRecord = new ObjectParameter("TotalRecord", totalRcord);
             List<USP_List_Rights_Result> lst = objUSPS.USP_List_Rights("AP", objDeal_Schema.Pushback_View, objDeal_Schema.Deal_Code,
-                objDeal_Schema.Pushback_Titles, "", "", "",  objPageNo, txtpageSize, objTotalRecord, "").ToList();
+                objDeal_Schema.Pushback_Titles, "", "", "", objPageNo, txtpageSize, objTotalRecord, "").ToList();
 
             ViewBag.RecordCount = Convert.ToInt32(objTotalRecord.Value);
             ViewBag.PageNo = Convert.ToInt32(objPageNo.Value);
 
             return PartialView("~/Views/Acq_Deal/_List_Pushback.cshtml", lst);
         }
-        public ActionResult Edit_Pushback(int PushbackCode, int TitleCode, int PlatformCode, int EpisodeFrom, int EpisodeTo, string View_Type, string Title_Code_Search, int? page_index, int? txtpageSize)
+        public PartialViewResult Edit_Pushback(int PushbackCode, int TitleCode, int PlatformCode, int EpisodeFrom, int EpisodeTo, string View_Type, string Title_Code_Search, int? page_index, int? txtpageSize)
         {
             ViewBag.PushbackCode = PushbackCode;
             ViewBag.Mode = "EDIT";
@@ -1077,7 +1236,7 @@ namespace RightsU_WebApp.Controllers
             //List<USP_List_Rights_Result> lst = BindGrid(Title_Code_Search, View_Type);
             int a = selected_Country_Territory_Code.Split(',').Count();
             ViewBag.RCount = a;
-            return View("~/Views/Acq_Deal/_Acq_Pushback.cshtml", objAcq_Deal_Pushback);
+            return PartialView("~/Views/Acq_Deal/_Acq_Pushback.cshtml", objAcq_Deal_Pushback);
         }
 
 

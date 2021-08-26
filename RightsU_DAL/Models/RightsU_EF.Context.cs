@@ -698,6 +698,27 @@ namespace RightsU_DAL
             return this.Database.ExecuteStoredProcedure<USP_Validate_Rights_Duplication_UDT>(proc);
         }
 
+        public IEnumerable<USP_Validate_Rev_HB_Duplication_UDT_Acq> USP_Validate_Rev_HB_Duplication_UDT(
+           List<Deal_Rights_UDT> LstDeal_Rights_UDT,
+           List<Deal_Rights_Title_UDT> LstDeal_Rights_Title_UDT,
+           List<Deal_Rights_Platform_UDT> LstDeal_Rights_Platform_UDT,
+           List<Deal_Rights_Territory_UDT> LstDeal_Rights_Territory_UDT,
+           List<Deal_Rights_Subtitling_UDT> LstDeal_Rights_Subtitling_UDT,
+           List<Deal_Rights_Dubbing_UDT> LstDeal_Rights_Dubbing_UDT
+           //string CallFrom
+           )
+        {
+            var proc = new USP_Validate_Rev_HB_Duplication_UDT_Acq();
+            proc.Deal_Rights = LstDeal_Rights_UDT;
+            proc.Deal_Rights_Title = LstDeal_Rights_Title_UDT;
+            proc.Deal_Rights_Platform = LstDeal_Rights_Platform_UDT;
+            proc.Deal_Rights_Territory = LstDeal_Rights_Territory_UDT;
+            proc.Deal_Rights_Subtitling = LstDeal_Rights_Subtitling_UDT;
+            proc.Deal_Rights_Dubbing = LstDeal_Rights_Dubbing_UDT;
+            //proc.CallFrom = CallFrom;
+            return this.Database.ExecuteStoredProcedure<USP_Validate_Rev_HB_Duplication_UDT_Acq> (proc);
+        }
+
         public IEnumerable<USP_Get_Data_Restriction_Remark_UDT> USP_Get_Data_Restriction_Remark_UDT(
            List<Deal_Rights_UDT> LstDeal_Rights_UDT,
            List<Deal_Rights_Title_UDT> LstDeal_Rights_Title_UDT,
