@@ -2355,6 +2355,69 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class Objection_Type_Service : BusinessLogic<Objection_Type>
+    {
+        private readonly Objection_Type_Repository objRepository;
+
+        public Objection_Type_Service(string Connection_Str)
+        {
+            this.objRepository = new Objection_Type_Repository(Connection_Str);
+        }
+        public IQueryable<Objection_Type> SearchFor(Expression<Func<Objection_Type, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Objection_Type GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Objection_Type objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Objection_Type objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Objection_Type objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Objection_Type objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Objection_Type objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        public override bool ValidateDelete(Objection_Type objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Objection_Type objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Objection_Type_Name == objToValidate.Objection_Type_Name && s.Objection_Type_Code != objToValidate.Objection_Type_Code).Count() > 0)
+            {
+                resultSet = "Objection Type already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
     public class Grade_Master_Service : BusinessLogic<Grade_Master>
     {
         private readonly Grade_Master_Repository objRepository;

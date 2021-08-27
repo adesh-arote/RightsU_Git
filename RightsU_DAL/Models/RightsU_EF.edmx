@@ -3689,6 +3689,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Is_Active" Type="char" MaxLength="1" />
           <Property Name="Type" Type="varchar" MaxLength="3" />
         </EntityType>
+        <EntityType Name="Objection_Type">
+          <Key>
+            <PropertyRef Name="Objection_Type_Code" />
+          </Key>
+          <Property Name="Objection_Type_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Objection_Type_Name" Type="varchar(max)" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
         <EntityType Name="Paf">
           <Key>
             <PropertyRef Name="Paf_Code" />
@@ -14248,6 +14256,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Music_Title_Talent" EntityType="Self.Music_Title_Talent" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Music_Title_Theme" EntityType="Self.Music_Title_Theme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Music_Type" EntityType="Self.Music_Type" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Objection_Type" EntityType="Self.Objection_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paf" EntityType="Self.Paf" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paf_Cost_Type" EntityType="Self.Paf_Cost_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paf_Cost_Type_Mapping" EntityType="Self.Paf_Cost_Type_Mapping" Schema="dbo" store:Type="Tables" />
@@ -20772,6 +20781,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="User_Code" Mode="In" Type="Int32" />
             <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="Objection_Type" EntityType="RightsU_NeoModel.Objection_Type" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35560,6 +35570,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Applicant_Name" Nullable="true" />
           <Property Type="DateTime" Name="Renewed_Until" Nullable="false" Precision="23" />
         </ComplexType>
+        <EntityType Name="Objection_Type">
+          <Key>
+            <PropertyRef Name="Objection_Type_Code" />
+          </Key>
+          <Property Name="Objection_Type_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Objection_Type_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44633,6 +44651,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Objection_Type">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Objection_Type">
+              <MappingFragment StoreEntitySet="Objection_Type">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Objection_Type_Name" ColumnName="Objection_Type_Name" />
+                <ScalarProperty Name="Objection_Type_Code" ColumnName="Objection_Type_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
