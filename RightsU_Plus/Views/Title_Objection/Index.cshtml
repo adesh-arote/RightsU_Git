@@ -1,13 +1,15 @@
 ﻿@using UTOFrameWork.FrameworkClasses
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-   
+
 }
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
 
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
-            <div class="divTitleObjection">
+            <div id="divTitleObjection">
 
             </div>
         </div>
@@ -38,13 +40,14 @@
                 TitleObjectionCode: TitleObjectionCode
             }),
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
                 else {
                     $('#divTitleObjection').empty();
                     $('#divTitleObjection').html(result);
-                  
+
                 }
             },
             error: function (result) {

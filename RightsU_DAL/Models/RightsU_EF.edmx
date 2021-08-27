@@ -35577,6 +35577,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Licensor" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Title" Nullable="true" MaxLength="566" />
           <Property Type="Int32" Name="Year_Of_Production" Nullable="true" />
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="Int32" Name="Licensor_Code" Nullable="false" />
         </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
@@ -44660,6 +44662,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Licensor" ColumnName="Licensor" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Year_Of_Production" ColumnName="Year_Of_Production" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Licensor_Code" ColumnName="Licensor_Code" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

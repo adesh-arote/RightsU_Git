@@ -18,5 +18,7 @@ namespace RightsU_Entities
         public string Licensor { get; set; }
         public string Title { get; set; }
         public Nullable<int> Year_Of_Production { get; set; }
+        public Nullable<int> Title_Code { get; set; }
+        public int Licensor_Code { get; set; }
     }
 }

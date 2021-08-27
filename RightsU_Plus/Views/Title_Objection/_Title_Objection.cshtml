@@ -6,6 +6,7 @@
     var URL_BindTitleObjectionList = '@Url.Action("BindTitleObjectionList", "Title_Objection")';
     var URL_SearchTitleObjection = '@Url.Action("SearchTitleObjection", "Title_Objection")';
     var URL_AddTitleObjectionList = '@Url.Action("AddTitleObjectionList", "Title_Objection")';
+    var URL_BindTitleLicencor = '@Url.Action("BindTitleLicencor", "Title_Objection")';
 
     $(document).ready(function () {
         addNumeric();
@@ -16,10 +17,70 @@
                 return false;
             }
         });
-
+        $("#ddlTitle,#ddlLicensor").SumoSelect();
         SearchTitleObjection();
+
+        $("#ddlTitle").change(function () {
+            TitleLicencorMapping("L")
+        });
+        $("#ddlLicensor").change(function () {
+            TitleLicencorMapping("T")
+        });
     });
 
+    function TitleLicencorMapping(MapFor) {
+        debugger;
+        var Licensor_Codes = $('#ddlLicensor').val();
+        var Title_Codes = $('#ddlTitle').val();
+        var Type = $("input[name='AcqSyn']:checked").val();
+
+        if (Licensor_Codes != null) {
+            Licensor_Codes = Licensor_Codes.join(',')                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+        }
+        else if (Title_Codes != null) {
+            Title_Codes = Title_Codes.join(',')
+        }
+  
+        $.ajax({
+            type: "POST",
+            url: URL_BindTitleLicencor,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Type: Type,
+                Title_Codes: Title_Codes,
+                Licensor_Codes: Licensor_Codes,
+                MapFor: MapFor
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    if (MapFor == "T") {
+                        $(result.lstTitle).each(function (index, item) {
+                            $("#ddlTitle").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlTitle")[0].sumo.reload();
+                    }
+                    else if (MapFor == "L") {
+                        $(result.lstLisencor).each(function (index, item) {
+                            $("#ddlLicensor").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlLicensor")[0].sumo.reload();
+                    }
+                    //   $("#ddlSrchDirector").val(obj_Search[0].DirectorCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
     function addNumeric() {
         $(".pagingSize").numeric({
             allowMinus: false,
@@ -245,11 +306,11 @@
                 </td>
                 <td>
                     <b>Title :&nbsp;</b>
-                    @Html.DropDownList("Title", (List<SelectListItem>)ViewBag.ddlTitle, "Please Select", new { @id = "ddlTitle" })
+                    @Html.DropDownList("Title", (IEnumerable<SelectListItem>)ViewBag.ddlTitle, new { @id = "ddlTitle", @multiple = "multiple" })
                 </td>
                 <td>
                     <b>Licensor :&nbsp;</b>
-                    @Html.DropDownList("Licensor", (List<SelectListItem>)ViewBag.ddlLicensor, "Please Select", new { @id = "ddlLicensor" })
+                    @Html.DropDownList("Licensor", (IEnumerable<SelectListItem>)ViewBag.ddlLicensor, new { @id = "ddlLicensor", @multiple = "multiple" })
                 </td>
                 <td>
                     <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">

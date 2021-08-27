@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class Title_ObjectionController : BaseController
     {
         #region Properties
+
         private List<RightsU_Entities.USP_Title_Objection_List_Result> lstUSP_Title_Objection_List
         {
             get
@@ -41,13 +42,23 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult BindPartialPages(string key, int TitleObjectionCode)
         {
 
-            //string ModuleName = "";
             //Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
             //RightsU_Entities.Vendor objVendor = null;
             if (key == "LIST")
             {
-                ViewBag.ddlTitle = 
-                ViewBag.ddlLicensor
+
+                ViewBag.ddlTitle = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName)
+                                         .USP_Title_Objection_List("A", "", "")
+                                         .ToList()
+                                         .Select(x => new { x.Title_Code, x.Title }).ToList().Distinct()
+                                         ,"Title_Code", "Title");
+
+                ViewBag.ddlLicensor = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName)
+                                        .USP_Title_Objection_List("A", "", "")
+                                        .ToList()
+                                        .Select(x => new { x.Licensor_Code, x.Licensor }).ToList().Distinct()
+                                        ,"Licensor_Code", "Licensor");
+
                 lstUSP_Title_Objection_List_Searched = lstUSP_Title_Objection_List = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List("A", "", "").ToList();
                 ViewBag.UserModuleRights = GetUserModuleRights();
                 return PartialView("~/Views/Title_Objection/_Title_Objection.cshtml");
@@ -276,7 +287,7 @@ namespace RightsU_Plus.Controllers
             return pageNo;
         }
 
-        public JsonResult SearchTitleObjection(string Type, string Title_Codes, string Licensor_Codes)
+        public JsonResult SearchTitleObjection(string Type, string Title_Codes = "", string Licensor_Codes = "")
         {
             lstUSP_Title_Objection_List_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List(Type, Title_Codes, Licensor_Codes).ToList();
 
@@ -286,6 +297,31 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+        public JsonResult BindTitleLicencor(string Type, string MapFor, string Title_Codes = "",string Licensor_Codes = "" )
+        {
+            Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
+            if (MapFor == "T")
+            {
+                SelectList lstTitle = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName)
+                                    .USP_Title_Objection_List(Type, Title_Codes, Licensor_Codes)
+                                    .ToList()
+                                    .Select(x=> new { Display_Value = x.Title_Code, Display_Text = x.Title }).ToList().Distinct()
+                                    , "Display_Value", "Display_Text");
+                obj_Dictionary.Add("lstTitle", lstTitle);
+            }
+            else if (MapFor == "L")
+            {
+                SelectList lstLicensor = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName)
+                                .USP_Title_Objection_List(Type, Title_Codes, Licensor_Codes)
+                                .ToList()
+                                .Select(x => new { Display_Value= x.Licensor_Code, Display_Text = x.Licensor }).ToList().Distinct()
+                                , "Display_Value", "Display_Text");
+                obj_Dictionary.Add("lstLicensor", lstLicensor); 
+            }
+
+            return Json(obj_Dictionary);
+        }
+        
         #endregion
     }
 }
