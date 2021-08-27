@@ -48,6 +48,46 @@ namespace RightsU_Entities
         public string Is_Title_Language_Right { get; set; }
         public string Agreement_No { get; set; }
     }
+    [StoredProcedure("USP_Validate_Rev_HB_Duplication_UDT_Acq")]
+    public class USP_Validate_Rev_HB_Duplication_UDT_Acq
+    {
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights")]
+        public List<Deal_Rights_UDT> Deal_Rights { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Title")]
+        public List<Deal_Rights_Title_UDT> Deal_Rights_Title { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Platform")]
+        public List<Deal_Rights_Platform_UDT> Deal_Rights_Platform { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Territory")]
+        public List<Deal_Rights_Territory_UDT> Deal_Rights_Territory { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Subtitling")]
+        public List<Deal_Rights_Subtitling_UDT> Deal_Rights_Subtitling { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Dubbing")]
+        public List<Deal_Rights_Dubbing_UDT> Deal_Rights_Dubbing { get; set; }
+
+        //[StoredProcedureParameter(SqlDbType.VarChar, ParameterName = "CallFrom")]
+        //public string CallFrom { get; set; }
+
+        public string Platform_Name { get; set; }
+        public int Platform_Code { get; set; }
+        public string Territory_Name { get; set; }
+        public string Country_Name { get; set; }
+        public string Territory_Type { get; set; }
+        public string Title_Name { get; set; }
+        public Nullable<DateTime> Right_Start_Date { get; set; }
+        public Nullable<DateTime> Right_End_Date { get; set; }
+        public string Right_Type { get; set; }
+        public string Is_Sub_License { get; set; }
+        public string Subtitling_Language { get; set; }
+        public string Dubbing_Language { get; set; }
+        public string ErrorMSG { get; set; }
+        public string Is_Title_Language_Right { get; set; }
+        public string Agreement_No { get; set; }
+    }
 
     [StoredProcedure("USP_Validate_Show_Episode_UDT")]
     public class USP_Validate_Show_Episode_UDT

@@ -108,6 +108,23 @@ namespace RightsU_DAL
                 LstDeal_Rights_UDT, LstDeal_Rights_Title_UDT, LstDeal_Rights_Platform_UDT, LstDeal_Rights_Territory_UDT, LstDeal_Rights_Subtitling_UDT, LstDeal_Rights_Dubbing_UDT, CallFrom
                 );
         }
+
+        public IEnumerable<USP_Validate_Rev_HB_Duplication_UDT_Acq> USP_Validate_Rev_HB_Duplication_UDT(
+            List<Deal_Rights_UDT> LstDeal_Rights_UDT,
+            List<Deal_Rights_Title_UDT> LstDeal_Rights_Title_UDT,
+            List<Deal_Rights_Platform_UDT> LstDeal_Rights_Platform_UDT,
+            List<Deal_Rights_Territory_UDT> LstDeal_Rights_Territory_UDT,
+            List<Deal_Rights_Subtitling_UDT> LstDeal_Rights_Subtitling_UDT,
+            List<Deal_Rights_Dubbing_UDT> LstDeal_Rights_Dubbing_UDT
+            //string CallFrom
+            )
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Validate_Rev_HB_Duplication_UDT(
+                LstDeal_Rights_UDT, LstDeal_Rights_Title_UDT, LstDeal_Rights_Platform_UDT, LstDeal_Rights_Territory_UDT, LstDeal_Rights_Subtitling_UDT, LstDeal_Rights_Dubbing_UDT/*, CallFrom*/
+                );
+        }
+
         public IEnumerable<USP_Get_Data_Restriction_Remark_UDT> USP_Get_Data_Restriction_Remark_UDT(
             List<Deal_Rights_UDT> LstDeal_Rights_UDT,
             List<Deal_Rights_Title_UDT> LstDeal_Rights_Title_UDT,
