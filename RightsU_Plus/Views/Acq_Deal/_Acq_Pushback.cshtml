@@ -283,20 +283,20 @@
                 <div>
                     <div class="form_fields acq">
                         <div class="modal_block modal_header">
-                            <a class="close" data-dismiss="modal" href="#">
+                            <a class="close" onclick="return HidePopup();" href="#">
                                 <span>×</span>
                                 <span class="sr-only">Close</span>
                             </a>
                             <h2>@objMessageKey.DuplicateCombination</h2>
                         </div>
-                        <div class="modal_block" style="overflow-y:hidden!important">
+                        <div  class="modal_block" style="overflow-y:hidden!important">
                             <div id="BindValidationPopup"></div>
                         </div>
                         <div class="modal_block_full">
                             <div class="form_links">
                                 <ul class="modal_block clearfix">
                                     <li>
-                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                        <a onclick="return HidePopup();" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
                                     </li>
                                 </ul>
                             </div>
@@ -398,6 +398,11 @@
     $('#txtDay').change(function () {
         OnFocusLostTerm();
     });
+
+    function HidePopup() {
+        debugger;
+        $('#popupValidationError').modal('hide');
+    }
     function SetMaxDt() {
         setMinMaxDates('txtRight_Start_Date', '', $('#txtRight_End_Date').val());
     }
