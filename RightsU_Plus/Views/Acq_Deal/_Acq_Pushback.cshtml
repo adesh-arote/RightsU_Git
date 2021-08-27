@@ -53,9 +53,9 @@
 {
     <div class="modal-dialog">
         <div class="modal-content clearfix">
-            @using (Html.BeginForm("Save_Pushback", "Acq_Pushback", FormMethod.Post, new { objAD_MVC = Model, @ID = "frm_Save_Pushback" }))
+            @using (Html.BeginForm("Save_Pushback", "Acq_Pushback", new AjaxOptions { OnSuccess = "OnSuccess" }, FormMethod.Post, new { objAD_MVC = Model, @ID = "frm_Save_Pushback" }))
             {
-               // <input type="hidden" id="hdntype" name="hdntype" value="@ViewBag.Mode" />
+                // <input type="hidden" id="hdntype" name="hdntype" value="@ViewBag.Mode" />
                 @Html.Hidden("type", (string)(ViewBag.Mode ?? 0))
                 <div>
                     <div class="form_fields acq">
@@ -154,24 +154,24 @@
                                                                 <label>@objMessageKey.EndDate</label>
                                                                 @{
                                                                     @(Model.Is_Tentative == "Y" ? @Html.TextBoxFor(model => model.Right_End_Date,
-                                                                    new
-                                                                    {
-                                                                        @name = "Right_End_Date",
-                                                                        @class = "isDatepicker",
-                                                                        @placeholder = "DD/MM/YYYY",
-                                                                        id = "txtRight_End_Date",
-                                                                        @disabled = "disabled",
-                                                                        Value = ""
-                                                                    }) :
-                                                                    Html.TextBoxFor(model => model.Right_End_Date, new
-                                                                    {
-                                                                        @name = "Right_End_Date",
-                                                                        @class = "isDatepicker",
-                                                                        @placeholder = "DD/MM/YYYY",
-                                                                        id = "txtRight_End_Date",
-                                                                        Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
-                                                                    }))
-                                                                                                                                    }
+                                                                            new
+                                                                            {
+                                                                                @name = "Right_End_Date",
+                                                                                @class = "isDatepicker",
+                                                                                @placeholder = "DD/MM/YYYY",
+                                                                                id = "txtRight_End_Date",
+                                                                                @disabled = "disabled",
+                                                                                Value = ""
+                                                                            }) :
+                                                                            Html.TextBoxFor(model => model.Right_End_Date, new
+                                                                            {
+                                                                                @name = "Right_End_Date",
+                                                                                @class = "isDatepicker",
+                                                                                @placeholder = "DD/MM/YYYY",
+                                                                                id = "txtRight_End_Date",
+                                                                                Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
+                                                                            }))
+                                                                }
                                                                 @Html.Hidden("hdnRight_Start_Date")
                                                                 @Html.Hidden("hdnRight_End_Date")
                                                             </li>
@@ -276,7 +276,68 @@
         </div>
     </div>
 }
-
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupValidationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DuplicateCombination</h2>
+                        </div>
+                        <div class="modal_block" style="overflow-y:hidden!important">
+                            <div id="BindValidationPopup"></div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupHoldbackValidationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DuplicateHoldbackCombination</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="BindHoldbackValidationPopup"></div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(function () {
        // $("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');
@@ -588,7 +649,7 @@
     function Validate_Save_Pushback() {
         debugger;
 
-        
+
 
 
 
@@ -711,7 +772,7 @@
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("Save_Pushback", "Acq_Pushback")',
-                data: formData,         
+                data: formData,
                 async: false,
                 success: function (result) {
                     if (result == "true") {
@@ -719,6 +780,10 @@
                     }
                     hideLoading();
                     if (result.Status == "U" || result.Status == "A") {
+                        if (result.Error_Message == "ERROR") {
+                            Show_Validation_Popup("",5, 0);
+                            return false;
+                        }
                         $('#popEditRevHB').modal('hide');
 
                         var msg = result.Status == "A" ? PushbackText + " saved successfully" : PushbackText + " updated successfully";
@@ -730,6 +795,7 @@
                         var rd_value = $('input[name=optViewType]:checked').val();
                         Bind_Grid(rd_value, page_Index, 'N');
                         BindRightsFilterData();
+                        //OnSuccess(result.message);
                         // showAlert("I", msg, "OK");
                     }
                 },
@@ -752,6 +818,7 @@
         }
     });
 
+    
     function CalculateEndDate(startDate, year, month, days) {
         debugger;
         var yearToMonth = 12 * year;
