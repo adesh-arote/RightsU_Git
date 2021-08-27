@@ -607,9 +607,9 @@ namespace RightsU_WebApp.Controllers
             objDRUDT.Right_Type = objExistingRights.Right_Type = objMVCRights.Right_Type;
             objExistingRights.Right_Type = objMVCRights.Right_Type;
             objDRUDT.Term = objExistingRights.Term;//= "";
-            objDRUDT.Milestone_Type_Code = objExistingRights.Milestone_Type_Code = null;
-            objDRUDT.Milestone_No_Of_Unit = objExistingRights.Milestone_No_Of_Unit = null;
-            objDRUDT.Milestone_Unit_Type = objExistingRights.Milestone_Unit_Type = null;
+            objDRUDT.Milestone_Type_Code = objExistingRights.Milestone_Type_Code; //= null;
+            objDRUDT.Milestone_No_Of_Unit = objExistingRights.Milestone_No_Of_Unit; //= null;
+            objDRUDT.Milestone_Unit_Type = objExistingRights.Milestone_Unit_Type; //= null;
 
             objExistingRights.LstDeal_Pushback_UDT = new List<Deal_Rights_UDT>();
             objExistingRights.LstDeal_Pushback_UDT.Add(objDRUDT);
