@@ -1,5 +1,4 @@
-﻿
-CREATE Procedure [dbo].[USP_Acquition_Deal_List_Report](
+﻿CREATE Procedure [dbo].[USP_Acquition_Deal_List_Report](
 	@Agreement_No VARCHAR(100), 
 	@Is_Master_Deal VARCHAR(2), 
 	@Start_Date VARCHAR(30), 
@@ -943,7 +942,7 @@ BEGIN
 	INTO #TempAcqDealListReport
 	FROM #TEMP_Acquition_Deal_List_Report TEMP_ADLR
 		LEFT JOIN Acq_Deal_Movie ADM ON TEMP_ADLR.Master_Deal_Movie_Code_ToLink = ADM.Acq_Deal_Movie_Code
-	ORDER BY TEMP_ADLR.Agreement_No, TEMP_ADLR.Is_Pushback
+	ORDER BY TEMP_ADLR.Business_Unit_Name, TEMP_ADLR.Agreement_No, TEMP_ADLR.Is_Pushback
 
 	BEGIN
 		SELECT 
@@ -1040,11 +1039,11 @@ BEGIN
 				, @Col_Head27, @Col_Head28, @Col_Head29, @Col_Head30, @Col_Head31, @Col_Head32, @Col_Head33, @Col_Head34, @Col_Head35, @Col_Head36, @Col_Head37, @Col_Head38, @Col_Head39, @Col_Head40
 				, @Col_Head41, @Col_Head42, @Col_Head43, @Col_Head44, @Col_Head45, @Col_Head46, @Col_Head47,@Col_Head48,@Col_Head49
 			) X   
-			ORDER BY Sorter
+			ORDER BY Sorter, [Business Unit Name], [Agreement_No]
 		END
 		ELSE 
 		BEGIN
-			SELECT * FROM #TempAcqDealListReport
+			SELECT * FROM #TempAcqDealListReport order by Business_Unit_Name, Agreement_No
 		END
 	END
 END

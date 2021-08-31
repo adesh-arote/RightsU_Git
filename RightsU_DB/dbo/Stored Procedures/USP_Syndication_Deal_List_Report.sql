@@ -571,7 +571,7 @@ BEGIN
 		TEMP_SDLR.Business_Unit_Name
 		INTO #TempSynDealListReport
 		FROM #TEMP_Syndication_Deal_List_Report TEMP_SDLR
-		ORDER BY TEMP_SDLR.Agreement_No, TEMP_SDLR.Is_Pushback
+		ORDER BY TEMP_SDLR.Business_Unit_Name, TEMP_SDLR.Agreement_No, TEMP_SDLR.Is_Pushback
 	END
 
 	BEGIN
@@ -669,11 +669,11 @@ BEGIN
 					, @Col_Head27, @Col_Head28, @Col_Head29, @Col_Head30, @Col_Head31, @Col_Head32, GETDATE(), GETDATE(), @Col_Head35, @Col_Head36, @Col_Head37, @Col_Head38, @Col_Head39, @Col_Head40
 					, @Col_Head41, @Col_Head42, @Col_Head43, @Col_Head44, @Col_Head45,@Col_Head49
 				) X   
-			ORDER BY Sorter
+			ORDER BY Sorter, [Business Unit Name], [Agreement_No]
 		END
 		ELSE
 		BEGIN
-			SELECT * FROM #TempSynDealListReport
+			SELECT * FROM #TempSynDealListReport order by Business_Unit_Name, Agreement_No
 		END
 
 	END

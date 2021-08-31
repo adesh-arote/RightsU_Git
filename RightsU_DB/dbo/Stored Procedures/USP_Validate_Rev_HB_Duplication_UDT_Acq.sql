@@ -248,7 +248,7 @@ Begin
 				@Deal_Pushback_Code INT,
 				@Deal_Code INT,
 				@Title_Code INT,
-				@Platform_Code INT,
+				@Platform_Code INT = 0,
 				@Check_For CHAR(1),
 				@Is_Theatrical_Right CHAR(1)
 		END
@@ -267,7 +267,7 @@ Begin
 		@Sub_License_Code=dr.Sub_License_Code,
 		@Is_Title_Language_Right=dr.Is_Title_Language_Right,	
 		@Title_Code=ISNULL(dr.Title_Code,0),
-		@Platform_Code=ISNULL(dr.Platform_Code,0),
+		--@Platform_Code=ISNULL(dr.Platform_Code,0),
 		@Check_For = dr.Check_For,
 		@Is_Theatrical_Right=ISNULL(dr.Is_Theatrical_Right,'N')
 		FROM @Deal_Rights dr
