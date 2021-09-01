@@ -3696,6 +3696,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Objection_Type_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Objection_Type_Name" Type="varchar(max)" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
         </EntityType>
         <EntityType Name="Paf">
           <Key>
@@ -35577,6 +35581,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Objection_Type_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Objection_Type_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -44654,6 +44662,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Objection_Type">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Objection_Type">
               <MappingFragment StoreEntitySet="Objection_Type">
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
                 <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
                 <ScalarProperty Name="Objection_Type_Name" ColumnName="Objection_Type_Name" />
                 <ScalarProperty Name="Objection_Type_Code" ColumnName="Objection_Type_Code" />

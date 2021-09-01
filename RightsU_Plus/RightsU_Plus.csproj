@@ -1277,6 +1277,8 @@
     <Content Include="Views\IPR_Dashboard\DashBoard.cshtml" />
     <Content Include="Views\IPR_List\_OppositionDetailPopup.cshtml" />
     <Content Include="Views\Reports\IPR_Report.cshtml" />
+    <Content Include="Views\Objection_Type\_ObjectionTypeList.cshtml" />
+    <Content Include="Views\Objection_Type\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
