@@ -119,27 +119,28 @@ Begin
 		--,Is_ROFR
 		--,Restriction_Remarks,
 		--Right_Start_Date,Right_End_Date,Platform_Code,Title_Code,Check_For)
-		--SELECT 6132,16545,null,'N',null,null,null,'Y',null,'',null,null,null,null,null,null,null,1,31241,null
+		--SELECT 0,22678,null,'Y',null,null,null,'Y',null,'',null,null,null,null,null,Convert(DateTime,'01JUL2021', 103) ,Convert(DateTime,'31JUL2021', 103),0,37549,null
 
 		--INSERT INTO @Deal_Rights_Title (Deal_Rights_Code,Title_Code,Episode_From,Episode_To)
-		--SELECT 6132,31241,1,1
+		--SELECT 0,37549,1,1
 		--SELECT * FROM @Deal_Rights_Title
 
 		--INSERT INTO @Deal_Rights_Platform(Deal_Rights_Code,Platform_Code)
-		--VALUES (6132,1),(6132,3) 
+		--VALUES (0,1),(0,209),(0,210),(0,394) 
 
 		--SELECT * FROM @Deal_Rights_Platform
 
 		--INSERT INTO @Deal_Rights_Territory (Deal_Rights_Code,Territory_Type,Territory_Code,Country_Code)
-		--SELECT 6132,'I',0,23
+		--SELECT 0,'G',1066,0
 		--SELECT * FROM @Deal_Rights_Territory
 
 		--INSERT INTO @Deal_Rights_Subtitling(Deal_Rights_Code,Language_Type,Language_Group_Code,Subtitling_Code)
-		--VALUES  (6132,'L',0,141 ),(6132,'L',0,1143)
+		--VALUES  (0,'L',0,24 ),(0,'L',0,135)
 		--SELECT * FROM @Deal_Rights_Subtitling
 
 		--INSERT INTO @Deal_Rights_Dubbing(Deal_Rights_Code,Language_Type,Language_Group_Code,Dubbing_Code)
-		--SELECT 6132,'L',0,141
+		--VALUES (0,'L',0,1143),(0,'L',0,24)
+
 		--SELECT * FROM @Deal_Rights_Dubbing
 
 		--SELECT 1 AS X
@@ -272,6 +273,8 @@ Begin
 		@Is_Theatrical_Right=ISNULL(dr.Is_Theatrical_Right,'N')
 		FROM @Deal_Rights dr
 	
+
+
 		DECLARE @Deal_Type_Code INT =0
 		SELECT TOP 1 @Deal_Type_Code = ISNULL(Parameter_Value,5) FROM System_Parameter_New WHERE Parameter_Name like 'Deal_Type_Music'
 		BEGIN  /* insert in temporary tables*/
@@ -319,20 +322,13 @@ Begin
 				--In Case of Right 1 is Unlimited and Current Right is MileStone 
 				(
 					(
-						((ADR.Right_Type = 'Y'  ) AND (@Right_Type = 'U' OR @Right_Type = 'M' OR (@Right_Type = 'Y' ))) -- Case 1
+						((ADR.Right_Type = 'Y'  ) AND ( @Right_Type = 'M' OR (@Right_Type = 'Y' ))) -- Case 1
 						OR
-						((ADR.Right_Type = 'M'  AND ((@Right_Type = 'Y' ) OR @Right_Type = 'U' OR @Right_Type = 'M'))) -- Case 2
+						((ADR.Right_Type = 'M'  AND ((@Right_Type = 'Y' )  OR @Right_Type = 'M'))) -- Case 2
 						OR 
-						((ADR.Right_Type = 'U' AND ((@Right_Type = 'Y') OR @Right_Type = 'M'))) -- Case 3
+						(( ((@Right_Type = 'Y') OR @Right_Type = 'M'))) -- Case 3
 					)
-					/*
-					(
-						--Alternative of Case 1,Case 2 and Case 3
-						((ADR.Right_Type = 'Y'  AND ADR.Is_Tentative = 'N') OR ADR.Right_Type = 'M' OR ADR.Right_Type = 'U')
-						OR
-						((@Right_Type = 'Y' AND @Is_Tentative = 'N') OR  @Right_Type = 'U' OR  OR  @Right_Type = 'M')					
-					)
-					*/				
+						
 					AND
 					(		
 						Convert(DateTime, @Right_Start_Date, 103) between Convert(DateTime, ADR.Right_Start_Date, 103) and Convert(DateTime, ISNULL(ADR.Right_End_Date,'31DEC9999'), 103)
@@ -345,34 +341,35 @@ Begin
 					)
 					OR
 					(				
-						/******************Case 4***********************************/
+					
+					/******************Case 4***********************************/
 						--In Case of Right 1 is YearBased with tentative and Current Right is Unlimited
 						--In Case of Right 1 is YearBased with tentative and Current Right is MileStone
 						--In Case of Right 1 is YearBased with tentative and Current Right is YearBased with No tentative
 						--In Case of Right 1 is YearBased with tentative and Current Right is YearBased with tentative
 						(
-							ADR.Right_Type = 'Y' 
+							ADR.Right_Type = 'Y' AND  ADR.Is_Tentative = 'Y' 
 							AND 
 							(
 								@Right_Type = 'U' 
 								OR 
 								(
-									(@Right_Type = 'M' OR (@Right_Type= 'Y' ))
+									(@Right_Type = 'M' OR (@Right_Type= 'Y' AND @Is_Tentative = 'N'))
 									AND  
 									Convert(DateTime, @Right_End_Date, 103) >= Convert(DateTime,ADR.Right_Start_Date, 103)
 								)
 								OR
-								(@Right_Type= 'Y')
+								(@Right_Type= 'Y' AND @Is_Tentative = 'Y')
 							)
 						) -- case 4					
 						OR
 						/******************Case 5***********************************/
 						--In Case of Right 1 is MileStone and Current Right is Yearbased with tentative					
 						--In case of Right 1 is Yearbased with no tentative and Current Right is Yearbased with tentative
-						((ADR.Right_Type = 'M' OR (ADR.Right_Type = 'Y'))
+						((ADR.Right_Type = 'M' OR (ADR.Right_Type = 'Y' AND ADR.Is_Tentative = 'N'))
 						AND
 						(
-						 (@Right_Type='Y' )
+						 (@Right_Type='Y' AND @Is_Tentative = 'Y')
 						 OR
 						 (@Right_Type='U')
 						)
@@ -381,23 +378,23 @@ Begin
 						--In Case of Right 1 is Unlimited and Current Right is unlimited 
 						--In Case of Right 1 is Unlimited and Current Right is Yearbased and tentative 					
 						OR
-						(ADR.Right_Type = 'U' AND  ((@Right_Type = 'U') OR (@Right_Type = 'Y' )))  --Case 6
+						(ADR.Right_Type = 'U' AND  ((@Right_Type = 'U') OR (@Right_Type = 'Y' AND @Is_Tentative = 'Y')))  --Case 6
 						--OR
 						--(ADR.Right_Type = 'U' AND @Right_Type = 'M' AND Convert(DateTime,ADR.Actual_Right_Start_Date, 103) <= Convert(DateTime, @Right_End_Date, 103)) --Case 6)																				
+
 					)
 				)
 			)
-			--AND ADR.Acq_Deal_Pushback_Code not in (@Deal_Rights_Code)
+			
 			AND
 			(
 				 (ISNULL(@Title_Code,0) = 0 AND ISNULL(@Platform_Code,0) = 0) AND ADR.Acq_Deal_Pushback_Code not in (@Deal_Rights_Code) 
 				 OR
 				 (ISNULL(@Title_Code,0) <> 0)
-				--OR
-				--( (ISNULL(@Title_Code,0) <> 0 AND ISNULL(@Platform_Code,0) <> 0) )
-				--OR
-				--( (ISNULL(@Title_Code,0) <> 0 AND ISNULL(@Platform_Code,0) = 0) )
+				
 			)
+
+	
 			select ADR.Acq_Deal_Pushback_Code
 					,ADRT.Title_Code
 					,ADRT.Episode_From

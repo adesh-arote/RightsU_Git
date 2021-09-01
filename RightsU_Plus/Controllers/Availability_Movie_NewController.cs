@@ -2191,6 +2191,8 @@ namespace RightsU_Plus.Controllers
             List<EachAvailViewModel> eachAvailViewModels = new List<EachAvailViewModel>();
             RightsUAvailsServiceProvider rightsUAvailsServiceProvider = new RightsUAvailsServiceProvider(new Uri(baseUri));
 
+            searchAvailFilters.Others.ModuleCode = 147;
+
             eachAvailViewModels = rightsUAvailsServiceProvider.GetAvails(searchAvailFilters);
             #endregion
 
