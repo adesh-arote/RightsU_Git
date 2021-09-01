@@ -26,18 +26,28 @@
         $("#ddlLicensor").change(function () {
             TitleLicencorMapping("T")
         });
+
+        $('input[type=radio][name=rb_AcqSyn').change(function () {
+            //if (this.value == 'A') {
+            //    alert("Allot Thai Gayo Bhai");
+            //}
+            //else if (this.value == 'S') {
+            //    alert("Transfer Thai Gayo");
+            //}
+            BindPartialView("LIST", this.value,0);
+        });
     });
 
     function TitleLicencorMapping(MapFor) {
         debugger;
         var Licensor_Codes = $('#ddlLicensor').val();
         var Title_Codes = $('#ddlTitle').val();
-        var Type = $("input[name='AcqSyn']:checked").val();
+        var Type = $("input[name='rb_AcqSyn']:checked").val();
 
         if (Licensor_Codes != null) {
             Licensor_Codes = Licensor_Codes.join(',')                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
         }
-        else if (Title_Codes != null) {
+        if (Title_Codes != null) {
             Title_Codes = Title_Codes.join(',')
         }
   
@@ -61,16 +71,31 @@
                 else {
                     debugger;
                     if (MapFor == "T") {
+                        $("#ddlTitle").empty();
                         $(result.lstTitle).each(function (index, item) {
+
                             $("#ddlTitle").append($("<option>").val(this.Value).text(this.Text));
                         });
-                        $("#ddlTitle")[0].sumo.reload();
+                        if (Title_Codes != null) {
+                            $("#ddlTitle").val(Title_Codes.split(',')).attr("selected", "true")[0].sumo.reload();
+                        }
+                        else {
+                            $("#ddlTitle")[0].sumo.reload();
+                        }
                     }
                     else if (MapFor == "L") {
-                        $(result.lstLisencor).each(function (index, item) {
+                        $("#ddlLicensor").empty();
+
+                        $(result.lstLicensor).each(function (index, item) {
                             $("#ddlLicensor").append($("<option>").val(this.Value).text(this.Text));
                         });
-                        $("#ddlLicensor")[0].sumo.reload();
+
+                        if (Licensor_Codes != null) {
+                            $("#ddlLicensor").val(Licensor_Codes.split(',')).attr("selected", "true")[0].sumo.reload();
+                        }
+                        else {
+                            $("#ddlLicensor")[0].sumo.reload();
+                        }
                     }
                     //   $("#ddlSrchDirector").val(obj_Search[0].DirectorCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
                 }
@@ -168,7 +193,7 @@
             $('#ddlLicensor,#ddlTitle').attr('required', true)
             return false;
         }
-        SearchTitleObjection(searchText);
+        SearchTitleObjection();
     }
     
     function BindTitleObjectionList() {
@@ -218,7 +243,14 @@
 
         var Licensor_Codes = $('#ddlLicensor').val();
         var Title_Codes = $('#ddlTitle').val();
-        var Type = $("input[name='AcqSyn']:checked").val();
+        var Type = $("input[name='rb_AcqSyn']:checked").val();
+
+        if (Licensor_Codes != null) {
+            Licensor_Codes = Licensor_Codes.join(',')
+        }
+        if (Title_Codes != null) {
+            Title_Codes = Title_Codes.join(',')
+        }
 
         $.ajax({
             type: "POST",
@@ -251,6 +283,7 @@
             }
         });
     }
+
 
     function AddTitleObjection() {
         $('.required').removeClass('required');
@@ -301,8 +334,8 @@
         <table class="table">
             <tr>
                 <td>
-                    <input type="radio" checked="checked" name="AcqSyn" value="A"> Acquisition &nbsp;&nbsp;
-                    <input type="radio" name="AcqSyn" value="S"> Syndication
+                    <input type="radio" checked=@(ViewBag.Type == "A"?true:false)  name="rb_AcqSyn" value="A"> Acquisition &nbsp;&nbsp;
+                    <input type="radio" checked=@(ViewBag.Type == "S"?true:false)  name="rb_AcqSyn" value="S"> Syndication
                 </td>
                 <td>
                     <b>Title :&nbsp;</b>

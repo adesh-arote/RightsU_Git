@@ -18,10 +18,10 @@
 <script>
     var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Title_Objection")';
     $(document).ready(function () {
-        BindPartialView("LIST", 0);
+        BindPartialView("LIST","A", 0);
     });
 
-    function BindPartialView(key, TitleObjectionCode) {
+    function BindPartialView(key, Type, TitleObjectionCode) {
         debugger
         //if (key == "ADDEDIT") {
         //    Search = $('#searchCommon').val();
@@ -37,6 +37,7 @@
             dataType: "html",
             data: JSON.stringify({
                 key: key,
+                Type: Type,
                 TitleObjectionCode: TitleObjectionCode
             }),
             success: function (result) {
@@ -47,7 +48,7 @@
                 else {
                     $('#divTitleObjection').empty();
                     $('#divTitleObjection').html(result);
-
+               
                 }
             },
             error: function (result) {

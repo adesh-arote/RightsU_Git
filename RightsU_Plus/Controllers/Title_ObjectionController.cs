@@ -33,33 +33,66 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstUSP_Title_Objection_List_Searched"] = value; }
         }
+
+        private List<Title_Licensor> lstTitle_Licensor
+        {
+            get
+            {
+                if (Session["lstTitle_Licensor"] == null)
+                    Session["lstTitle_Licensor"] = new List<Title_Licensor>();
+                return (List<Title_Licensor>)Session["lstTitle_Licensor"];
+            }
+            set { Session["lstTitle_Licensor"] = value; }
+        }
+
         #endregion
         public ActionResult Index()
         {
+            var ListAcq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List("X", "", "").ToList()
+                        .Select(x => new { x.Title_Code, x.Title, x.Licensor, x.Licensor_Code }).ToList().Distinct();
+
+            var ListSyn = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List("Y", "", "").ToList()
+                                    .Select(x => new { x.Title_Code, x.Title, x.Licensor, x.Licensor_Code }).ToList().Distinct();
+
+            Title_Licensor obj = null;
+
+            foreach (var item in ListAcq)
+            {
+                obj = new Title_Licensor();
+                obj.Acq_Syn = "A";
+                obj.Title = item.Title;
+                obj.Title_Code = item.Title_Code;
+                obj.Licensor = item.Licensor;
+                obj.Licensor_Code = item.Licensor_Code;
+                lstTitle_Licensor.Add(obj);
+            }
+
+            foreach (var item in ListSyn)
+            {
+                obj = new Title_Licensor();
+                obj.Acq_Syn = "S";
+                obj.Title = item.Title;
+                obj.Title_Code = item.Title_Code;
+                obj.Licensor = item.Licensor;
+                obj.Licensor_Code = item.Licensor_Code;
+                lstTitle_Licensor.Add(obj);
+            }
+
 
             return View();
         }
-        public PartialViewResult BindPartialPages(string key, int TitleObjectionCode)
+        public PartialViewResult BindPartialPages(string key, string Type, int TitleObjectionCode)
         {
 
             //Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
             //RightsU_Entities.Vendor objVendor = null;
             if (key == "LIST")
             {
+                ViewBag.Type = Type;
+                ViewBag.ddlTitle = new SelectList(lstTitle_Licensor.Where(x=>x.Acq_Syn == Type).Select(x=> new { x.Title, x.Title_Code}).ToList(), "Title_Code", "Title");
+                ViewBag.ddlLicensor = new SelectList(lstTitle_Licensor.Where(x => x.Acq_Syn == Type).Select(x => new { x.Licensor_Code, x.Licensor }).ToList(),"Licensor_Code", "Licensor");
 
-                ViewBag.ddlTitle = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName)
-                                         .USP_Title_Objection_List("A", "", "")
-                                         .ToList()
-                                         .Select(x => new { x.Title_Code, x.Title }).ToList().Distinct()
-                                         ,"Title_Code", "Title");
-
-                ViewBag.ddlLicensor = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName)
-                                        .USP_Title_Objection_List("A", "", "")
-                                        .ToList()
-                                        .Select(x => new { x.Licensor_Code, x.Licensor }).ToList().Distinct()
-                                        ,"Licensor_Code", "Licensor");
-
-                lstUSP_Title_Objection_List_Searched = lstUSP_Title_Objection_List = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List("A", "", "").ToList();
+                lstUSP_Title_Objection_List_Searched = lstUSP_Title_Objection_List = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List(Type, "", "").ToList();
                 ViewBag.UserModuleRights = GetUserModuleRights();
                 return PartialView("~/Views/Title_Objection/_Title_Objection.cshtml");
             }
@@ -302,26 +335,33 @@ namespace RightsU_Plus.Controllers
             Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
             if (MapFor == "T")
             {
-                SelectList lstTitle = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName)
-                                    .USP_Title_Objection_List(Type, Title_Codes, Licensor_Codes)
-                                    .ToList()
-                                    .Select(x=> new { Display_Value = x.Title_Code, Display_Text = x.Title }).ToList().Distinct()
+                var LCodes = Licensor_Codes.Split(',').ToList();
+                SelectList lstTitle = new SelectList(lstTitle_Licensor.Where(x => LCodes.Contains(x.Licensor_Code.ToString()))
+                                    .ToList().Select(x=> new { Display_Value = x.Title_Code, Display_Text = x.Title }).ToList().Distinct()
                                     , "Display_Value", "Display_Text");
                 obj_Dictionary.Add("lstTitle", lstTitle);
             }
             else if (MapFor == "L")
             {
-                SelectList lstLicensor = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName)
-                                .USP_Title_Objection_List(Type, Title_Codes, Licensor_Codes)
-                                .ToList()
+                var TCodes = Title_Codes.Split(',').ToList();
+                SelectList lstLicensor = new SelectList(lstTitle_Licensor.Where(x => TCodes.Contains(x.Title_Code.ToString())).ToList()
                                 .Select(x => new { Display_Value= x.Licensor_Code, Display_Text = x.Licensor }).ToList().Distinct()
                                 , "Display_Value", "Display_Text");
                 obj_Dictionary.Add("lstLicensor", lstLicensor); 
             }
-
             return Json(obj_Dictionary);
         }
         
         #endregion
     }
+
+    class Title_Licensor
+    {
+        public string Acq_Syn { get; set; }
+        public string Licensor { get; set; }
+        public string Title { get; set; }
+        public Nullable<int> Title_Code { get; set; }
+        public int Licensor_Code { get; set; }
+    }
+
 }
