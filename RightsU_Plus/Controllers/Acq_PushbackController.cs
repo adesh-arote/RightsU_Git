@@ -601,8 +601,13 @@ namespace RightsU_WebApp.Controllers
             //}
 
             //objDRUDT.Is_Theatrical_Right = objExistingRights.Is_Theatrical_Right = objMVCRights.Is_Theatrical_Right.ToUpper() == "TRUE" ? "Y" : "N";
-            if (objMVCRights.Right_Type == "M" && (objExistingRights.Right_Type == "Y" || objExistingRights.Right_Type == "U"))
-                objExistingRights.Right_Start_Date = objExistingRights.Right_End_Date = objExistingRights.Right_Start_Date = objExistingRights.Right_End_Date = null;
+            //if (objMVCRights.Right_Type == "M" && (objExistingRights.Right_Type == "Y" || objExistingRights.Right_Type == "U"))
+            //    objExistingRights.Right_Start_Date = objExistingRights.Right_End_Date = objExistingRights.Right_Start_Date = objExistingRights.Right_End_Date = null;
+
+            objDRUDT.Right_Start_Date = objExistingRights.Right_Start_Date;
+            objDRUDT.Right_End_Date = objExistingRights.Right_End_Date;
+            objDRUDT.Is_Tentative = objExistingRights.Is_Tentative;
+        
 
             objDRUDT.Right_Type = objExistingRights.Right_Type = objMVCRights.Right_Type;
             objExistingRights.Right_Type = objMVCRights.Right_Type;
