@@ -2347,11 +2347,17 @@ namespace RightsU_Plus.Controllers
                     //Default Download Filename
                     string FileName = "AvailsReport_" + DateTimes + ".xlsx";
 
-                    string availsReportFilePath = ConfigurationManager.AppSettings["AvailsReportFilePath"];
+                    //string availsReportFilePath = ConfigurationManager.AppSettings["AvailsReportFilePath"];
 
+                    //Session["AvailsReportFilePath"] = availsReportFilePath + FileName;
+
+                    //pck.SaveAs(new FileInfo(availsReportFilePath + FileName));
+
+                    string filepath = ConfigurationManager.AppSettings["AvailsReportFilePath"].Trim('~');
+                    string availsReportFilePath = (Server.MapPath("~") + "\\" + filepath);
                     Session["AvailsReportFilePath"] = availsReportFilePath + FileName;
-
                     pck.SaveAs(new FileInfo(availsReportFilePath + FileName));
+
                 }
             }
             catch (Exception ex)
