@@ -2355,6 +2355,68 @@ namespace RightsU_BLL
             return true;
         }
     }
+    public class Deal_Description_Service : BusinessLogic<Deal_Description>
+    {
+        private readonly Deal_Description_Repository objRepository;
+
+        public Deal_Description_Service(string Connection_Str)
+        {
+            this.objRepository = new Deal_Description_Repository(Connection_Str);
+        }
+        public IQueryable<Deal_Description> SearchFor(Expression<Func<Deal_Description, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Deal_Description GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Deal_Description objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Deal_Description objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Deal_Description objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Deal_Description objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Deal_Description objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        public override bool ValidateDelete(Deal_Description objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Deal_Description objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Deal_Desc_Name == objToValidate.Deal_Desc_Name && s.Deal_Desc_Code != objToValidate.Deal_Desc_Code && s.Type == objToValidate.Type).Count() > 0)
+            {
+                resultSet = "Deal Description already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
     public class Grade_Master_Service : BusinessLogic<Grade_Master>
     {
         private readonly Grade_Master_Repository objRepository;
@@ -6680,25 +6742,25 @@ namespace RightsU_BLL
         }
     }
 
-    public class Deal_Description_Service
-    {
-        private readonly Deal_Description_Repository obj_Repository;
+    //public class Deal_Description_Service
+    //{
+    //    private readonly Deal_Description_Repository obj_Repository;
 
-        public Deal_Description_Service(string Connection_Str)
-        {
-            this.obj_Repository = new Deal_Description_Repository(Connection_Str);
-        }
+    //    public Deal_Description_Service(string Connection_Str)
+    //    {
+    //        this.obj_Repository = new Deal_Description_Repository(Connection_Str);
+    //    }
 
-        public IQueryable<Deal_Description> SearchFor(Expression<Func<Deal_Description, bool>> predicate)
-        {
-            return obj_Repository.SearchFor(predicate);
-        }
+    //    public IQueryable<Deal_Description> SearchFor(Expression<Func<Deal_Description, bool>> predicate)
+    //    {
+    //        return obj_Repository.SearchFor(predicate);
+    //    }
 
-        public Deal_Description GetById(int id)
-        {
-            return obj_Repository.GetById(id);
-        }
-    }
+    //    public Deal_Description GetById(int id)
+    //    {
+    //        return obj_Repository.GetById(id);
+    //    }
+    //}
 
     public class Deal_Segment_Service
     {
