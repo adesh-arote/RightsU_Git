@@ -36,9 +36,9 @@ namespace RightsU_Plus.Controllers
         #endregion
         public ActionResult Index()
         {
-            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForGenres);
+            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForObjectionType);
             //string moduleCode = Request.QueryString["modulecode"];
-            string moduleCode = GlobalParams.ModuleCodeForGenres.ToString();
+            string moduleCode = GlobalParams.ModuleCodeForObjectionType.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
             lstObjectionType_Searched = lstObjectionType = new Objection_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
@@ -97,7 +97,7 @@ namespace RightsU_Plus.Controllers
         }
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGenres), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForObjectionType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
             string rights = "";
             if (lstRights.FirstOrDefault() != null)
                 rights = lstRights.FirstOrDefault();
@@ -112,7 +112,7 @@ namespace RightsU_Plus.Controllers
             bool isLocked = true;
             if (Objection_TypeCode > 0)
             {
-                isLocked = DBUtil.Lock_Record(Objection_TypeCode, GlobalParams.ModuleCodeForGenres, objLoginUser.Users_Code, out RLCode, out strMessage);
+                isLocked = DBUtil.Lock_Record(Objection_TypeCode, GlobalParams.ModuleCodeForObjectionType, objLoginUser.Users_Code, out RLCode, out strMessage);
             }
 
             var obj = new
@@ -145,7 +145,7 @@ namespace RightsU_Plus.Controllers
             string status = "S", message = "", strMessage = "";
             int RLCode = 0;
 
-            bool isLocked = DBUtil.Lock_Record(Objection_Type_Code, GlobalParams.ModuleCodeForGenres, objLoginUser.Users_Code, out RLCode, out strMessage);
+            bool isLocked = DBUtil.Lock_Record(Objection_Type_Code, GlobalParams.ModuleCodeForObjectionType, objLoginUser.Users_Code, out RLCode, out strMessage);
             if (isLocked)
             {
                 Objection_Type_Service objService = new Objection_Type_Service(objLoginEntity.ConnectionStringName);
