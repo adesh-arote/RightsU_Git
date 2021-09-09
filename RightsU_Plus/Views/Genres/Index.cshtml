@@ -308,7 +308,7 @@
                 else {
                     hideLoading();
                     if (result.Status == "S") {
-                        $('#lblRecordCount').text(result.RecordCount);
+                        $('#lblRecordCount').text(result.Record_Count);
                         $('#hdnAction').val("")
                         showAlert("S", result.Message);
                         if ($("#searchCommon").val() != "") {

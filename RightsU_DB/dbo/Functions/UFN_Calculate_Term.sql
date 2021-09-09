@@ -44,10 +44,10 @@ BEGIN
 		SET @FirstDay = @endDate-DAY(@endDate)+1
 		set @day =  DATEDIFF(DD, @FirstDay, @endDate)
 	
-		SET @startDate = DateAdd(month,@month,@startDate)
-		SET @startDate = DateAdd(year,@year,@startDate)
+		--SET @startDate = DateAdd(month,@month,@startDate)
+		--SET @startDate = DateAdd(year,@year,@startDate)
 
-		SET @LastDay =  DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,@startDate)+1,1))
+		SET @LastDay =  DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,@startDate)+1,0))
 		SET @day = @day + DATEDIFF(DD, @startDate, @LastDay)
 		--SELECT @day
 	END

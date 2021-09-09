@@ -2609,7 +2609,10 @@ namespace RightsU_Plus.Controllers
                 {
                     UTOFrameWork.FrameworkClasses.ReportSetting objRS = new UTOFrameWork.FrameworkClasses.ReportSetting();
                     rptViewer.ServerReport.ReportPath = objRS.GetReport(ReportName);
-                    rptViewer.ServerReport.DisplayName = "rptIPR_Report";
+                    if (ReportName == "rptIPR_IntDom_Report")
+                    {
+                        rptViewer.ServerReport.DisplayName = "rptIPR_Report";
+                    }
                 }
                 rptViewer.Visible = true;
                 rptViewer.ProcessingMode = ProcessingMode.Remote;
