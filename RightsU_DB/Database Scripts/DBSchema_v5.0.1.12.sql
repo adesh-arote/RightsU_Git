@@ -4440,7 +4440,7 @@ PRIMARY KEY CLUSTERED
 --FOR OBJECTION Type
 
 CREATE TABLE Objection_Type(
-Objection_Type_Code INT,
+Objection_Type_Code INT IDENTITY(1,1) PRIMARY KEY,
 Objection_Type_Name VARCHAR(MAX),
 Is_Active CHAR(1),
 Inserted_On DATETIME,
