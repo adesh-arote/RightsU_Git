@@ -554,12 +554,12 @@
             var FirstDay = new Date(y, m, 1);
             day = CalculateDaysBetweenTwoDates(FirstDay, endDate);
 
-            startDate.setMonth(startDate.getMonth() + month);
-            startDate.setYear(startDate.getYear() + year);
+            //startDate.setMonth(startDate.getMonth() + month);
+            //startDate.setYear(startDate.getYear() + year);
 
             m = startDate.getMonth(),
                 y = startDate.getFullYear();
-            var LastDay = new Date(y, m + 1, 1);
+            var LastDay = new Date(y, m + 1, 0);
             day = day + CalculateDaysBetweenTwoDates(startDate, LastDay);
         }
         var term = parseInt(year) + '.' + month + "." + day;

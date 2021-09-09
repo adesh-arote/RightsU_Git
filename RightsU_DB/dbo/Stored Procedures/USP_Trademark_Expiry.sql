@@ -3,6 +3,7 @@
 -- --Author:		Ayush Dubey
 -- --Create date:	05 AUgust 2021
 -- --Description:	Email Notification
+-- Last Changed By : Akshay Rane 
 -- --=============================================	
 AS
 BEGIN
@@ -117,7 +118,7 @@ BEGIN
 		--Looping throug IPR Records
 
 		DECLARE curIPR_Records CURSOR FOR 
-		SELECT TOP 85 Trademark_No, Trademark, Applicant, Expiring_On, Created_By, Creation_Date, Class FROM #IPR_Records ORDER BY Trademark_No
+		SELECT Trademark_No, Trademark, Applicant, Expiring_On, Created_By, Creation_Date, Class FROM #IPR_Records ORDER BY Trademark_No
 
 		OPEN curIPR_Records 
 		FETCH NEXT FROM curIPR_Records INTO @Trademark_No, @Trademark, @Applicant, @Expiring_On, @Created_By, @Creation_Date, @Class
@@ -146,14 +147,17 @@ BEGIN
 			BEGIN
 				SELECT @Email_body = @Email_header + @trData + @Email_footer
 
-				EXEC msdb.dbo.sp_send_dbmail 
-					 @profile_name = @DatabaseEmail_Profile,
-					 @recipients =  @To_User_Mail_Id,
-					 @copy_recipients = @CC_User_Mail_Id,
-					 @blind_copy_recipients = @BCC_User_Mail_Id,
-					 @subject = @MailSubject,
-					 @body = @Email_body,
-					 @body_format = 'HTML';
+				IF EXISTS (SELECT TOP 1 * FROM #IPR_Records)
+				BEGIN
+					EXEC msdb.dbo.sp_send_dbmail 
+						 @profile_name = @DatabaseEmail_Profile,
+						 @recipients =  @To_User_Mail_Id,
+						 @copy_recipients = @CC_User_Mail_Id,
+						 @blind_copy_recipients = @BCC_User_Mail_Id,
+						 @subject = @MailSubject,
+						 @body = @Email_body,
+						 @body_format = 'HTML';
+				END
 
 				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
 				SELECT @Email_Config_Code,@Email_body, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  ' Trademark Expiry'
