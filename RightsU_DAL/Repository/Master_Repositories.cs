@@ -981,6 +981,30 @@ namespace RightsU_DAL
             base.Delete(objToDelete);
         }
     }
+    public class Deal_Description_Repository : RightsU_Repository<Deal_Description>
+    {
+        public Deal_Description_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Deal_Description objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(Deal_Description objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
     public class Objection_Type_Repository : RightsU_Repository<Objection_Type>
     {
         public Objection_Type_Repository(string conStr) : base(conStr) { }
@@ -2888,12 +2912,6 @@ namespace RightsU_DAL
             base.Delete(objToDelete);
         }
     }
-
-    public class Deal_Description_Repository : RightsU_Repository<Deal_Description>
-    {
-        public Deal_Description_Repository(string conStr) : base(conStr) { }
-    }
-
     public class Deal_Segment_Repository : RightsU_Repository<Deal_Segment>
     {
         public Deal_Segment_Repository(string conStr) : base(conStr) { }
