@@ -176,7 +176,7 @@
     <Compile Include="IPR\IPR_REP_EMAIL_FREQ.cs" />
     <Compile Include="IPR\IPR_REP_STATUS_HISTORY.cs" />
     <Compile Include="IPR\IPR_TYPE.cs" />
-    <Compile Include="Master_Entities\Objection_Type.cs" />
+    <Compile Include="Master_Entities\Title_Objection_Type.cs" />
     <Compile Include="Master_Entities\Platform_Broadcast.cs" />
     <Compile Include="Master_Entities\DM_Title_Resolve_Conflict.cs" />
     <Compile Include="Master_Entities\DM_Title_Import_Utility_Data.cs" />

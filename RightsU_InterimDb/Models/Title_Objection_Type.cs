@@ -12,7 +12,7 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Objection_Type
+    public partial class Title_Objection_Type
     {
     	public State EntityState { get; set; }    public int Objection_Type_Code { get; set; }
     	    public string Objection_Type_Name { get; set; }

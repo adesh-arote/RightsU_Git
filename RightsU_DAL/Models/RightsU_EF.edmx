@@ -3689,18 +3689,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Is_Active" Type="char" MaxLength="1" />
           <Property Name="Type" Type="varchar" MaxLength="3" />
         </EntityType>
-        <EntityType Name="Objection_Type">
-          <Key>
-            <PropertyRef Name="Objection_Type_Code" />
-          </Key>
-          <Property Name="Objection_Type_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Objection_Type_Name" Type="varchar(max)" />
-          <Property Name="Is_Active" Type="char" MaxLength="1" />
-          <Property Name="Inserted_On" Type="datetime" />
-          <Property Name="Inserted_By" Type="int" />
-          <Property Name="Last_Updated_Time" Type="datetime" />
-          <Property Name="Last_Action_By" Type="int" />
-        </EntityType>
         <EntityType Name="Paf">
           <Key>
             <PropertyRef Name="Paf_Code" />
@@ -5401,6 +5389,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
           <Property Name="Lock_Time" Type="time" Precision="7" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Type">
+          <Key>
+            <PropertyRef Name="Objection_Type_Code" />
+          </Key>
+          <Property Name="Objection_Type_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Objection_Type_Name" Type="varchar(max)" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
         </EntityType>
         <EntityType Name="Title_Promotion">
           <Key>
@@ -14260,7 +14260,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Music_Title_Talent" EntityType="Self.Music_Title_Talent" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Music_Title_Theme" EntityType="Self.Music_Title_Theme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Music_Type" EntityType="Self.Music_Type" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Objection_Type" EntityType="Self.Objection_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paf" EntityType="Self.Paf" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paf_Cost_Type" EntityType="Self.Paf_Cost_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paf_Cost_Type_Mapping" EntityType="Self.Paf_Cost_Type_Mapping" Schema="dbo" store:Type="Tables" />
@@ -14392,6 +14391,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Title_Country" EntityType="Self.Title_Country" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Geners" EntityType="Self.Title_Geners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Milestone" EntityType="Self.Title_Milestone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Objection_Type" EntityType="Self.Title_Objection_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Promotion" EntityType="Self.Title_Promotion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Release" EntityType="Self.Title_Release" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Release_Platforms" EntityType="Self.Title_Release_Platforms" Schema="dbo" store:Type="Tables" />
@@ -20785,7 +20785,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="User_Code" Mode="In" Type="Int32" />
             <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="Objection_Type" EntityType="RightsU_NeoModel.Objection_Type" />
+          <EntitySet Name="Title_Objection_Type" EntityType="RightsU_NeoModel.Title_Objection_Type" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35574,7 +35574,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Applicant_Name" Nullable="true" />
           <Property Type="DateTime" Name="Renewed_Until" Nullable="false" Precision="23" />
         </ComplexType>
-        <EntityType Name="Objection_Type">
+        <EntityType Name="Title_Objection_Type">
           <Key>
             <PropertyRef Name="Objection_Type_Code" />
           </Key>
@@ -44659,9 +44659,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <EntitySetMapping Name="Objection_Type">
-            <EntityTypeMapping TypeName="RightsU_NeoModel.Objection_Type">
-              <MappingFragment StoreEntitySet="Objection_Type">
+          <EntitySetMapping Name="Title_Objection_Type">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Objection_Type">
+              <MappingFragment StoreEntitySet="Title_Objection_Type">
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
                 <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />

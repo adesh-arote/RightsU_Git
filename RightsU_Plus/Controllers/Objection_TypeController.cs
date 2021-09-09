@@ -12,24 +12,24 @@ namespace RightsU_Plus.Controllers
     public class Objection_TypeController : BaseController
     {
         #region --Properties--
-        private List<RightsU_Entities.Objection_Type> lstObjectionType
+        private List<RightsU_Entities.Title_Objection_Type> lstObjectionType
         {
             get
             {
                 if (Session["lstObjectionType"] == null)
-                    Session["lstObjectionType"] = new List<RightsU_Entities.Objection_Type>();
-                return (List<RightsU_Entities.Objection_Type>)Session["lstObjectionType"];
+                    Session["lstObjectionType"] = new List<RightsU_Entities.Title_Objection_Type>();
+                return (List<RightsU_Entities.Title_Objection_Type>)Session["lstObjectionType"];
             }
             set { Session["lstObjectionType"] = value; }
         }
 
-        private List<RightsU_Entities.Objection_Type> lstObjectionType_Searched
+        private List<RightsU_Entities.Title_Objection_Type> lstObjectionType_Searched
         {
             get
             {
                 if (Session["lstObjectionType_Searched"] == null)
-                    Session["lstObjectionType_Searched"] = new List<RightsU_Entities.Objection_Type>();
-                return (List<RightsU_Entities.Objection_Type>)Session["lstObjectionType_Searched"];
+                    Session["lstObjectionType_Searched"] = new List<RightsU_Entities.Title_Objection_Type>();
+                return (List<RightsU_Entities.Title_Objection_Type>)Session["lstObjectionType_Searched"];
             }
             set { Session["lstObjectionType_Searched"] = value; }
         }
@@ -41,21 +41,21 @@ namespace RightsU_Plus.Controllers
             string moduleCode = GlobalParams.ModuleCodeForObjectionType.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = objLoginUser.System_Language_Code.ToString();
-            lstObjectionType_Searched = lstObjectionType = new Objection_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            lstObjectionType_Searched = lstObjectionType = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
-            lstSort.Add(new SelectListItem { Text = "Opposition Type Name Asc", Value = "NA" });
-            lstSort.Add(new SelectListItem { Text = "Opposition Type Name Desc", Value = "ND" });
+            lstSort.Add(new SelectListItem { Text = "Objection Type Name Asc", Value = "NA" });
+            lstSort.Add(new SelectListItem { Text = "Objection Type Name Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
             ViewBag.UserModuleRights = GetUserModuleRights();
-            return View("~/Views/Objection_Type/Index.cshtml");
+            return View("~/Views/Title_Objection_Type/Index.cshtml");
         }
 
         public PartialViewResult BindObjection_TypeList(int pageNo, int recordPerPage, int Objection_TypeCode, string commandName, string sortType)
         {
             ViewBag.Objection_Type_Code = Objection_TypeCode;
             ViewBag.CommandName = commandName;
-            List<RightsU_Entities.Objection_Type> lst = new List<RightsU_Entities.Objection_Type>();
+            List<RightsU_Entities.Title_Objection_Type> lst = new List<RightsU_Entities.Title_Objection_Type>();
             int RecordCount = 0;
             RecordCount = lstObjectionType_Searched.Count;
             if (RecordCount > 0)
@@ -70,7 +70,7 @@ namespace RightsU_Plus.Controllers
                     lst = lstObjectionType_Searched.OrderByDescending(o => o.Objection_Type_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
             ViewBag.UserModuleRights = GetUserModuleRights();
-            return PartialView("~/Views/Objection_Type/_ObjectionTypeList.cshtml", lst);
+            return PartialView("~/Views/Title_Objection_Type/_ObjectionTypeList.cshtml", lst);
         }
         #region --Other Method--
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
@@ -125,7 +125,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SearchObjection_TypeCode(string searchText)
         {
-            Objection_Type_Service objService = new Objection_Type_Service(objLoginEntity.ConnectionStringName);
+            Title_Objection_Type_Service objService = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName);
             if (!string.IsNullOrEmpty(searchText))
             {
                 lstObjectionType_Searched = lstObjectionType.Where(w => w.Objection_Type_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
@@ -148,8 +148,8 @@ namespace RightsU_Plus.Controllers
             bool isLocked = DBUtil.Lock_Record(Objection_Type_Code, GlobalParams.ModuleCodeForObjectionType, objLoginUser.Users_Code, out RLCode, out strMessage);
             if (isLocked)
             {
-                Objection_Type_Service objService = new Objection_Type_Service(objLoginEntity.ConnectionStringName);
-                RightsU_Entities.Objection_Type objObjectionType = objService.GetById(Objection_Type_Code);
+                Title_Objection_Type_Service objService = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Entities.Title_Objection_Type objObjectionType = objService.GetById(Objection_Type_Code);
                 objObjectionType.Is_Active = doActive;
                 objObjectionType.EntityState = State.Modified;
                 dynamic resultSet;
@@ -189,8 +189,8 @@ namespace RightsU_Plus.Controllers
             if (ObjectionTypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
-            Objection_Type_Service objService = new Objection_Type_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Objection_Type objObjectionType = null;
+            Title_Objection_Type_Service objService = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Entities.Title_Objection_Type objObjectionType = null;
 
             if (ObjectionTypeCode > 0)
             {
@@ -199,7 +199,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                objObjectionType = new RightsU_Entities.Objection_Type();
+                objObjectionType = new RightsU_Entities.Title_Objection_Type();
                 objObjectionType.EntityState = State.Added;
                 objObjectionType.Inserted_On = DateTime.Now;
                 objObjectionType.Inserted_By = objLoginUser.Users_Code;

@@ -12,7 +12,7 @@ namespace RightsU_Entities
     using System;
     using System.Collections.Generic;
 
-    public partial class Objection_Type
+    public partial class Title_Objection_Type
     {
         public State EntityState { get; set; }
         public int Objection_Type_Code { get; set; }
