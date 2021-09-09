@@ -1,0 +1,1149 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_Acq_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string MsgType = "";
+    string msg = "";
+    if (TempData["Message"] != null)
+    {
+        msg = TempData["Message"].ToString();
+    }
+    if (TempData["strMsgType"] != null)
+    {
+        MsgType = TempData["strMsgType"].ToString();
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/Custom_Scripts/Custom_CSS/Acq_Deal_List.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script>
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Acq_List")'
+    var Command_Name, tmpAcqDealCode, tmp_IsZeroWorkFlow, tmp_pageNo, tmp_IsAdvanced, fullyLoaded = "Y";
+    //Global Veraible
+    var MsgType_G = '@MsgType', msg_G = '@msg', RLCode_G = '@ViewBag.RLCode', ReleaseRecord_G = '@ViewBag.ReleaseRecord', isAdvanced_G = '@ViewBag.isAdvanced'
+    , IncludeSubDeal_Search_G = '@ViewBag.IncludeSubDeal_Search'
+    , PageNo_G = '@ViewBag.PageNo', Mode_G = '@UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW', DealProgram_G = '@GlobalParams.Deal_Program';
+    //Global Param
+    var Deal_Type_Other = '@GlobalParams.Deal_Type_Other', Deal_Type_Movie = '@GlobalParams.Deal_Type_Movie'
+    , Deal_Type_Content = '@GlobalParams.Deal_Type_Content', Deal_Type_Event = '@GlobalParams.Deal_Type_Event'
+    , Deal_Type_Format_Program = '@GlobalParams.Deal_Type_Format_Program', Deal_Type_Documentary_Show = '@GlobalParams.Deal_Type_Documentary_Show'
+    , Deal_Type_Documentary_Film = '@GlobalParams.Deal_Type_Documentary_Film', Deal_Type_Sports = '@GlobalParams.Deal_Type_Sports'
+    , Deal_Type_Music = '@GlobalParams.Deal_Type_Music';
+    //URL
+    var URL_PartialDealList = '@Url.Action("PartialDealList", "Acq_List")', URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Acq_List")'
+    , URL_Show_Validation_Popup = '@Url.Action("Show_Validation_Popup", "Acq_List")', URL_DeleteDeal = '@Url.Action("DeleteDeal", "Acq_List")'
+    , URL_Rollback = '@Url.Action("Rollback", "Acq_List")', URL_RollbackWOApp = '@Url.Action("RollbackWOApp", "Acq_List")'
+    , URL_ValidateTermination = '@Url.Action("ValidateTermination", "Acq_List")'
+    , URL_OpenTerminationPopup = '@Url.Action("OpenTerminationPopup", "Acq_List")', URL_SaveTermination = '@Url.Action("SaveTermination", "Acq_List")'
+    , URL_ShowTerminateError = '@Url.Action("ShowTerminateError", "Acq_List")', URL_SendForAuthorisation = '@Url.Action("SendForAuthorisation", "Acq_List")'
+    , URL_Approve = '@Url.Action("Approve", "Acq_List")', URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Acq_List")'
+    , URL_Index = '@Url.Action("Index", "Acq_General", new { Mode = "Mode_G", Acq_Deal_Code = "Acq_Deal_Code" })'
+    , URL_PartialBindDealStatusPopup = '@Url.Action("PartialBindDealStatusPopup", "Acq_List")'
+    , URL_PartialBindMilestonePopup = '@Url.Action("PartialBindMilestonePopup", "Acq_List")'
+    , URL_Validate_Deal_Approve_List = '@Url.Action("Validate_Deal_Approve_List","Global")'
+    , URL_BindReleaseContentList = '@Url.Action("BindReleaseContentList", "Acq_List")'
+    , URL_SaveReleasedContent = '@Url.Action("SaveReleasedContent", "Acq_List")'
+    , URL_SearchReleaseContent = '@Url.Action("SearchReleaseContent", "Acq_List")'
+    , URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Acq_List")'
+    , URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Acq_List")'
+    , URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")'
+    , URL_ChkRightsDuplication = '@Url.Action("ChkRightsDuplication", "Acq_Rights")'
+    , URL_Release_Lock = '@Url.Action("Release_Lock", "Global")'
+    , URL_GetAcqAsyncStatus = '@Url.Action("GetAcqAsyncStatus", "Acq_List")'
+    , URL_ActionButtons = '@Url.Action("ActionButtons", "Acq_List")'
+    , URL_BindAT = '@Url.Action("BindAT", "Acq_List")'
+    , URL_SessionTitleList = '@Url.Action("SessionTitleList", "Acq_List")'
+    , URL_PartialBindLinearStatusPopup = '@Url.Action("PartialBindLinearStatusPopup", "Acq_List")'
+    , URL_Show_Error_Popup = '@Url.Action("Show_Error_Popup", "Acq_List")'
+    , URL_Reprocess = '@Url.Action("Reprocess", "Acq_List")'
+    , URL_SendForArchive = '@Url.Action("SendForArchive", "Acq_List")'
+    , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Acq_List")'
+    , URL_Archive = '@Url.Action("Archive", "Acq_List")';
+
+    var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';
+    var BUCode = '@ViewBag.BUCode';
+
+    function Validate_Record(dealCode, dealType, recordID) {
+        var rid = recordID.id;
+        var valid = true;
+        var moduleCode = 30;
+        if (dealType == "S")
+            moduleCode = 35;
+        $.ajax({
+            type: "POST",
+            url: URL_Validate_Deal_Approve_List,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                dealCode: dealCode,
+                moduleCode: moduleCode,
+                usersCode: UsersCode_G
+            }),
+            success: function (result) {
+                result = result.split('~');
+                var Record_Locking_Code = result[1];
+                if (Record_Locking_Code != 'undefined' && Record_Locking_Code > 0) {
+                    var New_href = $('#' + rid).attr('href').replace("RecordLockingCode", Record_Locking_Code);
+                    $('#' + rid).attr('href', New_href);
+                }
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result[0] == 'S') {
+                        valid = true;
+                    }
+                    else {
+                        if (result[0].indexOf('approved') != -1) {
+                            bindApprovalList(result[0]);
+                            valid = false;
+                            showAlert("E", result[0]);
+                        }
+                        else {
+                            showAlert("E", result[0]);
+                            valid = false;
+                        }
+                    }
+                }
+            },
+            error: function (result) { }
+        });
+    }
+    //$(document).ready(function () {
+    //    //function PostConfirmation() {
+    //    var objPC = { Is_Error: "ClientName", Error_Details: "Client One", Module_Name: "TALENT", Response_XML: "TEST" };
+    //    alert("junj");
+    //    debugger;
+    //    var url = 'api/WebAPI/Confirmation'
+    //    $.ajax({
+    //        type: "POST",
+    //        dataType:"json",
+    //        url: url,
+    //        traditional: true,
+    //        //enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify(objPC),
+    //        //data: JSON.stringify(objTC),
+    //        //JSON.stringify({
+    //        //    //dealTypeCode: dealTypeCode,
+    //        //    //masterDealMovieCode: masterDealMovieCode,
+    //        //    //pageNo: pageNo,
+    //        //    strXml: 'adesh'
+    //        //}), //.serialize(),
+    //        //data: { strXml: 'adesh' },
+    //        async: false,
+    //        success: function (result) {
+    //            alert('s');
+    //        },
+    //        error: function (result) {
+    //            alert('Error: ' + result.responseText);
+    //        }
+    //    });
+    //    // }
+    //});
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.MoreActionDiv').css("left", "32px !important");
+        }
+        $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
+        if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {
+            $('#ddlGenBUMultiSelect').SumoSelect();
+            $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode'.split(','))
+            $('#ddlGenBUMultiSelect')[0].sumo.reload();
+
+            $('#ddlSrchBUMultiSelect').SumoSelect();
+        }
+        else {
+            $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
+        }
+        //$("td").bind("mousemove", function (event) {
+        //    $(this).find("span.PlatformExpand").css({
+        //        top: event.pageY + 5 + "px",
+        //        left: event.pageX + 5 + "px"
+        //    }).show();
+        //}).bind("mouseout", function () {
+        //    $("span.PlatformExpand").hide();
+        //});
+
+    });
+</script>
+<script>
+    var panelVisible = false;
+    var RightpanelHideCss = '-350px';
+    var RightpanelShowCss = '0px';
+
+    var RightpanelHideCsss = '-350px';
+    var RightpanelShowCsss = '350px';
+
+    var LeftpanelHideCss = '-350px';
+    var LeftpanelShowCss = '0px';
+
+    var LeftpanelHideCsss = '0px';
+    var LeftpanelShowCsss = '350px';
+
+
+    $(document).ready(function () {
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.glyphicon-search').css("transform", "rotate(-360deg)");
+        }
+        else
+            $('.glyphicon-search').css("transform", "rotate(-270deg)");
+        initializeChosen();
+        initializeSubMenu2();
+        AllsubmenuHide();
+        var lastScrollTop = 0;
+        $(window).scroll(function (event) {
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop)
+                $("#pnlSearch").addClass("tinyADSearch")
+            else
+                $("#pnlSearch").removeClass("tinyADSearch")
+        });
+        $("#AllsubmenuHide").click(function () {
+            if ('@objMessageKey.LayoutDirection' == "RTL") {
+                $('.RightPanel').css('left', LeftpanelHideCss);
+                $('.leftPanel').css('right', panelHideCss);
+                $('#sideNavi').show();
+            }
+            else {
+                $('.RightPanel').css('right', RightpanelHideCss);
+                $('.leftPanel').css('left', panelHideCss);
+                $('#sideNavi').show();
+            }
+        })
+
+        $("#ddlBUUnit").change(function () {
+            debugger;
+            //$("#ddlSrchTitle").find("option").attr("selected", false);
+            //$("#ddlSrchTitle").val('')[0].sumo.reload();
+            $('#txtTitleSearch').val('');
+            var dealTypeVal = $('#ddlSrchDealType').val();
+
+            var ddlBU = $('#ddlBUUnit').val();
+            $.ajax({
+                type: "POST",
+                url: URL_OnChangeBindTitle,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dealTypeCode: dealTypeVal,
+                    BUCode: ddlBU
+                }),
+                async: true,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        //$("#ddlSrchTitle").empty();
+                        //$(result).each(function (index, item) {
+                        //    $("#ddlSrchTitle").append($("<option>").val(this.Value).text(this.Text));
+                        //});
+                        //$("#ddlSrchTitle").val('')[0].sumo.reload();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        });
+        //setChosenWidth('#ddlBUUnit', '30%');
+    });
+
+    function togglePanelVisibility2(panelID) {
+        debugger;
+        if (Is_AllowMultiBUacqdeal != 'Y') {
+            var ddlBusinessUnit = $('#ddlBUUnit').val();
+            if (ddlBusinessUnit != 0 || ddlBusinessUnit != null) {
+                $('#ddlSrchBU').val(ddlBusinessUnit).attr("selected", "true").trigger("chosen:updated");
+            }
+        }
+        else {
+            var ddlBUMulti = $('#ddlGenBUMultiSelect').val();
+            if (ddlBUMulti != 0 || ddlBUMulti != null) {
+                $('#ddlSrchBUMultiSelect').val(ddlBUMulti);
+                OnChangeBindTitle('TP');
+            }
+        }
+        document.getElementById("showMore").innerHTML = "Show more...";
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            document.getElementById('pnlSearch').removeAttribute('hidden')
+            $('.leftPanel').css('right', panelHideCss);
+            $(".RightPanel:not(#" + panelID + ")").css("left", LeftpanelHideCss);
+            var panel = document.getElementById(panelID);
+            if (panel.style.left == LeftpanelShowCss) {
+                panel.style.left = LeftpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.left = LeftpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+        else {
+            document.getElementById('pnlSearch').removeAttribute('hidden')
+            $('.leftPanel').css('left', panelHideCss);
+            $('.MoreActionDiv').hide('fast');
+            $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelHideCss);
+            var panel = document.getElementById(panelID);
+            if (panel.style.right == RightpanelShowCss) {
+                panel.style.right = RightpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.right = RightpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+    }
+    function ShowMore(panelID) {
+        debugger;
+        document.getElementById('pnlShowmore').removeAttribute('hidden')
+        $('.leftPanel').css('left', panelHideCss);
+        $('.MoreActionDiv').hide('fast');
+        $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelShowCss);
+        var panel = document.getElementById(panelID);
+        if (panel.style.right == RightpanelShowCsss) {
+            panel.style.right = RightpanelHideCss;
+            panelVisible = false;
+            $('#sideNavi').show();
+        }
+        else {
+            panel.style.right = RightpanelShowCsss;
+            panelVisible = true;
+            $('#sideNavi').hide();
+        }
+        if (panel.style.right == '350px') {
+            document.getElementById("showMore").innerHTML = "Show less...";
+        }
+        else {
+            document.getElementById("showMore").innerHTML = "Show more...";
+        }
+    }
+
+    function initializeSubMenu2() {
+        $('.RightPanel li.has-sub>a').on('click', function () {
+            $(this).removeAttr('href');
+            var element = $(this).parent('li');
+            if (element.hasClass('open')) {
+                element.removeClass('open');
+                element.find('li').removeClass('open');
+                element.find('ul').slideUp(200);
+            }
+            else {
+                element.addClass('open');
+                element.children('ul').slideDown(200);
+                element.siblings('li').children('ul').slideUp(200);
+                element.siblings('li').removeClass('open');
+                element.siblings('li').find('li').removeClass('open');
+                element.siblings('li').find('ul').slideUp(200);
+            }
+        });
+    }
+
+    function AllsubmenuHide() {
+        debugger;
+        $('.RightPanel').css('right', RightpanelHideCss);
+        $('.leftPanel').css('left', panelHideCss);
+        $('#sideNavi').show();
+    }
+    var objAcqListCode;
+    var commandName;
+    function ShowRemark(status, IntCode) {
+        debugger;
+        // $("#ddlStarCastAdd").attr('selectedIndex', '-1');
+        $("#pop_setRemark").modal();
+        $("#pop_setRemark").show();
+        $("#btnStatus").prop('value', status);
+        objAcqListCode = IntCode;
+        if (status == "Approve") {
+            commandName = "Approve";
+        }
+        else if (status == "Send For Approval") {
+            commandName = "SendForAuth";
+        }
+    }
+    function ApproveRemarkOk() {
+        debugger;
+        var remark = $.trim($('#txtArea').val());
+        if (remark == "") {
+            $('#txtArea').val('').attr('required', true);
+            return false
+        }
+        //Ask_Confirmation(commandName, objAcqListCode, 0);
+    };
+    var URL_Bind_Title = '@Url.Action("Bind_Title", "Acq_List")';
+    function populateTitle(evt) {
+        debugger;
+        //$("#ddlSrchTitle").find("option").attr("selected", false);
+        //$("#ddlSrchTitle").val('')[0].sumo.reload();
+        var dealTypeVal = $('#ddlSrchDealType').val();
+        var ddlBU = "";
+        if (Is_AllowMultiBUacqdeal != 'Y') {
+            ddlBU = $('#ddlBUUnit').val();
+        }
+        else {
+            ddlBU = $('#ddlSrchBUMultiSelect').val().join(',');
+        }
+
+        var Selected_Title_Codes = "";
+        var selectedtxt = $('#txtTitleSearch').val();
+        var txt = selectedtxt.split('?');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $('#txtTitleSearch').autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (v, i) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    param = {
+                        Searched_Title: $('#txtTitleSearch').val(),
+                        dealTypeCode: dealTypeVal,
+                        BUCode: ddlBU
+                    };
+                    $.ajax({
+                        url: URL_Bind_Title,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = "@objMessageKey.NoResultFound";
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+
+                },
+                select: function (event, i) {
+                    //debugger;
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnTitleSearch").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnTitleSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "300px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+</script>
+<style>
+    /*.tinyADSearch {
+        top: 40px;
+    }*/
+    .SumoSelect.open > .optWrapper {
+        top: 35px;
+        display: block;
+        z-index: 1010;
+    }
+
+    .main_section {
+        overflow-x: auto !important;
+    }
+
+    .RightPanel {
+        padding-left: 10px;
+        background-color: #dbdbdb;
+        width: 350px;
+        height: 100%;
+        /*top: 0px !important;*/
+        top: 70px;
+        /* padding: 10px; */
+        /*position: absolute !important;*/
+        position: fixed;
+        z-index: 5;
+        right: 0px;
+        box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        -moz-box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        -webkit-box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        transition: all 0.3s;
+        -o-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+        /*overflow: auto;*/
+    }
+
+    .AdSearch {
+        margin-left: 8px;
+        margin-top: 3px;
+    }
+
+    #divReleaseContentList {
+        overflow: auto;
+        max-height: 170px;
+        width: 94%;
+        margin: 3%;
+    }
+
+    #AdvanceSearchPanel {
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    .pagination_popup .current.prev, .pagination .current.next {
+        z-index: -1 !important;
+    }
+
+    #ddlBUUnit_chosen {
+        width: 200px !important;
+        /*text-align : left;*/
+        float: none;
+    }
+
+    .chosen-drop > .chosen-search > .chosen-results > ul > li {
+        white-space: pre !important;
+    }
+
+    /*.SumoSelect {
+        width: 94% !important;
+    }*/
+
+    /*new added*/
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+    }
+
+    #divSearch {
+        padding: 6px 10px;
+        margin-bottom: 3px;
+        border: 1px solid #ddd;
+        background-color: #eee;
+    }
+
+        #divSearch > ul > li {
+            float: left;
+            min-height: 56px;
+            list-style-type: none;
+            padding: 0 3px;
+        }
+
+        #divSearch .chosen-container {
+            margin: 0;
+        }
+
+        #divSearch .checkbox-inline {
+            margin-bottom: 7px;
+        }
+
+    ul.first > li {
+        width: 25%;
+    }
+
+        ul.first > li:nth-child(2) {
+            width: 25%;
+        }
+
+        ul.first > li:last-child {
+            width: 25%;
+        }
+
+    ul.second > li {
+        width: 35%;
+    }
+
+        ul.second > li:last-child {
+            width: 25%;
+        }
+
+        ul.second > li:last-child {
+            width: 25%;
+        }
+
+    #divSearch label {
+        display: inline-block;
+    }
+
+    /*  .container {
+        /* width: 900px;
+        width: 95%;
+        margin: 0 auto;
+        /* min-height: 710px;
+        padding: 0px 0 55px 80px !important;
+    }*/
+
+    .help {
+        text-align: center;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 0px 2px 2px 2px;
+        width: 80px;
+        float: right;
+    }
+
+        .help:hover {
+            background: #e0e0e0;
+        }
+
+    .collapse {
+        position: absolute;
+        right: 3px;
+        top: 72px;
+        width: 180px;
+        height: 280px;
+        z-index: 99;
+        background-color: #f3f3f3;
+        border: 1px solid #000000;
+    }
+
+        .collapse div {
+            padding: 15px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+            .collapse div:hover {
+                background-color: #0080c0;
+                color: #ffffff;
+            }
+
+    .rowBorder td {
+        border-bottom: 1px dotted #dddddd !important;
+    }
+
+    .rowBg {
+        background-color: #eaeaea;
+    }
+
+        .rowBg td {
+            border-bottom: 1px dotted #dddddd !important;
+        }
+
+    .PlatformExpand {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        background-color: black;
+        color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    .dashboard {
+        min-height: 245px !important;
+    }
+
+    .tab-content #2_StackedColumn_chart {
+        width: 520px !important;
+    }
+
+    #ui-id-1 {
+        position: fixed;
+    }
+
+    .container {
+        min-height: 738px;
+    }
+
+    /*.tinyADSearch {
+        top: 70px;
+    }*/
+</style>
+<script src="~/Custom_Scripts/Acq_Deal_List.js"></script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div id="sideNavi">
+            <div class="side-navi-item item1" style="top:0px ;width: 46px !important;" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindAdvanced_Search_Controls('BTC');"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+        </div>
+        <div class="RightPanel" id="pnlSearch" hidden="hidden" dir="@objMessageKey.LayoutDirection">
+            <div id="AdvanceSearchPanel">
+                <h4>@objMessageKey.AdvanceSearch</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible=true;togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
+                <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+                    <li class="AdSearch">
+                        <label>@objMessageKey.AgreementNo:</label><br>
+                        <input type="text" value="@ViewBag.DealNo_Search" placeholder="@objMessageKey.DealNo" maxlength="15" id="txtSrchDealNo" style="width: 172px;" />
+                    </li>
+
+                    <li class="AdSearch">
+                        <label>@objMessageKey.BusinessUnit:</label><br>
+                        @if (ViewBag.Is_AllowMultiBUacqdeal != "Y")
+                        {
+                            <select id="ddlSrchBU" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 174px;"></select>
+                        }
+                        else
+                        {
+                            <select id="ddlSrchBUMultiSelect" onchange="OnChangeBindTitle()" multiple="multiple" style="width: 174px;"></select>
+                        }
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.DealType:</label><br>
+                        <select id="ddlSrchDealType" style="width: 174px;" class="form_input chosen-select"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Title:</label>
+                        <input type="text" id="txtTitleSearch" style="width:300px" autocomplete="on" onkeyup="populateTitle(event)" />
+                        @Html.Hidden("hdnTitleSearch")
+
+                    </li>
+
+                    <li class="AdSearch">
+                        <label>@objMessageKey.WorkflowStatus:</label><br>
+                        <select id="ddlWorkflowStatus" class="form_input chosen-select" style="width: 174px;"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Licensor:</label><br>
+                        <select id="ddlSrchLicensor" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <a onclick="ShowMore('pnlShowmore')" id="showMore" value="Show more..">Show more...</a>
+                    </li>
+
+
+                </ul>
+                <br />
+
+                <div style="text-align:center;">
+                    <label class="checkbox-inline">
+
+                        @if (ViewBag.IncludeArchiveDeal == "true")
+                        {
+                            <input type="checkbox" id="chkArchiveDeal" value="Y" checked="checked" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkArchiveDeal" value="Y" />
+                        }
+                        Include Archive Deal
+                    </label>
+                    <label class="checkbox-inline">
+                        @if (ViewBag.IncludeSubDeal == "true")
+                        {
+                            <input type="checkbox" id="chkSubDeal" value="Y" checked="checked" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkSubDeal" value="Y" />
+                        }
+                        @objMessageKey.IncludeSubDeals
+                    </label><br><br>
+                    @*<br />*@
+                    <a class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
+                    <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
+                    <input type="hidden" id="hdnClearAll" />
+                </div>
+            </div>
+        </div>
+
+        <div class="RightPanel" style="overflow-y: auto;" id="pnlShowmore" hidden="hidden" dir="@objMessageKey.LayoutDirection">
+            <div id="AdvanceSearchPanel">
+                <h4>Additional Options</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible=true;ShowMore('pnlSearch');">@*<span class="Reviewclose">x</span>*@</a>
+                <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+                    <li class="AdSearch">
+                        <label>@objMessageKey.AgreementPeriod:</label><br>
+                        <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealFrmDt_Search" runat="server" id="txtfrom" placeholder="@objMessageKey.From" title="@objMessageKey.From" />
+                        <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealToDt_Search" runat="server" id="txtto" placeholder="@objMessageKey.To" title="@objMessageKey.To" />
+                    </li>
+
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Status:</label><br />
+                        <select id="ddlSrchDealTag" class="form_input chosen-select" style="width: 174px;"></select>
+                    </li>
+
+
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Director:</label><br>
+                        <select id="ddlSrchDirector" multiple="multiple"></select>
+                    </li>
+                    @*<li class="AdSearch" id="spType">
+                            <label id="spType1">Sport Type:</label><br />
+                            <select id="ddlSrchSportType" style="width: 174px;">
+                                <option value="" selected>Please Select </option>
+                            </select>
+                        </li>*@
+
+                </ul>
+                <br />
+
+                <div style="text-align:center;">
+                    <label class="checkbox-inline" style="display:none">
+
+                        @if (ViewBag.IncludeArchiveDeal == "true")
+                        {
+                            <input type="checkbox" id="chkArchiveDeal" value="Y" checked="checked" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkArchiveDeal" value="Y" />
+                        }
+                        Include Archive Deal
+                    </label>
+                    @*<label class="checkbox-inline">
+                            @if (ViewBag.IncludeSubDeal == "true")
+                            {
+                                <input type="checkbox" id="chkSubDeal" value="Y" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkSubDeal" value="Y" />
+                            }
+                            @objMessageKey.IncludeSubDeals
+                        </label><br><br>
+                        <br />*@
+                    <input type="hidden" id="hdnClearAll" />
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="container acq main_col" id="AllsubmenuHide">
+            <div class="top_area">
+                <h2 class="pull-left" style="">
+                    Objection Detail
+                </h2>
+                <div class="MuBUList" style="">
+                    @if (ViewBag.Is_AllowMultiBUacqdeal == "Y")
+                    {
+                        @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                    }
+                </div>
+                <div class="right_nav pull-right">
+                    <ul>
+                        <li>
+                            @if (ViewBag.Is_AllowMultiBUacqdeal != "Y")
+                            {
+                                <span>
+                                    @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "" })
+                                </span>
+                            }
+                            @*else
+                            {
+                                <span>
+                                    @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                                </span>
+                                @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select> 
+                            }*@
+
+                            <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:279px !important;"
+                                   placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" />
+                        </li>
+                        <li>
+                            <a class="btn-primary" style="cursor: pointer" onclick="CommonSrch();">@objMessageKey.Search</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="ShowAll();">
+                                <span class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="ShowAll"></span>
+                            </a>
+                        </li>
+                        @*<li>
+                                <a href="#">
+                                    <span class="glyphicon glyphicon-search" title="Advanced Search" onclick="BindAdvanced_Search_Controls('BTC');"></span>
+                                </a>
+                            </li>*@
+                        <li>
+                            @{if (ViewBag.AddVisibility == true)
+                                {
+                                    <a class="btn-primary" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Add", Acq_Deal_Code = 0 })">@objMessageKey.AddDeal</a>
+                                }
+                            }
+                        </li>
+                        @*<li>
+                                <div id="sideNavi">
+                                    <div class="side-navi-item item1" style="top:0px ;width: 46px !important;" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindAdvanced_Search_Controls('BTC');"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+                                    </div>
+                            </li>*@
+                    </ul>
+                </div>
+            </div>
+            <div id="dvDealList">
+            </div>
+            <div id="dvNoRecords" class="grid_area deal clearfix" style="display: none">
+                @objMessageKey.Norecordfound!!
+            </div>
+            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="popupValidationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none; overflow: scroll; height: 600px;">
+                <div class="modal-dialog">
+                    <div class="modal-content clearfix">
+                        <form class="form" id="frm_set_milestone">
+                            <div>
+                                <div class="form_fields acq">
+                                    <div class="modal_block modal_header">
+                                        <a class="close" data-dismiss="modal" href="#">
+                                            <span>×</span>
+                                            <span class="sr-only">Close</span>
+                                        </a>
+                                        <h2>@objMessageKey.DuplicateCombination</h2>
+                                    </div>
+                                    <div class="modal_block">
+                                        <div id="BindValidationPopup"></div>
+                                    </div>
+                                    <div class="modal_block_full">
+                                        <div class="form_links">
+                                            <ul class="modal_block clearfix">
+                                                <li>
+                                                    <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popupTermination" role="dialog" tabindex="-1" aria-hidden="false" style="display: none; max-width: 800px;">
+            </div>
+            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popupTerminationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in modalPopup" id="divPopupReleaseContent" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="formReleaseContent">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="CloseReleaseContent()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.ReleaseContentList  ( <span id="spnAgreementNo"></span> )</h2>
+                        </div>
+
+                        <div style="background-color:#eee">
+                            <table class="table">
+                                <tr>
+                                    <td style="width:15%;line-height: 26px;text-align:center;">
+                                        @objMessageKey.TitleName :
+                                    </td>
+                                    <td style="width:30%;">
+                                        <input type="text" name="srchCommon" id="txtSearch_RCPopup" class="search" style="width:100%" placeholder="@objMessageKey.TitleName" />
+                                    </td>
+                                    <td>
+                                        <input type="button" id="btnSearch_RCPopup" class="button" value="@objMessageKey.Search" onclick="btnSearch_RCPopup_OnClick('S')">
+                                        <input type="button" id="btnShowAll_RCPopup" class="button" value="@objMessageKey.ShowAll" onclick="btnSearch_RCPopup_OnClick('SA')">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="grid_area">
+                            <div class="paging_area clearfix" style="margin:10px">
+                                <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                                <span class="pull-left" id="lblRecordCount_RCPopup"></span>
+                                <input type="hidden" id="hdnPageNo_RCPopup" name="hdnPageNo_RCPopup" value="1" />
+                                <input type="hidden" id="hdnPagePerBatch_RCPopup" name="hdnPagePerBatch_RCPopup" value="5" />
+                                <input type="hidden" id="hdnRecordCount_RCPopup" name="hdnRecordCount_RCPopup" value="0" />
+                                <input type="hidden" id="hdnSelectedTitleCodes" name="hdnSelectedTitleCodes" value="" />
+                                <input type="hidden" id="hdnAllTitleCodes" name="hdnAllTitleCodes" value="" />
+                                <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+
+                                <div id="Pagination_popup" class="pagination_popup">
+                                </div>
+                                <span class="pull-right">
+                                    @objMessageKey.PageSize:
+                                    <input type="text" id="txtPageSize_RCPopup" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                                           onchange="txtPageSize_RCPopup_OnChange()" onblur="setDefaultPaging('txtPageSize_RCPopup')" />
+                                </span>
+                            </div>
+
+                            <div id="divReleaseContentList">
+                            </div>
+                        </div>
+                        <input type="hidden" name="acqDealCode" id="acqDealCode" value="0" />
+                        <input type="hidden" name="agreementNo" id="agreementNo" value="0" />
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" id="btnSaveReleaseContent" class="btn btn-primary" value="@objMessageKey.Save"
+                                               onclick="SaveReleaseContent();">
+                                    </li>
+                                    <li>
+                                        <input type="button" id="btnCancelReleaseContent" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="CloseReleaseContent();">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitle" style="max-width: 560px;" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="formReleaseContent">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="CloseAT()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2><b><span id="spnCount_AT" style="font-weight: 500;"></span></b>&nbsp;&nbsp;@objMessageKey.Title  ( <span id="spnAgreementNo_AT"></span> )</h2>
+                        </div>
+                        <div>
+                            <table class="table">
+                                <tr>
+                                    <td style="width:12%;line-height: 26px;text-align:center;padding-left: 19px;">
+                                        @objMessageKey.Title :
+                                    </td>
+                                    <td style="width:48%;">
+                                        <input type="text" name="srchCommon" id="txtSearch_ATPopup" class="search" style="width:100%" placeholder="@objMessageKey.TitleName" />
+                                    </td>
+                                    <td>
+                                        <input type="button" id="btnSearch_ATPopup" class="button" value="@objMessageKey.Search" onclick="btnSearch_ATPopup_OnClick('S')">
+                                        <input type="button" id="btnShowAll_ATPopup" class="button" value="@objMessageKey.ShowAll" onclick="btnSearch_ATPopup_OnClick('SA')">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="">
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="scale_table_block">
+                                    <div id="divTitleList">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="acqDealCode_AT" id="acqDealCode_AT" value="0" />
+                        <input type="hidden" name="agreementNo_AT" id="agreementNo_AT" value="0" />
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" id="btnCancelReleaseContent" class="btn btn-primary" value="@objMessageKey.Close"
+                                               onclick="CloseAT();">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+    /*Paging Style*/
+
+    .pagination_popup {
+        float: right;
+        margin-top: 4px;
+    }
+
+        .pagination_popup > span {
+            position: relative;
+            padding: 4px 9px;
+            margin-left: -1px;
+            line-height: 1.42857143;
+            color: #428bca;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        .pagination_popup > a {
+            margin-left: -1px;
+            padding: 4px 9px;
+            line-height: 1.42857143;
+            color: #428bca;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+            .pagination_popup > a:first-child, .pagination > span:first-child {
+                margin-left: 0;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+            }
+
+            .pagination_popup > a:last-child, .pagination > span:last-child {
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+
+            .pagination_popup > a:hover, .pagination > span:hover, .pagination > a:focus, .pagination > span:focus {
+                color: #2a6496;
+                background-color: #eee;
+            }
+
+        .pagination_popup > .current {
+            z-index: 2;
+            font-weight: 700;
+            cursor: not-allowed;
+            border-color: #428bca;
+        }
+
+        .pagination_popup .current.prev, .pagination .current.next {
+            border-color: #ddd;
+            font-weight: 100;
+            z-index: 1;
+        }
+    /*End Paging Style*/
+</style>

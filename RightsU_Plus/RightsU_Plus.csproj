@@ -218,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\Title_Objection_ListController.cs" />
     <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
     <Compile Include="Controllers\Availability_Movie_NewController.cs" />
     <Compile Include="Controllers\IPR_Dashboard.cs" />
@@ -1280,6 +1281,8 @@
     <Content Include="Views\Title_Objection\Index.cshtml" />
     <Content Include="Views\Title_Objection\_Title_Objection.cshtml" />
     <Content Include="Views\Title_Objection\_Title_Objection_List.cshtml" />
+    <Content Include="Views\Title_Objection_List\_List_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection_List\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
