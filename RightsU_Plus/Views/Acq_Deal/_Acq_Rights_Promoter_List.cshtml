@@ -11,8 +11,7 @@
     RightsU_BLL.Promoter_Remarks_Service objPRService = new RightsU_BLL.Promoter_Remarks_Service(objLoginEntity.ConnectionStringName);
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
-    {
-        objMessageKey = (MessageKey)Session["objMessageKey"];
+    {        objMessageKey = (MessageKey)Session["objMessageKey"];
     }
 }
 <script>
@@ -287,36 +286,36 @@
         z-index: 100;
     }
 
-        #popupFadeP .modal-dialog ul.fancytree-container {
-            height: 100%;
-            border: 0;
-            max-height: 300px;
-        }
+     #popupFadeP .modal-dialog ul.fancytree-container {
+         height: 100%;
+         border: 0;
+         max-height: 300px;
+     }
 
-        #popupFadeP form .modal_block {
-            padding: 3px 1px;
-        }
+     #popupFadeP form .modal_block {
+         padding: 3px 1px;
+     }
 
-        #popupFadeP #Promoter_Matrix {
-            max-height: 300px !important;
-        }
-          #Tree_Filter_Promoter_Matrix {   
-        max-width:300px;
-        padding-left:3px;
-        position:relative!important;
-        }
-        #Promoter_Matrix{
-            margin:0px 0px 0px 0px!important;
-        }
-        #divTree{
-            overflow-x:hidden;
-        }
-         #popupFadeP .modal_header{
-            background:#c3c3c3;
-        }
-          .tooltip{
-             z-index:9999!important;
-         }
+     #popupFadeP #Promoter_Matrix {
+         max-height: 300px !important;
+     }
+       #Tree_Filter_Promoter_Matrix {   
+     max-width:300px;
+     padding-left:3px;
+     position:relative!important;
+     }
+     #Promoter_Matrix{
+         margin:0px 0px 0px 0px!important;
+     }
+     #divTree{
+         overflow-x:hidden;
+     }
+      #popupFadeP .modal_header{
+         background:#c3c3c3;
+     }
+     .tooltip{
+          z-index:9999!important;
+     }
 </style>
 <form id="frm_Save_Promoter" method="post">
     <table class="table table-bordered table-hover" id="tblPromoter">

@@ -1280,6 +1280,7 @@
     <Content Include="Views\Title_Objection\Index.cshtml" />
     <Content Include="Views\Title_Objection\_Title_Objection.cshtml" />
     <Content Include="Views\Title_Objection\_Title_Objection_List.cshtml" />
+    <Content Include="Views\Title_Objection\_AddEdit_Title_Objection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

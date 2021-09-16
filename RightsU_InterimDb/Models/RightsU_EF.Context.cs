@@ -428,6 +428,12 @@ namespace RightsU_InterimDb.Models
         public DbSet<DM_Title_Resolve_Conflict> DM_Title_Resolve_Conflict { get; set; }
         public DbSet<Music_Title> Music_Title { get; set; }
         public DbSet<Platform_Broadcast> Platform_Broadcast { get; set; }
+        public DbSet<Title_Objection> Title_Objection { get; set; }
+        public DbSet<Title_Objection_Platform> Title_Objection_Platform { get; set; }
+        public DbSet<Title_Objection_Rights_Period> Title_Objection_Rights_Period { get; set; }
+        public DbSet<Title_Objection_Status> Title_Objection_Status { get; set; }
+        public DbSet<Title_Objection_Territory> Title_Objection_Territory { get; set; }
+        public DbSet<Title_Objection_Type> Title_Objection_Type { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {

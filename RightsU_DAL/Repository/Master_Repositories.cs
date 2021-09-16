@@ -2892,4 +2892,9 @@ namespace RightsU_DAL
     {
         public DM_Title_Import_Utility_Data_Repository(string conStr) : base(conStr) { }
     }
+
+    public class Title_Objection_Status_Repository : RightsU_Repository<Title_Objection_Status>
+    {
+        public Title_Objection_Status_Repository(string conStr) : base(conStr) { }
+    }
 }

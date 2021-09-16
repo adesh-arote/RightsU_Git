@@ -6860,6 +6860,26 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class Title_Objection_Status_Service
+    {
+        private readonly Title_Objection_Status_Repository obj_Repository;
+
+        public Title_Objection_Status_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Status_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Status> SearchFor(Expression<Func<Title_Objection_Status, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Status GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
 }
 
 

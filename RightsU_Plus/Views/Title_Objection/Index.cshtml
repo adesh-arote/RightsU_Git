@@ -5,6 +5,12 @@
 }
 <script src="~/JS_Core/jquery.sumoselect.js"></script>
 <link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
 <div class="main_section">
     <section class="rightsU_container clearfix">
@@ -18,15 +24,16 @@
 <script>
     var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Title_Objection")';
     $(document).ready(function () {
-        BindPartialView("LIST","A", 0);
+        BindPartialView("LIST");
     });
 
-    function BindPartialView(key, Type, TitleObjectionCode) {
+    function BindPartialView(key, Deal_Code = 0, Title_Code = 0) {
         debugger
         //if (key == "ADDEDIT") {
         //    Search = $('#searchCommon').val();
         //    $('#hdnSearch').val($('#searchCommon').val());
         //}
+        Record_Type = $("input[name='rb_AcqSyn']:checked").val();
 
         $.ajax({
             type: "POST",
@@ -37,8 +44,9 @@
             dataType: "html",
             data: JSON.stringify({
                 key: key,
-                Type: Type,
-                TitleObjectionCode: TitleObjectionCode
+                Record_Type: Record_Type,
+                Deal_Code: Deal_Code,
+                Title_Code: Title_Code
             }),
             success: function (result) {
                 debugger;
@@ -48,7 +56,7 @@
                 else {
                     $('#divTitleObjection').empty();
                     $('#divTitleObjection').html(result);
-               
+
                 }
             },
             error: function (result) {

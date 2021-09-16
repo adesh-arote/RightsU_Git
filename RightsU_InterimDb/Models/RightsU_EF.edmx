@@ -1863,6 +1863,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Property Name="Deal_Desc_Name" Type="nvarchar(max)" />
           <Property Name="Type" Type="char" MaxLength="1" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
         </EntityType>
         <EntityType Name="Deal_Rights_Process">
           <Key>
@@ -5389,6 +5393,72 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
           <Property Name="Lock_Time" Type="time" Precision="7" />
+        </EntityType>
+        <EntityType Name="Title_Objection">
+          <Key>
+            <PropertyRef Name="Title_Objection_Code" />
+          </Key>
+          <Property Name="Title_Objection_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title_Objection_Status_Code" Type="int" />
+          <Property Name="Title_Objection_Type_Code" Type="int" />
+          <Property Name="Title_Code" Type="int" />
+          <Property Name="Record_Code" Type="int" />
+          <Property Name="Record_Type" Type="char" MaxLength="1" />
+          <Property Name="Objection_Start_Date" Type="datetime" />
+          <Property Name="Objection_End_Date" Type="datetime" />
+          <Property Name="Objection_Remarks" Type="nvarchar(max)" />
+          <Property Name="Resolution_Remarks" Type="nvarchar(max)" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Platform">
+          <Key>
+            <PropertyRef Name="Title_Objection_Platform_Code" />
+          </Key>
+          <Property Name="Title_Objection_Platform_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title_Objection_Code" Type="int" />
+          <Property Name="Platform_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Rights_Period">
+          <Key>
+            <PropertyRef Name="Title_Objection_Rights_Period_Code" />
+          </Key>
+          <Property Name="Title_Objection_Rights_Period_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title_Objection_Code" Type="int" />
+          <Property Name="Rights_Start_Date" Type="datetime" />
+          <Property Name="Rights_End_Date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Status">
+          <Key>
+            <PropertyRef Name="Title_Objection_Status_Code" />
+          </Key>
+          <Property Name="Title_Objection_Status_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Objection_Status_Name" Type="nvarchar(max)" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Territory">
+          <Key>
+            <PropertyRef Name="Title_Objection_Territory_Code" />
+          </Key>
+          <Property Name="Title_Objection_Territory_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title_Objection_Code" Type="int" />
+          <Property Name="Territory_Type" Type="char" MaxLength="1" />
+          <Property Name="Country_Code" Type="int" />
+          <Property Name="Territory_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Type">
+          <Key>
+            <PropertyRef Name="Objection_Type_Code" />
+          </Key>
+          <Property Name="Objection_Type_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Objection_Type_Name" Type="varchar(max)" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
         </EntityType>
         <EntityType Name="Title_Promotion">
           <Key>
@@ -11602,6 +11672,78 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Title_Objection_Platform_Title_Objection">
+          <End Role="Title_Objection" Type="Self.Title_Objection" Multiplicity="0..1" />
+          <End Role="Title_Objection_Platform" Type="Self.Title_Objection_Platform" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection_Platform">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Rights_Period_Title_Objection">
+          <End Role="Title_Objection" Type="Self.Title_Objection" Multiplicity="0..1" />
+          <End Role="Title_Objection_Rights_Period" Type="Self.Title_Objection_Rights_Period" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection_Rights_Period">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Territory_Title_Objection">
+          <End Role="Title_Objection" Type="Self.Title_Objection" Multiplicity="0..1" />
+          <End Role="Title_Objection_Territory" Type="Self.Title_Objection_Territory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection_Territory">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="Title_Objection" Type="Self.Title_Objection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Title_Objection_Status">
+          <End Role="Title_Objection_Status" Type="Self.Title_Objection_Status" Multiplicity="0..1" />
+          <End Role="Title_Objection" Type="Self.Title_Objection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection_Status">
+              <PropertyRef Name="Title_Objection_Status_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Status_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Title_Objection_Type">
+          <End Role="Title_Objection_Type" Type="Self.Title_Objection_Type" Multiplicity="0..1" />
+          <End Role="Title_Objection" Type="Self.Title_Objection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection_Type">
+              <PropertyRef Name="Objection_Type_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Type_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Title_Original_Language">
           <End Role="Language" Type="Self.Language" Multiplicity="0..1" />
           <End Role="Title" Type="Self.Title" Multiplicity="*" />
@@ -14384,6 +14526,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Title_Country" EntityType="Self.Title_Country" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Geners" EntityType="Self.Title_Geners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Milestone" EntityType="Self.Title_Milestone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Objection" EntityType="Self.Title_Objection" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Objection_Platform" EntityType="Self.Title_Objection_Platform" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Objection_Rights_Period" EntityType="Self.Title_Objection_Rights_Period" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Objection_Status" EntityType="Self.Title_Objection_Status" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Objection_Territory" EntityType="Self.Title_Objection_Territory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Objection_Type" EntityType="Self.Title_Objection_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Promotion" EntityType="Self.Title_Promotion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Release" EntityType="Self.Title_Release" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Release_Platforms" EntityType="Self.Title_Release_Platforms" Schema="dbo" store:Type="Tables" />
@@ -16728,6 +16876,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Title_Language" Association="Self.FK_Title_Language">
             <End Role="Language" EntitySet="Language" />
             <End Role="Title" EntitySet="Title" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Platform_Title_Objection" Association="Self.FK_Title_Objection_Platform_Title_Objection">
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+            <End Role="Title_Objection_Platform" EntitySet="Title_Objection_Platform" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Rights_Period_Title_Objection" Association="Self.FK_Title_Objection_Rights_Period_Title_Objection">
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+            <End Role="Title_Objection_Rights_Period" EntitySet="Title_Objection_Rights_Period" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Territory_Title_Objection" Association="Self.FK_Title_Objection_Territory_Title_Objection">
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+            <End Role="Title_Objection_Territory" EntitySet="Title_Objection_Territory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Title" Association="Self.FK_Title_Objection_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Title_Objection_Status" Association="Self.FK_Title_Objection_Title_Objection_Status">
+            <End Role="Title_Objection_Status" EntitySet="Title_Objection_Status" />
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Title_Objection_Type" Association="Self.FK_Title_Objection_Title_Objection_Type">
+            <End Role="Title_Objection_Type" EntitySet="Title_Objection_Type" />
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
           </AssociationSet>
           <AssociationSet Name="FK_Title_Original_Language" Association="Self.FK_Title_Original_Language">
             <End Role="Language" EntitySet="Language" />
@@ -20782,6 +20954,36 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Title_Codes" Mode="In" Type="String" />
             <Parameter Name="Licensor_Codes" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Title_Objection" EntityType="RightsU_NeoModel.Title_Objection" />
+          <EntitySet Name="Title_Objection_Platform" EntityType="RightsU_NeoModel.Title_Objection_Platform" />
+          <EntitySet Name="Title_Objection_Rights_Period" EntityType="RightsU_NeoModel.Title_Objection_Rights_Period" />
+          <EntitySet Name="Title_Objection_Status" EntityType="RightsU_NeoModel.Title_Objection_Status" />
+          <EntitySet Name="Title_Objection_Territory" EntityType="RightsU_NeoModel.Title_Objection_Territory" />
+          <EntitySet Name="Title_Objection_Type" EntityType="RightsU_NeoModel.Title_Objection_Type" />
+          <AssociationSet Name="FK_Title_Objection_Title" Association="RightsU_NeoModel.FK_Title_Objection_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Platform_Title_Objection" Association="RightsU_NeoModel.FK_Title_Objection_Platform_Title_Objection">
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+            <End Role="Title_Objection_Platform" EntitySet="Title_Objection_Platform" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Rights_Period_Title_Objection" Association="RightsU_NeoModel.FK_Title_Objection_Rights_Period_Title_Objection">
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+            <End Role="Title_Objection_Rights_Period" EntitySet="Title_Objection_Rights_Period" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Territory_Title_Objection" Association="RightsU_NeoModel.FK_Title_Objection_Territory_Title_Objection">
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+            <End Role="Title_Objection_Territory" EntitySet="Title_Objection_Territory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Title_Objection_Status" Association="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Status">
+            <End Role="Title_Objection_Status" EntitySet="Title_Objection_Status" />
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Objection_Title_Objection_Type" Association="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Type">
+            <End Role="Title_Objection_Type" EntitySet="Title_Objection_Type" />
+            <End Role="Title_Objection" EntitySet="Title_Objection" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -23630,6 +23832,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title" FromRole="Title" ToRole="MHCueSheetSong" />
           <NavigationProperty Name="Title_Milestone" Relationship="RightsU_NeoModel.FK__Title_Mil__Title__334C3C61" FromRole="Title" ToRole="Title_Milestone" />
           <Property Name="Original_Title_Code" Type="Int32" />
+          <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Title" FromRole="Title" ToRole="Title_Objection" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -35073,6 +35276,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Deal_Desc_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
         </EntityType>
         <EntityType Name="Deal_Segment">
           <Key>
@@ -35580,6 +35787,155 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Title_Code" Nullable="true" />
           <Property Type="Int32" Name="Licensor_Code" Nullable="false" />
         </ComplexType>
+        <EntityType Name="Title_Objection">
+          <Key>
+            <PropertyRef Name="Title_Objection_Code" />
+          </Key>
+          <Property Name="Title_Objection_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title_Objection_Status_Code" Type="Int32" />
+          <Property Name="Title_Objection_Type_Code" Type="Int32" />
+          <Property Name="Title_Code" Type="Int32" />
+          <Property Name="Record_Code" Type="Int32" />
+          <Property Name="Record_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Objection_Start_Date" Type="DateTime" Precision="3" />
+          <Property Name="Objection_End_Date" Type="DateTime" Precision="3" />
+          <Property Name="Objection_Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Resolution_Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Title_Objection_Title" FromRole="Title_Objection" ToRole="Title" />
+          <NavigationProperty Name="Title_Objection_Platform" Relationship="RightsU_NeoModel.FK_Title_Objection_Platform_Title_Objection" FromRole="Title_Objection" ToRole="Title_Objection_Platform" />
+          <NavigationProperty Name="Title_Objection_Rights_Period" Relationship="RightsU_NeoModel.FK_Title_Objection_Rights_Period_Title_Objection" FromRole="Title_Objection" ToRole="Title_Objection_Rights_Period" />
+          <NavigationProperty Name="Title_Objection_Territory" Relationship="RightsU_NeoModel.FK_Title_Objection_Territory_Title_Objection" FromRole="Title_Objection" ToRole="Title_Objection_Territory" />
+          <NavigationProperty Name="Title_Objection_Status" Relationship="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Status" FromRole="Title_Objection" ToRole="Title_Objection_Status" />
+          <NavigationProperty Name="Title_Objection_Type" Relationship="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Type" FromRole="Title_Objection" ToRole="Title_Objection_Type" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Platform">
+          <Key>
+            <PropertyRef Name="Title_Objection_Platform_Code" />
+          </Key>
+          <Property Name="Title_Objection_Platform_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title_Objection_Code" Type="Int32" />
+          <Property Name="Platform_Code" Type="Int32" />
+          <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Platform_Title_Objection" FromRole="Title_Objection_Platform" ToRole="Title_Objection" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Rights_Period">
+          <Key>
+            <PropertyRef Name="Title_Objection_Rights_Period_Code" />
+          </Key>
+          <Property Name="Title_Objection_Rights_Period_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title_Objection_Code" Type="Int32" />
+          <Property Name="Rights_Start_Date" Type="DateTime" Precision="3" />
+          <Property Name="Rights_End_Date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Rights_Period_Title_Objection" FromRole="Title_Objection_Rights_Period" ToRole="Title_Objection" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Status">
+          <Key>
+            <PropertyRef Name="Title_Objection_Status_Code" />
+          </Key>
+          <Property Name="Title_Objection_Status_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Objection_Status_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Status" FromRole="Title_Objection_Status" ToRole="Title_Objection" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Territory">
+          <Key>
+            <PropertyRef Name="Title_Objection_Territory_Code" />
+          </Key>
+          <Property Name="Title_Objection_Territory_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title_Objection_Code" Type="Int32" />
+          <Property Name="Territory_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Country_Code" Type="Int32" />
+          <Property Name="Territory_Code" Type="Int32" />
+          <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Territory_Title_Objection" FromRole="Title_Objection_Territory" ToRole="Title_Objection" />
+        </EntityType>
+        <EntityType Name="Title_Objection_Type">
+          <Key>
+            <PropertyRef Name="Objection_Type_Code" />
+          </Key>
+          <Property Name="Objection_Type_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Objection_Type_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Type" FromRole="Title_Objection_Type" ToRole="Title_Objection" />
+        </EntityType>
+        <Association Name="FK_Title_Objection_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Objection" Role="Title_Objection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Platform_Title_Objection">
+          <End Type="RightsU_NeoModel.Title_Objection" Role="Title_Objection" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Objection_Platform" Role="Title_Objection_Platform" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection_Platform">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Rights_Period_Title_Objection">
+          <End Type="RightsU_NeoModel.Title_Objection" Role="Title_Objection" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Objection_Rights_Period" Role="Title_Objection_Rights_Period" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection_Rights_Period">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Territory_Title_Objection">
+          <End Type="RightsU_NeoModel.Title_Objection" Role="Title_Objection" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Objection_Territory" Role="Title_Objection_Territory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection_Territory">
+              <PropertyRef Name="Title_Objection_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Title_Objection_Status">
+          <End Type="RightsU_NeoModel.Title_Objection_Status" Role="Title_Objection_Status" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Objection" Role="Title_Objection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection_Status">
+              <PropertyRef Name="Title_Objection_Status_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Status_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Objection_Title_Objection_Type">
+          <End Type="RightsU_NeoModel.Title_Objection_Type" Role="Title_Objection_Type" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Objection" Role="Title_Objection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Objection_Type">
+              <PropertyRef Name="Objection_Type_Code" />
+            </Principal>
+            <Dependent Role="Title_Objection">
+              <PropertyRef Name="Title_Objection_Type_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44375,6 +44731,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Deal_Description">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Deal_Description">
               <MappingFragment StoreEntitySet="Deal_Description">
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
                 <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Deal_Desc_Name" ColumnName="Deal_Desc_Name" />
@@ -44667,6 +45027,78 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Title_Objection">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Objection">
+              <MappingFragment StoreEntitySet="Title_Objection">
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Resolution_Remarks" ColumnName="Resolution_Remarks" />
+                <ScalarProperty Name="Objection_Remarks" ColumnName="Objection_Remarks" />
+                <ScalarProperty Name="Objection_End_Date" ColumnName="Objection_End_Date" />
+                <ScalarProperty Name="Objection_Start_Date" ColumnName="Objection_Start_Date" />
+                <ScalarProperty Name="Record_Type" ColumnName="Record_Type" />
+                <ScalarProperty Name="Record_Code" ColumnName="Record_Code" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Objection_Type_Code" ColumnName="Title_Objection_Type_Code" />
+                <ScalarProperty Name="Title_Objection_Status_Code" ColumnName="Title_Objection_Status_Code" />
+                <ScalarProperty Name="Title_Objection_Code" ColumnName="Title_Objection_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Title_Objection_Platform">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Objection_Platform">
+              <MappingFragment StoreEntitySet="Title_Objection_Platform">
+                <ScalarProperty Name="Platform_Code" ColumnName="Platform_Code" />
+                <ScalarProperty Name="Title_Objection_Code" ColumnName="Title_Objection_Code" />
+                <ScalarProperty Name="Title_Objection_Platform_Code" ColumnName="Title_Objection_Platform_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Title_Objection_Rights_Period">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Objection_Rights_Period">
+              <MappingFragment StoreEntitySet="Title_Objection_Rights_Period">
+                <ScalarProperty Name="Rights_End_Date" ColumnName="Rights_End_Date" />
+                <ScalarProperty Name="Rights_Start_Date" ColumnName="Rights_Start_Date" />
+                <ScalarProperty Name="Title_Objection_Code" ColumnName="Title_Objection_Code" />
+                <ScalarProperty Name="Title_Objection_Rights_Period_Code" ColumnName="Title_Objection_Rights_Period_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Title_Objection_Status">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Objection_Status">
+              <MappingFragment StoreEntitySet="Title_Objection_Status">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Objection_Status_Name" ColumnName="Objection_Status_Name" />
+                <ScalarProperty Name="Title_Objection_Status_Code" ColumnName="Title_Objection_Status_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Title_Objection_Territory">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Objection_Territory">
+              <MappingFragment StoreEntitySet="Title_Objection_Territory">
+                <ScalarProperty Name="Territory_Code" ColumnName="Territory_Code" />
+                <ScalarProperty Name="Country_Code" ColumnName="Country_Code" />
+                <ScalarProperty Name="Territory_Type" ColumnName="Territory_Type" />
+                <ScalarProperty Name="Title_Objection_Code" ColumnName="Title_Objection_Code" />
+                <ScalarProperty Name="Title_Objection_Territory_Code" ColumnName="Title_Objection_Territory_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Title_Objection_Type">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Objection_Type">
+              <MappingFragment StoreEntitySet="Title_Objection_Type">
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Objection_Type_Name" ColumnName="Objection_Type_Name" />
+                <ScalarProperty Name="Objection_Type_Code" ColumnName="Objection_Type_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

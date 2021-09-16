@@ -78,23 +78,32 @@ namespace RightsU_Plus.Controllers
                 lstTitle_Licensor.Add(obj);
             }
 
-
             return View();
         }
-        public PartialViewResult BindPartialPages(string key, string Type, int TitleObjectionCode)
+        public PartialViewResult BindPartialPages(string key, string Record_Type = "A", int Title_Code = 0, int Deal_Code = 0)
         {
 
             //Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
             //RightsU_Entities.Vendor objVendor = null;
             if (key == "LIST")
             {
-                ViewBag.Type = Type;
-                ViewBag.ddlTitle = new SelectList(lstTitle_Licensor.Where(x=>x.Acq_Syn == Type).Select(x=> new { x.Title, x.Title_Code}).ToList(), "Title_Code", "Title");
-                ViewBag.ddlLicensor = new SelectList(lstTitle_Licensor.Where(x => x.Acq_Syn == Type).Select(x => new { x.Licensor_Code, x.Licensor }).ToList(),"Licensor_Code", "Licensor");
+                ViewBag.Type = Record_Type;
+                ViewBag.ddlTitle = new SelectList(lstTitle_Licensor.Where(x => x.Acq_Syn == Record_Type).Select(x => new { x.Title, x.Title_Code }).ToList().Distinct(), "Title_Code", "Title");
+                ViewBag.ddlLicensor = new SelectList(lstTitle_Licensor.Where(x => x.Acq_Syn == Record_Type).Select(x => new { x.Licensor_Code, x.Licensor }).ToList().Distinct(), "Licensor_Code", "Licensor");
 
-                lstUSP_Title_Objection_List_Searched = lstUSP_Title_Objection_List = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List(Type, "", "").ToList();
+                lstUSP_Title_Objection_List_Searched = lstUSP_Title_Objection_List = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List(Record_Type, "", "").ToList();
                 ViewBag.UserModuleRights = GetUserModuleRights();
                 return PartialView("~/Views/Title_Objection/_Title_Objection.cshtml");
+            }
+            else if (key == "ADD")
+            {
+                ViewBag.ddlCT = new SelectList(
+                    new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").Select(x => new { x.Country_Code, x.Country_Name }).ToList()
+                    , "Country_Code", "Country_Name");
+
+                ViewBag.ddlTitle_Status = new SelectList(new Title_Objection_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList(), "Title_Objection_Status_Code", "Objection_Status_Name");
+                USP_Title_Objection_List_Result objUTO = lstUSP_Title_Objection_List_Searched.Where(x => x.Acq_Deal_Code == Deal_Code && x.Title_Code == Title_Code).FirstOrDefault();
+                return PartialView("~/Views/Title_Objection/_AddEdit_Title_Objection.cshtml", objUTO);
             }
             else
                 return PartialView();
@@ -287,6 +296,60 @@ namespace RightsU_Plus.Controllers
             return PartialView("~/Views/Title_Objection/_Title_Objection_List.cshtml", lst);
         }
 
+        public PartialViewResult BindPlatformTree(string PlatformCode, string DummyProperty)
+        {
+            Platform_Tree_View objPTV = new Platform_Tree_View(objLoginEntity.ConnectionStringName);
+
+            //if (objPage_Properties.RMODE != "V" || IsBulk == "Y")
+            if (true)
+            {
+                //string referancePlatforms = "";
+
+                //if (objPage_Properties.obj_lst_Syn_Rights.Count() > 0 && objPage_Properties.Is_Syn_Acq_Mapp == "Y" && objPage_Properties.RMODE != "C")
+                //{
+                //    string[] arr_Selected_PCodes = objPage_Properties.Acquired_Platform_Codes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                //    objPTV.Reference_From = "S";
+                //    referancePlatforms += string.Join(",", objPage_Properties.obj_lst_Syn_Rights.SelectMany(sm => sm.Syn_Deal_Rights_Platform).Where(w => (w.Platform_Code == objPage_Properties.PCODE || objPage_Properties.PCODE <= 0) && arr_Selected_PCodes.Contains(w.Platform_Code.ToString())).Select(s => s.Platform_Code).Distinct().ToArray());
+                //}
+
+                //if (objAcq_Deal_Rights.Is_Theatrical_Right == "N")
+                //    objPTV.PlatformCodes_Selected = strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                //if (referancePlatforms != "" && objPage_Properties.RMODE != "C")
+                //    objPTV.SynPlatformCodes_Reference = referancePlatforms.Trim(',').Split(new char[] { ',' }, StringSplitOptions.None);
+
+
+
+                //               SELECT DISTINCT ADRP.Platform_Code
+                //               FROM Acq_Deal_Rights ADR
+                //INNER JOIN Acq_Deal_Movie ADM ON ADM.Acq_Deal_Code = ADR.Acq_Deal_Code
+                //INNER JOIN acq_Deal_rights_platform ADRP ON ADRP.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code
+                //WHERE ADR.Actual_Right_End_Date >= GETDATE() AND
+                //ADR.Acq_Deal_Code = 39 AND ADM.Title_Code = 3272
+                //var a = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName)
+                //        .SearchFor(x => x.Acq_Deal_Code == 39 && x.Acq_Deal.Acq_Deal_Movie.Select(y => y.Title_Code).Contains(3272))
+                //        .Where(x => x.Actual_Right_End_Date >= System.DateTime.Now).ToList();
+                //.Select(x => x.Acq_Deal_Rights_Platform.Select(z => x.Platform_Codes).Distinct()).Distinct();
+
+
+
+                ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
+            }
+            //else
+            //{
+            //    if (objAcq_Deal_Rights.Is_Theatrical_Right == "N")
+            //        objPTV.PlatformCodes_Display = strPlatform;
+
+            //    objPTV.PlatformCodes_Selected = strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+            //    ViewBag.TV_Platform = objPTV.PopulateTreeNode("Y");
+            //}
+
+            ViewBag.TreeId = "Rights_Platform";
+            ViewBag.TreeValueId = "hdnTVCodes";
+            return PartialView("_TV_Platform");
+        }
+
         #region Other Method
         private string GetUserModuleRights()
         {
@@ -319,7 +382,6 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
-
         public JsonResult SearchTitleObjection(string Type, string Title_Codes = "", string Licensor_Codes = "")
         {
             lstUSP_Title_Objection_List_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List(Type, Title_Codes, Licensor_Codes).ToList();
@@ -330,28 +392,57 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-        public JsonResult BindTitleLicencor(string Type, string MapFor, string Title_Codes = "",string Licensor_Codes = "" )
+        public JsonResult BindTitleLicencor(string Type, string MapFor, string Title_Codes = "", string Licensor_Codes = "")
         {
             Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
             if (MapFor == "T")
             {
                 var LCodes = Licensor_Codes.Split(',').ToList();
-                SelectList lstTitle = new SelectList(lstTitle_Licensor.Where(x => LCodes.Contains(x.Licensor_Code.ToString()))
-                                    .ToList().Select(x=> new { Display_Value = x.Title_Code, Display_Text = x.Title }).ToList().Distinct()
+                if (Licensor_Codes != "")
+                {
+                    SelectList lstTitle = new SelectList(lstTitle_Licensor.Where(x => LCodes.Contains(x.Licensor_Code.ToString()))
+                                    .ToList().Select(x => new { Display_Value = x.Title_Code, Display_Text = x.Title }).ToList().Distinct()
                                     , "Display_Value", "Display_Text");
-                obj_Dictionary.Add("lstTitle", lstTitle);
+
+                    obj_Dictionary.Add("lstTitle", lstTitle);
+                }
+                else
+                {
+                    SelectList lstTitle = new SelectList(lstTitle_Licensor.Select(x => new { Display_Value = x.Title_Code, Display_Text = x.Title })
+                                    .ToList().Distinct()
+                                    , "Display_Value", "Display_Text");
+
+                    obj_Dictionary.Add("lstTitle", lstTitle);
+                }
             }
             else if (MapFor == "L")
             {
                 var TCodes = Title_Codes.Split(',').ToList();
                 SelectList lstLicensor = new SelectList(lstTitle_Licensor.Where(x => TCodes.Contains(x.Title_Code.ToString())).ToList()
-                                .Select(x => new { Display_Value= x.Licensor_Code, Display_Text = x.Licensor }).ToList().Distinct()
+                                .Select(x => new { Display_Value = x.Licensor_Code, Display_Text = x.Licensor }).ToList().Distinct()
                                 , "Display_Value", "Display_Text");
-                obj_Dictionary.Add("lstLicensor", lstLicensor); 
+                obj_Dictionary.Add("lstLicensor", lstLicensor);
             }
             return Json(obj_Dictionary);
         }
-        
+        public JsonResult BindCountryTerritory(string Type)
+        {
+            Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
+            if (Type == "C")
+            {
+                SelectList lstCT = new SelectList(new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+                .Select(x => new { Display_Value = x.Country_Code, Display_Text = x.Country_Name }).ToList(), "Display_Value", "Display_Text");
+                obj_Dictionary.Add("lstCT", lstCT);
+
+            }
+            else if (Type == "T")
+            {
+                SelectList lstCT = new SelectList(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
+                .Select(x => new { Display_Value = x.Territory_Code, Display_Text = x.Territory_Name }).ToList(), "Display_Value", "Display_Text");
+                obj_Dictionary.Add("lstCT", lstCT);
+            }
+            return Json(obj_Dictionary);
+        }
         #endregion
     }
 

@@ -414,7 +414,12 @@ namespace RightsU_DAL
         public DbSet<DM_Title_Import_Utility_Data> DM_Title_Import_Utility_Data { get; set; }
         public DbSet<Acq_Adv_Ancillary_Report> Acq_Adv_Ancillary_Report { get; set; }
         public DbSet<DM_Title_Resolve_Conflict> DM_Title_Resolve_Conflict { get; set; }
-
+        public DbSet<Title_Objection> Title_Objection { get; set; }
+        public DbSet<Title_Objection_Platform> Title_Objection_Platform { get; set; }
+        public DbSet<Title_Objection_Rights_Period> Title_Objection_Rights_Period { get; set; }
+        public DbSet<Title_Objection_Status> Title_Objection_Status { get; set; }
+        public DbSet<Title_Objection_Territory> Title_Objection_Territory { get; set; }
+        public DbSet<Title_Objection_Type> Title_Objection_Type { get; set; }
 
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name,string IS_Sport_Right)
         {

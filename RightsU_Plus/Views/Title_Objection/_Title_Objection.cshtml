@@ -1,5 +1,9 @@
 ﻿@using UTOFrameWork.FrameworkClasses
-
+<style>
+    #sumo_ddlTitle, #sumo_ddlLicensor {
+        width: 80% !important;
+    }
+</style>
 <script>
     var IsCall = 'Y', Command_Name = "";
 
@@ -20,20 +24,15 @@
         $("#ddlTitle,#ddlLicensor").SumoSelect();
         SearchTitleObjection();
 
-        $("#ddlTitle").change(function () {
-            TitleLicencorMapping("L")
-        });
+        //$("#ddlTitle").change(function () {
+        //    TitleLicencorMapping("L")
+        //});
+
         $("#ddlLicensor").change(function () {
             TitleLicencorMapping("T")
         });
 
         $('input[type=radio][name=rb_AcqSyn').change(function () {
-            //if (this.value == 'A') {
-            //    alert("Allot Thai Gayo Bhai");
-            //}
-            //else if (this.value == 'S') {
-            //    alert("Transfer Thai Gayo");
-            //}
             BindPartialView("LIST", this.value,0);
         });
     });
@@ -45,12 +44,12 @@
         var Type = $("input[name='rb_AcqSyn']:checked").val();
 
         if (Licensor_Codes != null) {
-            Licensor_Codes = Licensor_Codes.join(',')                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+            Licensor_Codes = Licensor_Codes.join(',')
         }
         if (Title_Codes != null) {
             Title_Codes = Title_Codes.join(',')
         }
-  
+
         $.ajax({
             type: "POST",
             url: URL_BindTitleLicencor,
@@ -195,11 +194,11 @@
         }
         SearchTitleObjection();
     }
-    
+
     function BindTitleObjectionList() {
         debugger;
         var pageNo=$('#hdnPageNo').val(), recordPerPage = $('#txtPageSize').val();
-  
+
         if(pageNo == undefined)
             pageNo = 1;
         else
@@ -321,7 +320,6 @@
         BindTitleObjectionList();
     }
 </script>
-
 <div class="">
     <div class="title_block dotted_border clearfix">
         <h2 class="pull-left">
@@ -331,21 +329,23 @@
 
     </div>
     <div class="search_area" style="background-color:#eee">
-        <table class="table">
+        <table class="table" style="width:100%">
             <tr>
-                <td>
-                    <input type="radio" checked=@(ViewBag.Type == "A"?true:false)  name="rb_AcqSyn" value="A"> Acquisition &nbsp;&nbsp;
-                    <input type="radio" checked=@(ViewBag.Type == "S"?true:false)  name="rb_AcqSyn" value="S"> Syndication
+                <td style="width:20%">
+                    <div style="line-height: 2;">
+                        <input type="radio" checked=@(ViewBag.Type == "A"?true:false) name="rb_AcqSyn" value="A"> Acquisition &nbsp;&nbsp;
+                        <input type="radio" checked=@(ViewBag.Type == "S"?true:false) name="rb_AcqSyn" value="S"> Syndication
+                    </div>
                 </td>
-                <td>
-                    <b>Title :&nbsp;</b>
-                    @Html.DropDownList("Title", (IEnumerable<SelectListItem>)ViewBag.ddlTitle, new { @id = "ddlTitle", @multiple = "multiple" })
-                </td>
-                <td>
+                <td style="width:30%">
                     <b>Licensor :&nbsp;</b>
                     @Html.DropDownList("Licensor", (IEnumerable<SelectListItem>)ViewBag.ddlLicensor, new { @id = "ddlLicensor", @multiple = "multiple" })
                 </td>
-                <td>
+                <td style="width:30%">
+                    <b>Title :&nbsp;</b>
+                    @Html.DropDownList("Title", (IEnumerable<SelectListItem>)ViewBag.ddlTitle, new { @id = "ddlTitle", @multiple = "multiple" })
+                </td>
+                <td style="width:20%">
                     <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">
                 </td>
 
