@@ -4984,5 +4984,22 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_List_Result>("USP_Title_Objection_List", callFromParameter, title_CodesParameter, licensor_CodesParameter);
         }
+    
+        public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type)
+        {
+            var titleCodeParameter = titleCode.HasValue ?
+                new ObjectParameter("TitleCode", titleCode) :
+                new ObjectParameter("TitleCode", typeof(int));
+    
+            var record_CodeParameter = record_Code.HasValue ?
+                new ObjectParameter("Record_Code", record_Code) :
+                new ObjectParameter("Record_Code", typeof(int));
+    
+            var record_TypeParameter = record_Type != null ?
+                new ObjectParameter("Record_Type", record_Type) :
+                new ObjectParameter("Record_Type", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_PreReq_Result>("USP_Title_Objection_PreReq", titleCodeParameter, record_CodeParameter, record_TypeParameter);
+        }
     }
 }

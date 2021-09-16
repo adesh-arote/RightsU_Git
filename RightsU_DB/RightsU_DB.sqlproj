@@ -1467,6 +1467,13 @@
     <Build Include="dbo\Stored Procedures\USP_Get_IPR_Dashboard_Details.sql" />
     <Build Include="dbo\Stored Procedures\USP_IPR_IntDom_Report.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Objection_List.sql" />
+    <Build Include="dbo\Tables\Title_Objection.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Platform.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Rights_Period.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Status.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Territory.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Type.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Title_Objection_PreReq.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

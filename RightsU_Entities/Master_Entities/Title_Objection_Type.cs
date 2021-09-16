@@ -27,6 +27,7 @@ namespace RightsU_Entities
         public Nullable<int> Inserted_By { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
+        public Nullable<int> Parent_Objection_Type_Code { get; set; }
 
         public virtual ICollection<Title_Objection> Title_Objection { get; set; }
     }

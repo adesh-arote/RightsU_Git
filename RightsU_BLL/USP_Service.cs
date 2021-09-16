@@ -58,7 +58,7 @@ namespace RightsU_BLL
             return objUSPDAL.USP_Get_Territory_ForDDL(IsThetrical);
         }
 
-        public ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name,string IS_Sport_Right)
+        public ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Get_Platform_Tree_Hierarchy(platformCodes, search_Platform_Name, IS_Sport_Right);
@@ -90,7 +90,7 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Ancillary_Validate_Udt(lstAncillary_Title, lstAncillary_Platform, lstAncillary_Platform_Medium, Ancillary_Type_code, Catch_Up_From, Acq_Deal_Ancillary_Code, Acq_Deal_Code);
         }
-        
+
         public IEnumerable<USP_Validate_Rights_Duplication_UDT> USP_Validate_Rights_Duplication_UDT(
             List<Deal_Rights_UDT> LstDeal_Rights_UDT,
             List<Deal_Rights_Title_UDT> LstDeal_Rights_Title_UDT,
@@ -759,11 +759,11 @@ namespace RightsU_BLL
             return objUSPDAL.USP_DM_Title_PI(LstTitle_Import_UDT, User_Code);
         }
         public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
-        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT,string CallFor, int User_Code, int DM_Master_Import_Code
+        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code
           )
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor , User_Code, DM_Master_Import_Code);
+            return objUSPDAL.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code, DM_Master_Import_Code);
         }
         public virtual ObjectResult<USP_Get_Termination_Title_Data_Result> USP_Get_Termination_Title_Data(Nullable<int> deal_Code, string type)
         {
@@ -1212,7 +1212,7 @@ namespace RightsU_BLL
         public virtual ObjectResult<USP_List_Music_Deal_Result> USP_List_Music_Deal(string searchText, string agreement_No, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate, string deal_Type_Code, string status_Code, Nullable<int> business_Unit_Code, Nullable<int> deal_Tag_Code, string workflow_Status, string vendor_Codes, string show_Type_Code, string title_Code, string music_Label_Codes, string isAdvance_Search, Nullable<int> user_Code, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_List_Music_Deal(searchText, agreement_No, startDate, endDate, deal_Type_Code, status_Code, business_Unit_Code, deal_Tag_Code, workflow_Status, vendor_Codes, show_Type_Code,title_Code ,music_Label_Codes, isAdvance_Search, user_Code, pageNo, pageSize, recordCount);
+            return objContext.USP_List_Music_Deal(searchText, agreement_No, startDate, endDate, deal_Type_Code, status_Code, business_Unit_Code, deal_Tag_Code, workflow_Status, vendor_Codes, show_Type_Code, title_Code, music_Label_Codes, isAdvance_Search, user_Code, pageNo, pageSize, recordCount);
         }
 
         public virtual ObjectResult<USP_Music_Deal_Link_Show_Result> USP_Music_Deal_Link_Show(string channel_Code, string title_Name, string mode, Nullable<int> music_Deal_Code, string selectedTitleCodes)
@@ -1474,9 +1474,9 @@ namespace RightsU_BLL
         public ObjectResult<USP_List_Title_Milestone_Result> USP_List_Title_Milestone(Nullable<int> pageNo, ObjectParameter recordCount, string pagingRequired, Nullable<int> pageSize, Nullable<int> titleCode)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_List_Title_Milestone(pageNo,  recordCount,  pagingRequired,  pageSize, titleCode);
+            return objUSPDAL.USP_List_Title_Milestone(pageNo, recordCount, pagingRequired, pageSize, titleCode);
         }
-        public virtual ObjectResult<string> USPMHGetMaxVendorCodes(string lastRequiredDate,string dealTypeCode, string businessUnitCode)
+        public virtual ObjectResult<string> USPMHGetMaxVendorCodes(string lastRequiredDate, string dealTypeCode, string businessUnitCode)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USPMHGetMaxVendorCodes(lastRequiredDate, dealTypeCode, businessUnitCode);
@@ -1572,6 +1572,11 @@ namespace RightsU_BLL
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Title_Objection_List(callFrom, title_Codes, licensor_Codes);
+        }
+        public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type);
         }
     }
 }

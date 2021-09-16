@@ -5459,6 +5459,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Last_Updated_Time" Type="datetime" />
           <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Parent_Objection_Type_Code" Type="int" />
         </EntityType>
         <EntityType Name="Title_Promotion">
           <Key>
@@ -13687,6 +13688,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Title_Codes" Type="varchar" Mode="In" />
           <Parameter Name="Licensor_Codes" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Title_Objection_PreReq" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TitleCode" Type="int" Mode="In" />
+          <Parameter Name="Record_Code" Type="int" Mode="In" />
+          <Parameter Name="Record_Type" Type="char" Mode="In" />
+        </Function>
         <Function Name="USP_UPDATE_ACQ_DEAL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Version" Type="varchar" Mode="In" />
@@ -20984,6 +20990,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Title_Objection_Type" EntitySet="Title_Objection_Type" />
             <End Role="Title_Objection" EntitySet="Title_Objection" />
           </AssociationSet>
+          <FunctionImport Name="USP_Title_Objection_PreReq" ReturnType="Collection(RightsU_NeoModel.USP_Title_Objection_PreReq_Result)">
+            <Parameter Name="TitleCode" Mode="In" Type="Int32" />
+            <Parameter Name="Record_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Record_Type" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35863,6 +35874,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Action_By" Type="Int32" />
           <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Type" FromRole="Title_Objection_Type" ToRole="Title_Objection" />
+          <Property Name="Parent_Objection_Type_Code" Type="Int32" />
         </EntityType>
         <Association Name="FK_Title_Objection_Title">
           <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
@@ -35936,6 +35948,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="USP_Title_Objection_PreReq_Result">
+          <Property Type="Int32" Name="Code" Nullable="true" />
+          <Property Type="String" Name="CodeFor" Nullable="true" MaxLength="1" />
+          <Property Type="DateTime" Name="StartDate" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="EndDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="MapFor" Nullable="true" />
+          <Property Type="String" Name="Obj_Type_Name" Nullable="true" />
+          <Property Type="String" Name="Obj_Type_Group" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -45089,6 +45110,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Title_Objection_Type">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Objection_Type">
               <MappingFragment StoreEntitySet="Title_Objection_Type">
+                <ScalarProperty Name="Parent_Objection_Type_Code" ColumnName="Parent_Objection_Type_Code" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
                 <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
@@ -45099,6 +45121,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Title_Objection_PreReq" FunctionName="RightsU_NeoModel.Store.USP_Title_Objection_PreReq">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Title_Objection_PreReq_Result">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="CodeFor" ColumnName="CodeFor" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="MapFor" ColumnName="MapFor" />
+                <ScalarProperty Name="Obj_Type_Name" ColumnName="Obj_Type_Name" />
+                <ScalarProperty Name="Obj_Type_Group" ColumnName="Obj_Type_Group" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
