@@ -377,7 +377,7 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         public JsonResult SaveTitleObjection(int TOC, string PlatformCodes, char CntTerr, int[] CTCodes, string[] LPCodes, string SD, string ED,
-            int ObjType, string ObjRemarks, string ResRemarks, int TitleCode, string RecordType, int RecordCode)
+            int ObjType, string ObjRemarks, string ResRemarks, int TitleCode, string RecordType, int RecordCode, int Title_Status)
         {
             Title_Objection_Service objTOService = new Title_Objection_Service(objLoginEntity.ConnectionStringName);
             Title_Objection objTO;
@@ -397,7 +397,7 @@ namespace RightsU_Plus.Controllers
                 objTO.Inserted_By = objLoginUser.Users_Code;
             }
 
-            objTO.Title_Objection_Status_Code = 1;
+            objTO.Title_Objection_Status_Code = Title_Status;
             objTO.Title_Objection_Type_Code = ObjType;
             objTO.Title_Code = TitleCode;
             objTO.Record_Code = RecordCode;

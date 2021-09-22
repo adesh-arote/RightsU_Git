@@ -1,21 +1,21 @@
 ﻿@model RightsU_Entities.USP_Title_Objection_List_Result
 @{
-    //string isCT = "I", pCodes = "", rpCodes = "", ctCodes = "", objTypeCode = "";
-    //RightsU_Entities.Title_Objection objTitleObjection = new RightsU_Entities.Title_Objection();
+    string isCT = "I", pCodes = "", rpCodes = "", ctCodes = "", objTypeCode = "";
+    RightsU_Entities.Title_Objection objTitleObjection = new RightsU_Entities.Title_Objection();
 
-    //if (ViewBag.obj_Usp_TO != null)
-    //{
-    //    objTitleObjection = (RightsU_Entities.Title_Objection)ViewBag.obj_Usp_TO;
+    if (ViewBag.obj_Usp_TO != null)
+    {
+        objTitleObjection = (RightsU_Entities.Title_Objection)ViewBag.obj_Usp_TO;
 
-    //    if (objTitleObjection.Title_Objection_Code > 0)
-    //    {
-    //        objTypeCode = objTitleObjection.Title_Objection_Type_Code.ToString();
-    //        isCT = objTitleObjection.Title_Objection_Territory.FirstOrDefault().Territory_Type;
-    //        pCodes = ViewBag.PCodes;
-    //        rpCodes = ViewBag.RPCodes;
-    //        ctCodes = ViewBag.CTCodes;
-    //    }
-    //}
+        if (objTitleObjection.Title_Objection_Code > 0)
+        {
+            objTypeCode = objTitleObjection.Title_Objection_Type_Code.ToString();
+            isCT = objTitleObjection.Title_Objection_Territory.FirstOrDefault().Territory_Type;
+            pCodes = ViewBag.PCodes;
+            rpCodes = ViewBag.RPCodes;
+            ctCodes = ViewBag.CTCodes;
+        }
+    }
 }
 <style>
     #ddlTitle_Status_chosen {
@@ -148,28 +148,24 @@
                     debugger;
                     $("#ddlObjType").empty();
 
+                    $("#ddlObjType").append($("<option>").val(""));
                     var lstObj_Type_Group = result.lstObjType.map(item => item.Obj_Type_Group)
                         .filter((value, index, self) => self.indexOf(value) === index)
 
                     $(lstObj_Type_Group).each(function (index, item) {
                         $("#ddlObjType").append('<optgroup label="' + item + '">');
-
                         $(result.lstObjType).each(function (index, itemOT) {
                             if (this.Obj_Type_Group == item) {
-                                $("#ddlObjType").append($("<option>").val(this.Code).text(this.Obj_Type_Name));
+                                $("#ddlObjType").children('optgroup[label="' + item + '"]').append($("<option>").val(this.Code).text(this.Obj_Type_Name));
                             }
                         });
-                        $("#ddlObjType").append('</optgroup>');
                     });
-
-                    if (TypeCode > 0 ) {
-                        $("#ddlObjType").val(TypeCode).SumoSelect();
-                    } else {
-                        $("#ddlObjType").SumoSelect();
-                    }
-
-                    $("#ddlObjType").closest('div').css("width", "35%")
                 }
+                $("#ddlObjType").trigger("chosen:updated");
+                if (TypeCode > 0) {
+                    $("#ddlObjType").val(TypeCode).trigger("chosen:updated");
+                }
+                $("#ddlObjType_chosen").css("width", "35%")
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -242,7 +238,7 @@
                 }
                 else {
                     $('#divTree').html(result);
-                    pos.left = 206;
+                    pos.left = 370;
                     $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
                     $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
                     initializeChosen();
@@ -265,6 +261,7 @@
         var ObjType = $("#ddlObjType").val();
         var ObjRemarks = $("#txt_Objection_Remarks").val();
         var ResRemarks = $("#txt_Resolution_Remarks").val();
+        var Title_Status = $("#ddlTitle_Status").val();
 
         debugger;
         $.ajax({
@@ -286,6 +283,7 @@
                 TitleCode : $("#hdnTitleCode").val(),
                 RecordType: $("#hdnRecordType").val(),
                 RecordCode: $("#hdnRecordCode").val(),
+                Title_Status: Title_Status,
                 TOC: TOC
             }),
             async: false,
@@ -359,17 +357,17 @@
                 <td style="width:15%"> <label class="bold">Objection Period : </label></td>
                 <td style="width:80%" colspan="3">
                     <input type="hidden" id="hdnStartDate" />
-                    <input type="text" class="isDatepicker" id="txtStart"  name="Start_Date" placeholder="DD/MM/YYYY" width="100" autocomplete="off"
+                    <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100" autocomplete="off"
                            title="Objection Start Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
                     &nbsp;&nbsp;<b> To </b> &nbsp;&nbsp;
-                    <input type="text" class="isDatepicker" id="txtEnd"  name="End_Date" placeholder="DD/MM/YYYY" autocomplete="off"
+                    <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="DD/MM/YYYY" autocomplete="off"
                            title="Objection End Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
                 </td>
             </tr>
             <tr>
                 <td style="width:15%"> <label class="bold">Type Of Objection : </label></td>
                 <td style="width:80%" colspan="3">
-                    <select id="ddlObjType" class="SlectBox-grp"></select>
+                    <select id="ddlObjType" class="form_input chosen-select"></select>
                 </td>
             </tr>
             <tr>
@@ -412,7 +410,7 @@
                             <span class="sr-only">Close</span>
                         </a>
                         <h5 style="margin-bottom:10px;margin-left:7px;">Platform Matrix</h5>
-                        <input type="hidden" id="hdnTVCodes"  name="hdnTVCodes" />
+                        <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
                         <div id="divTree" class="platform_wrapper">
                             <div id="tree" class="treeClass">
                             </div>
