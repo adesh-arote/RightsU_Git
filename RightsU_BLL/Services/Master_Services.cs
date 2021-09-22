@@ -6880,6 +6880,143 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+
+    public class Title_Objection_Service : BusinessLogic<Title_Objection>
+    {
+        private readonly Title_Objection_Repository objRepository;
+
+        public Title_Objection_Service(string Connection_Str)
+        {
+            this.objRepository = new Title_Objection_Repository(Connection_Str);
+        }
+        public IQueryable<Title_Objection> SearchFor(Expression<Func<Title_Objection, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Title_Objection GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Title_Objection objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Title_Objection objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Title_Objection objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Title_Objection objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Title_Objection objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        public override bool ValidateDelete(Title_Objection objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Title_Objection objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Title_Objection_Platform_Service
+    {
+        private readonly Title_Objection_Platform_Repository obj_Repository;
+
+        public Title_Objection_Platform_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Platform_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Platform> SearchFor(Expression<Func<Title_Objection_Platform, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Platform GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
+    public class Title_Objection_Territory_Service
+    {
+        private readonly Title_Objection_Territory_Repository obj_Repository;
+
+        public Title_Objection_Territory_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Territory_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Territory> SearchFor(Expression<Func<Title_Objection_Territory, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Territory GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
+    public class Title_Objection_Rights_Period_Service
+    {
+        private readonly Title_Objection_Rights_Period_Repository obj_Repository;
+
+        public Title_Objection_Rights_Period_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Rights_Period_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Rights_Period> SearchFor(Expression<Func<Title_Objection_Rights_Period, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Rights_Period GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
+    public class Title_Objection_Type_Service
+    {
+        private readonly Title_Objection_Type_Repository obj_Repository;
+
+        public Title_Objection_Type_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Type_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Type> SearchFor(Expression<Func<Title_Objection_Type, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Type GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
 }
 
 

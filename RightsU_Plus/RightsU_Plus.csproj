@@ -1283,7 +1283,9 @@
     <Content Include="Views\Title_Objection\_Title_Objection_List.cshtml" />
     <Content Include="Views\Title_Objection_List\_List_Title_Objection.cshtml" />
     <Content Include="Views\Title_Objection_List\Index.cshtml" />
-    <Content Include="Views\Title_Objection\_AddEdit_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_Edit_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_Add_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_View_Title_Objection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

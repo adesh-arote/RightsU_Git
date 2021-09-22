@@ -1,8 +1,30 @@
 ﻿@model RightsU_Entities.USP_Title_Objection_List_Result
+@{
+    //string isCT = "I", pCodes = "", rpCodes = "", ctCodes = "", objTypeCode = "";
+    //RightsU_Entities.Title_Objection objTitleObjection = new RightsU_Entities.Title_Objection();
 
+    //if (ViewBag.obj_Usp_TO != null)
+    //{
+    //    objTitleObjection = (RightsU_Entities.Title_Objection)ViewBag.obj_Usp_TO;
+
+    //    if (objTitleObjection.Title_Objection_Code > 0)
+    //    {
+    //        objTypeCode = objTitleObjection.Title_Objection_Type_Code.ToString();
+    //        isCT = objTitleObjection.Title_Objection_Territory.FirstOrDefault().Territory_Type;
+    //        pCodes = ViewBag.PCodes;
+    //        rpCodes = ViewBag.RPCodes;
+    //        ctCodes = ViewBag.CTCodes;
+    //    }
+    //}
+}
 <style>
     #ddlTitle_Status_chosen {
-        max-width: 46%;
+        width: 120% !important;
+        right: 50%;
+    }
+
+    .sumo_ddlLP {
+        width: 35%;
     }
 
     #popupFadeP {
@@ -57,21 +79,25 @@
 <script>
     var URL_BindPlatformTree = '@Url.Action("BindPlatformTree", "Title_Objection")';
     var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Title_Objection")';
-
+    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
+    var URL_SaveTitleObjection = '@Url.Action("SaveTitleObjection", "Title_Objection")';
 
     $(document).ready(function () {
-
+        debugger;
         initializeChosen();
         initializeDatepicker();
         initializeTooltip();
+
+
+        $("#ddlCT,#ddlLP").SumoSelect();
+        BindObjectionType();
+
 
         var restrictCharLengthOR = $(".restrictCharOR").val().length;
         $("#spn_ObjRemark").html(restrictCharLengthOR + "/4000");
 
         var restrictCharLengthRR = $(".restrictCharRR").val().length;
         $("#spn_ResRemark").html(restrictCharLengthRR + "/4000");
-
-        $("#ddlCT,#ddlCarName").SumoSelect();
 
         $('#txtStart').change(function () {
             SetMinDt();
@@ -82,6 +108,7 @@
         $('input[type=radio][name=rb_CT').change(function () {
             CountryTerritoryMapping(this.value)
         });
+
     });
 
     $(document).on('keyup', 'textarea', function () {
@@ -103,7 +130,54 @@
     function SetMinDt() {
         setMinMaxDates('txtEnd', $('#txtStart').val(), '');
     }
-    function CountryTerritoryMapping(MapFor) {
+
+    function BindObjectionType(TypeCode = 0) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindObjectionType,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $("#ddlObjType").empty();
+
+                    var lstObj_Type_Group = result.lstObjType.map(item => item.Obj_Type_Group)
+                        .filter((value, index, self) => self.indexOf(value) === index)
+
+                    $(lstObj_Type_Group).each(function (index, item) {
+                        $("#ddlObjType").append('<optgroup label="' + item + '">');
+
+                        $(result.lstObjType).each(function (index, itemOT) {
+                            if (this.Obj_Type_Group == item) {
+                                $("#ddlObjType").append($("<option>").val(this.Code).text(this.Obj_Type_Name));
+                            }
+                        });
+                        $("#ddlObjType").append('</optgroup>');
+                    });
+
+                    if (TypeCode > 0 ) {
+                        $("#ddlObjType").val(TypeCode).SumoSelect();
+                    } else {
+                        $("#ddlObjType").SumoSelect();
+                    }
+
+                    $("#ddlObjType").closest('div').css("width", "35%")
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function CountryTerritoryMapping() {
         debugger;
 
         var Type = $("input[name='rb_CT']:checked").val();
@@ -128,6 +202,7 @@
                     $(result.lstCT).each(function (index, item) {
                         $("#ddlCT").append($("<option>").val(this.Value).text(this.Text));
                     });
+
                     $("#ddlCT")[0].sumo.reload();
                 }
             },
@@ -137,38 +212,18 @@
             }
         });
     }
-
     function ClosePopup() {
-        //if (Tree_Type_G == "E") {
-        //    var PromoterCount = $('#Rights_PlatformplatformCnt').text();
-        //    $('#' + dummyID).text(PromoterCount + " Promoters");
-        //    Promoter_Codes_G = $("#hdnPGCodes").val();
-        //}
         $('#popupFadeP').hide('slow');
     }
-
-
     $('.clsPromoterPopup').on('click', function (e) {
         debugger;
         e.preventDefault();
         var btdId = e.target.id;
         var codes = "";
         pos = $('#' + btdId).offset();
-        @*$("#hdnPGCodes").val('@j');*@
-        //if ($('#hdnPGCodes').val() != Promoter_Codes_G && Promoter_Codes_G != '') {
-        //    codes = Promoter_Codes_G;
-        //}
-        //else {
-        //    codes = $('#hdnPGCodes').val();
-        //}
-        //var text = $('#' + btdId).hasClass('View');
-        //if (text == true) {
-        //    Tree_Type_G = "V";
-        //    codes = "";
-        //}
-        //else {
-        //    Tree_Type_G = "E";
-        //}
+
+        codes = $('#hdnTVCodes').val();
+
         $.ajax({
             type: "POST",
             url: URL_BindPlatformTree,
@@ -178,7 +233,7 @@
             dataType: "html",
             data: JSON.stringify({
                 PlatformCode: codes,
-                DummyProperty: ''
+                isView: 'N'
 
             }),
             success: function (result) {
@@ -198,6 +253,59 @@
             }
         });
     });
+    function SaveTitleObjection(TOC) {
+        debugger;
+
+        var PlatformCodes = $("#hdnTVCodes").val();
+        var CntTerr = $("input[name='rb_CT']:checked").val();
+        var CTCodes = $("#ddlCT").val();
+        var LPCodes = $("#ddlLP").val();
+        var SD = $("#txtStart").val();
+        var ED = $("#txtEnd").val();
+        var ObjType = $("#ddlObjType").val();
+        var ObjRemarks = $("#txt_Objection_Remarks").val();
+        var ResRemarks = $("#txt_Resolution_Remarks").val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_SaveTitleObjection,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PlatformCodes: PlatformCodes,
+                CntTerr: CntTerr,
+                CTCodes: CTCodes,
+                LPCodes: LPCodes,
+                SD: SD,
+                ED: ED,
+                ObjType: ObjType,
+                ObjRemarks: ObjRemarks,
+                ResRemarks: ResRemarks,
+                TitleCode : $("#hdnTitleCode").val(),
+                RecordType: $("#hdnRecordType").val(),
+                RecordCode: $("#hdnRecordCode").val(),
+                TOC: TOC
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    if (result.Status == "S") {
+                        showAlert("S", "Record saved successfully");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
 </script>
 <div class="">
     <div class="title_block dotted_border clearfix">
@@ -213,87 +321,83 @@
 
     </div>
     <div class="grid_area">
-        <table class="table table-bordered table-hover" style="width:100%">
+        <table class="table table-bordered table-hover" style="width:100%" border="0">
             <tr>
-                <td style="width:20%"> <label class="bold">Title : </label></td>
-                <td style="width:80%" colspan="3"> @Model.Title </td>
-            </tr>
-            <tr>
-                <td style="width:20%"> <label class="bold">Agreement No : </label></td>
-                <td style="width:80%" colspan="3"> @Model.Agreement_No </td>
-            </tr>
-            <tr>
-                <td style="width:20%"> <label class="bold">Select Platform : </label></td>
+                <td style="width:15%"> <label class="bold">Title : </label></td>
                 <td style="width:80%" colspan="3">
-                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">Platform</a>
-
+                    @Model.Title
+                    <input type="hidden" id="hdnTitleCode" value="@Model.Title_Code" />
+                    <input type="hidden" id="hdnRecordType" value="@ViewBag.Type" />
+                    <input type="hidden" id="hdnRecordCode" value="@Model.Acq_Deal_Code" />
                 </td>
             </tr>
             <tr>
-                <td style="width:20%"> <label class="bold">Region : </label></td>
+                <td style="width:15%"> <label class="bold">Agreement No : </label></td>
+                <td style="width:80%" colspan="3"> @Model.Agreement_No</td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Select Platform : </label></td>
                 <td style="width:80%" colspan="3">
-                    <input type="radio" checked="true" name="rb_CT" value="C"> Country &nbsp;&nbsp;
+                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">Platform</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Region : </label></td>
+                <td style="width:80%" colspan="3">
+                    <input type="radio" checked=true name="rb_CT" value="C"> Country &nbsp;&nbsp;
                     <input type="radio" name="rb_CT" value="T"> Territory &nbsp;&nbsp;
                     @Html.DropDownList("ddlCT", (IEnumerable<SelectListItem>)ViewBag.ddlCT, new { @id = "ddlCT", @multiple = "multiple" })
                 </td>
             </tr>
             <tr>
-                <td style="width:20%"> <label class="bold">Objection Period : </label></td>
-                <td style="width:30%">
+                <td style="width:15%"> <label class="bold">License Period : </label></td>
+                <td style="width:80%" colspan="3">
+                    @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, new { @id = "ddlLP", @multiple = "multiple" })
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Objection Period : </label></td>
+                <td style="width:80%" colspan="3">
                     <input type="hidden" id="hdnStartDate" />
-                    <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100" autocomplete="off"
+                    <input type="text" class="isDatepicker" id="txtStart"  name="Start_Date" placeholder="DD/MM/YYYY" width="100" autocomplete="off"
                            title="Objection Start Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
-
-
-                <td style="width:30%">
-                    <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="DD/MM/YYYY" autocomplete="off"
+                    &nbsp;&nbsp;<b> To </b> &nbsp;&nbsp;
+                    <input type="text" class="isDatepicker" id="txtEnd"  name="End_Date" placeholder="DD/MM/YYYY" autocomplete="off"
                            title="Objection End Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
                 </td>
             </tr>
             <tr>
-                <td style="width:20%"> <label class="bold">Type Of Objection : </label></td>
+                <td style="width:15%"> <label class="bold">Type Of Objection : </label></td>
                 <td style="width:80%" colspan="3">
-
-                    <select id="ddlCarName" multiple="multiple" placeholder="Hello  im from placeholder" class="SlectBox-grp">
-                        <optgroup label="US Brands">
-                            <option value="chrysler">Chrysler</option>
-                            <option value="gm">General Motors</option>
-                            <option value="ford">Ford</option>
-                        </optgroup>
-                        <optgroup label="French Brands">
-                            <option value="citroen">Citroën</option>
-                            <option value="peugeot">Peugeot</option>
-                            <option value="renault">Renault</option>
-                            <option value="nissan">Nissan</option>
-                        </optgroup>
-                        <optgroup label="Italian brands">
-                            <option value="fiat">Fiat</option>
-                            <option value="alpha-Romeo">Alpha Romeo</option>
-                            <option value="lamborghini">Lamborghini</option>
-                        </optgroup>
-                        <optgroup label="German brands">
-                            <option value="audi">Audi</option>
-                            <option value="bMW">BMW</option>
-                            <option value="volkswagen">Volkswagen</option>
-                        </optgroup>
-                    </select>
+                    <select id="ddlObjType" class="SlectBox-grp"></select>
                 </td>
             </tr>
             <tr>
-                <td style="width:20%"> <label class="bold">Objection Remarks : </label></td>
+                <td style="width:15%"> <label class="bold">Objection Remarks : </label></td>
                 <td style="width:80%" colspan="3">
                     <span style="float:right;" id="spn_ObjRemark"></span>
                     @Html.TextArea("txt_Objection_Remarks", new { @class = "textarea restrictCharOR", @rows = "2", @cols = "20", @maxlength = "4000" })
                 </td>
             </tr>
             <tr>
-                <td style="width:20%"> <label class="bold">Resolution Remarks : </label></td>
+                <td style="width:15%"> <label class="bold">Resolution Remarks : </label></td>
                 <td style="width:80%" colspan="3">
                     <span style="float:right;" id="spn_ResRemark"></span>
                     @Html.TextArea("txt_Resolution_Remarks", new { @class = "textarea restrictCharRR", @rows = "2", @cols = "20", @maxlength = "4000" })
                 </td>
             </tr>
         </table>
+    </div>
+    <br />
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+            <li>
+                <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="return SaveTitleObjection(0);" />
+            </li>
+            <li>
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal()" />
+            </li>
+        </ul>
     </div>
 </div>
 
@@ -308,7 +412,7 @@
                             <span class="sr-only">Close</span>
                         </a>
                         <h5 style="margin-bottom:10px;margin-left:7px;">Platform Matrix</h5>
-                        <input type="hidden" id="hdnPGCodes" name="hdnPGCodes" />
+                        <input type="hidden" id="hdnTVCodes"  name="hdnTVCodes" />
                         <div id="divTree" class="platform_wrapper">
                             <div id="tree" class="treeClass">
                             </div>

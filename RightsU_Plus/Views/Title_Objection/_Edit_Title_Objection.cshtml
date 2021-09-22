@@ -1,0 +1,440 @@
+﻿@model RightsU_Entities.USP_Title_Objection_List_Result
+@{
+    string isCT = "I", pCodes = "", rpCodes = "", ctCodes = "", objTypeCode = "";
+    RightsU_Entities.Title_Objection objTitleObjection = new RightsU_Entities.Title_Objection();
+
+    if (ViewBag.obj_Usp_TO != null)
+    {
+        objTitleObjection = (RightsU_Entities.Title_Objection)ViewBag.obj_Usp_TO;
+
+        if (objTitleObjection.Title_Objection_Code > 0)
+        {
+            objTypeCode = objTitleObjection.Title_Objection_Type_Code.ToString();
+            isCT = objTitleObjection.Title_Objection_Territory.FirstOrDefault().Territory_Type;
+            pCodes = ViewBag.PCodes;
+            rpCodes = ViewBag.RPCodes;
+            ctCodes = ViewBag.CTCodes;
+        }
+    }
+}
+<style>
+    #ddlTitle_Status_chosen {
+        width: 120% !important;
+        right: 50%;
+    }
+
+    .sumo_ddlLP {
+        width: 35%;
+    }
+
+    #popupFadeP {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFadeP .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            max-height: 300px;
+        }
+
+        #popupFadeP form .modal_block {
+            padding: 3px 1px;
+        }
+
+        #popupFadeP #Rights_Platform {
+            max-height: 300px !important;
+        }
+
+    #Tree_Filter_Rights_Platform {
+        max-width: 300px;
+        padding-left: 3px;
+        position: relative !important;
+    }
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
+    }
+
+    #divTree {
+        overflow-x: hidden;
+    }
+
+    #popupFadeP .modal_header {
+        background: #c3c3c3;
+    }
+
+    .tooltip {
+        z-index: 9999 !important;
+    }
+
+    input.isDatepicker {
+        width: 100px;
+        z-index: auto;
+    }
+</style>
+<script>
+    var URL_BindPlatformTree = '@Url.Action("BindPlatformTree", "Title_Objection")';
+    var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Title_Objection")';
+    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
+    var URL_SaveTitleObjection = '@Url.Action("SaveTitleObjection", "Title_Objection")';
+
+    $(document).ready(function () {
+        debugger;
+        initializeChosen();
+        initializeDatepicker();
+        initializeTooltip();
+
+        if (@pCodes != "")
+        {
+            BindObjectionType(@objTypeCode);
+            $("#ddlLP").val('@rpCodes'.split(',')).SumoSelect();
+            $("#ddlCT").val('@ViewBag.CTCodes'.split(',')).SumoSelect();
+        }
+        else {
+            $("#ddlCT,#ddlLP").SumoSelect();
+            BindObjectionType();
+        }
+
+        var restrictCharLengthOR = $(".restrictCharOR").val().length;
+        $("#spn_ObjRemark").html(restrictCharLengthOR + "/4000");
+
+        var restrictCharLengthRR = $(".restrictCharRR").val().length;
+        $("#spn_ResRemark").html(restrictCharLengthRR + "/4000");
+
+        $('#txtStart').change(function () {
+            SetMinDt();
+        });
+        $('#txtEnd').change(function () {
+            SetMaxDt();
+        });
+        $('input[type=radio][name=rb_CT').change(function () {
+            CountryTerritoryMapping(this.value)
+        });
+
+    });
+
+    $(document).on('keyup', 'textarea', function () {
+        var count = $(this).val().length;
+        if (this.id == "txt_Resolution_Remarks") {
+            $("#spn_ResRemark").html(count + "/4000");
+        }
+        else {
+            $("#spn_ObjRemark").html(count + "/4000");
+        }
+    });
+
+    $("#popupFadeP").click(function (event) {
+        event.stopPropagation();
+    });
+    function SetMaxDt() {
+        setMinMaxDates('txtStart', '', $('#txtEnd').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtEnd', $('#txtStart').val(), '');
+    }
+
+    function BindObjectionType(TypeCode = 0) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindObjectionType,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $("#ddlObjType").empty();
+
+                    var lstObj_Type_Group = result.lstObjType.map(item => item.Obj_Type_Group)
+                        .filter((value, index, self) => self.indexOf(value) === index)
+
+                    $(lstObj_Type_Group).each(function (index, item) {
+                       
+                        $("#ddlObjType").append('<optgroup  value="' + item + '" label="' + item + '">');
+
+                        $(result.lstObjType).each(function (index, itemOT) {
+                            if (this.Obj_Type_Group == item) {
+                                $("#ddlObjType").append($("<option>").val(this.Code).text(this.Obj_Type_Name));
+                                //if (TypeCode == this.Code) {
+                                //    $("#ddlObjType").append("<option selected='selected' value='" + this.Code + "'>" + this.Obj_Type_Name + "</option>");
+                                //}
+                                //else {
+                                //    $("#ddlObjType").append($("<option>").val(this.Code).text(this.Obj_Type_Name));
+                                //}
+                            }
+                        });
+                        $("#ddlObjType").append('</optgroup>');
+                    });
+
+                    //if (TypeCode > 0 ) {
+                    //    $("#ddlObjType").val(TypeCode).SumoSelect();
+                    //} else {
+                    //    $("#ddlObjType").SumoSelect();
+                    //}
+                    $("#ddlObjType").SumoSelect();
+
+                    $("#ddlObjType").closest('div').css("width", "35%")
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function CountryTerritoryMapping() {
+        debugger;
+
+        var Type = $("input[name='rb_CT']:checked").val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindCountryTerritory,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Type: Type
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $("#ddlCT").empty();
+                    $(result.lstCT).each(function (index, item) {
+                        $("#ddlCT").append($("<option>").val(this.Value).text(this.Text));
+                    });
+
+                    $("#ddlCT")[0].sumo.reload();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ClosePopup() {
+        $('#popupFadeP').hide('slow');
+    }
+    $('.clsPromoterPopup').on('click', function (e) {
+        debugger;
+        e.preventDefault();
+        var btdId = e.target.id;
+        var codes = "";
+        pos = $('#' + btdId).offset();
+
+        codes = $('#hdnTVCodes').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTree,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                PlatformCode: codes,
+                isView: 'N'
+
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTree').html(result);
+                    pos.left = 206;
+                    $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    });
+    function SaveTitleObjection(TOC = 0) {
+        debugger;
+
+        var PlatformCodes = $("#hdnTVCodes").val();
+        var CntTerr = $("input[name='rb_CT']:checked").val();
+        var CTCodes = $("#ddlCT").val();
+        var LPCodes = $("#ddlLP").val();
+        var SD = $("#txtStart").val();
+        var ED = $("#txtEnd").val();
+        var ObjType = $("#ddlObjType").val();
+        var ObjRemarks = $("#txt_Objection_Remarks").val();
+        var ResRemarks = $("#txt_Resolution_Remarks").val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_SaveTitleObjection,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PlatformCodes: PlatformCodes,
+                CntTerr: CntTerr,
+                CTCodes: CTCodes,
+                LPCodes: LPCodes,
+                SD: SD,
+                ED: ED,
+                ObjType: ObjType,
+                ObjRemarks: ObjRemarks,
+                ResRemarks: ResRemarks,
+                TitleCode : $("#hdnTitleCode").val(),
+                RecordType: $("#hdnRecordType").val(),
+                RecordCode: $("#hdnRecordCode").val(),
+                TOC: TOC
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    if (result.Status == "S") {
+                        showAlert("S", "Record saved successfully");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+</script>
+<div class="">
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            Edit Title Objection
+            <span></span>
+        </h2>
+        <div class="pull-right" style="line-height: 4;">
+            <span>
+                @Html.DropDownList("Title_Status", (IEnumerable<SelectListItem>)ViewBag.ddlTitle_Status, new { @id = "ddlTitle_Status", @class = "form_input chosen-select" })
+            </span>
+        </div>
+
+    </div>
+    <div class="grid_area">
+        <table class="table table-bordered table-hover" style="width:100%" border="0">
+            <tr>
+                <td style="width:15%"> <label class="bold">Title : </label></td>
+                <td style="width:80%" colspan="3">
+                    @Model.Title
+                    <input type="hidden" id="hdnTitleCode" value="@Model.Title_Code" />
+                    <input type="hidden" id="hdnRecordType" value="@ViewBag.Type" />
+                    <input type="hidden" id="hdnRecordCode" value="@Model.Acq_Deal_Code" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Agreement No : </label></td>
+                <td style="width:80%" colspan="3"> @Model.Agreement_No</td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Select Platform : </label></td>
+                <td style="width:80%" colspan="3">
+                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">Platform</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Region : </label></td>
+                <td style="width:80%" colspan="3">
+                    <input type="radio" checked=@(isCT == "I"?true:false) name="rb_CT" value="C"> Country &nbsp;&nbsp;
+                    <input type="radio" checked=@(isCT == "G"?true:false) name="rb_CT" value="T"> Territory &nbsp;&nbsp;
+                    @Html.DropDownList("ddlCT", (IEnumerable<SelectListItem>)ViewBag.ddlCT, new { @id = "ddlCT", @multiple = "multiple" })
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">License Period : </label></td>
+                <td style="width:80%" colspan="3">
+                    @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, new { @id = "ddlLP", @multiple = "multiple" })
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Objection Period : </label></td>
+                <td style="width:80%" colspan="3">
+                    <input type="hidden" id="hdnStartDate" />
+                    <input type="text" class="isDatepicker" id="txtStart" value="@(((DateTime)objTitleObjection.Objection_Start_Date).ToString("dd/MM/yyyy"))" name="Start_Date" placeholder="DD/MM/YYYY" width="100" autocomplete="off"
+                           title="Objection Start Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                    &nbsp;&nbsp;<b> To </b> &nbsp;&nbsp;
+                    <input type="text" class="isDatepicker" id="txtEnd" value="@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MM/yyyy"))" name="End_Date" placeholder="DD/MM/YYYY" autocomplete="off"
+                           title="Objection End Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Type Of Objection : </label></td>
+                <td style="width:80%" colspan="3">
+                    @*<select id="ddlObjType" tabindex="-1" placeholder="Hello  im from placeholder" ></select>*@
+                    <select id="ddlObjType" tabindex="-1" class="optgroup_test" placeholder="Hello  im from placeholder"></select>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Objection Remarks : </label></td>
+                <td style="width:80%" colspan="3">
+                    <span style="float:right;" id="spn_ObjRemark"></span>
+                    @Html.TextArea("txt_Objection_Remarks", objTitleObjection.Objection_Remarks, new { @class = "textarea restrictCharOR", @rows = "2", @cols = "20", @maxlength = "4000" })
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Resolution Remarks : </label></td>
+                <td style="width:80%" colspan="3">
+                    <span style="float:right;" id="spn_ResRemark"></span>
+                    @Html.TextArea("txt_Resolution_Remarks", objTitleObjection.Resolution_Remarks, new { @class = "textarea restrictCharRR", @rows = "2", @cols = "20", @maxlength = "4000" })
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+            <li>
+                <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="return SaveTitleObjection(@objTitleObjection.Title_Objection_Code);" />
+            </li>
+            <li>
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal()" />
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div id="popupFadeP">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="ClosePopup()">
+                            <span style="margin-right:6px;">×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h5 style="margin-bottom:10px;margin-left:7px;">Platform Matrix</h5>
+                        <input type="hidden" id="hdnTVCodes" value="@pCodes" name="hdnTVCodes" />
+                        <div id="divTree" class="platform_wrapper">
+                            <div id="tree" class="treeClass">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

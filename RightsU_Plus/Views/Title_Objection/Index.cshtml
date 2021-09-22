@@ -23,17 +23,29 @@
 </div>
 <script>
     var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Title_Objection")';
+    var Command_Name = "";
+    var TitleObjectCode = '@ViewBag.TitleObjectCode';
+
     $(document).ready(function () {
-        BindPartialView("LIST");
+        BindPartialView('@ViewBag.callFrom');
     });
+
+    function CancelSaveDeal() {
+        Command_Name = "CANCEL_SAVE_DEAL";
+        showAlert("I", 'All Unsaved Data Will Be Lost. Still WantTo Go Ahead?', "OKCANCEL");
+    }
+    function handleOk() {
+        if (Command_Name == "CANCEL_SAVE_DEAL") {
+            BindPartialView("LIST");
+        }
+    }
+    function cancelView() {
+        BindPartialView("LIST", '@ViewBag.EditRecCode', '@ViewBag.EditTitCode')
+    }
 
     function BindPartialView(key, Deal_Code = 0, Title_Code = 0) {
         debugger
-        //if (key == "ADDEDIT") {
-        //    Search = $('#searchCommon').val();
-        //    $('#hdnSearch').val($('#searchCommon').val());
-        //}
-        Record_Type = $("input[name='rb_AcqSyn']:checked").val();
+        Record_Type = TitleObjectCode === 0 ? $("input[name='rb_AcqSyn']:checked").val() : 'A';
 
         $.ajax({
             type: "POST",
@@ -46,7 +58,8 @@
                 key: key,
                 Record_Type: Record_Type,
                 Deal_Code: Deal_Code,
-                Title_Code: Title_Code
+                Title_Code: Title_Code,
+                TitleObjectCode: TitleObjectCode
             }),
             success: function (result) {
                 debugger;

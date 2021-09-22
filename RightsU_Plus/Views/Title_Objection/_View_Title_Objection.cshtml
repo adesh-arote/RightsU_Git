@@ -1,0 +1,246 @@
+﻿@model RightsU_Entities.USP_Title_Objection_List_Result
+@{
+    string isCT = "I", pCodes = "", ctCodes = "", objTypeCode = "";
+
+    RightsU_Entities.Title_Objection objTitleObjection = new RightsU_Entities.Title_Objection();
+
+    objTitleObjection = (RightsU_Entities.Title_Objection)ViewBag.obj_Usp_TO;
+
+    objTypeCode = objTitleObjection.Title_Objection_Type_Code.ToString();
+    isCT = objTitleObjection.Title_Objection_Territory.FirstOrDefault().Territory_Type;
+    pCodes = ViewBag.PCodes;
+    var rpCodes = ViewBag.RPCodes;
+    ctCodes = ViewBag.CTCodes;
+}
+<style>
+    #ddlTitle_Status_chosen {
+        width: 120% !important;
+        right: 50%;
+    }
+
+    .sumo_ddlLP {
+        width: 35%;
+    }
+
+    #popupFadeP {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFadeP .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            max-height: 300px;
+        }
+
+        #popupFadeP form .modal_block {
+            padding: 3px 1px;
+        }
+
+        #popupFadeP #Rights_Platform {
+            max-height: 300px !important;
+        }
+
+    #Tree_Filter_Rights_Platform {
+        max-width: 300px;
+        padding-left: 3px;
+        position: relative !important;
+    }
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
+    }
+
+    #divTree {
+        overflow-x: hidden;
+    }
+
+    #popupFadeP .modal_header {
+        background: #c3c3c3;
+    }
+
+    .tooltip {
+        z-index: 9999 !important;
+    }
+
+    input.isDatepicker {
+        width: 100px;
+        z-index: auto;
+    }
+</style>
+<script>
+    var URL_BindPlatformTree = '@Url.Action("BindPlatformTree", "Title_Objection")';
+    var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Title_Objection")';
+    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
+    var URL_SaveTitleObjection = '@Url.Action("SaveTitleObjection", "Title_Objection")';
+
+    $(document).ready(function () {
+        debugger;
+        initializeChosen();
+        initializeDatepicker();
+        initializeTooltip();
+    });
+
+    $("#popupFadeP").click(function (event) {
+        event.stopPropagation();
+    });
+
+
+
+    function ClosePopup() {
+        $('#popupFadeP').hide('slow');
+    }
+    $('.clsPromoterPopup').on('click', function (e) {
+        debugger;
+        e.preventDefault();
+        var btdId = e.target.id;
+        var codes = "";
+        pos = $('#' + btdId).offset();
+
+        codes = $('#hdnTVCodes').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTree,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                PlatformCode: codes,
+                isView: 'Y'
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTree').html(result);
+                    pos.left = 206;
+                    $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    });
+
+</script>
+<div class="">
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            View Title Objection
+            <span></span>
+        </h2>
+        <div class="pull-right" style="line-height: 4;">
+            <span>
+                @ViewBag.Title_Status_Name
+            </span>
+        </div>
+
+    </div>
+    <div class="grid_area">
+        <table class="table table-bordered table-hover" style="width:100%" border="0">
+            <tr>
+                <td style="width:15%"> <label class="bold">Title : </label></td>
+                <td style="width:80%" colspan="3">
+                    @Model.Title
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Agreement No : </label></td>
+                <td style="width:80%" colspan="3"> @Model.Agreement_No</td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Select Platform : </label></td>
+                <td style="width:80%" colspan="3">
+                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">Platform</a>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Region : </label></td>
+                <td style="width:80%" colspan="3">
+                    @*<span>@(isCT == "G" ? "Territory : " : " : ")</span> &nbsp;&nbsp;*@
+                    <span>@ctCodes</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">License Period : </label></td>
+                <td style="width:80%" colspan="3">
+                    <ul style="list-style-type: none;">
+                        @foreach (var item in rpCodes)
+                        {
+                            <li>@Html.Raw(item)</li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Objection Period : </label></td>
+                <td style="width:80%" colspan="3">
+                    <span>@(((DateTime)objTitleObjection.Objection_Start_Date).ToString("dd/MMM/yyyy"))</span>
+                    &nbsp;&nbsp;<b> To </b> &nbsp;&nbsp;
+                    <span>@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MMM/yyyy"))</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Type Of Objection : </label></td>
+                <td style="width:80%" colspan="3">
+                    <span> @ViewBag.Object_Type_Name </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Objection Remarks : </label></td>
+                <td style="width:80%" colspan="3">
+                    <span>@objTitleObjection.Objection_Remarks</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:15%"> <label class="bold">Resolution Remarks : </label></td>
+                <td style="width:80%" colspan="3">
+                    <span>@objTitleObjection.Resolution_Remarks</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+            <li>
+                <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="return SaveTitleObjection(@objTitleObjection.Title_Objection_Code);" />
+            </li>
+            <li>
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal()" />
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div id="popupFadeP">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="ClosePopup()">
+                            <span style="margin-right:6px;">×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h5 style="margin-bottom:10px;margin-left:7px;">Platform Matrix</h5>
+                        <input type="hidden" id="hdnTVCodes" value="@pCodes" name="hdnTVCodes" />
+                        <div id="divTree" class="platform_wrapper">
+                            <div id="tree" class="treeClass">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

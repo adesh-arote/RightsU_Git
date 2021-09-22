@@ -6,8 +6,8 @@
 )
 AS
 BEGIN
-	--DECLARE @TitleCode INT = 36672,
-	--		@Record_Code INT = 21738,
+	--DECLARE @TitleCode INT = 3272,
+	--		@Record_Code INT = 39,
 	--		@Record_Type CHAR(1) = 'A'
 
 	IF OBJECT_ID('tempdb..#DataMapping') IS NOT NULL DROP TABLE #DataMapping
@@ -30,7 +30,7 @@ BEGIN
 		FROM Acq_Deal_Rights ADR
 			 INNER JOIN Acq_Deal_Movie ADM ON ADM.Acq_Deal_Code = ADR.Acq_Deal_Code
 			 INNER JOIN acq_Deal_rights_platform ADRP ON ADRP.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code
-		WHERE  ADR.Actual_Right_End_Date >= GETDATE() AND ADR.Acq_Deal_Code = @Record_Code AND ADM.Title_Code = @TitleCode
+		WHERE ADR.Actual_Right_End_Date >= GETDATE() AND ADR.Acq_Deal_Code = @Record_Code AND ADM.Title_Code = @TitleCode
 
 		INSERT INTO #DataMapping(Code, CodeFor, MapFor)
 		SELECT DISTINCT COALESCE(ADRT.Country_Code, ADRT.Territory_Code) AS Territory_Code, ADRT.Territory_Type, 'TERRITORY'
@@ -71,10 +71,17 @@ BEGIN
 		ORDER BY Actual_Right_Start_Date,Actual_Right_End_Date
 	END
 
-	INSERT INTO #DataMapping(Obj_Type_Group, Obj_Type_Name, MapFor)
-	SELECT A.Objection_Type_Name , B.Objection_Type_Name , 'TYPEOFOBJECTION'
+	INSERT INTO #DataMapping(Code, CodeFor, MapFor)
+	SELECT DISTINCT Country_Code,'I','TERRITORY' FROM Territory_Details WHERE Territory_Code IN 
+	(SELECT Code FROM #DataMapping WHERE MapFor = 'TERRITORY' And ISNULL(CodeFor,'') = 'G')
+
+	INSERT INTO #DataMapping(Code, Obj_Type_Group, Obj_Type_Name, MapFor)
+	SELECT B.Objection_Type_Code, A.Objection_Type_Name , B.Objection_Type_Name , 'TYPEOFOBJECTION'
 	FROM Title_Objection_Type A
 	INNER JOIN Title_Objection_Type B ON A.Objection_Type_Code = B.Parent_Objection_Type_Code
 
-	SELECT DISTINCT Code, CodeFor, StartDate, EndDate, Obj_Type_Group, Obj_Type_Name MapFor FROM #DataMapping
+	UPDATE A SET A.Obj_Type_Name = C.Country_Name FROM #DataMapping A INNER JOIN Country C  ON A.Code = C.Country_Code WHERE A.CodeFor = 'I' AND MapFor = 'TERRITORY'
+	UPDATE A SET A.Obj_Type_Name = C.Territory_Name FROM #DataMapping A INNER JOIN Territory C  ON A.Code = C.Territory_Code WHERE A.CodeFor = 'G' AND MapFor = 'TERRITORY'
+
+	SELECT DISTINCT Code, CodeFor, StartDate, EndDate, Obj_Type_Group, Obj_Type_Name, MapFor FROM #DataMapping
 END
