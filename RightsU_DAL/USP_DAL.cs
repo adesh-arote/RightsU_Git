@@ -40,6 +40,12 @@ namespace RightsU_DAL
             return objContext.USP_List_Acq(strSearch, pageNo, orderByCndition, isPaging, pageSize, recordCount, user_Code, exactMatch);
         }
 
+        public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch,string Type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, Nullable<int> user_Code, string exactMatch, ObjectParameter recordCount)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Objection_Adv_List(strSearch, Type, pageNo, orderByCndition, isPaging, pageSize, recordCount, user_Code, exactMatch);
+        }
+
         public ObjectResult<USP_List_Syn_Result> USP_List_Syn(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string ExactMatch)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);

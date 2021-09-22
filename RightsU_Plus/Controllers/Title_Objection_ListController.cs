@@ -151,6 +151,8 @@ namespace RightsU_Plus.Controllers
         #region---------------Index & Bind-------------
         public ActionResult Index(string Message = "", string ReleaseRecord = "")
         {
+
+
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForAcqDeal);
             CommonUtil.WriteErrorLog("Index method of Acq_ListController is executing", Err_filename);
             if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
@@ -262,17 +264,18 @@ namespace RightsU_Plus.Controllers
             }
 
             CommonUtil.WriteErrorLog("Index method of Acq_ListController has been executed", Err_filename);
-            return View("~/Views/Objection_List/Index.cshtml");
+            return View("~/Views/Title_Objection_List/Index.cshtml");
         }
         [HttpPost]
-        public PartialViewResult PartialDealList(int Page, string commonSearch, string isTAdvanced, string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", string ClearSession = "N", string strBUCode = "1")
+        public PartialViewResult PartialDealList(int Page,string Type, string commonSearch, string isTAdvanced, string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", string ClearSession = "N", string strBUCode = "1")
         {
             string[] arrTitleName = strTitles.Split('﹐');
+            //Type = string.Join(",", Type);
             string sstrTitles = string.Join(",", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Name)).Select(y => y.Title_Code).ToList());
             CommonUtil.WriteErrorLog("BindGridView() method of Acq_ListController is executing", Err_filename);
-            IEnumerable<RightsU_Entities.USP_List_Acq_Result> objList = BindGridView(commonSearch, isTAdvanced, strDealNo, strfrom, strto, strSrchDealType, strSrchDealTag, strWorkflowStatus, sstrTitles, strDirector, strLicensor, strBU, strShowAll, strIncludeSubDeal, strIncludeArchiveDeal, Page, ClearSession, strBUCode);
+            IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> objList = BindGridView(commonSearch, Type, isTAdvanced, strDealNo, strfrom, strto, strSrchDealType, strSrchDealTag, strWorkflowStatus, sstrTitles, strDirector, strLicensor, strShowAll, strIncludeSubDeal, strIncludeArchiveDeal, Page, ClearSession, strBUCode);
             CommonUtil.WriteErrorLog("BindGridView() method if Acq_ListController has been executed", Err_filename);
-            return PartialView("~/Views/Shared/_List_Objection.cshtml", objList);
+            return PartialView("~/Views/Title_Objection_List/_List_Title_Objection.cshtml", objList);
         }
 
 
@@ -292,7 +295,7 @@ namespace RightsU_Plus.Controllers
             Response.End();
         }
 
-        public IEnumerable<RightsU_Entities.USP_List_Acq_Result> BindGridView(string commonSearch = "", string isTAdvanced = "N", string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", int Page = 0, string ClearSession = "N", string strBUCode = "1")
+        public IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> BindGridView(string commonSearch = "",string Type = "", string isTAdvanced = "N", string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", int Page = 0, string ClearSession = "N", string strBUCode = "1")
         {
             string sql = "";
             if (ClearSession == "Y")
@@ -410,21 +413,21 @@ namespace RightsU_Plus.Controllers
                             sql += " and Deal_Workflow_Status not in ('A','W','R')";
                     }
                     string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
-                    if (Is_AllowMultiBUsyndeal != "Y")
-                    {
-                        obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
+                    //if (Is_AllowMultiBUsyndeal != "Y")
+                    //{
+                    //    obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
 
-                    }
+                    //}
 
                     //obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
-                    if (obj_Acq_Syn_List_Search.BUCodes_Search > 0 && Is_AllowMultiBUsyndeal != "Y")
-                    {
-                        sql += " And Business_Unit_Code In (" + obj_Acq_Syn_List_Search.BUCodes_Search + ") "; // AND is_active='Y'
-                    }
-                    else
-                    {
-                        sql += " And Business_Unit_Code In (" + strBU + ") "; // AND is_active='Y'
-                    }
+                    //if (obj_Acq_Syn_List_Search.BUCodes_Search > 0 && Is_AllowMultiBUsyndeal != "Y")
+                    //{
+                    //    sql += " And Business_Unit_Code In (" + obj_Acq_Syn_List_Search.BUCodes_Search + ") "; // AND is_active='Y'
+                    //}
+                    //else
+                    //{
+                    //    sql += " And Business_Unit_Code In (" + strBU + ") "; // AND is_active='Y'
+                    //}
 
                     if (obj_Acq_Syn_List_Search.strIncludeArchiveDeal == "Y")
                         sql += " AND (is_active in ('Y') OR ( Deal_Workflow_Status = 'AR'))";
@@ -496,12 +499,12 @@ namespace RightsU_Plus.Controllers
             string orderByCndition = "Acq_Deal_Code desc";
             CommonUtil.WriteErrorLog("USP_List_Acq is executing", Err_filename);
             ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            IEnumerable<RightsU_Entities.USP_List_Acq_Result> objList = new List<RightsU_Entities.USP_List_Acq_Result>();
-            objList = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Acq(sql, obj_Acq_Syn_List_Search.PageNo, orderByCndition, isPaging, pageSize, objLoginUser.Users_Code, commonSearch, objRecordCount).ToList();
+            IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> objList = new List<RightsU_Entities.USP_Title_Objection_Adv_List_Result>();
+            objList = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_Adv_List(sql, Type,obj_Acq_Syn_List_Search.PageNo, orderByCndition, isPaging, pageSize, objLoginUser.Users_Code, commonSearch, objRecordCount).ToList();
 
             CommonUtil.WriteErrorLog("USP_List_Acq has been executed", Err_filename);
             RecordCount = Convert.ToInt32(objRecordCount.Value);
-            ViewBag.RecordCount = RecordCount;
+            ViewBag.RecordCount = objList.Count();//RecordCount;
             ViewBag.PageNo = obj_Acq_Syn_List_Search.PageNo;
             return objList;
         }
@@ -1489,7 +1492,7 @@ namespace RightsU_Plus.Controllers
         #region ---------------BIND DROPDOWNS---------------
         private List<USP_Get_Acq_PreReq_Result> BindAllDropDowns()
         {
-            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("DTG,DTP,DTC,BUT,VEN,DIR,TIT,WFL", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
+            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("OBT,OBS.VEN", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
             return obj_USP_Get_PreReq_Result;
         }
         public JsonResult OnChangeBindTitle(int? dealTypeCode, int? BUCode, string TitleSearch, params int?[] ddlBUMulti)

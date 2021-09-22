@@ -5318,5 +5318,41 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_PreReq_Result>("USP_Title_Objection_PreReq", titleCodeParameter, record_CodeParameter, record_TypeParameter);
         }
+         public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch,string type,  Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string exactMatch) /*string type,*/
+        {
+            var strSearchParameter = strSearch != null ?
+                new ObjectParameter("StrSearch", strSearch) :
+                new ObjectParameter("StrSearch", typeof(string));
+
+            var typeParameter = type != null ?
+                new ObjectParameter("Type", type) :
+                new ObjectParameter("Type", typeof(string));
+
+            var pageNoParameter = pageNo.HasValue ?
+                new ObjectParameter("PageNo", pageNo) :
+                new ObjectParameter("PageNo", typeof(int));
+    
+            var orderByCnditionParameter = orderByCndition != null ?
+                new ObjectParameter("OrderByCndition", orderByCndition) :
+                new ObjectParameter("OrderByCndition", typeof(string));
+    
+            var isPagingParameter = isPaging != null ?
+                new ObjectParameter("IsPaging", isPaging) :
+                new ObjectParameter("IsPaging", typeof(string));
+    
+            var pageSizeParameter = pageSize.HasValue ?
+                new ObjectParameter("PageSize", pageSize) :
+                new ObjectParameter("PageSize", typeof(int));
+    
+            var user_CodeParameter = user_Code.HasValue ?
+                new ObjectParameter("User_Code", user_Code) :
+                new ObjectParameter("User_Code", typeof(int));
+    
+            var exactMatchParameter = exactMatch != null ?
+                new ObjectParameter("ExactMatch", exactMatch) :
+                new ObjectParameter("ExactMatch", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_Adv_List_Result>("USP_Title_Objection_Adv_List", strSearchParameter, typeParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, exactMatchParameter); /*, typeParameter*/
+        }
     }
 }
