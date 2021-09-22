@@ -144,19 +144,19 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
 
     if (showLD == 'Y')
         showLoading();
-    var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N',chkAcq = '',chkSyn = '',Type = '';
+    var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N', chkAcq = '', chkSyn = '', Type = '';
     tmp_pageNo = pagenumber;
     tmp_IsAdvanced = isAdvanced;
     chkAcq = $('#chkAcq').val();
     chkSyn = $('#chkSyn').val();
     if ($('#chkAcq').is(':checked') && $('#chkSyn').is(':checked')) {
         Type = chkAcq + ',' + chkSyn;
-       
+
     }
     else if ($('#chkAcq').is(':checked')) {
         Type = chkAcq;
     }
-    else if ($('#chkSyn').is(':checked')){
+    else if ($('#chkSyn').is(':checked')) {
         Type = chkSyn;
     }
     if (isAdvanced == 'N')
@@ -198,7 +198,7 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
         async: true,
         data: JSON.stringify({
             Page: pagenumber,
-            Type : Type,
+            Type: Type,
             commonSearch: $('#srchCommon').val(),
             isTAdvanced: isAdvanced,
             strDealNo: $('#txtSrchDealNo').val(),
@@ -282,9 +282,9 @@ function validateSearch() {
     var ddlTagStatus = $('#ddlSrchDealTag').val();
     var ddlBU = $('#ddlSrchBU').val();
     var ddlDealType = $('#ddlSrchDealType').val();
-    
+
     $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
-    if (txtSDealNo == "" && txtfrom == "" && txtto == "" && tmpLicensor == ""  && tmpTitle == "" && ddlTagStatus < "0"  && ddlDealType < "0") {
+    if (txtSDealNo == "" && txtfrom == "" && txtto == "" && tmpLicensor == "" && tmpTitle == "" && ddlTagStatus < "0" && ddlDealType < "0") {
         showAlert('e', 'Please select/enter search criteria');
         return false;
     }
