@@ -144,7 +144,6 @@ function SaveTitleObjection(TOC = 0) {
                 redirectToLogin();
             }
             else {
-                
                 if (result.Status === "S") {
                     showAlert("S", "Record saved successfully");
                     var URL = '@Url.Action("Index", "Title_Objection_List")';
