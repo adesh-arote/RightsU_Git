@@ -220,13 +220,12 @@
                             showAlert('E', result.ErrorMessage);
                         }
                         else {
-                            var URL = '@Url.Action("ButtonEvents", "Acq_List", new { Acq_Deal_Code = "_Acq_Deal_Code_", CommandName = "_CommandName_" })';//, new { CallFrom = "T", Page_No = "Code", DealTypeCode = "Deal_Type_Code", TitleName = "Title_Name" }
+                            var URL = '@Url.Action("Index", "Title_Objection", new { callFrom = "EDIT", TitleObjectCode = "_TOC_" })';//, new { CallFrom = "T", Page_No = "Code", DealTypeCode = "Deal_Type_Code", TitleName = "Title_Name" }
 
-
-                            URL = URL.replace("_Acq_Deal_Code_", result.Acq_Deal_Code);
+                            URL = URL.replace("_TOC_", result.Acq_Deal_Code);
                             URL = URL.replace("amp;", "");
-                            URL = URL.replace("_CommandName_", result.CommandName);
-                            URL = URL.replace("amp;", "");
+                            //URL = URL.replace("_CommandName_", result.CommandName);
+                            //URL = URL.replace("amp;", "");
                             window.location.href = URL;
                         }
                     }
@@ -368,7 +367,7 @@
                     int Count = 0;
                 }
 
-                <a title="@objMessageKey.View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @objAcqList.Title_Objection_Code })"></a>
+                <a title="@objMessageKey.View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("Index", "Title_Objection", new { callFrom = "VIEW", TitleObjectCode = objAcqList.Title_Objection_Code })"></a>
                 <img id="imgLoading_@objAcqList.Title_Objection_Code" title="@objMessageKey.PleaseWait.." src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
                 <a id="btnShowError_@objAcqList.Title_Objection_Code" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none; color: #2b64a5;"></a>
                 <a title="@objMessageKey.Edit" id="Edit_@tempCount" class="glyphicon glyphicon-pencil AT_@objAcqList.Title_Objection_Code" onclick="return CheckRecordLock(@objAcqList.Title_Objection_Code,'Edit')"></a>

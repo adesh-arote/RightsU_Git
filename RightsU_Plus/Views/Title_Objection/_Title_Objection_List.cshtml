@@ -27,7 +27,6 @@
                         @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + "~"))
                         {
                             <a title="Add Objection" class="glyphicon glyphicon-plus" style="cursor: pointer;" onclick="BindPartialView('ADD',@item.Acq_Deal_Code, @item.Title_Code)"></a>
-                            <a title="Edit Objection" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="BindPartialView('EDIT',@item.Acq_Deal_Code, @item.Title_Code)"></a>
                         }
                     </td>
                 </tr>

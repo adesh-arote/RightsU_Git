@@ -119,7 +119,7 @@
                 }
                 else {
                     $('#divTree').html(result);
-                    pos.left = 206;
+                    pos.left = 370;
                     $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
                     $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
                     initializeChosen();
@@ -212,9 +212,6 @@
     <br />
     <div class="bottom_action">
         <ul class="form_link_nav clearfix">
-            <li>
-                <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="return SaveTitleObjection(@objTitleObjection.Title_Objection_Code);" />
-            </li>
             <li>
                 <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal()" />
             </li>

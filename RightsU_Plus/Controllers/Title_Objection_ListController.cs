@@ -153,7 +153,7 @@ namespace RightsU_Plus.Controllers
         {
 
 
-            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForAcqDeal);
+            //LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForAcqDeal);
             CommonUtil.WriteErrorLog("Index method of Acq_ListController is executing", Err_filename);
             if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
             {

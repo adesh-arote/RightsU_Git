@@ -786,7 +786,7 @@
                                 @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select> 
                             }*@
 
-                            <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:279px !important;"
+                            <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:260px !important;"
                                    placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" />
                         </li>
                         <li>
@@ -805,7 +805,7 @@
                         <li>
                             @{if (ViewBag.AddVisibility == true)
                                 {
-                                    <a class="btn-primary" href="@Url.Action("ButtonEvents", "Title_Objection_List", new { CommandName = "Add", Acq_Deal_Code = 0 })">Add Title Objection</a>
+                                    <a class="btn-primary" href="@Url.Action("Index", "Title_Objection", new { callFrom = "LIST", TitleObjectCode = 0 })">Add Objection</a>
                                 }
                             }
                         </li>

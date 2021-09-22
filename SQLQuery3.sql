@@ -10,4 +10,3 @@ select * from system_module where parent_module_code = 2 order by 3
 
 --UPDATE system_module SET Module_Position = 'BQ', Parent_Module_Code = 2 WHERE Module_Code = 251
 
-select * from 
