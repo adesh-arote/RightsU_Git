@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RightsU_Entities.USP_List_Acq_Result>
+﻿@model IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result>
 @using UTOFrameWork.FrameworkClasses
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -23,7 +23,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <link href="~/Custom_Scripts/Custom_CSS/Acq_Deal_List.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script>
-    var URL_Reload_Current_Page = '@Url.Action("Index", "Acq_List")'
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Title_Objection_List")'
     var Command_Name, tmpAcqDealCode, tmp_IsZeroWorkFlow, tmp_pageNo, tmp_IsAdvanced, fullyLoaded = "Y";
     //Global Veraible
     var MsgType_G = '@MsgType', msg_G = '@msg', RLCode_G = '@ViewBag.RLCode', ReleaseRecord_G = '@ViewBag.ReleaseRecord', isAdvanced_G = '@ViewBag.isAdvanced'
@@ -36,35 +36,35 @@
     , Deal_Type_Documentary_Film = '@GlobalParams.Deal_Type_Documentary_Film', Deal_Type_Sports = '@GlobalParams.Deal_Type_Sports'
     , Deal_Type_Music = '@GlobalParams.Deal_Type_Music';
     //URL
-    var URL_PartialDealList = '@Url.Action("PartialDealList", "Acq_List")', URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Acq_List")'
-    , URL_Show_Validation_Popup = '@Url.Action("Show_Validation_Popup", "Acq_List")', URL_DeleteDeal = '@Url.Action("DeleteDeal", "Acq_List")'
-    , URL_Rollback = '@Url.Action("Rollback", "Acq_List")', URL_RollbackWOApp = '@Url.Action("RollbackWOApp", "Acq_List")'
-    , URL_ValidateTermination = '@Url.Action("ValidateTermination", "Acq_List")'
-    , URL_OpenTerminationPopup = '@Url.Action("OpenTerminationPopup", "Acq_List")', URL_SaveTermination = '@Url.Action("SaveTermination", "Acq_List")'
-    , URL_ShowTerminateError = '@Url.Action("ShowTerminateError", "Acq_List")', URL_SendForAuthorisation = '@Url.Action("SendForAuthorisation", "Acq_List")'
-    , URL_Approve = '@Url.Action("Approve", "Acq_List")', URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Acq_List")'
+    var URL_PartialDealList = '@Url.Action("PartialDealList", "Title_Objection_List")', URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_Objection_List")'
+    , URL_Show_Validation_Popup = '@Url.Action("Show_Validation_Popup", "Title_Objection_List")', URL_DeleteDeal = '@Url.Action("DeleteDeal", "Title_Objection_List")'
+    , URL_Rollback = '@Url.Action("Rollback", "Title_Objection_List")', URL_RollbackWOApp = '@Url.Action("RollbackWOApp", "Title_Objection_List")'
+    , URL_ValidateTermination = '@Url.Action("ValidateTermination", "Title_Objection_List")'
+    , URL_OpenTerminationPopup = '@Url.Action("OpenTerminationPopup", "Title_Objection_List")', URL_SaveTermination = '@Url.Action("SaveTermination", "Title_Objection_List")'
+    , URL_ShowTerminateError = '@Url.Action("ShowTerminateError", "Title_Objection_List")', URL_SendForAuthorisation = '@Url.Action("SendForAuthorisation", "Title_Objection_List")'
+    , URL_Approve = '@Url.Action("Approve", "Title_Objection_List")', URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Title_Objection_List")'
     , URL_Index = '@Url.Action("Index", "Acq_General", new { Mode = "Mode_G", Acq_Deal_Code = "Acq_Deal_Code" })'
-    , URL_PartialBindDealStatusPopup = '@Url.Action("PartialBindDealStatusPopup", "Acq_List")'
-    , URL_PartialBindMilestonePopup = '@Url.Action("PartialBindMilestonePopup", "Acq_List")'
+    , URL_PartialBindDealStatusPopup = '@Url.Action("PartialBindDealStatusPopup", "Title_Objection_List")'
+    , URL_PartialBindMilestonePopup = '@Url.Action("PartialBindMilestonePopup", "Title_Objection_List")'
     , URL_Validate_Deal_Approve_List = '@Url.Action("Validate_Deal_Approve_List","Global")'
-    , URL_BindReleaseContentList = '@Url.Action("BindReleaseContentList", "Acq_List")'
-    , URL_SaveReleasedContent = '@Url.Action("SaveReleasedContent", "Acq_List")'
-    , URL_SearchReleaseContent = '@Url.Action("SearchReleaseContent", "Acq_List")'
-    , URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Acq_List")'
-    , URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Acq_List")'
+    , URL_BindReleaseContentList = '@Url.Action("BindReleaseContentList", "Title_Objection_List")'
+    , URL_SaveReleasedContent = '@Url.Action("SaveReleasedContent", "Title_Objection_List")'
+    , URL_SearchReleaseContent = '@Url.Action("SearchReleaseContent", "Title_Objection_List")'
+    , URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Title_Objection_List")'
+    , URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Title_Objection_List")'
     , URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")'
     , URL_ChkRightsDuplication = '@Url.Action("ChkRightsDuplication", "Acq_Rights")'
     , URL_Release_Lock = '@Url.Action("Release_Lock", "Global")'
-    , URL_GetAcqAsyncStatus = '@Url.Action("GetAcqAsyncStatus", "Acq_List")'
-    , URL_ActionButtons = '@Url.Action("ActionButtons", "Acq_List")'
-    , URL_BindAT = '@Url.Action("BindAT", "Acq_List")'
-    , URL_SessionTitleList = '@Url.Action("SessionTitleList", "Acq_List")'
-    , URL_PartialBindLinearStatusPopup = '@Url.Action("PartialBindLinearStatusPopup", "Acq_List")'
-    , URL_Show_Error_Popup = '@Url.Action("Show_Error_Popup", "Acq_List")'
-    , URL_Reprocess = '@Url.Action("Reprocess", "Acq_List")'
-    , URL_SendForArchive = '@Url.Action("SendForArchive", "Acq_List")'
-    , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Acq_List")'
-    , URL_Archive = '@Url.Action("Archive", "Acq_List")';
+    , URL_GetAcqAsyncStatus = '@Url.Action("GetAcqAsyncStatus", "Title_Objection_List")'
+    , URL_ActionButtons = '@Url.Action("ActionButtons", "Title_Objection_List")'
+    , URL_BindAT = '@Url.Action("BindAT", "Title_Objection_List")'
+    , URL_SessionTitleList = '@Url.Action("SessionTitleList", "Title_Objection_List")'
+    , URL_PartialBindLinearStatusPopup = '@Url.Action("PartialBindLinearStatusPopup", "Title_Objection_List")'
+    , URL_Show_Error_Popup = '@Url.Action("Show_Error_Popup", "Title_Objection_List")'
+    , URL_Reprocess = '@Url.Action("Reprocess", "Title_Objection_List")'
+    , URL_SendForArchive = '@Url.Action("SendForArchive", "Title_Objection_List")'
+    , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Title_Objection_List")'
+    , URL_Archive = '@Url.Action("Archive", "Title_Objection_List")';
 
     var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';
     var BUCode = '@ViewBag.BUCode';
@@ -276,7 +276,7 @@
                 OnChangeBindTitle('TP');
             }
         }
-        document.getElementById("showMore").innerHTML = "Show more...";
+        
         debugger;
         if ('@objMessageKey.LayoutDirection' == "RTL") {
             document.getElementById('pnlSearch').removeAttribute('hidden')
@@ -388,7 +388,7 @@
         }
         //Ask_Confirmation(commandName, objAcqListCode, 0);
     };
-    var URL_Bind_Title = '@Url.Action("Bind_Title", "Acq_List")';
+    var URL_Bind_Title = '@Url.Action("Bind_Title", "Title_Objection_List")';
     function populateTitle(evt) {
         debugger;
         //$("#ddlSrchTitle").find("option").attr("selected", false);
@@ -707,7 +707,7 @@
         top: 70px;
     }*/
 </style>
-<script src="~/Custom_Scripts/Acq_Deal_List.js"></script>
+<script src="~/Custom_Scripts/Title_Objection_List.js"></script>
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div id="sideNavi">
@@ -716,27 +716,13 @@
         <div class="RightPanel" id="pnlSearch" hidden="hidden" dir="@objMessageKey.LayoutDirection">
             <div id="AdvanceSearchPanel">
                 <h4>@objMessageKey.AdvanceSearch</h4>
+
+
                 <a class="close" href="#" onclick="javascript: panelVisible=true;togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
                 <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
                     <li class="AdSearch">
                         <label>@objMessageKey.AgreementNo:</label><br>
                         <input type="text" value="@ViewBag.DealNo_Search" placeholder="@objMessageKey.DealNo" maxlength="15" id="txtSrchDealNo" style="width: 172px;" />
-                    </li>
-
-                    <li class="AdSearch">
-                        <label>@objMessageKey.BusinessUnit:</label><br>
-                        @if (ViewBag.Is_AllowMultiBUacqdeal != "Y")
-                        {
-                            <select id="ddlSrchBU" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 174px;"></select>
-                        }
-                        else
-                        {
-                            <select id="ddlSrchBUMultiSelect" onchange="OnChangeBindTitle()" multiple="multiple" style="width: 174px;"></select>
-                        }
-                    </li>
-                    <li class="AdSearch">
-                        <label>@objMessageKey.DealType:</label><br>
-                        <select id="ddlSrchDealType" style="width: 174px;" class="form_input chosen-select"></select>
                     </li>
                     <li class="AdSearch">
                         <label>@objMessageKey.Title:</label>
@@ -744,47 +730,24 @@
                         @Html.Hidden("hdnTitleSearch")
 
                     </li>
+                    <li class="AdSearch">
+                        <label>Objection Type:</label><br>
+                        <select id="ddlSrchDealType" style="width: 174px;" class="form_input chosen-select"></select>
+                    </li>
 
                     <li class="AdSearch">
-                        <label>@objMessageKey.WorkflowStatus:</label><br>
+                        <label>Objection Status:</label><br>
                         <select id="ddlWorkflowStatus" class="form_input chosen-select" style="width: 174px;"></select>
                     </li>
                     <li class="AdSearch">
                         <label>@objMessageKey.Licensor:</label><br>
                         <select id="ddlSrchLicensor" multiple="multiple"></select>
                     </li>
-                    <li class="AdSearch">
-                        <a onclick="ShowMore('pnlShowmore')" id="showMore" value="Show more..">Show more...</a>
-                    </li>
-
-
                 </ul>
                 <br />
 
                 <div style="text-align:center;">
-                    <label class="checkbox-inline">
-
-                        @if (ViewBag.IncludeArchiveDeal == "true")
-                        {
-                            <input type="checkbox" id="chkArchiveDeal" value="Y" checked="checked" />
-                        }
-                        else
-                        {
-                            <input type="checkbox" id="chkArchiveDeal" value="Y" />
-                        }
-                        Include Archive Deal
-                    </label>
-                    <label class="checkbox-inline">
-                        @if (ViewBag.IncludeSubDeal == "true")
-                        {
-                            <input type="checkbox" id="chkSubDeal" value="Y" checked="checked" />
-                        }
-                        else
-                        {
-                            <input type="checkbox" id="chkSubDeal" value="Y" />
-                        }
-                        @objMessageKey.IncludeSubDeals
-                    </label><br><br>
+                      <br><br>
                     @*<br />*@
                     <a class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
                     <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
@@ -792,81 +755,21 @@
                 </div>
             </div>
         </div>
-
-        <div class="RightPanel" style="overflow-y: auto;" id="pnlShowmore" hidden="hidden" dir="@objMessageKey.LayoutDirection">
-            <div id="AdvanceSearchPanel">
-                <h4>Additional Options</h4>
-                <a class="close" href="#" onclick="javascript: panelVisible=true;ShowMore('pnlSearch');">@*<span class="Reviewclose">x</span>*@</a>
-                <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
-                    <li class="AdSearch">
-                        <label>@objMessageKey.AgreementPeriod:</label><br>
-                        <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealFrmDt_Search" runat="server" id="txtfrom" placeholder="@objMessageKey.From" title="@objMessageKey.From" />
-                        <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealToDt_Search" runat="server" id="txtto" placeholder="@objMessageKey.To" title="@objMessageKey.To" />
-                    </li>
-
-                    <li class="AdSearch">
-                        <label>@objMessageKey.Status:</label><br />
-                        <select id="ddlSrchDealTag" class="form_input chosen-select" style="width: 174px;"></select>
-                    </li>
-
-
-                    <li class="AdSearch">
-                        <label>@objMessageKey.Director:</label><br>
-                        <select id="ddlSrchDirector" multiple="multiple"></select>
-                    </li>
-                    @*<li class="AdSearch" id="spType">
-                            <label id="spType1">Sport Type:</label><br />
-                            <select id="ddlSrchSportType" style="width: 174px;">
-                                <option value="" selected>Please Select </option>
-                            </select>
-                        </li>*@
-
-                </ul>
-                <br />
-
-                <div style="text-align:center;">
-                    <label class="checkbox-inline" style="display:none">
-
-                        @if (ViewBag.IncludeArchiveDeal == "true")
-                        {
-                            <input type="checkbox" id="chkArchiveDeal" value="Y" checked="checked" />
-                        }
-                        else
-                        {
-                            <input type="checkbox" id="chkArchiveDeal" value="Y" />
-                        }
-                        Include Archive Deal
-                    </label>
-                    @*<label class="checkbox-inline">
-                            @if (ViewBag.IncludeSubDeal == "true")
-                            {
-                                <input type="checkbox" id="chkSubDeal" value="Y" checked="checked" />
-                            }
-                            else
-                            {
-                                <input type="checkbox" id="chkSubDeal" value="Y" />
-                            }
-                            @objMessageKey.IncludeSubDeals
-                        </label><br><br>
-                        <br />*@
-                    <input type="hidden" id="hdnClearAll" />
-                </div>
-            </div>
-        </div>
-
-
-
         <div class="container acq main_col" id="AllsubmenuHide">
             <div class="top_area">
                 <h2 class="pull-left" style="">
                     Objection Detail
                 </h2>
-                <div class="MuBUList" style="">
+                    <div class="MuBUList" style="">
+                        <input type="checkbox" id="chkAcq" value="A" checked="checked" /> Acquisition
+                        <input type="checkbox" id="chkSyn" value="S" /> Syndication
+                    </div>
+                @*<div class="MuBUList" style="">
                     @if (ViewBag.Is_AllowMultiBUacqdeal == "Y")
                     {
                         @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
                     }
-                </div>
+                </div>*@
                 <div class="right_nav pull-right">
                     <ul>
                         <li>
@@ -903,7 +806,7 @@
                         <li>
                             @{if (ViewBag.AddVisibility == true)
                                 {
-                                    <a class="btn-primary" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Add", Acq_Deal_Code = 0 })">@objMessageKey.AddDeal</a>
+                                    <a class="btn-primary" href="@Url.Action("ButtonEvents", "Title_Objection_List", new { CommandName = "Add", Acq_Deal_Code = 0 })">Add Title Objection</a>
                                 }
                             }
                         </li>

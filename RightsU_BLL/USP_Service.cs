@@ -37,6 +37,11 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_List_Acq(strSearch, pageNo, orderByCndition, isPaging, pageSize, user_Code, exactMatch, recordCount);
         }
+        public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch,string Type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, Nullable<int> user_Code, string exactMatch, ObjectParameter recordCount)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Title_Objection_Adv_List(strSearch, Type, pageNo, orderByCndition, isPaging, pageSize, user_Code, exactMatch, recordCount);
+        }
 
         public ObjectResult<USP_List_Syn_Result> USP_List_Syn(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string ExactMatch)
         {

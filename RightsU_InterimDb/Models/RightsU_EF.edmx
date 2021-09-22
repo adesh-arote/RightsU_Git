@@ -13683,6 +13683,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="AdvanceSearch" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="ExactMatch" Type="varchar(max)" Mode="In" />
         </Function>
+        <Function Name="USP_Title_Objection_Adv_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StrSearch" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Type" Type="nvarchar" Mode="In" />
+          <Parameter Name="PageNo" Type="int" Mode="In" />
+          <Parameter Name="OrderByCndition" Type="varchar" Mode="In" />
+          <Parameter Name="IsPaging" Type="varchar" Mode="In" />
+          <Parameter Name="PageSize" Type="int" Mode="In" />
+          <Parameter Name="RecordCount" Type="int" Mode="InOut" />
+          <Parameter Name="User_Code" Type="int" Mode="In" />
+          <Parameter Name="ExactMatch" Type="varchar(max)" Mode="In" />
+        </Function>
         <Function Name="USP_Title_Objection_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CallFrom" Type="char" Mode="In" />
           <Parameter Name="Title_Codes" Type="varchar" Mode="In" />
@@ -20994,6 +21005,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="TitleCode" Mode="In" Type="Int32" />
             <Parameter Name="Record_Code" Mode="In" Type="Int32" />
             <Parameter Name="Record_Type" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Title_Objection_Adv_List" ReturnType="Collection(RightsU_NeoModel.USP_Title_Objection_Adv_List_Result)">
+            <Parameter Name="StrSearch" Mode="In" Type="String" />
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="PageNo" Mode="In" Type="Int32" />
+            <Parameter Name="OrderByCndition" Mode="In" Type="String" />
+            <Parameter Name="IsPaging" Mode="In" Type="String" />
+            <Parameter Name="PageSize" Mode="In" Type="Int32" />
+            <Parameter Name="RecordCount" Mode="InOut" Type="Int32" />
+            <Parameter Name="User_Code" Mode="In" Type="Int32" />
+            <Parameter Name="ExactMatch" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -35957,6 +35979,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Obj_Type_Name" Nullable="true" />
           <Property Type="String" Name="Obj_Type_Group" Nullable="true" />
         </ComplexType>
+        <ComplexType Name="USP_Title_Objection_Adv_List_Result">
+          <Property Type="Int32" Name="Title_Objection_Code" Nullable="false" />
+          <Property Type="Int32" Name="Deal_Code" Nullable="false" />
+          <Property Type="Int32" Name="Title_Code" Nullable="false" />
+          <Property Type="String" Name="Agreement_No" Nullable="true" />
+          <Property Type="String" Name="Title_Name" Nullable="true" />
+          <Property Type="String" Name="Deal_Desc" Nullable="true" />
+          <Property Type="String" Name="Vendor_Name" Nullable="true" />
+          <Property Type="String" Name="Objection_Type_Name" Nullable="true" />
+          <Property Type="DateTime" Name="Agreement_Date" Nullable="false" Precision="23" />
+          <Property Type="String" Name="CountryDetails" Nullable="true" />
+          <Property Type="String" Name="Status" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -45131,6 +45166,23 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="MapFor" ColumnName="MapFor" />
                 <ScalarProperty Name="Obj_Type_Name" ColumnName="Obj_Type_Name" />
                 <ScalarProperty Name="Obj_Type_Group" ColumnName="Obj_Type_Group" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Title_Objection_Adv_List" FunctionName="RightsU_NeoModel.Store.USP_Title_Objection_Adv_List">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Title_Objection_Adv_List_Result">
+                <ScalarProperty Name="Title_Objection_Code" ColumnName="Title_Objection_Code" />
+                <ScalarProperty Name="Deal_Code" ColumnName="Deal_Code" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+                <ScalarProperty Name="Deal_Desc" ColumnName="Deal_Desc" />
+                <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
+                <ScalarProperty Name="Objection_Type_Name" ColumnName="Objection_Type_Name" />
+                <ScalarProperty Name="Agreement_Date" ColumnName="Agreement_Date" />
+                <ScalarProperty Name="CountryDetails" ColumnName="CountryDetails" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

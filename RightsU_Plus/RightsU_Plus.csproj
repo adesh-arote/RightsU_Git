@@ -667,6 +667,10 @@
     <Content Include="CSS\slider-menu.theme.jquery.css" />
     <Content Include="CSS\sumoselect.css" />
     <Content Include="CSS\TopBand.css" />
+    <Content Include="Custom_Scripts\Title_Objection_List.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_List - Copy.min.js">
+      <DependentUpon>Title_Objection_List.js</DependentUpon>
+    </Content>
     <Content Include="Custom_Scripts\MHRequisitionApprove.js" />
     <Content Include="Custom_Scripts\Pro_Deal_List.js" />
     <Content Include="Custom_Scripts\Acq_Deal_Ancillary.js" />
@@ -1014,6 +1018,9 @@
     <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\ui.fancytree.less" />
     <Content Include="Content\jquery.fancytree-css\skin-awesome\ui.fancytree.less" />
     <Content Include="Download\Title_Import_Utility_Sample.xlsx" />
+    <Content Include="Custom_Scripts\Acq_Deal_List - Copy.min.js.map">
+      <DependentUpon>Title_Objection_List.js</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\RightsU_Publish.pubxml" />
     <None Include="Properties\PublishProfiles\RU_Publish.pubxml" />
