@@ -1,5 +1,4 @@
-﻿@using UTOFrameWork.FrameworkClasses
-<style>
+﻿<style>
     #sumo_ddlTitle, #sumo_ddlLicensor {
         width: 80% !important;
     }
@@ -12,6 +11,11 @@
     var URL_AddTitleObjectionList = '@Url.Action("AddTitleObjectionList", "Title_Objection")';
     var URL_BindTitleLicencor = '@Url.Action("BindTitleLicencor", "Title_Objection")';
 
+    var URL_BindPlatformTree = '@Url.Action("BindPlatformTree", "Title_Objection")';
+    var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Title_Objection")';
+    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
+    var URL_SaveTitleObjection = '@Url.Action("SaveTitleObjection", "Title_Objection")';
+
     $(document).ready(function () {
         addNumeric();
         $('#searchCommon').keypress(function (e) {
@@ -23,15 +27,9 @@
         });
         $("#ddlTitle,#ddlLicensor").SumoSelect();
         SearchTitleObjection();
-
-        //$("#ddlTitle").change(function () {
-        //    TitleLicencorMapping("L")
-        //});
-
         $("#ddlLicensor").change(function () {
             TitleLicencorMapping("T")
         });
-
         $('input[type=radio][name=rb_AcqSyn').change(function () {
             BindPartialView("LIST", this.value,0);
         });
@@ -96,7 +94,6 @@
                             $("#ddlLicensor")[0].sumo.reload();
                         }
                     }
-                    //   $("#ddlSrchDirector").val(obj_Search[0].DirectorCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
                 }
             },
             error: function (result) {
@@ -194,7 +191,6 @@
         }
         SearchTitleObjection();
     }
-
     function BindTitleObjectionList() {
         debugger;
         var pageNo=$('#hdnPageNo').val(), recordPerPage = $('#txtPageSize').val();
@@ -282,8 +278,6 @@
             }
         });
     }
-
-
     function AddTitleObjection() {
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -315,7 +309,6 @@
             }
         });
     }
-
     function CancelTitleObjection() {
         BindTitleObjectionList();
     }
@@ -376,5 +369,13 @@
                 </div>
             </div>
         </div>
+    </div>
+    <br />
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+            <li>
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Back To List" onclick="CancelSaveDeal()" />
+            </li>
+        </ul>
     </div>
 </div>

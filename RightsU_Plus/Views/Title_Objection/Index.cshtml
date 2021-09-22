@@ -1,7 +1,5 @@
-﻿@using UTOFrameWork.FrameworkClasses
-@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-
 }
 <script src="~/JS_Core/jquery.sumoselect.js"></script>
 <link href="~/CSS/sumoselect.css" rel="stylesheet" />
@@ -9,7 +7,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
-
+<script src="~/Custom_Scripts/Title_Objection_Generic.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
 <div class="main_section">
@@ -21,10 +19,17 @@
         </div>
     </section>
 </div>
+
 <script>
     var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Title_Objection")';
+    var URL_BindPlatformTree = '@Url.Action("BindPlatformTree", "Title_Objection")';
+    var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Title_Objection")';
+    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
+    var URL_SaveTitleObjection = '@Url.Action("SaveTitleObjection", "Title_Objection")';
+
     var Command_Name = "";
     var TitleObjectCode = '@ViewBag.TitleObjectCode';
+    var callFrom = '@ViewBag.callFrom'
 
     $(document).ready(function () {
         BindPartialView('@ViewBag.callFrom');
@@ -40,7 +45,7 @@
              window.location.href = URL;
         }
     }
-  
+
     function BindPartialView(key, Deal_Code = 0, Title_Code = 0) {
         debugger
         Record_Type = TitleObjectCode === 0 ? $("input[name='rb_AcqSyn']:checked").val() : 'A';

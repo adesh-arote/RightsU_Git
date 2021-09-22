@@ -70,31 +70,27 @@
         width: 100px;
         z-index: auto;
     }
+
+    .count {
+        position: absolute;
+        text-align: center;
+        width: 17px;
+        height: 17px;
+        font-size: 10px;
+        padding-top: 0.1em;
+        background: #f9df73;
+        border-radius: 50%;
+        box-shadow: 0 0 7px #aaa;
+    }
 </style>
 <script>
-    var URL_BindPlatformTree = '@Url.Action("BindPlatformTree", "Title_Objection")';
-    var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Title_Objection")';
-    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
-    var URL_SaveTitleObjection = '@Url.Action("SaveTitleObjection", "Title_Objection")';
-
-    $(document).ready(function () {
-        debugger;
-        initializeChosen();
-        initializeDatepicker();
-        initializeTooltip();
+     $(document).ready(function () {
+        if (@pCodes != "")
+            $('#pCount').text(@pCodes.Split(',').Count());
     });
 
-    $("#popupFadeP").click(function (event) {
-        event.stopPropagation();
-    });
-
-
-
-    function ClosePopup() {
-        $('#popupFadeP').hide('slow');
-    }
     $('.clsPromoterPopup').on('click', function (e) {
-        debugger;
+
         e.preventDefault();
         var btdId = e.target.id;
         var codes = "";
@@ -111,15 +107,15 @@
             dataType: "html",
             data: JSON.stringify({
                 PlatformCode: codes,
-                isView: 'Y'
+                isView: callFrom === "VIEW" ? "Y" : "N"
             }),
             success: function (result) {
-                if (result == "true") {
+                if (result === "true") {
                     redirectToLogin();
                 }
                 else {
                     $('#divTree').html(result);
-                    pos.left = 370;
+                    pos.left = 440;
                     $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
                     $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
                     initializeChosen();
@@ -130,7 +126,6 @@
             }
         });
     });
-
 </script>
 <div class="">
     <div class="title_block dotted_border clearfix">
@@ -160,7 +155,10 @@
             <tr>
                 <td style="width:15%"> <label class="bold">Select Platform : </label></td>
                 <td style="width:80%" colspan="3">
-                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">Platform</a>
+                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">
+                        View Platform Matrix  &nbsp;&nbsp;
+                        <span id="pCount" class="count">0</span>
+                    </a>
                 </td>
             </tr>
             <tr>
@@ -218,7 +216,6 @@
         </ul>
     </div>
 </div>
-
 <div id="popupFadeP">
     <div class="modal-dialog">
         <div class="modal-content clearfix">

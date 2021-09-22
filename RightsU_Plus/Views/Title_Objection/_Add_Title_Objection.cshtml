@@ -75,12 +75,19 @@
         width: 100px;
         z-index: auto;
     }
+    .count {
+        position: absolute;
+        text-align: center;
+        width: 17px;
+        height: 17px;
+        font-size: 10px;
+        padding-top: 0.1em;
+        background: #f9df73;
+        border-radius: 50%;
+        box-shadow: 0 0 7px #aaa;
+    }
 </style>
 <script>
-    var URL_BindPlatformTree = '@Url.Action("BindPlatformTree", "Title_Objection")';
-    var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Title_Objection")';
-    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
-    var URL_SaveTitleObjection = '@Url.Action("SaveTitleObjection", "Title_Objection")';
 
     $(document).ready(function () {
         debugger;
@@ -88,10 +95,8 @@
         initializeDatepicker();
         initializeTooltip();
 
-
         $("#ddlCT,#ddlLP").SumoSelect();
         BindObjectionType();
-
 
         var restrictCharLengthOR = $(".restrictCharOR").val().length;
         $("#spn_ObjRemark").html(restrictCharLengthOR + "/4000");
@@ -108,111 +113,9 @@
         $('input[type=radio][name=rb_CT').change(function () {
             CountryTerritoryMapping(this.value)
         });
-
     });
-
-    $(document).on('keyup', 'textarea', function () {
-        var count = $(this).val().length;
-        if (this.id == "txt_Resolution_Remarks") {
-            $("#spn_ResRemark").html(count + "/4000");
-        }
-        else {
-            $("#spn_ObjRemark").html(count + "/4000");
-        }
-    });
-
-    $("#popupFadeP").click(function (event) {
-        event.stopPropagation();
-    });
-    function SetMaxDt() {
-        setMinMaxDates('txtStart', '', $('#txtEnd').val());
-    }
-    function SetMinDt() {
-        setMinMaxDates('txtEnd', $('#txtStart').val(), '');
-    }
-
-    function BindObjectionType(TypeCode = 0) {
-        debugger;
-        $.ajax({
-            type: "POST",
-            url: URL_BindObjectionType,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            success: function (result) {
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                else {
-                    debugger;
-                    $("#ddlObjType").empty();
-
-                    $("#ddlObjType").append($("<option>").val(""));
-                    var lstObj_Type_Group = result.lstObjType.map(item => item.Obj_Type_Group)
-                        .filter((value, index, self) => self.indexOf(value) === index)
-
-                    $(lstObj_Type_Group).each(function (index, item) {
-                        $("#ddlObjType").append('<optgroup label="' + item + '">');
-                        $(result.lstObjType).each(function (index, itemOT) {
-                            if (this.Obj_Type_Group == item) {
-                                $("#ddlObjType").children('optgroup[label="' + item + '"]').append($("<option>").val(this.Code).text(this.Obj_Type_Name));
-                            }
-                        });
-                    });
-                }
-                $("#ddlObjType").trigger("chosen:updated");
-                if (TypeCode > 0) {
-                    $("#ddlObjType").val(TypeCode).trigger("chosen:updated");
-                }
-                $("#ddlObjType_chosen").css("width", "35%")
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-                hideLoading();
-            }
-        });
-    }
-    function CountryTerritoryMapping() {
-        debugger;
-
-        var Type = $("input[name='rb_CT']:checked").val();
-
-        $.ajax({
-            type: "POST",
-            url: URL_BindCountryTerritory,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Type: Type
-            }),
-            async: false,
-            success: function (result) {
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                else {
-                    debugger;
-                    $("#ddlCT").empty();
-                    $(result.lstCT).each(function (index, item) {
-                        $("#ddlCT").append($("<option>").val(this.Value).text(this.Text));
-                    });
-
-                    $("#ddlCT")[0].sumo.reload();
-                }
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-                hideLoading();
-            }
-        });
-    }
-    function ClosePopup() {
-        $('#popupFadeP').hide('slow');
-    }
     $('.clsPromoterPopup').on('click', function (e) {
-        debugger;
+
         e.preventDefault();
         var btdId = e.target.id;
         var codes = "";
@@ -229,16 +132,15 @@
             dataType: "html",
             data: JSON.stringify({
                 PlatformCode: codes,
-                isView: 'N'
-
+                isView: callFrom === "VIEW" ? "Y" : "N"
             }),
             success: function (result) {
-                if (result == "true") {
+                if (result === "true") {
                     redirectToLogin();
                 }
                 else {
                     $('#divTree').html(result);
-                    pos.left = 370;
+                    pos.left = 440;
                     $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
                     $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
                     initializeChosen();
@@ -249,61 +151,7 @@
             }
         });
     });
-    function SaveTitleObjection(TOC) {
-        debugger;
 
-        var PlatformCodes = $("#hdnTVCodes").val();
-        var CntTerr = $("input[name='rb_CT']:checked").val();
-        var CTCodes = $("#ddlCT").val();
-        var LPCodes = $("#ddlLP").val();
-        var SD = $("#txtStart").val();
-        var ED = $("#txtEnd").val();
-        var ObjType = $("#ddlObjType").val();
-        var ObjRemarks = $("#txt_Objection_Remarks").val();
-        var ResRemarks = $("#txt_Resolution_Remarks").val();
-        var Title_Status = $("#ddlTitle_Status").val();
-
-        debugger;
-        $.ajax({
-            type: "POST",
-            url: URL_SaveTitleObjection,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                PlatformCodes: PlatformCodes,
-                CntTerr: CntTerr,
-                CTCodes: CTCodes,
-                LPCodes: LPCodes,
-                SD: SD,
-                ED: ED,
-                ObjType: ObjType,
-                ObjRemarks: ObjRemarks,
-                ResRemarks: ResRemarks,
-                TitleCode : $("#hdnTitleCode").val(),
-                RecordType: $("#hdnRecordType").val(),
-                RecordCode: $("#hdnRecordCode").val(),
-                Title_Status: Title_Status,
-                TOC: TOC
-            }),
-            async: false,
-            success: function (result) {
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                else {
-                    debugger;
-                    if (result.Status == "S") {
-                        showAlert("S", "Record saved successfully");
-                    }
-                }
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-                hideLoading();
-            }
-        });
-    }
 </script>
 <div class="">
     <div class="title_block dotted_border clearfix">
@@ -336,7 +184,11 @@
             <tr>
                 <td style="width:15%"> <label class="bold">Select Platform : </label></td>
                 <td style="width:80%" colspan="3">
-                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">Platform</a>
+                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="Add Platform" style="text-decoration:underline">
+                        Add Platform Matrix  &nbsp;&nbsp;
+                        <span id="pCount" class="count">0</span>
+                    </a>
+              
                 </td>
             </tr>
             <tr>
@@ -398,7 +250,6 @@
         </ul>
     </div>
 </div>
-
 <div id="popupFadeP">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
@@ -410,7 +261,7 @@
                             <span class="sr-only">Close</span>
                         </a>
                         <h5 style="margin-bottom:10px;margin-left:7px;">Platform Matrix</h5>
-                        <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                        <input type="hidden" id="hdnTVCodes" value="@pCodes" name="hdnTVCodes" />
                         <div id="divTree" class="platform_wrapper">
                             <div id="tree" class="treeClass">
                             </div>
