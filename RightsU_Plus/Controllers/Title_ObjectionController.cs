@@ -325,14 +325,14 @@ namespace RightsU_Plus.Controllers
                 if (Licensor_Codes != "")
                 {
                     SelectList lstTitle = new SelectList(lstTitle_Licensor.Where(x => LCodes.Contains(x.Licensor_Code.ToString()))
-                                    .ToList().Select(x => new { Display_Value = x.Title_Code, Display_Text = x.Title }).ToList().Distinct()
+                                    .Where(x => x.Acq_Syn == Type).ToList().ToList().Select(x => new { Display_Value = x.Title_Code, Display_Text = x.Title }).ToList().Distinct()
                                     , "Display_Value", "Display_Text");
 
                     obj_Dictionary.Add("lstTitle", lstTitle);
                 }
                 else
                 {
-                    SelectList lstTitle = new SelectList(lstTitle_Licensor.Select(x => new { Display_Value = x.Title_Code, Display_Text = x.Title })
+                    SelectList lstTitle = new SelectList(lstTitle_Licensor.Where(x => x.Acq_Syn == Type).ToList().Select(x => new { Display_Value = x.Title_Code, Display_Text = x.Title })
                                     .ToList().Distinct()
                                     , "Display_Value", "Display_Text");
 
@@ -342,10 +342,22 @@ namespace RightsU_Plus.Controllers
             else if (MapFor == "L")
             {
                 var TCodes = Title_Codes.Split(',').ToList();
-                SelectList lstLicensor = new SelectList(lstTitle_Licensor.Where(x => TCodes.Contains(x.Title_Code.ToString())).ToList()
+                if (Title_Codes != "")
+                {
+                    SelectList lstLicensor = new SelectList(lstTitle_Licensor.Where(x => TCodes.Contains(x.Title_Code.ToString()))
+                        .Where(x=>x.Acq_Syn == Type).ToList()
                                 .Select(x => new { Display_Value = x.Licensor_Code, Display_Text = x.Licensor }).ToList().Distinct()
                                 , "Display_Value", "Display_Text");
-                obj_Dictionary.Add("lstLicensor", lstLicensor);
+                    obj_Dictionary.Add("lstLicensor", lstLicensor);
+                }
+                else
+                {
+                    SelectList lstLicensor = new SelectList(lstTitle_Licensor.Where(x => x.Acq_Syn == Type).ToList().Select(x => new { Display_Value = x.Licensor_Code, Display_Text = x.Licensor })
+                                   .ToList().Distinct()
+                                   , "Display_Value", "Display_Text");
+
+                    obj_Dictionary.Add("lstLicensor", lstLicensor);
+                }
             }
             return Json(obj_Dictionary);
         }
