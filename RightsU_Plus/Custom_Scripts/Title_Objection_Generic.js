@@ -103,7 +103,6 @@ function ClosePopup() {
 }
 
 function SaveTitleObjection(TOC = 0) {
-    
 
     var PlatformCodes = $("#hdnTVCodes").val();
     var CntTerr = $("input[name='rb_CT']:checked").val();
@@ -149,6 +148,9 @@ function SaveTitleObjection(TOC = 0) {
                     showAlert("S", "Record saved successfully");
                     var URL = '/Title_Objection_List';
                     window.location.href = URL;
+                }
+                else {
+                    showAlert("E", "Combination Conflicts Other Title Objection");
                 }
             }
         },

@@ -1475,6 +1475,8 @@
     <Build Include="dbo\Tables\Title_Objection_Type.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Objection_PreReq.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Objection_ADV_List.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_Title_Objection_Dup.sql" />
+    <Build Include="dbo\User Defined Types\Title_Objection_UDT.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
