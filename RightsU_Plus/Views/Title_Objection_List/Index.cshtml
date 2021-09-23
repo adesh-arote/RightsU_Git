@@ -724,8 +724,9 @@
                         <input type="text" value="@ViewBag.DealNo_Search" placeholder="@objMessageKey.DealNo" maxlength="15" id="txtSrchDealNo" style="width: 172px;" />
                     </li>
                     <li class="AdSearch">
-                        <label>@objMessageKey.Title:</label>
-                        <input type="text" id="txtTitleSearch" style="width:300px" autocomplete="on" onkeyup="populateTitle(event)" />
+                        <label>@objMessageKey.Title:</label><br>
+                        <select id="ddlSrchDirector" multiple="multiple"></select>
+                        @*<input type="text" id="txtTitleSearch" style="width:300px" autocomplete="on" onkeyup="populateTitle(event)" />*@
                         @Html.Hidden("hdnTitleSearch")
 
                     </li>
@@ -761,7 +762,7 @@
                 </h2>
                     <div class="MuBUList" style="">
                         <input type="checkbox" id="chkAcq" value="A" checked="checked" /> Acquisition
-                        <input type="checkbox" id="chkSyn" value="S" /> Syndication
+                        <input type="checkbox" id="chkSyn" value="S"  checked="checked"/> Syndication
                     </div>
                 @*<div class="MuBUList" style="">
                     @if (ViewBag.Is_AllowMultiBUacqdeal == "Y")
@@ -787,7 +788,7 @@
                             }*@
 
                             <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:260px !important;"
-                                   placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" />
+                                   placeholder="Search by Title, DealNo, Licensor" />
                         </li>
                         <li>
                             <a class="btn-primary" style="cursor: pointer" onclick="CommonSrch();">@objMessageKey.Search</a>

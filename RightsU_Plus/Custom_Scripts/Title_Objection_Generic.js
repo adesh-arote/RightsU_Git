@@ -48,13 +48,13 @@ function BindObjectionType(TypeCode = 0) {
                     });
                 });
             }
-            $("#ddlObjType").chosen();
             if (TypeCode > 0) {
-                {
-                    $("#ddlObjType").val(TypeCode).trigger("chosen:updated");
-                }
-                $("#ddlObjType_chosen").css("width", "35%")
+                $("#ddlObjType").val(TypeCode).trigger("chosen:updated");
             }
+            else {
+                $("#ddlObjType").trigger("chosen:updated");
+            }
+            $("#ddlObjType_chosen").css("width", "35%")
         },
         error: function (result) {
             alert('Error: ' + result.responseText);

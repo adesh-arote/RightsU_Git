@@ -14,8 +14,8 @@ As
 BEGIN  
  --SET @OrderByCndition = N'Last_Updated_Time DESC'  
   
- --IF(@PageNo = 0)  
- -- SET @PageNo = 1  
+ IF(@PageNo = 0)  
+  SET @PageNo = 1  
   
  IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp  
  IF OBJECT_ID('tempdb..#AcqSynData') IS NOT NULL DROP TABLE #AcqSynData
@@ -60,9 +60,11 @@ BEGIN
 		Objection_Status VARCHAR(MAX)
 	)
   
-  Declare @SqlPageNo NVARCHAR(MAX)--,@SqlPageNo1 NVARCHAR(MAX),@Type Varchar(100)= 'A,S',@ExactMatch varchar(max) = '',@RecordCount Int = 10,@IsPaging VARCHAR(10)= 'Y',@PageNo Int=1,@PageSize Int=50  --,@StrSearch NVARCHAR(Max)  
+  Declare @SqlPageNo NVARCHAR(MAX),@SqlPageNo1 NVARCHAR(MAX)--,@Type Varchar(100)= 'A,S',@ExactMatch varchar(max) = '',@RecordCount Int = 10,@IsPaging VARCHAR(10)= 'Y',@PageNo Int=1,@PageSize Int=50
+  --,@StrSearch NVARCHAR(Max) = 'and Tm.agreement_no like ''%A%'' AND V.Vendor_Code IN(527)AND TOS.Title_Objection_Status_Code IN(2)AND Objection_Type_Code IN(7)'  
   INSERT INTO #Type(Deal_Type)
   SELECT number FROM dbo.fn_Split_withdelemiter(@Type,',')
+
   set @SqlPageNo = N'  
    WITH Y AS (  
       Select distinct x.Title_Objection_Code,X.Record_Code,X.Title_Name,X.Last_Updated_Time From   
@@ -118,10 +120,10 @@ BEGIN
 	Update #TempData Set Sort = '0' Where Title_name like @ExactMatch OR Vendor_Name like @ExactMatch  OR Agreement_no like @ExactMatch 
 
 	PRINT '2'
-	delete from T From #TempData T Inner Join
-	(
-		Select ROW_NUMBER()Over(Partition By AgreeMent_No Order By Sort asc) RowNum, Id, Agreement_No, Sort From #TempData
-	)a On T.Id = a.Id and a.RowNum <> 1
+	--delete from T From #TempData T Inner Join
+	--(
+	--	Select ROW_NUMBER()Over(Partition By AgreeMent_No Order By Sort asc) RowNum, Id, Agreement_No, Sort From #TempData
+	--)a On T.Id = a.Id and a.RowNum <> 1
 	
 	PRINT '3'
 	Select @RecordCount = Count(distinct (agreement_no )) From #TempData
@@ -138,7 +140,7 @@ BEGIN
 		Delete From #TempData Where Row_Num < (((@PageNo - 1) * @PageSize) + 1) Or Row_Num > @PageNo * @PageSize 
 	End	
 
-	 SELECT DISTINCT TOB.Title_Objection_Code,AD.Acq_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Desc,V.Vendor_Name,TOT.Objection_Type_Name,AD.Agreement_Date,    
+	 SET @SqlPageNo1=  'SELECT DISTINCT TOB.Title_Objection_Code,AD.Acq_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Desc,V.Vendor_Name,TOT.Objection_Type_Name,AD.Agreement_Date,    
 	 dbo.UFN_Get_Acq_Territory(AD.Acq_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status    
 	 FROM Title_Objection TOB    
 	 INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code     
@@ -147,19 +149,12 @@ BEGIN
 	 INNER JOIN Acq_Deal AD ON TOB.Record_Code = AD.Acq_Deal_Code    
 	 INNER JOIN Vendor v WITH(NOLOCK) on AD.Vendor_Code = v.vendor_code    
 	 INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code    
-	 WHERE TOB.Record_Type IN(@Type)  
+	 WHERE TOB.Record_Type Collate Latin1_General_CI_AI IN(SELECT Deal_Type FROM #Type) '+@StrSearch+'
+	 ' 
+
+	 PRINT(@SqlPageNo1)
+	 EXEC (@SqlPageNo1)
 	
-	--SELECT DISTINCT TOB.Title_Objection_Code,AD.Acq_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Desc,CAST(V.Vendor_Name AS varchar(MAX)),TOT.Objection_Type_Name,AD.Agreement_Date,  
-	--dbo.UFN_Get_Acq_Territory(AD.Acq_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status  
-	--FROM Title_Objection TOB  
-	--INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code   
-	--INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code  
-	--INNER JOIN Title T ON TOB.Title_Code = T.Title_Code  
-	--INNER JOIN Acq_Deal AD  WITH(NOLOCK)  ON TOB.Record_Code = AD.Acq_Deal_Code  
-	--INNER JOIN Vendor v WITH(NOLOCK) on AD.Vendor_Code = v.vendor_code  
-	--INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code  
-	--WHERE TOB.Record_Type Collate Latin1_General_CI_AI  IN(SELECT Deal_Type FROM #Type)
-	--AND (T.Title_Name LIKE @ExactMatch OR V.Vendor_Name like @ExactMatch  OR AD.Agreement_No like @ExactMatch) 
   END
  ELSE IF(@Type = 'S')
   BEGIN
@@ -194,10 +189,10 @@ BEGIN
 	Update #TempData Set Sort = '0' Where Title_name like @ExactMatch OR Vendor_Name like @ExactMatch  OR Agreement_no like @ExactMatch 
 
 	PRINT '2'
-	delete from T From #TempData T Inner Join
-	(
-		Select ROW_NUMBER()Over(Partition By AgreeMent_No Order By Sort asc) RowNum, Id, Agreement_No, Sort From #TempData
-	)a On T.Id = a.Id and a.RowNum <> 1
+	--delete from T From #TempData T Inner Join
+	--(
+	--	Select ROW_NUMBER()Over(Partition By AgreeMent_No Order By Sort asc) RowNum, Id, Agreement_No, Sort From #TempData
+	--)a On T.Id = a.Id and a.RowNum <> 1
 	
 	PRINT '3'
 	Select @RecordCount = Count(distinct (agreement_no )) From #TempData
@@ -208,13 +203,12 @@ BEGIN
 		Inner Join (
 			Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC) Row_Num, ID From #TempData
 		) As b On a.Id = b.Id
-		
 	If(@IsPaging = 'Y')
 	Begin
 		Delete From #TempData Where Row_Num < (((@PageNo - 1) * @PageSize) + 1) Or Row_Num > @PageNo * @PageSize 
 	End	
 
-	SELECT DISTINCT TOB.Title_Objection_Code,AD.Syn_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Description AS Deal_Desc,V.Vendor_Name,TOT.Objection_Type_Name,AD.Agreement_Date,    
+	SET @SqlPageNo1 ='SELECT DISTINCT TOB.Title_Objection_Code,AD.Syn_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Description AS Deal_Desc,V.Vendor_Name,TOT.Objection_Type_Name,AD.Agreement_Date,    
 	 dbo.UFN_Get_Syn_Territory(AD.Syn_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status    
 	 FROM Title_Objection TOB    
 	 INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code     
@@ -223,20 +217,12 @@ BEGIN
 	 INNER JOIN Syn_Deal AD ON TOB.Record_Code = AD.Syn_Deal_Code    
 	 INNER JOIN Vendor v WITH(NOLOCK) on AD.Vendor_Code = v.vendor_code    
 	 INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code    
-	 WHERE TOB.Record_Type IN(@Type)  
+	 WHERE TOB.Record_Type Collate Latin1_General_CI_AI IN(SELECT Deal_Type FROM #Type) '+@StrSearch+'' 
 
-	--SELECT DISTINCT TOB.Title_Objection_Code,SD.Syn_Deal_Code AS Deal_Code,T.Title_Code,SD.Agreement_No,T.Title_Name,SD.Deal_Description,CAST(V.Vendor_Name AS varchar(MAX)),TOT.Objection_Type_Name,SD.Agreement_Date,  
-	--dbo.UFN_Get_Syn_Territory(SD.Syn_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status  
-	--FROM Title_Objection TOB  
-	--INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code   
-	--INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code  
-	--INNER JOIN Title T ON TOB.Title_Code = T.Title_Code  
-	--INNER JOIN Syn_Deal SD  WITH(NOLOCK)  ON TOB.Record_Code = SD.Syn_Deal_Code  
-	--INNER JOIN Vendor v WITH(NOLOCK) on SD.Vendor_Code = v.vendor_code  
-	--INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code  
-	--WHERE TOB.Record_Type Collate Latin1_General_CI_AI  IN(SELECT Deal_Type FROM #Type)
+	 PRINT(@SqlPageNo1)
+	 EXEC(@SqlPageNo1)
   END
- ELSE IF(@Type = 'A,S')
+ ELSE IF(@Type = 'A,S' OR @Type = 'S,A')
   BEGIN
 		set @SqlPageNo = N'  
 		WITH Y AS (  
@@ -253,9 +239,8 @@ BEGIN
 				,TOS.Objection_Status_Name           
 				,T.Title_Name  
 				FROM Title_Objection TOB WITH(NOLOCK)  
-				INNER JOIN Acq_Deal AD ON TOB.Record_Code = AD.Acq_Deal_Code
 				INNER JOIN Syn_Deal SD ON TOB.Record_Code =  SD.Syn_Deal_Code
-				INNER JOIN Vendor V ON SD.Vendor_Code = V.Vendor_Code
+				INNER JOIN Vendor V ON SD.Vendor_Code = V.Vendor_Code 
 				INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code   
 				Inner Join Title T WITH(NOLOCK) On TOB.Title_Code = T.Title_Code  
 			)as XYZ Where 1=1   
@@ -265,15 +250,46 @@ BEGIN
 
 		PRINT (@SqlPageNo)  
 		EXEC (@SqlPageNo)  
+		 
+		 SET @SqlPageNo = ''
+
+		 set @SqlPageNo = N'  
+		WITH Y AS (  
+			Select distinct x.Title_Objection_Code,X.Record_Code,X.Title_Name,X.Last_Updated_Time,X.Agreement_No,X.Vendor_Name From   
+			(  
+			select * from (  
+			Select distinct TOB.Title_Objection_Code  
+				,TOB.Objection_Start_Date  
+				,TOB.Record_Code
+				,AD.Acq_Deal_Code
+				,AD.Agreement_No
+				,V.Vendor_Name
+				,TOB.[last_updated_time]            
+				,TOS.Objection_Status_Name           
+				,T.Title_Name  
+				FROM Title_Objection TOB WITH(NOLOCK)  
+				INNER JOIN Acq_Deal AD ON TOB.Record_Code = AD.Acq_Deal_Code
+				INNER JOIN Vendor V ON AD.Vendor_Code = V.Vendor_Code 
+				INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code   
+				Inner Join Title T WITH(NOLOCK) On TOB.Title_Code = T.Title_Code  
+			)as XYZ Where 1=1   
+			)as X  
+			)  
+		Insert InTo #TempData Select Record_Code,Agreement_No,Vendor_Name,Title_Objection_Code,Title_name,''1'','' '',Last_Updated_Time From Y'  
+
+		PRINT (@SqlPageNo)  
+		EXEC (@SqlPageNo) 
+
 		PRINT '1'
+
 	Set @ExactMatch = '%'+@ExactMatch+'%'
 	Update #TempData Set Sort = '0' Where Title_name like @ExactMatch OR Vendor_Name like @ExactMatch  OR Agreement_no like @ExactMatch 
 
 	PRINT '2'
-	delete from T From #TempData T Inner Join
-	(
-		Select ROW_NUMBER()Over(Partition By AgreeMent_No Order By Sort asc) RowNum, Id, Agreement_No, Sort From #TempData
-	)a On T.Id = a.Id and a.RowNum <> 1
+	--delete from T From #TempData T Inner Join
+	--(
+	--	Select ROW_NUMBER()Over(Partition By AgreeMent_No Order By Sort asc) RowNum, Id, Agreement_No, Sort From #TempData
+	--)a On T.Id = a.Id and a.RowNum <> 1
 	
 	PRINT '3'
 	Select @RecordCount = Count(distinct (agreement_no )) From #TempData
@@ -290,7 +306,7 @@ BEGIN
 		Delete From #TempData Where Row_Num < (((@PageNo - 1) * @PageSize) + 1) Or Row_Num > @PageNo * @PageSize 
 	End	
 
-	INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status)
+	SET @SqlPageNo1 ='INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status)
 	SELECT DISTINCT TOB.Title_Objection_Code,SD.Syn_Deal_Code AS Deal_Code,T.Title_Code,SD.Agreement_No,T.Title_Name,SD.Deal_Description,CAST(V.Vendor_Name AS varchar(MAX)),TOT.Objection_Type_Name,SD.Agreement_Date,  
 	dbo.UFN_Get_Syn_Territory(SD.Syn_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status  
 	FROM Title_Objection TOB  
@@ -300,25 +316,30 @@ BEGIN
 	INNER JOIN Syn_Deal SD  WITH(NOLOCK)  ON TOB.Record_Code = SD.Syn_Deal_Code  
 	INNER JOIN Vendor v WITH(NOLOCK) on SD.Vendor_Code = v.vendor_code  
 	INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code  
-	WHERE TOB.Record_Type Collate Latin1_General_CI_AI  IN('S')
-	--AND (T.Title_Name LIKE @ExactMatch OR V.Vendor_Name like @ExactMatch  OR SD.Agreement_No like @ExactMatch) 
+	WHERE TOB.Record_Type  Collate Latin1_General_CI_AI  IN(''S'')'+@StrSearch+''
 
-	INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status)
-	SELECT DISTINCT TOB.Title_Objection_Code,AD.Acq_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Desc,CAST(V.Vendor_Name AS varchar(MAX)),TOT.Objection_Type_Name,AD.Agreement_Date,  
-	dbo.UFN_Get_Acq_Territory(AD.Acq_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status  
+	PRINT(@SqlPageNo1)
+	EXEC(@SqlPageNo1)
+
+	SET @SqlPageNo1 = ''
+
+	SET @SqlPageNo1 = 'INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status)
+	SELECT DISTINCT TOB.Title_Objection_Code,SD.Acq_Deal_Code AS Deal_Code,T.Title_Code,SD.Agreement_No,T.Title_Name,SD.Deal_Desc,CAST(V.Vendor_Name AS varchar(MAX)),TOT.Objection_Type_Name,SD.Agreement_Date,  
+	dbo.UFN_Get_Acq_Territory(SD.Acq_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status  
 	FROM Title_Objection TOB  
 	INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code   
 	INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code  
 	INNER JOIN Title T ON TOB.Title_Code = T.Title_Code  
-	INNER JOIN Acq_Deal AD  WITH(NOLOCK)  ON TOB.Record_Code = AD.Acq_Deal_Code  
-	INNER JOIN Vendor v WITH(NOLOCK) on AD.Vendor_Code = v.vendor_code  
+	INNER JOIN Acq_Deal SD  WITH(NOLOCK)  ON TOB.Record_Code = SD.Acq_Deal_Code
+	INNER JOIN Vendor v WITH(NOLOCK) on SD.Vendor_Code = v.vendor_code  
 	INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code  
-	WHERE TOB.Record_Type Collate Latin1_General_CI_AI  IN('A')
-	--OR (T.Title_Name LIKE @ExactMatch OR V.Vendor_Name like @ExactMatch  OR AD.Agreement_No like @ExactMatch) 
+	WHERE TOB.Record_Type Collate Latin1_General_CI_AI  IN(''A'')'+@StrSearch+''
+
+	PRINT(@SqlPageNo1)
+	EXEC(@SqlPageNo1)
 
 	SELECT DISTINCT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,  
 	dbo.UFN_Get_Acq_Territory(Deal_Code) CountryDetails,Objection_Status AS Status  FROM #AcqSynData
-	--SELECT * FROM #AcqSynData
   END
  IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp  
  IF OBJECT_ID('tempdb..#AcqSynData') IS NOT NULL DROP TABLE #AcqSynData
