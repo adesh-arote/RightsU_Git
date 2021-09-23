@@ -27217,3 +27217,213 @@
 22 September 2021 18:40:26
   :BindGridView() method if Acq_ListController has been executed
 -------------------------------
+23 September 2021 08:09:59
+  :Index method of Acq_ListController is executing
+-------------------------------
+23 September 2021 08:09:59
+  :Condition 1 executing
+-------------------------------
+23 September 2021 08:09:59
+  :Condition 1 executed
+-------------------------------
+23 September 2021 08:09:59
+  :Condition 2 executing
+-------------------------------
+23 September 2021 08:09:59
+  :Condition 2 executed
+-------------------------------
+23 September 2021 08:09:59
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+23 September 2021 08:09:59
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+23 September 2021 08:09:59
+  :BindBUList() method is executing
+-------------------------------
+23 September 2021 08:09:59
+  :BindBUList() method has been executed
+-------------------------------
+23 September 2021 08:09:59
+  :Condition 4 executing
+-------------------------------
+23 September 2021 08:09:59
+  :Condition 4 executed
+-------------------------------
+23 September 2021 08:09:59
+  :Index method of Acq_ListController has been executed
+-------------------------------
+23 September 2021 08:10:04
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+23 September 2021 08:10:04
+  :USP_List_Acq is executing
+-------------------------------
+23 September 2021 08:12:07
+  :Index method of Acq_ListController is executing
+-------------------------------
+23 September 2021 08:12:07
+  :Condition 1 executing
+-------------------------------
+23 September 2021 08:12:07
+  :Condition 1 executed
+-------------------------------
+23 September 2021 08:12:07
+  :Condition 2 executing
+-------------------------------
+23 September 2021 08:12:07
+  :Condition 2 executed
+-------------------------------
+23 September 2021 08:12:07
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+23 September 2021 08:12:07
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+23 September 2021 08:12:07
+  :BindBUList() method is executing
+-------------------------------
+23 September 2021 08:12:07
+  :BindBUList() method has been executed
+-------------------------------
+23 September 2021 08:12:07
+  :Condition 4 executing
+-------------------------------
+23 September 2021 08:12:07
+  :Condition 4 executed
+-------------------------------
+23 September 2021 08:12:07
+  :Index method of Acq_ListController has been executed
+-------------------------------
+23 September 2021 08:12:10
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+23 September 2021 08:12:10
+  :USP_List_Acq is executing
+-------------------------------
+23 September 2021 08:32:17
+  :Index method of Acq_ListController is executing
+-------------------------------
+23 September 2021 08:32:17
+  :Condition 1 executing
+-------------------------------
+23 September 2021 08:32:17
+  :Condition 1 executed
+-------------------------------
+23 September 2021 08:32:17
+  :Condition 2 executing
+-------------------------------
+23 September 2021 08:32:17
+  :Condition 2 executed
+-------------------------------
+23 September 2021 08:32:17
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+23 September 2021 08:32:17
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+23 September 2021 08:32:17
+  :BindBUList() method is executing
+-------------------------------
+23 September 2021 08:32:17
+  :BindBUList() method has been executed
+-------------------------------
+23 September 2021 08:32:17
+  :Condition 4 executing
+-------------------------------
+23 September 2021 08:32:17
+  :Condition 4 executed
+-------------------------------
+23 September 2021 08:32:17
+  :Index method of Acq_ListController has been executed
+-------------------------------
+23 September 2021 08:32:20
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+23 September 2021 08:32:20
+  :USP_List_Acq is executing
+-------------------------------
+23 September 2021 08:41:37
+  :Index method of Acq_ListController is executing
+-------------------------------
+23 September 2021 08:41:37
+  :Condition 1 executing
+-------------------------------
+23 September 2021 08:41:37
+  :Condition 1 executed
+-------------------------------
+23 September 2021 08:41:37
+  :Condition 2 executing
+-------------------------------
+23 September 2021 08:41:37
+  :Condition 2 executed
+-------------------------------
+23 September 2021 08:41:37
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+23 September 2021 08:41:37
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+23 September 2021 08:41:37
+  :BindBUList() method is executing
+-------------------------------
+23 September 2021 08:41:37
+  :BindBUList() method has been executed
+-------------------------------
+23 September 2021 08:41:37
+  :Condition 4 executing
+-------------------------------
+23 September 2021 08:41:37
+  :Condition 4 executed
+-------------------------------
+23 September 2021 08:41:37
+  :Index method of Acq_ListController has been executed
+-------------------------------
+23 September 2021 08:41:39
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+23 September 2021 08:41:39
+  :USP_List_Acq is executing
+-------------------------------
+23 September 2021 09:57:14
+  :Index method of Acq_ListController is executing
+-------------------------------
+23 September 2021 09:57:14
+  :Condition 1 executing
+-------------------------------
+23 September 2021 09:57:14
+  :Condition 1 executed
+-------------------------------
+23 September 2021 09:57:14
+  :Condition 2 executing
+-------------------------------
+23 September 2021 09:57:14
+  :Condition 2 executed
+-------------------------------
+23 September 2021 09:57:14
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+23 September 2021 09:57:15
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+23 September 2021 09:57:15
+  :BindBUList() method is executing
+-------------------------------
+23 September 2021 09:57:15
+  :BindBUList() method has been executed
+-------------------------------
+23 September 2021 09:57:15
+  :Condition 4 executing
+-------------------------------
+23 September 2021 09:57:15
+  :Condition 4 executed
+-------------------------------
+23 September 2021 09:57:15
+  :Index method of Acq_ListController has been executed
+-------------------------------
+23 September 2021 09:57:18
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+23 September 2021 09:57:18
+  :USP_List_Acq is executing
+-------------------------------
