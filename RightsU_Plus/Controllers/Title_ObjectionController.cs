@@ -69,23 +69,27 @@ namespace RightsU_Plus.Controllers
 
             foreach (var item in ListAcq)
             {
-                obj = new Title_Licensor();
-                obj.Acq_Syn = "A";
-                obj.Title = item.Title;
-                obj.Title_Code = item.Title_Code;
-                obj.Licensor = item.Licensor;
-                obj.Licensor_Code = item.Licensor_Code;
+                obj = new Title_Licensor
+                {
+                    Acq_Syn = "A",
+                    Title = item.Title,
+                    Title_Code = item.Title_Code,
+                    Licensor = item.Licensor,
+                    Licensor_Code = item.Licensor_Code
+                };
                 lstTitle_Licensor.Add(obj);
             }
 
             foreach (var item in ListSyn)
             {
-                obj = new Title_Licensor();
-                obj.Acq_Syn = "S";
-                obj.Title = item.Title;
-                obj.Title_Code = item.Title_Code;
-                obj.Licensor = item.Licensor;
-                obj.Licensor_Code = item.Licensor_Code;
+                obj = new Title_Licensor
+                {
+                    Acq_Syn = "S",
+                    Title = item.Title,
+                    Title_Code = item.Title_Code,
+                    Licensor = item.Licensor,
+                    Licensor_Code = item.Licensor_Code
+                };
                 lstTitle_Licensor.Add(obj);
             }
 
@@ -137,7 +141,7 @@ namespace RightsU_Plus.Controllers
             {
 
                 Title_Objection objTO = new Title_Objection_Service(objLoginEntity.ConnectionStringName).GetById(TitleObjectCode);
-                ViewBag.Type = Record_Type;
+                ViewBag.Type = objTO.Record_Type;
 
                 lstUSP_Title_Objection_PreReq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_PreReq(objTO.Title_Code, objTO.Record_Code, objTO.Record_Type).ToList();
 
@@ -179,7 +183,7 @@ namespace RightsU_Plus.Controllers
             {
 
                 Title_Objection objTO = new Title_Objection_Service(objLoginEntity.ConnectionStringName).GetById(TitleObjectCode);
-                ViewBag.Type = Record_Type;
+                ViewBag.Type = objTO.Record_Type;
 
                 var objUTO = new USP_Service(objLoginEntity.ConnectionStringName)
                     .USP_Title_Objection_List(objTO.Record_Type, objTO.Title_Code.ToString(), "")
@@ -345,7 +349,7 @@ namespace RightsU_Plus.Controllers
                 if (Title_Codes != "")
                 {
                     SelectList lstLicensor = new SelectList(lstTitle_Licensor.Where(x => TCodes.Contains(x.Title_Code.ToString()))
-                        .Where(x=>x.Acq_Syn == Type).ToList()
+                        .Where(x => x.Acq_Syn == Type).ToList()
                                 .Select(x => new { Display_Value = x.Licensor_Code, Display_Text = x.Licensor }).ToList().Distinct()
                                 , "Display_Value", "Display_Text");
                     obj_Dictionary.Add("lstLicensor", lstLicensor);
@@ -391,6 +395,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult SaveTitleObjection(int TOC, string PlatformCodes, char CntTerr, int[] CTCodes, string[] LPCodes, string SD, string ED,
             int ObjType, string ObjRemarks, string ResRemarks, int TitleCode, string RecordType, int RecordCode, int Title_Status)
         {
+            Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
             Title_Objection_Service objTOService = new Title_Objection_Service(objLoginEntity.ConnectionStringName);
             Title_Objection objTO;
             if (TOC > 0)
@@ -467,11 +472,37 @@ namespace RightsU_Plus.Controllers
                 objTO.Title_Objection_Rights_Period.Add(objLP);
             }
 
-            dynamic resultSet;
-            bool isValid = objTOService.Save(objTO, out resultSet);
+            Title_Objection_UDT objTO_udt = new Title_Objection_UDT();
+            objTO_udt.Title_Objection_Code = TOC;
+            objTO_udt.PlatformCodes = PlatformCodes;
+            objTO_udt.CntTerr = CntTerr;
+            objTO_udt.CTCodes = string.Join(",", CTCodes);
+            objTO_udt.LPCodes = string.Join(",", LPCodes);
+            objTO_udt.SD = SD;
+            objTO_udt.ED = ED;
+            objTO_udt.Objection_Type_Code = ObjType;
+            objTO_udt.ObjRemarks = ObjRemarks;
+            objTO_udt.ResRemarks = ResRemarks;
+            objTO_udt.TitleCode = TitleCode;
+            objTO_udt.RecordType = Convert.ToChar(RecordType);
+            objTO_udt.RecordCode = RecordCode;
+            objTO_udt.Title_Status_Code = Title_Status;
 
-            Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
-            obj_Dictionary.Add("Status", "S");
+            List<Title_Objection_UDT> lstVTOD = new List<Title_Objection_UDT>();
+            lstVTOD.Add(objTO_udt);
+
+            var a = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_Title_Objection_Dup(lstVTOD, objLoginUser.Users_Code).FirstOrDefault();
+
+            if (a.Result == "N")
+            {
+                dynamic resultSet;
+                bool isValid = objTOService.Save(objTO, out resultSet);
+                obj_Dictionary.Add("Status", "S");
+            }
+            else
+            {
+                obj_Dictionary.Add("Status", "E");
+            }
             return Json(obj_Dictionary);
         }
     }

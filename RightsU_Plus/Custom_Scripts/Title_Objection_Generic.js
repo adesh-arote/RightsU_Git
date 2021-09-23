@@ -48,13 +48,14 @@ function BindObjectionType(TypeCode = 0) {
                     });
                 });
             }
-            if (TypeCode > 0) {
+            if (TypeCode > 0) 
+            {
                 $("#ddlObjType").val(TypeCode).trigger("chosen:updated");
             }
             else {
                 $("#ddlObjType").trigger("chosen:updated");
             }
-            $("#ddlObjType_chosen").css("width", "35%")
+            $("#ddlObjType_chosen").css("width", "35%");     
         },
         error: function (result) {
             alert('Error: ' + result.responseText);
@@ -146,7 +147,7 @@ function SaveTitleObjection(TOC = 0) {
             else {
                 if (result.Status === "S") {
                     showAlert("S", "Record saved successfully");
-                    var URL = '@Url.Action("Index", "Title_Objection_List")';
+                    var URL = '/Title_Objection_List';
                     window.location.href = URL;
                 }
             }

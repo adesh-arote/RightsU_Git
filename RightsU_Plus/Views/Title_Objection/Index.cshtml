@@ -48,11 +48,10 @@
 
     function BindPartialView(key, Deal_Code = 0, Title_Code = 0) {
         debugger
-        //Record_Type = TitleObjectCode === 0 ? $("input[name='rb_AcqSyn']:checked").val() : 'A';
-        if (callFrom =="LIST") {
-            Record_Type = $("input[name='rb_AcqSyn']:checked").val();
-        }
-       
+        Record_Type = TitleObjectCode === 0 ? $("input[name='rb_AcqSyn']:checked").val() : 'A';
+        //if (callFrom =="LIST") {
+        //    Record_Type = $("input[name='rb_AcqSyn']:checked").val();
+        //}
 
         $.ajax({
             type: "POST",
