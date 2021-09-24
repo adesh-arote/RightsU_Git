@@ -64,8 +64,7 @@ function BindObjectionType(TypeCode = 0) {
     });
 }
 function CountryTerritoryMapping() {
-    
-
+   
     var Type = $("input[name='rb_CT']:checked").val();
 
     $.ajax({
@@ -97,12 +96,18 @@ function CountryTerritoryMapping() {
         }
     });
 }
-function ClosePopup() {
-    $('#pCount').text($('#Rights_PlatformplatformCnt').text());
+function ClosePopup(isView = "N") {
+    if (isView === "N") {
+        $('#pCount').text($('#Rights_PlatformplatformCnt').text());
+    }
     $('#popupFadeP').hide('slow');
 }
 
 function SaveTitleObjection(TOC = 0) {
+    debugger;
+    if (!validateSave()) {
+        return false;
+    }
 
     var PlatformCodes = $("#hdnTVCodes").val();
     var CntTerr = $("input[name='rb_CT']:checked").val();
@@ -111,11 +116,10 @@ function SaveTitleObjection(TOC = 0) {
     var SD = $("#txtStart").val();
     var ED = $("#txtEnd").val();
     var ObjType = $("#ddlObjType").val();
-    var ObjRemarks = $("#txt_Objection_Remarks").val();
-    var ResRemarks = $("#txt_Resolution_Remarks").val();
+    var ObjRemarks = $("#txt_Objection_Remarks").val().trim();
+    var ResRemarks = $("#txt_Resolution_Remarks").val().trim();
     var Title_Status = $("#ddlTitle_Status").val();
 
-    
     $.ajax({
         type: "POST",
         url: URL_SaveTitleObjection,
@@ -159,4 +163,56 @@ function SaveTitleObjection(TOC = 0) {
             hideLoading();
         }
     });
+}
+
+function validateSave() {
+    debugger;
+    $("[required='required']").removeAttr("required");
+    $('.required').removeClass('required');
+
+    var isValid = true;
+
+    var PlatformCodes = $("#hdnTVCodes").val();
+    var CTCodes = $("#ddlCT").val();
+    var LPCodes = $("#ddlLP").val();
+    var SD = $("#txtStart").val();
+    var ED = $("#txtEnd").val();
+    var ObjType = $("#ddlObjType").val();
+    var ObjRemarks = $("#txt_Objection_Remarks").val().trim();
+    var ResRemarks = $("#txt_Resolution_Remarks").val().trim();
+
+
+    if (PlatformCodes === "") {
+        isValid = false;
+        showAlert("E", "Please select atleast one platform.");
+    }
+    if (ObjType === "") {
+        isValid = false
+        $('#ddlObjType').attr('required', true);
+    }
+    if (ObjRemarks === "") {
+        isValid = false;
+        $('#txt_Objection_Remarks').attr('required', true);
+    }
+    if (ResRemarks === "") {
+        isValid = false;
+        $('#txt_Resolution_Remarks').attr('required', true);
+    }
+    if (SD === "") {
+        isValid = false;
+        $('#txtStart').attr('required', true);
+    }
+    if (ED === "") {
+        $('#txtEnd').attr('required', true);
+    }
+    if (CTCodes === null) {
+        isValid = false;
+        $('#divddlCT').addClass('required');
+    }   
+    if (LPCodes === null) {
+        isValid = false;
+        $('#divddlLP').addClass('required');
+    }
+
+    return isValid;
 }

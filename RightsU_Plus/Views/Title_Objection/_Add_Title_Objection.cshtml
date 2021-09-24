@@ -19,12 +19,11 @@
 }
 <style>
     #ddlTitle_Status_chosen {
-        width: 120% !important;
-        right: 50%;
+        width: 42% !important;
     }
 
-    .sumo_ddlLP {
-        width: 35%;
+    .sumo_ddlLP, .sumo_ddlCT {
+        width: 100%;
     }
 
     #popupFadeP {
@@ -75,6 +74,7 @@
         width: 100px;
         z-index: auto;
     }
+
     .count {
         position: absolute;
         text-align: center;
@@ -85,6 +85,10 @@
         background: #f9df73;
         border-radius: 50%;
         box-shadow: 0 0 7px #aaa;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 5fr;
     }
 </style>
 <script>
@@ -159,7 +163,8 @@
             Add Title Objection
             <span></span>
         </h2>
-        <div class="pull-right" style="line-height: 4;">
+        <div class="pull-right" style="line-height: 50px;width: 23%;">
+            <span class="bold">Title Objection Status :&nbsp;&nbsp;</span>
             <span>
                 @Html.DropDownList("Title_Status", (IEnumerable<SelectListItem>)ViewBag.ddlTitle_Status, new { @id = "ddlTitle_Status", @class = "form_input chosen-select" })
             </span>
@@ -188,21 +193,29 @@
                         Add Platform Matrix  &nbsp;&nbsp;
                         <span id="pCount" class="count">0</span>
                     </a>
-              
+
                 </td>
             </tr>
             <tr>
                 <td style="width:15%"> <label class="bold">Region : </label></td>
                 <td style="width:80%" colspan="3">
-                    <input type="radio" checked=true name="rb_CT" value="C"> Country &nbsp;&nbsp;
-                    <input type="radio" name="rb_CT" value="T"> Territory &nbsp;&nbsp;
-                    @Html.DropDownList("ddlCT", (IEnumerable<SelectListItem>)ViewBag.ddlCT, new { @id = "ddlCT", @multiple = "multiple" })
+                    <div class="grid-container">
+                        <div style="line-height: 25px;">
+                            <input type="radio" checked=true name="rb_CT" value="C"> Country &nbsp;&nbsp;
+                            <input type="radio" name="rb_CT" value="T"> Territory &nbsp;&nbsp;
+                        </div>
+                        <div id="divddlCT" style="width:35%">
+                            @Html.DropDownList("ddlCT", (IEnumerable<SelectListItem>)ViewBag.ddlCT, new { @id = "ddlCT", @multiple = "multiple" })
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td style="width:15%"> <label class="bold">License Period : </label></td>
                 <td style="width:80%" colspan="3">
-                    @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, new { @id = "ddlLP", @multiple = "multiple" })
+                    <div id="divddlLP" style="width:35%">
+                        @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, new { @id = "ddlLP", @multiple = "multiple" })
+                    </div>
                 </td>
             </tr>
             <tr>

@@ -478,8 +478,8 @@ namespace RightsU_Plus.Controllers
             objTO_udt.CntTerr = CntTerr;
             objTO_udt.CTCodes = string.Join(",", CTCodes);
             objTO_udt.LPCodes = string.Join(",", LPCodes);
-            objTO_udt.SD = SD;
-            objTO_udt.ED = ED;
+            objTO_udt.SD = Convert.ToDateTime(SD).ToString("dd-MMM-yyyy");
+            objTO_udt.ED = Convert.ToDateTime(ED).ToString("dd-MMM-yyyy");
             objTO_udt.Objection_Type_Code = ObjType;
             objTO_udt.ObjRemarks = ObjRemarks;
             objTO_udt.ResRemarks = ResRemarks;
@@ -491,7 +491,7 @@ namespace RightsU_Plus.Controllers
             List<Title_Objection_UDT> lstVTOD = new List<Title_Objection_UDT>();
             lstVTOD.Add(objTO_udt);
 
-            var a = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_Title_Objection_Dup(lstVTOD, objLoginUser.Users_Code).FirstOrDefault();
+           var a = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_Title_Objection_Dup(lstVTOD, objLoginUser.Users_Code).FirstOrDefault();
 
             if (a.Result == "N")
             {

@@ -14,8 +14,7 @@
 }
 <style>
     #ddlTitle_Status_chosen {
-        width: 120% !important;
-        right: 50%;
+        width: 42% !important;
     }
 
     .sumo_ddlLP {
@@ -133,7 +132,8 @@
             View Title Objection
             <span></span>
         </h2>
-        <div class="pull-right" style="line-height: 4;">
+        <div class="pull-right" style="line-height: 50px;width: 23%;">
+            <span class="bold">Title Objection Status :&nbsp;&nbsp;</span>
             <span>
                 @ViewBag.Title_Status_Name
             </span>
@@ -164,7 +164,6 @@
             <tr>
                 <td style="width:15%"> <label class="bold">Region : </label></td>
                 <td style="width:80%" colspan="3">
-                    @*<span>@(isCT == "G" ? "Territory : " : " : ")</span> &nbsp;&nbsp;*@
                     <span>@ctCodes</span>
                 </td>
             </tr>
@@ -222,7 +221,7 @@
             <form class="form">
                 <div class="form_fields">
                     <div class="modal_block modal_header">
-                        <a class="close" onclick="ClosePopup()">
+                        <a class="close" onclick="ClosePopup('Y')">
                             <span style="margin-right:6px;">×</span>
                             <span class="sr-only">Close</span>
                         </a>
