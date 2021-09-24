@@ -39,6 +39,10 @@
         Command_Name = "CANCEL_SAVE_DEAL";
         showAlert("I", 'All Unsaved Data Will Be Lost. Still WantTo Go Ahead?', "OKCANCEL");
     }
+    function backToList() {
+        var URL = '@Url.Action("Index", "Title_Objection_List")';
+        window.location.href = URL;
+    }
     function handleOk() {
         if (Command_Name == "CANCEL_SAVE_DEAL") {
              var URL = '@Url.Action("Index", "Title_Objection_List")';

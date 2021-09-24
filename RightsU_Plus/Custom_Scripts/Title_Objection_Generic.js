@@ -150,8 +150,9 @@ function SaveTitleObjection(TOC = 0) {
             else {
                 if (result.Status === "S") {
                     showAlert("S", "Record saved successfully");
-                    var URL = '/Title_Objection_List';
-                    window.location.href = URL;
+                    //var URL = '/Title_Objection_List';
+                    //window.location.href = URL;
+                    backToList();
                 }
                 else {
                     showAlert("E", "Combination Conflicts Other Title Objection");
