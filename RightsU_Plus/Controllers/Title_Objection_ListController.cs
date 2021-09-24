@@ -277,7 +277,7 @@ namespace RightsU_Plus.Controllers
             //Type = string.Join(",", Type);
             string sstrTitles = string.Join(",", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Name)).Select(y => y.Title_Code).ToList());
             CommonUtil.WriteErrorLog("BindGridView() method of Acq_ListController is executing", Err_filename);
-            IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> objList = BindGridView(commonSearch, Type, isTAdvanced, strDealNo, strTitleObjectionType, strTitleObjectionStatus, sstrTitles, strLicensor, strShowAll, Page, ClearSession);
+            IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> objList = BindGridView(commonSearch, Type, isTAdvanced, strDealNo, strTitleObjectionType, strTitleObjectionStatus, strTitles, strLicensor, strShowAll, Page, ClearSession);
             CommonUtil.WriteErrorLog("BindGridView() method if Acq_ListController has been executed", Err_filename);
             return PartialView("~/Views/Title_Objection_List/_List_Title_Objection.cshtml", objList);
         }
@@ -324,11 +324,11 @@ namespace RightsU_Plus.Controllers
 
 
                     obj_Acq_Syn_List_Search.WorkFlowStatus_Search = strTitleObjectionStatus != "0" ? strTitleObjectionStatus : "0";
-                    if(obj_Acq_Syn_List_Search.Status_Search != "")
+                    if(obj_Acq_Syn_List_Search.Status_Search != "" && obj_Acq_Syn_List_Search.Status_Search != "0")
                         sql += "AND TOS.Title_Objection_Status_Code IN(" + obj_Acq_Syn_List_Search.WorkFlowStatus_Search + ")";
 
                     obj_Acq_Syn_List_Search.DealType_Search = strTitleObjectionType != "0" ? strTitleObjectionType : "0";
-                    if (obj_Acq_Syn_List_Search.Status_Search != "")
+                    if (obj_Acq_Syn_List_Search.DealType_Search != "" && obj_Acq_Syn_List_Search.DealType_Search != "0")
                         sql += "AND Objection_Type_Code IN(" + obj_Acq_Syn_List_Search.DealType_Search + ")";
                    
                 }
