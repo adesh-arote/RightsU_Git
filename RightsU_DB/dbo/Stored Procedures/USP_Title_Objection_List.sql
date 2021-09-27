@@ -36,7 +36,7 @@ BEGIN
 				INNER JOIN Acq_Deal_Licensor ADL ON ADL.Acq_Deal_Code = AD.Acq_Deal_Code
 				INNER JOIN Vendor V ON V.Vendor_Code = ADL.Vendor_Code
 				INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
-			WHERE ADR.Actual_Right_End_Date >= GETDATE()
+			WHERE ADR.Actual_Right_End_Date >= GETDATE() OR Right_Type = 'U'
 	END
 	ELSE IF @CallFrom = 'A'
 	BEGIN
@@ -58,7 +58,7 @@ BEGIN
 			INNER JOIN Acq_Deal_Licensor ADL ON ADL.Acq_Deal_Code = AD.Acq_Deal_Code
 			INNER JOIN Vendor V ON V.Vendor_Code = ADL.Vendor_Code
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
-		WHERE ADR.Actual_Right_End_Date >= GETDATE()
+		WHERE ADR.Actual_Right_End_Date >= GETDATE() OR Right_Type = 'U'
 		AND (
 				( ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,',')) )
 				OR
@@ -84,7 +84,7 @@ BEGIN
 			INNER JOIN Syn_Deal_Rights_Title ADRT ON ADRT.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code
 			INNER JOIN Vendor V ON V.Vendor_Code = AD.Vendor_Code
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
-		WHERE ADR.Actual_Right_End_Date >= GETDATE()
+		WHERE ADR.Actual_Right_End_Date >= GETDATE() OR Right_Type = 'U'
 		AND (
 				(ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,',')))
 				OR

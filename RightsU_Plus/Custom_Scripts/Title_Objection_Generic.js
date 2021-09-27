@@ -19,7 +19,7 @@ function SetMinDt() {
 }
 
 function BindObjectionType(TypeCode = 0) {
-    
+
     $.ajax({
         type: "POST",
         url: URL_BindObjectionType,
@@ -32,7 +32,7 @@ function BindObjectionType(TypeCode = 0) {
                 redirectToLogin();
             }
             else {
-                
+
                 $("#ddlObjType").empty();
 
                 $("#ddlObjType").append($("<option>").val(""));
@@ -48,14 +48,13 @@ function BindObjectionType(TypeCode = 0) {
                     });
                 });
             }
-            if (TypeCode > 0) 
-            {
+            if (TypeCode > 0) {
                 $("#ddlObjType").val(TypeCode).trigger("chosen:updated");
             }
             else {
                 $("#ddlObjType").trigger("chosen:updated");
             }
-            $("#ddlObjType_chosen").css("width", "35%");     
+            $("#ddlObjType_chosen").css("width", "35%");
         },
         error: function (result) {
             alert('Error: ' + result.responseText);
@@ -63,8 +62,11 @@ function BindObjectionType(TypeCode = 0) {
         }
     });
 }
-function CountryTerritoryMapping() {
-   
+function CountryTerritoryMapping(pCodes = "", mapFor = "") {
+
+    var TitleCode = $("#hdnTitleCode").val();
+    var RecordType = $("#hdnRecordType").val();
+    var RecordCode = $("#hdnRecordCode").val();
     var Type = $("input[name='rb_CT']:checked").val();
 
     $.ajax({
@@ -74,7 +76,12 @@ function CountryTerritoryMapping() {
         enctype: 'multipart/form-data',
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
-            Type: Type
+            Type: Type,
+            pCodes: pCodes,
+            mapFor: mapFor,
+            TitleCode: TitleCode,
+            RecordType: RecordType,
+            RecordCode: RecordCode
         }),
         async: false,
         success: function (result) {
@@ -86,8 +93,16 @@ function CountryTerritoryMapping() {
                 $(result.lstCT).each(function (index, item) {
                     $("#ddlCT").append($("<option>").val(this.Value).text(this.Text));
                 });
-
                 $("#ddlCT")[0].sumo.reload();
+
+                if (mapFor === "LP") {
+                    $("#ddlLP").empty();
+                    $("#ddlLP").append($("<option>").val("Please Select"));
+                    $(result.lstLP).each(function (index, item) {
+                        $("#ddlLP").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $("#ddlLP").trigger("chosen:updated");
+                }
             }
         },
         error: function (result) {
@@ -99,6 +114,9 @@ function CountryTerritoryMapping() {
 function ClosePopup(isView = "N") {
     if (isView === "N") {
         $('#pCount').text($('#Rights_PlatformplatformCnt').text());
+        if ($('#pCount').text() != "0") {
+            CountryTerritoryMapping($("#hdnTVCodes").val(), "LP");
+        }
     }
     $('#popupFadeP').hide('slow');
 }
@@ -193,11 +211,11 @@ function validateSave() {
     }
     if (ObjRemarks === "") {
         isValid = false;
-        $('#txt_Objection_Remarks').attr('required', true);
+        $('#txt_Objection_Remarks').val("").attr('required', true);
     }
     if (ResRemarks === "") {
         isValid = false;
-        $('#txt_Resolution_Remarks').attr('required', true);
+        $('#txt_Resolution_Remarks').val("").attr('required', true);
     }
     if (SD === "") {
         isValid = false;
@@ -209,10 +227,11 @@ function validateSave() {
     if (CTCodes === null) {
         isValid = false;
         $('#divddlCT').addClass('required');
-    }   
-    if (LPCodes === null) {
+    }
+    if (LPCodes === "Please Select" || LPCodes === "" ) {
         isValid = false;
-        $('#divddlLP').addClass('required');
+        $('#ddlLP').attr('required', true);
+        $("#ddlLP").val("").trigger("chosen:updated");
     }
 
     return isValid;

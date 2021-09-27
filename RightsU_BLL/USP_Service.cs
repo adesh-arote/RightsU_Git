@@ -1583,10 +1583,10 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Title_Objection_List(callFrom, title_Codes, licensor_Codes);
         }
-        public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type)
+        public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type, string pCodes)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type);
+            return objUSPDAL.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type, pCodes);
         }
     }
 }

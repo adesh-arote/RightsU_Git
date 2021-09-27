@@ -1597,10 +1597,10 @@ namespace RightsU_DAL
             return objContext.USP_Title_Objection_List(callFrom, title_Codes, licensor_Codes);
         }
 
-        public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type)
+        public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type, string pCodes)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type);
+            return objContext.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type, pCodes);
         }
 
     }

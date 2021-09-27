@@ -213,26 +213,13 @@
                     redirectToLogin();
                 }
                 else {
-                    if (result.Is_Locked == "Y") {
-                        debugger
-                        if (result.ErrorMessage != '' && result.DealStatus == 'Y') {
-                            message = result.ErrorMessage;
-                            showAlert('E', result.ErrorMessage);
-                        }
-                        else {
-                            var URL = '@Url.Action("Index", "Title_Objection", new { callFrom = "EDIT", TitleObjectCode = "_TOC_" })';//, new { CallFrom = "T", Page_No = "Code", DealTypeCode = "Deal_Type_Code", TitleName = "Title_Name" }
+                 var URL = '@Url.Action("Index", "Title_Objection", new { callFrom = "EDIT", TitleObjectCode = "_TOC_" })';
 
-                            URL = URL.replace("_TOC_", result.Acq_Deal_Code);
-                            URL = URL.replace("amp;", "");
-                            //URL = URL.replace("_CommandName_", result.CommandName);
-                            //URL = URL.replace("amp;", "");
-                            window.location.href = URL;
-                        }
-                    }
-                    if (result.Is_Locked == "N") {
-                        showAlert("E", result.Message);
-
-                    }
+                 URL = URL.replace("_TOC_",Acq_Deal_Code);
+                 URL = URL.replace("amp;", "");
+              
+                 window.location.href = URL;
+              
                 }
             },
             error: function (result) {

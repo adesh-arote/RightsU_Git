@@ -26,7 +26,6 @@
         display: none;
         max-width: 300px;
         border: #bbb 1px solid;
-        z-index: 100;
     }
 
         #popupFadeP .modal-dialog ul.fancytree-container {
@@ -83,11 +82,18 @@
     }
 </style>
 <script>
-     $(document).ready(function () {
+    $(document).ready(function () {
         if (@pCodes != "")
             $('#pCount').text(@pCodes.Split(',').Count());
     });
 
+    $('.expand_Resolution_Remarks').expander({
+        slicePoint: 500,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
     $('.clsPromoterPopup').on('click', function (e) {
 
         e.preventDefault();
@@ -181,9 +187,9 @@
             <tr>
                 <td style="width:15%"> <label class="bold">Objection Period : </label></td>
                 <td style="width:80%" colspan="3">
-                    <span>@(((DateTime)objTitleObjection.Objection_Start_Date).ToString("dd/MMM/yyyy"))</span>
-                    &nbsp;&nbsp;<b> To </b> &nbsp;&nbsp;
-                    <span>@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MMM/yyyy"))</span>
+                    <span>@(((DateTime)objTitleObjection.Objection_Start_Date).ToString("dd/MM/yyyy"))</span>
+                    &nbsp;<b>To</b>&nbsp;
+                    <span>@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MM/yyyy"))</span>
                 </td>
             </tr>
             <tr>
@@ -195,13 +201,13 @@
             <tr>
                 <td style="width:15%"> <label class="bold">Objection Remarks : </label></td>
                 <td style="width:80%" colspan="3">
-                    <span>@objTitleObjection.Objection_Remarks</span>
+                    <div  class="expand_Resolution_Remarks" >@objTitleObjection.Objection_Remarks</div>
                 </td>
             </tr>
             <tr>
                 <td style="width:15%"> <label class="bold">Resolution Remarks : </label></td>
                 <td style="width:80%" colspan="3">
-                    <span>@objTitleObjection.Resolution_Remarks</span>
+                    <div class="expand_Resolution_Remarks">@objTitleObjection.Resolution_Remarks</div>
                 </td>
             </tr>
         </table>
@@ -210,7 +216,7 @@
     <div class="bottom_action">
         <ul class="form_link_nav clearfix">
             <li>
-                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal()" />
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal('Y')" />
             </li>
         </ul>
     </div>

@@ -31,7 +31,6 @@
         display: none;
         max-width: 300px;
         border: #bbb 1px solid;
-        z-index: 100;
     }
 
         #popupFadeP .modal-dialog ul.fancytree-container {
@@ -99,7 +98,7 @@
         initializeDatepicker();
         initializeTooltip();
 
-        $("#ddlCT,#ddlLP").SumoSelect();
+        $("#ddlCT").SumoSelect();
         BindObjectionType();
 
         var restrictCharLengthOR = $(".restrictCharOR").val().length;
@@ -115,7 +114,7 @@
             SetMaxDt();
         });
         $('input[type=radio][name=rb_CT').change(function () {
-            CountryTerritoryMapping(this.value)
+            CountryTerritoryMapping()
         });
     });
     $('.clsPromoterPopup').on('click', function (e) {
@@ -214,7 +213,7 @@
                 <td style="width:15%"> <label class="bold">License Period : </label></td>
                 <td style="width:80%" colspan="3">
                     <div id="divddlLP" style="width:35%">
-                        @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, new { @id = "ddlLP", @multiple = "multiple" })
+                        @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP,"Please Select", new { @id = "ddlLP", @class = "form_input chosen-select" })
                     </div>
                 </td>
             </tr>
