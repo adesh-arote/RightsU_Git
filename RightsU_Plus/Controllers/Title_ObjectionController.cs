@@ -101,7 +101,7 @@ namespace RightsU_Plus.Controllers
         {
 
             if (key != "LIST")
-                lstUSP_Title_Objection_PreReq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_PreReq(Title_Code, Deal_Code, Record_Type,"").ToList();
+                lstUSP_Title_Objection_PreReq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_PreReq(Title_Code, Deal_Code, Record_Type, "").ToList();
 
             if (key == "LIST")
             {
@@ -130,14 +130,6 @@ namespace RightsU_Plus.Controllers
                      Display_Text = ((DateTime)x.StartDate).ToString("dd/MM/yyyy") + " To " + ((DateTime)x.EndDate).ToString("dd/MM/yyyy")
                  }).ToList();
 
-                var SDEDList1 = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "SDED" && x.EndDate == null).Select(x =>
-                 new
-                 {
-                     Display_Value = ((DateTime)x.StartDate).ToString("dd-MMM-yyyy") + "~(Perpetuity)",
-                     Display_Text = ((DateTime)x.StartDate).ToString("dd/MM/yyyy") + " (Perpetuity) "
-                 }).ToList();
-
-                SDEDList.AddRange(SDEDList1);
                 ViewBag.ddlLP = new SelectList(SDEDList, "Display_Value", "Display_Text");
 
                 ViewBag.ddlTitle_Status = new SelectList(new Title_Objection_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList(), "Title_Objection_Status_Code", "Objection_Status_Name");
@@ -173,9 +165,7 @@ namespace RightsU_Plus.Controllers
                     .ToList();
 
                 var RPCodes = abc.Where(x => x.Rights_End_Date != null).Select(x => ((DateTime)x.Rights_Start_Date).ToString("dd-MMM-yyyy") + "~" + ((DateTime)x.Rights_End_Date).ToString("dd-MMM-yyyy")).ToList();
-                var RPCodes1 = abc.Where(x => x.Rights_End_Date == null).Select(x => ((DateTime)x.Rights_Start_Date).ToString("dd-MMM-yyyy") + "~(Perpetuity)").ToList();
-                RPCodes.AddRange(RPCodes1);
-
+              
                 ViewBag.RPCodes = RPCodes.FirstOrDefault();
 
                 var CountryList = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "TERRITORY" && x.CodeFor == (CTType == "G" ? "G" : "I")).Select(x => new { Country_Code = x.Code, Country_Name = x.Obj_Type_Name }).ToList();
@@ -188,14 +178,7 @@ namespace RightsU_Plus.Controllers
                   Display_Text = ((DateTime)x.StartDate).ToString("dd/MM/yyyy") + " To " + ((DateTime)x.EndDate).ToString("dd/MM/yyyy")
               }).ToList();
 
-                var SDEDList1 = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "SDED" && x.EndDate == null).Select(x =>
-                 new
-                 {
-                     Display_Value = ((DateTime)x.StartDate).ToString("dd-MMM-yyyy") + "~(Perpetuity)",
-                     Display_Text = ((DateTime)x.StartDate).ToString("dd/MM/yyyy") + " (Perpetuity) "
-                 }).ToList();
 
-                SDEDList.AddRange(SDEDList1);
                 ViewBag.ddlLP = new SelectList(SDEDList, "Display_Value", "Display_Text");
 
                 ViewBag.ddlTitle_Status = new SelectList(new Title_Objection_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList(), "Title_Objection_Status_Code", "Objection_Status_Name", objTO.Title_Objection_Status_Code);
@@ -404,15 +387,7 @@ namespace RightsU_Plus.Controllers
                    Display_Text = ((DateTime)x.StartDate).ToString("dd/MM/yyyy") + " To " + ((DateTime)x.EndDate).ToString("dd/MM/yyyy")
                }).ToList();
 
-                var SDEDList1 = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "SDED" && x.EndDate == null).Select(x =>
-                 new
-                 {
-                     Display_Value = ((DateTime)x.StartDate).ToString("dd-MMM-yyyy") + "~(Perpetuity)",
-                     Display_Text = ((DateTime)x.StartDate).ToString("dd/MM/yyyy") + " (Perpetuity) "
-                 }).ToList();
-
-                SDEDList.AddRange(SDEDList1);
-
+          
                 SelectList lstLP = new SelectList(SDEDList, "Display_Value", "Display_Text");
                 obj_Dictionary.Add("lstLP", lstLP);
             }
@@ -519,7 +494,7 @@ namespace RightsU_Plus.Controllers
                 Title_Objection_Rights_Period objLP = new Title_Objection_Rights_Period();
                 objLP.EntityState = State.Added;
                 objLP.Rights_Start_Date = Convert.ToDateTime(item.Split('~').ElementAt(0));
-                objLP.Rights_End_Date = item.Split('~').ElementAt(1) == "(Perpetuity)" ? (dynamic)null : Convert.ToDateTime(item.Split('~').ElementAt(1));
+                objLP.Rights_End_Date = Convert.ToDateTime(item.Split('~').ElementAt(1));
                 objLP.Title_Objection_Code = TOC;
                 objTO.Title_Objection_Rights_Period.Add(objLP);
             }

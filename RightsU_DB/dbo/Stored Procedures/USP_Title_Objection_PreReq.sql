@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE USP_Title_Objection_PreReq
+﻿CREATE PROCEDURE USP_Title_Objection_PreReq
 (
 	@TitleCode INT = 36672,
 	@Record_Code INT = 21738,
@@ -11,7 +11,7 @@ BEGIN
 	--DECLARE	@TitleCode INT = 37553,
 	--@Record_Code INT = 22682,
 	--@Record_Type CHAR(1) = 'A',
-	--@PCodes NVARCHAR(MAX) = '317'
+	--@PCodes NVARCHAR(MAX) = ''
 
 	IF OBJECT_ID('tempdb..#DataMapping') IS NOT NULL DROP TABLE #DataMapping
 	IF OBJECT_ID('tempdb..#Deal_Rights') IS NOT NULL DROP TABLE #Deal_Rights
@@ -116,6 +116,12 @@ BEGIN
 
 	UPDATE A SET A.Obj_Type_Name = C.Country_Name FROM #DataMapping A INNER JOIN Country C  ON A.Code = C.Country_Code WHERE A.CodeFor = 'I' AND MapFor = 'TERRITORY'
 	UPDATE A SET A.Obj_Type_Name = C.Territory_Name FROM #DataMapping A INNER JOIN Territory C  ON A.Code = C.Territory_Code WHERE A.CodeFor = 'G' AND MapFor = 'TERRITORY'
+
+	DECLARE @Perpertuity_Term_In_Year INT
+	SELECT @Perpertuity_Term_In_Year = Parameter_Value FROM system_parameter_new WHERE parameter_name = 'Perpertuity_Term_In_Year'
+
+	UPDATE  #DataMapping SET EndDate = DATEADD(day ,-1, DATEADD(year, @Perpertuity_Term_In_Year, StartDate))
+	WHERE MapFor = 'SDED' And EndDate IS NULL
 
 	SELECT DISTINCT Code, CodeFor, StartDate, EndDate, Obj_Type_Group, Obj_Type_Name, MapFor FROM #DataMapping
 
