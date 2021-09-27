@@ -773,12 +773,12 @@
                 <div class="right_nav pull-right">
                     <ul>
                         <li>
-                            @if (ViewBag.Is_AllowMultiBUacqdeal != "Y")
+                            @*@if (ViewBag.Is_AllowMultiBUacqdeal != "Y")
                             {
                                 <span>
                                     @Html.DropDownList("BusineesUnitList", ViewBag.BusineesUnitList as SelectList, new { @id = "ddlBUUnit", @class = "" })
                                 </span>
-                            }
+                            }*@
                             @*else
                             {
                                 <span>
@@ -804,11 +804,7 @@
                                 </a>
                             </li>*@
                         <li>
-                            @{if (ViewBag.AddVisibility == true)
-                                {
-                                    <a class="btn-primary" href="@Url.Action("Index", "Title_Objection", new { callFrom = "LIST", TitleObjectCode = 0 })">Add Objection</a>
-                                }
-                            }
+                                <a class="btn-primary" href="@Url.Action("Index", "Title_Objection", new { callFrom = "LIST", TitleObjectCode = 0 })">Add Objection</a>
                         </li>
                         @*<li>
                                 <div id="sideNavi">
