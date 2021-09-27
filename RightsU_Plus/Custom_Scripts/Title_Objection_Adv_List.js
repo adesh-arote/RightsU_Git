@@ -105,7 +105,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                     });
                     //$("#ddlSrchDealType").trigger("chosen:updated");
 
-                    var obj_Search = $(result.Obj_Title_Objection_List_Search);
+                    var obj_Search = $(result.Title_Objection_List_Search);
                     $("#ddlSrchDealType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlWorkflowStatus").val(obj_Search[0].WorkFlowStatus_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlSrchLicensor").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
