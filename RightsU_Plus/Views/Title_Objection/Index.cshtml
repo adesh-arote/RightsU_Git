@@ -32,12 +32,19 @@
     var callFrom = '@ViewBag.callFrom'
 
     $(document).ready(function () {
+        initializeExpander();
         BindPartialView('@ViewBag.callFrom');
     });
 
-    function CancelSaveDeal() {
-        Command_Name = "CANCEL_SAVE_DEAL";
-        showAlert("I", 'All Unsaved Data Will Be Lost. Still WantTo Go Ahead?', "OKCANCEL");
+    function CancelSaveDeal(isView = 'N') {
+        if (isView == "Y") {
+             var URL = '@Url.Action("Index", "Title_Objection_List")';
+             window.location.href = URL;
+        }
+        else {
+            Command_Name = "CANCEL_SAVE_DEAL";
+            showAlert("I", 'All Unsaved Data Will Be Lost. Still WantTo Go Ahead?', "OKCANCEL");
+        }
     }
     function backToList() {
         var URL = '@Url.Action("Index", "Title_Objection_List")';
@@ -52,7 +59,7 @@
 
     function BindPartialView(key, Deal_Code = 0, Title_Code = 0) {
         debugger
-        Record_Type = TitleObjectCode === 0 ? $("input[name='rb_AcqSyn']:checked").val() : 'A';
+        Record_Type = TitleObjectCode == 0 ? $("input[name='rb_AcqSyn']:checked").val() : 'A';
         //if (callFrom =="LIST") {
         //    Record_Type = $("input[name='rb_AcqSyn']:checked").val();
         //}

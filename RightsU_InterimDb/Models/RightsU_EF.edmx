@@ -13703,6 +13703,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="TitleCode" Type="int" Mode="In" />
           <Parameter Name="Record_Code" Type="int" Mode="In" />
           <Parameter Name="Record_Type" Type="char" Mode="In" />
+          <Parameter Name="PCodes" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_UPDATE_ACQ_DEAL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
@@ -21005,6 +21006,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="TitleCode" Mode="In" Type="Int32" />
             <Parameter Name="Record_Code" Mode="In" Type="Int32" />
             <Parameter Name="Record_Type" Mode="In" Type="String" />
+            <Parameter Name="PCodes" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Title_Objection_Adv_List" ReturnType="Collection(RightsU_NeoModel.USP_Title_Objection_Adv_List_Result)">
             <Parameter Name="StrSearch" Mode="In" Type="String" />
