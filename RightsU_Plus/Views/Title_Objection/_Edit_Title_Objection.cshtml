@@ -118,15 +118,20 @@
         $("#spn_ResRemark").html(restrictCharLengthRR + "/4000");
 
         $('#txtStart').change(function () {
+            debugger;
+            dateCheck("Start Date", $("#ddlLP").val().split('~')[0], $("#ddlLP").val().split('~')[1], $('#txtStart').val());
             SetMinDt();
         });
         $('#txtEnd').change(function () {
+            debugger;
+            dateCheck("End Date", $("#ddlLP").val().split('~')[0], $("#ddlLP").val().split('~')[1], $('#txtEnd').val());
             SetMaxDt();
         });
         $('input[type=radio][name=rb_CT').change(function () {
             CountryTerritoryMapping()
         });
     });
+   
     $('.clsPromoterPopup').on('click', function (e) {
 
         e.preventDefault();
@@ -222,7 +227,7 @@
                 <td style="width:15%"> <label class="bold">License Period : </label></td>
                 <td style="width:80%" colspan="3">
                     <div id="divddlLP" style="width:35%">
-                        @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP,"Please Select", new { @id = "ddlLP", @class = "form_input chosen-select" })
+                        @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, new { @id = "ddlLP", @class = "form_input chosen-select" })
                     </div>
                 </td>
             </tr>

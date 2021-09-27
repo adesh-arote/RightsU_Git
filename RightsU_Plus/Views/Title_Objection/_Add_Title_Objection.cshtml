@@ -108,9 +108,11 @@
         $("#spn_ResRemark").html(restrictCharLengthRR + "/4000");
 
         $('#txtStart').change(function () {
+            dateCheck("Start Date", $("#ddlLP").val().split('~')[0], $("#ddlLP").val().split('~')[1], $('#txtStart').val());
             SetMinDt();
         });
         $('#txtEnd').change(function () {
+            dateCheck("End Date", $("#ddlLP").val().split('~')[0], $("#ddlLP").val().split('~')[1], $('#txtEnd').val());
             SetMaxDt();
         });
         $('input[type=radio][name=rb_CT').change(function () {

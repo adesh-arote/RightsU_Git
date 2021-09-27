@@ -115,6 +115,7 @@ function ClosePopup(isView = "N") {
     if (isView === "N") {
         $('#pCount').text($('#Rights_PlatformplatformCnt').text());
         if ($('#pCount').text() != "0") {
+            $('#txtStart,#txtEnd').val("").attr('required', false);
             CountryTerritoryMapping($("#hdnTVCodes").val(), "LP");
         }
     }
@@ -228,11 +229,35 @@ function validateSave() {
         isValid = false;
         $('#divddlCT').addClass('required');
     }
-    if (LPCodes === "Please Select" || LPCodes === "" ) {
+    if (LPCodes === "Please Select" || LPCodes === "") {
         isValid = false;
         $('#ddlLP').attr('required', true);
         $("#ddlLP").val("").trigger("chosen:updated");
     }
 
     return isValid;
+}
+
+function dateCheck(callFor, dateFrom, dateTo, dateCheck) {
+    var c = dateCheck.split('/');
+    var check = new Date(c[2], parseInt(c[1]) - 1, c[0]);
+
+    var fDate, lDate, cDate;
+    fDate = Date.parse(dateFrom);
+    lDate = Date.parse(dateTo);
+    cDate = Date.parse(check);
+
+    if (cDate <= lDate && cDate >= fDate) {
+        return true;
+    }
+
+    if (callFor === "Start Date") {
+        $('#txtStart').val("").attr('required', true);
+    }
+    else {
+        $('#txtEnd').val("").attr('required', true);
+    }
+
+    showAlert("E", callFor + " Should be between License Period");
+    return false;
 }

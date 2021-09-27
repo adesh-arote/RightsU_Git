@@ -12,12 +12,27 @@ AS
 BEGIN
 
 	--DECLARE
-	--@CallFrom CHAR(1) = 'Y',
-	--@Title_Codes VARCHAR(1000) = '473,3272',
-	--@Licensor_Codes VARCHAR(1000) = '23,22'
+	--@CallFrom CHAR(1) = 'X',
+	--@Title_Codes VARCHAR(1000) = '',
+	--@Licensor_Codes VARCHAR(1000) = ''
+
+	IF OBJECT_ID('tempdb..#FinalResult') IS NOT NULL DROP TABLE #FinalResult
+
+	CREATE TABLE #FinalResult
+	(
+		Acq_Deal_Code INT,
+		Agreement_No NVARCHAR(MAX),
+		Deal_Desc NVARCHAR(MAX),
+		Licensor NVARCHAR(MAX),
+		Title NVARCHAR(MAX),
+		Year_Of_Production INT,
+		Title_Code INT,
+		Licensor_Code INT
+	)
 
 	IF @CallFrom = 'X'
 	BEGIN
+		INSERT INTO #FinalResult (Acq_Deal_Code, Agreement_No, Deal_Desc, Licensor, Title, Year_Of_Production, Title_Code, Licensor_Code)
 		SELECT DISTINCT 
 				AD.Acq_Deal_Code, 
 				AD.Agreement_No,
@@ -36,10 +51,14 @@ BEGIN
 				INNER JOIN Acq_Deal_Licensor ADL ON ADL.Acq_Deal_Code = AD.Acq_Deal_Code
 				INNER JOIN Vendor V ON V.Vendor_Code = ADL.Vendor_Code
 				INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
-			WHERE ADR.Actual_Right_End_Date >= GETDATE() OR Right_Type = 'U'
+			WHERE ADR.Actual_Right_End_Date >= GETDATE()
 	END
 	ELSE IF @CallFrom = 'A'
 	BEGIN
+		IF(@Title_Codes = ''  AND @Licensor_Codes = '' )
+			GOTO Final_Result;
+
+		INSERT INTO #FinalResult (Acq_Deal_Code, Agreement_No, Deal_Desc, Licensor, Title, Year_Of_Production, Title_Code, Licensor_Code)
 		SELECT DISTINCT 
 			AD.Acq_Deal_Code, 
 			AD.Agreement_No,
@@ -58,15 +77,19 @@ BEGIN
 			INNER JOIN Acq_Deal_Licensor ADL ON ADL.Acq_Deal_Code = AD.Acq_Deal_Code
 			INNER JOIN Vendor V ON V.Vendor_Code = ADL.Vendor_Code
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
-		WHERE ADR.Actual_Right_End_Date >= GETDATE() OR Right_Type = 'U'
+		WHERE ADR.Actual_Right_End_Date >= GETDATE()
 		AND (
-				( ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,',')) )
-				OR
-				( ADL.Vendor_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Licensor_Codes,',')))
+				( @Title_Codes = '' OR ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,','))   )
+				AND
+				( @Licensor_Codes = '' OR ADL.Vendor_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Licensor_Codes,',')))
 			)
 	END
 	ELSE IF @CallFrom = 'S'
 	BEGIN
+		IF(@Title_Codes = ''  AND @Licensor_Codes = '' )
+			GOTO Final_Result;
+
+		INSERT INTO #FinalResult (Acq_Deal_Code, Agreement_No, Deal_Desc, Licensor, Title, Year_Of_Production, Title_Code, Licensor_Code)
 		SELECT DISTINCT 
 			AD.Syn_Deal_Code AS Acq_Deal_Code, 
 			AD.Agreement_No,
@@ -84,15 +107,16 @@ BEGIN
 			INNER JOIN Syn_Deal_Rights_Title ADRT ON ADRT.Syn_Deal_Rights_Code = ADR.Syn_Deal_Rights_Code
 			INNER JOIN Vendor V ON V.Vendor_Code = AD.Vendor_Code
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
-		WHERE ADR.Actual_Right_End_Date >= GETDATE() OR Right_Type = 'U'
+		WHERE ADR.Actual_Right_End_Date >= GETDATE()
 		AND (
-				(ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,',')))
-				OR
-				(AD.Vendor_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Licensor_Codes,',')))
+				( @Title_Codes = '' OR ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,',')))
+				AND
+				( @Licensor_Codes = '' OR AD.Vendor_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Licensor_Codes,',')))
 			)
 	END
 	ELSE IF @CallFrom = 'Y'
 	BEGIN
+		INSERT INTO #FinalResult (Acq_Deal_Code, Agreement_No, Deal_Desc, Licensor, Title, Year_Of_Production, Title_Code, Licensor_Code)
 		SELECT DISTINCT 
 			AD.Syn_Deal_Code AS Acq_Deal_Code, 
 			AD.Agreement_No,
@@ -112,4 +136,7 @@ BEGIN
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
 		WHERE ADR.Actual_Right_End_Date >= GETDATE()
 	END
+
+	Final_Result:
+	SELECT  Acq_Deal_Code, Agreement_No, Deal_Desc, Licensor, Title, Year_Of_Production, Title_Code, Licensor_Code FROM #FinalResult
 END
