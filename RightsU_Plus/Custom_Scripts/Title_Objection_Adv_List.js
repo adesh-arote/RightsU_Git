@@ -274,32 +274,23 @@ function ShowAll() {
     $('#ddlSrchDealType').val(0).trigger("chosen:updated");
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
-    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
-    $('#ddlGenBUMultiSelect').val('1');
-    $("#ddlGenBUMultiSelect")[0].sumo.reload();
-    $('#ddlSrchBUMultiSelect').val('1');
-    $("#ddlSrchBUMultiSelect")[0].sumo.reload();
     OnChangeBindTitle('ShowAll');
     //$("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#ddlSrchDirector")[0].sumo.unSelectAll();
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
-    //$("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
-    //$("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
-
-    $('#ddlBUUnit').val(BUCode).attr("selected", "true").trigger("chosen:updated");
-
-    showLD = 'Y';
+    $('#chkAcq').prop('checked', true);
+    $('#chkSyn').prop('checked', true);
     LoadDeals(0, 'N', 'Y');
 
 }
-function SetMaxDt() {
-    setMinMaxDates('txtfrom', '', $('#txtto').val());
-}
+//function SetMaxDt() {
+//    setMinMaxDates('txtfrom', '', $('#txtto').val());
+//}
 
-function SetMinDt() {
+//function SetMinDt() {
 
-    setMinMaxDates('txtto', $('#txtfrom').val(), '');
-}
+//    setMinMaxDates('txtto', $('#txtfrom').val(), '');
+//}
 
 function ClearAll() {
     debugger;
@@ -308,21 +299,18 @@ function ClearAll() {
     $('#txtfrom').val('');
     $('#txtto').val('');
     $('#txtTitleSearch').val('');
-    SetMinDt();
-    SetMaxDt();
     $('#ddlSrchDealType').val(0).trigger("chosen:updated");
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
-    $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
 
     OnChangeBindTitle();
     //$("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#chkSubDeal").prop("checked", false);
     $("#chkArchiveDeal").prop("checked", false);
+    //$('#chkAcq').prop('checked', true);
+    //$('#chkSyn').prop('checked', true);
     $("#ddlSrchDirector")[0].sumo.unSelectAll();
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
-    $("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
-    $("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
     showLD = 'Y';
     LoadDeals(0, 'N', 'Y');
     $('#divSearch').show();

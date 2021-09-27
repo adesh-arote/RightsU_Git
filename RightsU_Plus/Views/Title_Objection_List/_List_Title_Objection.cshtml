@@ -213,26 +213,26 @@
                     redirectToLogin();
                 }
                 else {
-                    //if (result.Is_Locked == "Y") {
-                    //    debugger
-                    //    if (result.ErrorMessage != '' && result.DealStatus == 'Y') {
-                    //        message = result.ErrorMessage;
-                    //        showAlert('E', result.ErrorMessage);
-                    //    }
-                    //    else {
+                    if (result.Is_Locked == "Y") {
+                        debugger
+                        if (result.ErrorMessage != '' && result.DealStatus == 'Y') {
+                            message = result.ErrorMessage;
+                            showAlert('E', result.ErrorMessage);
+                        }
+                        else {
                             var URL = '@Url.Action("Index", "Title_Objection", new { callFrom = "EDIT", TitleObjectCode = "_TOC_" })';//, new { CallFrom = "T", Page_No = "Code", DealTypeCode = "Deal_Type_Code", TitleName = "Title_Name" }
 
-                            URL = URL.replace("_TOC_", Acq_Deal_Code);
+                            URL = URL.replace("_TOC_", result.Acq_Deal_Code);
                             URL = URL.replace("amp;", "");
                             //URL = URL.replace("_CommandName_", result.CommandName);
                             //URL = URL.replace("amp;", "");
                             window.location.href = URL;
-                    //    }
-                    //}
-                    //if (result.Is_Locked == "N") {
-                    //    showAlert("E", result.Message);
+                        }
+                    }
+                    if (result.Is_Locked == "N") {
+                        showAlert("E", result.Message);
 
-                    //}
+                    }
                 }
             },
             error: function (result) {
@@ -278,274 +278,275 @@
     <div class="pagination" id="Pagination_List"></div>
 </div>
 <div class="grid_area deal clearfix" onclick="AllsubmenuHide();">
-    <div class="grid_area deal clearfix" onclick="AllsubmenuHide();">
-        @Html.Hidden("hdnAcqDealCode")
-        @{
-            int tempCount = 0;
-            int counter = 0;
-            foreach (var objAcqList in Model)
-            {
-                tempCount = tempCount + 1;
-                counter += 1;
-                <div class="grid_item">
-                    <ul>
-                        <li class="deal_no">
-                            <h4 class="agreementNo Highlight" data-toggle="tooltip" title="@objMessageKey.AgreementNo"> <a href="#" onclick="window.location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = objAcqList.Deal_Code }) '">@Html.Label("id", objAcqList.Agreement_No, new { style = "cursor:pointer;" })</a></h4>
-                            @*<span class="deal_version VR_@objAcqList.Deal_Code" title="@objMessageKey.VersionNo">V-@objAcqList.version</span>*@
-                        </li>
-                        <li><span class="seperator">| </span></li>
-                        <li class="deal_desc" title="@objMessageKey.DealDescription">
-                            <div class="expandable">
-                                @objAcqList.Deal_Desc<a href="#"><span></span></a>
-                            </div>
-                        </li>
-                        <li><span class="seperator">| </span></li>
-                        <li class="deal_status">
-                            <span title="@objMessageKey.AgreementDate">
-                                @*@objAcqList.DealTagDescription*@
-                                @string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objAcqList.Agreement_Date)
-                                @*@objAcqList.DealSignedDate*@
-                            </span>
-                            @{
-                                string groupname = objAcqList.Status;
-                                if (objAcqList.Status.Contains("Runs, Rights Pending") || objAcqList.Status.Contains("Runs Pending"))
-                                {
-                                    <span data-toggle="modal" data-target="#popLinearStatus" class="deal_workflow_status pending" title="@objMessageKey.WorkflowStatus"
-                                          onclick="BindLinearStatusPopup(@objAcqList.Deal_Code)">@objAcqList.Status</span>
+<div class="grid_area deal clearfix" onclick="AllsubmenuHide();">
+    @Html.Hidden("hdnAcqDealCode")
+    @{
+        int tempCount = 0;
+        int counter = 0;
+        foreach (var objAcqList in Model)
+        {
+            tempCount = tempCount + 1;
+            counter += 1;
+        <div class="grid_item">
+                <ul>
+                    <li class="deal_no">
+                        <h4 class="agreementNo Highlight" data-toggle="tooltip" title="@objMessageKey.AgreementNo"> <a href="#" onclick="window.location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = objAcqList.Deal_Code }) '">@Html.Label("id", objAcqList.Agreement_No, new { style = "cursor:pointer;" })</a></h4>
+                        @*<span class="deal_version VR_@objAcqList.Deal_Code" title="@objMessageKey.VersionNo">V-@objAcqList.version</span>*@
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="deal_desc" title="@objMessageKey.DealDescription">
+                        <div class="expandable">
+                            @objAcqList.Deal_Desc<a href="#"><span></span></a>
+                        </div>
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="deal_status">
+                        <span title="Type of Objection">
+                            @objAcqList.Objection_Type_Name
+                            @*@objAcqList.DealTagDescription*@
+                            @*@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objAcqList.Agreement_Date)*@
+                            @*@objAcqList.DealSignedDate*@
+                        </span>
+                        @{
+                            string groupname = objAcqList.Status;
+                            if (objAcqList.Status.Contains("Runs, Rights Pending") || objAcqList.Status.Contains("Runs Pending"))
+                            {
+                                <span data-toggle="modal" data-target="#popLinearStatus" class="deal_workflow_status pending" title="Objection Status"
+                                      >@objAcqList.Status</span> //onclick="BindLinearStatusPopup(@objAcqList.Deal_Code)"
+                            }
+                            else if (objAcqList.Status.Contains("Pending"))
+                            {
+                                    <span data-toggle="modal" data-target="#popDealStatus" class="deal_workflow_status pending" title="Objection Status"
+                                          >@objAcqList.Status</span>
                                     }
-                                    else if (objAcqList.Status.Contains("Pending"))
+                                    else
                                     {
-                                        <span data-toggle="modal" data-target="#popDealStatus" class="deal_workflow_status pending" title="@objMessageKey.WorkflowStatus"
-                                              onclick="BindDealStatusPopup(@objAcqList.Deal_Code)">@objAcqList.Status</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="deal_workflow_status" title="Title Objection Status">@groupname</span>
-                                        }
-                            }
-                        </li>
-                    </ul>
-                    <ul>
-                        <li class="deal_title">
-                            <span class="Highlight" title="@objMessageKey.Title">
-                                @objAcqList.Title_Name
-                            </span>
-                            @*@if (objAcqList.Cnt_DealTitles > 3)
-                                {
-                                    <a title="More Title" href="#" data-toggle="modal" style="transform: rotate(270deg);padding-right: 7px;" class="glyphicon glyphicon-option-vertical" onclick="BindMoreTitles(@objAcqList.Title_Objection_Code, '@objAcqList.Agreement_No', @objAcqList.Cnt_DealTitles)"></a>
-                                }*@
-                        </li>
+                                        <span class="deal_workflow_status" title="Objection Status">@groupname</span>
+                                    }
+                        }
+                    </li>
+                </ul>
+                <ul>
+            <li class="deal_title">
+                <span class="Highlight" title="@objMessageKey.Title">
+                    @objAcqList.Title_Name
+                </span>
+                @*@if (objAcqList.Cnt_DealTitles > 3)
+                {
+                    <a title="More Title" href="#" data-toggle="modal" style="transform: rotate(270deg);padding-right: 7px;" class="glyphicon glyphicon-option-vertical" onclick="BindMoreTitles(@objAcqList.Title_Objection_Code, '@objAcqList.Agreement_No', @objAcqList.Cnt_DealTitles)"></a>
+                }*@
+            </li>
 
 
-                        <li class="deal_licensor Highlight" title="@objMessageKey.Licensor">@objAcqList.Vendor_Name</li>
-                        @*<li class="deal_period" title="@objMessageKey.Period">
-                                @if (string.IsNullOrEmpty(objAcqList.ri))
-                                {
-                                    <span class="not-available">@objMessageKey.NO @objMessageKey.Period</span>
-                                }
-                                else
-                                {
-                                    @objAcqList.RightPeriod
-                                }
-                            </li>*@
-                        <li class="deal_territory" title="@objMessageKey.Country/@objMessageKey.Territory">
-                            @if (string.IsNullOrEmpty(objAcqList.CountryDetails))
-                            {
-                                <span class="not-available">@objMessageKey.NO @objMessageKey.Country/@objMessageKey.Territory</span>
-                            }
-                            else
-                            {
-                                <div class="expandable">
-                                    @objAcqList.CountryDetails
-                                    <a href="#"><span></span></a>
-                                </div>
-                            }
-                        </li>
+            <li class="deal_licensor Highlight" title="@objMessageKey.Licensor">@objAcqList.Vendor_Name</li>
+            @*<li class="deal_period" title="@objMessageKey.Period">
+                @if (string.IsNullOrEmpty(objAcqList.ri))
+                {
+                    <span class="not-available">@objMessageKey.NO @objMessageKey.Period</span>
+                }
+                else
+                {
+                    @objAcqList.RightPeriod
+                }
+            </li>*@
+            <li class="deal_territory" title="Country/Territory">
+                @if (string.IsNullOrEmpty(objAcqList.CountryDetails))
+                {
+                    <span class="not-available">@objMessageKey.NO Country/Territory</span>
+                }
+                else
+                {
+                    <div class="expandable">
+                        @objAcqList.CountryDetails
+                        <a href="#"><span></span></a>
+                    </div>
+                }
+            </li>
 
-                        <li class="deal_action clsTdAction_@objAcqList.Title_Objection_Code@objAcqList.Status TC_@tempCount" id="divAction_@tempCount">
-                            @{
-                                int Count = 0;
-                            }
+            <li class="deal_action clsTdAction_@objAcqList.Title_Objection_Code@objAcqList.Status TC_@tempCount" id="divAction_@tempCount">
+                @{
+                    int Count = 0;
+                }
 
-                            <a title="@objMessageKey.View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("Index", "Title_Objection", new { callFrom = "VIEW", TitleObjectCode = objAcqList.Title_Objection_Code })"></a>
-                            <img id="imgLoading_@objAcqList.Title_Objection_Code" title="@objMessageKey.PleaseWait.." src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
-                            <a id="btnShowError_@objAcqList.Title_Objection_Code" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none; color: #2b64a5;"></a>
-                            <a title="@objMessageKey.Edit" id="Edit_@tempCount" class="glyphicon glyphicon-pencil AT_@objAcqList.Title_Objection_Code" onclick="return CheckRecordLock(@objAcqList.Title_Objection_Code,'Edit')"></a>
+                <a title="@objMessageKey.View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("Index", "Title_Objection", new { callFrom = "VIEW", TitleObjectCode = objAcqList.Title_Objection_Code })"></a>
+                <img id="imgLoading_@objAcqList.Title_Objection_Code" title="@objMessageKey.PleaseWait.." src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
+                <a id="btnShowError_@objAcqList.Title_Objection_Code" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none; color: #2b64a5;"></a>
+                <a title="@objMessageKey.Edit" id="Edit_@tempCount" class="glyphicon glyphicon-pencil AT_@objAcqList.Title_Objection_Code" onclick="return CheckRecordLock(@objAcqList.Title_Objection_Code,'Edit')"></a>
 
-                            @if (Count > 3)
-                            {
-                                <a title="@objMessageKey.MoreAction" id="show_hide_@tempCount" href="#" class="glyphicon glyphicon-option-vertical show_hide AT_@objAcqList.Title_Objection_Code"></a>
-                                <div id="extend_@tempCount" class="MoreActionDiv" style="display:none;">
-                                </div>
-                            }
-                        </li>
+                @if (Count > 3)
+                {
+                    <a title="@objMessageKey.MoreAction" id="show_hide_@tempCount" href="#" class="glyphicon glyphicon-option-vertical show_hide AT_@objAcqList.Title_Objection_Code"></a>
+                    <div id="extend_@tempCount" class="MoreActionDiv" style="display:none;">
+                    </div>
+                }
+            </li>
 
-                    </ul>
-                </div>
-            }
+        </ul>
+    </div>
         }
-    </div>
-    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupShowError" role="dialog" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content clearfix">
-                <form class="form" id="frm_Error_Popup">
-                    <div>
-                        <div class="form_fields syn">
-                            <div class="modal_block modal_header">
-                                <a class="close" data-dismiss="modal" href="#" onclick="handleCancel()">
-                                    <span>×</span>
-                                    <span class="sr-only">@objMessageKey.Close</span>
-                                </a>
-                                <h2>Error Details</h2>
+    }
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupShowError" role="dialog" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_Error_Popup">
+                <div>
+                    <div class="form_fields syn">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="handleCancel()">
+                                <span>×</span>
+                                <span class="sr-only">@objMessageKey.Close</span>
+                            </a>
+                            <h2>Error Details</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="BindErrorPopup">
                             </div>
-                            <div class="modal_block">
-                                <div id="BindErrorPopup">
-                                </div>
-                            </div>
-                            <div class="modal_block_full">
-                                <div class="form_links">
-                                    <ul class="modal_block clearfix">
-                                        <li>
-                                            <input class="btn btn-primary" style="background-color: #2b64a5;" type="button" value="Reprocess" onclick="return Reprocess();" />
-                                        </li>
-                                        <li>
-                                            <a data-dismiss="modal" style="background-color: #2b64a5;" class="btn-primary" href="#" onclick="handleCancel()">Cancel</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input class="btn btn-primary" style="background-color: #2b64a5;" type="button" value="Reprocess" onclick="return Reprocess();" />
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" style="background-color: #2b64a5;" class="btn-primary" href="#" onclick="handleCancel()">Cancel</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
-    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popDealStatus" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content clearfix">
-                <form class="form" id="new_acq_bundle_form">
-                    <div class="form_wrapper">
-                        <div class="form_fields acq">
-                            <div class="modal_block modal_header">
-                                <a class="close" data-dismiss="modal" href="#">
-                                    <span>×</span>
-                                    <span class="sr-only">Close</span>
-                                </a>
-                                <h2>@objMessageKey.DealStatus</h2>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popDealStatus" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="new_acq_bundle_form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DealStatus</h2>
+                        </div>
+                        <div id="bindDealStatus">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popSetMileStone" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DatesagainstMilestone</h2>
+                        </div>
+                        <div id="BindMilestonePopup">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="popupValidationError" role="dialog" tabindex="-1" data-backdrop="static" data-keyboard="false" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_Validation_Popup">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="handleCancelValidationPopup()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DuplicateCombination</h2>
+                        </div>
+                        <div class="modal_block" style="overflow-y:hidden!important">
+                            <div id="BindValidationPopup">
                             </div>
-                            <div id="bindDealStatus">
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" href="#" onclick="handleCancelValidationPopup()">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
-    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popSetMileStone" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content clearfix">
-                <form class="form" id="frm_set_milestone">
-                    <div class="form_wrapper">
-                        <div class="form_fields acq">
-                            <div class="modal_block modal_header">
-                                <a class="close" data-dismiss="modal" href="#">
-                                    <span>×</span>
-                                    <span class="sr-only">Close</span>
-                                </a>
-                                <h2>@objMessageKey.DatesagainstMilestone</h2>
-                            </div>
-                            <div id="BindMilestonePopup">
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="popupValidationError" role="dialog" tabindex="-1" data-backdrop="static" data-keyboard="false" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content clearfix">
-                <form class="form" id="frm_Validation_Popup">
-                    <div>
-                        <div class="form_fields acq">
-                            <div class="modal_block modal_header">
-                                <a class="close" data-dismiss="modal" href="#" onclick="handleCancelValidationPopup()">
-                                    <span>×</span>
-                                    <span class="sr-only">Close</span>
-                                </a>
-                                <h2>@objMessageKey.DuplicateCombination</h2>
-                            </div>
-                            <div class="modal_block" style="overflow-y:hidden!important">
-                                <div id="BindValidationPopup">
-                                </div>
-                            </div>
-                            <div class="modal_block_full">
-                                <div class="form_links">
-                                    <ul class="modal_block clearfix">
-                                        <li>
-                                            <a data-dismiss="modal" class="btn-primary" href="#" onclick="handleCancelValidationPopup()">@objMessageKey.Cancel</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+</div>
 
-    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="pop_setRemark" role="dialog" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content clearfix">
-                <form class="form" id="new_acq_bundle_form">
-                    <div class="form_wrapper">
-                        <div class="form_fields acq" style="height:210px;">
-                            <div class="modal_block modal_header">
-                                <a class="close" data-dismiss="modal" href="#" onclick="CloseApprovalRemark()">
-                                    <span>×</span>
-                                    <span class="sr-only">Close</span>
-                                </a>
-                                <h2>@objMessageKey.Remarks</h2>
-                            </div>
-                            <div style="padding:10px 20px;">
-                                @Html.TextArea("ApproverRemark", new { id = "txtArea", @rows = "5", @cols = "20", @class = "textarea", style = "resize: none" })
-                            </div>
-                            <div class="modal_block_full">
-                                <div class="form_links">
-                                    <ul class="modal_block clearfix">
-                                        <li>
-                                            <input type="button" id="btnStatus" class="btn btn-primary" value="@objMessageKey.Approve"
-                                                   onclick="ButtonEvents();">
-                                        </li>
-                                    </ul>
-                                </div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="pop_setRemark" role="dialog" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="new_acq_bundle_form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq" style="height:210px;">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="CloseApprovalRemark()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.Remarks</h2>
+                        </div>
+                        <div style="padding:10px 20px;">
+                            @Html.TextArea("ApproverRemark", new { id = "txtArea", @rows = "5", @cols = "20", @class = "textarea", style = "resize: none" })
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" id="btnStatus" class="btn btn-primary" value="@objMessageKey.Approve"
+                                               onclick="ButtonEvents();">
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popLinearStatus" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content clearfix">
-                <form class="form" id="new_acq_bundle_form">
-                    <div class="form_wrapper">
-                        <div class="form_fields acq">
-                            <div class="modal_block modal_header">
-                                <a class="close" data-dismiss="modal" href="#">
-                                    <span>×</span>
-                                    <span class="sr-only">Close</span>
-                                </a>
-                                <h2>@objMessageKey.DealStatus</h2>
-                            </div>
-                            <div id="bindLinearStatus">
-                            </div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popLinearStatus" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="new_acq_bundle_form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.DealStatus</h2>
+                        </div>
+                        <div id="bindLinearStatus">
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
+</div>

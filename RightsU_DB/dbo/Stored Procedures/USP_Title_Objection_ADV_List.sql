@@ -18,35 +18,38 @@ BEGIN
   SET @PageNo = 1  
   
  IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp  
+ IF OBJECT_ID('tempdb..#Filter') IS NOT NULL DROP TABLE #Filter
  IF OBJECT_ID('tempdb..#AcqSynData') IS NOT NULL DROP TABLE #AcqSynData
  IF OBJECT_ID('tempdb..#TempData') IS NOT NULL DROP TABLE #TempData  
  IF OBJECT_ID('tempdb..#Type') IS NOT NULL DROP TABLE #Type
   
- Create Table #Temp(  
-  Id INT IDENTITY(1,1),  
-  Record_Code INT,
-  Title_Objection_Code VARCHAR(200),   
-  Title_name  VARCHAR(200),  
-  Sort VARCHAR(10),  
-  Row_Num INT,  
-  Last_Updated_Time DATETIME  
-  );  
+	Create Table #Temp(  
+		Id INT IDENTITY(1,1),  
+		Record_Code INT,
+		Title_Objection_Code VARCHAR(200),   
+		Title_name  VARCHAR(200),  
+		Sort VARCHAR(10),  
+		Row_Num INT,  
+		Last_Updated_Time DATETIME  
+	);  
 
-  Create Table #TempData(  
-  Id INT IDENTITY(1,1),  
-  Record_Code INT,
-  Agreement_No NVARCHAR(MAX),
-  Vendor_Name VARCHAR(200),
-  Title_Objection_Code VARCHAR(200),   
-  Title_name  VARCHAR(200),  
-  Sort VARCHAR(10),  
-  Row_Num INT,  
-  Last_Updated_Time DATETIME  
-  );  
-  Create Table #Type(
-  Deal_Type VARCHAR(100),
-  )
-  	Create table #AcqSynData(
+	Create Table #TempData(  
+		Id INT IDENTITY(1,1),  
+		Record_Code INT,
+		Agreement_No NVARCHAR(MAX),
+		Vendor_Name VARCHAR(200),
+		Title_Objection_Code VARCHAR(200),   
+		Title_name  VARCHAR(200),  
+		Sort VARCHAR(10),  
+		Row_Num INT,  
+		Last_Updated_Time DATETIME  
+		);  
+
+	Create Table #Type(
+		Deal_Type VARCHAR(100),
+	)
+
+	Create table #AcqSynData(
 		Title_Objection_Code INT,
 		Deal_Code INT,
 		Title_Code INT,
@@ -57,11 +60,30 @@ BEGIN
 		Objection_Type_Name VARCHAR(MAX),
 		Agreement_Date DATETIME,
 		CountryDetails VARCHAR(MAX),
-		Objection_Status VARCHAR(MAX)
+		Objection_Status VARCHAR(MAX),
+		SORT INT,
+		Last_Updated_Time Datetime
+	)
+
+	Create table #Filter(
+		Title_Objection_Code INT,
+		Deal_Code INT,
+		Title_Code INT,
+		Agreement_No VARCHAR(MAX),
+		Title_Name VARCHAR(MAX),
+		Deal_Desc NVARCHAR(MAX),
+		Vendor_Name VARCHAR(200),
+		Objection_Type_Name VARCHAR(MAX),
+		Agreement_Date DATETIME,
+		CountryDetails VARCHAR(MAX),
+		Objection_Status VARCHAR(MAX),
+		SORT INT,
+		Last_Updated_Time Datetime
 	)
   
   Declare @SqlPageNo NVARCHAR(MAX),@SqlPageNo1 NVARCHAR(MAX)--,@Type Varchar(100)= 'A,S',@ExactMatch varchar(max) = '',@RecordCount Int = 10,@IsPaging VARCHAR(10)= 'Y',@PageNo Int=1,@PageSize Int=50
-  --,@StrSearch NVARCHAR(Max) = 'and Tm.agreement_no like ''%A%'' AND V.Vendor_Code IN(527)AND TOS.Title_Objection_Status_Code IN(2)AND Objection_Type_Code IN(7)'  
+  --,@StrSearch NVARCHAR(Max) = '' --AND V.Vendor_Code IN(527)AND TOS.Title_Objection_Status_Code IN(2)AND Objection_Type_Code IN(7)
+
   INSERT INTO #Type(Deal_Type)
   SELECT number FROM dbo.fn_Split_withdelemiter(@Type,',')
 
@@ -140,20 +162,33 @@ BEGIN
 		Delete From #TempData Where Row_Num < (((@PageNo - 1) * @PageSize) + 1) Or Row_Num > @PageNo * @PageSize 
 	End	
 
-	 SET @SqlPageNo1=  'SELECT DISTINCT TOB.Title_Objection_Code,AD.Acq_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Desc,V.Vendor_Name,TOT.Objection_Type_Name,AD.Agreement_Date,    
-	 dbo.UFN_Get_Acq_Territory(AD.Acq_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status    
+	 SET @SqlPageNo1=  'INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status,SORT,Last_Updated_Time)
+	 SELECT DISTINCT TOB.Title_Objection_Code,AD.Acq_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Desc,V.Vendor_Name,TOT.Objection_Type_Name,AD.Agreement_Date,    
+	  STUFF((  
+		SELECT DISTINCT '', '' +  Country_Name from Country C
+		INNER Join Title_Objection_Territory TTRY ON C.Country_Code = TTRY.Country_Code
+		WHERE TTRY.Title_Objection_Code = Tm.Title_Objection_Code
+		FOR XML PATH('''')  
+	   ), 1, 1, '''') AS ''CountryDetails'',TOS.Objection_Status_Name Status,Tm.Sort,TOB.Last_Updated_Time
 	 FROM Title_Objection TOB    
+	 INNER JOIN Title_Objection_Territory TTRY ON TOB.Title_Objection_Code = TTRY.Title_Objection_Code
+	 INNER JOIN Country C ON TTRY.Country_Code = C.Country_Code
 	 INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code     
 	 INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code    
 	 INNER JOIN Title T ON TOB.Title_Code = T.Title_Code    
 	 INNER JOIN Acq_Deal AD ON TOB.Record_Code = AD.Acq_Deal_Code    
 	 INNER JOIN Vendor v WITH(NOLOCK) on AD.Vendor_Code = v.vendor_code    
 	 INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code    
-	 WHERE TOB.Record_Type Collate Latin1_General_CI_AI IN(SELECT Deal_Type FROM #Type) '+@StrSearch+'
+	 WHERE TOB.Record_Type Collate Latin1_General_CI_AI IN(SELECT Deal_Type FROM #Type) '+@StrSearch+' ORDER BY Sort,TOB.Last_Updated_Time
 	 ' 
-
 	 PRINT(@SqlPageNo1)
 	 EXEC (@SqlPageNo1)
+
+	 INSERT INTO #Filter
+	 SELECT DISTINCT * FROM #AcqSynData
+
+	 SELECT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,  
+	 CountryDetails,Objection_Status AS Status  FROM #Filter ORDER By SORT , Last_Updated_Time
 	
   END
  ELSE IF(@Type = 'S')
@@ -208,19 +243,33 @@ BEGIN
 		Delete From #TempData Where Row_Num < (((@PageNo - 1) * @PageSize) + 1) Or Row_Num > @PageNo * @PageSize 
 	End	
 
-	SET @SqlPageNo1 ='SELECT DISTINCT TOB.Title_Objection_Code,AD.Syn_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Description AS Deal_Desc,V.Vendor_Name,TOT.Objection_Type_Name,AD.Agreement_Date,    
-	 dbo.UFN_Get_Syn_Territory(AD.Syn_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status    
+	SET @SqlPageNo1 ='INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status,SORT,Last_Updated_Time)
+	SELECT DISTINCT TOB.Title_Objection_Code,AD.Syn_Deal_Code AS Deal_Code,T.Title_Code,AD.Agreement_No,T.Title_Name,AD.Deal_Description AS Deal_Desc,V.Vendor_Name,TOT.Objection_Type_Name,AD.Agreement_Date,    
+	 STUFF((  
+		SELECT DISTINCT '', '' +  Country_Name from Country C
+		INNER Join Title_Objection_Territory TTRY ON C.Country_Code = TTRY.Country_Code
+		WHERE TTRY.Title_Objection_Code = Tm.Title_Objection_Code
+		FOR XML PATH('''')  
+	   ), 1, 1, '''') AS ''CountryDetails'',TOS.Objection_Status_Name Status ,Tm.Sort,TOB.Last_Updated_Time  
 	 FROM Title_Objection TOB    
+	 INNER JOIN Title_Objection_Territory TTRY ON TOB.Title_Objection_Code = TTRY.Title_Objection_Code
+	 INNER JOIN Country C ON TTRY.Country_Code = C.Country_Code
 	 INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code     
 	 INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code    
 	 INNER JOIN Title T ON TOB.Title_Code = T.Title_Code    
 	 INNER JOIN Syn_Deal AD ON TOB.Record_Code = AD.Syn_Deal_Code    
 	 INNER JOIN Vendor v WITH(NOLOCK) on AD.Vendor_Code = v.vendor_code    
 	 INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code    
-	 WHERE TOB.Record_Type Collate Latin1_General_CI_AI IN(SELECT Deal_Type FROM #Type) '+@StrSearch+'' 
+	 WHERE TOB.Record_Type Collate Latin1_General_CI_AI IN(SELECT Deal_Type FROM #Type) '+@StrSearch+' ORDER BY Sort,TOB.Last_Updated_Time' 
 
 	 PRINT(@SqlPageNo1)
 	 EXEC(@SqlPageNo1)
+
+	  INSERT INTO #Filter
+	  SELECT DISTINCT * FROM #AcqSynData
+
+	 SELECT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,
+	 CountryDetails,Objection_Status AS Status  FROM #Filter ORDER By SORT ,Last_Updated_Time
   END
  ELSE IF(@Type = 'A,S' OR @Type = 'S,A')
   BEGIN
@@ -281,10 +330,9 @@ BEGIN
 		EXEC (@SqlPageNo) 
 
 		PRINT '1'
-
 	Set @ExactMatch = '%'+@ExactMatch+'%'
 	Update #TempData Set Sort = '0' Where Title_name like @ExactMatch OR Vendor_Name like @ExactMatch  OR Agreement_no like @ExactMatch 
-
+	
 	PRINT '2'
 	--delete from T From #TempData T Inner Join
 	--(
@@ -306,40 +354,57 @@ BEGIN
 		Delete From #TempData Where Row_Num < (((@PageNo - 1) * @PageSize) + 1) Or Row_Num > @PageNo * @PageSize 
 	End	
 
-	SET @SqlPageNo1 ='INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status)
+	SET @SqlPageNo1 ='INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status,Sort,Last_Updated_Time)
 	SELECT DISTINCT TOB.Title_Objection_Code,SD.Syn_Deal_Code AS Deal_Code,T.Title_Code,SD.Agreement_No,T.Title_Name,SD.Deal_Description,CAST(V.Vendor_Name AS varchar(MAX)),TOT.Objection_Type_Name,SD.Agreement_Date,  
-	dbo.UFN_Get_Syn_Territory(SD.Syn_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status  
+	STUFF((  
+		SELECT DISTINCT '', '' +  Country_Name from Country C
+		INNER Join Title_Objection_Territory TTRY ON C.Country_Code = TTRY.Country_Code
+		WHERE TTRY.Title_Objection_Code = Tm.Title_Objection_Code
+		FOR XML PATH('''')  
+	   ), 1, 1, '''') AS ''CountryDetails'',TOS.Objection_Status_Name Status,Tm.Sort,TOB.Last_Updated_Time
 	FROM Title_Objection TOB  
+	INNER JOIN Title_Objection_Territory TTRY ON TOB.Title_Objection_Code = TTRY.Title_Objection_Code
+	INNER JOIN Country C ON TTRY.Country_Code = C.Country_Code
 	INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code   
 	INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code  
 	INNER JOIN Title T ON TOB.Title_Code = T.Title_Code  
 	INNER JOIN Syn_Deal SD  WITH(NOLOCK)  ON TOB.Record_Code = SD.Syn_Deal_Code  
 	INNER JOIN Vendor v WITH(NOLOCK) on SD.Vendor_Code = v.vendor_code  
 	INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code  
-	WHERE TOB.Record_Type  Collate Latin1_General_CI_AI  IN(''S'')'+@StrSearch+''
+	WHERE TOB.Record_Type  Collate Latin1_General_CI_AI  IN(''S'')'+@StrSearch+' ORDER BY Sort,TOB.Last_Updated_Time '
 
 	PRINT(@SqlPageNo1)
 	EXEC(@SqlPageNo1)
 
 	SET @SqlPageNo1 = ''
 
-	SET @SqlPageNo1 = 'INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status)
+	SET @SqlPageNo1 = 'INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status,Sort,Last_Updated_Time)
 	SELECT DISTINCT TOB.Title_Objection_Code,SD.Acq_Deal_Code AS Deal_Code,T.Title_Code,SD.Agreement_No,T.Title_Name,SD.Deal_Desc,CAST(V.Vendor_Name AS varchar(MAX)),TOT.Objection_Type_Name,SD.Agreement_Date,  
-	dbo.UFN_Get_Acq_Territory(SD.Acq_Deal_Code) CountryDetails,TOS.Objection_Status_Name Status  
+	STUFF((  
+		SELECT DISTINCT '', '' +  Country_Name from Country C
+		INNER Join Title_Objection_Territory TTRY ON C.Country_Code = TTRY.Country_Code
+		WHERE TTRY.Title_Objection_Code = Tm.Title_Objection_Code
+		FOR XML PATH('''')  
+	   ), 1, 1, '''') AS ''CountryDetails'',TOS.Objection_Status_Name Status,Tm.Sort,TOB.Last_Updated_Time  
 	FROM Title_Objection TOB  
+	INNER JOIN Title_Objection_Territory TTRY ON TOB.Title_Objection_Code = TTRY.Title_Objection_Code
+	 INNER JOIN Country C ON TTRY.Country_Code = C.Country_Code
 	INNER JOIN Title_Objection_Type TOT ON TOB.Title_Objection_Type_Code = TOT.Objection_Type_Code   
 	INNER JOIN Title_Objection_Status TOS ON TOB.Title_Objection_Status_Code = TOS.Title_Objection_Status_Code  
 	INNER JOIN Title T ON TOB.Title_Code = T.Title_Code  
 	INNER JOIN Acq_Deal SD  WITH(NOLOCK)  ON TOB.Record_Code = SD.Acq_Deal_Code
 	INNER JOIN Vendor v WITH(NOLOCK) on SD.Vendor_Code = v.vendor_code  
 	INNER JOIN #TempData Tm on TOB.Title_Objection_Code = Tm.Title_Objection_Code  
-	WHERE TOB.Record_Type Collate Latin1_General_CI_AI  IN(''A'')'+@StrSearch+''
+	WHERE TOB.Record_Type Collate Latin1_General_CI_AI  IN(''A'')'+@StrSearch+' ORDER BY Sort,TOB.Last_Updated_Time'
 
 	PRINT(@SqlPageNo1)
 	EXEC(@SqlPageNo1)
 
-	SELECT DISTINCT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,  
-	dbo.UFN_Get_Acq_Territory(Deal_Code) CountryDetails,Objection_Status AS Status  FROM #AcqSynData
+	INSERT INTO #Filter
+	SELECT DISTINCT * FROM #AcqSynData
+
+	 SELECT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,
+	 CountryDetails,Objection_Status AS Status  FROM #Filter ORDER By SORT ,Last_Updated_Time
   END
  IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp  
  IF OBJECT_ID('tempdb..#AcqSynData') IS NOT NULL DROP TABLE #AcqSynData
