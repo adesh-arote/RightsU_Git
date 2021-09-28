@@ -301,7 +301,12 @@ function handleCancel() {
 function CommonSrch() {
     $('.required').removeClass('required');
     $("[required='required']").removeAttr("required"); 
-    
+
+    if (!($('#chkAcq').is(':checked')) && !($('#chkSyn').is(':checked'))) {
+        $('#IsAcqSyn').addClass('required');
+        return false;
+    }
+
     if ($('#srchCommon').val() == '')
         $('#hdnClearAll').val('Y');
     showLD = 'Y';
