@@ -139,7 +139,7 @@ namespace RightsU_Plus.Controllers
         }
         [HttpPost]
         public PartialViewResult PartialDealList(int Page,string Type, string commonSearch, string isTAdvanced, string strDealNo = "", string strTitleObjectionType = "", string strTitleObjectionStatus = "", string strTitles = "", string strLicensor = "", string strShowAll = "N", string ClearSession = "N")
-        {
+         {
             string[] arrTitleName = strTitles.Split('﹐');
             //Type = string.Join(",", Type);
             string sstrTitles = string.Join(",", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Name)).Select(y => y.Title_Code).ToList());
@@ -226,12 +226,12 @@ namespace RightsU_Plus.Controllers
             //List<int> titleName = Title_Objection_List_Search.TitleCodes_Search.Split(',').Select(int.Parse).ToList();
             obj_USP_Get_PreReq_Result = BindAllDropDowns();
 
-            if (Title_Objection_List_Search.isAdvanced != "Y")
-            {
-                Title_Objection_List_Search.BUCodes_Search = obj_USP_Get_PreReq_Result.Where(i => i.Data_For == "BUT").Select(i => i.Display_Value ?? 0).FirstOrDefault();
+            //if (Title_Objection_List_Search.isAdvanced != "Y")
+            //{
+            //    Title_Objection_List_Search.BUCodes_Search = obj_USP_Get_PreReq_Result.Where(i => i.Data_For == "BUT").Select(i => i.Display_Value ?? 0).FirstOrDefault();
 
-                Title_Objection_List_Search.WorkFlowStatus_Search = "0";
-            }
+            //    Title_Objection_List_Search.WorkFlowStatus_Search = "0";
+            //}
 
             var ListAcq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List("X", "", "").ToList()
                         .Select(x => new { x.Title_Code, x.Title, x.Licensor, x.Licensor_Code }).ToList().Distinct();
@@ -301,7 +301,7 @@ namespace RightsU_Plus.Controllers
             if (Title_Objection_List_Search != null)
             {
                 obj_Dictionary.Add("strTitleNames", strTitleNames);
-                obj_Dictionary.Add("Obj_Acq_Syn_List_Search", Title_Objection_List_Search);
+                obj_Dictionary.Add("Title_Objection_List_Search", Title_Objection_List_Search);
 
             }
             obj_Dictionary.Add("lstWorkFlowStatus", lstWorkFlowStatus);
@@ -310,11 +310,9 @@ namespace RightsU_Plus.Controllers
         private void Set_Srch_Criteria()
         {
             ViewBag.DealType_Search = Title_Objection_List_Search.DealType_Search;
-            ViewBag.BUCodes_Search = Title_Objection_List_Search.BUCodes_Search;
             ViewBag.Status_Search = Title_Objection_List_Search.Status_Search;
             ViewBag.WorkFlowStatus_Search = Title_Objection_List_Search.WorkFlowStatus_Search;
             ViewBag.TitleCodes_Search = Title_Objection_List_Search.TitleCodes_Search;
-            ViewBag.DirectorCodes_Search = Title_Objection_List_Search.DirectorCodes_Search;
             ViewBag.ProducerCodes_Search = Title_Objection_List_Search.ProducerCodes_Search;
             ViewBag.PageNo = Title_Objection_List_Search.PageNo;
             ViewBag.IncludeSubDeal = Title_Objection_List_Search.IncludeSubDeal;
@@ -325,19 +323,13 @@ namespace RightsU_Plus.Controllers
             Title_Objection_List_Search = new Title_Objection_List_Search();
             Title_Objection_List_Search.Common_Search = "";
             Title_Objection_List_Search.DealNo_Search = "";
-            Title_Objection_List_Search.DealFrmDt_Search = "";
-            Title_Objection_List_Search.DealToDt_Search = "";
             Title_Objection_List_Search.TitleCodes_Search = "";
-            Title_Objection_List_Search.DirectorCodes_Search = "";
             Title_Objection_List_Search.ProducerCodes_Search = "";
             Title_Objection_List_Search.Status_Search = "0";
             Title_Objection_List_Search.WorkFlowStatus_Search = "";
             Title_Objection_List_Search.isAdvanced = "N";
             Title_Objection_List_Search.DealType_Search = "0";
-            Title_Objection_List_Search.BUCodes_Search = 0;
             Title_Objection_List_Search.PageNo = 1;
-            Title_Objection_List_Search.IncludeSubDeal = "false";
-            Title_Objection_List_Search.strIncludeArchiveDeal = "false";
         }
 
         #endregion

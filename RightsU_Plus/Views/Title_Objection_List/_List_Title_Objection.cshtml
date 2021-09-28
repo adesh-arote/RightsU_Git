@@ -36,18 +36,9 @@
         if (isAdvanced == 'N')
             $('#divSearch').hide();
         else {
-            if (Is_AllowMultiBUacqdeal != 'Y') {
-                if (isAdvanced == 'Y' && parseInt($("#ddlSrchBU option").length) == 0)
-                    BindAdvanced_Search_Controls('PGL');
-            }
-            else {
-                if (isAdvanced == 'Y' && parseInt($("#ddlSrchBUMultiSelect option").length) == 0)
-                    BindAdvanced_Search_Controls('PGL');
-            }
+            if (isAdvanced == 'Y')
+                BindAdvanced_Search_Controls('PGL');
         }
-        //if ($('#ddlSrchTitle').val())
-        //    tmpTitle = $('#ddlSrchTitle').val().join(',');
-
         if ($('#ddlSrchDirector').val())
             tmpDirector = $('#ddlSrchDirector').val().join(',');
 
@@ -83,12 +74,8 @@
                 strTitles: tmpTitle,
                 strDirector: tmpDirector,
                 strLicensor: tmpLicensor,
-                strBU: strBU,
                 strShowAll: ShowAll,
-                strIncludeSubDeal: tmpChecked,
-                strIncludeArchiveDeal: tmpArchiveChecked,
                 ClearSession: $('#hdnClearAll').val(),
-                strBUCode: BUCode//$('#ddlBUUnit').val()
             }),
             success: function (result) {
                 if (result == "true")
@@ -107,9 +94,6 @@
                                 $(".Highlight").mark(keyword, options);
                             }
                         });
-
-                        // $("#lbTitle_Code").on("input", mark);
-                        // $("#lbTitle_Code").on("change", mark);
                     }
                     if (showLD == 'Y')
                         hideLoading();
@@ -239,22 +223,21 @@
                         @*<span class="deal_version VR_@objAcqList.Deal_Code" title="@objMessageKey.VersionNo">V-@objAcqList.version</span>*@
                     </li>
                     <li><span class="seperator">| </span></li>
-                    <li class="deal_desc" title="@objMessageKey.DealDescription">
+                    <li class="deal_desc" title="Deal Description">
                         <div class="expandable">
                             @objAcqList.Deal_Desc<a href="#"><span></span></a>
                         </div>
                     </li>
                     <li><span class="seperator">| </span></li>
-                    <li class="deal_status">
-                        <span title="Type of Objection">
+                    <li style="width:28% !important" >
+                        <span title="Type of Objection" >
                             @objAcqList.Objection_Type_Name
-                            @*@objAcqList.DealTagDescription*@
-                            @*@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objAcqList.Agreement_Date)*@
-                            @*@objAcqList.DealSignedDate*@
                         </span>
+                    </li>
+                    <li style="width:11%">
                         @{
                             string groupname = objAcqList.Status;
-                                <span class="deal_workflow_status" title="Objection Status">@groupname</span>
+                            <span class="deal_workflow_status" title="Objection Status">@groupname</span>
                         }
                     </li>
                 </ul>
@@ -264,10 +247,21 @@
                     @objAcqList.Title_Name
                 </span>
             </li>
-
-
             <li class="deal_licensor Highlight" title="@objMessageKey.Licensor">@objAcqList.Vendor_Name</li>
             <li class="deal_territory" title="Country/Territory">
+                @if (string.IsNullOrEmpty(objAcqList.CountryDetails))
+                {
+                    <span class="not-available">NO Country/Territory</span>
+                }
+                else
+                {
+                    <div class="expandable">
+                        @objAcqList.CountryDetails
+                        <a href="#"><span></span></a>
+                    </div>
+                }
+            </li>
+            @*<li class="deal_territory" title="Country/Territory">
                 @if (string.IsNullOrEmpty(objAcqList.CountryDetails))
                 {
                     <span class="not-available">@objMessageKey.NO Country/Territory</span>
@@ -279,7 +273,7 @@
                         <a href="#"><span></span></a>
                     </div>
                 }
-            </li>
+            </li>*@
 
             <li class="deal_action clsTdAction_@objAcqList.Title_Objection_Code@objAcqList.Status TC_@tempCount" id="divAction_@tempCount">
                 @{
