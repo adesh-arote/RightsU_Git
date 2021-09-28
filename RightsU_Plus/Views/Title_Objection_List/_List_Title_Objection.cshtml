@@ -25,77 +25,7 @@
         opt["current_page"] = PageNo;
         $(".pagination").pagination(recordCnt, opt);
     }
-    function LoadDeal(pagenumber, isAdvanced, showAll) {
-        debugger;
-
-        if (showLD == 'Y')
-            showLoading();
-        var tmpTitle = '', tmpDirector = '', tmpLicensor = '';
-        tmp_pageNo = pagenumber;
-        tmp_IsAdvanced = isAdvanced;
-        if (isAdvanced == 'N')
-            $('#divSearch').hide();
-        else {
-            if (isAdvanced == 'Y')
-                BindAdvanced_Search_Controls('PGL');
-        }
-        if ($('#ddlSrchDirector').val())
-            tmpDirector = $('#ddlSrchDirector').val().join(',');
-
-        if ($('#ddlSrchLicensor').val())
-            tmpLicensor = $('#ddlSrchLicensor').val().join(',');
-
-        if ($('#txtTitleSearch').val())
-            tmpTitle = $('#txtTitleSearch').val().join(',');
-        $.ajax({
-            type: "POST",
-            url: URL_PartialDealList,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            dataType: "html",
-            async: true,
-            data: JSON.stringify({
-                Page: pagenumber,
-                commonSearch: $('#srchCommon').val(),
-                isTAdvanced: isAdvanced,
-                strDealNo: $('#txtSrchDealNo').val(),
-                strSrchDealType: $('#ddlSrchDealType').val(),
-                strTitles: tmpTitle,
-                strDirector: tmpDirector,
-                strLicensor: tmpLicensor,
-                strShowAll: ShowAll,
-                ClearSession: $('#hdnClearAll').val(),
-            }),
-            success: function (result) {
-                if (result == "true")
-                    redirectToLogin();
-
-                else {
-
-                    $('#dvDealList').html(result);
-                    $('[title]').tooltip();
-                    initializeExpander();
-                    if ($('#srchCommon').val().trim() != '') {
-                        var keyword = $("#srchCommon").val();
-                        var options = { 'separateWordSearch': true };
-                        $(".Highlight").unmark({
-                            done: function () {
-                                $(".Highlight").mark(keyword, options);
-                            }
-                        });
-                    }
-                    if (showLD == 'Y')
-                        hideLoading();
-
-                }
-            },
-            error: function (result) {
-                var StrErrMessage = "Please wait....Page is loading";
-                alert('Error: ' + StrErrMessage);
-            }
-        });
-    }
+    
     function pageselectCallback(page_index, jq) {
         if (IsCall == 'Y')
             LoadDeal(page_index, tmp_IsAdvanced, 'N');

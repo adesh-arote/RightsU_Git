@@ -38,7 +38,7 @@
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
             $('.MoreActionDiv').css("left", "32px !important");
         }
-        $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
+        $('#ddlSrchTitle,#ddlSrchLicensor').SumoSelect();
     });
 </script>
 <script>
@@ -155,9 +155,6 @@
     }
 </script>
 <style>
-    /*.tinyADSearch {
-        top: 40px;
-    }*/
     .SumoSelect.open > .optWrapper {
         top: 35px;
         display: block;
@@ -195,35 +192,17 @@
         margin-top: 3px;
     }
 
-    #divReleaseContentList {
-        overflow: auto;
-        max-height: 170px;
-        width: 94%;
-        margin: 3%;
-    }
+   
 
     #AdvanceSearchPanel {
         overflow-y: auto;
         height: 100%;
     }
 
-    .pagination_popup .current.prev, .pagination .current.next {
-        z-index: -1 !important;
-    }
-
-    #ddlBUUnit_chosen {
-        width: 200px !important;
-        /*text-align : left;*/
-        float: none;
-    }
-
     .chosen-drop > .chosen-search > .chosen-results > ul > li {
         white-space: pre !important;
     }
 
-    /*.SumoSelect {
-        width: 94% !important;
-    }*/
 
     /*new added*/
     .search_area {
@@ -280,14 +259,6 @@
     #divSearch label {
         display: inline-block;
     }
-
-    /*  .container {
-        /* width: 900px;
-        width: 95%;
-        margin: 0 auto;
-        /* min-height: 710px;
-        padding: 0px 0 55px 80px !important;
-    }*/
 
     .help {
         text-align: center;
@@ -389,19 +360,18 @@
                     </li>
                     <li class="AdSearch">
                         <label>@objMessageKey.Title:</label><br>
-                        <select id="ddlSrchDirector" multiple="multiple"></select>
-                        @*<input type="text" id="txtTitleSearch" style="width:300px" autocomplete="on" onkeyup="populateTitle(event)" />*@
+                        <select id="ddlSrchTitle" multiple="multiple"></select>
                         @Html.Hidden("hdnTitleSearch")
 
                     </li>
                     <li class="AdSearch">
                         <label>Objection Type:</label><br>
-                        <select id="ddlSrchDealType" style="width: 174px;" class="form_input chosen-select"></select>
+                        <select id="ddlSrchObjectionType" style="width: 174px;" class="form_input chosen-select"></select>
                     </li>
 
                     <li class="AdSearch">
                         <label>Objection Status:</label><br>
-                        <select id="ddlWorkflowStatus" class="form_input chosen-select" style="width: 174px;"></select>
+                        <select id="ddlObjectionStatus" class="form_input chosen-select" style="width: 174px;"></select>
                     </li>
                     <li class="AdSearch">
                         <label>@objMessageKey.Licensor:</label><br>
@@ -442,11 +412,6 @@
                                 <span class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="ShowAll"></span>
                             </a>
                         </li>
-                        @*<li>
-                                <a href="#">
-                                    <span class="glyphicon glyphicon-search" title="Advanced Search" onclick="BindAdvanced_Search_Controls('BTC');"></span>
-                                </a>
-                            </li>*@
                         <li>
                             <a class="btn-primary" href="@Url.Action("Index", "Title_Objection", new { callFrom = "LIST", TitleObjectCode = 0 })">Add Objection</a>
                         </li>
@@ -458,230 +423,6 @@
             <div id="dvNoRecords" class="grid_area deal clearfix" style="display: none">
                 @objMessageKey.Norecordfound!!
             </div>
-            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="popupValidationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none; overflow: scroll; height: 600px;">
-                <div class="modal-dialog">
-                    <div class="modal-content clearfix">
-                        <form class="form" id="frm_set_milestone">
-                            <div>
-                                <div class="form_fields acq">
-                                    <div class="modal_block modal_header">
-                                        <a class="close" data-dismiss="modal" href="#">
-                                            <span>×</span>
-                                            <span class="sr-only">Close</span>
-                                        </a>
-                                        <h2>@objMessageKey.DuplicateCombination</h2>
-                                    </div>
-                                    <div class="modal_block">
-                                        <div id="BindValidationPopup"></div>
-                                    </div>
-                                    <div class="modal_block_full">
-                                        <div class="form_links">
-                                            <ul class="modal_block clearfix">
-                                                <li>
-                                                    <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popupTermination" role="dialog" tabindex="-1" aria-hidden="false" style="display: none; max-width: 800px;">
-            </div>
-            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popupTerminationError" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
-            </div>
         </div>
     </section>
 </div>
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in modalPopup" id="divPopupReleaseContent" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-        <div class="modal-content clearfix">
-            <form class="form" id="formReleaseContent">
-                <div class="form_wrapper">
-                    <div class="form_fields acq">
-                        <div class="modal_block modal_header">
-                            <a class="close" data-dismiss="modal" href="#" onclick="CloseReleaseContent()">
-                                <span>×</span>
-                                <span class="sr-only">Close</span>
-                            </a>
-                            <h2>@objMessageKey.ReleaseContentList  ( <span id="spnAgreementNo"></span> )</h2>
-                        </div>
-
-                        <div style="background-color:#eee">
-                            <table class="table">
-                                <tr>
-                                    <td style="width:15%;line-height: 26px;text-align:center;">
-                                        @objMessageKey.TitleName :
-                                    </td>
-                                    <td style="width:30%;">
-                                        <input type="text" name="srchCommon" id="txtSearch_RCPopup" class="search" style="width:100%" placeholder="@objMessageKey.TitleName" />
-                                    </td>
-                                    <td>
-                                        <input type="button" id="btnSearch_RCPopup" class="button" value="@objMessageKey.Search" onclick="btnSearch_RCPopup_OnClick('S')">
-                                        <input type="button" id="btnShowAll_RCPopup" class="button" value="@objMessageKey.ShowAll" onclick="btnSearch_RCPopup_OnClick('SA')">
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="grid_area">
-                            <div class="paging_area clearfix" style="margin:10px">
-                                <span class="pull-left">@objMessageKey.TotalRecords: </span>
-                                <span class="pull-left" id="lblRecordCount_RCPopup"></span>
-                                <input type="hidden" id="hdnPageNo_RCPopup" name="hdnPageNo_RCPopup" value="1" />
-                                <input type="hidden" id="hdnPagePerBatch_RCPopup" name="hdnPagePerBatch_RCPopup" value="5" />
-                                <input type="hidden" id="hdnRecordCount_RCPopup" name="hdnRecordCount_RCPopup" value="0" />
-                                <input type="hidden" id="hdnSelectedTitleCodes" name="hdnSelectedTitleCodes" value="" />
-                                <input type="hidden" id="hdnAllTitleCodes" name="hdnAllTitleCodes" value="" />
-                                <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
-
-                                <div id="Pagination_popup" class="pagination_popup">
-                                </div>
-                                <span class="pull-right">
-                                    @objMessageKey.PageSize:
-                                    <input type="text" id="txtPageSize_RCPopup" name="txtPageSize" class="smallTextBox pagingSize" value="10"
-                                           onchange="txtPageSize_RCPopup_OnChange()" onblur="setDefaultPaging('txtPageSize_RCPopup')" />
-                                </span>
-                            </div>
-
-                            <div id="divReleaseContentList">
-                            </div>
-                        </div>
-                        <input type="hidden" name="acqDealCode" id="acqDealCode" value="0" />
-                        <input type="hidden" name="agreementNo" id="agreementNo" value="0" />
-                        <div class="modal_block_full">
-                            <div class="form_links">
-                                <ul class="modal_block clearfix">
-                                    <li>
-                                        <input type="button" id="btnSaveReleaseContent" class="btn btn-primary" value="@objMessageKey.Save"
-                                               onclick="SaveReleaseContent();">
-                                    </li>
-                                    <li>
-                                        <input type="button" id="btnCancelReleaseContent" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                               onclick="CloseReleaseContent();">
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitle" style="max-width: 560px;" role="dialog" tabindex="-1" aria-hidden="false">
-    <div class="modal-dialog">
-        <div class="modal-content clearfix">
-            <form class="form" id="formReleaseContent">
-                <div class="form_wrapper">
-                    <div class="form_fields acq">
-                        <div class="modal_block modal_header">
-                            <a class="close" data-dismiss="modal" href="#" onclick="CloseAT()">
-                                <span>×</span>
-                                <span class="sr-only">Close</span>
-                            </a>
-                            <h2><b><span id="spnCount_AT" style="font-weight: 500;"></span></b>&nbsp;&nbsp;@objMessageKey.Title  ( <span id="spnAgreementNo_AT"></span> )</h2>
-                        </div>
-                        <div>
-                            <table class="table">
-                                <tr>
-                                    <td style="width:12%;line-height: 26px;text-align:center;padding-left: 19px;">
-                                        @objMessageKey.Title :
-                                    </td>
-                                    <td style="width:48%;">
-                                        <input type="text" name="srchCommon" id="txtSearch_ATPopup" class="search" style="width:100%" placeholder="@objMessageKey.TitleName" />
-                                    </td>
-                                    <td>
-                                        <input type="button" id="btnSearch_ATPopup" class="button" value="@objMessageKey.Search" onclick="btnSearch_ATPopup_OnClick('S')">
-                                        <input type="button" id="btnShowAll_ATPopup" class="button" value="@objMessageKey.ShowAll" onclick="btnSearch_ATPopup_OnClick('SA')">
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="">
-                            <div class="tab-content clearfix table-wrapper scale_table_container">
-                                <div class="scale_table_block">
-                                    <div id="divTitleList">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <input type="hidden" name="acqDealCode_AT" id="acqDealCode_AT" value="0" />
-                        <input type="hidden" name="agreementNo_AT" id="agreementNo_AT" value="0" />
-                        <div class="modal_block_full">
-                            <div class="form_links">
-                                <ul class="modal_block clearfix">
-                                    <li>
-                                        <input type="button" id="btnCancelReleaseContent" class="btn btn-primary" value="@objMessageKey.Close"
-                                               onclick="CloseAT();">
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<style>
-    /*Paging Style*/
-
-    .pagination_popup {
-        float: right;
-        margin-top: 4px;
-    }
-
-        .pagination_popup > span {
-            position: relative;
-            padding: 4px 9px;
-            margin-left: -1px;
-            line-height: 1.42857143;
-            color: #428bca;
-            text-decoration: none;
-            background-color: #fff;
-            border: 1px solid #ddd;
-        }
-
-        .pagination_popup > a {
-            margin-left: -1px;
-            padding: 4px 9px;
-            line-height: 1.42857143;
-            color: #428bca;
-            text-decoration: none;
-            background-color: #fff;
-            border: 1px solid #ddd;
-        }
-
-            .pagination_popup > a:first-child, .pagination > span:first-child {
-                margin-left: 0;
-                border-top-left-radius: 4px;
-                border-bottom-left-radius: 4px;
-            }
-
-            .pagination_popup > a:last-child, .pagination > span:last-child {
-                border-top-right-radius: 4px;
-                border-bottom-right-radius: 4px;
-            }
-
-            .pagination_popup > a:hover, .pagination > span:hover, .pagination > a:focus, .pagination > span:focus {
-                color: #2a6496;
-                background-color: #eee;
-            }
-
-        .pagination_popup > .current {
-            z-index: 2;
-            font-weight: 700;
-            cursor: not-allowed;
-            border-color: #428bca;
-        }
-
-        .pagination_popup .current.prev, .pagination .current.next {
-            border-color: #ddd;
-            font-weight: 100;
-            z-index: 1;
-        }
-    /*End Paging Style*/
-</style>

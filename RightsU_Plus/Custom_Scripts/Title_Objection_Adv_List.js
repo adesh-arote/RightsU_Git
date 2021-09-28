@@ -82,21 +82,21 @@ function BindAdvanced_Search_Controls(callfrom) {
                     debugger;
                     $(result.USP_Result).each(function (index, item) {
                         if (this.Data_For == 'OBT')
-                            $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            $("#ddlSrchObjectionType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'OBS')
-                            $("#ddlWorkflowStatus").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                            $("#ddlObjectionStatus").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'VEN')
                             $("#ddlSrchLicensor").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                     });
                     $(result.Title_Result).each(function (index, item) {
-                        $("#ddlSrchDirector").append($("<option>").val(this.Title_Code).text(this.Title));
+                        $("#ddlSrchTitle").append($("<option>").val(this.Title_Code).text(this.Title));
                     });
 
                     var obj_Search = $(result.Title_Objection_List_Search);
-                    $("#ddlSrchDealType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
-                    $("#ddlWorkflowStatus").val(obj_Search[0].WorkFlowStatus_Search).attr("selected", "true").trigger("chosen:updated");
+                    $("#ddlSrchObjectionType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
+                    $("#ddlObjectionStatus").val(obj_Search[0].WorkFlowStatus_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlSrchLicensor").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
-                    $("#ddlSrchDirector").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
+                    $("#ddlSrchTitle").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
                 }
             },
             error: function (result) {
@@ -128,8 +128,8 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
     if (isAdvanced == 'N')
         $('#divSearch').hide();
 
-    if ($('#ddlSrchDirector').val())
-        tmpTitle = $('#ddlSrchDirector').val().join(',');
+    if ($('#ddlSrchTitle').val())
+        tmpTitle = $('#ddlSrchTitle').val().join(',');
 
     if ($('#ddlSrchLicensor').val())
         tmpLicensor = $('#ddlSrchLicensor').val().join(',');
@@ -148,8 +148,8 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
             commonSearch: $('#srchCommon').val(),
             isTAdvanced: isAdvanced,
             strDealNo: $('#txtSrchDealNo').val(),
-            strTitleObjectionType: $('#ddlSrchDealType').val(),
-            strTitleObjectionStatus: $('#ddlWorkflowStatus').val(),
+            strTitleObjectionType: $('#ddlSrchObjectionType').val(),
+            strTitleObjectionStatus: $('#ddlObjectionStatus').val(),
             strTitles: tmpTitle,
             strLicensor: tmpLicensor,
             strShowAll: ShowAll,
@@ -199,7 +199,7 @@ function validateSearch() {
     if ($('#ddlSrchLicensor').val())
         tmpLicensor = $('#ddlSrchLicensor').val().join(',');
     var txtSDealNo = $('#txtSrchDealNo').val();
-    var ddlDealType = $('#ddlSrchDealType').val();
+    var ddlDealType = $('#ddlSrchObjectionType').val();
 
     if (txtSDealNo == "" && tmpLicensor == "" && tmpTitle == "" && ddlDealType < "0") {
         showAlert('e', 'Please select/enter search criteria');
@@ -218,9 +218,9 @@ function ShowAll() {
     $("#chkArchiveDeal").prop("checked", "checked");
     $('#hdnClearAll').val('Y');
     $('#txtSrchDealNo').val('');
-    $('#ddlSrchDealType').val(0).trigger("chosen:updated");
-    $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
-    $("#ddlSrchDirector")[0].sumo.unSelectAll();
+    $('#ddlSrchObjectionType').val(0).trigger("chosen:updated");
+    $('#ddlObjectionStatus').val(0).trigger("chosen:updated");
+    $("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
     $('#chkAcq').prop('checked', true);
     $('#chkSyn').prop('checked', true);
@@ -232,14 +232,14 @@ function ClearAll() {
     $('#hdnClearAll').val('Y');
     $('#txtSrchDealNo').val('');
     $('#txtTitleSearch').val('');
-    $('#ddlSrchDealType').val(0).trigger("chosen:updated");
+    $('#ddlSrchObjectionType').val(0).trigger("chosen:updated");
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
-    $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
+    $('#ddlObjectionStatus').val(0).trigger("chosen:updated");
     $("#chkSubDeal").prop("checked", false);
     $("#chkArchiveDeal").prop("checked", false);
     //$('#chkAcq').prop('checked', true);
     //$('#chkSyn').prop('checked', true);
-    $("#ddlSrchDirector")[0].sumo.unSelectAll();
+    $("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
     showLD = 'Y';
     LoadDeals(0, 'N', 'Y');
