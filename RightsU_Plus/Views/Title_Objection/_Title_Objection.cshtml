@@ -33,10 +33,10 @@
         $('input[type=radio][name=rb_AcqSyn').change(function () {
 
             if (this.value === "S") {
-                $("#txtLicensor").text("Licensee");
+                $(".txtLicensor").text("Licensee");
             }
             else {
-                $("#txtLicensor").text("Licensor");
+                $(".txtLicensor").text("Licensor");
             }
             TitleLicencorMapping("L")
             TitleLicencorMapping("T")
@@ -339,7 +339,7 @@
                     </div>
                 </td>
                 <td style="width:27%;">
-                    <b><span id="txtLicensor">Licensor</span> :&nbsp;</b>
+                    <b><span class="txtLicensor">Licensor</span> :&nbsp;</b>
                     @Html.DropDownList("Licensor", (IEnumerable<SelectListItem>)ViewBag.ddlLicensor, new { @id = "ddlLicensor", @multiple = "multiple" })
                 </td>
                 <td style="width:5%;line-height: 30px;">
