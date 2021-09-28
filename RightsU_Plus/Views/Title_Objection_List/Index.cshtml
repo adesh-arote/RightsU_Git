@@ -28,90 +28,18 @@
     var MsgType_G = '@MsgType', msg_G = '@msg', RLCode_G = '@ViewBag.RLCode', ReleaseRecord_G = '@ViewBag.ReleaseRecord', isAdvanced_G = '@ViewBag.isAdvanced'
     , IncludeSubDeal_Search_G = '@ViewBag.IncludeSubDeal_Search'
     , PageNo_G = '@ViewBag.PageNo', Mode_G = '@UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW', DealProgram_G = '@GlobalParams.Deal_Program';
-    
+
     //URL
     var URL_PartialDealList = '@Url.Action("PartialDealList", "Title_Objection_List")'
-        , URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_Objection_List")'
-    , URL_ValidateTermination = '@Url.Action("ValidateTermination", "Title_Objection_List")'
-    , URL_OpenTerminationPopup = '@Url.Action("OpenTerminationPopup", "Title_Objection_List")', URL_SaveTermination = '@Url.Action("SaveTermination", "Title_Objection_List")'
-    , URL_ShowTerminateError = '@Url.Action("ShowTerminateError", "Title_Objection_List")', URL_SendForAuthorisation = '@Url.Action("SendForAuthorisation", "Title_Objection_List")'
-    , URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Title_Objection_List")'
-    , URL_BindReleaseContentList = '@Url.Action("BindReleaseContentList", "Title_Objection_List")'
-    , URL_SaveReleasedContent = '@Url.Action("SaveReleasedContent", "Title_Objection_List")'
-    , URL_SearchReleaseContent = '@Url.Action("SearchReleaseContent", "Title_Objection_List")'
-    , URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Title_Objection_List")'
-    , URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Title_Objection_List")';
+        , URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Title_Objection_List")';
 
-    var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';
-    var BUCode = '@ViewBag.BUCode';
-
-    @*function Validate_Record(dealCode, dealType, recordID) {
-        var rid = recordID.id;
-        var valid = true;
-        var moduleCode = 30;
-        if (dealType == "S")
-            moduleCode = 35;
-        $.ajax({
-            type: "POST",
-            url: URL_Validate_Deal_Approve_List,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            data: JSON.stringify({
-                dealCode: dealCode,
-                moduleCode: moduleCode,
-                usersCode: UsersCode_G
-            }),
-            success: function (result) {
-                result = result.split('~');
-                var Record_Locking_Code = result[1];
-                if (Record_Locking_Code != 'undefined' && Record_Locking_Code > 0) {
-                    var New_href = $('#' + rid).attr('href').replace("RecordLockingCode", Record_Locking_Code);
-                    $('#' + rid).attr('href', New_href);
-                }
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                else {
-                    if (result[0] == 'S') {
-                        valid = true;
-                    }
-                    else {
-                        if (result[0].indexOf('approved') != -1) {
-                            bindApprovalList(result[0]);
-                            valid = false;
-                            showAlert("E", result[0]);
-                        }
-                        else {
-                            showAlert("E", result[0]);
-                            valid = false;
-                        }
-                    }
-                }
-            },
-            error: function (result) { }
-        });
-    }
     $(document).ready(function () {
         debugger;
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
             $('.MoreActionDiv').css("left", "32px !important");
         }
         $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
-        if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {
-            $('#ddlGenBUMultiSelect').SumoSelect();
-            $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode'.split(','))
-            $('#ddlGenBUMultiSelect')[0].sumo.reload();
-
-            $('#ddlSrchBUMultiSelect').SumoSelect();
-        }
-        else {
-            $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
-        }
-       
-
-    });*@
+    });
 </script>
 <script>
     var panelVisible = false;
@@ -157,60 +85,11 @@
                 $('#sideNavi').show();
             }
         })
-
-        $("#ddlBUUnit").change(function () {
-            debugger;
-            //$("#ddlSrchTitle").find("option").attr("selected", false);
-            //$("#ddlSrchTitle").val('')[0].sumo.reload();
-            $('#txtTitleSearch').val('');
-            var dealTypeVal = $('#ddlSrchDealType').val();
-            $.ajax({
-                type: "POST",
-                url: URL_OnChangeBindTitle,
-                traditional: true,
-                enctype: 'multipart/form-data',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    dealTypeCode: dealTypeVal,
-                }),
-                async: true,
-                success: function (result) {
-
-                    if (result == "true") {
-                        redirectToLogin();
-                    }
-                    else {
-                        //$("#ddlSrchTitle").empty();
-                        //$(result).each(function (index, item) {
-                        //    $("#ddlSrchTitle").append($("<option>").val(this.Value).text(this.Text));
-                        //});
-                        //$("#ddlSrchTitle").val('')[0].sumo.reload();
-                    }
-                },
-                error: function (result) {
-                    alert('Error: ' + result.responseText);
-                }
-            });
-        });
-        //setChosenWidth('#ddlBUUnit', '30%');
     });
 
     function togglePanelVisibility2(panelID) {
         debugger;
-        if (Is_AllowMultiBUacqdeal != 'Y') {
-            var ddlBusinessUnit = $('#ddlBUUnit').val();
-            if (ddlBusinessUnit != 0 || ddlBusinessUnit != null) {
-                $('#ddlSrchBU').val(ddlBusinessUnit).attr("selected", "true").trigger("chosen:updated");
-            }
-        }
-        else {
-            var ddlBUMulti = $('#ddlGenBUMultiSelect').val();
-            if (ddlBUMulti != 0 || ddlBUMulti != null) {
-                $('#ddlSrchBUMultiSelect').val(ddlBUMulti);
-                OnChangeBindTitle('TP');
-            }
-        }
-        
+       
         debugger;
         if ('@objMessageKey.LayoutDirection' == "RTL") {
             document.getElementById('pnlSearch').removeAttribute('hidden')
@@ -246,30 +125,7 @@
             }
         }
     }
-    function ShowMore(panelID) {
-        debugger;
-        document.getElementById('pnlShowmore').removeAttribute('hidden')
-        $('.leftPanel').css('left', panelHideCss);
-        $('.MoreActionDiv').hide('fast');
-        $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelShowCss);
-        var panel = document.getElementById(panelID);
-        if (panel.style.right == RightpanelShowCsss) {
-            panel.style.right = RightpanelHideCss;
-            panelVisible = false;
-            $('#sideNavi').show();
-        }
-        else {
-            panel.style.right = RightpanelShowCsss;
-            panelVisible = true;
-            $('#sideNavi').hide();
-        }
-        if (panel.style.right == '350px') {
-            document.getElementById("showMore").innerHTML = "Show less...";
-        }
-        else {
-            document.getElementById("showMore").innerHTML = "Show more...";
-        }
-    }
+    
 
     function initializeSubMenu2() {
         $('.RightPanel li.has-sub>a').on('click', function () {
@@ -297,133 +153,6 @@
         $('.leftPanel').css('left', panelHideCss);
         $('#sideNavi').show();
     }
-    var objAcqListCode;
-    var commandName;
-    function ShowRemark(status, IntCode) {
-        debugger;
-        // $("#ddlStarCastAdd").attr('selectedIndex', '-1');
-        $("#pop_setRemark").modal();
-        $("#pop_setRemark").show();
-        $("#btnStatus").prop('value', status);
-        objAcqListCode = IntCode;
-        if (status == "Approve") {
-            commandName = "Approve";
-        }
-        else if (status == "Send For Approval") {
-            commandName = "SendForAuth";
-        }
-    }
-    function ApproveRemarkOk() {
-        debugger;
-        var remark = $.trim($('#txtArea').val());
-        if (remark == "") {
-            $('#txtArea').val('').attr('required', true);
-            return false
-        }
-        //Ask_Confirmation(commandName, objAcqListCode, 0);
-    };
-    var URL_Bind_Title = '@Url.Action("Bind_Title", "Title_Objection_List")';
-    function populateTitle(evt) {
-        debugger;
-        //$("#ddlSrchTitle").find("option").attr("selected", false);
-        //$("#ddlSrchTitle").val('')[0].sumo.reload();
-        var dealTypeVal = $('#ddlSrchDealType').val();
-        var ddlBU = "";
-        if (Is_AllowMultiBUacqdeal != 'Y') {
-            ddlBU = $('#ddlBUUnit').val();
-        }
-        else {
-            ddlBU = $('#ddlSrchBUMultiSelect').val().join(',');
-        }
-
-        var Selected_Title_Codes = "";
-        var selectedtxt = $('#txtTitleSearch').val();
-        var txt = selectedtxt.split('?');
-        var iscomplete = true;
-        if (txt[txt.length - 1].trim() == "")
-            iscomplete = false;
-        if (iscomplete) {
-            $('#txtTitleSearch').autocomplete({
-                focus: function () {
-                    return false;
-                },
-                search: function (v, i) {
-                    $(this).addClass('loader');
-                },
-                source: function (request, response) {
-                    param = {
-                        Searched_Title: $('#txtTitleSearch').val(),
-                        dealTypeCode: dealTypeVal,
-                        BUCode: ddlBU
-                    };
-                    $.ajax({
-                        url: URL_Bind_Title,
-                        data: JSON.stringify(param),
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        dataFilter: function (data) { return data; },
-                        success: function (data) {
-                            debugger;
-                            if (data.length == 0) {
-                                data[0] = "@objMessageKey.NoResultFound";
-                                response($.map(data, function (v, i) {
-                                    $('#txtTitleSearch').removeClass('loader');
-                                    return {
-                                        label: 'Result Not Found',
-                                        val: '0'
-                                    }
-                                }))
-                            }
-                            else {
-                                response($.map(data, function (v, i) {
-                                    $('#txtTitleSearch').removeClass('loader');
-                                    return {
-                                        label: v.Title_Name,
-                                        val: v.Title_Code
-                                    }
-                                }))
-                            }
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-
-                            alert("Error" + textStatus);
-                        }
-                    });
-
-                },
-                select: function (event, i) {
-                    //debugger;
-                    var text = this.value.split(/﹐\s*/);
-                    text.pop();
-                    text.push(i.item.value);
-                    text.push("");
-                    this.value = text;
-                    this.value = text.join("﹐");
-                    var value = $("#hdnTitleSearch").val().split(/,\s*/);
-                    value.pop();
-                    value.push(i.item.val);
-                    value.push("");
-                    $("#hdnTitleSearch")[0].value = value.join(", ");
-                    return false;
-                },
-                minLength: 3,
-                open: function (event, ui) {
-                    $(".ui-autocomplete").css("position", "auto");
-                    $(".ui-autocomplete").css("max-height", "200px");
-                    $(".ui-autocomplete").css("max-width", "300px");
-                    $(".ui-autocomplete").css("overflow-y", "auto");
-                    $(".ui-autocomplete").css("overflow-x", "hidden");
-                    $(".ui-autocomplete").css("z-index", "2147483647");
-
-                },
-
-            });
-        }
-        else
-            return false;
-    }
-
 </script>
 <style>
     /*.tinyADSearch {
@@ -682,7 +411,7 @@
                 <br />
 
                 <div style="text-align:center;">
-                      <br><br>
+                    <br><br>
                     @*<br />*@
                     <a class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
                     <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
@@ -695,10 +424,10 @@
                 <h2 class="pull-left" style="">
                     Objection Detail
                 </h2>
-                    <div class="MuBUList" id="IsAcqSyn" style="">
-                        <input type="checkbox" id="chkAcq" value="A" checked="checked" /> Acquisition
-                        <input type="checkbox" id="chkSyn" value="S"  checked="checked"/> Syndication
-                    </div>
+                <div class="MuBUList" id="IsAcqSyn" style="">
+                    <input type="checkbox" id="chkAcq" value="A" checked="checked" /> Acquisition
+                    <input type="checkbox" id="chkSyn" value="S" checked="checked" /> Syndication
+                </div>
                 <div class="right_nav pull-right">
                     <ul>
                         <li>
@@ -719,7 +448,7 @@
                                 </a>
                             </li>*@
                         <li>
-                                    <a class="btn-primary" href="@Url.Action("Index", "Title_Objection", new { callFrom = "LIST", TitleObjectCode = 0 })">Add Objection</a>
+                            <a class="btn-primary" href="@Url.Action("Index", "Title_Objection", new { callFrom = "LIST", TitleObjectCode = 0 })">Add Objection</a>
                         </li>
                     </ul>
                 </div>

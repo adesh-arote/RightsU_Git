@@ -7,10 +7,6 @@
         if (msg_G != null && msg_G != '')
             showAlert('e', msg_G);
     }
-    if (RLCode_G != '')
-        Call_RefreshRecordReleaseTime(RLCode_G);
-    if (IncludeSubDeal_Search_G != 'undefined' && IncludeSubDeal_Search_G == 'N')
-        $("#chkSubDeal").removeAttr("checked");
     tmp_IsAdvanced = isAdvanced_G;
     if (tmp_IsAdvanced == "")
         tmp_IsAdvanced = "N";
@@ -23,12 +19,6 @@
     $('#srchCommon').focus();
     if (tmp_IsAdvanced == 'N')
         $('#divSearch').hide();
-    $('#txtfrom').change(function () {
-        SetMinDt();
-    });
-    $('#txtto').change(function () {
-        SetMaxDt();
-    });
 });
 
 /*Bind the Grid*/
@@ -62,7 +52,6 @@ function BindAdvanced_Search_Controls(callfrom) {
         Type = chkSyn;
     }
 
-    //Here call from PGL - Pageload (document ready), BTC - Button(Search) Click
     if (callfrom == 'BTC') {
         $('#divSearch').slideToggle(400);
 
@@ -72,7 +61,6 @@ function BindAdvanced_Search_Controls(callfrom) {
     var Is_async = true;
     if (tmp_IsAdvanced == 'Y')
         Is_async = false
-    if (parseInt($("#ddlSrchBU option").length) == 0 || (parseInt($("#ddlSrchBUMultiSelect option").length) == 0)) {
         debugger;
         $.ajax({
             type: "POST",
@@ -103,7 +91,6 @@ function BindAdvanced_Search_Controls(callfrom) {
                     $(result.Title_Result).each(function (index, item) {
                         $("#ddlSrchDirector").append($("<option>").val(this.Title_Code).text(this.Title));
                     });
-                    //$("#ddlSrchDealType").trigger("chosen:updated");
 
                     var obj_Search = $(result.Title_Objection_List_Search);
                     $("#ddlSrchDealType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
@@ -116,7 +103,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                 alert('Error: ' + result.responseText);
             }
         });
-    }
+    
 }
 function LoadDeals(pagenumber, isAdvanced, showAll) {
     debugger;
@@ -185,9 +172,6 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
                             $(".Highlight").mark(keyword, options);
                         }
                     });
-
-                    // $("#lbTitle_Code").on("input", mark);
-                    // $("#lbTitle_Code").on("change", mark);
                 }
                 if (showLD == 'Y')
                     hideLoading();
@@ -208,34 +192,16 @@ function validateSearch() {
     $('#hdnClearAll').val('N');
     var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N';
 
-    //if ($('#ddlSrchTitle').val())
-    //    tmpTitle = $('#ddlSrchTitle').val().join(',');
 
     if ($("#txtTitleSearch").val())
         tmpTitle = $('#txtTitleSearch').val();
 
-    //if ($('#ddlSrchDirector').val())
-    //    tmpDirector = $('#ddlSrchDirector').val().join(',');
-
     if ($('#ddlSrchLicensor').val())
         tmpLicensor = $('#ddlSrchLicensor').val().join(',');
-
-    if ($('#chkSubDeal:checked').val())
-        tmpChecked = $('#chkSubDeal:checked').val();
-
-    if ($('#chkArchiveDeal:checked').val())
-        tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
-
-
     var txtSDealNo = $('#txtSrchDealNo').val();
-    var txtfrom = $('#txtfrom').val();
-    var txtto = $('#txtto').val();
-    var ddlTagStatus = $('#ddlSrchDealTag').val();
-    var ddlBU = $('#ddlSrchBU').val();
     var ddlDealType = $('#ddlSrchDealType').val();
 
-    $('#ddlBUUnit').val(ddlBU).attr("selected", "true").trigger("chosen:updated");
-    if (txtSDealNo == "" && txtfrom == "" && txtto == "" && tmpLicensor == "" && tmpTitle == "" && ddlTagStatus < "0" && ddlDealType < "0") {
+    if (txtSDealNo == "" && tmpLicensor == "" && tmpTitle == "" && ddlDealType < "0") {
         showAlert('e', 'Please select/enter search criteria');
         return false;
     }
@@ -252,12 +218,8 @@ function ShowAll() {
     $("#chkArchiveDeal").prop("checked", "checked");
     $('#hdnClearAll').val('Y');
     $('#txtSrchDealNo').val('');
-    $('#txtfrom').val('');
-    $('#txtto').val('');
     $('#ddlSrchDealType').val(0).trigger("chosen:updated");
-    $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
-    //$("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#ddlSrchDirector")[0].sumo.unSelectAll();
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
     $('#chkAcq').prop('checked', true);
@@ -269,13 +231,10 @@ function ClearAll() {
     debugger;
     $('#hdnClearAll').val('Y');
     $('#txtSrchDealNo').val('');
-    $('#txtfrom').val('');
-    $('#txtto').val('');
     $('#txtTitleSearch').val('');
     $('#ddlSrchDealType').val(0).trigger("chosen:updated");
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
-    //$("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#chkSubDeal").prop("checked", false);
     $("#chkArchiveDeal").prop("checked", false);
     //$('#chkAcq').prop('checked', true);

@@ -30,7 +30,7 @@
 
         if (showLD == 'Y')
             showLoading();
-        var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N';
+        var tmpTitle = '', tmpDirector = '', tmpLicensor = '';
         tmp_pageNo = pagenumber;
         tmp_IsAdvanced = isAdvanced;
         if (isAdvanced == 'N')
@@ -47,12 +47,6 @@
 
         if ($('#txtTitleSearch').val())
             tmpTitle = $('#txtTitleSearch').val().join(',');
-
-        if ($('#chkSubDeal:checked').val())
-            tmpChecked = $('#chkSubDeal:checked').val();
-
-        if ($('#chkArchiveDeal:checked').val())
-            tmpArchiveChecked = $('#chkArchiveDeal:checked').val();
         $.ajax({
             type: "POST",
             url: URL_PartialDealList,
@@ -66,11 +60,7 @@
                 commonSearch: $('#srchCommon').val(),
                 isTAdvanced: isAdvanced,
                 strDealNo: $('#txtSrchDealNo').val(),
-                strfrom: $('#txtfrom').val(),
-                strto: $('#txtto').val(),
                 strSrchDealType: $('#ddlSrchDealType').val(),
-                strSrchDealTag: $('#ddlSrchDealTag').val(),
-                strWorkflowStatus: $('#ddlWorkflowStatus').val(),
                 strTitles: tmpTitle,
                 strDirector: tmpDirector,
                 strLicensor: tmpLicensor,
@@ -261,19 +251,6 @@
                     </div>
                 }
             </li>
-            @*<li class="deal_territory" title="Country/Territory">
-                @if (string.IsNullOrEmpty(objAcqList.CountryDetails))
-                {
-                    <span class="not-available">@objMessageKey.NO Country/Territory</span>
-                }
-                else
-                {
-                    <div class="expandable">
-                        @objAcqList.CountryDetails
-                        <a href="#"><span></span></a>
-                    </div>
-                }
-            </li>*@
 
             <li class="deal_action clsTdAction_@objAcqList.Title_Objection_Code@objAcqList.Status TC_@tempCount" id="divAction_@tempCount">
                 @{

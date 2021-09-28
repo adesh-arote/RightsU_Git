@@ -50,20 +50,6 @@ namespace RightsU_Plus.Controllers
         public ActionResult Index(string Message = "", string ReleaseRecord = "")
         {
             CommonUtil.WriteErrorLog("Index method of Title_Objection_ListController is executing", Err_filename);
-            if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
-            {
-                Deal_Schema objDS = ((Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA]);
-                if (objDS != null && objDS.Mode == GlobalParams.DEAL_MODE_APPROVE)
-                    DBUtil.Release_Record(objDS.Record_Locking_Code);
-            }
-            
-            #region --- Clear Session ---
-            Session[UtoSession.SESS_DEAL] = null;
-            Session["ADS_Acq_General"] = null;
-            Session[UtoSession.ACQ_DEAL_SCHEMA] = null;
-            Session["TS_Acq_General"] = null;
-            TempData["TitleData"] = null;
-            #endregion
 
             string IsMenu = "";
             Dictionary<string, string> obj_Dic_Layout = new Dictionary<string, string>();
@@ -82,8 +68,6 @@ namespace RightsU_Plus.Controllers
                 if (Session["obj_Syn_List_Search"] != null)
                     Session["obj_Syn_List_Search"] = null;
                 Reset_Srch_Criteria();
-                ViewBag.IncludeSubDeal = Title_Objection_List_Search.IncludeSubDeal;
-                ViewBag.IncludeArchiveDeal = Title_Objection_List_Search.strIncludeArchiveDeal;
                 CommonUtil.WriteErrorLog("Condition 2 executed", Err_filename);
             }
             else
@@ -96,19 +80,6 @@ namespace RightsU_Plus.Controllers
                 ViewBag.DealFrmDt_Search = Title_Objection_List_Search.DealFrmDt_Search;
                 ViewBag.DealToDt_Search = Title_Objection_List_Search.DealToDt_Search;
                 ViewBag.Search = Title_Objection_List_Search.Common_Search;
-                ViewBag.BUCode = Title_Objection_List_Search.BUCode;
-                ViewBag.WorkFlowStatus = Title_Objection_List_Search.WorkFlowStatus_Search;
-                if (Title_Objection_List_Search.IncludeSubDeal == "Y")
-                    Title_Objection_List_Search.IncludeSubDeal = "true";
-                else
-                    Title_Objection_List_Search.IncludeSubDeal = "false";
-                ViewBag.IncludeSubDeal = Title_Objection_List_Search.IncludeSubDeal;
-
-                if (Title_Objection_List_Search.strIncludeArchiveDeal == "Y")
-                    Title_Objection_List_Search.strIncludeArchiveDeal = "true";
-                else
-                    Title_Objection_List_Search.strIncludeArchiveDeal = "false";
-                ViewBag.IncludeArchiveDeal = Title_Objection_List_Search.strIncludeArchiveDeal;
 
                 CommonUtil.WriteErrorLog(" Condition 3 executed", Err_filename);
             }
@@ -147,22 +118,6 @@ namespace RightsU_Plus.Controllers
             IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> objList = BindGridView(commonSearch, Type, isTAdvanced, strDealNo, strTitleObjectionType, strTitleObjectionStatus, strTitles, strLicensor, strShowAll, Page, ClearSession);
             CommonUtil.WriteErrorLog("BindGridView() method if Title_Objection_ListController has been executed", Err_filename);
             return PartialView("~/Views/Title_Objection_List/_List_Title_Objection.cshtml", objList);
-        }
-
-        public void ExportToWord()
-        {
-            FileInfo fliTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/ContactDraft.doc"));
-            string fullPath = (Server.MapPath("~") + "\\" + "Download\\ContractDraft.docx");
-            FileInfo flInfo = new FileInfo(fullPath);
-            //FileInfo fliTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/ContractDraft.docx"));
-            WebClient client = new WebClient();
-            Byte[] buffer = client.DownloadData(fullPath);
-            Response.Clear();
-            Response.ContentType = "application/ms-word";
-            Response.AddHeader("content-disposition", "Attachment;filename=" + flInfo.Name);
-            Response.BinaryWrite(buffer);
-
-            Response.End();
         }
 
         public IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> BindGridView(string commonSearch = "",string Type = "", string isTAdvanced = "N", string strDealNo = "", string strTitleObjectionType = "",  string strTitleObjectionStatus = "", string strTitles = "", string strLicensor = "", string strShowAll = "N", int Page = 0, string ClearSession = "N")
@@ -223,15 +178,7 @@ namespace RightsU_Plus.Controllers
             Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
             Set_Srch_Criteria();
             List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
-            //List<int> titleName = Title_Objection_List_Search.TitleCodes_Search.Split(',').Select(int.Parse).ToList();
             obj_USP_Get_PreReq_Result = BindAllDropDowns();
-
-            //if (Title_Objection_List_Search.isAdvanced != "Y")
-            //{
-            //    Title_Objection_List_Search.BUCodes_Search = obj_USP_Get_PreReq_Result.Where(i => i.Data_For == "BUT").Select(i => i.Display_Value ?? 0).FirstOrDefault();
-
-            //    Title_Objection_List_Search.WorkFlowStatus_Search = "0";
-            //}
 
             var ListAcq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List("X", "", "").ToList()
                         .Select(x => new { x.Title_Code, x.Title, x.Licensor, x.Licensor_Code }).ToList().Distinct();
@@ -291,12 +238,8 @@ namespace RightsU_Plus.Controllers
 
             string[] arrTitleName = Title_Objection_List_Search.TitleCodes_Search.Split(',');
             string strTitleNames = string.Join("﹐", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Code.ToString())).Select(y => y.Title_Name).ToList());
-            // Title_Objection_List_Search.WorkFlowStatus_Search = obj_USP_Get_PreReq_Result.Where(i => i.Data_For == "WFL").Select(i => i.Display_Value ?? 0).FirstOrDefault().ToString();
             obj_Dictionary.Add("USP_Result", obj_USP_Get_PreReq_Result);
-            SelectList lstWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName)
-                .SearchFor(x => x.Deal_Type == "A")
-              .Select(i => new { Display_Value = i.Deal_WorkflowFlag, Display_Text = i.Deal_Workflow_Status_Name }).ToList(),
-              "Display_Value", "Display_Text");
+            
 
             if (Title_Objection_List_Search != null)
             {
@@ -304,7 +247,6 @@ namespace RightsU_Plus.Controllers
                 obj_Dictionary.Add("Title_Objection_List_Search", Title_Objection_List_Search);
 
             }
-            obj_Dictionary.Add("lstWorkFlowStatus", lstWorkFlowStatus);
             return Json(obj_Dictionary);
         }
         private void Set_Srch_Criteria()
@@ -315,8 +257,6 @@ namespace RightsU_Plus.Controllers
             ViewBag.TitleCodes_Search = Title_Objection_List_Search.TitleCodes_Search;
             ViewBag.ProducerCodes_Search = Title_Objection_List_Search.ProducerCodes_Search;
             ViewBag.PageNo = Title_Objection_List_Search.PageNo;
-            ViewBag.IncludeSubDeal = Title_Objection_List_Search.IncludeSubDeal;
-            ViewBag.IncludeArchiveDeal = Title_Objection_List_Search.strIncludeArchiveDeal;
         }
         private void Reset_Srch_Criteria()
         {
@@ -326,7 +266,6 @@ namespace RightsU_Plus.Controllers
             Title_Objection_List_Search.TitleCodes_Search = "";
             Title_Objection_List_Search.ProducerCodes_Search = "";
             Title_Objection_List_Search.Status_Search = "0";
-            Title_Objection_List_Search.WorkFlowStatus_Search = "";
             Title_Objection_List_Search.isAdvanced = "N";
             Title_Objection_List_Search.DealType_Search = "0";
             Title_Objection_List_Search.PageNo = 1;
