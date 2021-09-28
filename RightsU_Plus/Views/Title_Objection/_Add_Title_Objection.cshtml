@@ -206,7 +206,8 @@
                             <input type="radio" name="rb_CT" value="T"> Territory &nbsp;&nbsp;
                         </div>
                         <div id="divddlCT" style="width:35%">
-                            @Html.DropDownList("ddlCT", (IEnumerable<SelectListItem>)ViewBag.ddlCT, new { @id = "ddlCT", @multiple = "multiple" })
+                            <select id="ddlCT" multiple="multiple"></select>
+                            @*@Html.DropDownList("ddlCT", (IEnumerable<SelectListItem>)ViewBag.ddlCT, new { @id = "ddlCT", @multiple = "multiple" })*@
                         </div>
                     </div>
                 </td>
@@ -215,7 +216,8 @@
                 <td style="width:15%"> <label class="bold">License Period : </label></td>
                 <td style="width:80%" colspan="3">
                     <div id="divddlLP" style="width:35%">
-                        @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP,"Please Select", new { @id = "ddlLP", @class = "form_input chosen-select" })
+                        <select id="ddlLP" class="form_input chosen-select"></select>
+                        @*@Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, "Please Select", new { @id = "ddlLP", @class = "form_input chosen-select" })*@
                     </div>
                 </td>
             </tr>

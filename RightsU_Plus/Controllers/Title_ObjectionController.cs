@@ -120,17 +120,17 @@ namespace RightsU_Plus.Controllers
 
                 ViewBag.Type = Record_Type;
 
-                var CountryList = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "TERRITORY" && x.CodeFor == "I").Select(x => new { Country_Code = x.Code, Country_Name = x.Obj_Type_Name }).ToList();
-                ViewBag.ddlCT = new SelectList(CountryList, "Country_Code", "Country_Name");
+                //var CountryList = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "TERRITORY" && x.CodeFor == "I").Select(x => new { Country_Code = x.Code, Country_Name = x.Obj_Type_Name }).ToList();
+                //ViewBag.ddlCT = new SelectList(CountryList, "Country_Code", "Country_Name");
 
-                var SDEDList = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "SDED" && x.EndDate != null).Select(x =>
-                 new
-                 {
-                     Display_Value = ((DateTime)x.StartDate).ToString("dd-MMM-yyyy") + "~" + ((DateTime)x.EndDate).ToString("dd-MMM-yyyy"),
-                     Display_Text = ((DateTime)x.StartDate).ToString("dd/MM/yyyy") + " To " + ((DateTime)x.EndDate).ToString("dd/MM/yyyy")
-                 }).ToList();
+                //var SDEDList = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "SDED" && x.EndDate != null).Select(x =>
+                // new
+                // {
+                //     Display_Value = ((DateTime)x.StartDate).ToString("dd-MMM-yyyy") + "~" + ((DateTime)x.EndDate).ToString("dd-MMM-yyyy"),
+                //     Display_Text = ((DateTime)x.StartDate).ToString("dd/MM/yyyy") + " To " + ((DateTime)x.EndDate).ToString("dd/MM/yyyy")
+                // }).ToList();
 
-                ViewBag.ddlLP = new SelectList(SDEDList, "Display_Value", "Display_Text");
+                //ViewBag.ddlLP = new SelectList(SDEDList, "Display_Value", "Display_Text");
 
                 ViewBag.ddlTitle_Status = new SelectList(new Title_Objection_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList(), "Title_Objection_Status_Code", "Objection_Status_Name");
 
