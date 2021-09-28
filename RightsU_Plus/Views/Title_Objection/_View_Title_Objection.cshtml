@@ -146,36 +146,36 @@
         </div>
 
     </div>
-    <div class="grid_area">
-        <table class="table table-bordered table-hover" style="width:100%" border="0">
+    <div class="scale_table_block" ">
+        <table class="four_column table style_table">
             <tr>
-                <td style="width:15%"> <label class="bold">Title : </label></td>
-                <td style="width:80%" colspan="3">
+                <td> <label class="bold">Title : </label></td>
+                <td>
                     @Model.Title
                 </td>
+                <td> <label class="bold">Agreement No : </label></td>
+                <td> @Model.Agreement_No</td>
             </tr>
             <tr>
-                <td style="width:15%"> <label class="bold">Agreement No : </label></td>
-                <td style="width:80%" colspan="3"> @Model.Agreement_No</td>
-            </tr>
-            <tr>
-                <td style="width:15%"> <label class="bold">Select Platform : </label></td>
-                <td style="width:80%" colspan="3">
+                <td> <label class="bold">Select Platform : </label></td>
+                <td>
                     <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">
                         View Platform Matrix  &nbsp;&nbsp;
                         <span id="pCount" class="count">0</span>
                     </a>
                 </td>
-            </tr>
-            <tr>
-                <td style="width:15%"> <label class="bold">Region : </label></td>
-                <td style="width:80%" colspan="3">
-                    <span>@ctCodes</span>
+                <td> <label class="bold">Type Of Objection : </label></td>
+                <td>
+                    <span> @ViewBag.Object_Type_Name </span>
                 </td>
             </tr>
             <tr>
-                <td style="width:15%"> <label class="bold">License Period : </label></td>
-                <td style="width:80%" colspan="3">
+                <td> <label class="bold">Region : </label></td>
+                <td>
+                    <span>@ctCodes</span>
+                </td>
+                <td> <label class="bold">License Period : </label></td>
+                <td>
                     <ul style="list-style-type: none;">
                         @foreach (var item in rpCodes)
                         {
@@ -185,32 +185,26 @@
                 </td>
             </tr>
             <tr>
-                <td style="width:15%"> <label class="bold">Objection Period : </label></td>
-                <td style="width:80%" colspan="3">
+                <td> <label class="bold">Objection Period : </label></td>
+                <td>
                     <span>@(((DateTime)objTitleObjection.Objection_Start_Date).ToString("dd/MM/yyyy"))</span>
                     &nbsp;<b>To</b>&nbsp;
                     <span>@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MM/yyyy"))</span>
                 </td>
             </tr>
-            <tr>
-                <td style="width:15%"> <label class="bold">Type Of Objection : </label></td>
-                <td style="width:80%" colspan="3">
-                    <span> @ViewBag.Object_Type_Name </span>
-                </td>
-            </tr>
-            <tr>
-                <td style="width:15%"> <label class="bold">Objection Remarks : </label></td>
-                <td style="width:80%" colspan="3">
-                    <div  class="expand_Resolution_Remarks" >@objTitleObjection.Objection_Remarks</div>
-                </td>
-            </tr>
-            <tr>
-                <td style="width:15%"> <label class="bold">Resolution Remarks : </label></td>
-                <td style="width:80%" colspan="3">
-                    <div class="expand_Resolution_Remarks">@objTitleObjection.Resolution_Remarks</div>
-                </td>
-            </tr>
         </table>
+    </div>
+    <div class="scale_table_block">
+        <div class="divBlock">
+            <div class="bold" style="padding-right: 55%;">Objection Remarks</div>
+        </div>
+        <div class="expand_Resolution_Remarks">@objTitleObjection.Objection_Remarks</div>
+    </div>
+    <div class="scale_table_block">
+        <div class="divBlock">
+            <div class="bold" style="padding-right: 55%;">Resolution Remarks</div>
+        </div>
+        <div class="expand_Resolution_Remarks">@objTitleObjection.Resolution_Remarks</div>
     </div>
     <br />
     <div class="bottom_action">
