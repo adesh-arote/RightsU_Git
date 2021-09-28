@@ -139,7 +139,7 @@ namespace RightsU_Plus.Controllers
         }
         [HttpPost]
         public PartialViewResult PartialDealList(int Page,string Type, string commonSearch, string isTAdvanced, string strDealNo = "", string strTitleObjectionType = "", string strTitleObjectionStatus = "", string strTitles = "", string strLicensor = "", string strShowAll = "N", string ClearSession = "N")
-        {
+         {
             string[] arrTitleName = strTitles.Split('﹐');
             //Type = string.Join(",", Type);
             string sstrTitles = string.Join(",", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Name)).Select(y => y.Title_Code).ToList());

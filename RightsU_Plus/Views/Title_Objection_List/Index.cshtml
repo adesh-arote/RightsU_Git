@@ -40,22 +40,12 @@
     , URL_SaveReleasedContent = '@Url.Action("SaveReleasedContent", "Title_Objection_List")'
     , URL_SearchReleaseContent = '@Url.Action("SearchReleaseContent", "Title_Objection_List")'
     , URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Title_Objection_List")'
-    , URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Title_Objection_List")'
-    , URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")'
-    , URL_ChkRightsDuplication = '@Url.Action("ChkRightsDuplication", "Acq_Rights")'
-    , URL_GetAcqAsyncStatus = '@Url.Action("GetAcqAsyncStatus", "Title_Objection_List")'
-    , URL_ActionButtons = '@Url.Action("ActionButtons", "Title_Objection_List")'
-    , URL_PartialBindLinearStatusPopup = '@Url.Action("PartialBindLinearStatusPopup", "Title_Objection_List")'
-    , URL_Show_Error_Popup = '@Url.Action("Show_Error_Popup", "Title_Objection_List")'
-    , URL_Reprocess = '@Url.Action("Reprocess", "Title_Objection_List")'
-    , URL_SendForArchive = '@Url.Action("SendForArchive", "Title_Objection_List")'
-    , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Title_Objection_List")'
-    , URL_Archive = '@Url.Action("Archive", "Title_Objection_List")';
+    , URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Title_Objection_List")';
 
     var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';
     var BUCode = '@ViewBag.BUCode';
 
-    function Validate_Record(dealCode, dealType, recordID) {
+    @*function Validate_Record(dealCode, dealType, recordID) {
         var rid = recordID.id;
         var valid = true;
         var moduleCode = 30;
@@ -103,38 +93,6 @@
             error: function (result) { }
         });
     }
-    //$(document).ready(function () {
-    //    //function PostConfirmation() {
-    //    var objPC = { Is_Error: "ClientName", Error_Details: "Client One", Module_Name: "TALENT", Response_XML: "TEST" };
-    //    alert("junj");
-    //    debugger;
-    //    var url = 'api/WebAPI/Confirmation'
-    //    $.ajax({
-    //        type: "POST",
-    //        dataType:"json",
-    //        url: url,
-    //        traditional: true,
-    //        //enctype: 'multipart/form-data',
-    //        contentType: "application/json; charset=utf-8",
-    //        data: JSON.stringify(objPC),
-    //        //data: JSON.stringify(objTC),
-    //        //JSON.stringify({
-    //        //    //dealTypeCode: dealTypeCode,
-    //        //    //masterDealMovieCode: masterDealMovieCode,
-    //        //    //pageNo: pageNo,
-    //        //    strXml: 'adesh'
-    //        //}), //.serialize(),
-    //        //data: { strXml: 'adesh' },
-    //        async: false,
-    //        success: function (result) {
-    //            alert('s');
-    //        },
-    //        error: function (result) {
-    //            alert('Error: ' + result.responseText);
-    //        }
-    //    });
-    //    // }
-    //});
     $(document).ready(function () {
         debugger;
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
@@ -151,16 +109,9 @@
         else {
             $('#ddlBUUnit').val('@ViewBag.BUCode').attr("selected", "true").trigger("chosen:updated");
         }
-        //$("td").bind("mousemove", function (event) {
-        //    $(this).find("span.PlatformExpand").css({
-        //        top: event.pageY + 5 + "px",
-        //        left: event.pageX + 5 + "px"
-        //    }).show();
-        //}).bind("mouseout", function () {
-        //    $("span.PlatformExpand").hide();
-        //});
+       
 
-    });
+    });*@
 </script>
 <script>
     var panelVisible = false;
@@ -213,8 +164,6 @@
             //$("#ddlSrchTitle").val('')[0].sumo.reload();
             $('#txtTitleSearch').val('');
             var dealTypeVal = $('#ddlSrchDealType').val();
-
-            var ddlBU = $('#ddlBUUnit').val();
             $.ajax({
                 type: "POST",
                 url: URL_OnChangeBindTitle,
@@ -223,7 +172,6 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     dealTypeCode: dealTypeVal,
-                    BUCode: ddlBU
                 }),
                 async: true,
                 success: function (result) {
@@ -747,14 +695,14 @@
                 <h2 class="pull-left" style="">
                     Objection Detail
                 </h2>
-                    <div class="MuBUList" style="">
+                    <div class="MuBUList" id="IsAcqSyn" style="">
                         <input type="checkbox" id="chkAcq" value="A" checked="checked" /> Acquisition
                         <input type="checkbox" id="chkSyn" value="S"  checked="checked"/> Syndication
                     </div>
                 <div class="right_nav pull-right">
                     <ul>
                         <li>
-                            <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:260px !important;"
+                            <input type="text" autocomplete="off" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:260px !important;"
                                    placeholder="Search by Title, DealNo, Licensor" />
                         </li>
                         <li>

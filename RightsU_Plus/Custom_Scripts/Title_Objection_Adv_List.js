@@ -299,7 +299,9 @@ function handleCancel() {
 /*Confirmation Alert*/
 
 function CommonSrch() {
-
+    $('.required').removeClass('required');
+    $("[required='required']").removeAttr("required"); 
+    
     if ($('#srchCommon').val() == '')
         $('#hdnClearAll').val('Y');
     showLD = 'Y';
