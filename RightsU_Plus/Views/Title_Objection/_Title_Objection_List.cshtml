@@ -1,5 +1,12 @@
 ﻿@model List<RightsU_Entities.USP_Title_Objection_List_Result>
-
+<script>
+    $(document).ready(function () {
+        if ($('input[type=radio][name=rb_AcqSyn]:checked').val() == "S")
+        { $(".txtLicensor").text("Licensee"); }
+        else
+        { $(".txtLicensor").text("Licensor"); }
+    });
+</script>
 <table class="table table-bordered table-hover" id="tblTitleObjection">
     <thead>
         <tr>
