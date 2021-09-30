@@ -160,19 +160,9 @@
                 <td> <label class="bold">Select Platform : </label></td>
                 <td>
                     <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">
-                        View Platform Matrix  &nbsp;&nbsp;
+                        View Platform&nbsp;
                         <span id="pCount" class="count">0</span>
                     </a>
-                </td>
-                <td> <label class="bold">Type Of Objection : </label></td>
-                <td>
-                    <span> @ViewBag.Object_Type_Name </span>
-                </td>
-            </tr>
-            <tr>
-                <td> <label class="bold">Region : </label></td>
-                <td>
-                    <span>@ctCodes</span>
                 </td>
                 <td> <label class="bold">License Period : </label></td>
                 <td>
@@ -183,13 +173,25 @@
                         }
                     </ul>
                 </td>
+               
             </tr>
             <tr>
+                <td> <label class="bold">Region : </label></td>
+                <td>
+                    <span>@ctCodes</span>
+                </td>
                 <td> <label class="bold">Objection Period : </label></td>
                 <td>
                     <span>@(((DateTime)objTitleObjection.Objection_Start_Date).ToString("dd/MM/yyyy"))</span>
                     &nbsp;<b>To</b>&nbsp;
                     <span>@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MM/yyyy"))</span>
+                </td>
+               
+            </tr>
+            <tr>
+                <td> <label class="bold">Type Of Objection : </label></td>
+                <td>
+                    <span> @ViewBag.Object_Type_Name </span>
                 </td>
             </tr>
         </table>

@@ -19,7 +19,7 @@
 }
 <style>
     #ddlObjType_chosen {
-        width: 95% !important;
+        width: 82% !important;
     }
 
     #ddlTitle_Status_chosen {
@@ -74,7 +74,7 @@
     }
 
     input.isDatepicker {
-        width: 162px !important;
+        width: 120px !important;
         z-index: auto;
     }
 
@@ -195,15 +195,18 @@
                 <td> <label class="bold">Select Platform : </label></td>
                 <td>
                     <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="Add Platform" style="text-decoration:underline">
-                        Add Platform Matrix  &nbsp;&nbsp;
+                        Add Platform&nbsp;
                         <span id="pCount" class="count">0</span>
                     </a>
 
                 </td>
-                <td> <label class="bold">Type Of Objection : </label></td>
+                <td> <label class="bold">License Period : </label></td>
                 <td>
-                    <select id="ddlObjType" class="form_input chosen-select"></select>
+                    <div id="divddlLP" style="width:100%">
+                        <select id="ddlLP" class="form_input chosen-select"></select>
+                    </div>
                 </td>
+
             </tr>
             <tr>
                 <td> <label class="bold">Region : </label></td>
@@ -218,15 +221,6 @@
                         </div>
                     </div>
                 </td>
-                <td> <label class="bold">License Period : </label></td>
-                <td>
-                    <div id="divddlLP" style="width:100%">
-                        <select id="ddlLP" class="form_input chosen-select"></select>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
                 <td><label class="bold">Objection Period : </label></td>
                 <td>
                     <input type="hidden" id="hdnStartDate" />
@@ -237,7 +231,13 @@
                            title="Objection End Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
                 </td>
             </tr>
-            <tr></tr>
+            <tr>
+                <td> <label class="bold">Type Of Objection : </label></td>
+                <td>
+                    <select id="ddlObjType" class="form_input chosen-select"></select>
+                </td>
+            </tr>
+
         </table>
     </div>
     <div class="scale_table_block">

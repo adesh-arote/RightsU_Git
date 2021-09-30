@@ -15,13 +15,13 @@
             rpCodes = ViewBag.RPCodes;
             ctCodes = ViewBag.CTCodes;
 
-            isCT = isCT == "I"?"C" : "T";
+            isCT = isCT == "I" ? "C" : "T";
         }
     }
 }
 <style>
     #ddlObjType_chosen {
-        width: 95% !important;
+        width: 82% !important;
     }
 
     #ddlTitle_Status_chosen {
@@ -76,7 +76,7 @@
     }
 
     input.isDatepicker {
-        width: 162px !important;
+        width: 120px !important;
         z-index: auto;
     }
 
@@ -204,18 +204,20 @@
                 <td> <label class="bold">Agreement No : </label></td>
                 <td> @Model.Agreement_No</td>
             </tr>
-            <tr></tr>
+
             <tr>
                 <td> <label class="bold">Select Platform : </label></td>
                 <td>
                     <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="Edit Platform" style="text-decoration:underline">
-                        Edit Platform Matrix  &nbsp;&nbsp;
+                        Edit Platform&nbsp;
                         <span id="pCount" class="count">0</span>
                     </a>
                 </td>
-                <td> <label class="bold">Type Of Objection : </label></td>
+                <td> <label class="bold">License Period : </label></td>
                 <td>
-                    <select id="ddlObjType" class="form_input chosen-select"></select>
+                    <div id="divddlLP" style="width:100%">
+                        @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, new { @id = "ddlLP", @class = "form_input chosen-select" })
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -231,15 +233,6 @@
                         </div>
                     </div>
                 </td>
-                <td> <label class="bold">License Period : </label></td>
-                <td>
-                    <div id="divddlLP" style="width:100%">
-                        @Html.DropDownList("ddlLP", (IEnumerable<SelectListItem>)ViewBag.ddlLP, new { @id = "ddlLP", @class = "form_input chosen-select" })
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
                 <td> <label class="bold">Objection Period : </label></td>
                 <td>
                     <input type="hidden" id="hdnStartDate" />
@@ -248,6 +241,12 @@
                     &nbsp;&nbsp;<b> To </b> &nbsp;&nbsp;
                     <input type="text" class="isDatepicker" id="txtEnd" value="@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MM/yyyy"))" name="End_Date" placeholder="DD/MM/YYYY" autocomplete="off"
                            title="Objection End Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                </td>
+            </tr>
+            <tr>
+                <td> <label class="bold">Type Of Objection : </label></td>
+                <td>
+                    <select id="ddlObjType" class="form_input chosen-select"></select>
                 </td>
             </tr>
 
