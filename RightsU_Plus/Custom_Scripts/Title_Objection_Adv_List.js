@@ -80,16 +80,16 @@ function BindAdvanced_Search_Controls(callfrom) {
                 }
                 else {
                     debugger;
+                    $("#ddlObjectionStatus").empty();
                     $(result.USP_Result).each(function (index, item) {
                         if (this.Data_For == 'OBT')
                             $("#ddlSrchObjectionType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'OBS')
                             $("#ddlObjectionStatus").append($("<option>").val(this.Display_Value).text(this.Display_Text));
-                        if (this.Data_For == 'VEN')
+                        if (this.Data_For == 'TOV')
                             $("#ddlSrchLicensor").append($("<option>").val(this.Display_Value).text(this.Display_Text));
-                    });
-                    $(result.Title_Result).each(function (index, item) {
-                        $("#ddlSrchTitle").append($("<option>").val(this.Title_Code).text(this.Title));
+                        if (this.Data_For == 'TOB')
+                            $("#ddlSrchTitle").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                     });
 
                     var obj_Search = $(result.Title_Objection_List_Search);

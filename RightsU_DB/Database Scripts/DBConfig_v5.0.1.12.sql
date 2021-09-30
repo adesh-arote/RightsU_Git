@@ -135,3 +135,6 @@ SELECT 250,'IPR Report','CD',113,'N','Reports/IPRReport','mainframe','sub','N','
 
 INSERT INTO System_Module_Right(Module_Code,Right_Code)
 VALUES (250,7),(250,152)
+
+INSERT INTO System_Module_Right(Module_Code,Right_Code)
+VALUES (251,1),(251,2)

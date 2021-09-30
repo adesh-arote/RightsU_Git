@@ -106,6 +106,7 @@ namespace RightsU_Plus.Controllers
             Session["FileName"] = "Acq_General";
 
             CommonUtil.WriteErrorLog("Index method of Title_Objection_ListController has been executed", Err_filename);
+            ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/Title_Objection_List/Index.cshtml");
         }
         [HttpPost]
@@ -117,9 +118,18 @@ namespace RightsU_Plus.Controllers
             CommonUtil.WriteErrorLog("BindGridView() method of Title_Objection_ListController is executing", Err_filename);
             IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> objList = BindGridView(commonSearch, Type, isTAdvanced, strDealNo, strTitleObjectionType, strTitleObjectionStatus, strTitles, strLicensor, strShowAll, Page, ClearSession);
             CommonUtil.WriteErrorLog("BindGridView() method if Title_Objection_ListController has been executed", Err_filename);
+            ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Title_Objection_List/_List_Title_Objection.cshtml", objList);
         }
+        private string GetUserModuleRights()
+        {
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForTitleObjection), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string rights = "";
+            if (lstRights.FirstOrDefault() != null)
+                rights = lstRights.FirstOrDefault();
 
+            return rights;
+        }
         public IEnumerable<RightsU_Entities.USP_Title_Objection_Adv_List_Result> BindGridView(string commonSearch = "",string Type = "", string isTAdvanced = "N", string strDealNo = "", string strTitleObjectionType = "",  string strTitleObjectionStatus = "", string strTitles = "", string strLicensor = "", string strShowAll = "N", int Page = 0, string ClearSession = "N")
         {
             string sql = "";
@@ -166,7 +176,7 @@ namespace RightsU_Plus.Controllers
 
             CommonUtil.WriteErrorLog("USP_Title_Objection_Adv_List has been executed", Err_filename);
             RecordCount = Convert.ToInt32(objRecordCount.Value);
-            ViewBag.RecordCount = objList.Count();//RecordCount;
+            ViewBag.RecordCount = RecordCount;
             ViewBag.PageNo = Title_Objection_List_Search.PageNo;
             return objList;
         }
@@ -179,63 +189,6 @@ namespace RightsU_Plus.Controllers
             Set_Srch_Criteria();
             List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
             obj_USP_Get_PreReq_Result = BindAllDropDowns();
-
-            var ListAcq = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List("X", "", "").ToList()
-                        .Select(x => new { x.Title_Code, x.Title, x.Licensor, x.Licensor_Code }).ToList().Distinct();
-
-            var ListSyn = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_List("Y", "", "").ToList()
-                                    .Select(x => new { x.Title_Code, x.Title, x.Licensor, x.Licensor_Code }).ToList().Distinct();
-
-            Title_Licensor obj = null;
-            if (Type == "A")
-            {
-                foreach (var item in ListAcq)
-                {
-                    obj = new Title_Licensor();
-                    obj.Acq_Syn = "A";
-                    obj.Title = item.Title;
-                    obj.Title_Code = item.Title_Code;
-                    lstTitle_Licensor.Add(obj);
-                }
-            }
-            else if (Type == "S")
-            {
-                foreach (var item in ListSyn)
-                {
-                    obj = new Title_Licensor();
-                    obj.Acq_Syn = "S";
-                    obj.Title = item.Title;
-                    obj.Title_Code = item.Title_Code;
-                    lstTitle_Licensor.Add(obj);
-                }
-            }
-            else if(Type == "A,S")
-            {
-                foreach (var item in ListAcq)
-                {
-                    obj = new Title_Licensor();
-                    obj.Acq_Syn = "A";
-                    obj.Title = item.Title;
-                    obj.Title_Code = item.Title_Code;
-                    obj.Licensor = item.Licensor;
-                    obj.Licensor_Code = item.Licensor_Code;
-                    lstTitle_Licensor.Add(obj);
-                }
-                foreach (var item in ListSyn)
-                {
-                    obj = new Title_Licensor();
-                    obj.Acq_Syn = "S";
-                    obj.Title = item.Title;
-                    obj.Title_Code = item.Title_Code;
-                    obj.Licensor = item.Licensor;
-                    obj.Licensor_Code = item.Licensor_Code;
-                    lstTitle_Licensor.Add(obj);
-                }
-
-            }
-
-            obj_Dictionary.Add("Title_Result", lstTitle_Licensor);
-
             string[] arrTitleName = Title_Objection_List_Search.TitleCodes_Search.Split(',');
             string strTitleNames = string.Join("﹐", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Code.ToString())).Select(y => y.Title_Name).ToList());
             obj_Dictionary.Add("USP_Result", obj_USP_Get_PreReq_Result);
@@ -302,7 +255,7 @@ namespace RightsU_Plus.Controllers
         #region ---------------BIND DROPDOWNS---------------
         private List<USP_Get_Acq_PreReq_Result> BindAllDropDowns()
         {
-            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("OBT,OBS.VEN", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(Title_Objection_List_Search.DealType_Search), Title_Objection_List_Search.BUCodes_Search).ToList();
+            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("OBT,OBS,TOV,TOB", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(Title_Objection_List_Search.DealType_Search), Title_Objection_List_Search.BUCodes_Search).ToList();
             return obj_USP_Get_PreReq_Result;
         }
 

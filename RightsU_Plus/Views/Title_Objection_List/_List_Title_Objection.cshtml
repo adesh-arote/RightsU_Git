@@ -28,7 +28,7 @@
     
     function pageselectCallback(page_index, jq) {
         if (IsCall == 'Y')
-            LoadDeal(page_index, tmp_IsAdvanced, 'N');
+            LoadDeals(page_index, tmp_IsAdvanced, 'N');
         else
             IsCall = 'Y';
     }
@@ -121,22 +121,32 @@
     /*.modal .scale_table_block {
     margin: 5px !important;*/
     }
+    .acq {
+        border-left: 4px solid #2b64a5 !important;
+    }
+    .syn {
+        border-left: 4px solid #d0021b !important;
+    }
 </style>
 <div class="paging_area clearfix">
     <span class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
     <div class="pagination" id="Pagination_List"></div>
 </div>
-<div class="grid_area deal clearfix" onclick="AllsubmenuHide();">
+
 <div class="grid_area deal clearfix" onclick="AllsubmenuHide();">
     @Html.Hidden("hdnAcqDealCode")
     @{
         int tempCount = 0;
         int counter = 0;
+        char type;
         foreach (var objAcqList in Model)
         {
             tempCount = tempCount + 1;
             counter += 1;
-        <div class="grid_item">
+            {
+                 type = objAcqList.Agreement_No[0];
+            }
+        <div class="@(type == 'A' ? "acq grid_item":"syn grid_item ")">
                 <ul>
                     <li class="deal_no">
                         <h4 class="agreementNo Highlight" data-toggle="tooltip" title="@objMessageKey.AgreementNo"> <a href="#" onclick="window.location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = objAcqList.Deal_Code }) '">@Html.Label("id", objAcqList.Agreement_No, new { style = "cursor:pointer;" })</a></h4>
@@ -186,12 +196,15 @@
                 @{
                     int Count = 0;
                 }
-
-                <a title="@objMessageKey.View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("Index", "Title_Objection", new { callFrom = "VIEW", TitleObjectCode = objAcqList.Title_Objection_Code })"></a>
-                <img id="imgLoading_@objAcqList.Title_Objection_Code" title="@objMessageKey.PleaseWait.." src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
-                <a id="btnShowError_@objAcqList.Title_Objection_Code" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none; color: #2b64a5;"></a>
-                <a title="@objMessageKey.Edit" id="Edit_@tempCount" class="glyphicon glyphicon-pencil AT_@objAcqList.Title_Objection_Code" onclick="return window.location.href='@Url.Action("Index", "Title_Objection", new { callFrom = "EDIT", TitleObjectCode = objAcqList.Title_Objection_Code})'"></a>
-
+                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView.ToString() + "~"))
+                {
+                    <a title="@objMessageKey.View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("Index", "Title_Objection", new { callFrom = "VIEW", TitleObjectCode = objAcqList.Title_Objection_Code })"></a>
+                }
+                    <a id="btnShowError_@objAcqList.Title_Objection_Code" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none; color: #2b64a5;"></a>
+                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                {
+                    <a title="@objMessageKey.Edit" id="Edit_@tempCount" class="glyphicon glyphicon-pencil AT_@objAcqList.Title_Objection_Code" onclick="return window.location.href='@Url.Action("Index", "Title_Objection", new { callFrom = "EDIT", TitleObjectCode = objAcqList.Title_Objection_Code})'"></a>
+                }
                 @if (Count > 3)
                 {
                     <a title="@objMessageKey.MoreAction" id="show_hide_@tempCount" href="#" class="glyphicon glyphicon-option-vertical show_hide AT_@objAcqList.Title_Objection_Code"></a>

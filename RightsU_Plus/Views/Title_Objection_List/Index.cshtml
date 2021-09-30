@@ -356,7 +356,7 @@
                 <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
                     <li class="AdSearch">
                         <label>@objMessageKey.AgreementNo:</label><br>
-                        <input type="text" value="@ViewBag.DealNo_Search" placeholder="@objMessageKey.DealNo" maxlength="15" id="txtSrchDealNo" style="width: 172px;" />
+                        <input type="text" value="@ViewBag.DealNo_Search" placeholder="Agreement No" maxlength="15" id="txtSrchDealNo" style="width: 172px;" />
                     </li>
                     <li class="AdSearch">
                         <label>@objMessageKey.Title:</label><br>
@@ -402,7 +402,7 @@
                     <ul>
                         <li>
                             <input type="text" autocomplete="off" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:260px !important;"
-                                   placeholder="Search by Title, DealNo, Licensor" />
+                                   placeholder="Search by Title, Agreement No, Licensor" />
                         </li>
                         <li>
                             <a class="btn-primary" style="cursor: pointer" onclick="CommonSrch();">@objMessageKey.Search</a>
@@ -412,10 +412,13 @@
                                 <span class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="ShowAll"></span>
                             </a>
                         </li>
-                        <li>
-                            <a class="btn-primary" href="@Url.Action("Index", "Title_Objection", new { callFrom = "LIST", TitleObjectCode = 0 })">Add Objection</a>
-                        </li>
-                    </ul>
+                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd.ToString() + "~"))
+                        {
+                            <li>
+                                <a class="btn-primary" href="@Url.Action("Index", "Title_Objection", new { callFrom = "LIST", TitleObjectCode = 0 })">Add Objection</a>
+                            </li>
+                        }
+                        </ul>
                 </div>
             </div>
             <div id="dvDealList">
