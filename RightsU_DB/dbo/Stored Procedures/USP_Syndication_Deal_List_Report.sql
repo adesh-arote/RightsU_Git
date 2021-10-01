@@ -37,16 +37,16 @@ BEGIN
 	
 	--SET @Agreement_No = ''
 	--SET @Start_Date= ''
-	--SET @End_Date = ''
+	--SET @End_Date= ''
 	--SET @Deal_Tag_Code = 0
-	--SET @Title_Codes = '703'
-	--SET @Business_Unit_code = '1,5'
+	--SET @Title_Codes = ' '
+	--SET @Business_Unit_code = 5
 	--SET @Is_Pushback = 'N'
 	--SET @IS_Expired  = 'N'
 	--SET @IS_Theatrical='N'
 	--SET @SysLanguageCode = 1
-	--SET @DealSegment = ''
-	--SET @TypeOfFilm = ''
+	--SET @DealSegment = 0
+	--SET @TypeOfFilm = 0
 	
 	--if CHARINDEX(',',@Business_Unit_code) > 0
 	--begin
@@ -104,9 +104,20 @@ BEGIN
 	@Col_Head48 NVARCHAR(MAX) = '',
 	@Col_Head49 NVARCHAR(MAX) = '',
 	@Col_Head50 NVARCHAR(MAX) = '',
-	@Col_Head51 NVARCHAR(MAX) = ''
+	@Col_Head51 NVARCHAR(MAX) = '',
+	@Col_Head52 NVARCHAR(MAX) = '',
+	@Col_Head53 NVARCHAR(MAX) = '',
+	@Col_Head54 NVARCHAR(MAX) = '',
+	@Col_Head55 NVARCHAR(MAX) = '',
+	@Col_Head56 NVARCHAR(MAX) = ''
 
 	BEGIN
+		IF OBJECT_ID('tempdb..#Title_Objection') IS NOT NULL
+		DROP TABLE #Title_Objection
+
+		IF OBJECT_ID('tempdb..#Title_Objection_Rights_Period') IS NOT NULL
+		DROP TABLE #Title_Objection_Rights_Period
+
 		IF OBJECT_ID('tempdb..#TEMP_Syndication_Deal_List_Report') IS NOT NULL
 		DROP TABLE #TEMP_Syndication_Deal_List_Report
 
@@ -238,16 +249,21 @@ BEGIN
 			Deal_Segment NVARCHAR(MAX),
 			Revenue_Vertical NVARCHAR(MAX),
 			Category_Name VARCHAR(MAX),
-			Columns_Value_Code INT
-			
+			Columns_Value_Code INT,
+			Objection_Platform NVARCHAR(MAX) default ' ~ ',
+			Objection_Region NVARCHAR(MAX),
+			Objection_Start_Date DATETIME,
+			Objection_End_Date DATETIME,
+			Under_Litigation NVARCHAR(MAX) default 'No',
 		)
 	END
 
-	DECLARE @IsDealSegment VARCHAR(100), @IsRevenueVertical VARCHAR(100), @IsTypeOfFilm VARCHAR(MAX), @Columns_Code INT
+	DECLARE @IsDealSegment VARCHAR(100), @IsRevenueVertical VARCHAR(100), @IsTypeOfFilm VARCHAR(MAX), @Columns_Code INT, @Is_Allow_Title_Objection CHAR(1) = 'N'
 	SELECT @IsDealSegment = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Deal_Segment' 
 	SELECT @IsRevenueVertical = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Gen_Revenue_Vertical' 
 	SELECT @IsTypeOfFilm = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_AcqSyn_Type_Of_Film' 
 	SELECT @Columns_Code = Columns_Code FROM Extended_Columns WHERE UPPER(Columns_Name) = 'TYPE OF FILM'
+	SELECT @Is_Allow_Title_Objection = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_Allow_Title_Objection'
 
 	BEGIN
 		INSERT INTO #TEMP_Syndication_Deal_List_Report
@@ -420,6 +436,50 @@ BEGIN
 			WHERE (Columns_Value_Code <> @TypeOfFilm ) OR Columns_Value_Code IS NULL
 		END
 		
+		IF (@Is_Allow_Title_Objection = 'Y')
+		BEGIN
+			SELECT * INTO #Title_Objection_Rights_Period FROM Title_Objection_Rights_Period
+	
+			UPDATE #Title_Objection_Rights_Period SET Rights_End_Date = 
+			CASE WHEN DATEDIFF(YEAR, Rights_Start_Date, Rights_End_Date) > 58 THEN NULL ELSE Rights_End_Date  END
+			
+			SELECT DISTINCT A.Title_Objection_Code, A.Record_Code, A.Title_Code, A.Objection_Start_Date, A.Objection_End_Date 
+			, B.Rights_Start_Date, B.Rights_End_Date,
+			 STUFF((
+				SELECT ', ' + COALESCE(C.Country_Name, TR.Territory_Name)
+				FROM Title_Objection_Territory T
+				left join Country C ON C.Country_Code = T.Country_Code
+				left join Territory TR ON TR.Territory_Code = T.Territory_Code
+				WHERE T.Title_Objection_Code = A.Title_Objection_Code
+            FOR XML PATH('')
+            ), 1, 1, '') AS Region,
+			STUFF((
+				SELECT ',' + CAST(P.Platform_Code AS VARCHAR)
+				FROM Title_Objection_Platform P
+		
+				WHERE P.Title_Objection_Code = A.Title_Objection_Code
+            FOR XML PATH('')
+            ), 1, 1, '') AS Platform_Name
+			INTO #Title_Objection
+			FROM Title_Objection A
+			INNER JOIN #Title_Objection_Rights_Period B ON A.Title_Objection_Code = B.Title_Objection_Code 
+			WHERE A.Record_Type = 'S'
+
+			UPDATE PT SET PT.Platform_Name = a.Platform_Hierarchy
+			from #Title_Objection PT
+			CROSS APPLY  [dbo].[UFN_Get_Platform_Hierarchy_WithNo](PT.Platform_Name) a
+			
+			UPDATE ADLR SET ADLR.Objection_Start_Date = TOB.Objection_Start_Date,
+							ADLR.Objection_End_Date = TOB.Objection_End_Date,
+							ADLR.Objection_Platform = TOB.Platform_Name,
+							ADLR.Objection_Region = TOB.Region,
+							ADLR.Under_Litigation = 'Yes. Please contact legal for further details'
+			FROM #TEMP_Syndication_Deal_List_Report ADLR
+			INNER JOIN #Title_Objection TOB ON TOB.Record_Code = ADLR.Syn_Deal_code AND TOB.Title_Code = ADLR.Title_Code 
+				AND TOB.Rights_Start_Date =ADLR.Right_Start_Date AND ISNULL(TOB.Rights_End_Date,'') = ISNULL(ADLR.Right_End_Date,'')
+
+		END
+
 		
 		PRINT 'Director, StartCast Insert and update for Primary Rights'
 			
@@ -568,7 +628,12 @@ BEGIN
 		TEMP_SDLR.Promtoer_Group AS Promoter_Group_Name,
 		TEMP_SDLR.Promtoer_Remarks AS Promoter_Remarks_Name,
 		TEMP_SDLR.Category_Name,
-		TEMP_SDLR.Business_Unit_Name
+		TEMP_SDLR.Business_Unit_Name,
+		TEMP_SDLR.Objection_Start_Date,
+		TEMP_SDLR.Objection_End_Date,
+		TEMP_SDLR.Objection_Platform,
+		TEMP_SDLR.Objection_Region,
+		TEMP_SDLR.Under_Litigation
 		INTO #TempSynDealListReport
 		FROM #TEMP_Syndication_Deal_List_Report TEMP_SDLR
 		ORDER BY TEMP_SDLR.Business_Unit_Name, TEMP_SDLR.Agreement_No, TEMP_SDLR.Is_Pushback
@@ -625,7 +690,12 @@ BEGIN
 			@Col_Head48 = 'Deal Segment',
 			@Col_Head49 = CASE WHEN  SM.Message_Key = 'CategoryName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head49 END,
 			@Col_Head50 = 'Revenue Vertical',
-			@Col_Head51 = 'Business Unit Name'
+			@Col_Head51 = 'Business Unit Name',
+			@Col_Head52 = 'Objection Start Date',
+			@Col_Head53 = 'Objection End Date',
+			@Col_Head54 = 'Objection Region',
+			@Col_Head55 = 'Objection Platform',
+			@Col_Head56 = 'Under Litigation'
 
 		 FROM System_Message SM  
 		 INNER JOIN System_Module_Message SMM ON SMM.System_Message_Code = SM.System_Message_Code  
@@ -643,6 +713,7 @@ BEGIN
 					 [Subtitling], [Dubbing], [Sub Licensing], [ROFR], [Restriction Remark], [Rights Holdback Platform], [Rights Holdback Remarks], [Blackout], [Rights Remarks],
 					 [Reverse Holdback Platform], [Reverse Holdback Start Date], [Reverse Holdback End Date], [Reverse Holdback Tentative], [Reverse Holdback Term], [Reverse Holdback Country],
 					 [Reverse Holdback Remarks], [General Remark], [Payment terms & Conditions], [Workflow status], [Run Type], [Attachment], [Self Utilization Group], [Self Utilization Remarks],[Category_Name]
+					 ,[Objection Start Date],[Objection End Date],[Objection Region],[Objection Platform], [Under Litigation]
 				FROM (
 			 SELECT
 					sorter = 1,
@@ -661,13 +732,14 @@ BEGIN
 					CAST([Pushback_Is_Tentative] AS NVARCHAR(MAX)) AS [Reverse Holdback Tentative], CAST([Pushback_Term] AS NVARCHAR(MAX)) As [Reverse Holdback Term], CAST([Pushback_Country_Name] AS NVARCHAR(MAX)) As [Reverse Holdback Country], CAST([Pushback_Remark] AS NVARCHAR(MAX)) As [Reverse Holdback Remarks],
 					CAST([General_Remark] AS NVARCHAR(MAX)) As [General Remark], CAST([Payment_Remarks] AS NVARCHAR(MAX)) As [Payment terms & Conditions], CAST([Deal_Workflow_Status] AS NVARCHAR(MAX))  As [Workflow status], CAST([Run_Type] AS NVARCHAR(MAX)) As [Run Type], CAST([Is_Attachment] AS NVARCHAR(MAX)) As [Attachment],
 					CAST([Promoter_Group_Name] AS NVARCHAR(MAX)) As[Self Utilization Group], CAST([Promoter_Remarks_Name] AS NVARCHAR(MAX)) As [Self Utilization Remarks], CAST([Category_Name] AS NVARCHAR(MAX)) AS [Category_Name]
+					,CONVERT(DATE,Objection_Start_Date,103)  As [Objection Start Date], CONVERT(DATE,Objection_End_Date,103)  As [Objection End Date], CAST(Objection_Region AS NVARCHAR(MAX)) As [Objection Region], CAST(Objection_Platform AS NVARCHAR(MAX)) As [Objection Platform],  CAST(Under_Litigation AS NVARCHAR(MAX)) As [Under Litigation]
 				From #TempSynDealListReport
 				UNION ALL
 					SELECT CAST(0 AS Varchar(100)), @Col_Head01, @Col_Head51, 
 					@Col_Head02, @Col_Head03, @Col_Head04, GETDATE() , @Col_Head06, @Col_Head48, @Col_Head50, @Col_Head07,@Col_Head47, @Col_Head08, @Col_Head09, @Col_Head10, @Col_Head11
 					, @Col_Head12, @Col_Head13, @Col_Head14, @Col_Head15,  GETDATE(), GETDATE(), @Col_Head18, 'Pushback', @Col_Head19, @Col_Head20, @Col_Head21, @Col_Head22, @Col_Head23, @Col_Head24, @Col_Head25, GETDATE()
 					, @Col_Head27, @Col_Head28, @Col_Head29, @Col_Head30, @Col_Head31, @Col_Head32, GETDATE(), GETDATE(), @Col_Head35, @Col_Head36, @Col_Head37, @Col_Head38, @Col_Head39, @Col_Head40
-					, @Col_Head41, @Col_Head42, @Col_Head43, @Col_Head44, @Col_Head45,@Col_Head49
+					, @Col_Head41, @Col_Head42, @Col_Head43, @Col_Head44, @Col_Head45,@Col_Head49, GETDATE(), GETDATE(), @Col_Head54, @Col_Head55, @Col_Head56
 				) X   
 			ORDER BY Sorter, [Business Unit Name], [Agreement_No]
 		END

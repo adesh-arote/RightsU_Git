@@ -1569,6 +1569,25 @@ namespace RightsU_DAL
 
     public class Save_Master_Entities_Generic
     {
+        public ICollection<Title_Objection_Platform> SaveTitle_Objection_Platform(ICollection<Title_Objection_Platform> entityList, DbContext dbContext)
+        {
+            ICollection<Title_Objection_Platform> updatedList = entityList;
+            updatedList = new Save_Entitiy_Lists_Generic<Title_Objection_Platform>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
+        public ICollection<Title_Objection_Territory> SaveTitle_Objection_Territory(ICollection<Title_Objection_Territory> entityList, DbContext dbContext)
+        {
+            ICollection<Title_Objection_Territory> updatedList = entityList;
+            updatedList = new Save_Entitiy_Lists_Generic<Title_Objection_Territory>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
+        public ICollection<Title_Objection_Rights_Period> SaveTitle_Objection_Rights_Period(ICollection<Title_Objection_Rights_Period> entityList, DbContext dbContext)
+        {
+            ICollection<Title_Objection_Rights_Period> updatedList = entityList;
+
+            updatedList = new Save_Entitiy_Lists_Generic<Title_Objection_Rights_Period>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
 
         public ICollection<Talent_Role> SaveTalentRole(ICollection<Talent_Role> entityList, DbContext dbContext)
         {
@@ -2933,5 +2952,59 @@ namespace RightsU_DAL
     public class DM_Title_Import_Utility_Data_Repository : RightsU_Repository<DM_Title_Import_Utility_Data>
     {
         public DM_Title_Import_Utility_Data_Repository(string conStr) : base(conStr) { }
+    }
+
+    public class Title_Objection_Status_Repository : RightsU_Repository<Title_Objection_Status>
+    {
+        public Title_Objection_Status_Repository(string conStr) : base(conStr) { }
+    }
+
+    public class Title_Objection_Platform_Repository : RightsU_Repository<Title_Objection_Platform>
+    {
+        public Title_Objection_Platform_Repository(string conStr) : base(conStr) { }
+      
+    }
+
+    public class Title_Objection_Territory_Repository : RightsU_Repository<Title_Objection_Territory>
+    {
+        public Title_Objection_Territory_Repository(string conStr) : base(conStr) { }
+       
+    }
+
+    public class Title_Objection_Rights_Period_Repository : RightsU_Repository<Title_Objection_Rights_Period>
+    {
+        public Title_Objection_Rights_Period_Repository(string conStr) : base(conStr) { }
+       
+    }
+
+    public class Title_Objection_Type_Repository : RightsU_Repository<Title_Objection_Type>
+    {
+        public Title_Objection_Type_Repository(string conStr) : base(conStr) { }
+    }
+
+    public class Title_Objection_Repository : RightsU_Repository<Title_Objection>
+    {
+        public Title_Objection_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Title_Objection objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
+            if (objToSave.Title_Objection_Platform != null) objToSave.Title_Objection_Platform = objSaveEntities.SaveTitle_Objection_Platform(objToSave.Title_Objection_Platform, base.DataContext);
+            if (objToSave.Title_Objection_Territory != null) objToSave.Title_Objection_Territory = objSaveEntities.SaveTitle_Objection_Territory(objToSave.Title_Objection_Territory, base.DataContext);
+            if (objToSave.Title_Objection_Rights_Period != null) objToSave.Title_Objection_Rights_Period = objSaveEntities.SaveTitle_Objection_Rights_Period(objToSave.Title_Objection_Rights_Period, base.DataContext);
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 }

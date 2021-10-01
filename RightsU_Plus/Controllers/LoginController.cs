@@ -222,68 +222,90 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Index(string alertMsg = "", string LoggedUserName = "", string strUserName = "", string strPassword = "")
         {
-            if (Request.QueryString["Action"] != null)
+            try
             {
-                string Action = Convert.ToString(Request.QueryString["Action"]);
-                string Code = Convert.ToString(Request.QueryString["Code"]);
-                string Type = Convert.ToString(Request.QueryString["Type"]);
-                string Req = Convert.ToString(Request.QueryString["Req"]);
+                LogErr("Index Login", "Login Indec method test", "Line no 1:", Server.MapPath("~"));
 
-                objLoginParam.Action = Action;
-                objLoginParam.DealCode = Convert.ToInt32(Code); ;
-                objLoginParam.ModuleCode = Convert.ToInt32(Type);
-                objLoginParam.Req = Req;
-            }
-            else if (Request.QueryString["ReleaseAC"] == null)
-                objLoginParam = null;
 
-            string a = Convert.ToString(System.Web.HttpContext.Current.Session["Entity_Type"]);
-            setDefaultProperty(System.Web.HttpContext.Current.Response, System.Web.HttpContext.Current.Request);
-            ViewBag.BindEntity = BindEntity("");
-            GetSystemVersion();
-            TempData["LOGGEDUSER"] = LoggedUserName;
-            TempData["STRUSERNAME"] = strUserName;
-            TempData["STRPASSWORD"] = strPassword;
-
-            if (ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().Trim().ToUpper() == "Y")
-                ViewBag.ForgotPwdVisibility = false;
-            else
-                ViewBag.ForgotPwdVisibility = true;
-            HttpApplicationState Application = HttpContext.ApplicationInstance.Application;
-
-            if (Request.QueryString["isReset"] != null && Request.QueryString["isReset"].ToString().ToUpper().Trim() == "Y" && Session[RightsU_Session.SESS_KEY] != null && Application["LOGGEDUSERS"] != null)
-            {
-                if (Application["LOGGEDUSERS"] != null)
-                    ClearDataFromApp();
-
-                Session.Abandon();
-            }
-            else if (Request.QueryString["ReleaseAC"] != null)
-            {
-                if (Request.QueryString["ReleaseAC"].ToString().ToUpper().Trim() == "Y")
+                if (Request.QueryString["Action"] != null)
                 {
-                    if (Request.QueryString["name"] != null)
-                    {
-                        Hashtable htLoggedUser = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
-                        htLoggedUser = (Hashtable)Application["LOGGEDUSERS"];
-                        string[] timeSessionId = new string[2];
+                    string Action = Convert.ToString(Request.QueryString["Action"]);
+                    string Code = Convert.ToString(Request.QueryString["Code"]);
+                    string Type = Convert.ToString(Request.QueryString["Type"]);
+                    string Req = Convert.ToString(Request.QueryString["Req"]);
 
-                        timeSessionId = getTimeAndSessionId(Convert.ToString(htLoggedUser[Request.QueryString["name"] + "#" + Convert.ToString(Session["Entity_Type"])]));
-                        htLoggedUser.Remove(Request.QueryString["name"] + "#" + Convert.ToString(Session["Entity_Type"]));
-                        OnlineVisitorsContainer.Visitors.Remove(timeSessionId[1]);
-                        Application.Lock();
-                        Application["LOGGEDUSERS"] = htLoggedUser;
-                        Application.UnLock();
-                        TempData["Name"] = Request.QueryString["name"].ToString();
-                        TempData["SelectedEntity"] = Convert.ToString(Session["Entity_Type"]);
-                        TempData["STRUSERNAME"] = TempData["Name"];
-                        alertMsg = "Your earlier session has been cleared, Please re-login";
+                    objLoginParam.Action = Action;
+                    objLoginParam.DealCode = Convert.ToInt32(Code); ;
+                    objLoginParam.ModuleCode = Convert.ToInt32(Type);
+                    objLoginParam.Req = Req;
+                    LogErr("Index Login", "Login Indec method test", "Line no 2:", Server.MapPath("~"));
+                }
+                else if (Request.QueryString["ReleaseAC"] == null)
+                    objLoginParam = null;
+                LogErr("Index Login", "Login Indec method test", "Line no 3:", Server.MapPath("~"));
+                string a = Convert.ToString(System.Web.HttpContext.Current.Session["Entity_Type"]);
+                setDefaultProperty(System.Web.HttpContext.Current.Response, System.Web.HttpContext.Current.Request);
+                LogErr("Index Login", "Login Indec method test", "Line no 4:", Server.MapPath("~"));
+                ViewBag.BindEntity = BindEntity("");
+                GetSystemVersion();
+                TempData["LOGGEDUSER"] = LoggedUserName;
+                TempData["STRUSERNAME"] = strUserName;
+                TempData["STRPASSWORD"] = strPassword;
+                LogErr("Index Login", "Login Indec method test", "Line no 5:", Server.MapPath("~"));
+
+                if (ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().Trim().ToUpper() == "Y")
+                    ViewBag.ForgotPwdVisibility = false;
+                else
+                    ViewBag.ForgotPwdVisibility = true;
+                HttpApplicationState Application = HttpContext.ApplicationInstance.Application;
+                LogErr("Index Login", "Login Indec method test", "Line no 6:", Server.MapPath("~"));
+                if (Request.QueryString["isReset"] != null && Request.QueryString["isReset"].ToString().ToUpper().Trim() == "Y" && Session[RightsU_Session.SESS_KEY] != null && Application["LOGGEDUSERS"] != null)
+                {
+                    LogErr("Index Login", "Login Indec method test", "Line no 7:", Server.MapPath("~"));
+                    if (Application["LOGGEDUSERS"] != null)
+                        ClearDataFromApp();
+                    LogErr("Index Login", "Login Indec method test", "Line no 8:", Server.MapPath("~"));
+                    Session.Abandon();
+                }
+                else if (Request.QueryString["ReleaseAC"] != null)
+                {
+                    LogErr("Index Login", "Login Indec method test", "Line no 9:", Server.MapPath("~"));
+                    if (Request.QueryString["ReleaseAC"].ToString().ToUpper().Trim() == "Y")
+                    {
+                        LogErr("Index Login", "Login Indec method test", "Line no 10:", Server.MapPath("~"));
+                        if (Request.QueryString["name"] != null)
+                        {
+                            LogErr("Index Login", "Login Indec method test", "Line no 11:", Server.MapPath("~"));
+                            Hashtable htLoggedUser = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
+                            htLoggedUser = (Hashtable)Application["LOGGEDUSERS"];
+                            string[] timeSessionId = new string[2];
+                            LogErr("Index Login", "Login Indec method test", "Line no 12:", Server.MapPath("~"));
+                            timeSessionId = getTimeAndSessionId(Convert.ToString(htLoggedUser[Request.QueryString["name"] + "#" + Convert.ToString(Session["Entity_Type"])]));
+                            htLoggedUser.Remove(Request.QueryString["name"] + "#" + Convert.ToString(Session["Entity_Type"]));
+                            LogErr("Index Login", "Login Indec method test", "Line no 13:", Server.MapPath("~"));
+                            OnlineVisitorsContainer.Visitors.Remove(timeSessionId[1]);
+                            Application.Lock();
+                            LogErr("Index Login", "Login Indec method test", "Line no 14:", Server.MapPath("~"));
+                            Application["LOGGEDUSERS"] = htLoggedUser;
+                            Application.UnLock();
+                            LogErr("Index Login", "Login Indec method test", "Line no 15:", Server.MapPath("~"));
+                            TempData["Name"] = Request.QueryString["name"].ToString();
+                            TempData["SelectedEntity"] = Convert.ToString(Session["Entity_Type"]);
+                            TempData["STRUSERNAME"] = TempData["Name"];
+                            alertMsg = "Your earlier session has been cleared, Please re-login";
+                            LogErr("Index Login", "Login Indec method test", "Line no 16:", Server.MapPath("~"));
+                        }
                     }
                 }
+                ViewBag.AlertMsg = alertMsg;
+                LogErr("Index Login", "Login Indec method test ~" + alertMsg, "Line no 17:", Server.MapPath("~"));
+                Session["RedirectToApproval"] = null;
             }
-            ViewBag.AlertMsg = alertMsg;
-            Session["RedirectToApproval"] = null;
-
+            catch (Exception ex)
+            {
+                LogErr("Index Login", "Login Indec method test ~" + ex.Message, "Line no 17:", Server.MapPath("~"));
+                throw;
+            }
 
             return View("Index");
         }

@@ -1,0 +1,15 @@
+﻿CREATE TYPE [dbo].[Title_Objection_UDT] AS TABLE (
+	Title_Objection_Code INT NULL,
+    PlatformCodes		 VARCHAR (MAX) NULL,
+    CTCodes				 VARCHAR (MAX) NULL,
+    LPCodes				 NVARCHAR (MAX) NULL,
+    SD					 VARCHAR (MAX) NULL,
+    ED					 VARCHAR (MAX) NULL,
+    ObjRemarks			 NVARCHAR (MAX) NULL,
+    ResRemarks			 NVARCHAR (MAX) NULL,
+    Objection_Type_Code	 INT NULL,
+    Title_Status_Code	 INT NULL,
+    CntTerr				 CHAR (1)      NULL,
+    TitleCode			 INT NULL,
+    RecordType			 CHAR (1)      NULL,
+    RecordCode			 INT NULL);

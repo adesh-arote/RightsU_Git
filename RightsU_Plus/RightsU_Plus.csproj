@@ -218,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\Title_Objection_ListController.cs" />
     <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
     <Compile Include="Controllers\Availability_Movie_NewController.cs" />
     <Compile Include="Controllers\Deal_DescriptionController.cs" />
@@ -311,6 +312,7 @@
     <Compile Include="Controllers\IPR_OppBy_AgainstController.cs" />
     <Compile Include="Controllers\Music_TitleController.cs" />
     <Compile Include="Controllers\Syn_DealController.cs" />
+    <Compile Include="Controllers\Title_ObjectionController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\VendorController.cs" />
     <Compile Include="Controllers\WebAPIController.cs" />
@@ -752,6 +754,8 @@
       <DependentUpon>Title_AddEdit.js</DependentUpon>
     </Content>
     <Content Include="Custom_Scripts\Title_Content_ImportExport.js" />
+    <Content Include="Custom_Scripts\Title_Objection_Adv_List.js" />
+    <Content Include="Custom_Scripts\Title_Objection_Generic.js" />
     <Content Include="Download\TitleContentList .xml" />
     <Content Include="EntitiesList.xml">
       <SubType>Designer</SubType>
@@ -1278,6 +1282,14 @@
     <Content Include="Views\IPR_Dashboard\DashBoard.cshtml" />
     <Content Include="Views\IPR_List\_OppositionDetailPopup.cshtml" />
     <Content Include="Views\Reports\IPR_Report.cshtml" />
+    <Content Include="Views\Title_Objection\Index.cshtml" />
+    <Content Include="Views\Title_Objection\_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_Title_Objection_List.cshtml" />
+    <Content Include="Views\Title_Objection_List\_List_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection_List\Index.cshtml" />
+    <Content Include="Views\Title_Objection\_Edit_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_Add_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_View_Title_Objection.cshtml" />
     <Content Include="Views\Objection_Type\_ObjectionTypeList.cshtml" />
     <Content Include="Views\Objection_Type\Index.cshtml" />
     <Content Include="Views\Shared\_Acq_Rev_HB_Validation_Popup.cshtml" />
