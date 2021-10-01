@@ -72,6 +72,7 @@
             $('.modal .scale_table_block').css("margin", "5px");
         }
         var mark = function () {
+            debugger;
             var keyword = $("#srchCommon").val();
             var options = { 'separateWordSearch': true };
             $(".Highlight").unmark({
@@ -177,7 +178,7 @@
                     @objAcqList.Title_Name
                 </span>
             </li>
-            <li class="deal_licensor Highlight" title="@objMessageKey.Licensor">@objAcqList.Vendor_Name</li>
+            <li class="deal_licensor Highlight" title="Licensor/Licensee">@objAcqList.Vendor_Name</li>
             <li class="deal_territory" title="Country/Territory">
                 @if (string.IsNullOrEmpty(objAcqList.CountryDetails))
                 {

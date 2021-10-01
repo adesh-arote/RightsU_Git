@@ -139,6 +139,7 @@ namespace RightsU_Plus.Controllers
                 Title_Objection_List_Search.isAdvanced = isTAdvanced;
             if (strShowAll == "N")
             {
+                Title_Objection_List_Search.Common_Search = !string.IsNullOrEmpty(commonSearch.Trim()) ? commonSearch.Trim().Replace("'", "''") : "";
                 if (Title_Objection_List_Search.isAdvanced == "Y")
                 {
                     Title_Objection_List_Search.DealNo_Search = !string.IsNullOrEmpty(strDealNo) ? strDealNo.Trim() : "";
@@ -255,6 +256,10 @@ namespace RightsU_Plus.Controllers
         #region ---------------BIND DROPDOWNS---------------
         private List<USP_Get_Acq_PreReq_Result> BindAllDropDowns()
         {
+            if(Title_Objection_List_Search.DealType_Search == "")
+            {
+                Title_Objection_List_Search.DealType_Search = "0";
+            }
             List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("OBT,OBS,TOV,TOB", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(Title_Objection_List_Search.DealType_Search), Title_Objection_List_Search.BUCodes_Search).ToList();
             return obj_USP_Get_PreReq_Result;
         }

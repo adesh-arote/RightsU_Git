@@ -431,8 +431,7 @@ namespace RightsU_Plus.Controllers
                 objTO.Title_Objection_Platform.ToList().ForEach(x => x.EntityState = State.Deleted);
                 objTO.Title_Objection_Territory.ToList().ForEach(x => x.EntityState = State.Deleted);
                 objTO.Title_Objection_Rights_Period.ToList().ForEach(x => x.EntityState = State.Deleted);
-                objTO.Last_Updated_Time = System.DateTime.Now;
-                objTO.Last_Action_By = objLoginUser.Users_Code;
+                
             }
             else
             {
@@ -450,6 +449,8 @@ namespace RightsU_Plus.Controllers
             objTO.Objection_End_Date = Convert.ToDateTime(ED);
             objTO.Objection_Remarks = ObjRemarks;
             objTO.Resolution_Remarks = ResRemarks;
+            objTO.Last_Updated_Time = System.DateTime.Now;
+            objTO.Last_Action_By = objLoginUser.Users_Code;
 
             objTO.EntityState = TOC > 0 ? State.Modified : State.Added;
 

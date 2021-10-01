@@ -33,6 +33,8 @@
     var URL_PartialDealList = '@Url.Action("PartialDealList", "Title_Objection_List")'
         , URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Title_Objection_List")';
 
+    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
+
     $(document).ready(function () {
         debugger;
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
@@ -366,7 +368,8 @@
                     </li>
                     <li class="AdSearch">
                         <label>Objection Type:</label><br>
-                        <select id="ddlSrchObjectionType" style="width: 174px;" class="form_input chosen-select"></select>
+                        <select id="ddlSrchObjectionType" class="form_input chosen-select"></select>
+                        @*<select id="ddlSrchObjectionType" style="width: 174px;" class="form_input chosen-select"></select>*@
                     </li>
 
                     <li class="AdSearch">
@@ -374,7 +377,7 @@
                         <select id="ddlObjectionStatus" class="form_input chosen-select" style="width: 174px;"></select>
                     </li>
                     <li class="AdSearch">
-                        <label>@objMessageKey.Licensor:</label><br>
+                        <label>Licensor/Licensee:</label><br>
                         <select id="ddlSrchLicensor" multiple="multiple"></select>
                     </li>
                 </ul>
@@ -402,7 +405,7 @@
                     <ul>
                         <li>
                             <input type="text" autocomplete="off" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:260px !important;"
-                                   placeholder="Search by Title, Agreement No, Licensor" />
+                                   placeholder="Search by Title, Agreement No, Licensor/Licensee" />
                         </li>
                         <li>
                             <a class="btn-primary" style="cursor: pointer" onclick="CommonSrch();">@objMessageKey.Search</a>

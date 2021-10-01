@@ -56,8 +56,8 @@ function BindAdvanced_Search_Controls(callfrom) {
         $('#divSearch').slideToggle(400);
 
     }
-    if ($('#txtTitleSearch').val())
-        tmpTitle = $('#txtTitleSearch').val();
+    if ($('#ddlSrchTitle').val())
+        tmpTitle = $('#ddlSrchTitle').val();
     var Is_async = true;
     if (tmp_IsAdvanced == 'Y')
         Is_async = false
@@ -81,9 +81,11 @@ function BindAdvanced_Search_Controls(callfrom) {
                 else {
                     debugger;
                     $("#ddlObjectionStatus").empty();
+                    $("#ddlSrchObjectionType").empty();
+                    BindObjectionType();
                     $(result.USP_Result).each(function (index, item) {
-                        if (this.Data_For == 'OBT')
-                            $("#ddlSrchObjectionType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                        //if (this.Data_For == 'OBT')
+                        //    $("#ddlSrchObjectionType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'OBS')
                             $("#ddlObjectionStatus").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'TOV')
@@ -93,7 +95,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                     });
 
                     var obj_Search = $(result.Title_Objection_List_Search);
-                    $("#ddlSrchObjectionType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
+                    //$("#ddlSrchObjectionType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlObjectionStatus").val(obj_Search[0].WorkFlowStatus_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlSrchLicensor").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
                     $("#ddlSrchTitle").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
@@ -104,6 +106,44 @@ function BindAdvanced_Search_Controls(callfrom) {
             }
         });
     
+}
+function BindObjectionType() {
+
+    $.ajax({
+        type: "POST",
+        url: URL_BindObjectionType,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        async: false,
+        success: function (result) {
+            if (result === "true") {
+                redirectToLogin();
+            }
+            else {
+                debugger;
+                $("#ddlSrchObjectionType").empty();
+
+                $("#ddlSrchObjectionType").append($("<option>").val(""));
+                var lstObj_Type_Group = result.lstObjType.map(item => item.Obj_Type_Group)
+                    .filter((value, index, self) => self.indexOf(value) === index);
+
+                $(lstObj_Type_Group).each(function (index, item) {
+                    $("#ddlSrchObjectionType").append('<optgroup label="' + item + '">');
+                    $(result.lstObjType).each(function (index, itemOT) {
+                        if (this.Obj_Type_Group === item) {
+                            $("#ddlSrchObjectionType").children('optgroup[label="' + item + '"]').append($("<option>").val(this.Code).text(this.Obj_Type_Name));
+                        }
+                    });
+                });
+            }
+            $("#ddlSrchObjectionType").trigger("chosen:updated");
+        },
+        error: function (result) {
+            alert('Error: ' + result.responseText);
+            hideLoading();
+        }
+    });
 }
 function LoadDeals(pagenumber, isAdvanced, showAll) {
     debugger;
@@ -191,10 +231,12 @@ function validateSearch() {
     $("#srchCommon").val('');
     $('#hdnClearAll').val('N');
     var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N';
+    
+    if ($("#ddlObjectionStatus").val())
+        tmpStatus =  $('#ddlSrchTitle').val();
 
-
-    if ($("#txtTitleSearch").val())
-        tmpTitle = $('#txtTitleSearch').val();
+    if ($("#ddlSrchTitle").val())
+        tmpTitle = $('#ddlSrchTitle').val();
 
     if ($('#ddlSrchLicensor').val())
         tmpLicensor = $('#ddlSrchLicensor').val().join(',');
@@ -258,6 +300,7 @@ function handleCancel() {
 /*Confirmation Alert*/
 
 function CommonSrch() {
+    debugger;
     $('.required').removeClass('required');
     $("[required='required']").removeAttr("required"); 
 
