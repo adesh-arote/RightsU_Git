@@ -6965,7 +6965,7 @@ namespace RightsU_BLL
         }
     }
 
-    public class Title_Objection_Status_Service
+    public class Title_Objection_Status_Service : BusinessLogic<Title_Objection_Status>
     {
         private readonly Title_Objection_Status_Repository obj_Repository;
 
@@ -6982,6 +6982,21 @@ namespace RightsU_BLL
         public Title_Objection_Status GetById(int id)
         {
             return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Title_Objection_Status objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Title_Objection_Status objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Title_Objection_Status objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -7042,7 +7057,7 @@ namespace RightsU_BLL
         }
     }
 
-    public class Title_Objection_Platform_Service
+    public class Title_Objection_Platform_Service : BusinessLogic<Title_Objection_Platform>
     {
         private readonly Title_Objection_Platform_Repository obj_Repository;
 
@@ -7060,9 +7075,24 @@ namespace RightsU_BLL
         {
             return obj_Repository.GetById(id);
         }
+
+        public override bool Validate(Title_Objection_Platform objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Title_Objection_Platform objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Title_Objection_Platform objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public class Title_Objection_Territory_Service
+    public class Title_Objection_Territory_Service : BusinessLogic<Title_Objection_Territory>
     {
         private readonly Title_Objection_Territory_Repository obj_Repository;
 
@@ -7080,9 +7110,24 @@ namespace RightsU_BLL
         {
             return obj_Repository.GetById(id);
         }
+
+        public override bool Validate(Title_Objection_Territory objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Title_Objection_Territory objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Title_Objection_Territory objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public class Title_Objection_Rights_Period_Service
+    public class Title_Objection_Rights_Period_Service : BusinessLogic<Title_Objection_Rights_Period>
     {
         private readonly Title_Objection_Rights_Period_Repository obj_Repository;
 
@@ -7100,25 +7145,20 @@ namespace RightsU_BLL
         {
             return obj_Repository.GetById(id);
         }
-    }
 
-    public class Title_Objection_Type_Service
-    {
-        private readonly Title_Objection_Type_Repository obj_Repository;
-
-        public Title_Objection_Type_Service(string Connection_Str)
+        public override bool Validate(Title_Objection_Rights_Period objToValidate, out dynamic resultSet)
         {
-            this.obj_Repository = new Title_Objection_Type_Repository(Connection_Str);
+            throw new NotImplementedException();
         }
 
-        public IQueryable<Title_Objection_Type> SearchFor(Expression<Func<Title_Objection_Type, bool>> predicate)
+        public override bool ValidateUpdate(Title_Objection_Rights_Period objToValidate, out dynamic resultSet)
         {
-            return obj_Repository.SearchFor(predicate);
+            throw new NotImplementedException();
         }
 
-        public Title_Objection_Type GetById(int id)
+        public override bool ValidateDelete(Title_Objection_Rights_Period objToValidate, out dynamic resultSet)
         {
-            return obj_Repository.GetById(id);
+            throw new NotImplementedException();
         }
     }
 }
