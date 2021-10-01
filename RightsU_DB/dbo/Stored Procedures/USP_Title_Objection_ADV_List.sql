@@ -14,8 +14,8 @@ As
 BEGIN      
  --SET @OrderByCndition = N'Last_Updated_Time DESC'      
       
-	 IF(@PageNo = 0)      
-	  SET @PageNo = 1      
+	 --IF(@PageNo = 0)      
+	 -- SET @PageNo = 1      
       
 	 IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp      
 	 IF OBJECT_ID('tempdb..#Filter') IS NOT NULL DROP TABLE #Filter    
@@ -82,7 +82,7 @@ BEGIN
 	 )    
       
 	  Declare @SqlPageNo NVARCHAR(MAX),@SqlPageNo1 NVARCHAR(MAX)--,@Type Varchar(100)= 'A,S',@ExactMatch varchar(max) = '',@RecordCount Int = 10,@IsPaging VARCHAR(10)= 'Y',@PageNo Int=1,@PageSize Int=14  
-	  --,@StrSearch NVARCHAR(Max) = 'AND T.Title_Code IN(2297)' --AND V.Vendor_Code IN(527)AND TOS.Title_Objection_Status_Code IN(2)AND Objection_Type_Code IN(7)    
+	  --,@StrSearch NVARCHAR(Max) = '' --AND V.Vendor_Code IN(527)AND TOS.Title_Objection_Status_Code IN(2)AND Objection_Type_Code IN(7)    AND T.Title_Code IN(2297)
     
 	  INSERT INTO #Type(Deal_Type)    
 	  SELECT number FROM dbo.fn_Split_withdelemiter(@Type,',')    
@@ -155,7 +155,7 @@ BEGIN
 		--)a On T.Id = a.Id and a.RowNum <> 1    
      
 		PRINT '3'    
-		if(@StrSearch = '' OR @StrSearch IS NULL)
+		if(@StrSearch = '' )
 		BEGIN
 		  Select @RecordCount = Count( (AgreeMent_No )) From #TempData 
 		END
@@ -187,7 +187,7 @@ BEGIN
 		  INSERT INTO #Filter    
 		  SELECT DISTINCT * FROM #AcqSynData  
 
-		  if(@StrSearch != '' OR @StrSearch IS NOT NULL)
+		  if(@StrSearch != '')
 		  BEGIN
 			Select @RecordCount = Count( (Title_Objection_Code )) From #AcqSynData  
 		  END
@@ -244,7 +244,7 @@ BEGIN
 		 --)a On T.Id = a.Id and a.RowNum <> 1    
      
 		 PRINT '3'    
-		 if(@StrSearch = '' OR @StrSearch IS NULL)
+		 if(@StrSearch = '')
 		BEGIN
 		 Select @RecordCount = Count((AgreeMent_No )) From #TempData   
 		 END
@@ -274,7 +274,7 @@ BEGIN
 		INSERT INTO #Filter    
 		SELECT DISTINCT * FROM #AcqSynData  
 
-		if(@StrSearch != '' OR @StrSearch IS NOT NULL)
+		if(@StrSearch != '')
 		  BEGIN
 			Select @RecordCount = Count( (Title_Objection_Code )) From #AcqSynData  
 		  END
@@ -355,7 +355,7 @@ BEGIN
 		 -- select row_number()over(partition by agreement_no order by sort asc) rownum, id, agreement_no, sort from #tempdata    
 		 --)a on t.id = a.id and a.rownum <> 1    
 		 PRINT '3'    
-		 if(@StrSearch = '' OR @StrSearch IS  NULL)
+		 if(@StrSearch = '')
 		  BEGIN
 		 Select @RecordCount = Count((agreement_no )) From #TempData   
 		 END
@@ -382,7 +382,6 @@ BEGIN
 		 EXEC(@SqlPageNo1)    
 		 
 		 SET @SqlPageNo1 = ''    
-    
 		 SET @SqlPageNo1 ='INSERT INTO #AcqSynData(Title_Objection_Code,Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name,Objection_Type_Name,Agreement_Date,CountryDetails,Objection_Status,Sort,Last_Updated_Time)    
 		 SELECT DISTINCT TOB.Title_Objection_Code,SD.Syn_Deal_Code AS Deal_Code,T.Title_Code,SD.Agreement_No,T.Title_Name,SD.Deal_Description,CAST(V.Vendor_Name AS varchar(MAX)),TOT.Objection_Type_Name,SD.Agreement_Date,      
 		 dbo.UFN_Get_Title_Objection_Territory(TOB.Title_Objection_Code) CountryDetails,TOS.Objection_Status_Name Status,Tm.Sort,TOB.Last_Updated_Time    
@@ -401,9 +400,9 @@ BEGIN
 		 INSERT INTO #Filter    
 		 SELECT DISTINCT * FROM #AcqSynData    
 
-		 if(@StrSearch != '' OR @StrSearch IS NOT NULL)
+		 if(@StrSearch != '')
 		  BEGIN
-			Select @RecordCount = Count( (Title_Objection_Code )) From #AcqSynData  
+			Select @RecordCount = Count( (Title_Objection_Code )) From #AcqSynData 
 		  END
     
 		  SELECT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,    
