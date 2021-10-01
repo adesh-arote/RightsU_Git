@@ -77,8 +77,6 @@ namespace RightsU_Plus.Controllers
                     Title_Objection_List_Search = new Title_Objection_List_Search();
                 ViewBag.isAdvanced = Title_Objection_List_Search.isAdvanced;
                 ViewBag.DealNo_Search = Title_Objection_List_Search.DealNo_Search;
-                ViewBag.DealFrmDt_Search = Title_Objection_List_Search.DealFrmDt_Search;
-                ViewBag.DealToDt_Search = Title_Objection_List_Search.DealToDt_Search;
                 ViewBag.Search = Title_Objection_List_Search.Common_Search;
 
                 CommonUtil.WriteErrorLog(" Condition 3 executed", Err_filename);
@@ -150,18 +148,18 @@ namespace RightsU_Plus.Controllers
                     if (Title_Objection_List_Search.TitleCodes_Search != "")
                         sql += "AND T.Title_Code IN(" + Title_Objection_List_Search.TitleCodes_Search + ")";
 
-                    Title_Objection_List_Search.ProducerCodes_Search = !string.IsNullOrEmpty(strLicensor) ? strLicensor.Trim() : "";
-                    if (Title_Objection_List_Search.ProducerCodes_Search != "")
-                        sql += " AND V.Vendor_Code IN(" + Title_Objection_List_Search.ProducerCodes_Search + ")";
+                    Title_Objection_List_Search.VendorCodes_Search = !string.IsNullOrEmpty(strLicensor) ? strLicensor.Trim() : "";
+                    if (Title_Objection_List_Search.VendorCodes_Search != "")
+                        sql += " AND V.Vendor_Code IN(" + Title_Objection_List_Search.VendorCodes_Search + ")";
 
 
-                    Title_Objection_List_Search.WorkFlowStatus_Search = strTitleObjectionStatus != "0" ? strTitleObjectionStatus : "0";
-                    if(Title_Objection_List_Search.WorkFlowStatus_Search != "" && Title_Objection_List_Search.WorkFlowStatus_Search != "0")
-                        sql += "AND TOS.Title_Objection_Status_Code IN(" + Title_Objection_List_Search.WorkFlowStatus_Search + ")";
+                    Title_Objection_List_Search.TitleObjectionStatus_Search = strTitleObjectionStatus != "0" ? strTitleObjectionStatus : "0";
+                    if(Title_Objection_List_Search.TitleObjectionStatus_Search != "" && Title_Objection_List_Search.TitleObjectionStatus_Search != "0")
+                        sql += "AND TOS.Title_Objection_Status_Code IN(" + Title_Objection_List_Search.TitleObjectionStatus_Search + ")";
 
-                    Title_Objection_List_Search.DealType_Search = strTitleObjectionType != "0" ? strTitleObjectionType : "0";
-                    if (Title_Objection_List_Search.DealType_Search != "" && Title_Objection_List_Search.DealType_Search != "0")
-                        sql += "AND Objection_Type_Code IN(" + Title_Objection_List_Search.DealType_Search + ")";
+                    Title_Objection_List_Search.TitleObjectionType_Search = strTitleObjectionType != "0" ? strTitleObjectionType : "0";
+                    if (Title_Objection_List_Search.TitleObjectionType_Search != "" && Title_Objection_List_Search.TitleObjectionType_Search != "0")
+                        sql += "AND Objection_Type_Code IN(" + Title_Objection_List_Search.TitleObjectionType_Search + ")";
                    
                 }
             }
@@ -205,11 +203,11 @@ namespace RightsU_Plus.Controllers
         }
         private void Set_Srch_Criteria()
         {
-            ViewBag.DealType_Search = Title_Objection_List_Search.DealType_Search;
+            ViewBag.DealType_Search = Title_Objection_List_Search.TitleObjectionType_Search;
             ViewBag.Status_Search = Title_Objection_List_Search.Status_Search;
-            ViewBag.WorkFlowStatus_Search = Title_Objection_List_Search.WorkFlowStatus_Search;
+            ViewBag.WorkFlowStatus_Search = Title_Objection_List_Search.TitleObjectionStatus_Search;
             ViewBag.TitleCodes_Search = Title_Objection_List_Search.TitleCodes_Search;
-            ViewBag.ProducerCodes_Search = Title_Objection_List_Search.ProducerCodes_Search;
+            ViewBag.ProducerCodes_Search = Title_Objection_List_Search.VendorCodes_Search;
             ViewBag.PageNo = Title_Objection_List_Search.PageNo;
         }
         private void Reset_Srch_Criteria()
@@ -218,10 +216,10 @@ namespace RightsU_Plus.Controllers
             Title_Objection_List_Search.Common_Search = "";
             Title_Objection_List_Search.DealNo_Search = "";
             Title_Objection_List_Search.TitleCodes_Search = "";
-            Title_Objection_List_Search.ProducerCodes_Search = "";
+            Title_Objection_List_Search.VendorCodes_Search = "";
             Title_Objection_List_Search.Status_Search = "0";
             Title_Objection_List_Search.isAdvanced = "N";
-            Title_Objection_List_Search.DealType_Search = "0";
+            Title_Objection_List_Search.TitleObjectionType_Search = "0";
             Title_Objection_List_Search.PageNo = 1;
         }
 
@@ -256,11 +254,11 @@ namespace RightsU_Plus.Controllers
         #region ---------------BIND DROPDOWNS---------------
         private List<USP_Get_Acq_PreReq_Result> BindAllDropDowns()
         {
-            if(Title_Objection_List_Search.DealType_Search == "")
+            if(Title_Objection_List_Search.TitleObjectionType_Search == "")
             {
-                Title_Objection_List_Search.DealType_Search = "0";
+                Title_Objection_List_Search.TitleObjectionType_Search = "0";
             }
-            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("OBT,OBS,TOV,TOB", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(Title_Objection_List_Search.DealType_Search), Title_Objection_List_Search.BUCodes_Search).ToList();
+            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("OBT,OBS,TOV,TOB", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(Title_Objection_List_Search.TitleObjectionType_Search), Title_Objection_List_Search.BUCodes_Search).ToList();
             return obj_USP_Get_PreReq_Result;
         }
 

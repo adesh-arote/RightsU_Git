@@ -81,8 +81,8 @@ BEGIN
 		  Last_Updated_Time Datetime    
 	 )    
       
-	  Declare @SqlPageNo NVARCHAR(MAX),@SqlPageNo1 NVARCHAR(MAX)--,@Type Varchar(100)= 'S',@ExactMatch varchar(max) = '',@RecordCount Int = 10,@IsPaging VARCHAR(10)= 'Y',@PageNo Int=1,@PageSize Int=10   
-	  --,@StrSearch NVARCHAR(Max) = '' --AND V.Vendor_Code IN(527)AND TOS.Title_Objection_Status_Code IN(2)AND Objection_Type_Code IN(7)    
+	  Declare @SqlPageNo NVARCHAR(MAX),@SqlPageNo1 NVARCHAR(MAX)--,@Type Varchar(100)= 'A,S',@ExactMatch varchar(max) = '',@RecordCount Int = 10,@IsPaging VARCHAR(10)= 'Y',@PageNo Int=1,@PageSize Int=14  
+	  --,@StrSearch NVARCHAR(Max) = 'AND T.Title_Code IN(2297)' --AND V.Vendor_Code IN(527)AND TOS.Title_Objection_Status_Code IN(2)AND Objection_Type_Code IN(7)    
     
 	  INSERT INTO #Type(Deal_Type)    
 	  SELECT number FROM dbo.fn_Split_withdelemiter(@Type,',')    
@@ -155,7 +155,10 @@ BEGIN
 		--)a On T.Id = a.Id and a.RowNum <> 1    
      
 		PRINT '3'    
-		  Select @RecordCount = Count( (AgreeMent_No )) From #TempData  
+		if(@StrSearch = '' OR @StrSearch IS NULL)
+		BEGIN
+		  Select @RecordCount = Count( (AgreeMent_No )) From #TempData 
+		END
 		Update a     
 		Set a.Row_Num = b.Row_Num From #TempData a    
 		Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC) Row_Num, ID From #TempData    
@@ -183,6 +186,11 @@ BEGIN
     
 		  INSERT INTO #Filter    
 		  SELECT DISTINCT * FROM #AcqSynData  
+
+		  if(@StrSearch != '' OR @StrSearch IS NOT NULL)
+		  BEGIN
+			Select @RecordCount = Count( (Title_Objection_Code )) From #AcqSynData  
+		  END
  
 
 		  SELECT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,      
@@ -236,7 +244,10 @@ BEGIN
 		 --)a On T.Id = a.Id and a.RowNum <> 1    
      
 		 PRINT '3'    
+		 if(@StrSearch = '' OR @StrSearch IS NULL)
+		BEGIN
 		 Select @RecordCount = Count((AgreeMent_No )) From #TempData   
+		 END
 		 Update a Set a.Row_Num = b.Row_Num From #TempData a    
 		  Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC) Row_Num, ID From #TempData) As b On a.Id = b.Id    
 
@@ -262,6 +273,11 @@ BEGIN
     
 		INSERT INTO #Filter    
 		SELECT DISTINCT * FROM #AcqSynData  
+
+		if(@StrSearch != '' OR @StrSearch IS NOT NULL)
+		  BEGIN
+			Select @RecordCount = Count( (Title_Objection_Code )) From #AcqSynData  
+		  END
 		
 		SELECT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,    
 		CountryDetails,Objection_Status AS Status  FROM #Filter ORDER By SORT ,Last_Updated_Time  DESC  
@@ -339,7 +355,10 @@ BEGIN
 		 -- select row_number()over(partition by agreement_no order by sort asc) rownum, id, agreement_no, sort from #tempdata    
 		 --)a on t.id = a.id and a.rownum <> 1    
 		 PRINT '3'    
+		 if(@StrSearch = '' OR @StrSearch IS  NULL)
+		  BEGIN
 		 Select @RecordCount = Count((agreement_no )) From #TempData   
+		 END
 		Update a Set a.Row_Num = b.Row_Num From #TempData a Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC) Row_Num, ID From #TempData) As b On a.Id = b.Id  
 		
 		 If(@IsPaging = 'Y')    
@@ -381,6 +400,11 @@ BEGIN
 
 		 INSERT INTO #Filter    
 		 SELECT DISTINCT * FROM #AcqSynData    
+
+		 if(@StrSearch != '' OR @StrSearch IS NOT NULL)
+		  BEGIN
+			Select @RecordCount = Count( (Title_Objection_Code )) From #AcqSynData  
+		  END
     
 		  SELECT Title_Objection_Code,Deal_Code AS Deal_Code,Title_Code,Agreement_No,Title_Name,Deal_Desc,Vendor_Name As Vendor_Name,Objection_Type_Name,Agreement_Date,    
 		  CountryDetails,Objection_Status AS Status  FROM #Filter ORDER By SORT ,Last_Updated_Time  DESC  
