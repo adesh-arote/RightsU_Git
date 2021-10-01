@@ -2997,7 +2997,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserName = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Users_Code", "First_Name").ToList();
 
             ViewBag.status = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Tag_Code > 0), "Deal_Tag_Code", "Deal_Tag_Description").ToList();
-            ViewBag.AcquisitionDeal = new SelectList(new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit.Users_Business_Unit.All(u => u.Users_Code == objLoginUser.Users_Code))).ToList();
+            ViewBag.AcquisitionDeal = new SelectList(new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit.Users_Business_Unit.All(u => u.Users_Code == objLoginUser.Users_Code)).Distinct()).ToList();
+
+            ViewBag.DealWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x=> true).Select(x=> new { x.Deal_Workflow_Status_Name,x.Deal_WorkflowFlag}).Distinct(), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name").ToList();
+
             if (rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllBusinessUnit + "~") && rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllRegionalGEC + "~"))
             {
                 ViewBag.BusinessUnitList = GetBusinessUnitList(true, true);
@@ -3031,7 +3034,7 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        public PartialViewResult BindDealStatusReport(string dealCode, string businessUnitcode, string dateformat, string acqDealCode, string userName, string startDate, string endDate, bool isExpiredDeal)
+        public PartialViewResult BindDealStatusReport(string dealCode, string businessUnitcode, string dateformat, string acqDealCode, string userName, string startDate, string endDate, bool isExpiredDeal, string dealWorkflowStatus)
         {
             ReportViewer rptViewer = new ReportViewer();
             try
@@ -3042,7 +3045,7 @@ namespace RightsU_Plus.Controllers
 
                 if (dealCode == GlobalParams.ModuleCodeForAcqDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[9];
+                    ReportParameter[] parm = new ReportParameter[10];
                     parm[0] = new ReportParameter("ModuleCode", dealCode);
                     parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
                     parm[2] = new ReportParameter("UserCode", userName);
@@ -3052,11 +3055,12 @@ namespace RightsU_Plus.Controllers
                     parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
                     parm[7] = new ReportParameter("DateFormat", dateformat);
                     parm[8] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    parm[9] = new ReportParameter("DealWorkflowStatus", dealWorkflowStatus);
                     rptViewer = BindReport(parm, "rptDealStatusReport");
                 }
                 else if (dealCode == GlobalParams.ModuleCodeForSynDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[9];
+                    ReportParameter[] parm = new ReportParameter[10];
                     parm[0] = new ReportParameter("ModuleCode", dealCode);
                     parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
                     parm[2] = new ReportParameter("UserCode", userName);
@@ -3066,6 +3070,7 @@ namespace RightsU_Plus.Controllers
                     parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
                     parm[7] = new ReportParameter("DateFormat", dateformat);
                     parm[8] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    parm[9] = new ReportParameter("DealWorkflowStatus", dealWorkflowStatus);
                     rptViewer = BindReport(parm, "rptDealStatusReport");
                 }
             }
