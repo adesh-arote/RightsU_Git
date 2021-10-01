@@ -1295,6 +1295,8 @@
     <Content Include="Views\Shared\_Acq_Rev_HB_Validation_Popup.cshtml" />
     <Content Include="Views\Deal_Description\_DealDescsList.cshtml" />
     <Content Include="Views\Deal_Description\Index.cshtml" />
+    <Content Include="Views\Title_Objection_Type\_ObjectionTypeList.cshtml" />
+    <Content Include="Views\Title_Objection_Type\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

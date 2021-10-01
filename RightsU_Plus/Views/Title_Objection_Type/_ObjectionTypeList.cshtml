@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.Objection_Type>
+﻿@model List<RightsU_Entities.Title_Objection_Type>
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
@@ -81,7 +81,7 @@
                                 }
                                 else
                                 {
-                                    <a title="Can not edit this opposition type as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                    <a title="Can not edit this objection type it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
                                 }
                             }
                             @if (item.Is_Active == "Y")

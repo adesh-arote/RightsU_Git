@@ -1005,11 +1005,11 @@ namespace RightsU_DAL
             base.Delete(objToDelete);
         }
     }
-    public class Objection_Type_Repository : RightsU_Repository<Objection_Type>
+    public class Objection_Type_Repository : RightsU_Repository<Title_Objection_Type>
     {
         public Objection_Type_Repository(string conStr) : base(conStr) { }
 
-        public override void Save(Objection_Type objToSave)
+        public override void Save(Title_Objection_Type objToSave)
         {
             if (objToSave.EntityState == State.Added)
             {
@@ -1024,7 +1024,7 @@ namespace RightsU_DAL
                 base.Delete(objToSave);
             }
         }
-        public override void Delete(Objection_Type objToDelete)
+        public override void Delete(Title_Objection_Type objToDelete)
         {
             base.Delete(objToDelete);
         }

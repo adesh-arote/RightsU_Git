@@ -2418,61 +2418,61 @@ namespace RightsU_BLL
         }
     }
 
-    public class Objection_Type_Service : BusinessLogic<Objection_Type>
+    public class Title_Objection_Type_Service : BusinessLogic<Title_Objection_Type>
     {
         private readonly Objection_Type_Repository objRepository;
 
-        public Objection_Type_Service(string Connection_Str)
+        public Title_Objection_Type_Service(string Connection_Str)
         {
             this.objRepository = new Objection_Type_Repository(Connection_Str);
         }
-        public IQueryable<Objection_Type> SearchFor(Expression<Func<Objection_Type, bool>> predicate)
+        public IQueryable<Title_Objection_Type> SearchFor(Expression<Func<Title_Objection_Type, bool>> predicate)
         {
             return objRepository.SearchFor(predicate);
         }
 
-        public Objection_Type GetById(int id)
+        public Title_Objection_Type GetById(int id)
         {
             return objRepository.GetById(id);
         }
 
-        public bool Save(Objection_Type objToSave, out dynamic resultSet)
+        public bool Save(Title_Objection_Type objToSave, out dynamic resultSet)
         {
             return base.Save(objToSave, objRepository, out resultSet);
         }
 
-        public bool Update(Objection_Type objToUpdate, out dynamic resultSet)
+        public bool Update(Title_Objection_Type objToUpdate, out dynamic resultSet)
         {
             return base.Update(objToUpdate, objRepository, out resultSet);
         }
 
-        public bool Delete(Objection_Type objToDelete, out dynamic resultSet)
+        public bool Delete(Title_Objection_Type objToDelete, out dynamic resultSet)
         {
             return base.Delete(objToDelete, objRepository, out resultSet);
         }
 
-        public override bool Validate(Objection_Type objToValidate, out dynamic resultSet)
+        public override bool Validate(Title_Objection_Type objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateUpdate(Objection_Type objToValidate, out dynamic resultSet)
+        public override bool ValidateUpdate(Title_Objection_Type objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
 
         }
 
-        public override bool ValidateDelete(Objection_Type objToValidate, out dynamic resultSet)
+        public override bool ValidateDelete(Title_Objection_Type objToValidate, out dynamic resultSet)
         {
             resultSet = "";
             return true;
         }
 
-        private bool ValidateDuplicate(Objection_Type objToValidate, out dynamic resultSet)
+        private bool ValidateDuplicate(Title_Objection_Type objToValidate, out dynamic resultSet)
         {
             if (SearchFor(s => s.Objection_Type_Name == objToValidate.Objection_Type_Name && s.Objection_Type_Code != objToValidate.Objection_Type_Code).Count() > 0)
             {
-                resultSet = "Objection Type already exists";
+                resultSet = "Title Objection Type already exists";
                 return false;
             }
 
