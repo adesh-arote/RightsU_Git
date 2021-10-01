@@ -35,6 +35,9 @@
           <QueryParameter Name="@Show_Expired">
             <Value>=Parameters!Show_Expired.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@DealWorkflowStatus">
+            <Value>=Parameters!DealWorkflowStatus.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USPDealStatusReport</CommandText>
@@ -58,7 +61,7 @@
         </Field>
         <Field Name="Version">
           <DataField>Version</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Status">
           <DataField>Status</DataField>
@@ -75,6 +78,14 @@
         <Field Name="Remarks">
           <DataField>Remarks</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Record_Code">
+          <DataField>Record_Code</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Status_Changed_On">
+          <DataField>Status_Changed_On</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -488,7 +499,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1714,6 +1724,11 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>Created_By</Prompt>
     </ReportParameter>
+    <ReportParameter Name="DealWorkflowStatus">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>DealWorkflowStatus</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -1764,6 +1779,11 @@
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>2</RowIndex>
           <ParameterName>Created_By</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>DealWorkflowStatus</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>
