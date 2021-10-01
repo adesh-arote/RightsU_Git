@@ -1,0 +1,241 @@
+﻿@model RightsU_Entities.USP_Title_Objection_List_Result
+@{
+    string isCT = "I", pCodes = "", ctCodes = "", objTypeCode = "";
+
+    RightsU_Entities.Title_Objection objTitleObjection = new RightsU_Entities.Title_Objection();
+
+    objTitleObjection = (RightsU_Entities.Title_Objection)ViewBag.obj_Usp_TO;
+
+    objTypeCode = objTitleObjection.Title_Objection_Type_Code.ToString();
+    isCT = objTitleObjection.Title_Objection_Territory.FirstOrDefault().Territory_Type;
+    pCodes = ViewBag.PCodes;
+    var rpCodes = ViewBag.RPCodes;
+    ctCodes = ViewBag.CTCodes;
+}
+<style>
+    #ddlTitle_Status_chosen {
+        width: 42% !important;
+    }
+
+    .sumo_ddlLP {
+        width: 35%;
+    }
+
+    #popupFadeP {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        border: #bbb 1px solid;
+    }
+
+        #popupFadeP .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            max-height: 300px;
+        }
+
+        #popupFadeP form .modal_block {
+            padding: 3px 1px;
+        }
+
+        #popupFadeP #Rights_Platform {
+            max-height: 300px !important;
+        }
+
+    #Tree_Filter_Rights_Platform {
+        max-width: 300px;
+        padding-left: 3px;
+        position: relative !important;
+    }
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
+    }
+
+    #divTree {
+        overflow-x: hidden;
+    }
+
+    #popupFadeP .modal_header {
+        background: #c3c3c3;
+    }
+
+    .tooltip {
+        z-index: 9999 !important;
+    }
+
+    input.isDatepicker {
+        width: 100px;
+        z-index: auto;
+    }
+
+    .count {
+        position: absolute;
+        text-align: center;
+        width: 17px;
+        height: 17px;
+        font-size: 10px;
+        padding-top: 0.1em;
+        background: #f9df73;
+        border-radius: 50%;
+        box-shadow: 0 0 7px #aaa;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        if (@pCodes != "")
+            $('#pCount').text(@pCodes.Split(',').Count());
+    });
+
+    $('.expand_Resolution_Remarks').expander({
+        slicePoint: 500,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $('.clsPromoterPopup').on('click', function (e) {
+
+        e.preventDefault();
+        var btdId = e.target.id;
+        var codes = "";
+        pos = $('#' + btdId).offset();
+
+        codes = $('#hdnTVCodes').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTree,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                PlatformCode: codes,
+                isView: callFrom === "VIEW" ? "Y" : "N"
+            }),
+            success: function (result) {
+                if (result === "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTree').html(result);
+                    pos.left = 440;
+                    $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    });
+</script>
+<div class="">
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            View Title Objection
+            <span></span>
+        </h2>
+        <div class="pull-right" style="line-height: 50px;width: 23%;">
+            <span class="bold">Title Objection Status :&nbsp;&nbsp;</span>
+            <span>
+                @ViewBag.Title_Status_Name
+            </span>
+        </div>
+
+    </div>
+    <div class="scale_table_block" ">
+        <table class="four_column table style_table">
+            <tr>
+                <td> <label class="bold">Title : </label></td>
+                <td>
+                    @Model.Title
+                </td>
+                <td> <label class="bold">Agreement No : </label></td>
+                <td> @Model.Agreement_No</td>
+            </tr>
+            <tr>
+                <td> <label class="bold">Select Platform : </label></td>
+                <td>
+                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="View Platform" style="text-decoration:underline">
+                        View Platform&nbsp;
+                        <span id="pCount" class="count">0</span>
+                    </a>
+                </td>
+                <td> <label class="bold">License Period : </label></td>
+                <td>
+                    <ul style="list-style-type: none;">
+                        @foreach (var item in rpCodes)
+                        {
+                            <li>@Html.Raw(item)</li>
+                        }
+                    </ul>
+                </td>
+               
+            </tr>
+            <tr>
+                <td> <label class="bold">Region : </label></td>
+                <td>
+                    <span>@ctCodes</span>
+                </td>
+                <td> <label class="bold">Objection Period : </label></td>
+                <td>
+                    <span>@(((DateTime)objTitleObjection.Objection_Start_Date).ToString("dd/MM/yyyy"))</span>
+                    &nbsp;<b>To</b>&nbsp;
+                    <span>@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MM/yyyy"))</span>
+                </td>
+               
+            </tr>
+            <tr>
+                <td> <label class="bold">Type Of Objection : </label></td>
+                <td>
+                    <span> @ViewBag.Object_Type_Name </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="scale_table_block">
+        <div class="divBlock">
+            <div class="bold" style="padding-right: 55%;">Objection Remarks</div>
+        </div>
+        <div class="expand_Resolution_Remarks">@objTitleObjection.Objection_Remarks</div>
+    </div>
+    <div class="scale_table_block">
+        <div class="divBlock">
+            <div class="bold" style="padding-right: 55%;">Resolution Remarks</div>
+        </div>
+        <div class="expand_Resolution_Remarks">@objTitleObjection.Resolution_Remarks</div>
+    </div>
+    <br />
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+            <li>
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal('Y')" />
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="popupFadeP">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="ClosePopup('Y')">
+                            <span style="margin-right:6px;">×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h5 style="margin-bottom:10px;margin-left:7px;">Platform Matrix</h5>
+                        <input type="hidden" id="hdnTVCodes" value="@pCodes" name="hdnTVCodes" />
+                        <div id="divTree" class="platform_wrapper">
+                            <div id="tree" class="treeClass">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

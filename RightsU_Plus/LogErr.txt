@@ -64,3 +64,613 @@ Directory Entry object created
 LDAP Login    LDAP Validation-1
 The server is not operational.
 
+
+-------------------------------------------------
+24-Sep-2021  11:07:06    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  11:07:06    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  11:07:06    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  11:07:43    LDAP 
+Index Login    Login Indec method test ~The underlying provider failed on Open.
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  11:08:24    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  11:08:24    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  11:08:24    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  11:08:29    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+24-Sep-2021  11:08:29    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+24-Sep-2021  11:08:29    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  11:18:38    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  11:18:38    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  11:18:38    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  11:18:43    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+24-Sep-2021  11:18:43    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+24-Sep-2021  11:18:43    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  11:19:34    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  11:19:34    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  11:19:34    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  11:19:34    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+24-Sep-2021  11:19:34    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+24-Sep-2021  11:19:34    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  12:21:29    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  12:21:29    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  12:21:30    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  12:22:04    LDAP 
+Index Login    Login Indec method test ~The underlying provider failed on Open.
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  12:22:30    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  12:22:30    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  12:22:30    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  12:22:35    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+24-Sep-2021  12:22:35    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+24-Sep-2021  12:22:35    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  13:59:26    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  13:59:26    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  13:59:26    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  13:59:31    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+24-Sep-2021  13:59:31    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+24-Sep-2021  13:59:31    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  14:18:41    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  14:18:41    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  14:18:41    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  14:19:18    LDAP 
+Index Login    Login Indec method test ~The underlying provider failed on Open.
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  14:24:03    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  14:24:03    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  14:24:03    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  14:24:39    LDAP 
+Index Login    Login Indec method test ~The underlying provider failed on Open.
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  14:57:47    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  14:57:47    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  14:57:47    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  14:57:52    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+24-Sep-2021  14:57:52    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+24-Sep-2021  14:57:52    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+24-Sep-2021  20:13:37    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+24-Sep-2021  20:13:37    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+24-Sep-2021  20:13:37    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+24-Sep-2021  20:13:41    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+24-Sep-2021  20:13:41    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+24-Sep-2021  20:13:41    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  09:49:18    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  09:49:18    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  09:49:18    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  09:49:23    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  09:49:23    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  09:49:23    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  10:06:53    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  10:06:53    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  10:06:53    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  10:07:00    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  10:07:00    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  10:07:00    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  10:48:59    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  10:48:59    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  10:48:59    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  10:49:04    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  10:49:04    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  10:49:04    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  11:18:05    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  11:18:05    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  11:18:05    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  11:18:54    LDAP 
+Index Login    Login Indec method test ~The underlying provider failed on Open.
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  11:19:14    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  11:19:14    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  11:19:14    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  11:19:30    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  11:19:30    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  11:19:30    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  13:13:50    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  13:13:50    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  13:13:50    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  13:13:54    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  13:13:54    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  13:13:54    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  13:14:57    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  13:14:57    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  13:14:57    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  13:15:02    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  13:15:02    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  13:15:02    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  13:19:27    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  13:19:27    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  13:19:27    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  13:19:32    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  13:19:32    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  13:19:32    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  14:26:02    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  14:26:02    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  14:26:02    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  14:26:10    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  14:26:10    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  14:26:10    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+27-Sep-2021  16:58:24    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+27-Sep-2021  16:58:24    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+27-Sep-2021  16:58:24    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+27-Sep-2021  16:58:31    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+27-Sep-2021  16:58:31    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+27-Sep-2021  16:58:31    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:
+
+-------------------------------------------------
+30-Sep-2021  14:10:35    LDAP 
+Index Login    Login Indec method test
+Line no 1:
+
+-------------------------------------------------
+30-Sep-2021  14:10:35    LDAP 
+Index Login    Login Indec method test
+Line no 3:
+
+-------------------------------------------------
+30-Sep-2021  14:10:35    LDAP 
+Index Login    Login Indec method test
+Line no 4:
+
+-------------------------------------------------
+30-Sep-2021  14:10:39    LDAP 
+Index Login    Login Indec method test
+Line no 5:
+
+-------------------------------------------------
+30-Sep-2021  14:10:39    LDAP 
+Index Login    Login Indec method test
+Line no 6:
+
+-------------------------------------------------
+30-Sep-2021  14:10:39    LDAP 
+Index Login    Login Indec method test ~
+Line no 17:

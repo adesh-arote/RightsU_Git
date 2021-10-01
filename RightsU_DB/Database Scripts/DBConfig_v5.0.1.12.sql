@@ -136,6 +136,9 @@ SELECT 250,'IPR Report','CD',113,'N','Reports/IPRReport','mainframe','sub','N','
 INSERT INTO System_Module_Right(Module_Code,Right_Code)
 VALUES (250,7),(250,152)
 
+INSERT INTO System_Module_Right(Module_Code,Right_Code)
+VALUES (251,1),(251,2)
+
 
 --FOR DEAL DESCRIPTION
 INSERT INTO System_Module(Module_Code,Module_Name,Module_Position,Parent_Module_Code,Is_Sub_Module,Url,Target,Css,Can_Workflow_Assign,Is_Active)

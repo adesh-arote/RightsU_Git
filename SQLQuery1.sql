@@ -1,40 +1,45 @@
---CREATE TABLE Revenue_Vertical
---(
---	Revenue_Vertical_Code INT IDENTITY (1,1) PRIMARY KEY,
---	Revenue_Vertical_Name NVARCHAR(MAX),
---	[Type] CHAR(1),
---	Is_Active CHAR(1)
---)
+SELECT * FROM title_Objection_Status
+SELECT * FROM title_Objection_Type
+SELECT * FROM title_Objection_Territory
+SELECT * FROM title_Objection_Platform
+SELECT * FROM title_Objection_Rights_Period
+SELECT * FROM Title_Objection
 
---ALTER TABLE Acq_Deal
---Add Revenue_Vertical_Code INT 
+DELETE FROM Title_Objection
+DELETE FROM title_Objection_Type
 
---ALTER TABLE Syn_Deal
---Add Revenue_Vertical_Code INT 
+DBCC CHECKIDENT ('Title_Objection', RESEED, 0)
 
---INSERT INTO Revenue_Vertical (Is_Active, Type, Revenue_Vertical_Name)
--- SELECT 'Y','A','Content Licensing - Airborne'
---UNION ALL SELECT 'Y','A','Content Licensing - Cable'
---UNION ALL SELECT 'Y','A','Content Licensing - Surface Transport'
---UNION ALL SELECT 'Y','A','Content Repository'
---UNION ALL SELECT 'Y','A','Digital - Domestic mobile'
---UNION ALL SELECT 'Y','A','Digital - India Syndication'
---UNION ALL SELECT 'Y','A','Digital - International Mobile'
---UNION ALL SELECT 'Y','A','DTH - DTH Services'
---UNION ALL SELECT 'Y','A','International Digital Syndication'
---UNION ALL SELECT 'Y','A','International Non Digital Syndication'
---UNION ALL SELECT 'Y','A','L&M Licensing'
---UNION ALL SELECT 'Y','A','L&M Merchandising'
---UNION ALL SELECT 'Y','A','Physical - Devices'
---UNION ALL SELECT 'Y','A','Physical - Home Video'
---UNION ALL SELECT 'Y','A','Television Syndication'
---UNION ALL SELECT 'Y','A','Theatrical'
---select * from System_Language_Message where Message_Desc like '%busin%'
---UPDATE System_Language_Message SET Message_Desc = 'Content Category' where Message_Desc like '%busin%'
 
---select * from system_parameter_new where Parameter_Name like '%ddl%'
---UPDATE system_parameter_new SET Parameter_Value = 'Y' where id = 1208
---  Create func [UFN_Get_Platform_Hierarchy_WithNo], UFN_Get_PR_Rights_Criteria
+
+ --SELECT * FROM title_Objection_Status
+ --select * from system_parameter_new where Parameter_Name like '%rpt%'
+
+
+ SELECT DISTINCT ADRP.Platform_Code 
+ FROM Acq_Deal_Rights ADR
+ INNER JOIN Acq_Deal_Movie ADM ON ADM.Acq_Deal_Code = ADR.Acq_Deal_Code
+ INNER JOIN acq_Deal_rights_platform ADRP ON ADRP.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code
+ WHERE  ADR.Actual_Right_End_Date >= GETDATE() AND 
+ ADR.Acq_Deal_Code = 21738 AND ADM.Title_Code = 36672
+
+ SELECT DISTINCT ADRT.Territory_Type, ADRT.Country_Code, ADRT.Territory_Code FROM Acq_Deal_Rights_Territory ADRT
+ INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Rights_Code = ADRT.Acq_Deal_Rights_Code
+ INNER JOIN Acq_Deal_Movie ADM ON ADM.Acq_Deal_Code = ADR.Acq_Deal_Code
+ WHERE  ADR.Actual_Right_End_Date >= GETDATE() AND 
+ ADR.Acq_Deal_Code = 21738 AND ADM.Title_Code = 36672
+
+
+ SELECT DISTINCT ADR.Actual_Right_Start_Date, adr.Actual_Right_End_Date
+ FROM Acq_Deal_Rights ADR
+ INNER JOIN Acq_Deal_Movie ADM ON ADM.Acq_Deal_Code = ADR.Acq_Deal_Code
+ WHERE  ADR.Actual_Right_End_Date >= GETDATE() AND 
+ ADR.Acq_Deal_Code = 21738 AND ADM.Title_Code = 36672
+ order by 1,2
+
+select * from Acq_Deal where Agreement_No =  'A-2021-00072'
+select * from Title where Title_Name =  'Title Objection Part 1'
+
 
 
 

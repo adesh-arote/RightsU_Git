@@ -1,0 +1,49 @@
+﻿@model List<RightsU_Entities.USP_Title_Objection_List_Result>
+<script>
+    $(document).ready(function () {
+        if ($('input[type=radio][name=rb_AcqSyn]:checked').val() == "S")
+        { $(".txtLicensor").text("Licensee"); }
+        else
+        { $(".txtLicensor").text("Licensor"); }
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblTitleObjection">
+    <thead>
+        <tr>
+            <th style="width:25%;">Title</th>
+            <th style="width:10%;">Agreement No</th>
+            <th style="width:20%;"><span class="txtLicensor">Licensor</span></th>
+            <th style="width:25%;">Deal Description</th>
+            <th style="width:10%;">Year Of Release</th>
+            <th style="width:10%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Agreement_No</td>
+                    <td>@item.Licensor</td>
+                    <td>@item.Deal_Desc</td>
+                    <td>@item.Year_Of_Production</td>
+                    <td align="center">
+
+                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + "~"))
+                        {
+                            <a title="Add Objection" class="glyphicon glyphicon-plus" style="cursor: pointer;" onclick="BindPartialView('ADD',@item.Acq_Deal_Code, @item.Title_Code)"></a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">No Record Found</td>
+            </tr>
+        }
+    </tbody>
+</table>
