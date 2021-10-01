@@ -232,10 +232,10 @@ function validateSearch() {
     debugger;
     $("#srchCommon").val('');
     $('#hdnClearAll').val('N');
-    var tmpTitle = '', tmpDirector = '', tmpLicensor = '', tmpChecked = 'N', tmpArchiveChecked = 'N';
+    var tmpTitle = '', tmpStatus = '', tmpLicensor = '';
     
     if ($("#ddlObjectionStatus").val())
-        tmpStatus =  $('#ddlSrchTitle').val();
+        tmpStatus = $('#ddlObjectionStatus').val();
 
     if ($("#ddlSrchTitle").val())
         tmpTitle = $('#ddlSrchTitle').val();
@@ -245,7 +245,7 @@ function validateSearch() {
     var txtSDealNo = $('#txtSrchDealNo').val();
     var ddlDealType = $('#ddlSrchObjectionType').val();
 
-    if (txtSDealNo == "" && tmpLicensor == "" && tmpTitle == "" && ddlDealType < "0") {
+    if (txtSDealNo == "" && tmpLicensor == "" && tmpTitle == "" && ddlDealType < "0" && tmpStatus < "0") {
         showAlert('e', 'Please select/enter search criteria');
         return false;
     }

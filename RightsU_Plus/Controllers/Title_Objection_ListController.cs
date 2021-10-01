@@ -144,20 +144,49 @@ namespace RightsU_Plus.Controllers
                     if (Title_Objection_List_Search.DealNo_Search != "")
                         sql += " and Tm.agreement_no like '%" + Title_Objection_List_Search.DealNo_Search.Trim().Replace("'", "''") + "%'";
 
-                    Title_Objection_List_Search.TitleCodes_Search = !string.IsNullOrEmpty(strTitles) ? strTitles.Trim() : "";
+                    if (Title_Objection_List_Search.TitleCodes_Search == "")
+                    {
+                        Title_Objection_List_Search.TitleCodes_Search = !string.IsNullOrEmpty(strTitles) ? strTitles.Trim() : "";
+                    }
+                    else if (Title_Objection_List_Search.TitleCodes_Search != "" && strTitles != "")
+                    {
+                        Title_Objection_List_Search.TitleCodes_Search = strTitles;
+                    }
                     if (Title_Objection_List_Search.TitleCodes_Search != "")
                         sql += "AND T.Title_Code IN(" + Title_Objection_List_Search.TitleCodes_Search + ")";
 
-                    Title_Objection_List_Search.VendorCodes_Search = !string.IsNullOrEmpty(strLicensor) ? strLicensor.Trim() : "";
+                    if (Title_Objection_List_Search.VendorCodes_Search == "")
+                    {
+                        Title_Objection_List_Search.VendorCodes_Search = !string.IsNullOrEmpty(strLicensor) ? strLicensor.Trim() : "";
+                    }
+                    else if(Title_Objection_List_Search.VendorCodes_Search != "" && strLicensor != "")
+                    {
+                        Title_Objection_List_Search.VendorCodes_Search = strLicensor;
+                    }
                     if (Title_Objection_List_Search.VendorCodes_Search != "")
                         sql += " AND V.Vendor_Code IN(" + Title_Objection_List_Search.VendorCodes_Search + ")";
 
 
-                    Title_Objection_List_Search.TitleObjectionStatus_Search = strTitleObjectionStatus != "0" ? strTitleObjectionStatus : "0";
+                    if (Title_Objection_List_Search.TitleObjectionStatus_Search == "")
+                    {
+                        Title_Objection_List_Search.TitleObjectionStatus_Search = strTitleObjectionStatus != "0" ? strTitleObjectionStatus : "0";
+                    }
+                    else if (Title_Objection_List_Search.TitleObjectionStatus_Search != "" && strTitleObjectionStatus != "")
+                    {
+                        Title_Objection_List_Search.TitleObjectionStatus_Search = strTitleObjectionStatus;
+                    }
                     if(Title_Objection_List_Search.TitleObjectionStatus_Search != "" && Title_Objection_List_Search.TitleObjectionStatus_Search != "0")
                         sql += "AND TOS.Title_Objection_Status_Code IN(" + Title_Objection_List_Search.TitleObjectionStatus_Search + ")";
 
-                    Title_Objection_List_Search.TitleObjectionType_Search = strTitleObjectionType != "0" ? strTitleObjectionType : "0";
+
+                    if (Title_Objection_List_Search.TitleObjectionType_Search == "")
+                    {
+                        Title_Objection_List_Search.TitleObjectionType_Search = strTitleObjectionType != "0" ? strTitleObjectionType : "0";
+                    }
+                    else if(Title_Objection_List_Search.TitleObjectionType_Search != "" && strTitleObjectionType != "")
+                    {
+                        Title_Objection_List_Search.TitleObjectionType_Search = strTitleObjectionType;
+                    }
                     if (Title_Objection_List_Search.TitleObjectionType_Search != "" && Title_Objection_List_Search.TitleObjectionType_Search != "0")
                         sql += "AND Objection_Type_Code IN(" + Title_Objection_List_Search.TitleObjectionType_Search + ")";
                    
