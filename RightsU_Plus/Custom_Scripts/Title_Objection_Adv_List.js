@@ -88,11 +88,11 @@ function BindAdvanced_Search_Controls(callfrom) {
                     $(result.USP_Result).each(function (index, item) {
                         //if (this.Data_For == 'OBT')
                         //    $("#ddlSrchObjectionType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
-                        if (this.Data_For == 'OBS')
+                        if (this.Data_For == 'TOS')
                             $("#ddlObjectionStatus").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'TOV')
                             $("#ddlSrchLicensor").append($("<option>").val(this.Display_Value).text(this.Display_Text));
-                        if (this.Data_For == 'TOB')
+                        if (this.Data_For == 'TTT')
                             $("#ddlSrchTitle").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                     });
 
