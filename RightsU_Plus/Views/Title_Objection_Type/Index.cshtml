@@ -1,26 +1,21 @@
 ﻿@using UTOFrameWork.FrameworkClasses
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    MessageKey objMessageKey = new MessageKey();
-    if (Session["objMessageKey"] != null)
-    {
-        objMessageKey = (MessageKey)Session["objMessageKey"];
-    }
-
 }
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 
 <script>
     var IsCall = 'Y', Command_Name = "", sort_Type_G = "T",Module_Code_G =@ViewBag.code, SysLanguageCode_G = @ViewBag.LangCode;
-    var URL_BindObjectionTypeList = '@Url.Action("BindObjection_TypeList", "Objection_Type")';
-    var URL_SearchObjectionType = '@Url.Action("SearchObjection_TypeCode", "Objection_Type")';
-    var URL_ActiveDeactiveObjectionType = '@Url.Action("ActiveDeactiveObjection_TypeCode", "Objection_Type")';
-    var URL_SaveObjectionType = '@Url.Action("SaveObjectionType", "Objection_Type")';
-    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Objection_Type")';
+    var URL_BindTitle_Objection_TypeList = '@Url.Action("BindTitle_Objection_TypeList", "Title_Objection_Type")';
+    var URL_SearchTitle_Objection_Type = '@Url.Action("SearchTitle_Objection_Type", "Title_Objection_Type")';
+    var URL_ActiveDeactiveTitle_Objection_Type = '@Url.Action("ActiveDeactiveTitle_Objection_Type", "Title_Objection_Type")';
+    var URL_SaveTitle_Objection_Type = '@Url.Action("SaveTitle_Objection_Type", "Title_Objection_Type")';
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Title_Objection_Type")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
     var URL_Export_To_Excel = '@Url.Action("ExportToExcel", "Global")'
-    var URL_Reload_Current_Page = '@Url.Action("Index", "Objection_Type")';
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Title_Objection_Type")';
     $(document).ready(function () {
         if(LayoutDirection_G == "RTL")
         {
@@ -35,7 +30,7 @@
             $('#ddlSortType_chosen').css("text-align", "left");
         }
         addNumeric();
-        SearchObjectionType("");
+        SearchTitle_Objection_Type("");
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
                 btnSearch_OnClick()
@@ -49,9 +44,9 @@
             }
             $('#hdnPageNo').val(1);
             sort_Type_G = $('#ddlSortType').val();
-            SearchObjectionType($('#searchCommon').val());
+            SearchTitle_Objection_Type($('#searchCommon').val());
         });
-       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Genres');
+
     });
     function addNumeric() {
         $(".pagingSize").numeric({
@@ -104,7 +99,7 @@
             var pageNo = page_index + 1
             $('#hdnPageNo').val(pageNo);
             if (IsCall == 'Y')
-                BindObjectionTypeList(0, "");
+                BindTitle_Objection_TypeList(0, "");
             else
                 IsCall = 'Y';
         }
@@ -118,7 +113,7 @@
         if (!ValidatePageSize())
             return false;
 
-        BindObjectionTypeList(0, "")
+        BindTitle_Objection_TypeList(0, "")
         SetPaging();
     }
     function ValidatePageSize() {
@@ -132,7 +127,7 @@
         return false
     }
     function pageBinding() {
-        BindObjectionTypeList(0, "")
+        BindTitle_Objection_TypeList(0, "")
         SetPaging();
     }
     function btnSearch_OnClick() {
@@ -152,7 +147,7 @@
             $('#searchCommon').attr('required', true)
             return false;
         }
-        SearchObjectionType(searchText);
+        SearchTitle_Objection_Type(searchText);
     }
     function btnShowAll_OnClick() {
         if (!checkCurrentAction())
@@ -166,14 +161,14 @@
         $('#hdnPageNo').val(1);
         $('#searchCommon').attr('required', false)
         $('#searchCommon').val('');
-        SearchObjectionType("");
+        SearchTitle_Objection_Type("");
     }
-    function BindObjectionTypeList(ObjectionTypeCode, commandName) {
+    function BindTitle_Objection_TypeList(Title_Objection_TypeCode, commandName) {
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
         $.ajax({
             type: "POST",
-            url: URL_BindObjectionTypeList,
+            url: URL_BindTitle_Objection_TypeList,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -181,7 +176,7 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                Objection_TypeCode: ObjectionTypeCode,
+                Title_Objection_TypeCode: Title_Objection_TypeCode,
                 commandName: commandName,
                 sortType : sort_Type_G
             }),
@@ -190,10 +185,11 @@
                     redirectToLogin();
                 }
                 else {
-                    $('#divOppsitionTypeList').empty();
-                    $('#divOppsitionTypeList').html(result);
+                    $('#divTitle_Objection_TypeList').empty();
+                    $('#divTitle_Objection_TypeList').html(result);
                     initializeExpander();
                     initializeTooltip();
+                    initializeChosen();
                 }
             },
             error: function (result) {
@@ -201,12 +197,12 @@
             }
         });
     }
-    function SearchObjectionType(searchText) {
+    function SearchTitle_Objection_Type(searchText) {
         $("#searchCommon").val(searchText);
         showLoading();
         $.ajax({
             type: "POST",
-            url: URL_SearchObjectionType,
+            url: URL_SearchTitle_Objection_Type,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -223,7 +219,7 @@
                     $('#lblRecordCount').text(result.Record_Count);
                     $("#hdnRecordCount").val(result.Record_Count);
                     SetPaging()
-                    BindObjectionTypeList(0, "");
+                    BindTitle_Objection_TypeList(0, "");
                     hideLoading();
                 }
             },
@@ -233,16 +229,16 @@
             }
         });
     }
-    function ActiveDeactiveObjectionType(ObjectType_Code, doActive) {
+    function ActiveDeactiveTitle_Objection_Type(Title_Objection_Type_Code, doActive) {
         if (checkCurrentAction()) {
             $.ajax({
                 type: "POST",
-                url: URL_ActiveDeactiveObjectionType,
+                url: URL_ActiveDeactiveTitle_Objection_Type,
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    Objection_Type_Code: ObjectType_Code,
+                    Title_Objection_Type_Code: Title_Objection_Type_Code,
                     doActive: doActive
                 }),
                 async: false,
@@ -254,10 +250,10 @@
                         if (result.Status == "S") {
                             showAlert("S", result.Message);
                             if ($("#searchCommon").val() != "") {
-                                SearchObjectionType($("#searchCommon").val())
+                                SearchTitle_Objection_Type($("#searchCommon").val())
                             }
                             else {
-                                BindObjectionTypeList(0, "");
+                                BindTitle_Objection_TypeList(0, "");
                             }
                         }
                         else {
@@ -273,31 +269,34 @@
             });
         }
     }
-    function SaveObjectionType(ObjectionTypeCode) {
+    function SaveTitle_Objection_Type(Title_Objection_TypeCode) {
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
         if (!ValidatePageSize())
             return false;
-
-        var ObjectionTypeName = $.trim($('#txtObjectionTypeName_' + ObjectionTypeCode).val());
-        var Record_Code= $('#hdnRecodLockingCode').val();
-        if (ObjectionTypeName == '') {
-            $('#txtObjectionTypeName_' + ObjectionTypeCode).val('')
-            $('#txtObjectionTypeName_' + ObjectionTypeCode).attr('required', true)
-            return false;
+        var Record_Code = $('#hdnRecodLockingCode').val();
+        var TOT_Name = $('#txtTOTName_' + Title_Objection_TypeCode).val().trim();
+        var TOT_Parent_Code = $('#ddlPTOT_' + Title_Objection_TypeCode).val();
+        if (TOT_Parent_Code == "Please Select" || TOT_Parent_Code == "") {
+            TOT_Parent_Code = 0;
+        }
+        if (TOT_Name == "") {
+            $('#txtTOTName_' + genresCode).attr('required', true)
+            return false
         }
 
         showLoading();
         $.ajax({
             type: "POST",
-            url: URL_SaveObjectionType,
+            url: URL_SaveTitle_Objection_Type,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                ObjectionTypeCode: ObjectionTypeCode,
-                ObjectionTypeName: ObjectionTypeName,
+                Title_Objection_TypeCode: Title_Objection_TypeCode,
+                Title_Objection_TypeName: TOT_Name,
+                TOT_Parent_Code: TOT_Parent_Code,
                 Record_Code: Record_Code
             }),
             async: false,
@@ -308,18 +307,18 @@
                 else {
                     hideLoading();
                     if (result.Status == "S") {
-                        $('#lblRecordCount').text(result.RecordCount);
+                        $('#lblRecordCount').text(result.Record_Count);
                         $('#hdnAction').val("")
                         showAlert("S", result.Message);
                         if ($("#searchCommon").val() != "") {
-                            SearchObjectionType($("#searchCommon").val())
+                            SearchTitle_Objection_Type($("#searchCommon").val())
                         }
                         else {
-                            BindObjectionTypeList(0, "");
+                            BindTitle_Objection_TypeList(0, "");
                         }
-                        // SearchGenre("");
+                        // SearchTitle_Objection_Type("");
                         SetPaging();
-                        // BindObjectionTypeList(0, "");
+                        // BindTitle_Objection_TypeList(0, "");
                     }
                     else {
                         showAlert("E", result.Message);
@@ -332,9 +331,9 @@
             }
         });
     }
-    function AddEditOppositionType(OppositionTypeCode, commandName) {
+    function AddEditTitle_Objection_Type(Title_Objection_TypeCode, commandName) {
         if (checkCurrentAction() && ValidatePageSize()) {
-            BindObjectionTypeList(OppositionTypeCode, commandName);
+            BindTitle_Objection_TypeList(Title_Objection_TypeCode, commandName);
             $('#hdnAction').val(commandName)
         }
     }
@@ -343,21 +342,21 @@
         if (recordLockingCode > 0)
             ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
         $('#hdnAction').val("")
-        BindObjectionTypeList(0, "");
+        BindTitle_Objection_TypeList(0, "");
     }
     function checkCurrentAction() {
         var action = $.trim($('#hdnAction').val());
         if (action == "ADD") {
-            showAlert("E", "@objMessageKey.CompleteAddOperationFirst")
+            showAlert("E", "Complete Add Operation First")
             return false;
         }
         else if (action == "EDIT") {
-            showAlert("E", "@objMessageKey.CompleteEditOperationFirst")
+            showAlert("E", "Complete Edit Operation First")
             return false;
         }
         return true;
     }
-    function CheckRecordLock(OppositionTypeCode,commandName){
+    function CheckRecordLock(Title_Objection_TypeCode,commandName){
         $.ajax({
             type: "POST",
             url: URL_CheckRecordLock,
@@ -365,7 +364,7 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                Objection_TypeCode: OppositionTypeCode,
+                Title_Objection_TypeCode: Title_Objection_TypeCode,
                 commandName:commandName
             }),
             async: false,
@@ -375,7 +374,7 @@
                 }
                 else {
                     if (result.Is_Locked == "Y") {
-                        AddEditOppositionType(OppositionTypeCode,commandName)
+                        AddEditTitle_Objection_Type(Title_Objection_TypeCode,commandName)
                         $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
@@ -393,7 +392,7 @@
     {
 
         var type = "";
-        var Module_Name = "Opposition Type";
+        var Module_Name = "Title_Objection_Type";
         type = $('#ddlSortType').val();
         var StrSearchCriteria = $.trim($('#searchCommon').val());
         window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code='+Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G + '&Module_Name='+Module_Name+ '&sortColumnOrder='+type + '&StrSearchCriteria=' + StrSearchCriteria;
@@ -406,9 +405,10 @@
         margin-bottom: 5px;
         background-color: #eee;
     }
+
     #ddlSortType_chosen {
         max-width: 46%;
-        text-align:left;
+        text-align: left;
     }
 </style>
 <div class="main_section">
@@ -417,7 +417,7 @@
             <div class="">
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
-                        Objection Type
+                        Title Objection Type List
                         <span></span>
                     </h2>
                     <div class="right_nav pull-right">
@@ -425,13 +425,13 @@
                             <li id="btnUser">
                                 @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAdd + "~"))
                                 {
-                                    <a class="btn btn-primary" onclick="AddEditOppositionType(0, 'ADD')">@objMessageKey.Add</a>
+                                    <a class="btn btn-primary" onclick="AddEditTitle_Objection_Type(0, 'ADD')">Add</a>
                                 }
                             </li>
                             <li>
-                         @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
                                 {
-                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()">
+                                    <a title="SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()">
                                     </a>
                                 }
                             </li>
@@ -441,19 +441,19 @@
                 <div class="search_area">
                     <table class="table">
                         <tr>
-                            <td style="width:13%; vertical-align: middle;text-align:center;">
-                                Objection Type List :
+                            <td style="width:12%; vertical-align: middle;text-align:center;">
+                                Title Objection Name :
                             </td>
                             <td style="width:25%; vertical-align:middle;">
-                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Objection Type Name" maxlength="100" />
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Title Objection Name" maxlength="100" />
                             </td>
                             <td>
                                 &nbsp;&nbsp;
-                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">&nbsp;
-                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
-                            </td> 
+                                <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">&nbsp;
+                                <input type="button" id="btnShowAll" class="button" value="ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
                             <td style="width:38%;" id="txtSort">
-                                @objMessageKey.SortBy :
+                                SortBy :
                                 @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
                             </td>
                         </tr>
@@ -462,7 +462,7 @@
                 <div class="grid_area">
                     <div style="border-bottom: 1px dotted #777; display:none;"></div>
                     <div class="paging_area clearfix">
-                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left">Total Records: </span>
                         <span class="pull-left" id="lblRecordCount"></span>
                         <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
                         <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
@@ -470,17 +470,17 @@
                         <div id="Pagination" class="pagination">
                         </div>
                         <span class="pull-right">
-                            @objMessageKey.PageSize:
+                            Page Size:
                             <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
                                    onchange="txtPageSize_OnChange()" onfocus="checkCurrentAction()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
                     <div class="tab-content clearfix table-wrapper scale_table_container">
                         <div class="scale_table_block">
-                            <input type="hidden" id="hdnOppositionTypeCode" value="0" />
+                            <input type="hidden" id="hdnTitle_Objection_TypeCode" value="0" />
                             <input type="hidden" id="hdnAction" name="hdnAction" value="" />
                             <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
-                            <div id="divOppsitionTypeList" class="deal clearfix">
+                            <div id="divTitle_Objection_TypeList" class="deal clearfix">
                             </div>
                         </div>
                     </div>

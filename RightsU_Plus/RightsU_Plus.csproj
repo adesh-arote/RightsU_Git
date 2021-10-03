@@ -222,7 +222,7 @@
     <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
     <Compile Include="Controllers\Availability_Movie_NewController.cs" />
     <Compile Include="Controllers\Deal_DescriptionController.cs" />
-    <Compile Include="Controllers\Objection_TypeController.cs" />
+    <Compile Include="Controllers\Title_Objection_TypeController.cs" />
     <Compile Include="Controllers\IPR_Dashboard.cs" />
     <Compile Include="Controllers\DM_Master_ImportController.cs" />
     <Compile Include="Controllers\DM_Title_Master_ImportController.cs" />
@@ -1290,12 +1290,10 @@
     <Content Include="Views\Title_Objection\_Edit_Title_Objection.cshtml" />
     <Content Include="Views\Title_Objection\_Add_Title_Objection.cshtml" />
     <Content Include="Views\Title_Objection\_View_Title_Objection.cshtml" />
-    <Content Include="Views\Objection_Type\_ObjectionTypeList.cshtml" />
-    <Content Include="Views\Objection_Type\Index.cshtml" />
     <Content Include="Views\Shared\_Acq_Rev_HB_Validation_Popup.cshtml" />
     <Content Include="Views\Deal_Description\_DealDescsList.cshtml" />
     <Content Include="Views\Deal_Description\Index.cshtml" />
-    <Content Include="Views\Title_Objection_Type\_ObjectionTypeList.cshtml" />
+    <Content Include="Views\Title_Objection_Type\_Title_Objection_Type_List.cshtml" />
     <Content Include="Views\Title_Objection_Type\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

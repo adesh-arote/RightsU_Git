@@ -182,7 +182,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeFor_IPR_Dashboard = 249;
         public const int ModuleCodeForTitleObjection= 251;
         public const int ModuleCodeForDealDescription = 252;
-        public const int ModuleCodeForObjectionType = 253;
+        public const int ModuleCodeForTitleObjectionType = 253;
 
         #endregion
 
