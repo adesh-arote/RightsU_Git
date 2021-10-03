@@ -144,7 +144,7 @@ namespace RightsU_Plus.Controllers
                     if (Title_Objection_List_Search.DealNo_Search != "")
                         sql += " and Tm.agreement_no like '%" + Title_Objection_List_Search.DealNo_Search.Trim().Replace("'", "''") + "%'";
 
-                    if (Title_Objection_List_Search.TitleCodes_Search == "")
+                    if (Title_Objection_List_Search.TitleCodes_Search == "" || Title_Objection_List_Search.TitleCodes_Search == null)
                     {
                         Title_Objection_List_Search.TitleCodes_Search = !string.IsNullOrEmpty(strTitles) ? strTitles.Trim() : "";
                     }
@@ -155,7 +155,7 @@ namespace RightsU_Plus.Controllers
                     if (Title_Objection_List_Search.TitleCodes_Search != "")
                         sql += "AND T.Title_Code IN(" + Title_Objection_List_Search.TitleCodes_Search + ")";
 
-                    if (Title_Objection_List_Search.VendorCodes_Search == "")
+                    if (Title_Objection_List_Search.VendorCodes_Search == "" || Title_Objection_List_Search.VendorCodes_Search == null)
                     {
                         Title_Objection_List_Search.VendorCodes_Search = !string.IsNullOrEmpty(strLicensor) ? strLicensor.Trim() : "";
                     }
@@ -167,7 +167,7 @@ namespace RightsU_Plus.Controllers
                         sql += " AND V.Vendor_Code IN(" + Title_Objection_List_Search.VendorCodes_Search + ")";
 
 
-                    if (Title_Objection_List_Search.TitleObjectionStatus_Search == "")
+                    if (Title_Objection_List_Search.TitleObjectionStatus_Search == "" || Title_Objection_List_Search.TitleObjectionStatus_Search == null)
                     {
                         Title_Objection_List_Search.TitleObjectionStatus_Search = strTitleObjectionStatus != "0" ? strTitleObjectionStatus : "0";
                     }
@@ -179,7 +179,7 @@ namespace RightsU_Plus.Controllers
                         sql += "AND TOS.Title_Objection_Status_Code IN(" + Title_Objection_List_Search.TitleObjectionStatus_Search + ")";
 
 
-                    if (Title_Objection_List_Search.TitleObjectionType_Search == "")
+                    if (Title_Objection_List_Search.TitleObjectionType_Search == "" || Title_Objection_List_Search.TitleObjectionType_Search == null)
                     {
                         Title_Objection_List_Search.TitleObjectionType_Search = strTitleObjectionType != "0" ? strTitleObjectionType : "0";
                     }
@@ -215,8 +215,8 @@ namespace RightsU_Plus.Controllers
         {
             Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
             Set_Srch_Criteria();
-            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
-            obj_USP_Get_PreReq_Result = BindAllDropDowns();
+            List<USP_Title_Objection_Adv_PreReq_Result> obj_USP_Get_PreReq_Result = new List<USP_Title_Objection_Adv_PreReq_Result>();
+            obj_USP_Get_PreReq_Result = BindAllDropDowns(Type);
             string[] arrTitleName = Title_Objection_List_Search.TitleCodes_Search.Split(',');
             string strTitleNames = string.Join("﹐", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Code.ToString())).Select(y => y.Title_Name).ToList());
             obj_Dictionary.Add("USP_Result", obj_USP_Get_PreReq_Result);
@@ -281,13 +281,17 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         #region ---------------BIND DROPDOWNS---------------
-        private List<USP_Get_Acq_PreReq_Result> BindAllDropDowns()
+        private List<USP_Title_Objection_Adv_PreReq_Result> BindAllDropDowns(string type)
         {
             if(Title_Objection_List_Search.TitleObjectionType_Search == "")
             {
                 Title_Objection_List_Search.TitleObjectionType_Search = "0";
             }
-            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("OBT,OBS,TOV,TOB", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(Title_Objection_List_Search.TitleObjectionType_Search), Title_Objection_List_Search.BUCodes_Search).ToList();
+            if(type == "A,S")
+            {
+                type = "";
+            }
+            List<USP_Title_Objection_Adv_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Objection_Adv_PreReq(type).ToList();
             return obj_USP_Get_PreReq_Result;
         }
 

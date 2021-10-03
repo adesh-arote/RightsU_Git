@@ -2843,7 +2843,6 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_PreReq_Result>("USP_Get_Acq_PreReq", data_ForParameter, call_FromParameter, loginUserCodeParameter, acq_Deal_CodeParameter, deal_Type_CodeParameter, businessUnitCodeParameter);
         }
-
         public virtual ObjectResult<USP_Get_Acq_PreReq_Result> USP_Get_Syn_PreReq(string data_For, string call_From, Nullable<int> loginUserCode, Nullable<int> syn_Deal_Code, Nullable<int> deal_Type_Code, Nullable<int> businessUnitCode)
         {
             var data_ForParameter = data_For != null ?
@@ -5387,6 +5386,15 @@ namespace RightsU_DAL
                 new ObjectParameter("ExactMatch", typeof(string));
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_Adv_List_Result>("USP_Title_Objection_Adv_List", strSearchParameter, typeParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, exactMatchParameter); /*, typeParameter*/
+        }
+
+        public virtual ObjectResult<USP_Title_Objection_Adv_PreReq_Result> USP_Title_Objection_Adv_PreReq(string type)
+        {
+            var typeParameter = type != null ?
+                new ObjectParameter("Type", type) :
+                new ObjectParameter("Type", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_Adv_PreReq_Result>("USP_Title_Objection_Adv_PreReq", typeParameter);
         }
     }
 }
