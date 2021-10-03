@@ -898,6 +898,11 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Get_Acq_PreReq(data_For, call_From, loginUserCode, acq_Deal_Code, deal_Type_Code, businessUnitCode);
         }
+        public virtual ObjectResult<USP_Title_Objection_Adv_PreReq_Result> USP_Title_Objection_Adv_PreReq(string type)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Objection_Adv_PreReq(type);
+        }
 
         public virtual ObjectResult<USP_Get_Acq_PreReq_Result> USP_Get_Syn_PreReq(string data_For, string call_From, Nullable<int> loginUserCode, Nullable<int> syn_Deal_Code, Nullable<int> deal_Type_Code, Nullable<int> businessUnitCode)
         {

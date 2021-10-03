@@ -13694,6 +13694,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="ExactMatch" Type="varchar(max)" Mode="In" />
         </Function>
+        <Function Name="USP_Title_Objection_Adv_PreReq" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USP_Title_Objection_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CallFrom" Type="char" Mode="In" />
           <Parameter Name="Title_Codes" Type="varchar" Mode="In" />
@@ -21018,6 +21021,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="RecordCount" Mode="InOut" Type="Int32" />
             <Parameter Name="User_Code" Mode="In" Type="Int32" />
             <Parameter Name="ExactMatch" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Title_Objection_Adv_PreReq" ReturnType="Collection(RightsU_NeoModel.USP_Title_Objection_Adv_PreReq_Result)">
+            <Parameter Name="Type" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -35994,6 +36000,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="CountryDetails" Nullable="true" />
           <Property Type="String" Name="Status" Nullable="true" />
         </ComplexType>
+        <ComplexType Name="USP_Title_Objection_Adv_PreReq_Result">
+          <Property Type="Int32" Name="Display_Value" Nullable="false" />
+          <Property Type="String" Name="Display_Text" Nullable="true" />
+          <Property Type="String" Name="Data_For" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -45185,6 +45196,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Agreement_Date" ColumnName="Agreement_Date" />
                 <ScalarProperty Name="CountryDetails" ColumnName="CountryDetails" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Title_Objection_Adv_PreReq" FunctionName="RightsU_NeoModel.Store.USP_Title_Objection_Adv_PreReq">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Title_Objection_Adv_PreReq_Result">
+                <ScalarProperty Name="Display_Value" ColumnName="Display_Value" />
+                <ScalarProperty Name="Display_Text" ColumnName="Display_Text" />
+                <ScalarProperty Name="Data_For" ColumnName="Data_For" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
