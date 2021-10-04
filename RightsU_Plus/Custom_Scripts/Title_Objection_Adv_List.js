@@ -117,6 +117,9 @@ function BindObjectionType() {
         traditional: true,
         enctype: 'multipart/form-data',
         contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            callFrom : "advList"
+        }),
         async: false,
         success: function (result) {
             if (result === "true") {
