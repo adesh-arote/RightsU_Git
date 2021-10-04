@@ -409,8 +409,13 @@ namespace RightsU_Plus.Controllers
 
             return Json(obj_Dictionary);
         }
-        public JsonResult BindObjectionType()
+        public JsonResult BindObjectionType(string callFrom = "")
         {
+            if (callFrom =="advList")
+            {
+                lstUSP_Title_Objection_PreReq = new USP_Service(objLoginEntity.ConnectionStringName)
+                  .USP_Title_Objection_PreReq(0, 0, "A", "").ToList();
+            }
             Dictionary<object, object> obj_Dictionary = new Dictionary<object, object>();
             var lstObjType = lstUSP_Title_Objection_PreReq.Where(x => x.MapFor == "TYPEOFOBJECTION").Select(x => new { x.Code, x.Obj_Type_Group, x.Obj_Type_Name }).ToList();
 
