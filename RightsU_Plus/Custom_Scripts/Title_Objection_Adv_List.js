@@ -99,6 +99,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                     var obj_Search = $(result.Title_Objection_List_Search);
                     //$("#ddlSrchObjectionType").val(obj_Search[0].DealType_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlObjectionStatus").val(obj_Search[0].TitleObjectionStatus_Search).attr("selected", "true").trigger("chosen:updated");
+                    $("#ddlSrchObjectionType").val(obj_Search[0].TitleObjectionType_Search).attr("selected", "true").trigger("chosen:updated");
                     $("#ddlSrchLicensor").val(obj_Search[0].VendorCodes_Search.split(','))[0].sumo.reload();
                     $("#ddlSrchTitle").val(obj_Search[0].TitleCodes_Search.split(','))[0].sumo.reload();
                 }
@@ -110,7 +111,7 @@ function BindAdvanced_Search_Controls(callfrom) {
     
 }
 function BindObjectionType() {
-
+    debugger;
     $.ajax({
         type: "POST",
         url: URL_BindObjectionType,
