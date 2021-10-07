@@ -52,8 +52,10 @@ BEGIN
 				INNER JOIN Vendor V ON V.Vendor_Code = ADL.Vendor_Code
 				INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
 			WHERE ADR.Actual_Right_End_Date >= GETDATE()  AND ADR.Right_Status = 'C' 
-			AND CAST(AD.[Version] AS decimal) > 1 
-			OR (CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
+			AND (
+				CAST(AD.[Version] AS decimal) > 1 
+				OR (CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
+			)
 	END
 	ELSE IF @CallFrom = 'A'
 	BEGIN
@@ -80,13 +82,15 @@ BEGIN
 			INNER JOIN Vendor V ON V.Vendor_Code = ADL.Vendor_Code
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
 		WHERE ADR.Actual_Right_End_Date >= GETDATE() AND ADR.Right_Status = 'C'
-			AND CAST(AD.[Version] AS decimal) > 1 
-			OR (CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
-		AND (
-				( @Title_Codes = '' OR ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,','))   )
-				AND
-				( @Licensor_Codes = '' OR ADL.Vendor_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Licensor_Codes,',')))
+			AND (
+				CAST(AD.[Version] AS decimal) > 1 
+				OR (CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
 			)
+			AND (
+					( @Title_Codes = '' OR ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,','))   )
+					AND
+					( @Licensor_Codes = '' OR ADL.Vendor_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Licensor_Codes,',')))
+				)
 	END
 	ELSE IF @CallFrom = 'S'
 	BEGIN
@@ -112,13 +116,15 @@ BEGIN
 			INNER JOIN Vendor V ON V.Vendor_Code = AD.Vendor_Code
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
 		WHERE ADR.Actual_Right_End_Date >= GETDATE()  AND ADR.Right_Status = 'C' 
-			AND CAST(AD.[Version] AS decimal) > 1 
-			OR (CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
-		AND (
-				( @Title_Codes = '' OR ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,',')))
-				AND
-				( @Licensor_Codes = '' OR AD.Vendor_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Licensor_Codes,',')))
+			AND (
+				CAST(AD.[Version] AS decimal) > 1 
+				OR (CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
 			)
+			AND (
+					( @Title_Codes = '' OR ADRT.Title_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Title_Codes,',')))
+					AND
+					( @Licensor_Codes = '' OR AD.Vendor_Code IN (SELECT number from dbo.fn_Split_withdelemiter(@Licensor_Codes,',')))
+				)
 	END
 	ELSE IF @CallFrom = 'Y'
 	BEGIN
@@ -141,20 +147,12 @@ BEGIN
 			INNER JOIN Vendor V ON V.Vendor_Code = AD.Vendor_Code
 			INNER JOIN Title T ON T.Title_Code = ADRT.Title_Code
 		WHERE ADR.Actual_Right_End_Date >= GETDATE()  AND ADR.Right_Status = 'C'
-			AND CAST(AD.[Version] AS decimal) > 1 
-			OR (CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
+			AND (
+				CAST(AD.[Version] AS decimal) > 1 
+				OR (CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
+			)
 	END
 
 	Final_Result:
 	SELECT  Acq_Deal_Code, Agreement_No, Deal_Desc, Licensor, Title, Year_Of_Production, Title_Code, Licensor_Code FROM #FinalResult
 END
-
-SELECT 
-	CAST(AD.[Version] AS decimal),AD.Deal_Workflow_Status,* 
-FROM Syn_Deal AD
-WHERE 
-	CAST(AD.[Version] AS decimal) > 1 
-	OR
-	(CAST(AD.[Version] AS decimal) = 1 AND AD.Deal_Workflow_Status = 'A')
-
-	SELECT (1716 + 684) + 686

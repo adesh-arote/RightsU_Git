@@ -94,6 +94,14 @@
         collapseTimer: 0,
         userCollapseText: '<span>[^]</span>'
     });
+    $('.expand_CT').expander({
+        slicePoint: 50,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
     $('.clsPromoterPopup').on('click', function (e) {
 
         e.preventDefault();
@@ -173,12 +181,12 @@
                         }
                     </ul>
                 </td>
-               
+
             </tr>
             <tr>
                 <td> <label class="bold">Region : </label></td>
                 <td>
-                    <span>@ctCodes</span>
+                    <div class="expand_CT">@ctCodes</div>
                 </td>
                 <td> <label class="bold">Objection Period : </label></td>
                 <td>
@@ -186,7 +194,7 @@
                     &nbsp;<b>To</b>&nbsp;
                     <span>@(((DateTime)objTitleObjection.Objection_End_Date).ToString("dd/MM/yyyy"))</span>
                 </td>
-               
+
             </tr>
             <tr>
                 <td> <label class="bold">Type Of Objection : </label></td>
