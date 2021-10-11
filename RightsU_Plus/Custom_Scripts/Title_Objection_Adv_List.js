@@ -285,8 +285,8 @@ function ClearAll() {
     $('#ddlObjectionStatus').val(0).trigger("chosen:updated");
     $("#chkSubDeal").prop("checked", false);
     $("#chkArchiveDeal").prop("checked", false);
-    //$('#chkAcq').prop('checked', true);
-    //$('#chkSyn').prop('checked', true);
+    $('#chkAcq').prop('checked', true);
+    $('#chkSyn').prop('checked', true);
     $("#ddlSrchTitle")[0].sumo.unSelectAll();
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
     showLD = 'Y';
