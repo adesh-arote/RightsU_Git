@@ -951,6 +951,22 @@ namespace RightsU_Plus.Controllers
                                                     where hbpm.EntityState != State.Deleted
                                                     select hbpm.Platform_Code.ToString()).ToArray();
 
+
+                string Is_Allow_Title_Objection = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                    .SearchFor(x => x.Parameter_Name == "Is_Allow_Title_Objection").FirstOrDefault().Parameter_Value;
+
+                if (Is_Allow_Title_Objection == "Y")
+                {
+                    int?[] def = objPage_Properties.Acquired_Title_Codes.Split(',').Select(x => (int?)Convert.ToInt32(x)).ToArray();
+
+                    var TOC = new Title_Objection_Service(objLoginEntity.ConnectionStringName)
+                        .SearchFor(x => x.Record_Code == objDeal_Schema.Deal_Code && x.Record_Type == "A" && def.Contains(x.Title_Code))
+                        .Select(x => x.Title_Objection_Code).ToList();
+                    string[] pCode = new Title_Objection_Platform_Service(objLoginEntity.ConnectionStringName)
+                        .SearchFor(x => TOC.Contains((int)x.Title_Objection_Code)).Select(x => x.Platform_Code.ToString()).ToArray();
+                    objPTV.TOPlatformCodes_Reference = pCode;
+                }
+
                 // Check title in run exist or not
                 if (objPage_Properties.RMODE != "C")
                 {
