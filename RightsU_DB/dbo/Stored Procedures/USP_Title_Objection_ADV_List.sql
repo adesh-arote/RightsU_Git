@@ -161,7 +161,7 @@ BEGIN
 		END
 		Update a     
 		Set a.Row_Num = b.Row_Num From #TempData a    
-		Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC) Row_Num, ID From #TempData    
+		Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC,Title_Objection_Code) Row_Num, ID From #TempData    
 		) As b On a.Id = b.Id    
        
 		 If(@IsPaging = 'Y')    
@@ -249,7 +249,7 @@ BEGIN
 		 Select @RecordCount = Count((AgreeMent_No )) From #TempData   
 		 END
 		 Update a Set a.Row_Num = b.Row_Num From #TempData a    
-		  Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC) Row_Num, ID From #TempData) As b On a.Id = b.Id    
+		  Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC,Title_Objection_Code) Row_Num, ID From #TempData) As b On a.Id = b.Id    
 
 		 If(@IsPaging = 'Y')    
 		 Begin    
@@ -359,7 +359,7 @@ BEGIN
 		  BEGIN
 		 Select @RecordCount = Count((agreement_no )) From #TempData   
 		 END
-		Update a Set a.Row_Num = b.Row_Num From #TempData a Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC) Row_Num, ID From #TempData) As b On a.Id = b.Id  
+		Update a Set a.Row_Num = b.Row_Num From #TempData a Inner Join (Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC,Title_Objection_Code) Row_Num, ID From #TempData) As b On a.Id = b.Id  
 		
 		 If(@IsPaging = 'Y')    
 		 Begin    
