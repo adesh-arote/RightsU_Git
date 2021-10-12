@@ -38,10 +38,11 @@ BEGIN
 				AD.Agreement_No,
 				AD.Deal_Desc, 
 				V.Vendor_Name AS 'Licensor',
-				CASE
-					WHEN T.Deal_Type_Code = 11 THEN RTRIM(LTRIM(T.Title_Name +' ('+ CAST(ADRT.Episode_From AS VARCHAR)+' - '+ CAST(ADRT.Episode_To AS VARCHAR) +')'))
-					ELSE RTRIM(LTRIM(T.Title_Name))
-				END AS 'Title',
+				--CASE
+				--	WHEN T.Deal_Type_Code = 11 THEN RTRIM(LTRIM(T.Title_Name +' ('+ CAST(ADRT.Episode_From AS VARCHAR)+' - '+ CAST(ADRT.Episode_To AS VARCHAR) +')'))
+				--	ELSE RTRIM(LTRIM(T.Title_Name))
+				--END AS 'Title',
+				RTRIM(LTRIM(T.Title_Name)) AS 'Title',
 				T.Year_Of_Production,
 				ADRT.Title_Code,
 				V.Vendor_Code AS 'Licensor_Code'
@@ -68,10 +69,11 @@ BEGIN
 			AD.Agreement_No,
 			AD.Deal_Desc, 
 			V.Vendor_Name AS 'Licensor',
-			CASE
-				WHEN T.Deal_Type_Code = 11 THEN RTRIM(LTRIM(T.Title_Name +' ('+ CAST(ADRT.Episode_From AS VARCHAR)+' - '+ CAST(ADRT.Episode_To AS VARCHAR) +')'))
-				ELSE RTRIM(LTRIM(T.Title_Name))
-			END AS 'Title',
+			--CASE
+			--	WHEN T.Deal_Type_Code = 11 THEN RTRIM(LTRIM(T.Title_Name +' ('+ CAST(ADRT.Episode_From AS VARCHAR)+' - '+ CAST(ADRT.Episode_To AS VARCHAR) +')'))
+			--	ELSE RTRIM(LTRIM(T.Title_Name))
+			--END AS 'Title',
+			RTRIM(LTRIM(T.Title_Name)) AS 'Title',
 			T.Year_Of_Production,
 			ADRT.Title_Code,
 			V.Vendor_Code AS 'Licensor_Code'
@@ -103,10 +105,11 @@ BEGIN
 			AD.Agreement_No,
 			AD.Deal_Description as 'Deal_Desc', 
 			V.Vendor_Name AS 'Licensor',
-			CASE
-				WHEN T.Deal_Type_Code = 11 THEN RTRIM(LTRIM(T.Title_Name +' ('+ CAST(ADRT.Episode_From AS VARCHAR)+' - '+ CAST(ADRT.Episode_To AS VARCHAR) +')'))
-				ELSE RTRIM(LTRIM(T.Title_Name))
-			END AS 'Title',
+			--CASE
+			--	WHEN T.Deal_Type_Code = 11 THEN RTRIM(LTRIM(T.Title_Name +' ('+ CAST(ADRT.Episode_From AS VARCHAR)+' - '+ CAST(ADRT.Episode_To AS VARCHAR) +')'))
+			--	ELSE RTRIM(LTRIM(T.Title_Name))
+			--END AS 'Title',
+			RTRIM(LTRIM(T.Title_Name)) AS 'Title',
 			T.Year_Of_Production,
 			ADRT.Title_Code,
 			V.Vendor_Code AS 'Licensor_Code'
@@ -134,10 +137,11 @@ BEGIN
 			AD.Agreement_No,
 			AD.Deal_Description as 'Deal_Desc', 
 			V.Vendor_Name AS 'Licensor',
-			CASE
-				WHEN T.Deal_Type_Code = 11 THEN RTRIM(LTRIM(T.Title_Name +' ('+ CAST(ADRT.Episode_From AS VARCHAR)+' - '+ CAST(ADRT.Episode_To AS VARCHAR) +')'))
-				ELSE RTRIM(LTRIM(T.Title_Name))
-			END AS 'Title',
+			--CASE
+			--	WHEN T.Deal_Type_Code = 11 THEN RTRIM(LTRIM(T.Title_Name +' ('+ CAST(ADRT.Episode_From AS VARCHAR)+' - '+ CAST(ADRT.Episode_To AS VARCHAR) +')'))
+			--	ELSE RTRIM(LTRIM(T.Title_Name))
+			--END AS 'Title',
+			RTRIM(LTRIM(T.Title_Name)) AS 'Title',
 			T.Year_Of_Production,
 			ADRT.Title_Code,
 			V.Vendor_Code AS 'Licensor_Code'
