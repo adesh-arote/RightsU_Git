@@ -25,6 +25,7 @@ using System.Text;
 using System.Data;
 using UTOFrameWork.FrameworkClasses;
 using System.Reflection;
+using System.DirectoryServices.Protocols;
 
 namespace RightsU_Plus.Controllers
 {
@@ -927,7 +928,7 @@ namespace RightsU_Plus.Controllers
 
         public bool LDAPAuthentication(string domain, string username, string password, string ldapPath, out string ErrMsg)
         {
-            ErrMsg = "";
+            /*ErrMsg = "";
             string domainAndUsername = domain + @"\" + username;
             LogErr("LDAP Login", "LDAP Validation", "domainAndUsername:" + domainAndUsername, Server.MapPath("~"));
             LogErr("LDAP Login", "LDAP Validation", "password:" + password, Server.MapPath("~"));
@@ -963,6 +964,42 @@ namespace RightsU_Plus.Controllers
                 //   throw new Exception("Error authenticating user." + ex.Message);
             }
             return true;
+            */
+            const int ldapErrorInvalidCredentials = 0x31;
+            string activeDirectoryServer = ldapPath;
+            string activeDirectpryDomain = domain;
+            try
+            {
+                LogErr("LDAP Login", "LDAP Validation", "Request : Step 1  ", Server.MapPath("~"));
+                using (var ldapConnection = new LdapConnection(activeDirectoryServer))
+                {
+                    LogErr("LDAP Login", "LDAP Validation", "Request : Step 2  ", Server.MapPath("~"));
+                    var networkCredential = new System.Net.NetworkCredential(username, password, activeDirectpryDomain);
+                    LogErr("LDAP Login", "LDAP Validation", "Request : Step 2.1 username : " + username + " / password : " + password + " / activeDirectpryDomain : " + activeDirectpryDomain, Server.MapPath("~"));
+                    ldapConnection.SessionOptions.SecureSocketLayer = true;
+                    ldapConnection.AuthType = AuthType.Negotiate;
+                    ldapConnection.Bind(networkCredential);
+                    LogErr("LDAP Login", "LDAP Validation", "Request : Step 3  ", Server.MapPath("~"));
+                }
+                // If the bind succeeds, the credentials are valid
+                ErrMsg = "";
+                return true;
+            }
+            catch (LdapException ldapException)
+            {
+                // Invalid credentials throw an exception with a specific error code
+                if (ldapException.ErrorCode.Equals(ldapErrorInvalidCredentials))
+                {
+                    LogErr("LDAP Login", "LDAP Validation", "Request : Step 4  " + ldapException.Message + " :::: " + ldapException.StackTrace, Server.MapPath("~"));
+                    ErrMsg = "failed";
+                    return false;
+                }
+                else
+                {
+                    LogErr("LDAP Login", "LDAP Validation", "Request : Step 5  " + ldapException.Message + " :::: " + ldapException.StackTrace, Server.MapPath("~"));
+                }
+                throw;
+            }
         }
 
         public string LDAPValidation(User objUser, string Username = "", string Password = "")
