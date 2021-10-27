@@ -27,22 +27,14 @@
         width: 100px;
         word-break: break-all;
     }
-     #Tree_Filter_Rights_Platform {
-        margin-left: -10px;
-        width: 300px;
-        margin-top: -3px;
+
+    #popupFade .modal_header {
+        background: #c3c3c3;
     }
-     #divPlatformTree {
-        overflow-x: hidden;
-       
-        /*overflow-y:auto;*/
+
+    #popupFade {
+        width: 300px !important;
     }
-      #popupFade .modal_header{
-        background:#c3c3c3;
-    }
-      #popupFade{
-          width:300px!important;
-      }
 </style>
 <script type="text/javascript">
 </script>
@@ -51,21 +43,14 @@
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
     URL_Reload_Current_Page = '@Url.Action("View", "Title")';
-    var chosenTerritory = [];
-    var chosenCountry = [];
     $(document).ready(function () {
         debugger;
-        $('#rdWorld').parents('li').next().hide();
         if ('RTL' == '@objMessageKey.LayoutDirection'){
             $('.divRelease').css("float", "left");
             $('.poptalent').css("float", "Right");
             $('.close').css("float", "left");
             $('.PopGender').css("float", "Right");
             $('.inline-radio').css("float", "Right");
-            //$('.pull-left').addClass('pull-left-Head')
-            //$('.pull-right').addClass('pull-right-Head')
-            //$('.pagination').addClass('pagination-Head')
-            //$('.TN').addClass('.TNHead')
             $('#lblReleaseType').css("float", "right")
         }
         else {
@@ -74,10 +59,7 @@
             $('.close').css("float", "Right");
             $('.PopGender').css("float", "Left");
             $('#lblReleaseType').css("float", "left")
-            //$('.inline-radio').css("float", "Left");
         }
-       // $("#ancFileName").attr('href', '/Help/Masters/Layout.html?TitleList');
-
         showLoading();
         BindExtended('@ViewBag.Mode');
         var Synopsis = document.getElementById("Synopsis");
@@ -94,66 +76,13 @@
             else
                 Bind_Deal_List(page_index, 'N');
         }
-        else if ('@ViewBag.Mode' == 'R') {   
+        else if ('@ViewBag.Mode' == 'R') {
            recordLockingCode = @ViewBag.RecordLockingCode_View;
             $('#hdnRecordLockingCode').val(recordLockingCode)
             if(recordLockingCode > 0)
                 Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
         }
 
-        $('#ddlTerritory_TitleRel').chosen().change(function () {
-            chosenTerritory = $(this).val();
-        });
-
-        $('#ddlCountry_TitleRel').chosen().change(function () {
-            chosenCountry = $(this).val();
-        });
-
-        $('#btnAddRelease').click(function () {
-            debugger
-            $('#popAddTitleRelease').modal();
-            $('#hdnTitleReleaseCode').val(0);
-            $('#rdWorld').prop('checked', true);
-            $('#popAddTitleRelease .modal_header h2').text('@objMessageKey.AddTitleRelease');
-            var data = CheckHoldBack();
-            if (data.length == 0 || data == '') {
-                $('#hdnTVCodes').val('1,8,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,41,42,43,9,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,409,410,411,412,413,414,415,416,417,44,45,46,47,48,49,50,51,428');
-                //$("#hdnSelectedPlatforms").val('@ViewBag.TheatricalPlatformCode');
-                BindPlatformTree();
-                $("#Rights_Platform").fancytree("disable");
-                $('input[name="Rel_Type"]').prop('disabled', true);
-                $('#rdWorld').prop('checked', true);
-
-            }
-            else if (data.length > 0) {
-                $('#hdnTVCodes').val(data);
-                $("#hdnSelectedPlatforms").val('');
-                BindPlatformTree();
-                $("#Rights_Platform").fancytree("enable");
-                $('input[name="Rel_Type"]').prop('disabled', false);
-                $('#rdWorld').prop('checked', true);
-            }
-            $('#rdWorld').parents('li').next().hide();
-        });
-
-        $('input[name="Rel_Type"]').click(function () {
-            debugger;
-            var ele = $(this);
-            var id = ele.attr('id');
-            $('#rdWorld').parents('li').next().show();
-            if (id == 'rdTerritory') {
-                $('#ddlTerritory_TitleRel_chosen').show();
-                $('#ddlCountry_TitleRel_chosen').hide();
-            }
-            else if (id == 'rdCountry') {
-                $('#ddlCountry_TitleRel_chosen').show();
-                $('#ddlTerritory_TitleRel_chosen').hide();
-            }
-            else if (id == 'rdWorld') {
-                ele.parents('li').next().hide();
-            }
-            $('#ddlCountry_TitleRel,#ddlTerritory_TitleRel').removeAttr('required');
-        });
 
         BindTitleList(@ViewBag.TitleReleasePageNo);
         initializeExpander();
@@ -161,88 +90,6 @@
             calculatePublicDomain()
         }
     });
-
-    function clearObj() {
-        chosenTerritory = [];
-        chosenCountry = [];
-        $('#ddlCountry_TitleRel,#ddlTerritory_TitleRel').val('').trigger('chosen:updated');
-        $('#Rel_Date').val('');
-        $('#ddlCountry_TitleRel').removeAttr('required');
-    }
-    function ValidateSaveTitleRelease() {
-        var Rel_Date = $('#Rel_Date');
-        if (Rel_Date.val() == '') {
-            Rel_Date.attr('required', true);
-            return false;
-        }
-
-        var Rel_Type = $('input[name="Rel_Type"]:checked').val();
-        var SelectedNodes = $.map($('#Rights_Platform').fancytree("getTree").getSelectedNodes(), function (node) {
-            return node.key;
-        });
-        var TitleReleaseCode = $('#hdnTitleReleaseCode').val();
-        var removeItem = 0;
-        SelectedNodes = jQuery.grep(SelectedNodes, function (value) {
-            return value != removeItem;
-        });
-
-        var iCountryLen = [];
-        var iTerritoryLen = [];
-        if (Rel_Type == 'C') {
-            var iCountryLen = $('#ddlCountry_TitleRel').val();
-            if (iCountryLen == null) {
-                $('#ddlCountry_TitleRel').attr('required', true);
-                return false;
-            }
-            else {
-
-                chosenCountry = iCountryLen;
-            }
-        }
-        else if (Rel_Type == 'T') {
-            var iTerritoryLen = $('#ddlTerritory_TitleRel').val();
-            if (iTerritoryLen == null) {
-                $('#ddlTerritory_TitleRel').attr('required', true);
-                return false;
-            }
-            else {
-                $('#ddlCountry_TitleRel').val('').trigger('chosen:updated');
-                chosenTerritory = iTerritoryLen;
-            }
-
-        }
-
-
-        if (SelectedNodes.length == 0) {
-            $("#tree").attr('required', true);
-            $("#tree").addClass('required');
-            return false;
-        }
-        var World_Code = "";
-        //var Territory_Code = $('#ddlTerritory_TitleRel_chosen option:selected').val();
-        Rel_Date = Rel_Date.val(); //$.datepicker.formatDate('dd MM yy', new Date(Rel_Date.val()));
-
-        $.ajax({
-            url: '@Url.Action("SaveTitleRelease", "Title")',
-            type: 'POST',
-            data: ({ Title_Code: '@Model.Title_Code', Release_Type: Rel_Type, Release_Date: Rel_Date, platForm_Code: SelectedNodes.toString(), Territory_Code: World_Code == '' ? (chosenTerritory == null ? '' : chosenTerritory.toString()) : World_Code, Country_Code: (chosenCountry == null ? '' : chosenCountry.toString()), World_Code: '', Title_Release_Code: TitleReleaseCode }),
-            async: false,
-            success: function (data) {
-                if (data == "true") {
-                    redirectToLogin();
-                }
-                if (data == 1) {
-                    showAlert('I', '@objMessageKey.Savedsuccessfully');
-                    clearObj();
-                    //calculatePublicDomain();
-                    window.location.reload();
-                }
-                else if (data == 0)
-                    showAlert('E', '@objMessageKey.CombinationAlreadyExist');
-
-            }
-        });
-    }
 
     function BindTitleList(pageNo) {
         $.ajax({
@@ -255,8 +102,10 @@
                     redirectToLogin();
                 }
                 $('#title_Release_List').html(data);
+                $('.five_td').hide();
                 initializeExpander();
                 $('#lblTitleReleaseCount').text($('.rights_table_block').length)
+                
             }
         });
     }
@@ -307,38 +156,6 @@
         });
     }
 
-    function BindPlatformTree() {
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("BindPlatformTreeView", "Title")',
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                strPlatform: $("#hdnTVCodes").val(),
-                selectedPlatform: $("#hdnSelectedPlatforms").val()
-            }),
-            async: false,
-            success: function (result) {
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                $('#tree').html(result);
-                //var j  = @Session["IsHoldBack"];
-                //if (j == 0) {
-                //    $("#Rights_Platform").fancytree("disable");
-                //    $('input:radio').prop('disabled', true);
-                //}
-                //else {
-                //    $("#Rights_Platform").fancytree("enable");
-                //    $('input:radio').prop('disabled', false);
-                //}
-            },
-            error: function (result) { }
-        });
-    }
-
-
     function Bind_Deal_List(page_index, IsCallFromPaging) {
         showLoading();
         var txtpageSize = $("#txtPageSize").val();
@@ -362,6 +179,7 @@
                 TitlePageSize: '@ViewBag.PageSize'
             }),
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -666,28 +484,11 @@
         bottom: inherit !important;
     }
 
-    /*.pull-left-Head {
-        float: right !important;
-        padding-right:1%;
-    }
 
-    .pull-right-Head {
-        float: left !important;
-    }
-
-    .pagination-Head {
-        float: left !important;
-        margin-top: 4px;
-         display: flex;
-    }*/
 
     .TN {
         float: right !important;
     }
-
-    /*.TNHead {
-        float: left !important;
-    }*/
 </style>
 
 @{
@@ -746,7 +547,7 @@
                                                     <td class="intro_pic">
                                                         <div>
                                                             @if (Model.Title_Image != null)
-                                                            {   <img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Title_Image)" alt="Image" />}
+                                                            {<img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Title_Image)" alt="Image" />}
                                                             else
                                                             {
                                                                 if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
@@ -758,7 +559,7 @@
                                                                 else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
                                                                 {<a href="javascript:void(0)"><img src="~/Images/Event.png" alt="Image" /></a> }
                                                                 else
-                                                                {<a href="javascript:void(0)"><img src="~/Images/movieIcon.png" alt="Image" /></a> }
+                                                                {<a href="javascript:void(0)"><img src="~/Images/movieIcon.png" alt="Image" /></a>}
                                                             }
                                                         </div>
                                                     </td>
@@ -774,12 +575,12 @@
                                                                 </td>
                                                                 <td>
                                                                     @{
-                                                                 string Program_Name = objMessageKey.Noprogram;
-                                                                if (@Model.Program_Code > 0 && @Model.Program_Code != null && @Model.Program_Code.ToString() != "")
-                                                                {
-                                                                    Program_Name = objP.GetById(Model.Program_Code ?? 0).Program_Name;
-                                                                }
-                                                                   }
+                                                                        string Program_Name = objMessageKey.Noprogram;
+                                                                        if (@Model.Program_Code > 0 && @Model.Program_Code != null && @Model.Program_Code.ToString() != "")
+                                                                        {
+                                                                            Program_Name = objP.GetById(Model.Program_Code ?? 0).Program_Name;
+                                                                        }
+                                                                    }
                                                                     @Html.Label("ProgramName", Program_Name)
                                                                 </td>
 
@@ -791,7 +592,7 @@
                                                                 </td>
                                                                 <td>@objMessageKey.OriginalTitle</td>
                                                                 @{
-                                                                   string originaltitle = objMessageKey.NA;
+                                                                    string originaltitle = objMessageKey.NA;
                                                                     if (@Model.Original_Title != null && @Model.Original_Title != "")
                                                                     {
                                                                         originaltitle = Model.Original_Title;
@@ -804,70 +605,70 @@
                                                             <tr>
                                                                 <td>@objMessageKey.DurationInMin &#x200E;</td>
                                                                 @{
-                string durationInMin = objMessageKey.NA;
-                                                                  if (@Model.Duration_In_Min != null && @Model.Duration_In_Min.ToString() != "")
-                                                                   {   
-                                                                     durationInMin = Model.Duration_In_Min.ToString();
-                                                                   }
+                                                                    string durationInMin = objMessageKey.NA;
+                                                                    if (@Model.Duration_In_Min != null && @Model.Duration_In_Min.ToString() != "")
+                                                                    {
+                                                                        durationInMin = Model.Duration_In_Min.ToString();
+                                                                    }
                                                                 }
                                                                 <td>
                                                                     @durationInMin
                                                                 </td>
                                                                 <td>@objMessageKey.YearOfRelease</td>
                                                                 @{
-                string YOR = objMessageKey.NA;
-                                                                    if(@Model.Year_Of_Production != null && @Model.Year_Of_Production.ToString() != "")
+                                                                    string YOR = objMessageKey.NA;
+                                                                    if (@Model.Year_Of_Production != null && @Model.Year_Of_Production.ToString() != "")
                                                                     {
-                                                                        YOR = Model.Year_Of_Production.ToString();   
+                                                                        YOR = Model.Year_Of_Production.ToString();
                                                                     }
-                                                                  }
+                                                                }
                                                                 <td>
-                                                                   @YOR
+                                                                    @YOR
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>@objMessageKey.TitleLanguage</td>
                                                                 <td>
                                                                     @{
-                                                            string Language_Name = "";
-                                                            if (@Model.Title_Language_Code > 0)
-                                                            {
-                                                                Language_Name = objLS.GetById(Model.Title_Language_Code ?? 0).Language_Name;
-                                                            }
+                                                                        string Language_Name = "";
+                                                                        if (@Model.Title_Language_Code > 0)
+                                                                        {
+                                                                            Language_Name = objLS.GetById(Model.Title_Language_Code ?? 0).Language_Name;
+                                                                        }
                                                                     }
                                                                     @Html.Label(@objMessageKey.TitleLanguage, Language_Name)
                                                                 </td>
                                                                 <td>@objMessageKey.OriginalLanguage</td>
                                                                 <td>
                                                                     @{
-                string Original_language = objMessageKey.NA;
-                                                            if (@Model.Original_Language_Code > 0 && @Model.Original_Language_Code != null && @Model.Original_Language_Code.ToString() != "")
-                                                            {
-                                                                Original_language = objLS.GetById(Model.Original_Language_Code ?? 0).Language_Name;
-                                                            }
+                                                                        string Original_language = objMessageKey.NA;
+                                                                        if (@Model.Original_Language_Code > 0 && @Model.Original_Language_Code != null && @Model.Original_Language_Code.ToString() != "")
+                                                                        {
+                                                                            Original_language = objLS.GetById(Model.Original_Language_Code ?? 0).Language_Name;
+                                                                        }
                                                                     }
                                                                     @Html.Label("Original_language", Original_language)
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>@objMessageKey.ProducerName</td>
-                                                               @{
-                string producername = objMessageKey.NA;
-                                                            if (@ViewBag.ProduceList !=null && @ViewBag.ProduceList != "")
-                                                            {
-                                                                producername = @ViewBag.ProduceList;
-                                                            }
+                                                                @{
+                                                                    string producername = objMessageKey.NA;
+                                                                    if (@ViewBag.ProduceList != null && @ViewBag.ProduceList != "")
+                                                                    {
+                                                                        producername = @ViewBag.ProduceList;
+                                                                    }
                                                                 }
                                                                 <td class="expandable">
                                                                     @producername
-                                                                                </td>
+                                                                </td>
                                                                 <td>@objMessageKey.DirectorName</td>
                                                                 @{
-                string directorname = objMessageKey.Nodirector;
-                                                            if (@ViewBag.DirectorList != null && @ViewBag.DirectorList != "")
-                                                            {
-                                                                directorname = @ViewBag.DirectorList;
-                                                            }
+                                                                    string directorname = objMessageKey.Nodirector;
+                                                                    if (@ViewBag.DirectorList != null && @ViewBag.DirectorList != "")
+                                                                    {
+                                                                        directorname = @ViewBag.DirectorList;
+                                                                    }
                                                                 }
                                                                 <td class="expandable">
                                                                     @directorname
@@ -880,11 +681,11 @@
                                                                 </td>
                                                                 <td>@objMessageKey.TitleGenres</td>
                                                                 @{
-                string genresname = objMessageKey.Nogenres;
-                                                            if (@ViewBag.GenresList != null && @ViewBag.GenresList != "")
-                                                            {
-                                                                genresname = @ViewBag.GenresList;
-                                                            }
+                                                                    string genresname = objMessageKey.Nogenres;
+                                                                    if (@ViewBag.GenresList != null && @ViewBag.GenresList != "")
+                                                                    {
+                                                                        genresname = @ViewBag.GenresList;
+                                                                    }
                                                                 }
                                                                 <td class="expandable">
                                                                     @genresname
@@ -900,29 +701,29 @@
                                                             <tr>
                                                                 <td>@objMessageKey.KeyStarCast</td>
                                                                 @{
-        string talent = objMessageKey.Notalent;
-        if (@ViewBag.StarCastList != null && @ViewBag.StarCastList != "")
-        {
-            talent = @ViewBag.StarCastList;
-        }
+                                                                    string talent = objMessageKey.Notalent;
+                                                                    if (@ViewBag.StarCastList != null && @ViewBag.StarCastList != "")
+                                                                    {
+                                                                        talent = @ViewBag.StarCastList;
+                                                                    }
                                                                 }
                                                                 <td colspan="1" class="expandable">
                                                                     @talent
                                                                 </td>
                                                                 @if (ViewBag.IsCalculatePublicDomain == "Y")
                                                                 {
-                                                                <td>
-                                                                    Public Domain
-                                                                </td>
-                                                                <td><div id="PDomain"></div></td>
+                                                                    <td>
+                                                                        Public Domain
+                                                                    </td>
+                                                                    <td><div id="PDomain"></div></td>
                                                                 }
                                                             </tr>
                                                             <tr>
                                                                 <td>@objMessageKey.Synopsis</td>
                                                                 @{
-                string synopsis = objMessageKey.NA;
-                                                                    if (@Model.Synopsis != null && @Model.Synopsis !="")
-                                                                    { 
+                                                                    string synopsis = objMessageKey.NA;
+                                                                    if (@Model.Synopsis != null && @Model.Synopsis != "")
+                                                                    {
                                                                         synopsis = Model.Synopsis;
                                                                     }
                                                                 }
@@ -939,7 +740,22 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="scale_table_block padding">
+                                    <div class="padding" id="Release_Block" style="margin: 1px;">
+                                        @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+                                        <div class="paging_area clearfix">
+                                            <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                                            <span class="pull-left" id="lblTitleReleaseCount"></span>
+                                            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                                            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                                            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                                            <div id="Pagination" class="pagination_Rel">
+                                            </div>
+                                        </div>
+                                        <div class="deal clearfix" id="title_Release_List">
+                                        </div>
+                                    </div>
+                                    <div class="padding">
                                         <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);">
                                         </div>
                                     </div>
@@ -960,29 +776,9 @@
 
                                         <div id="dv_Deal_List" class="scale_table_block"></div>
                                     }
-                                    else if (ViewBag.Mode == "R")
-                                    {
-                                        @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" });
-                                        <div class="divRelease">
-                                            <input type="button" id="btnAddRelease" value="@objMessageKey.Add" class="btn btn-primary" />
-                                        </div>
-                                        <div class="paging_area clearfix">
-                                            <span class="pull-left">@objMessageKey.TotalRecords: </span>
-                                            <span class="pull-left" id="lblTitleReleaseCount"></span>
-                                            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
-                                            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
-                                            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
 
-                                            <div id="Pagination" class="pagination">
-                                            </div>
-                                            @*<span class="pull-right">
-                                                    Page Size:
-                                                    <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()">
-                                                </span>*@
-                                        </div>
-                                        <div class="deal clearfix" id="title_Release_List">
-                                        </div>
-                                    }
+
+
                                     <div class="bottom_action">
                                         <ul class="form_link_nav clearfix">
                                             <li class="poptalent">
@@ -1074,71 +870,3 @@
         </div>
     </div>
 </div>
-@if (ViewBag.Mode == "R")
-{
-    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddTitleRelease" role="dialog" tabindex="-1" aria-hidden="false">
-        <div class="modal-dialog">
-            <div class="modal-content clearfix">
-                <form class="form" id="talent_popup">
-                    <div class="form_wrapper">
-                        <div class="form_fields" dir="@objMessageKey.LayoutDirection">
-                            <div class="modal_block modal_header">
-                                <a class="close" data-dismiss="modal" href="#">
-                                    <span>×</span>
-                                    <span class="sr-only">Close</span>
-                                </a>
-                                <h2>@objMessageKey.AddTitleRelease</h2>
-                            </div>
-                            <div class="modal_block">
-                                <ul class="form_fields_wrapper add_title_popup">
-                                    <li>
-                                        <label id="lblReleaseType"><b>@objMessageKey.ReleaseType</b>&nbsp;</label>
-
-                                        @*<input class="form_input" id="talent_name" name="title" type="text" value="" maxlength="100" ondrop="return false;" />*@
-                                        <input type="hidden" id="hdnTVCodes" />
-                                        <input type="hidden" id="hdnSelectedPlatforms" />
-                                        <label class="inline-radio">
-                                            <input type="radio" name="Rel_Type" id="rdWorld" value="W" checked>@objMessageKey.World &nbsp;
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="Rel_Type" id="rdTerritory" value="T">@objMessageKey.Territory
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="Rel_Type" id="rdCountry" value="C">@objMessageKey.Country
-                                        </label>
-                                    </li>
-                                    <li>
-                                        @Html.DropDownList("Territory_Code", ViewBag.TerritoryList_TitleRel as SelectList, new { id = "ddlTerritory_TitleRel", @class = "form_input chosen-select", multiple = "multiple" })
-                                        @Html.DropDownList("Country_Code", ViewBag.CountryList_TitleRel as SelectList, new { id = "ddlCountry_TitleRel", @class = "form_input chosen-select", multiple = "multiple" })
-                                    </li>
-                                    <li>
-                                        <label><b>@objMessageKey.ReleaseDate</b></label>
-                                        <input class="form_input isDatepicker" id="Rel_Date" name="Rel_Date" type="text" ondrop="return false;" />
-                                    </li>
-                                    <li>
-                                        <lable><b>@objMessageKey.ReleaseOnPlatform</b></lable>
-                                        <div id="tree" class="treeClass">
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="modal_block_full">
-                                <div class="form_links">
-                                    <ul class="modal_block clearfix">
-                                        <li class="poptalent">
-                                            <a class="btn btn-primary" href="#" onclick="ValidateSaveTitleRelease()">@objMessageKey.Save</a>
-                                        </li>
-                                        <li class="poptalent">
-                                            <a data-dismiss="modal" class="btn btn-primary" href="#" onclick="clearObj()">@objMessageKey.Cancel</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-}
-

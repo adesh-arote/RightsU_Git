@@ -328,7 +328,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.PartialTabList = null;
             }
             // ViewBag.IsFirstTime = "Y";
-
+            Fillddl();
             return View(objTitle);
         }
 
@@ -364,14 +364,14 @@ namespace RightsU_Plus.Controllers
                 ViewBag.DealListPageSize = Convert.ToInt32(obj_Dictionary_Title["DealListPageSize"]);
                 TempData["TitleData"] = null;
             }
-            if (Type == "R")
-            {
-                ViewBag.RecordLockingCode_View = TempData["RecodLockingCode"];
-                TempData.Keep("RecodLockingCode");
-                Fillddl();
-            }
-            else
-                ViewBag.RecordLockingCode_View = 0;
+            //if (Type == "R")
+            //{
+            //    ViewBag.RecordLockingCode_View = TempData["RecodLockingCode"];
+            //    TempData.Keep("RecodLockingCode");
+            Fillddl();
+            //}
+            //else
+            ViewBag.RecordLockingCode_View = 0;
             objTitle = new Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
             mode = "V";
             PageNo = Page_No;
@@ -1374,7 +1374,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult SaveExtendedMetadata(string ExtendedColumnValue)
         {
             int ccount = 0;
-           // ExtendedColumnCode ;
+            // ExtendedColumnCode ;
             string msgType = "";
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             try
