@@ -105,7 +105,7 @@
                 $('.five_td').hide();
                 initializeExpander();
                 $('#lblTitleReleaseCount').text($('.rights_table_block').length)
-                
+                $('#is_Ex_Date').text("Yes");
             }
         });
     }
@@ -710,13 +710,11 @@
                                                                 <td colspan="1" class="expandable">
                                                                     @talent
                                                                 </td>
-                                                                @if (ViewBag.IsCalculatePublicDomain == "Y")
-                                                                {
-                                                                    <td>
-                                                                        Public Domain
-                                                                    </td>
-                                                                    <td><div id="PDomain"></div></td>
-                                                                }
+
+                                                                <td>First Exhibition Date</td>
+                                                                <td>
+                                                                    <span id="is_Ex_Date"> No </span>
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>@objMessageKey.Synopsis</td>
@@ -730,8 +728,18 @@
                                                                 <td class="expandable" id="tdsynopsis">
                                                                     @synopsis
                                                                 </td>
-                                                                <td></td>
-                                                                <td></td>
+                                                                @if (ViewBag.IsCalculatePublicDomain == "Y")
+                                                                {
+                                                                    <td>
+                                                                        Public Domain
+                                                                    </td>
+                                                                    <td><div id="PDomain"></div></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                }
 
                                                             </tr>
                                                         </table>

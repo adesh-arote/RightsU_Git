@@ -1081,7 +1081,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
-        public PartialViewResult GetTitle_Release_List(int Title_Code, int PageNo = 1, int PageSize = 10)
+        public PartialViewResult GetTitle_Release_List(int Title_Code, int PageNo = 1, int PageSize = 10, string cmdName = "")
         {
             //new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(p => true).Select(p => p)
             //    .Join(new Title_Release_Platform_Service().SearchFor(p => true).Select(p => p), x => x.Title_Release_Code, y => y.Title_Release_Code, (x, y) => new { Title_Release = x, Title_Release_Platforms = y })
@@ -1090,6 +1090,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.TitleReleasePageNo = PageNo;
             ViewBag.TitleReleaseCount = new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Title_Code == Title_Code).Count();
             var title_List = new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Title_Code == Title_Code).OrderBy(p => p.Title_Release_Code).Skip(skip).Take(PageSize).ToList();
+            if (cmdName == "C")
+            {
+                title_List.Clear();
+            }
             return PartialView("_List_Title_Release", title_List);
         }
 

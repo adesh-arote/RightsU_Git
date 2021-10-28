@@ -88,7 +88,7 @@
             $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
         }
         Dir_G = '@ViewBag.Direction';
-        BindTitleList(@ViewBag.TitleReleasePageNo);
+        BindTitleList('@ViewBag.TitleReleasePageNo', '@ViewBag.CommandName');
         $('input[type=radio][name=rb_ED').change(function () {
             if ($(this).val() == 'N') {
                 $('#btnAddRelease').prop('disabled', true);
@@ -270,11 +270,11 @@
         });
     }
 
-    function BindTitleList(pageNo) {
+    function BindTitleList(pageNo, cmdName = "") {
         $.ajax({
             url: '@Url.Action("GetTitle_Release_List", "Title")',
             type: 'POST',
-            data: ({ Title_Code: '@Model.Title_Code', PageNo: pageNo }),
+            data: ({ Title_Code: '@Model.Title_Code', PageNo: pageNo, cmdName: cmdName }),
             async: false,
             success: function (data) {
                 if (data == "true") {
