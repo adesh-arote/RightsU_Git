@@ -403,6 +403,13 @@ namespace RightsU_Plus.Controllers
                 ViewBag.OriginalLanguage = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(e => e.Language_Code == objTitle.Original_Language_Code).Select(i => new { i.Language_Name });
             else
                 ViewBag.OriginalLanguage = "No Original Langauge";
+
+            string Per_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic").FirstOrDefault().Parameter_Value;
+
+            if (Per_Logic == "Y")
+            {
+                return View("~/Views/Title/View_Release.cshtml", objTitle);
+            }
             return View(objTitle);
         }
 
@@ -1903,8 +1910,16 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.Direction = "LTR";
                 ViewBag.IsFirstTime = "N";
-                ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").First().Parameter_Value;
+                ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").FirstOrDefault().Parameter_Value;
                 //return PartialView("~/Views/Title/Index.cshtml", objTitle);
+
+                string Per_Logic =  new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic").FirstOrDefault().Parameter_Value;
+
+                if (Per_Logic == "Y")
+                {
+                    return PartialView("~/Views/Title/_Title_Main_Release.cshtml", objTitle);
+                }
+
                 return PartialView("~/Views/Title/_Title_Main.cshtml", objTitle);
             }
             else

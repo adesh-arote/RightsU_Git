@@ -333,7 +333,7 @@
                         }
                         @if (ViewBag.buttonsVisibility.Contains("~" + GlobalParams.RightCodeForTitleRelease + "~"))
                         {
-                            <a class="glyphicon glyphicon-export" style="display:none" href="#" title='@objMessageKey.Release' onclick="CheckRecordLock(@item.Title_Code,'R');"></a>
+                            <a class="glyphicon glyphicon-export" href="#" title='@objMessageKey.Release' onclick="CheckRecordLock(@item.Title_Code,'R');"></a>
                         }
                         @if (item.Is_Active == "Active")
                         {

@@ -12,19 +12,12 @@
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
-<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
-<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
-<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
-
 <script>
     var URL_BindFieldNamedd = '@Url.Action("BindFieldNameddl", "Title")';
     var URL_TitleList_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code", Record_Locking_Code ="RL_Code"})';
     var URL_Bind_Title_List = '@Url.Action("Bind_Title_List", "Title_List")';
     var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_List")';
-    var chosenTerritory = [];
-    var chosenCountry = [];
     $(document).ready(function () {
-        $('#rdWorld').parents('li').next().hide();
         $("#_hdnRecordLockingCode").val(recordLockingCode);
         initializeChosen();
        // $("#ancFileName").attr('href', '/Help/Masters/Layout.html?TitleList');
@@ -65,22 +58,6 @@
             $('.inline-radio').css("float", "Left");
         }
 
-         if ('RTL' == '@objMessageKey.LayoutDirection'){
-            $('.divRelease').css("float", "left");
-            $('.poptalent').css("float", "Right");
-            $('.close').css("float", "left");
-            $('.PopGender').css("float", "Right");
-            $('.inline-radio').css("float", "Right");
-            $('#lblReleaseType').css("float", "right")
-        }
-        else {
-            $('.divRelease').css("float", "Right");
-            $('.poptalent').css("float", "Left");
-            $('.close').css("float", "Right");
-            $('.PopGender').css("float", "Left");
-            $('#lblReleaseType').css("float", "left")
-        }
-
         if ("RTL" == '@objMessageKey.LayoutDirection') {
 
             $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
@@ -88,71 +65,7 @@
             $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
         }
         Dir_G = '@ViewBag.Direction';
-        BindTitleList('@ViewBag.TitleReleasePageNo', '@ViewBag.CommandName');
-        $('input[type=radio][name=rb_ED').change(function () {
-            if ($(this).val() == 'N') {
-                $('#btnAddRelease').prop('disabled', true);
-            }
-            else {
-                $('#btnAddRelease').prop('disabled', false);
-            }
-        });
-    });
 
-    $('#ddlTerritory_TitleRel').chosen().change(function () {
-        chosenTerritory = $(this).val();
-    });
-
-    $('#ddlCountry_TitleRel').chosen().change(function () {
-        chosenCountry = $(this).val();
-    });
-
-    $('#btnAddRelease').click(function () {
-            debugger
-            $('#popAddTitleRelease').modal();
-            $('#hdnTitleReleaseCode').val(0);
-            $('#rdWorld').prop('checked', true);
-            $('#popAddTitleRelease .modal_header h2').text('@objMessageKey.AddTitleRelease');
-        debugger
-            var data = CheckHoldBack();
-            if (data.length == 0 || data == '') {
-                $('#hdnTVCodes').val('1,8,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,41,42,43,9,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,409,410,411,412,413,414,415,416,417,44,45,46,47,48,49,50,51,428');
-                //$("#hdnSelectedPlatforms").val('@ViewBag.TheatricalPlatformCode');
-                BindPlatformTree();
-                $("#Rights_Platform").fancytree("disable");
-                $('input[name="Rel_Type"]').prop('disabled', true);
-                $('#rdWorld').prop('checked', true);
-
-            }
-            else if (data.length > 0) {
-                $('#hdnTVCodes').val(data);
-                $("#hdnSelectedPlatforms").val('');
-                $('input[name="Rel_Type"]').prop('disabled', false);
-                $('#rdWorld').prop('checked', true);
-                BindPlatformTree();
-                $("#Rights_Platform").fancytree("enable");
-
-            }
-            $('#rdWorld').parents('li').next().hide();
-    });
-
-    $('input[name="Rel_Type"]').click(function () {
-        debugger;
-        var ele = $(this);
-        var id = ele.attr('id');
-        $('#rdWorld').parents('li').next().show();
-        if (id == 'rdTerritory') {
-            $('#ddlTerritory_TitleRel_chosen').show();
-            $('#ddlCountry_TitleRel_chosen').hide();
-        }
-        else if (id == 'rdCountry') {
-            $('#ddlCountry_TitleRel_chosen').show();
-            $('#ddlTerritory_TitleRel_chosen').hide();
-        }
-        else if (id == 'rdWorld') {
-            ele.parents('li').next().hide();
-        }
-        $('#ddlCountry_TitleRel,#ddlTerritory_TitleRel').removeAttr('required');
     });
 
     $("#Deal_Type_Code").change(function () {
@@ -192,219 +105,6 @@
             }
         });
     });
-
-    function ValidateSaveTitleRelease() {
-        var Rel_Date = $('#Rel_Date');
-        if (Rel_Date.val() == '') {
-            Rel_Date.attr('required', true);
-            return false;
-        }
-
-        var Rel_Type = $('input[name="Rel_Type"]:checked').val();
-        var SelectedNodes = $.map($('#Rights_Platform').fancytree("getTree").getSelectedNodes(), function (node) {
-            return node.key;
-        });
-        var TitleReleaseCode = $('#hdnTitleReleaseCode').val();
-        var removeItem = 0;
-        SelectedNodes = jQuery.grep(SelectedNodes, function (value) {
-            return value != removeItem;
-        });
-
-        var iCountryLen = [];
-        var iTerritoryLen = [];
-        if (Rel_Type == 'C') {
-            var iCountryLen = $('#ddlCountry_TitleRel').val();
-            if (iCountryLen == null) {
-                $('#ddlCountry_TitleRel').attr('required', true);
-                return false;
-            }
-            else {
-
-                chosenCountry = iCountryLen;
-            }
-        }
-        else if (Rel_Type == 'T') {
-            var iTerritoryLen = $('#ddlTerritory_TitleRel').val();
-            if (iTerritoryLen == null) {
-                $('#ddlTerritory_TitleRel').attr('required', true);
-                return false;
-            }
-            else {
-                $('#ddlCountry_TitleRel').val('').trigger('chosen:updated');
-                chosenTerritory = iTerritoryLen;
-            }
-
-        }
-
-
-        if (SelectedNodes.length == 0) {
-            $("#tree").attr('required', true);
-            $("#tree").addClass('required');
-            return false;
-        }
-        var World_Code = "";
-        //var Territory_Code = $('#ddlTerritory_TitleRel_chosen option:selected').val();
-        Rel_Date = Rel_Date.val(); //$.datepicker.formatDate('dd MM yy', new Date(Rel_Date.val()));
-
-        $.ajax({
-            url: '@Url.Action("SaveTitleRelease", "Title")',
-            type: 'POST',
-            data: ({ Title_Code: '@Model.Title_Code', Release_Type: Rel_Type, Release_Date: Rel_Date, platForm_Code: SelectedNodes.toString(), Territory_Code: World_Code == '' ? (chosenTerritory == null ? '' : chosenTerritory.toString()) : World_Code, Country_Code: (chosenCountry == null ? '' : chosenCountry.toString()), World_Code: '', Title_Release_Code: TitleReleaseCode }),
-            async: false,
-            success: function (data) {
-                debugger;
-                if (data == "true") {
-                    redirectToLogin();
-                }
-                if (data == 1) {
-                    showAlert('I', '@objMessageKey.Savedsuccessfully');
-                    clearObj();
-                    BindTitleList(@ViewBag.TitleReleasePageNo);
-                    $('#popAddTitleRelease').modal('hide');
-                    //window.location.reload();
-                }
-                else if (data == 0)
-                    showAlert('E', '@objMessageKey.CombinationAlreadyExist');
-
-            }
-        });
-    }
-
-    function BindTitleList(pageNo, cmdName = "") {
-        $.ajax({
-            url: '@Url.Action("GetTitle_Release_List", "Title")',
-            type: 'POST',
-            data: ({ Title_Code: '@Model.Title_Code', PageNo: pageNo, cmdName: cmdName }),
-            async: false,
-            success: function (data) {
-                if (data == "true") {
-                    redirectToLogin();
-                }
-                $('#title_Release_List').html(data);
-                initializeExpander();
-                $('#lblTitleReleaseCount').text($('.rights_table_block').length)
-
-                if ($('.rights_table_block').length > 0) {
-                    $('input[name=rb_ED]').attr("disabled", true);
-                    $('#btnAddRelease').prop('disabled', false);
-                    $("input[name=rb_ED][value='Y']").prop('checked', true);
-                }
-                else {
-                    $('input[name=rb_ED]').attr("disabled", false);
-                    $('#btnAddRelease').prop('disabled', true);
-                    $("input[name=rb_ED][value='N']").prop('checked', true);
-                }
-            }
-        });
-    }
-
-      var Command_Name = "";
-    var TitleReleaseCode = 0;
-    function handleOk() {
-        if (Command_Name == "TITLE_RELEASE_DELETE") {
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("DeleteTitleRelease", "Title")',
-                data: { Title_Release_Code: TitleReleaseCode },
-                async: false,
-                success: function (result) {
-                    if (result == "true") {
-                        redirectToLogin();
-                    }
-                    else {
-                        if (result.Status == "S") {
-                            showAlert('I', result.Message);
-                            var pageNo = $('#hdnPageNo').val();
-                            BindTitleList(pageNo);
-                            calculatePublicDomain();
-                        }
-                        else {
-                            showAlert('E', result.Message);
-                        }
-                    }
-                },
-                error: function (result) {
-                    alert('Error: ' + result.responseText);
-                }
-            });
-        }
-        else if ($("#hdnConfirmationtype").val() == 'talent') {
-            ValidateSave('validate');
-        }
-        else {
-            var obj = $('#hdnCurrentID').val();
-            var imgDelete = document.getElementById("imgDelete_" + obj);
-            SaveExtended(imgDelete);
-        }
-    }
-    function handleCancel() {
-        Command_Name = "";
-        TitleReleaseCode = 0;
-    }
-
-    function clearObj() {
-        debugger;
-        $('.required').removeClass('required');
-        $("[required='required']").removeAttr("required");
-        chosenTerritory = [];
-        chosenCountry = [];
-        $('#rdWorld').parents('li').next().hide();
-        $('#hdnTitleReleaseCode').val(0);
-        $('#rdWorld').prop('checked', true);
-
-        $('#ddlCountry_TitleRel,#ddlTerritory_TitleRel').val('').trigger('chosen:updated');
-        $('#Rel_Date').val('');
-        $('#hdnTVCodes').val('');
-        $('#ddlCountry_TitleRel,#ddlTerritory_TitleRel').removeAttr('required');
-    }
-
-     function CheckHoldBack() {
-        var retVal = '';
-        $.ajax({
-            url: '@Url.Action("CheckIfHoldBack","Title")',
-            type: 'POST',
-            data: ({ Title_Code: '@Model.Title_Code' }),
-            async: false,
-            success: function (data) {
-                if (data == "true") {
-                    redirectToLogin();
-                }
-                retVal = data;
-            }
-        });
-        return retVal;
-    }
-
-        function BindPlatformTree() {
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("BindPlatformTreeView", "Title")',
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                strPlatform: $("#hdnTVCodes").val(),
-                selectedPlatform: $("#hdnSelectedPlatforms").val()
-            }),
-            async: false,
-            success: function (result) {
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                $('#tree').html(result);
-                //var j  = @Session["IsHoldBack"];
-                //if (j == 0) {
-                //    $("#Rights_Platform").fancytree("disable");
-                //    $('input:radio').prop('disabled', true);
-                //}
-                //else {
-                //    $("#Rights_Platform").fancytree("enable");
-                //    $('input:radio').prop('disabled', false);
-                //}
-            },
-            error: function (result) { }
-        });
-    }
 
     function fileCheck(obj) {
         var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
@@ -526,13 +226,6 @@
     }
 </script>
 <style>
-    #divRelease {
-        text-align: right;
-        border-bottom: 1.5px dotted #CCC;
-        margin-bottom: 10px;
-        padding-bottom: 10px;
-    }
-
     .four_column td:nth-child(2n) {
         width: 36% !important;
     }
@@ -732,7 +425,17 @@
                                         @Html.Hidden("hdnGenres")
                                     </td>
                                 </tr>
-                                <tr></tr>
+                                <tr>
+
+                                    @if (Model.Deal_Type_Code == GlobalParams.CodeForEmbeddedMusic)
+                                    {
+                                        <td>@objMessageKey.MusicLabel</td>
+                                        <td>
+                                            @Html.DropDownList("Music_Label_Code", (List<SelectListItem>)ViewBag.MusicLabelList,
+                                                 new { @id = "Music_Label_Code", @class = "form_input chosen-select" })
+                                        </td>
+                                    }
+                                </tr>
                                 <tr>
                                     <td>@objMessageKey.KeyStarCast</td>
                                     <td>
@@ -744,23 +447,6 @@
                                         <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddTalent" onclick="AddTalent(@GlobalParams.Role_code_StarCast);" />
                                         @Html.Hidden("hdnStarCast")
                                     </td>
-
-                                    <td>First Exhibition Date</td>
-                                    <td>
-                                        <input type="radio"  name="rb_ED" value="Y"> Yes &nbsp;&nbsp;
-                                        <input type="radio" checked="checked" name="rb_ED" value="N"> No &nbsp;&nbsp;
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    @if (Model.Deal_Type_Code == GlobalParams.CodeForEmbeddedMusic)
-                                    {
-                                        <td>@objMessageKey.MusicLabel</td>
-                                        <td>
-                                            @Html.DropDownList("Music_Label_Code", (List<SelectListItem>)ViewBag.MusicLabelList,
-                                                 new { @id = "Music_Label_Code", @class = "form_input chosen-select" })
-                                        </td>
-                                    }
                                     @if (ViewBag.IsCalculatePublicDomain == "Y")
                                     {
                                         <td>Public Domain</td>
@@ -772,7 +458,6 @@
                                             <td>No</td>}
                                     }
                                 </tr>
-
                                 <tr>
                                     <td>@objMessageKey.Synopsis</td>
                                     <td colspan="3">
@@ -789,26 +474,7 @@
             </table>
         </div>
 
-        <div class="padding" id="Release_Block" style="margin: 1px;">
-            @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
-            <div class="divRelease">
-                <input type="button" disabled id="btnAddRelease" value="Add Title Release" class="btn btn-primary" />
-            </div>
-            <div class="paging_area clearfix">
-                <span class="pull-left">@objMessageKey.TotalRecords: </span>
-                <span class="pull-left" id="lblTitleReleaseCount"></span>
-                <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
-                <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
-                <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
-
-                <div id="Pagination" class="pagination_Rel">
-                </div>
-            </div>
-            <div class="deal clearfix" id="title_Release_List">
-            </div>
-        </div>
-
-        <div class="padding">
+        <div class="scale_table_block padding">
             <a class="glyphicon glyphicon-plus pull-right" title="@objMessageKey.Add" id="btnAddAdditional" onclick="btnAddExtendedData();"></a>
             <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>
         </div>
