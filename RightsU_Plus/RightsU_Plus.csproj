@@ -1295,6 +1295,8 @@
     <Content Include="Views\Deal_Description\Index.cshtml" />
     <Content Include="Views\Title_Objection_Type\_Title_Objection_Type_List.cshtml" />
     <Content Include="Views\Title_Objection_Type\Index.cshtml" />
+    <Content Include="Views\Title\_Title_Main_Release.cshtml" />
+    <Content Include="Views\Title\View_Release.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

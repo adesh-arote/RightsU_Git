@@ -194,6 +194,10 @@
             debugger
             $('.required').removeClass('required');
             $("[required='required']").removeAttr("required");
+
+           
+           
+
             showLoading();
             IsValidForTab = true;
             var hdnProducer = "";
@@ -207,9 +211,17 @@
             var IsValid = true;
             hdnmode = "@ViewBag.CommandName";
 
+            var ED = $("input[name='rb_ED']:checked").val();
+            if (ED == 'Y' && $('.rights_table_block').length == 0) {
+                showAlert("E", "Please Add Title Release");
+                hideLoading();
+                return false;
+
+            }
+
             if ($("#Deal_Type_Code").val() == null || $("#Deal_Type_Code").val() == "") {
-                showAlert("e", "Please select title type", "");
-                IsValidForTab= false;
+                showAlert("e", "Please select title type");
+                IsValidForTab = false;
                 hideLoading();
             }
             
@@ -741,6 +753,71 @@
                                         </li>
                                         <li class="poptalent">
                                             <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddTitleRelease" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="talent_popup">
+                    <div class="form_wrapper">
+                        <div class="form_fields" dir="@objMessageKey.LayoutDirection">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>@objMessageKey.AddTitleRelease</h2>
+                            </div>
+                            <div class="modal_block">
+                                <ul class="form_fields_wrapper add_title_popup">
+                                    <li>
+                                        <label id="lblReleaseType"><b>@objMessageKey.ReleaseType</b>&nbsp;</label>
+
+                                        @*<input class="form_input" id="talent_name" name="title" type="text" value="" maxlength="100" ondrop="return false;" />*@
+                                        <input type="hidden" id="hdnTVCodes" />
+                                        <input type="hidden" id="hdnSelectedPlatforms" />
+                                        <label class="inline-radio">
+                                            <input type="radio" name="Rel_Type" id="rdWorld" value="W" checked>@objMessageKey.World &nbsp;
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="Rel_Type" id="rdTerritory" value="T">@objMessageKey.Territory
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="Rel_Type" id="rdCountry" value="C">@objMessageKey.Country
+                                        </label>
+                                    </li>
+                                    <li>
+                                        @Html.DropDownList("Territory_Code", ViewBag.TerritoryList_TitleRel as SelectList, new { id = "ddlTerritory_TitleRel", @class = "form_input chosen-select", multiple = "multiple" })
+                                        @Html.DropDownList("Country_Code", ViewBag.CountryList_TitleRel as SelectList, new { id = "ddlCountry_TitleRel", @class = "form_input chosen-select", multiple = "multiple" })
+                                    </li>
+                                    <li>
+                                        <label><b>@objMessageKey.ReleaseDate</b></label>
+                                        <input class="form_input isDatepicker" id="Rel_Date" name="Rel_Date" type="text" ondrop="return false;" />
+                                    </li>
+                                    <li>
+                                        <lable><b>@objMessageKey.ReleaseOnPlatform</b></lable>
+                                        <div id="tree" class="treeClass">
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" onclick="ValidateSaveTitleRelease()">@objMessageKey.Save</a>
+                                        </li>
+                                        <li class="poptalent">
+                                            <a data-dismiss="modal" class="btn btn-primary" href="#" onclick="clearObj()">@objMessageKey.Cancel</a>
                                         </li>
                                     </ul>
                                 </div>
