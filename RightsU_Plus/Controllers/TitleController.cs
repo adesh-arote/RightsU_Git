@@ -364,14 +364,16 @@ namespace RightsU_Plus.Controllers
                 ViewBag.DealListPageSize = Convert.ToInt32(obj_Dictionary_Title["DealListPageSize"]);
                 TempData["TitleData"] = null;
             }
-            //if (Type == "R")
-            //{
-            //    ViewBag.RecordLockingCode_View = TempData["RecodLockingCode"];
-            //    TempData.Keep("RecodLockingCode");
+
             Fillddl();
-            //}
-            //else
-            ViewBag.RecordLockingCode_View = 0;
+            if (Type == "R")
+            {
+                ViewBag.RecordLockingCode_View = TempData["RecodLockingCode"];
+                TempData.Keep("RecodLockingCode");
+                //Fillddl();
+            }
+            else
+                ViewBag.RecordLockingCode_View = 0;
             objTitle = new Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
             mode = "V";
             PageNo = Page_No;

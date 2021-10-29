@@ -1,12 +1,19 @@
-select * from system_module WHERE Parent_Module_Code = 2
+select * from system_module where Module_Name like '%Title%'
 
-select * from system_module where parent_module_code = 2 order by 3
+select * from System_Module_Right where Module_Code = 27
 
---INSERT INTO system_module (Module_Code, Module_Name, Module_Position, Parent_Module_Code, Is_Sub_Module, [Url], Target, Css, Can_Workflow_Assign, Is_Active)
---SELECT 251, 'Title Objection', 'BQ', 0 ,'N', 'welcome.htm', 'mainframe','top','N','Y'
+select * from System_Right where Right_Code in (
+1
+,2
+,3
+,4
+,7
+,9
+,128
+,137
+,121
+,10
+,160
+)
 
---INSERT INTO System_Module_Right(Module_Code, Right_Code)
---SELECT '251', '7'
-
---UPDATE system_module SET Module_Position = 'BQ', Parent_Module_Code = 2 WHERE Module_Code = 251
-
+update System_Parameter set Parameter_Value = 'N' where Parameter_Name = 'Is_Allow_Perpetual_Date_Logic'
