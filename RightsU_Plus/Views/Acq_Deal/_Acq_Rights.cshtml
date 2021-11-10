@@ -169,6 +169,7 @@
     var URL_BindPromoter = '@Url.Action("BindPromoter", "Acq_Rights_Promoter")';
     var URL_Delete_Promoter = '@Url.Action("Delete_Promoter", "Acq_Rights_Promoter")';
     var URL_ApplyTemplate = '@Url.Action("ApplyTemplate", "Acq_Rights")';
+    var URL_GetPerpetuity_Logic_Date = '@Url.Action("GetPerpetuity_Logic_Date", "Acq_Rights")';
 
 
     var ShowMessage = {
@@ -556,8 +557,9 @@
                                                 <div class="@(ORightType == "U" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabPerp">
                                                     <ul style="height: 30px;">
                                                         <li style="text-decoration: none;display: inline;width: 35%;float: left">
+                                                            <input type="hidden" value="@ViewBag.Allow_Perpetual_Date_Logic" id="hdnAllow_Perpetual_Date_Logic" />
                                                             <label>@objMessageKey.StartDate</label>
-                                                            @Html.TextBox("Perpetuity_Date", Model.Start_Date, new { @id = "txtPerpetuity_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                            @Html.TextBox("Perpetuity_Date", Model.Start_Date, new { autocomplete = "off", @id = "txtPerpetuity_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
                                                         </li>
                                                         @if (ViewBag.Enabled_Perpetuity == "Y")
                                                         {
@@ -570,6 +572,20 @@
                                                             <li style="text-decoration: none;display: inline;width: 35%;float: right">
                                                                 <label>@objMessageKey.EndDate</label>
                                                                 @Html.TextBox("Perpetuity_EndDate", Model.End_Date, new { @id = "txtPerpetuity_EndDate", @placeholder = "DD/MM/YYYY", @readonly = "readonly", @style = "width:95px;" })
+                                                            </li>
+                                                        }
+                                                        else if (ViewBag.Allow_Perpetual_Date_Logic == "Y")
+                                                        {
+                                                            <li style="text-decoration: none;display: inline;padding-left: 4%" id="li_Perpetuity">
+                                                                End Date :&nbsp;&nbsp;
+                                                                @{ string PerDate =
+                                                                                 Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
+                                                                <input type="text" id="txtPer_Date_Logic_EndDate" placeholder="DD/MM/YYYY" readonly="readonly" style="width:95px;" value="@PerDate" />
+
+                                                                @if (ViewBag.Deal_Workflow_Flag == "AM")
+                                                                {
+                                                                    <a id="btnRefPerDate" title="Refresh Perpetuity Date" class="glyphicon glyphicon-refresh" onclick="return CalculatePerpetuityEndDate()" style="padding-left: 10px;"></a>
+                                                                }
                                                             </li>
                                                         }
                                                     </ul>

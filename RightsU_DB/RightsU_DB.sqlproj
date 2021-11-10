@@ -1480,6 +1480,7 @@
     <Build Include="dbo\Functions\UFN_Get_Title_Objection_Territory.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Objection_Adv_PreReq.sql" />
     <Build Include="dbo\Stored Procedures\USP_Validate_Rev_HB_Duplication_UDT_Acq.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_Perpetuity_Rights_Duplication_Acq.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
