@@ -204,6 +204,8 @@ namespace RightsU_Plus.Controllers
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ADD && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW)
                 ViewBag.Record_Locking_Code = objDeal_Schema.Record_Locking_Code;
 
+            ViewBag.Allow_Perpetual_Date_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic").FirstOrDefault().Parameter_Value;
+            ViewBag.Deal_Workflow_Flag = objDeal_Schema.Deal_Workflow_Flag;
             try
             {
                 ViewBag.Term_Perputity = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Perpertuity_Term_In_Year").First().Parameter_Value;
@@ -256,6 +258,8 @@ namespace RightsU_Plus.Controllers
 
             FillViewFormDetails();
             SetVisibility();
+            ViewBag.Allow_Perpetual_Date_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic").FirstOrDefault().Parameter_Value;
+
             try
             {
                 ViewBag.AcqSyn_Rights_Thetrical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Rights_Thetrical").First().Parameter_Value.ToString();
@@ -1129,6 +1133,61 @@ namespace RightsU_Plus.Controllers
                 return languageName;
             }
         }
+        public JsonResult GetPerpetuity_Logic_Date(int?[] titleCodes, string perpetuityDate, string callFromValidate = "N")
+        {
+            string Result = "";
+            if (perpetuityDate != "")
+            {
+                if (objDeal_Schema.Deal_Type_Code == 11)
+                {
+                    for (int i = 0; i < titleCodes.Length; i++)
+                    {
+                        int AMDCode = (int)titleCodes.ElementAt(i);
+                        var TCode = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
+                            .SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Syn_Deal_Movie_Code == AMDCode)
+                            .Select(y => y.Title_Code).FirstOrDefault();
+                        titleCodes.SetValue(TCode, i);
+                    }
+                }
+                if (callFromValidate == "Y")
+                {
+                    var lstTitleCode = new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(x => titleCodes.Contains(x.Title_Code)).Select(x => x.Title_Code).Distinct().ToList();
+                    var TitleCodeNo_Release_Date = titleCodes.Except(lstTitleCode);
+                    Result = String.Join(", ", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => TitleCodeNo_Release_Date.Contains(x.Title_Code)).Select(x => x.Title_Name).ToList());
+                }
+                else
+                {
+                    List<Title_Perpetuity_Date> lstTPD = Calculate_Perpetuity_Logic(titleCodes, perpetuityDate);
+                    if (titleCodes.Count() == 1 && lstTPD.Count > 0)
+                    {
+                        Result = lstTPD.Where(x => x.TitleCode == titleCodes.ElementAt(0)).Select(x => x.Perpetuity_Date).FirstOrDefault().ToString("dd/MM/yyyy");
+                    }
+                }
+                
+            }
+            return Json(Result, JsonRequestBehavior.AllowGet);
+        }
+
+        public List<Title_Perpetuity_Date> Calculate_Perpetuity_Logic(int?[] titleCodes, string perpetuityDate)
+        {
+            var Term_Perputity = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Perpertuity_Term_In_Year").Select(x => x.Parameter_Value).FirstOrDefault();
+            var lstTit_Perpetuity_Date = new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(x => titleCodes.Contains(x.Title_Code)).ToList()
+                    .GroupBy(p => p.Title_Code, (key, g) => new { TitleCode = key, Min_Release_Date = (DateTime)g.Select(x => x.Release_Date).Min() });
+
+
+            List<Title_Perpetuity_Date> lstTPD = new List<Title_Perpetuity_Date>();
+            foreach (var item in lstTit_Perpetuity_Date)
+            {
+                Title_Perpetuity_Date obj = new Title_Perpetuity_Date();
+                obj.TitleCode = item.TitleCode;
+                obj.Release_Date = item.Min_Release_Date;
+                int year = item.Min_Release_Date.Year;
+                DateTime firstDay = new DateTime(year + 1, 1, 1);
+                obj.Perpetuity_Date = firstDay.AddYears(Convert.ToInt32(Term_Perputity)).AddDays(-1);
+                lstTPD.Add(obj);
+            }
+            return lstTPD;
+        }
         public JsonResult Validate_Groups(string Region_Codes, string Dubbing_Codes, string Subtitling_Codes)
         {
             List<string> lst_ErrorMsg = new List<string>();
@@ -1699,7 +1758,78 @@ namespace RightsU_Plus.Controllers
                         objSyn_Deal_Rights.EntityState = State.Added;
 
                     dynamic resultSet;
+
+                    string Is_Allow_Perpetual_Date_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic").FirstOrDefault().Parameter_Value;
+                    List<Title_Perpetuity_Date> lstTPD = new List<Title_Perpetuity_Date>();
+                    if (Is_Allow_Perpetual_Date_Logic == "Y" && objSyn_Deal_Rights.Right_Type == "U")
+                    {
+                        var titleCodes = objSyn_Deal_Rights.Syn_Deal_Rights_Title.Select(x => x.Title_Code).ToList();
+                        var lstTitleCode = new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(x => titleCodes.Contains(x.Title_Code)).Select(x => x.Title_Code).Distinct().ToList();
+                        var TitleCodeNo_Release_Date = titleCodes.Except(lstTitleCode);
+
+                        foreach (var item in TitleCodeNo_Release_Date)
+                        {
+                            Syn_Deal_Rights_Title obj = objSyn_Deal_Rights.Syn_Deal_Rights_Title.Where(x => x.Title_Code == item).FirstOrDefault();
+                            Deal_Rights_Title_UDT objUdt = objSyn_Deal_Rights.LstDeal_Rights_Title_UDT.Where(x => x.Title_Code == item).FirstOrDefault();
+                            objSyn_Deal_Rights.Syn_Deal_Rights_Title.Remove(obj);
+                            objSyn_Deal_Rights.LstDeal_Rights_Title_UDT.Remove(objUdt);
+                        }
+
+                        if (objSyn_Deal_Rights.Syn_Deal_Rights_Title.Count == 0)
+                            return false;
+
+                        lstTPD = Calculate_Perpetuity_Logic(lstTitleCode.ToArray(), ((DateTime)objSyn_Deal_Rights.Actual_Right_Start_Date).ToString("dd/MM/yyyy")).ToList();
+
+                    }
+
                     objADRS.Save(objSyn_Deal_Rights, out resultSet);
+                    //int res = resultSet.Count;
+                    if (Is_Allow_Perpetual_Date_Logic == "Y" && objSyn_Deal_Rights.Right_Type == "U")
+                    {
+                        Syn_Deal_Rights_Service ADRPS = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName);
+                        dynamic resultSetADRP;
+                        for (int i = 0; i < objSyn_Deal_Rights.Syn_Deal_Rights_Title.Count; i++)
+                        {
+                            if (i > 0)
+                            {
+                                var NewSyn_Deal_Rights_Code = (dynamic)null;
+                                int? TCode = objSyn_Deal_Rights.Syn_Deal_Rights_Title.ElementAt(i).Title_Code;
+                                if (objDeal_Schema.Deal_Type_Code == 11)
+                                {
+                                    int ADRTCode = objSyn_Deal_Rights.Syn_Deal_Rights_Title.ElementAt(i).Syn_Deal_Rights_Title_Code;
+                                    NewSyn_Deal_Rights_Code = new USP_Service(objLoginEntity.ConnectionStringName)
+                                   .USP_Syn_Deal_Right_Clone(objSyn_Deal_Rights.Syn_Deal_Code, objSyn_Deal_Rights.Syn_Deal_Rights_Code, ADRTCode, TCode, "Y");
+                                }
+                                else
+                                {
+                                    NewSyn_Deal_Rights_Code = new USP_Service(objLoginEntity.ConnectionStringName)
+                                    .USP_Syn_Deal_Right_Clone(objSyn_Deal_Rights.Syn_Deal_Code, objSyn_Deal_Rights.Syn_Deal_Rights_Code, 0, TCode, "N");
+                                }
+
+                                //Deal_Rights_Process_Service DRPService = new Deal_Rights_Process_Service(objLoginEntity.ConnectionStringName);
+                                //Deal_Rights_Process DRP = new Deal_Rights_Process();
+                                //DRP.Deal_Code = objSyn_Deal_Rights.Syn_Deal_Code;
+                                //DRP.Deal_Rights_Code = Convert.ToInt32(NewSyn_Deal_Rights_Code.FirstOrDefault());
+                                //DRP.Module_Code = 35;
+                                //DRP.Record_Status = "P";
+                                //DRP.Inserted_On = System.DateTime.Now;
+                                //DRP.User_Code = objLoginUser.Users_Code;
+                                //DRP.EntityState = State.Added;
+
+                                //dynamic resultSetDRP;
+                                //DRPService.Save(DRP, out resultSetDRP);
+                            }
+
+                            Syn_Deal_Rights objADR = ADRPS.GetById(objSyn_Deal_Rights.Syn_Deal_Rights_Code);
+                            objADR.EntityState = State.Modified;
+                            int? TitCode = objADR.Syn_Deal_Rights_Title.ElementAt(i).Title_Code;
+                            objADR.Actual_Right_End_Date = lstTPD.Where(x => x.TitleCode == TitCode).Select(x => x.Perpetuity_Date).FirstOrDefault();
+                            ADRPS.Save(objADR, out resultSetADRP);
+
+                        }
+
+                    }
+
                     return true;
                 }
             }

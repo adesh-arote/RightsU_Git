@@ -257,6 +257,11 @@
                                             <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Actual_Right_End_Date).Replace("/", "-")</span>
                                             <input type="hidden" value="@Model.Actual_Right_End_Date" id="End_Date" />
                                         }
+                                        else if (ViewBag.Allow_Perpetual_Date_Logic == "Y" && Model.Actual_Right_End_Date != null)
+                                        {
+                                            <label>&emsp;&emsp;@objMessageKey.EndDate: </label>
+                                            <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Actual_Right_End_Date).Replace("/", "-")</span>
+                                        }
                                         <input type="hidden" value="@Model.Actual_Right_Start_Date" id="Start_Date" />
 
                                     }

@@ -126,6 +126,7 @@ namespace RightsU_BLL
         }
     }
 
+
     public class Syn_Deal_Rights_Service : BusinessLogic<Syn_Deal_Rights>
     {
         private readonly Syn_Deal_Rights_Repository objSDRR;
