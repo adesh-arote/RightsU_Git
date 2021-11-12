@@ -406,7 +406,7 @@ namespace RightsU_Plus.Controllers
             else
                 ViewBag.OriginalLanguage = "No Original Langauge";
 
-            string Per_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic").FirstOrDefault().Parameter_Value;
+            string Per_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic_Title").FirstOrDefault().Parameter_Value;
 
             if (Per_Logic == "Y")
             {
@@ -1915,7 +1915,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").FirstOrDefault().Parameter_Value;
                 //return PartialView("~/Views/Title/Index.cshtml", objTitle);
 
-                string Per_Logic =  new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic").FirstOrDefault().Parameter_Value;
+                string Per_Logic =  new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic_Title").FirstOrDefault().Parameter_Value;
 
                 if (Per_Logic == "Y")
                 {

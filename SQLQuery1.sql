@@ -1,5 +1,21 @@
-select * from Users_Activity_Log order by 1 desc
+select * from title order by 1 desc
 
-{"New_Acq_Deal_Code":"22686","Previous_Acq_Deal_Code":"22681","User_Code":"143","LstDeal_Rights_Title_UDT":"{[    {      "Deal_Rights_Code": 32087,      "Title_Code": 37552,      "Episode_From": 1,      "Episode_To": 1    }  ]}"}
-{"New_Acq_Deal_Code":"22685","Previous_Acq_Deal_Code":"22681","User_Code":"143","LstDeal_Rights_Title_UDT":"[    {      "Deal_Rights_Code": 32087,      "Title_Code": 37552,      "Episode_From": 1,      "Episode_To": 1    }  ]"}
-{"right_Type":"AR","view_Type":"G","deal_Code":"22685","deal_Movie_Codes":"","region_Code":"","platform_Code":"","IsExclusive":"B","pageNo":"System.Data.Entity.Core.Objects.ObjectParameter","pageSize":"10","totalRecord":"System.Data.Entity.Core.Objects.ObjectParameter","searchText":""}
+select T.Title_Code, MIN(TR.Release_Date) AS Release_Date into #TitleRelease from Title_Release TR
+INNER JOIN Title T ON T.Title_Code = TR.Title_Code
+GROUP BY  T.Title_Code
+
+SELECT * FROM TITLE WHERE TITLE_cODE = 38559
+
+SELECT ADR.Actual_Right_Start_Date, ADR.Actual_Right_End_Date, ADR.Right_Type, ADRT.*,
+TR.Release_Date,  DATEADD(DAY,-1, (DATEADD(year, 60, CONVERT(date,DATEADD(YEAR,DATEDIFF(YEAR,0,DATEADD(year, 1, TR.Release_Date)),0))))) FROM Acq_Deal_Rights_Title ADRT
+--UPDATE ADR SET 
+--ADR.Actual_Right_End_Date = DATEADD(DAY,-1, (DATEADD(year, 60, CONVERT(date,DATEADD(YEAR,DATEDIFF(YEAR,0,DATEADD(year, 1, TR.Release_Date)),0)))))
+-- FROM Acq_Deal_Rights_Title ADRT
+INNER JOIN #TitleRelease TR ON ADRT.Title_Code = TR.Title_Code
+INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Rights_Code = ADRT.Acq_Deal_Rights_Code
+WHERE ADR.Right_Type ='U'
+ 
+
+ select * from System_Parameter_New order by 1 desc
+
+select convert (date,DATEADD(YEAR,DATEDIFF(YEAR,0,DATEADD(year, 1, getdate())),0))

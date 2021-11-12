@@ -54,6 +54,9 @@ namespace RightsU_BLL
             if (!objToValidate.SaveGeneralOnly)
             {
                 USP_Service objValidateService = new USP_Service(_Connection_Str);
+
+                //Commented by akshay rane temporary (need to Recheck by aayush)
+                /*
                 List<USP_Validate_Rev_HB_Duplication_UDT_Acq> objResult = new List<USP_Validate_Rev_HB_Duplication_UDT_Acq>();
                 foreach (Acq_Deal_Pushback objADP in objToValidate.Acq_Deal_Pushback)
                 {
@@ -71,24 +74,27 @@ namespace RightsU_BLL
                            ).ToList());
                     }
                 }
-                //foreach (Acq_Deal_Rights objADP in objToValidate.Acq_Deal_Rights)
-                //{
-                //    if (objADP.LstDeal_Rights_UDT.Count > 0)
-                //    {
-                //        //List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
-                //        objResult.AddRange(objValidateService.USP_Validate_Rights_Duplication_UDT(
-                //           objADP.LstDeal_Rights_UDT,
-                //           objADP.LstDeal_Rights_Title_UDT,
-                //           objADP.LstDeal_Rights_Platform_UDT,
-                //           objADP.LstDeal_Rights_Territory_UDT,
-                //           objADP.LstDeal_Rights_Subtitling_UDT,
-                //           objADP.LstDeal_Rights_Dubbing_UDT,
-                //           "AR"
-                //           ).ToList());
+                */
 
-                //        resultSet = objResult;
-                //    }
-                //}
+                List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
+                foreach (Acq_Deal_Rights objADP in objToValidate.Acq_Deal_Rights)
+                {
+                    if (objADP.LstDeal_Rights_UDT.Count > 0)
+                    {
+                        //List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
+                        objResult.AddRange(objValidateService.USP_Validate_Rights_Duplication_UDT(
+                           objADP.LstDeal_Rights_UDT,
+                           objADP.LstDeal_Rights_Title_UDT,
+                           objADP.LstDeal_Rights_Platform_UDT,
+                           objADP.LstDeal_Rights_Territory_UDT,
+                           objADP.LstDeal_Rights_Subtitling_UDT,
+                           objADP.LstDeal_Rights_Dubbing_UDT,
+                           "AR"
+                           ).ToList());
+
+                        resultSet = objResult;
+                    }
+                }
                 resultSet = objResult;
                 return !(objResult.Count() > 0);
             }
