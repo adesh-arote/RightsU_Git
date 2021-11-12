@@ -1783,8 +1783,8 @@ namespace RightsU_Plus.Controllers
                     }
 
                     objADRS.Save(objSyn_Deal_Rights, out resultSet);
-                    int res = resultSet.Count;
-                    if (Is_Allow_Perpetual_Date_Logic == "Y" && objSyn_Deal_Rights.Right_Type == "U" && res == 0)
+                    //int res = resultSet.Count;
+                    if (Is_Allow_Perpetual_Date_Logic == "Y" && objSyn_Deal_Rights.Right_Type == "U")
                     {
                         Syn_Deal_Rights_Service ADRPS = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName);
                         dynamic resultSetADRP;
