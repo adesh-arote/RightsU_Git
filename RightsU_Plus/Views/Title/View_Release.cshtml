@@ -105,7 +105,12 @@
                 $('.five_td').hide();
                 initializeExpander();
                 $('#lblTitleReleaseCount').text($('.rights_table_block').length)
-                $('#is_Ex_Date').text("Yes");
+                if ($('.rights_table_block').length > 0) {
+                    $('#is_Ex_Date').text("Yes");
+                }
+                else {
+                    $('#is_Ex_Date').text("No");
+                }
             }
         });
     }

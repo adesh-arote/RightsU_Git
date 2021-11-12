@@ -397,6 +397,7 @@
         string Concat = " To ";
         var hdnPlatformCode_ = "hdnPlatformCode_";
         string ClassName = "rowBg";
+        string Is_Allow_Perpetual_Date_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic").FirstOrDefault().Parameter_Value;
 
         <input type="hidden" id="hdnCurrentID" />
         @Html.Hidden("hdnSynDealCode")
@@ -545,6 +546,11 @@
                                     {
                                         <text> @objMessageKey.From </text>
                                         @Convert.ToDateTime(item.Rights_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                        if (Is_Allow_Perpetual_Date_Logic == "Y" && item.Rights_End_Date != null)
+                                        {
+                                            <text> @objMessageKey.To </text>
+                                            @Convert.ToDateTime(item.Rights_End_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                        }
                                     }
                                 }
                             </div>

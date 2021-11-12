@@ -149,6 +149,81 @@ namespace RightsU_BLL
         }
     }
 
+    public class Acq_Deal_Rights_Perpetuity_Service : BusinessLogic<Acq_Deal_Rights>
+    {
+        private readonly Acq_Deal_Rights_Repository objADRR;
+        private string _Connection_Str = "";
+        //public Acq_Deal_Rights_Service()
+        //{
+        //    this.objADRR = new Acq_Deal_Rights_Repository(DBConnection.Connection_Str);
+        //}
+        public Acq_Deal_Rights_Perpetuity_Service(string Connection_Str)
+        {
+            _Connection_Str = Connection_Str;
+            this.objADRR = new Acq_Deal_Rights_Repository(Connection_Str);
+        }
+        public IQueryable<Acq_Deal_Rights> SearchFor(Expression<Func<Acq_Deal_Rights, bool>> predicate)
+        {
+            IQueryable<Acq_Deal_Rights> lst = objADRR.SearchFor(predicate);
+            foreach (Acq_Deal_Rights objRight in lst)
+            {
+                objRight.Acq_Deal_Rights_Territory.Clear();
+                objRight.Acq_Deal_Rights_Territory = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Territory(objRight.Acq_Deal_Rights_Code).ToList();
+                objRight.Acq_Deal_Rights_Subtitling.Clear();
+                objRight.Acq_Deal_Rights_Subtitling = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Subtitling(objRight.Acq_Deal_Rights_Code).ToList();
+                objRight.Acq_Deal_Rights_Dubbing.Clear();
+                objRight.Acq_Deal_Rights_Dubbing = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Dubbing(objRight.Acq_Deal_Rights_Code).ToList();
+            }
+            return lst;
+        }
+
+        public Acq_Deal_Rights GetById(int id)
+        {
+            Acq_Deal_Rights objRight = objADRR.GetById(id);
+            objRight.Acq_Deal_Rights_Territory.Clear();
+            objRight.Acq_Deal_Rights_Territory = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Territory(objRight.Acq_Deal_Rights_Code).ToList();
+            objRight.Acq_Deal_Rights_Subtitling.Clear();
+            objRight.Acq_Deal_Rights_Subtitling = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Subtitling(objRight.Acq_Deal_Rights_Code).ToList();
+            objRight.Acq_Deal_Rights_Dubbing.Clear();
+            objRight.Acq_Deal_Rights_Dubbing = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Dubbing(objRight.Acq_Deal_Rights_Code).ToList();
+            return objRight;
+            //return objADRR.GetById(id);
+        }
+
+        public bool Save(Acq_Deal_Rights objADR, out dynamic resultSet)
+        {
+            return base.Save(objADR, objADRR, out resultSet);
+        }
+
+        public bool Update(Acq_Deal_Rights objADR, out dynamic resultSet)
+        {
+            return base.Update(objADR, objADRR, out resultSet);
+        }
+
+        public bool Delete(Acq_Deal_Rights objADR, out dynamic resultSet)
+        {
+            return base.Delete(objADR, objADRR, out resultSet);
+        }
+
+        public override bool Validate(Acq_Deal_Rights objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(Acq_Deal_Rights objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(Acq_Deal_Rights objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
     public class Acq_Deal_Rights_Service : BusinessLogic<Acq_Deal_Rights>
     {
         private readonly Acq_Deal_Rights_Repository objADRR;
