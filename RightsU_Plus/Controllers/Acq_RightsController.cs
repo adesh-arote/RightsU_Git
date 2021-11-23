@@ -2462,9 +2462,10 @@ namespace RightsU_Plus.Controllers
                         dynamic resultSetADRP;
                         for (int i = 0; i < objAcq_Deal_Rights.Acq_Deal_Rights_Title.Count; i++)
                         {
+                            var NewAcq_Deal_Rights_Code = (dynamic)null;
                             if (i > 0)
                             {
-                                var NewAcq_Deal_Rights_Code = (dynamic)null;
+                
                                 int? TCode = objAcq_Deal_Rights.Acq_Deal_Rights_Title.ElementAt(i).Title_Code;
                                 if (objDeal_Schema.Deal_Type_Code == 11)
                                 {
@@ -2492,9 +2493,18 @@ namespace RightsU_Plus.Controllers
                                 DRPService.Save(DRP, out resultSetDRP);
                             }
 
-                            Acq_Deal_Rights objADR = ADRPS.GetById(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
+                            Acq_Deal_Rights objADR;
+                            if (i == 0)
+                            {
+                                objADR = ADRPS.GetById(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
+                            }
+                            else
+                            {
+                                objADR = ADRPS.GetById(Convert.ToInt32(NewAcq_Deal_Rights_Code));
+                            }
+
                             objADR.EntityState = State.Modified;
-                            int? TitCode = objADR.Acq_Deal_Rights_Title.ElementAt(i).Title_Code;
+                            int? TitCode = objADR.Acq_Deal_Rights_Title.ElementAt(0).Title_Code;
                             objADR.Actual_Right_End_Date = lstTPD.Where(x => x.TitleCode == TitCode).Select(x => x.Perpetuity_Date).FirstOrDefault();
                             ADRPS.Save(objADR, out resultSetADRP);
 

@@ -1790,20 +1790,21 @@ namespace RightsU_Plus.Controllers
                         dynamic resultSetADRP;
                         for (int i = 0; i < objSyn_Deal_Rights.Syn_Deal_Rights_Title.Count; i++)
                         {
+                            var NewSyn_Deal_Rights_Code = (dynamic)null;
                             if (i > 0)
                             {
-                                var NewSyn_Deal_Rights_Code = (dynamic)null;
+                               
                                 int? TCode = objSyn_Deal_Rights.Syn_Deal_Rights_Title.ElementAt(i).Title_Code;
                                 if (objDeal_Schema.Deal_Type_Code == 11)
                                 {
                                     int ADRTCode = objSyn_Deal_Rights.Syn_Deal_Rights_Title.ElementAt(i).Syn_Deal_Rights_Title_Code;
                                     NewSyn_Deal_Rights_Code = new USP_Service(objLoginEntity.ConnectionStringName)
-                                   .USP_Syn_Deal_Right_Clone(objSyn_Deal_Rights.Syn_Deal_Code, objSyn_Deal_Rights.Syn_Deal_Rights_Code, ADRTCode, TCode, "Y");
+                                   .USP_Syn_Deal_Right_Clone(objSyn_Deal_Rights.Syn_Deal_Code, objSyn_Deal_Rights.Syn_Deal_Rights_Code, ADRTCode, TCode, "Y").FirstOrDefault();
                                 }
                                 else
                                 {
                                     NewSyn_Deal_Rights_Code = new USP_Service(objLoginEntity.ConnectionStringName)
-                                    .USP_Syn_Deal_Right_Clone(objSyn_Deal_Rights.Syn_Deal_Code, objSyn_Deal_Rights.Syn_Deal_Rights_Code, 0, TCode, "N");
+                                    .USP_Syn_Deal_Right_Clone(objSyn_Deal_Rights.Syn_Deal_Code, objSyn_Deal_Rights.Syn_Deal_Rights_Code, 0, TCode, "N").FirstOrDefault();
                                 }
 
                                 //Deal_Rights_Process_Service DRPService = new Deal_Rights_Process_Service(objLoginEntity.ConnectionStringName);
@@ -1820,9 +1821,18 @@ namespace RightsU_Plus.Controllers
                                 //DRPService.Save(DRP, out resultSetDRP);
                             }
 
-                            Syn_Deal_Rights objADR = ADRPS.GetById(objSyn_Deal_Rights.Syn_Deal_Rights_Code);
+                            Syn_Deal_Rights objADR;
+                            if (i == 0)
+                            {
+                                objADR = ADRPS.GetById(objSyn_Deal_Rights.Syn_Deal_Rights_Code);
+                            }
+                            else
+                            {
+                                objADR = ADRPS.GetById(Convert.ToInt32(NewSyn_Deal_Rights_Code));
+                            }
+                            
                             objADR.EntityState = State.Modified;
-                            int? TitCode = objADR.Syn_Deal_Rights_Title.ElementAt(i).Title_Code;
+                            int? TitCode = objADR.Syn_Deal_Rights_Title.ElementAt(0).Title_Code;
                             objADR.Actual_Right_End_Date = lstTPD.Where(x => x.TitleCode == TitCode).Select(x => x.Perpetuity_Date).FirstOrDefault();
                             ADRPS.Save(objADR, out resultSetADRP);
 
