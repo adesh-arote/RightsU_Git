@@ -465,7 +465,7 @@ BEGIN
 		DEALLOCATE cur_on_rejection  
 		/* CURSOR END */
 
-		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
+		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT, @module_code, @RecordCode
 
     	IF OBJECT_ID('tempdb..#TempCursorOnRej') IS NOT NULL DROP TABLE #TempCursorOnRej
 

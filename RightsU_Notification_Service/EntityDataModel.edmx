@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RightsU_Plus_TestingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Notifications">
+          <Key>
+            <PropertyRef Name="NotificationsCode" />
+          </Key>
+          <Property Name="NotificationsCode" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NotificationType" Type="bigint" Nullable="false" />
+          <Property Name="EventCategory" Type="bigint" />
+          <Property Name="UserCode" Type="bigint" Nullable="false" />
+          <Property Name="TransType" Type="bigint" />
+          <Property Name="TransCode" Type="bigint" />
+          <Property Name="Email" Type="nvarchar(max)" />
+          <Property Name="Mobile" Type="nvarchar(max)" />
+          <Property Name="IsSend" Type="bit" Nullable="false" />
+          <Property Name="IsRead" Type="bit" Nullable="false" />
+          <Property Name="CC" Type="nvarchar(max)" />
+          <Property Name="BCC" Type="nvarchar(max)" />
+          <Property Name="Subject" Type="nvarchar" MaxLength="1000" />
+          <Property Name="HtmlBody" Type="nvarchar(max)" />
+          <Property Name="TextBody" Type="nvarchar(max)" />
+          <Property Name="ScheduleDateTime" Type="datetime" />
+          <Property Name="NoOfRetry" Type="int" />
+          <Property Name="MsgStatusCode" Type="int" />
+          <Property Name="SentOrReadDateTime" Type="datetime" />
+          <Property Name="API_Status" Type="nvarchar" MaxLength="1000" />
+          <Property Name="ErrorDetails" Type="nvarchar(max)" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="CreatedBy" Type="bigint" />
+          <Property Name="ModifiedOn" Type="datetime" />
+          <Property Name="ModifiedBy" Type="bigint" />
+          <Property Name="IsAutoEscalated" Type="bit" Nullable="false" />
+          <Property Name="IsReminderMail" Type="bit" Nullable="false" />
+          <Property Name="Service_Response" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityContainer Name="RightsU_Plus_TestingModelStoreContainer">
+          <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RightsU_Plus_TestingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Notification">
+          <Key>
+            <PropertyRef Name="NotificationsCode" />
+          </Key>
+          <Property Name="NotificationsCode" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NotificationType" Type="Int64" Nullable="false" />
+          <Property Name="EventCategory" Type="Int64" />
+          <Property Name="UserCode" Type="Int64" Nullable="false" />
+          <Property Name="TransType" Type="Int64" />
+          <Property Name="TransCode" Type="Int64" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mobile" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsSend" Type="Boolean" Nullable="false" />
+          <Property Name="IsRead" Type="Boolean" Nullable="false" />
+          <Property Name="CC" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BCC" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Subject" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="HtmlBody" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TextBody" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ScheduleDateTime" Type="DateTime" Precision="3" />
+          <Property Name="NoOfRetry" Type="Int32" />
+          <Property Name="MsgStatusCode" Type="Int32" />
+          <Property Name="SentOrReadDateTime" Type="DateTime" Precision="3" />
+          <Property Name="API_Status" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ErrorDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="Int64" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="Int64" />
+          <Property Name="IsAutoEscalated" Type="Boolean" Nullable="false" />
+          <Property Name="IsReminderMail" Type="Boolean" Nullable="false" />
+          <Property Name="Service_Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityContainer Name="RightsU_Plus_Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Notifications" EntityType="Self.Notification" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RightsU_Plus_TestingModelStoreContainer" CdmEntityContainer="RightsU_Plus_Entities">
+          <EntitySetMapping Name="Notifications">
+            <EntityTypeMapping TypeName="RightsU_Plus_TestingModel.Notification">
+              <MappingFragment StoreEntitySet="Notifications">
+                <ScalarProperty Name="Service_Response" ColumnName="Service_Response" />
+                <ScalarProperty Name="NotificationsCode" ColumnName="NotificationsCode" />
+                <ScalarProperty Name="NotificationType" ColumnName="NotificationType" />
+                <ScalarProperty Name="EventCategory" ColumnName="EventCategory" />
+                <ScalarProperty Name="UserCode" ColumnName="UserCode" />
+                <ScalarProperty Name="TransType" ColumnName="TransType" />
+                <ScalarProperty Name="TransCode" ColumnName="TransCode" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="IsSend" ColumnName="IsSend" />
+                <ScalarProperty Name="IsRead" ColumnName="IsRead" />
+                <ScalarProperty Name="CC" ColumnName="CC" />
+                <ScalarProperty Name="BCC" ColumnName="BCC" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="HtmlBody" ColumnName="HtmlBody" />
+                <ScalarProperty Name="TextBody" ColumnName="TextBody" />
+                <ScalarProperty Name="ScheduleDateTime" ColumnName="ScheduleDateTime" />
+                <ScalarProperty Name="NoOfRetry" ColumnName="NoOfRetry" />
+                <ScalarProperty Name="MsgStatusCode" ColumnName="MsgStatusCode" />
+                <ScalarProperty Name="SentOrReadDateTime" ColumnName="SentOrReadDateTime" />
+                <ScalarProperty Name="API_Status" ColumnName="API_Status" />
+                <ScalarProperty Name="ErrorDetails" ColumnName="ErrorDetails" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="IsAutoEscalated" ColumnName="IsAutoEscalated" />
+                <ScalarProperty Name="IsReminderMail" ColumnName="IsReminderMail" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

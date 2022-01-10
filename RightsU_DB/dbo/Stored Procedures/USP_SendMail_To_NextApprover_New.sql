@@ -353,7 +353,7 @@ BEGIN
 		/* CURSOR END */
 					 --select @DefaultSiteUrl
 
-		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
+		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT, @Module_code, @RecordCode
 		SET @Is_Error='N'
 	END TRY
 	BEGIN CATCH
