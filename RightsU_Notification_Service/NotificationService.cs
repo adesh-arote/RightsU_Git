@@ -17,8 +17,8 @@ namespace RightsU_Notification_Service
 {
     public partial class NotificationService : ServiceBase
     {
-        public static string IsAuthKeyRequired = Convert.ToString(ConfigurationSettings.AppSettings["IsAuthKeyRequired"]);
-        public static string AuthKey = Convert.ToString(ConfigurationSettings.AppSettings["AuthKey"]);//AES Encryption
+        public static string IsAuthKeyRequired = "N";//Convert.ToString(ConfigurationSettings.AppSettings["IsAuthKeyRequired"]);
+        public static string AuthKey = "";//AES Encryption
 
         public static string RequestUri = "";
         public static int Max_Retry_Limit = 5;
@@ -27,6 +27,10 @@ namespace RightsU_Notification_Service
         public NotificationService()
         {
             InitializeComponent();
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
+
+            AuthKey = AesOperation.EncryptString("R!ghT$U@uT@", myIP);
             Error.WriteLog("Service Started", includeTime: true, addSeperater: true);
         }
 

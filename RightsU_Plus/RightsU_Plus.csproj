@@ -218,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\Title_Objection_ListController.cs" />
     <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
     <Compile Include="Controllers\Availability_Movie_NewController.cs" />
