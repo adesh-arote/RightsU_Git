@@ -1,5 +1,6 @@
-﻿@using System.Web.Optimization
-@using RightsU_Entities
+﻿@using System.Web.Optimization;
+@using RightsU_Entities;
+@using RightsU_Plus.Controllers;
 @using UTOFrameWork.FrameworkClasses
 @using RightsU_BLL;
 @{
@@ -26,7 +27,7 @@
     && x.User_Code == objLoginUser.Users_Code && x.Created_Time >= dt
     && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").Select(s => s.Email_Notification_Log_Code).Count();
 
-
+    List<EventCategoryMsgCount> lstEventCategoryMsgCount = new NotificationController().GetSummarisedMessageStatus().ToList();
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -852,7 +853,7 @@
             var strWindowFeatures = "location=yes,toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=4000,height=4000";
             window.open('http://localhost:52844/Login/Login', '_blank', strWindowFeatures);
         }
-        
+
     </script>
 </head>
 
@@ -862,9 +863,9 @@
             <div class="navigation" onclick="RightmenuHide()">
                 <ul>
                     @*<li class="home_button" title="Home" data-placement="right">
-            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
-        </li>
-        <li class="seperator"></li>*@
+                            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
+                        </li>
+                        <li class="seperator"></li>*@
                     @{ if (Menulist != null)
                         {
                             string dataPlacement = "right";
@@ -919,15 +920,15 @@
                             }
 
                             @*<li class="seperator"></li>
-                <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
-                    <a class="glyphicon glyphicon-calendar" href="#"></a>
-                </li>
-                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
-                    <a class="glyphicon glyphicon-phone" href="#"></a>
-                </li>
-                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
-                    <a class="glyphicon glyphicon-tent" href="#"></a>
-                </li>*@
+                                <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-calendar" href="#"></a>
+                                </li>
+                                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-phone" href="#"></a>
+                                </li>
+                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-tent" href="#"></a>
+                                </li>*@
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title) ||
                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
@@ -961,10 +962,10 @@
                             }
 
                             @*{
-                    <li title="Digital" data-placement="right">
-                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
-                    </li>
-                }*@
+                                    <li title="Digital" data-placement="right">
+                                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
+                                    </li>
+                                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('G','pnlAvail');" title="@objMessageKey.Availability" data-placement="@dataPlacement">
@@ -979,11 +980,11 @@
                                 </li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGlossary))
-                {
-                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
-                       <a class="glyphicon glyphicon-tasks" href="#"></a>
-                   </li>
-                }*@
+                                {
+                                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
+                                       <a class="glyphicon glyphicon-tasks" href="#"></a>
+                                   </li>
+                                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('E','pnlReports');" title="@objMessageKey.Reports" data-placement="@dataPlacement">
@@ -997,11 +998,11 @@
                                 <li class="seperator"></li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForUploads))
-                {
-                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
-                        <a class="glyphicon glyphicon-open" href="#"></a>
-                    </li>
-                }*@
+                                {
+                                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
+                                        <a class="glyphicon glyphicon-open" href="#"></a>
+                                    </li>
+                                }*@
 
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application))
@@ -1019,8 +1020,8 @@
                         }
                     }
                     @*<li title="Log Out" data-placement="right">
-            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
-        </li>*@
+                            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
+                        </li>*@
                 </ul>
             </div>
             <div class="header-nav ">
@@ -1055,46 +1056,49 @@
                                 <li class="emailPNL">
                                     <span class="bold">Notifications</span>
                                 </li>
-                                @{ 
-                                       List<Email_Config> lstEmailConfig = new Email_Config_Service(objLoginEntity.ConnectionStringName)
-                                        .SearchFor(x => x.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y")
-                                                            .OrderBy(x => x.Email_Type).ToList();
-
-                                    List<Email_Notification_Log> lstEmail_Notification_Log = (List<Email_Notification_Log>)Session["lstEmail_Notification_Log"];
-
+                                @{
                                     var EmailConfig = new List<Email_Config>();
+                                    //   List<Email_Config> lstEmailConfig = new Email_Config_Service(objLoginEntity.ConnectionStringName)
+                                    //    .SearchFor(x => x.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y")
+                                    //                        .OrderBy(x => x.Email_Type).ToList();
 
-                                    foreach (Email_Config objEmail in lstEmailConfig)
-                                    {
-                                        objEmail.TotalCount = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName)
-                                            .SearchFor(x => x.User_Code == objLoginUser.Users_Code
-                                            && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
-                                            && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
-                                            )
-                                            .Count();
-                                        objEmail.Count = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N"
-                                        && x.User_Code == objLoginUser.Users_Code && string.IsNullOrEmpty(x.Email_Body) == false
-                                        && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
-                                        && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
-                                        )
-                                        .Count();
-                                    }
-                                    EmailConfig = lstEmailConfig;
+                                    //List<Email_Notification_Log> lstEmail_Notification_Log = (List<Email_Notification_Log>)Session["lstEmail_Notification_Log"];
+
+                                    //var EmailConfig = new List<Email_Config>();
+
+                                    //foreach (Email_Config objEmail in lstEmailConfig)
+                                    //{
+                                    //    objEmail.TotalCount = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName)
+                                    //        .SearchFor(x => x.User_Code == objLoginUser.Users_Code
+                                    //        && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
+                                    //        && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
+                                    //        )
+                                    //        .Count();
+                                    //    objEmail.Count = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N"
+                                    //    && x.User_Code == objLoginUser.Users_Code && string.IsNullOrEmpty(x.Email_Body) == false
+                                    //    && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
+                                    //    && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
+                                    //    )
+                                    //    .Count();
+                                    //}
+                                    //EmailConfig = lstEmailConfig;
+
+                                    //lstEventCategoryMsgCount.
                                 }
 
                                 @{int NoNotiCount = 0;}
                                 <div id="DivEmailConfig">
 
-                                    @foreach (Email_Config item in EmailConfig)
+                                    @foreach (EventCategoryMsgCount item in lstEventCategoryMsgCount)
                                     {
-                                        if (item.TotalCount > 0)
-                                        {
-                                            NoNotiCount = 1;
-                                            <li class="liEmail" onclick="EmailPopup('@item.Email_Config_Code','@item.Email_Type','@item.Count');">
-                                                <a href="#">@item.Email_Type</a>
-                                                <span class="EmailCount" title="Unseen Message" id="TotalECount_@item.Email_Config_Code">@item.Count</span>
-                                            </li>
-                                        }
+                                        //if (item.TotalCount > 0)
+                                        //{
+                                        NoNotiCount = 1;
+                                        <li class="liEmail" onclick="EmailPopup('@item.Email_Config_Code','@item.EventCategory','@item.cnt');">
+                                            <a href="#">@item.EventCategory</a>
+                                            <span class="EmailCount" title="Unseen Message" id="TotalECount_@item.Email_Config_Code">@item.cnt</span>
+                                        </li>
+                                        @*}*@
                                     }
 
                                     @if (NoNotiCount == 0)
@@ -1403,6 +1407,42 @@
 </body>
 </html>
 <script>
+    var URL_UpdateMessageStatus = '@Url.Action("UpdateMessageStatus", "Notification")';
+    function UpdateMessageStatus(NEDetailCode, NECode) {
+            debugger;
+
+            $.ajax({
+                type: "POST",
+                url: URL_UpdateMessageStatus,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    NEDetailCode: NEDetailCode,
+                    NECode: NECode
+                }),
+                async: false,
+                success: function (result) {
+                    hideLoading();
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            debugger;
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    hideLoading();
+                    alert('Error: ' + result.responseText);
+                }
+            });
+    }
+
     function showPrevious() {
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();
@@ -1443,6 +1483,8 @@
         $('#' + oldDiv).attr('style', 'display:none')
     }
     function showNext() {
+        debugger;
+        alert("showNext");
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();
         var num = parseInt($('#hdnDiv').val().split('_')[1]);
@@ -1484,9 +1526,14 @@
             document.getElementById('SeenEmailCount').innerHTML = 1;
             $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
         }
+        var NEDCode = $('#hdnSeenId_' + num).val();
+        var NECode = $('#hdnNECode_' + num).val();
+        UpdateMessageStatus(NEDCode, NECode);
         $('#' + oldDiv).attr('style', 'display:none')
     }
+
     function EmailPopup(Email_Type_Code, Email_Type, Count) {
+        debugger;
         $('#hdnSelectedEmail').val('');
         $('#hdnCurrNoti').val(Email_Type_Code);
         $('#hdnSeenCount').val('0')
@@ -1495,13 +1542,13 @@
         document.getElementById('Email_Type').innerHTML = Email_Type + ' Notifications';
         $.ajax({
             type: "POST",
-            url: '@Url.Action("Show_Email_Popup", "Base")',
+            url: '@Url.Action("Show_Email_Popup", "Notification")',
             traditional: true,
             async: false,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                Email_Type_Code: Email_Type_Code
+                Email_Type: Email_Type
             }),
             success: function (result) {
                 if (result == "true") {
@@ -1530,6 +1577,7 @@
         //setChosenWidth('#lbSearchTitles', '500px');
         initializeExpander();
     }
+
     function updateCount() {
         debugger
         var TotalCounttt = 0;

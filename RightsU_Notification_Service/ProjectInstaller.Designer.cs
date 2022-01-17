@@ -39,9 +39,9 @@
             // 
             // serviceInstaller1
             //
-            this.serviceInstaller1.ServiceName = "RightsU Scheduler Service";
-            this.serviceInstaller1.Description = "RightsU Scheduler Service";
-            this.serviceInstaller1.DisplayName = "RightsU Scheduler Service";
+            this.serviceInstaller1.ServiceName = "RightsU Notification Service";
+            this.serviceInstaller1.Description = "RightsU Notification Service";
+            this.serviceInstaller1.DisplayName = "RightsU Notification Service";
             // 
             // ProjectInstaller
             // 

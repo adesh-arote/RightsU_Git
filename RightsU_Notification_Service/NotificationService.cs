@@ -8,6 +8,8 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,10 +19,10 @@ namespace RightsU_Notification_Service
 {
     public partial class NotificationService : ServiceBase
     {
-        public static string IsAuthKeyRequired = "N";//Convert.ToString(ConfigurationSettings.AppSettings["IsAuthKeyRequired"]);
+        public static string IsAuthKeyRequired = "Y";//Convert.ToString(ConfigurationSettings.AppSettings["IsAuthKeyRequired"]);
         public static string AuthKey = "";//AES Encryption
 
-        public static string RequestUri = "";
+        public static string RequestUri = Convert.ToString("http://192.168.0.114/UTONotificationUI/UTONotificationAPI/api/Notification/");
         public static int Max_Retry_Limit = 5;
         public Timer timer = new Timer();
 
@@ -30,7 +32,12 @@ namespace RightsU_Notification_Service
             string hostName = Dns.GetHostName(); // Retrive the Name of HOST
             string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
 
-            AuthKey = AesOperation.EncryptString("R!ghT$U@uT@", myIP);
+            byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes("abc123");
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(myIP);
+
+            byte[] bytesEncrypted = AesOperation.AES_Encrypt(bytesToBeEncrypted, passwordBytes);
+            AuthKey = Convert.ToBase64String(bytesEncrypted);
+
             Error.WriteLog("Service Started", includeTime: true, addSeperater: true);
         }
 
@@ -53,8 +60,12 @@ namespace RightsU_Notification_Service
             Error.WriteLog("EXE started", includeTime: true, addSeperater: true);
             try
             {
+                Error.WriteLog("SendPendingRecords before", includeTime: true, addSeperater: true);
                 SendPendingRecords();
+                Error.WriteLog("SendPendingRecords After", includeTime: true, addSeperater: true);
+                Error.WriteLog("SendErrorRecords Before", includeTime: true, addSeperater: true);
                 SendErrorRecords();
+                Error.WriteLog("SendPendingRecords After", includeTime: true, addSeperater: true);
             }
             catch (Exception ex)
             {
@@ -76,29 +87,28 @@ namespace RightsU_Notification_Service
 
         public static void SendErrorRecords()
         {
-            using (var client = new WebClient())
+            using (var context = new RightsU_Plus_Entities())
             {
-                using (var context = new RightsU_Plus_Entities())
+                var result = (dynamic)null;
+                List<Notification> lstNotification = context.Notifications.Where(x => x.API_Status == "E").ToList();
+
+                if (lstNotification.Count > 0)
                 {
-                    var result = (dynamic)null;
-
-                    client.Headers.Clear();
-                    client.Headers.Add("Content-Type:application/json");
-                    client.Headers.Add("Accept:application/json");
-                    if (IsAuthKeyRequired == "Y")
-                        client.Headers.Add("Authorization", "Bearer " + AuthKey);
-
-                    List<Notification> lstNotification = context.Notifications.Where(x => x.API_Status == "E").ToList();
-
-                    if (lstNotification.Count > 0)
+                    foreach (var x in lstNotification)
                     {
-                        foreach (var x in lstNotification)
+                        using (var client = new WebClient())
                         {
+                            client.Headers.Add("Content-Type:application/json");
+                            client.Headers.Add("Accept:application/json");
+                            client.Headers.Add("AuthKey", AuthKey);
+                            client.Headers.Add("Service", "true");
                             var Response = new
                             {
                                 EventCategory = x.EventCategory,
                                 NotificationType = x.NotificationType,
-                                RecipientList = new { To = x.Email, CC = x.CC, BCC = x.BCC },
+                                To = x.Email,
+                                CC = x.CC,
+                                BCC = x.BCC,
                                 Subject = x.Subject,
                                 HTMLMessage = x.HtmlBody,
                                 TextMessage = x.TextBody,
@@ -114,7 +124,7 @@ namespace RightsU_Notification_Service
                             }
                             else
                             {
-                                result = client.UploadString(RequestUri, JsonConvert.SerializeObject(Response));
+                                result = client.UploadString(RequestUri + "NESendMessage", JsonConvert.SerializeObject(Response));
                                 Update_Notification(x.NotificationsCode, result, true);
                             }
                         }
@@ -125,30 +135,28 @@ namespace RightsU_Notification_Service
 
         public static void SendPendingRecords()
         {
-            using (var client = new WebClient())
+            using (var context = new RightsU_Plus_Entities())
             {
-                using (var context = new RightsU_Plus_Entities())
+                var result = (dynamic)null;
+                List<Notification> lstNotification = context.Notifications.Where(x => x.API_Status == "P").ToList();
+
+                if (lstNotification.Count > 0)
                 {
-                    var result = (dynamic)null;
-
-                    client.Headers.Clear();
-                    client.Headers.Add("Content-Type:application/json");
-                    client.Headers.Add("Accept:application/json");
-                    if (IsAuthKeyRequired == "Y")
-                        client.Headers.Add("Authorization", "Bearer " + AuthKey);
-
-                    List<Notification> lstNotification = context.Notifications.Where(x => x.API_Status == "P").ToList();
-
-
-                    if (lstNotification.Count > 0)
+                    foreach (Notification x in lstNotification)
                     {
-                        foreach (var x in lstNotification)
+                        using (var client = new WebClient())
                         {
+                            client.Headers.Add("Content-Type:application/json");
+                            client.Headers.Add("Accept:application/json");
+                            client.Headers.Add("AuthKey", AuthKey);
+                            client.Headers.Add("Service", "true");
                             var Response = new
                             {
                                 EventCategory = x.EventCategory,
                                 NotificationType = x.NotificationType,
-                                RecipientList = new { To = x.Email, CC = x.CC, BCC = x.BCC },
+                                To = x.Email,
+                                CC = x.CC,
+                                BCC = x.BCC,
                                 Subject = x.Subject,
                                 HTMLMessage = x.HtmlBody,
                                 TextMessage = x.TextBody,
@@ -158,30 +166,39 @@ namespace RightsU_Notification_Service
                                 UserCode = x.UserCode
                             };
 
-                            //“Status”:”Ok”,
-                            //“Message”: “Request Queued Successfully”,
-                            //“ErrorCode”:””,
-                            //“ErrorMessage”: “”,
-                            //“NECode”: “100020”
-                            result = client.UploadString(RequestUri, JsonConvert.SerializeObject(Response));
+                            result = client.UploadString(RequestUri + "NESendMessage", JsonConvert.SerializeObject(Response));
                             Update_Notification(x.NotificationsCode, result);
                         }
                     }
                 }
             }
         }
+
         public static void Update_Notification(long NotificationsCode, dynamic Response, bool Retry = false)
         {
             using (var context = new RightsU_Plus_Entities())
             {
+                Error.WriteLog(Response, includeTime: true, addSeperater: true);
+                ResponseMessage objResponseMessage = JsonConvert.DeserializeObject<ResponseMessage>(Response);
+
                 Notification objNotification = context.Notifications.Where(x => x.NotificationsCode == NotificationsCode).FirstOrDefault();
                 objNotification.Service_Response = Convert.ToString(Response);
-                objNotification.API_Status = Response.Status == "Ok" ? "C" : "E";
-                objNotification.ErrorDetails = Response.ErrorMessage == "" ? null : Response.ErrorMessage;
+                objNotification.API_Status = objResponseMessage.Status == true ? "C" : "E";
+                objNotification.ErrorDetails = objResponseMessage.ErrorMessage == "" ? null : Response.ErrorMessage;
                 objNotification.NoOfRetry = Retry ? objNotification.NoOfRetry + 1 : 0;
                 context.Entry(objNotification).State = EntityState.Modified;
                 context.SaveChanges();
             }
         }
+    }
+
+    public class ResponseMessage
+    {
+        public int? ResponseCode { get; set; }
+        public bool Status { get; set; }
+        public string Message { get; set; }
+        public int? NECode { get; set; }
+        public int? ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

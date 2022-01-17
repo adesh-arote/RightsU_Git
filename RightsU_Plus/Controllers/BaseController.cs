@@ -1313,20 +1313,20 @@ namespace RightsU_Plus.Controllers
         }
 
 
-        public ActionResult Show_Email_Popup(int Email_Type_Code)
+        public ActionResult Show_Email_Popup1(string Email_Type)
         {
             List<Email_Notification_Log> lstLog = new List<Email_Notification_Log>();
-            string alertDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Email_Alert_Days").Select(x => x.Parameter_Value).FirstOrDefault();
-            DateTime dt = DateTime.Today.AddDays(Convert.ToDouble(alertDays));
-            //if (lstEmail_Notification_Log.Count == 0)
-            //{
-            lstEmail_Notification_Log = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.User_Code == objLoginUser.Users_Code
-            && string.IsNullOrEmpty(x.Email_Body) == false && x.Created_Time >= dt
-            && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").ToList();
-            //}
-            lstLog = lstEmail_Notification_Log.Where(x => x.Email_Config_Code == Email_Type_Code).OrderBy(x => x.Is_Read).ToList();
-            ViewBag.EmailCount = lstLog.Where(w => w.Is_Read == "N").Count();
-            ViewBag.FirstTotalCount = lstLog.Count();
+            //string alertDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Email_Alert_Days").Select(x => x.Parameter_Value).FirstOrDefault();
+            //DateTime dt = DateTime.Today.AddDays(Convert.ToDouble(alertDays));
+            ////if (lstEmail_Notification_Log.Count == 0)
+            ////{
+            //lstEmail_Notification_Log = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.User_Code == objLoginUser.Users_Code
+            //&& string.IsNullOrEmpty(x.Email_Body) == false && x.Created_Time >= dt
+            //&& x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").ToList();
+            ////}
+            //lstLog = lstEmail_Notification_Log.Where(x => x.Email_Config_Code == Email_Type_Code).OrderBy(x => x.Is_Read).ToList();
+            //ViewBag.EmailCount = lstLog.Where(w => w.Is_Read == "N").Count();
+            //ViewBag.FirstTotalCount = lstLog.Count();
             return PartialView("_Email_Notification_Popup", lstLog);
         }
         public void updateSeenNotification(string Email_Log_Codes)

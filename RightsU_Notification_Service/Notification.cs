@@ -15,8 +15,8 @@ namespace RightsU_Notification_Service
     public partial class Notification
     {
         public long NotificationsCode { get; set; }
-        public long NotificationType { get; set; }
-        public Nullable<long> EventCategory { get; set; }
+        public string NotificationType { get; set; }
+        public string EventCategory { get; set; }
         public long UserCode { get; set; }
         public Nullable<long> TransType { get; set; }
         public Nullable<long> TransCode { get; set; }

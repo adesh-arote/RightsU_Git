@@ -1,105 +1,302 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using RightsU_BLL;
+using RightsU_Entities;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web.Mvc;
+using UTO.Framework.Shared.Configuration;
 
 namespace RightsU_Plus.Controllers
 {
     public class NotificationController : BaseController
     {
+        public static string baseUri;
+        public static string AuthKey;
 
-        public ActionResult GetEmail()
+        public NotificationController()
         {
-            using (var client = new HttpClient())
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
+
+            byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes("abc123");
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(myIP);
+
+            byte[] bytesEncrypted = AES_Encrypt(bytesToBeEncrypted, passwordBytes);
+            AuthKey = Convert.ToBase64String(bytesEncrypted);
+
+            baseUri = new ApplicationConfiguration().GetConfigurationValue("NotificationApi");
+        }
+        private byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
+        {
+            byte[] encryptedBytes = null;
+            byte[] saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+            using (MemoryStream ms = new MemoryStream())
             {
-                client.BaseAddress = new Uri("http://localhost:64189/api/notification");
-
-                var objNot = new Notification
+                using (RijndaelManaged AES = new RijndaelManaged())
                 {
-                    NECode = 5,
-                    TransType = 1,
-                    TransCode = 1,
-                    UserCode = 0,
-                    NotificationType = "",
-                    ScheduleDateTime = System.DateTime.Now,
-                    SentDateTime = System.DateTime.Now,
-                    EventCategory = 1,
-                    Recipient = "",
-                    Subject = "",
-                    Status = "",
-                    NoOfRetry = 0
-                };
+                    AES.KeySize = 256;
+                    AES.BlockSize = 128;
 
+                    var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+                    AES.Key = key.GetBytes(AES.KeySize / 8);
+                    AES.IV = key.GetBytes(AES.BlockSize / 8);
 
+                    AES.Mode = CipherMode.CBC;
 
-                //HTTP POST
-                var postTask = client.PostAsJsonAsync("", );
-                postTask.Wait();
-
-                var result = postTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
+                    using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
+                        cs.Close();
+                    }
+                    encryptedBytes = ms.ToArray();
                 }
             }
 
-            return View();
+            return encryptedBytes;
+        }
+        public List<EventCategoryMsgCount> GetSummarisedMessageStatus()
+        {
+            int timeout = 3600;
+            string result = "";
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetSummarisedMessageStatus");
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.ContentType = "application/Json";
+            request.Method = "POST";
+            request.Headers.Add("ContentType", "application/json");
+            request.Headers.Add("AuthKey", AuthKey);
+            request.Headers.Add("Service", "true");
+            //Ragnar_Tygerian@uto.in;sds_daf@uto.in
+            var objEmail = new
+            {
+                UserEmail = "Ragnar_Tygerian@uto.in"// objLoginUser.Email_Id
+            };
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = JsonConvert.SerializeObject(objEmail);
+                streamWriter.Write(json);
+            }
+
+            var httpResponse = (HttpWebResponse)request.GetResponse();
+            try
+            {
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                request.Abort();
+            }
+
+            if (result != "")
+            {
+                HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
+                List<EventCategoryMsgCount> lst = JsonConvert.DeserializeObject<List<EventCategoryMsgCount>>(objData.Response.ToString());
+
+                return lst;
+                //return PartialView("~/Views/Shared/_Email_Pannel.cshtml", lst);
+            }
+            return new List<EventCategoryMsgCount>();
+            //return PartialView("~/Views/Shared/_Email_Pannel.cshtml", new List<EventCategoryMsgCount>());
         }
 
-        // GET: api/Notification
-        //public HttpResponseMessage GetNotifiation()
-        //{
+        public ActionResult Show_Email_Popup(string Email_Type)
+        {
+            string result = "";
 
-        //    //            {
-        //    //NECode: 
-        //    //TransType: Deal,
-        //    //TransCode: ,
-        //    //UserCode: ,
-        //    //NotificationType: ,
-        //    //ScheduleDateTime: ,
-        //    //SentDateTime:,
-        //    //EventCategory: ,
-        //    //Recipient: ,
-        //    //Subject: ,
-        //    //Status: ,
-        //    //NoOfRetry: 
-        //    //}
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetMessageStatus");
 
-        //    return Ok(");
-        //}
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.ContentType = "application/Json";
+            request.Method = "POST";
+            request.Headers.Add("ContentType", "application/json");
+            request.Headers.Add("AuthKey", AuthKey);
+            request.Headers.Add("Service", "true");
 
+            var objNoti = new
+            {
+                NECode = "",
+                TransType = "",
+                TransCode = "",
+                UserCode = "",
+                NotificationType = "",
+                ScheduleDateTime ="",
+                SentDateTime = "",
+                EventCategory = Email_Type, //"Channel Unutilized Run",
+                Recipient = "Ragnar_Tygerian@uto.in",// objLoginUser.Email_Id,
+                Subject = "",
+                Status = "",
+                isRead = "0",
+                isSend = "",
+                NoOfRetry = "",
+                size = "500",
+                from = "0"
+            };
 
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = JsonConvert.SerializeObject(objNoti);
+                streamWriter.Write(json);
+            }
+
+            var httpResponse = (HttpWebResponse)request.GetResponse();
+            try
+            {
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                request.Abort();
+            }
+
+            if (result != "")
+            {
+                HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
+                HttpResponseClass lstResponse = JsonConvert.DeserializeObject<HttpResponseClass>(objData.Response.ToString());
+                List<GetMessageStatus> lstGetMessageStatus = JsonConvert.DeserializeObject<List<GetMessageStatus>>(lstResponse.lstGetMessages.ToString());
+
+                return PartialView("_Email_Notification_Popup", lstGetMessageStatus);
+            }
+            return PartialView("_Email_Notification_Popup", new GetMessageStatus());
+        }
+
+        public JsonResult UpdateMessageStatus(int NECode, int NEDetailCode)
+        {
+            string result = "";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEUpdateMessageStatus");
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.ContentType = "application/Json";
+            request.Method = "POST";
+            request.Headers.Add("ContentType", "application/json");
+            request.Headers.Add("AuthKey", AuthKey);
+            request.Headers.Add("Service", "true");
+
+            var objEmailStatus = new
+            {
+                NECode = NECode,
+                NEDetailCode = NEDetailCode,
+                UpdatedStatus = "Read",
+                ReadDateTime = System.DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss")
+            };
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = JsonConvert.SerializeObject(objEmailStatus);
+                streamWriter.Write(json);
+            }
+
+            var httpResponse = (HttpWebResponse)request.GetResponse();
+            try
+            {
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                request.Abort();
+            }
+
+            if (result != "")
+            {
+                HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
+
+                return Json(new EmailStatus());
+            }
+            return Json(new EmailStatus());
+        }
     }
 
-
-    public class Notification
+    public class HttpResponseClass
     {
-        public int NECode { get; set; }
-        public string NotificationType { get; set; }
-        public int EventCategory { get; set; }
-        public int UserCode { get; set; }
-        public int TransType { get; set; }
-        public int TransCode { get; set; }
-        public string Recipient { get; set; }
-        public string Mobile { get; set; }
-        public int IsSend { get; set; }
-        public int IsRead { get; set; }
-        public string CC { get; set; }
-        public string BCC { get; set; }
-        public string Subject { get; set; }
-        public string HtmlBody { get; set; }
-        public string TextBody { get; set; }
-        public Nullable<System.DateTime> ScheduleDateTime { get; set; }
-        public int NoOfRetry { get; set; }
-        public int MsgStatusCode { get; set; }
-        public Nullable<System.DateTime> SentDateTime { get; set; }
-        public string Status { get; set; }
-        public string ErrorDetails { get; set; }
-        public Nullable<System.DateTime> CreatedOn { get; set; }
-        public int CreatedBy { get; set; }
-        public Nullable<System.DateTime> ModifiedOn { get; set; }
-        public int ModifiedBy { get; set; }
-        public int IsAutoEscalated { get; set; }
-        public int IsReminderMail { get; set; }
-        public string Service_Response { get; set; }
+        public string ResponseCode { get; set; }
+        public bool Status { get; set; }
+        public string Message { get; set; }
+        public string NECode { get; set; }
+        public string ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
+        public Object Response { get; set; }
+        public Object lstGetMessages { get; set; }
     }
+
+    public class EventCategoryMsgCount
+    {
+        public int Email_Config_Code { get; set; }
+        public string EventCategory { get; set; }
+        public int cnt { get; set; }
+    }
+
+    public class GetMessageStatus
+    {
+        public Nullable<int> TotalRecords { get; set; }
+        public Nullable<long> RowNum { get; set; }
+        public long NotificationsCode { get; set; }
+        public string EventCategory { get; set; }
+        public Nullable<long> TransactionCode { get; set; }
+        public string TransactionType { get; set; }
+        public string MessageType { get; set; }
+        public string Subject { get; set; }
+        public string Message { get; set; }
+        public string SentTo { get; set; }
+        public string Status { get; set; }
+        public int NoOfRetry { get; set; }
+        public string ScheduleDateTime { get; set; }
+        public string SentDateTime { get; set; }
+        public int NECode { get; set; }
+        public int NotificationDetailCode { get; set; }
+    }
+
+    //-----------------------------------
+    public class EmailStatus
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
+        public int ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
+    }
+    public class EmailViewModel
+    {
+        public int totalRecords { get; set; }
+        //public ICollection<Data> Datas { get; set; }
+    }
+
+    //public class Data
+    //{
+    //    public string Email_Config_Code { get; set; }
+    //    public string EventCategory { get; set; }
+    //    public int Count { get; set; }
+    //    public int TransactionCode { get; set; }
+    //    public int TransactionType { get; set; }
+    //    public string MessageType { get; set; }
+    //    public string Subject { get; set; }
+    //    public string Message { get; set; }
+    //    public string SentTo { get; set; }
+    //    public string Status { get; set; }
+    //    public int NoOfRetry { get; set; }
+    //    public Nullable<System.DateTime> SentDateTime { get; set; }
+    //    public Nullable<System.DateTime> ScheduleDateTime { get; set; }
+    //    public int NECode { get; set; }
+    //    public int NEDetailCode { get; set; }
+    //}
+
 }
