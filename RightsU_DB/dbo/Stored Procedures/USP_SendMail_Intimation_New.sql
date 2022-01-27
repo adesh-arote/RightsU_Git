@@ -248,10 +248,10 @@ BEGIN
 			DECLARE @ENL TABLE (
 				BUCode INT,
 				User_Code INT,
-				EmailId NVARCHAR(MAX),
-				User_Type NVARCHAR(MAX)
+				EmailId NVARCHAR(MAX)
+				--User_Type NVARCHAR(MAX)
 			)
-			INSERT INTO @ENL (BUCode, User_Code, EmailId, User_Type)
+			INSERT INTO @ENL (BUCode, User_Code, EmailId)
 			EXEC USP_Get_EmailConfig_Users 'ASCM', 'Y'
 
 			INSERT INTO #TempCursorOnRej(Email_id, First_name, Security_group_name, Next_level_group, Security_group_code, User_code)
