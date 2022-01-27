@@ -32,60 +32,60 @@ namespace RightsU_Plus.Controllers
             byte[] bytesEncrypted = AES_Encrypt(bytesToBeEncrypted, passwordBytes);
             AuthKey = Convert.ToBase64String(bytesEncrypted);
 
-          //  baseUri = new ApplicationConfiguration().GetConfigurationValue("NotificationApi");
+            baseUri = new ApplicationConfiguration().GetConfigurationValue("NotificationApi");
         }
 
         public List<EventCategoryMsgCount> GetSummarisedMessageStatus(string Email_Id)
         {
-            //int timeout = 3600;
-            //string result = "";
+            int timeout = 3600;
+            string result = "";
 
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetSummarisedMessageStatus");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetSummarisedMessageStatus");
 
-            //request.KeepAlive = false;
-            //request.ProtocolVersion = HttpVersion.Version10;
-            //request.ContentType = "application/Json";
-            //request.Method = "POST";
-            //request.Headers.Add("ContentType", "application/json");
-            //request.Headers.Add("AuthKey", AuthKey);
-            //request.Headers.Add("Service", "true");
-            ////Ragnar_Tygerian@uto.in;sds_daf@uto.in
-            //var objEmail = new
-            //{
-            //    UserEmail = Email_Id // "Ragnar_Tygerian@uto.in"// objLoginUser.Email_Id
-            //};
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.ContentType = "application/Json";
+            request.Method = "POST";
+            request.Headers.Add("ContentType", "application/json");
+            request.Headers.Add("AuthKey", AuthKey);
+            request.Headers.Add("Service", "true");
+            //Ragnar_Tygerian@uto.in;sds_daf@uto.in
+            var objEmail = new
+            {
+                UserEmail = Email_Id // "Ragnar_Tygerian@uto.in"// objLoginUser.Email_Id
+            };
 
-            //try
-            //{
-            //    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            //    {
-            //        string json = JsonConvert.SerializeObject(objEmail);
-            //        streamWriter.Write(json);
-            //    }
-            //    var httpResponse = (HttpWebResponse)request.GetResponse();
-            //    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            //    {
-            //        result = streamReader.ReadToEnd();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    request.Abort();
-            //}
+            try
+            {
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    string json = JsonConvert.SerializeObject(objEmail);
+                    streamWriter.Write(json);
+                }
+                var httpResponse = (HttpWebResponse)request.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                request.Abort();
+            }
 
-            //if (result != "")
-            //{
-            //    try
-            //    {
-            //        HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
-            //        List<EventCategoryMsgCount> lst = JsonConvert.DeserializeObject<List<EventCategoryMsgCount>>(objData.Response.ToString());
-            //        return lst;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        return new List<EventCategoryMsgCount>();
-            //    }
-            //}
+            if (result != "")
+            {
+                try
+                {
+                    HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
+                    List<EventCategoryMsgCount> lst = JsonConvert.DeserializeObject<List<EventCategoryMsgCount>>(objData.Response.ToString());
+                    return lst;
+                }
+                catch (Exception ex)
+                {
+                    return new List<EventCategoryMsgCount>();
+                }
+            }
             return new List<EventCategoryMsgCount>();
         }
 
