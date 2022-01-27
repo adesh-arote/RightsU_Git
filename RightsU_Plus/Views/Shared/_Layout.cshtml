@@ -27,7 +27,8 @@
     && x.User_Code == objLoginUser.Users_Code && x.Created_Time >= dt
     && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").Select(s => s.Email_Notification_Log_Code).Count();
 
-    List<EventCategoryMsgCount> lstEventCategoryMsgCount = new NotificationController().GetSummarisedMessageStatus().ToList();
+    List<EventCategoryMsgCount> lstEventCategoryMsgCount = new NotificationController().GetSummarisedMessageStatus(objLoginUser.Email_Id).ToList();
+    int BellIconCount = lstEventCategoryMsgCount.Sum(x => x.cnt);
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -1049,41 +1050,15 @@
                             }
                             else
                             {
-                                <span class="TotalEmailCount" id="TotalEmailCount">@count</span>
+                                <span class="TotalEmailCount" id="TotalEmailCount">@BellIconCount</span>
                             }
-                            <input type="hidden" id="hdnTotalEmailCount" value="@count" />
+                            <input type="hidden" id="hdnTotalEmailCount" value="@BellIconCount" />
                             <ul id="EmailPanel" class="NotifyEmailPanel" style="display: none;">
                                 <li class="emailPNL">
                                     <span class="bold">Notifications</span>
                                 </li>
                                 @{
                                     var EmailConfig = new List<Email_Config>();
-                                    //   List<Email_Config> lstEmailConfig = new Email_Config_Service(objLoginEntity.ConnectionStringName)
-                                    //    .SearchFor(x => x.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y")
-                                    //                        .OrderBy(x => x.Email_Type).ToList();
-
-                                    //List<Email_Notification_Log> lstEmail_Notification_Log = (List<Email_Notification_Log>)Session["lstEmail_Notification_Log"];
-
-                                    //var EmailConfig = new List<Email_Config>();
-
-                                    //foreach (Email_Config objEmail in lstEmailConfig)
-                                    //{
-                                    //    objEmail.TotalCount = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName)
-                                    //        .SearchFor(x => x.User_Code == objLoginUser.Users_Code
-                                    //        && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
-                                    //        && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
-                                    //        )
-                                    //        .Count();
-                                    //    objEmail.Count = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N"
-                                    //    && x.User_Code == objLoginUser.Users_Code && string.IsNullOrEmpty(x.Email_Body) == false
-                                    //    && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
-                                    //    && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
-                                    //    )
-                                    //    .Count();
-                                    //}
-                                    //EmailConfig = lstEmailConfig;
-
-                                    //lstEventCategoryMsgCount.
                                 }
 
                                 @{int NoNotiCount = 0;}
@@ -1091,14 +1066,13 @@
 
                                     @foreach (EventCategoryMsgCount item in lstEventCategoryMsgCount)
                                     {
-                                        //if (item.TotalCount > 0)
-                                        //{
-                                        NoNotiCount = 1;
-                                        <li class="liEmail" onclick="EmailPopup('@item.Email_Config_Code','@item.EventCategory','@item.cnt');">
+
+                                        NoNotiCount++;
+                                        <li class="liEmail" onclick="EmailPopup('@NoNotiCount','@item.EventCategory','@item.cnt');">
                                             <a href="#">@item.EventCategory</a>
-                                            <span class="EmailCount" title="Unseen Message" id="TotalECount_@item.Email_Config_Code">@item.cnt</span>
+                                            <span class="EmailCount" title="Unseen Message" id="TotalECount_@NoNotiCount">@item.cnt</span>
                                         </li>
-                                        @*}*@
+
                                     }
 
                                     @if (NoNotiCount == 0)
@@ -1377,7 +1351,7 @@
                                 <ul class="modal_block clearfix">
                                     <li class="pull-left">
                                         @*<input type="button" title="Previous" id="btnPrev" value="<<" onclick="showPrevious()" />*@
-                                        <a class="btn btn-primary" href="#" id="btnPrev" onclick="showPrevious()">Previous</a>
+                                        <a class="btn btn-primary" disabled="true" href="#" id="btnPrev" onclick="showPrevious()">Previous</a>
                                     </li>
                                     <b>
                                         <li style="position:relative; left:38%!important; vertical-align:middle">
@@ -1407,6 +1381,36 @@
 </body>
 </html>
 <script>
+    function MarkAllRead() {
+        debugger;
+        var markCount = parseInt(document.getElementById("TotalEmailCount").innerHTML);
+        if (markCount != 0) {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("MarkAllRead", "Base")',
+                traditional: true,
+                async: false,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Email_Log_Codes: $('#hdnSelectedEmail').val()
+                }),
+                success: function (result) {
+                    var outputs = document.querySelectorAll("span.EmailCount");
+                    for (var i = 0; i < outputs.length; ++i) {
+                        outputs[i].textContent = 0;
+                    }
+                    document.getElementById("TotalEmailCount").innerHTML = parseInt(0);
+                    $('#hdnTotalEmailCount').val(0);
+                },
+                error: function (x, e) {
+                }
+            });
+        }
+
+    }
+
     var URL_UpdateMessageStatus = '@Url.Action("UpdateMessageStatus", "Notification")';
     function UpdateMessageStatus(NEDetailCode, NECode) {
             debugger;
@@ -1444,6 +1448,9 @@
     }
 
     function showPrevious() {
+        debugger;
+     
+        $('#btnNext').attr('disabled', false);
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();
         var num = parseInt($('#hdnDiv').val().split('_')[1]);
@@ -1480,11 +1487,38 @@
                 $('#hdnSeenCount').val(hdnCount - unseenCount);
             }
         }
+
+        if ($("#SeenEmailCount").text() === $("#TotalEmailLogCount").text())
+            $('#btnNext').attr('disabled', true);
+        else
+            $('#btnNext').attr('disabled', false);
+
+        if ($("#SeenEmailCount").text() == 1)
+            $('#btnPrev').attr('disabled', true);
+        else
+            $('#btnPrev').attr('disabled', true);
+
+        ++num;
+
+        if ($('#hdnSeenNew_' + num).val() == "N") {
+            var ETC = $('#hdnEmail_Type_Code').val();
+            var TotalETC = $('#TotalECount_' + ETC).text();
+            var TotalEmailCount = $('#TotalEmailCount').text();
+            if (TotalETC != 0) {
+                $('#TotalECount_' + ETC).text(TotalETC - 1);
+                $('#TotalEmailCount').text(TotalEmailCount - 1);
+            }
+        }
+        var NEDCode = $('#hdnSeenId_' + num).val();
+        var NECode = $('#hdnNECode_' + num).val();
+        $('#hdnSeenNew_' + num).val("Y");
+        UpdateMessageStatus(NEDCode, NECode);
+
         $('#' + oldDiv).attr('style', 'display:none')
     }
     function showNext() {
         debugger;
-        alert("showNext");
+
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();
         var num = parseInt($('#hdnDiv').val().split('_')[1]);
@@ -1496,6 +1530,7 @@
         else
             $('#hdnSelectedEmail').val(hdnSeenId);
         if ($('#hdnSeen_' + num).val() == 'N') {
+
             $('#hdnSeen_' + num).val('Y');
 
             if (unseenCount != 0) {
@@ -1526,10 +1561,32 @@
             document.getElementById('SeenEmailCount').innerHTML = 1;
             $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
         }
+
+        if ($("#SeenEmailCount").text() === $("#TotalEmailLogCount").text())
+            $('#btnNext').attr('disabled', true);
+        else
+            $('#btnNext').attr('disabled', false);
+
+        debugger;
+
+        $('#' + oldDiv).attr('style', 'display:none')
+
+        --num;
+
+        if ($('#hdnSeenNew_' + num).val() == "N") {
+            var ETC = $('#hdnEmail_Type_Code').val();
+            var TotalETC = $('#TotalECount_' + ETC).text();
+            var TotalEmailCount = $('#TotalEmailCount').text();
+            if (TotalETC != 0) {
+                $('#TotalECount_' + ETC).text(TotalETC - 1);
+                $('#TotalEmailCount').text(TotalEmailCount - 1);
+            }
+        }
+
         var NEDCode = $('#hdnSeenId_' + num).val();
         var NECode = $('#hdnNECode_' + num).val();
+        $('#hdnSeenNew_' + num).val("Y");
         UpdateMessageStatus(NEDCode, NECode);
-        $('#' + oldDiv).attr('style', 'display:none')
     }
 
     function EmailPopup(Email_Type_Code, Email_Type, Count) {
@@ -1538,6 +1595,11 @@
         $('#hdnCurrNoti').val(Email_Type_Code);
         $('#hdnSeenCount').val('0')
         var unseenCount = parseInt(Count) - 1;
+
+        if ($('#TotalECount_' + Email_Type_Code).text() == 0) {
+            return false;
+        }
+
         //document.getElementById('unseenCount').innerHTML=unseenCount;
         document.getElementById('Email_Type').innerHTML = Email_Type + ' Notifications';
         $.ajax({
@@ -1548,7 +1610,9 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                Email_Type: Email_Type
+                Email_Type: Email_Type,
+                Email_Id: '@objLoginUser.Email_Id',
+                Email_Type_Code: Email_Type_Code
             }),
             success: function (result) {
                 if (result == "true") {
@@ -1580,6 +1644,7 @@
 
     function updateCount() {
         debugger
+
         var TotalCounttt = 0;
         var greaterEmailCount = 0;
         var num = parseInt($('#hdnDiv').val().split('_')[1]);
@@ -1618,53 +1683,21 @@
 
             }
         }
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("updateSeenNotification", "Base")',
-            traditional: true,
-            async: false,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Email_Log_Codes: $('#hdnSelectedEmail').val()
-            }),
-            success: function (result) {
 
-            },
-            error: function (x, e) {
+        var NEDCode = $('#hdnSeenId_' + num).val();
+        var NECode = $('#hdnNECode_' + num).val();
+
+        if ($('#hdnSeenNew_' + num).val() == "N") {
+            var ETC = $('#hdnEmail_Type_Code').val();
+            var TotalETC = $('#TotalECount_' + ETC).text();
+            var TotalEmailCount = $('#TotalEmailCount').text();
+            if (TotalETC != 0) {
+                $('#TotalECount_' + ETC).text(TotalETC - 1);
+                $('#TotalEmailCount').text(TotalEmailCount - 1);
             }
-        });
-    }
-    function MarkAllRead() {
-        var markCount = parseInt(document.getElementById("TotalEmailCount").innerHTML);
-        if (markCount != 0) {
-            $.ajax({
-                type: "POST",
-                traditional: true,
-                enctype: 'multipart/form-data',
-                contentType: "application/json; charset=utf-8",
-                url: '@Url.Action("MarkAllRead", "Base")',
-                async: true,
-                data: JSON.stringify({
-                }),
-                success: function (result) {
-                    var outputs = document.querySelectorAll("span.EmailCount");
-                    for (var i = 0; i < outputs.length; ++i) {
-                        outputs[i].textContent = 0;
-                    }
-                    document.getElementById("TotalEmailCount").innerHTML = parseInt(0);
-                    $('#hdnTotalEmailCount').val(0);
-                    // document.getElementById("TotalEmailCount").style.display='none';
-                    //showAlert("S","All Notifications are mark as read","");
-                },
-                error: function (x, e) {
-                }
-            });
         }
-        //else{
-        //    showAlert("E","No new notifications to read","");
-        //}
-
+        $('#hdnSeenNew_' + num).val("Y");
+        UpdateMessageStatus(NEDCode, NECode);
     }
 </script>
 <script>

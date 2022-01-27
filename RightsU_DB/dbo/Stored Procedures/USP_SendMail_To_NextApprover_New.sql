@@ -333,14 +333,15 @@ BEGIN
 				DECLARE @DatabaseEmail_Profile varchar(200)	
 				SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
 
-				EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile,
-				@Recipients =  @Cur_email_id,
-				@Copy_recipients = @CC,
-				@subject = @MailSubjectCr,
-				@body = @body1,@body_format = 'HTML';  
+				--EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile,
+				--@Recipients =  @Cur_email_id,
+				--@Copy_recipients = @CC,
+				--@subject = @MailSubjectCr,
+				--@body = @body1,
+				--@body_format = 'HTML';  
 
 				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
-				SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Send for Approval'
+				SELECT @Email_Config_Code,@body1, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  @MailSubjectCr
 
 				--select @body1
 

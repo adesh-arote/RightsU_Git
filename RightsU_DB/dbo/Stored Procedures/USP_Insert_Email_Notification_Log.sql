@@ -130,9 +130,8 @@ BEGIN
 	--	) as Tbl2 ON Tbl1.RowNo = Tbl2.RowNo
 	--END
 
-	INSERT INTO Notifications (NotificationType, EventCategory, Tran_Code, Tran_Type, UserCode, Email, CC, BCC, [Subject], HtmlBody, CreatedOn, ModifiedOn, NoOfRetry, API_Status, IsReminderMail, IsSend, IsRead, IsAutoEscalated)
-	SELECT  'Email_NTF', EC.Email_Config_Code, @Module_Code, @Record_Code, 0, To_User_Mail_Id, CC_User_Mail_Id, BCC_User_Mail_Id, [Subject], Email_Body, GETDATE(), GETDATE(),0 ,'P' , 0, 1, 0, 0 
+	INSERT INTO Notifications (NotificationType, EventCategory, TransCode, TransType, UserCode, Email, CC, BCC, [Subject], HtmlBody, CreatedOn, ModifiedOn, NoOfRetry, API_Status, IsReminderMail, IsSend, IsRead, IsAutoEscalated)
+	SELECT distinct 'Email_NTF', EC.Email_Config_Code, @Module_Code, @Record_Code, 0, To_User_Mail_Id, CC_User_Mail_Id, BCC_User_Mail_Id, [Subject], Email_Body, GETDATE(), GETDATE(),0 ,'P' , 0, 0, 0, 0 
 	FROM  #Email_Config_Users_UDT A
 	INNER JOIN Email_Config EC ON EC.Email_Config_Code = A.Email_Config_Code
-
 END

@@ -439,24 +439,25 @@ BEGIN
 				DECLARE @DatabaseEmail_Profile varchar(200)	= ''
 				SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
 
-				EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile  
-				,@recipients =  @cur_email_id    
-				,@copy_recipients = @CC  
-				,@subject = @MailSubjectCr  
-				,@body = @body1,@body_format = 'HTML';    
+				--EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmail_Profile  
+				--,@recipients =  @cur_email_id    
+				--,@copy_recipients = @CC  
+				--,@subject = @MailSubjectCr  
+				--,@body = @body1,
+				--@body_format = 'HTML';    
 
 				IF (@RedirectToApprovalList = 'WA')
 					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
-					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Waiting for Archive'
+					SELECT @Email_Config_Code,@body1, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  @MailSubjectCr --'Waiting for Archive'
 				ELSE IF (@RedirectToApprovalList = 'AR')
 					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
-					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Archived'
+					SELECT @Email_Config_Code,@body1, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''), @MailSubjectCr -- 'Archived'
 				ELSE IF (@RedirectToApprovalList = 'A')
 					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
-					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Rejected For Archive'
+					SELECT @Email_Config_Code,@body1, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''), @MailSubjectCr -- 'Rejected For Archive'
 				ELSE
 					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, [Subject])
-					SELECT @Email_Config_Code,@Email_Table, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''),  'Send for Approval'
+					SELECT @Email_Config_Code,@body1, ISNULL(@Cur_user_code,''), ISNULL(@Cur_email_id ,''), @MailSubjectCr -- 'Send for Approval'
 				
 			END  
 			FETCH NEXT FROM cur_on_rejection INTO @cur_email_id, @cur_first_name, @cur_security_group_name, @cur_next_level_group ,@cur_security_group_code ,@cur_user_code  

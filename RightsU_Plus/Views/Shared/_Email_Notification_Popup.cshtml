@@ -5,14 +5,16 @@
     <input type="hidden" id="hdnCount" value="@Model.ElementAt(0).TotalRecords" />
     <input type="hidden" id="FirstTotalCount" value="@Model.ElementAt(0).TotalRecords" />
     <input type="hidden" id="hdnDiv" value="div_1" />
+    <input type="hidden" id="hdnEmail_Type_Code" value="@ViewBag.Email_Type_Code" />
     foreach (var item in Model)
     {
-        count = count + 1;
+        count++;
 
         <input type="hidden" id="hdnNECode_@count" value="@item.NotificationsCode" />
         <input type="hidden" id="hdnSeenId_@count" value="@item.NotificationDetailCode" />
         <input type="hidden" id="hdnSeen_@count" value="@item.Status" />
-        if (count != 1)
+        <input type="hidden" id="hdnSeenNew_@count" value="N" />
+        if (count > 1)
         {
             <div id='div_@count' style="display:none">
                 @Html.Raw(HttpUtility.HtmlDecode(item.Message.Replace("tblFormat", "table table-bordered table-hover")))
@@ -36,7 +38,6 @@
             $('#btnNext').attr('disabled', true);
         }
         else {
-
             $('#btnPrev').attr('disabled', false);
             $('#btnNext').attr('disabled', false);
         }

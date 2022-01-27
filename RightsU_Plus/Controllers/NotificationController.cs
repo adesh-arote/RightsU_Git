@@ -32,7 +32,206 @@ namespace RightsU_Plus.Controllers
             byte[] bytesEncrypted = AES_Encrypt(bytesToBeEncrypted, passwordBytes);
             AuthKey = Convert.ToBase64String(bytesEncrypted);
 
-            baseUri = new ApplicationConfiguration().GetConfigurationValue("NotificationApi");
+          //  baseUri = new ApplicationConfiguration().GetConfigurationValue("NotificationApi");
+        }
+
+        public List<EventCategoryMsgCount> GetSummarisedMessageStatus(string Email_Id)
+        {
+            //int timeout = 3600;
+            //string result = "";
+
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetSummarisedMessageStatus");
+
+            //request.KeepAlive = false;
+            //request.ProtocolVersion = HttpVersion.Version10;
+            //request.ContentType = "application/Json";
+            //request.Method = "POST";
+            //request.Headers.Add("ContentType", "application/json");
+            //request.Headers.Add("AuthKey", AuthKey);
+            //request.Headers.Add("Service", "true");
+            ////Ragnar_Tygerian@uto.in;sds_daf@uto.in
+            //var objEmail = new
+            //{
+            //    UserEmail = Email_Id // "Ragnar_Tygerian@uto.in"// objLoginUser.Email_Id
+            //};
+
+            //try
+            //{
+            //    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            //    {
+            //        string json = JsonConvert.SerializeObject(objEmail);
+            //        streamWriter.Write(json);
+            //    }
+            //    var httpResponse = (HttpWebResponse)request.GetResponse();
+            //    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            //    {
+            //        result = streamReader.ReadToEnd();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    request.Abort();
+            //}
+
+            //if (result != "")
+            //{
+            //    try
+            //    {
+            //        HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
+            //        List<EventCategoryMsgCount> lst = JsonConvert.DeserializeObject<List<EventCategoryMsgCount>>(objData.Response.ToString());
+            //        return lst;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        return new List<EventCategoryMsgCount>();
+            //    }
+            //}
+            return new List<EventCategoryMsgCount>();
+        }
+
+        public ActionResult Show_Email_Popup(int Email_Type_Code, string Email_Type, string Email_Id)
+        {
+            List<GetMessageStatus> lst = GetMessageStatusDetails(Email_Type, Email_Id);
+            ViewBag.Email_Type_Code = Email_Type_Code;
+            return PartialView("_Email_Notification_Popup", lst);
+        }
+
+        public JsonResult UpdateMessageStatus(int NECode, int NEDetailCode)
+        {
+            var obj = (dynamic)null;
+            UpdateMessageStatusDetails(NECode, NEDetailCode);
+            obj = new
+            {
+                Status = "S",
+                Message = ""
+            };
+            return Json(obj);
+        }
+
+        public ActionResult MarkAllRead(string Email_Id)
+        {
+            List<GetMessageStatus> lstGetMessageStatus = GetMessageStatusDetails("", Email_Id);
+            foreach (GetMessageStatus item in lstGetMessageStatus)
+            {
+                UpdateMessageStatusDetails(item.NotificationsCode, item.NotificationDetailCode);
+            }
+
+            var obj = new
+            {
+                Status = "S",
+                Message = ""
+            };
+            return Json(obj);
+        }
+
+        #region CRUD Methods
+        public HttpResponseClass UpdateMessageStatusDetails(int NECode, int NEDetailCode)
+        {
+            string result = "";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEUpdateMessageStatus");
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.ContentType = "application/Json";
+            request.Method = "POST";
+            request.Headers.Add("ContentType", "application/json");
+            request.Headers.Add("AuthKey", AuthKey);
+            request.Headers.Add("Service", "true");
+
+            var objEmailStatus = new
+            {
+                NECode = NECode,
+                NEDetailCode = NEDetailCode,
+                UpdatedStatus = "Read",
+                ReadDateTime = System.DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss")
+            };
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = JsonConvert.SerializeObject(objEmailStatus);
+                streamWriter.Write(json);
+            }
+            try
+            {
+                var httpResponse = (HttpWebResponse)request.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                request.Abort();
+            }
+
+            if (result != "")
+            {
+                HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
+                return objData;
+            }
+            return new HttpResponseClass();
+        }
+        public List<GetMessageStatus> GetMessageStatusDetails(string Email_Type, string Email_Id)
+        {
+            string result = "";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetMessageStatus");
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.ContentType = "application/Json";
+            request.Method = "POST";
+            request.Headers.Add("ContentType", "application/json");
+            request.Headers.Add("AuthKey", AuthKey);
+            request.Headers.Add("Service", "true");
+
+            var objNoti = new
+            {
+                NECode = "",
+                TransType = "",
+                TransCode = "",
+                UserCode = "",
+                NotificationType = "",
+                ScheduleDateTime = "",
+                SentDateTime = "",
+                EventCategory = Email_Type, //"Channel Unutilized Run",
+                Recipient = Email_Id,//"Ragnar_Tygerian@uto.in",// objLoginUser.Email_Id,
+                Subject = "",
+                Status = "",
+                isRead = "0",
+                isSend = "",
+                NoOfRetry = "",
+                size = "500",
+                from = "0"
+            };
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = JsonConvert.SerializeObject(objNoti);
+                streamWriter.Write(json);
+            }
+
+            try
+            {
+                var httpResponse = (HttpWebResponse)request.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                request.Abort();
+            }
+
+            if (result != "")
+            {
+                HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
+                HttpResponseClass lstResponse = JsonConvert.DeserializeObject<HttpResponseClass>(objData.Response.ToString());
+                List<GetMessageStatus> lstGetMessageStatus = JsonConvert.DeserializeObject<List<GetMessageStatus>>(lstResponse.lstGetMessages.ToString());
+
+                return lstGetMessageStatus;
+            }
+            return new List<GetMessageStatus>();
         }
         private byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
         {
@@ -62,170 +261,10 @@ namespace RightsU_Plus.Controllers
 
             return encryptedBytes;
         }
-        public List<EventCategoryMsgCount> GetSummarisedMessageStatus()
-        {
-            int timeout = 3600;
-            string result = "";
+        #endregion
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetSummarisedMessageStatus");
-
-            request.KeepAlive = false;
-            request.ProtocolVersion = HttpVersion.Version10;
-            request.ContentType = "application/Json";
-            request.Method = "POST";
-            request.Headers.Add("ContentType", "application/json");
-            request.Headers.Add("AuthKey", AuthKey);
-            request.Headers.Add("Service", "true");
-            //Ragnar_Tygerian@uto.in;sds_daf@uto.in
-            var objEmail = new
-            {
-                UserEmail = "Ragnar_Tygerian@uto.in"// objLoginUser.Email_Id
-            };
-
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                string json = JsonConvert.SerializeObject(objEmail);
-                streamWriter.Write(json);
-            }
-
-            var httpResponse = (HttpWebResponse)request.GetResponse();
-            try
-            {
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    result = streamReader.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                request.Abort();
-            }
-
-            if (result != "")
-            {
-                HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
-                List<EventCategoryMsgCount> lst = JsonConvert.DeserializeObject<List<EventCategoryMsgCount>>(objData.Response.ToString());
-
-                return lst;
-                //return PartialView("~/Views/Shared/_Email_Pannel.cshtml", lst);
-            }
-            return new List<EventCategoryMsgCount>();
-            //return PartialView("~/Views/Shared/_Email_Pannel.cshtml", new List<EventCategoryMsgCount>());
-        }
-
-        public ActionResult Show_Email_Popup(string Email_Type)
-        {
-            string result = "";
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetMessageStatus");
-
-            request.KeepAlive = false;
-            request.ProtocolVersion = HttpVersion.Version10;
-            request.ContentType = "application/Json";
-            request.Method = "POST";
-            request.Headers.Add("ContentType", "application/json");
-            request.Headers.Add("AuthKey", AuthKey);
-            request.Headers.Add("Service", "true");
-
-            var objNoti = new
-            {
-                NECode = "",
-                TransType = "",
-                TransCode = "",
-                UserCode = "",
-                NotificationType = "",
-                ScheduleDateTime ="",
-                SentDateTime = "",
-                EventCategory = Email_Type, //"Channel Unutilized Run",
-                Recipient = "Ragnar_Tygerian@uto.in",// objLoginUser.Email_Id,
-                Subject = "",
-                Status = "",
-                isRead = "0",
-                isSend = "",
-                NoOfRetry = "",
-                size = "500",
-                from = "0"
-            };
-
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                string json = JsonConvert.SerializeObject(objNoti);
-                streamWriter.Write(json);
-            }
-
-            var httpResponse = (HttpWebResponse)request.GetResponse();
-            try
-            {
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    result = streamReader.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                request.Abort();
-            }
-
-            if (result != "")
-            {
-                HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
-                HttpResponseClass lstResponse = JsonConvert.DeserializeObject<HttpResponseClass>(objData.Response.ToString());
-                List<GetMessageStatus> lstGetMessageStatus = JsonConvert.DeserializeObject<List<GetMessageStatus>>(lstResponse.lstGetMessages.ToString());
-
-                return PartialView("_Email_Notification_Popup", lstGetMessageStatus);
-            }
-            return PartialView("_Email_Notification_Popup", new GetMessageStatus());
-        }
-
-        public JsonResult UpdateMessageStatus(int NECode, int NEDetailCode)
-        {
-            string result = "";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEUpdateMessageStatus");
-
-            request.KeepAlive = false;
-            request.ProtocolVersion = HttpVersion.Version10;
-            request.ContentType = "application/Json";
-            request.Method = "POST";
-            request.Headers.Add("ContentType", "application/json");
-            request.Headers.Add("AuthKey", AuthKey);
-            request.Headers.Add("Service", "true");
-
-            var objEmailStatus = new
-            {
-                NECode = NECode,
-                NEDetailCode = NEDetailCode,
-                UpdatedStatus = "Read",
-                ReadDateTime = System.DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss")
-            };
-
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                string json = JsonConvert.SerializeObject(objEmailStatus);
-                streamWriter.Write(json);
-            }
-
-            var httpResponse = (HttpWebResponse)request.GetResponse();
-            try
-            {
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    result = streamReader.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                request.Abort();
-            }
-
-            if (result != "")
-            {
-                HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
-
-                return Json(new EmailStatus());
-            }
-            return Json(new EmailStatus());
-        }
     }
+
 
     public class HttpResponseClass
     {
@@ -250,7 +289,7 @@ namespace RightsU_Plus.Controllers
     {
         public Nullable<int> TotalRecords { get; set; }
         public Nullable<long> RowNum { get; set; }
-        public long NotificationsCode { get; set; }
+        public int NotificationsCode { get; set; }
         public string EventCategory { get; set; }
         public Nullable<long> TransactionCode { get; set; }
         public string TransactionType { get; set; }
@@ -274,29 +313,4 @@ namespace RightsU_Plus.Controllers
         public int ErrorCode { get; set; }
         public string ErrorMessage { get; set; }
     }
-    public class EmailViewModel
-    {
-        public int totalRecords { get; set; }
-        //public ICollection<Data> Datas { get; set; }
-    }
-
-    //public class Data
-    //{
-    //    public string Email_Config_Code { get; set; }
-    //    public string EventCategory { get; set; }
-    //    public int Count { get; set; }
-    //    public int TransactionCode { get; set; }
-    //    public int TransactionType { get; set; }
-    //    public string MessageType { get; set; }
-    //    public string Subject { get; set; }
-    //    public string Message { get; set; }
-    //    public string SentTo { get; set; }
-    //    public string Status { get; set; }
-    //    public int NoOfRetry { get; set; }
-    //    public Nullable<System.DateTime> SentDateTime { get; set; }
-    //    public Nullable<System.DateTime> ScheduleDateTime { get; set; }
-    //    public int NECode { get; set; }
-    //    public int NEDetailCode { get; set; }
-    //}
-
 }
