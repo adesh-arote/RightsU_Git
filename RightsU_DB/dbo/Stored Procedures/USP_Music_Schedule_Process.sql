@@ -664,7 +664,7 @@ BEGIN
 		)
 		DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
 		INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
-		EXEC USP_Get_EmailConfig_Users 'CUR', 'N'
+		EXEC USP_Get_EmailConfig_Users 'MSE', 'N'
 
 						
 	-----------------------------------------------------------
@@ -807,14 +807,14 @@ BEGIN
 					PRINT '  @mailBodyWithData : ' + @mailBodyWithData
 
 					
-					EXEC msdb.dbo.sp_send_dbmail 
-					@profile_name = @dbEmail_Profile,
-					@recipients =  @User_Email_Id,
-					@copy_recipients = @CC_User_Mail_Id,
-					@blind_copy_recipients = @BCC_User_Mail_Id,
-					@subject = 'Music Schedule Exception',
-					@body = @mailBodyWithData, 
-					@body_format = 'HTML';
+					--EXEC msdb.dbo.sp_send_dbmail 
+					--@profile_name = @dbEmail_Profile,
+					--@recipients =  @User_Email_Id,
+					--@copy_recipients = @CC_User_Mail_Id,
+					--@blind_copy_recipients = @BCC_User_Mail_Id,
+					--@subject = 'Music Schedule Exception',
+					--@body = @mailBodyWithData, 
+					--@body_format = 'HTML';
 
 		
 					SELECT  @User_Email_Id = ISNULL(STUFF((SELECT ';' + A.number FROM dbo.fn_Split_withdelemiter(@User_Email_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,''),
@@ -824,9 +824,13 @@ BEGIN
 							@BCC_User_Mail_Id = ISNULL(STUFF((SELECT ';' + A.number FROM dbo.fn_Split_withdelemiter(@BCC_User_Mail_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,''),
 							@BCC_Users_Code = ISNULL( STUFF(( SELECT ',' + CAST(U.Users_Code AS NVARCHAR(MAX)) FROM dbo.fn_Split_withdelemiter(@BCC_User_Mail_Id,';') AS A INNER JOIN Users U on U.Email_Id = A.number FOR XML PATH('')), 1, 1, '') ,'')
 	
-					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
-					SELECT @Email_Config_Code,'<table class=''tblFormat'' >'+@trTable+'</table>', ISNULL(@To_Users_Code,''), ISNULL(@User_Email_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''), 'Music Schedule Exception'
+					--INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+					--SELECT @Email_Config_Code,'<table class=''tblFormat'' >'+@trTable+'</table>', ISNULL(@To_Users_Code,''), ISNULL(@User_Email_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''), 'Music Schedule Exception'
 				
+					INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+					SELECT @Email_Config_Code,  @mailBodyWithData, ISNULL(@To_Users_Code,''), ISNULL(@User_Email_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''), 'Music Schedule Exception'
+
+
 					UPDATE #TempMailData SET IsMailSent = 'Y' WHERE RowNo = @RowNo
 
 					SELECT @RowNo = 0, @trTable = '', @User_Email_Id = '', @cc_user_mail_id = '', @bcc_user_mail_id = ''

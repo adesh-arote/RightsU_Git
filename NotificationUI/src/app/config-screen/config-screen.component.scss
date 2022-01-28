@@ -1,0 +1,140 @@
+.divCenter {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 5px;
+  background-color: lightgray;
+}
+
+.headerCls {
+  font-size: 18px;
+  font-family: proxima_novaregular;
+}
+
+.bold-font {
+  font-weight: bold;
+}
+
+
+.config-container {
+  width: 98%;
+  padding: 2% 1%;
+  margin-left: 10px;
+  margin-top: 5px;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px 0 rgb(0 0 0 / 11%);
+  background-color: #cfdcf7;
+}
+
+.top-margin {
+  margin-top: 2%;
+}
+
+:host ::ng-deep .singleSelectDrpdwn .p-dropdown {
+  width: 95%;
+  margin-left: 4%;
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    color: #0f1010;
+    font-size: 12px;
+  }
+
+  .p-inputtext {
+    color: #0f1010;
+    font-size: 12px;
+  }
+}
+
+
+
+.btnClass {
+  color: white;
+  background: black;
+  width: 10%;
+}
+
+.fail-span {
+  margin-left: 68px;
+}
+
+.fail-val-msg {
+  margin-left: 45%;
+}
+
+.row-margin {
+  margin-top: 1%;
+}
+
+.success-span {
+  margin-left: 41px;
+}
+
+.success-val-msg {
+  margin-left: 45%;
+}
+
+
+.retry-span {
+  margin-left: 167px;
+}
+
+.retry-val-msg {
+  margin-left: 5%;
+}
+
+.duration-span {
+  margin-left: 2%;
+}
+
+.duration-input {
+  width: 95%;
+}
+
+.server-span {
+  margin-left: 19%;
+}
+
+.port-span {
+  margin-left: 32%;
+}
+
+.defaultCred-span {
+  margin-left: 16%;
+}
+
+.defaultCred-val-msg {
+  margin-left: 47%;
+}
+
+.user-span {
+  margin-left: 32%;
+}
+
+.user-span2 {
+  margin-left: 33%;
+}
+
+.pswd-span {
+  margin-left: 33%;
+}
+
+.saveBtn {
+  margin: 1% 2%;
+}
+
+.colTh {
+  width: 60%;
+  padding: 8px;
+}
+
+::ng-deep input {
+  margin-left: 4% !important;
+}
+
+.radio-val-msg {
+  margin-left: 4%;
+}
+
+input[type=radio] {
+  margin: 4px 0 0;
+ // margin-left: 1px !important;
+}
