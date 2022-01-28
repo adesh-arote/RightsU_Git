@@ -1,0 +1,314 @@
+<div class="row divCenter">
+  <span class="headerCls bold-font">
+    {{LABEL.Config_Screen}}
+  </span>
+</div>
+<form [formGroup]="configForm">
+  <div class="config-container">
+    <!-- <div class="row top-margin">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.Retry_Option_For_Failed_Msg}}:<span class="error-messages-style">*</span> </span>
+                <span class="fail-span">
+                      <input type="radio" id="Yes" [(ngModel)]="retryFailModel"  formControlName="retryFail" [value]="true">
+                      <label for="Yes">{{LABEL.Yes}}</label>
+                      <input type="radio" id="No"   [(ngModel)]="retryFailModel"  formControlName="retryFail" [value]="false" (change)="showRetryVal1=false;showRetryVal2=false">
+                      <label for="No">{{LABEL.No}}</label>
+                    <div *ngIf="submitted && configForm.get('retryFail').invalid" class="box-danger fail-val-msg">
+                        <span *ngIf="configForm.get('retryFail').errors.required" class="box-danger error-msgs">
+                            {{MESSAGE.This_field_is_required}}
+                        </span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row row-margin">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.Retry_Option_For_Success_Msg}}:<span class="error-messages-style">*</span> </span>
+                <span class="success-span">
+                      <input type="radio" id="Yes"   [(ngModel)]="retrySuccessModel" formControlName="retrySucess" [value]="true">
+                      <label for="Yes">{{LABEL.Yes}}</label>
+                      <input type="radio" id="No"   [(ngModel)]="retrySuccessModel" formControlName="retrySucess" [value]="false" (change)="showRetryVal1=false;showRetryVal2=false">
+                      <label for="No">{{LABEL.No}}</label>
+                    <div *ngIf="submitted && configForm.get('retrySucess').invalid" class="box-danger success-val-msg" >
+                        <span *ngIf="configForm.get('retrySucess').errors.required" class="box-danger error-msgs">
+                            {{MESSAGE.This_field_is_required}}
+                        </span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-margin" >
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.No_Of_Retry}}:<span *ngIf="retrySuccessModel || retryFailModel" class="error-messages-style">*</span>
+                <span *ngIf="!retrySuccessModel && !retryFailModel" class="error-messages-style">&nbsp;&nbsp;</span> </span>
+                <span class="retry-span">
+                      <p-dropdown [options]="noOfRetry" formControlName="noOfRetry" placeholder="Select Value" class="singleSelectDrpdwn"
+                         optionLabel="label" (onChange)="showRetryVal1=false;onNoOfRetryChange($event)">
+                    </p-dropdown>
+                    <div class="box-danger retry-val-msg" *ngIf="showRetryVal1">
+                        <span  class="box-danger error-msgs">{{MESSAGE.This_field_is_required}}</span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-margin">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.Duration_Between}}:<span *ngIf="retrySuccessModel || retryFailModel" class="error-messages-style">*</span>
+                <span *ngIf="!retrySuccessModel && !retryFailModel" class="error-messages-style">&nbsp;&nbsp;</span></span>
+                <span class="duration-span">
+                    <input type="number" min="0" max="720" class="duration-input"
+                    [(ngModel)]="numberModel" formControlName="durationRetry"
+                    (keypress)="keyPress($event)" (keyup)="preventInput($event);showRetryVal2=false">
+                    <div class="box-danger retry-val-msg"  *ngIf="showRetryVal2">
+                        <span  class="box-danger error-msgs">{{MESSAGE.This_field_is_required}}</span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row row-margin" >
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.SMTP_SERVER}}:<span class="error-messages-style">*</span> </span>
+                <span class="server-span">
+                    <input type="text" [(ngModel)]="severModel" formControlName="serverName">
+                    <div *ngIf="submitted && configForm.get('serverName').invalid" class="box-danger retry-val-msg">
+                        <span *ngIf="configForm.get('serverName').errors.required" class="box-danger error-msgs"><Table>
+                            {{MESSAGE.This_field_is_required}}
+                        </Table></span>
+                    </div>
+                </span>
+
+            </div>
+        </div>
+    </div> -->
+    <!-- <div class="row row-margin" >
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.SMTP_Port}}:<span class="error-messages-style">*</span> </span>
+                <span class="port-span">
+                    <input type="text" [(ngModel)]="portModel" formControlName="port">
+                    <div *ngIf="submitted && configForm.get('port').invalid" class="box-danger retry-val-msg">
+                        <span *ngIf="configForm.get('port').errors.required" class="box-danger error-msgs">
+                            {{MESSAGE.This_field_is_required}}
+                        </span>
+                    </div>
+                </span>
+
+            </div>
+        </div>
+    </div> -->
+    <!-- <div class="row row-margin">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.Use_Default_Credentials}}:<span class="error-messages-style">*</span> </span>
+                <span class="defaultCred-span">
+                      <input type="radio" id="Yes" [(ngModel)]="defaultCredModel" formControlName="defaultCredential" [value]="true">
+                      <label for="Yes">{{LABEL.Yes}}</label>
+                      <input type="radio" id="No" [(ngModel)]="defaultCredModel" formControlName="defaultCredential" [value]="false" (change)="showCredentialVal1=false;showCredentialVal2=false">
+                      <label for="No">{{LABEL.No}}</label>
+                    <div *ngIf="submitted && configForm.get('defaultCredential').invalid" class="box-danger defaultCred-val-msg">
+                        <span *ngIf="configForm.get('defaultCredential').errors.required" class="box-danger error-msgs">
+                            {{MESSAGE.This_field_is_required}}
+                        </span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div> -->
+    <!-- <div class="row row-margin">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.User_Name}}:<span *ngIf="!defaultCredModel"  class="error-messages-style">*</span>
+                <span *ngIf="defaultCredModel"  class="error-messages-style">&nbsp;&nbsp;</span> </span>
+                <span class="user-span">
+                    <input type="text" [(ngModel)]="userNameModel" formControlName="userName" (keyup)="showCredentialVal1=false">
+                    <div class="box-danger retry-val-msg" *ngIf="showCredentialVal1">
+                        <span  class="box-danger error-msgs"> {{MESSAGE.This_field_is_required}}</span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div> -->
+    <!-- <div class="row row-margin" >
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <span class="bold-font">{{LABEL.Password}}:<span *ngIf="!defaultCredModel" class="error-messages-style">*</span>
+                <span *ngIf="defaultCredModel"  class="error-messages-style">&nbsp;&nbsp;</span> </span>
+                <span class="pswd-span" >
+                    <input type="text" [(ngModel)]="pswdModel"  formControlName="pswd" (keyup)="showCredentialVal2=false">
+                    <div class="box-danger retry-val-msg"  *ngIf="showCredentialVal2">
+                        <span  class="box-danger error-msgs"> {{MESSAGE.This_field_is_required}}</span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div> -->
+    <table class="tableClass">
+      <tbody>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.Retry_Option_For_Failed_Msg}}:<span class="error-messages-style">*</span> </span>
+          </td>
+          <td>
+            <span>
+              <input type="radio" id="Yes" [(ngModel)]="retryFailModel" formControlName="retryFail" [value]="true">
+              &nbsp;<label for="Yes">{{LABEL.Yes}}</label>
+              &nbsp;<input type="radio" id="No" [(ngModel)]="retryFailModel" formControlName="retryFail" [value]="false" (change)="showRetryVal1=false;showRetryVal2=false">
+              &nbsp;<label for="No">{{LABEL.No}}</label>
+              <div *ngIf="submitted && configForm.get('retryFail').invalid" class="box-danger radio-val-msg">
+                <span *ngIf="configForm.get('retryFail').errors.required" class="box-danger error-msgs">
+                  {{MESSAGE.This_field_is_required}}
+                </span>
+              </div>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.Retry_Option_For_Success_Msg}}:<span class="error-messages-style">*</span> </span>
+          </td>
+          <td>
+            <span>
+              <input type="radio" id="Yes" [(ngModel)]="retrySuccessModel" formControlName="retrySucess" [value]="true">
+              &nbsp;<label for="Yes">{{LABEL.Yes}}</label>
+              &nbsp;<input type="radio" id="No" [(ngModel)]="retrySuccessModel" formControlName="retrySucess" [value]="false" (change)="showRetryVal1=false;showRetryVal2=false">
+              &nbsp;<label for="No">{{LABEL.No}}</label>
+              <div *ngIf="submitted && configForm.get('retrySucess').invalid" class="box-danger radio-val-msg">
+                <span *ngIf="configForm.get('retrySucess').errors.required" class="box-danger error-msgs">
+                  {{MESSAGE.This_field_is_required}}
+                </span>
+              </div>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.No_Of_Retry}}:<span *ngIf="retrySuccessModel || retryFailModel" class="error-messages-style">*</span></span>
+          </td>
+          <td>
+            <span>
+              <p-dropdown [options]="noOfRetry" formControlName="noOfRetry" placeholder="Select Value" class="singleSelectDrpdwn"
+                          optionLabel="label" (onChange)="showRetryVal1=false;onNoOfRetryChange($event)">
+              </p-dropdown>
+              <div class="box-danger retry-val-msg" *ngIf="showRetryVal1">
+                <span class="box-danger error-msgs">{{MESSAGE.This_field_is_required}}</span>
+              </div>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.Duration_Between}}:<span *ngIf="retrySuccessModel || retryFailModel" class="error-messages-style">*</span> </span>
+          </td>
+          <td>
+            <span>
+              <input type="number" min="0" max="720" class="duration-input"
+                     [(ngModel)]="numberModel" formControlName="durationRetry"
+                     (keypress)="keyPress($event)" (keyup)="preventInput($event);showRetryVal2=false">
+              <div class="box-danger retry-val-msg" *ngIf="showRetryVal2">
+                <span class="box-danger error-msgs">{{MESSAGE.This_field_is_required}}</span>
+              </div>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.SMTP_SERVER}}:<span class="error-messages-style">*</span> </span>
+          </td>
+          <td>
+            <span>
+              <input type="text" [(ngModel)]="severModel" formControlName="serverName" class="duration-input">
+              <div *ngIf="submitted && configForm.get('serverName').invalid" class="box-danger retry-val-msg">
+                <span *ngIf="configForm.get('serverName').errors.required" class="box-danger error-msgs">
+                  {{MESSAGE.This_field_is_required}}
+                </span>
+              </div>
+            </span>
+
+          </td>
+        </tr>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.SMTP_Port}}:<span class="error-messages-style">*</span> </span>
+          </td>
+          <td>
+            <span>
+              <input type="text" [(ngModel)]="portModel" formControlName="port" class="duration-input">
+              <div *ngIf="submitted && configForm.get('port').invalid" class="box-danger retry-val-msg">
+                <span *ngIf="configForm.get('port').errors.required" class="box-danger error-msgs">
+                  {{MESSAGE.This_field_is_required}}
+                </span>
+              </div>
+            </span>
+
+          </td>
+        </tr>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.Use_Default_Credentials}}:<span class="error-messages-style">*</span> </span>
+          </td>
+          <td>
+            <span>
+              <input type="radio" id="Yes" [(ngModel)]="defaultCredModel" formControlName="defaultCredential" [value]="true">
+              &nbsp;<label for="Yes">{{LABEL.Yes}}</label>
+              &nbsp;<input type="radio" id="No" [(ngModel)]="defaultCredModel" formControlName="defaultCredential" [value]="false" (change)="showCredentialVal1=false;showCredentialVal2=false">
+              &nbsp;<label for="No">{{LABEL.No}}</label>
+              <div *ngIf="submitted && configForm.get('defaultCredential').invalid" class="box-danger radio-val-msg">
+                <span *ngIf="configForm.get('defaultCredential').errors.required" class="box-danger error-msgs">
+                  {{MESSAGE.This_field_is_required}}
+                </span>
+              </div>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.User_Name}}:<span *ngIf="!defaultCredModel" class="error-messages-style">*</span></span>
+          </td>
+          <td>
+            <span>
+              <input type="text" [(ngModel)]="userNameModel" formControlName="userName" class="duration-input" (keyup)="showCredentialVal1=false">
+              <div class="box-danger retry-val-msg" *ngIf="showCredentialVal1">
+                <span class="box-danger error-msgs"> {{MESSAGE.This_field_is_required}}</span>
+              </div>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="colTh">
+            <span class="bold-font">{{LABEL.Password}}:<span *ngIf="!defaultCredModel" class="error-messages-style">*</span></span>
+          </td>
+          <td>
+            <span>
+              <input type="text" [(ngModel)]="pswdModel" formControlName="pswd" class="duration-input" (keyup)="showCredentialVal2=false">
+              <div class="box-danger retry-val-msg" *ngIf="showCredentialVal2">
+                <span class="box-danger error-msgs"> {{MESSAGE.This_field_is_required}}</span>
+              </div>
+            </span>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+  <div class="row top-margin ">
+    <button type="button" class="btn btnClass saveBtn" (click)="saveData()">{{LABEL.Save}}</button>
+    <button type="button" class="btn btnClass" (click)="clearFormData()">{{LABEL.Cancel}}</button>
+  </div>
+</form>
+<p-toast position="top-center" styleClass="toasterStyle" [baseZIndex]="10000"></p-toast>
