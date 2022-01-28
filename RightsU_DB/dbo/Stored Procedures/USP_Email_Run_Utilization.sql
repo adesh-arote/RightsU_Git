@@ -292,18 +292,18 @@ BEGIN
 		WHILE (@@Fetch_Status = 0) 
 		BEGIN		
 
-			   EXEC msdb.dbo.sp_send_dbmail 
-				@profile_name = @DatabaseEmail_Profile,
-				@recipients =  @To_User_Mail_Id,
-				@copy_recipients = @CC_User_Mail_Id,
-				@blind_copy_recipients = @BCC_User_Mail_Id,
-				@subject = @MailSubjectCr,
-				@body = @Emailbody, 
-				@body_format = 'HTML';
+			 --  EXEC msdb.dbo.sp_send_dbmail 
+				--@profile_name = @DatabaseEmail_Profile,
+				--@recipients =  @To_User_Mail_Id,
+				--@copy_recipients = @CC_User_Mail_Id,
+				--@blind_copy_recipients = @BCC_User_Mail_Id,
+				--@subject = @MailSubjectCr,
+				--@body = @Emailbody, 
+				--@body_format = 'HTML';
 
 
 				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
-				SELECT @Email_Config_Code,@EmailUser_Body, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Last Month Run Utilization'
+				SELECT @Email_Config_Code,@Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Last Month Run Utilization'
 
 			FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 		END -- End of Fetch outer
