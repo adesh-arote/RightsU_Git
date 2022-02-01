@@ -166,26 +166,30 @@ namespace UTO_Notification.Controllers
                 httpResponses.Message = "Request Queued Successfully";
             }
 
-            logObj.RequestId = Convert.ToString(obj.NECode);
-            logObj.UserId = Convert.ToString(obj.UserCode);
-            logObj.RequestUri = Request.RequestUri.AbsoluteUri;
-            logObj.RequestMethod = "api/Notification/NESendMessage";
-            logObj.RequestContent = "To: " + obj.TO + " <br/> CC: " + obj.CC + " <br/> Bcc:" + obj.BCC;
-            logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
-            logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseContent = httpResponses.Message;
-            logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
-            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-            logObj.UserAgent = "Notification API";
-            logObj.Method = "Post";
-            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-            logObj.IsSuccess = isSuccess.ToString();
-            logObj.TimeTaken = Convert.ToString(TimeTaken);
-            logObj.HttpStatusCode = httpResponses.ResponseCode;
-            logObj.HttpStatusDescription = httpResponses.Message;
-            LogService(logObj);
+            if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+            {
+                logObj.RequestId = Convert.ToString(obj.NECode);
+                logObj.UserId = Convert.ToString(obj.UserCode);
+                logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                logObj.RequestMethod = "api/Notification/NESendMessage";
+                logObj.RequestContent = "To: " + obj.TO + " <br/> CC: " + obj.CC + " <br/> Bcc:" + obj.BCC;
+                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
+                logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
+                logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseContent = httpResponses.Message;
+                logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                logObj.UserAgent = "Notification API";
+                logObj.Method = "Post";
+                logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                logObj.IsSuccess = isSuccess.ToString();
+                logObj.TimeTaken = Convert.ToString(TimeTaken);
+                logObj.HttpStatusCode = httpResponses.ResponseCode;
+                logObj.HttpStatusDescription = httpResponses.Message;
+                LogService(logObj);
+
+            }
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
@@ -213,26 +217,29 @@ namespace UTO_Notification.Controllers
                 httpResponses.Message = "Request Updated Successfully";
                 isSuccess = true;
             }
-            logObj.RequestId = Convert.ToString(obj.NECode);
-            logObj.UserId = Convert.ToString(obj.UserCode);
-            logObj.RequestUri = Request.RequestUri.AbsoluteUri;
-            logObj.RequestMethod = "api/Notification/NEUpdateMessageStatus";
-            logObj.RequestContent = "To: " + obj.TO + " <br/> CC: " + obj.CC + " <br/> Bcc:" + obj.BCC;
-            logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
-            logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseContent = httpResponses.Message;
-            logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
-            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-            logObj.UserAgent = "Notification API";
-            logObj.Method = "Post";
-            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-            logObj.IsSuccess = isSuccess.ToString();
-            logObj.TimeTaken = Convert.ToString(TimeTaken);
-            logObj.HttpStatusCode = httpResponses.ResponseCode;
-            logObj.HttpStatusDescription = httpResponses.Message;
-            LogService(logObj);
+            if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+            {
+                logObj.RequestId = Convert.ToString(obj.NECode);
+                logObj.UserId = Convert.ToString(obj.UserCode);
+                logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                logObj.RequestMethod = "api/Notification/NEUpdateMessageStatus";
+                logObj.RequestContent = "To: " + obj.TO + " <br/> CC: " + obj.CC + " <br/> Bcc:" + obj.BCC;
+                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
+                logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
+                logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseContent = httpResponses.Message;
+                logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                logObj.UserAgent = "Notification API";
+                logObj.Method = "Post";
+                logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                logObj.IsSuccess = isSuccess.ToString();
+                logObj.TimeTaken = Convert.ToString(TimeTaken);
+                logObj.HttpStatusCode = httpResponses.ResponseCode;
+                logObj.HttpStatusDescription = httpResponses.Message;
+                LogService(logObj);
+            }
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
@@ -265,25 +272,27 @@ namespace UTO_Notification.Controllers
                 httpResponses.Message = "Ok";
                 isSuccess = true;
             }
-            logObj.RequestId = Convert.ToString(obj.NECode);
-            logObj.UserId = Convert.ToString(obj.UserCode);
-            logObj.RequestUri = Request.RequestUri.AbsoluteUri;
-            logObj.RequestMethod = "api/Notification/NEGetMessageStatus";
-            logObj.RequestContent = "NotificationType: " + obj.NotificationType + " <br/> EventCategory: " + obj.EventCategory + " <br/> NoOfRetry:" + obj.NoOfRetry;
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseContent = httpResponses.Message;
-            logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
-            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-            logObj.UserAgent = "Notification API";
-            logObj.Method = "Post";
-            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-            logObj.IsSuccess = isSuccess.ToString();
-            logObj.TimeTaken = Convert.ToString(TimeTaken);
-            logObj.HttpStatusCode = httpResponses.ResponseCode;
-            logObj.HttpStatusDescription = httpResponses.Message;
-            LogService(logObj);
-
+            if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+            {
+                logObj.RequestId = Convert.ToString(obj.NECode);
+                logObj.UserId = Convert.ToString(obj.UserCode);
+                logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                logObj.RequestMethod = "api/Notification/NEGetMessageStatus";
+                logObj.RequestContent = "NotificationType: " + obj.NotificationType + " <br/> EventCategory: " + obj.EventCategory + " <br/> NoOfRetry:" + obj.NoOfRetry;
+                logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseContent = httpResponses.Message;
+                logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                logObj.UserAgent = "Notification API";
+                logObj.Method = "Post";
+                logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                logObj.IsSuccess = isSuccess.ToString();
+                logObj.TimeTaken = Convert.ToString(TimeTaken);
+                logObj.HttpStatusCode = httpResponses.ResponseCode;
+                logObj.HttpStatusDescription = httpResponses.Message;
+                LogService(logObj);
+            }
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
@@ -309,23 +318,24 @@ namespace UTO_Notification.Controllers
                 isSuccess = true;
                 httpResponses.Message = "Ok";
             }
-           
-            logObj.RequestUri = Request.RequestUri.AbsoluteUri;
-            logObj.RequestMethod = "api/Notification/NEGetMasters";
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseContent = httpResponses.Message;
-            logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
-            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-            logObj.UserAgent = "Notification API";
-            logObj.Method = "Post";
-            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-            logObj.IsSuccess = isSuccess.ToString();
-            logObj.TimeTaken = Convert.ToString(TimeTaken);
-            logObj.HttpStatusCode = httpResponses.ResponseCode;
-            logObj.HttpStatusDescription = httpResponses.Message;
-            LogService(logObj);
-
+            if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+            {
+                logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                logObj.RequestMethod = "api/Notification/NEGetMasters";
+                logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseContent = httpResponses.Message;
+                logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                logObj.UserAgent = "Notification API";
+                logObj.Method = "Post";
+                logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                logObj.IsSuccess = isSuccess.ToString();
+                logObj.TimeTaken = Convert.ToString(TimeTaken);
+                logObj.HttpStatusCode = httpResponses.ResponseCode;
+                logObj.HttpStatusDescription = httpResponses.Message;
+                LogService(logObj);
+            }
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
@@ -351,22 +361,24 @@ namespace UTO_Notification.Controllers
                 isSuccess = true;
                 httpResponses.Message = "Ok";
             }
-
-            logObj.RequestUri = Request.RequestUri.AbsoluteUri;
-            logObj.RequestMethod = "api/Notification/NEGetConfiguration";
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseContent = httpResponses.Message;
-            logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
-            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-            logObj.UserAgent = "Notification API";
-            logObj.Method = "Post";
-            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-            logObj.IsSuccess = isSuccess.ToString();
-            logObj.TimeTaken = Convert.ToString(TimeTaken);
-            logObj.HttpStatusCode = httpResponses.ResponseCode;
-            logObj.HttpStatusDescription = httpResponses.Message;
-            LogService(logObj);
+            if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+            {
+                logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                logObj.RequestMethod = "api/Notification/NEGetConfiguration";
+                logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseContent = httpResponses.Message;
+                logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                logObj.UserAgent = "Notification API";
+                logObj.Method = "Post";
+                logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                logObj.IsSuccess = isSuccess.ToString();
+                logObj.TimeTaken = Convert.ToString(TimeTaken);
+                logObj.HttpStatusCode = httpResponses.ResponseCode;
+                logObj.HttpStatusDescription = httpResponses.Message;
+                LogService(logObj);
+            }
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
@@ -391,25 +403,26 @@ namespace UTO_Notification.Controllers
                 isSuccess = true;
                 httpResponses.Message = "Ok";
             }
-
-            logObj.RequestId = Convert.ToString(obj.NotificationConfigCode);
-            logObj.RequestUri = Request.RequestUri.AbsoluteUri;
-            logObj.RequestMethod = "api/Notification/NESaveConfiguration";
-            logObj.RequestContent = "NotificationType: " + obj.NotificationConfigCode + " <br/> UserName: " + obj.UserName + " <br/> NoOfTimesToRetry:" + obj.NoOfTimesToRetry;
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseContent = httpResponses.Message;
-            logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
-            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-            logObj.UserAgent = "Notification API";
-            logObj.Method = "Post";
-            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-            logObj.IsSuccess = isSuccess.ToString();
-            logObj.TimeTaken = Convert.ToString(TimeTaken);
-            logObj.HttpStatusCode = httpResponses.ResponseCode;
-            logObj.HttpStatusDescription = httpResponses.Message;
-            LogService(logObj);
-
+            if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+            {
+                logObj.RequestId = Convert.ToString(obj.NotificationConfigCode);
+                logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                logObj.RequestMethod = "api/Notification/NESaveConfiguration";
+                logObj.RequestContent = "NotificationType: " + obj.NotificationConfigCode + " <br/> UserName: " + obj.UserName + " <br/> NoOfTimesToRetry:" + obj.NoOfTimesToRetry;
+                logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseContent = httpResponses.Message;
+                logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                logObj.UserAgent = "Notification API";
+                logObj.Method = "Post";
+                logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                logObj.IsSuccess = isSuccess.ToString();
+                logObj.TimeTaken = Convert.ToString(TimeTaken);
+                logObj.HttpStatusCode = httpResponses.ResponseCode;
+                logObj.HttpStatusDescription = httpResponses.Message;
+                LogService(logObj);
+            }
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
         private static void LogError(string content)
@@ -455,24 +468,25 @@ namespace UTO_Notification.Controllers
                 isSuccess = true;
                 httpResponses.Message = "Ok";
             }
-
-            logObj.RequestUri = Request.RequestUri.AbsoluteUri;
-            logObj.RequestMethod = "api/Notification/NEGetSummarisedMessageStatus";
-            logObj.RequestContent = "UserEmail: " + obj.UserEmail;
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseContent = httpResponses.Message;
-            logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
-            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-            logObj.UserAgent = "Notification API";
-            logObj.Method = "Post";
-            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-            logObj.IsSuccess = isSuccess.ToString();
-            logObj.TimeTaken = Convert.ToString(TimeTaken);
-            logObj.HttpStatusCode = httpResponses.ResponseCode;
-            logObj.HttpStatusDescription = httpResponses.Message;
-            LogService(logObj);
-
+            if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+            {
+                logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                logObj.RequestMethod = "api/Notification/NEGetSummarisedMessageStatus";
+                logObj.RequestContent = "UserEmail: " + obj.UserEmail;
+                logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+                logObj.ResponseContent = httpResponses.Message;
+                logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                logObj.UserAgent = "Notification API";
+                logObj.Method = "Post";
+                logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                logObj.IsSuccess = isSuccess.ToString();
+                logObj.TimeTaken = Convert.ToString(TimeTaken);
+                logObj.HttpStatusCode = httpResponses.ResponseCode;
+                logObj.HttpStatusDescription = httpResponses.Message;
+                LogService(logObj);
+            }
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
