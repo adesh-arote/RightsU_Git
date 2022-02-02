@@ -379,6 +379,14 @@ export class SearchScreenComponent implements OnInit {
         outputData => {
 
           let exportData = outputData.Response.lstGetMessages;
+
+         // exportData.Message = exportData.Message.replace(/,/g, '&#44');
+
+          exportData.map((rowData: any) => {
+            rowData.Message = rowData.Message.replace(/,/g, '&#44');
+            
+          });
+
           if (outputData.Status && !this.utilityService.isEmpty(exportData)) {
             const result = [
               'TransactionCode',
@@ -394,7 +402,7 @@ export class SearchScreenComponent implements OnInit {
               'Subject'
             ];
             const re2 = ['Transaction Code', 'Transaction Type', 'Message Type', 'Message', 'Sent To', 'Status',
-              'No Of Retry', 'Sent Date Time', 'Schedule Date Time', 'Event/Category', 'Subject'
+              'No Of Retry', 'SentDate Time', 'ScheduleDate Time', 'Event/Category', 'Subject'
             ];
             const header = result;
             const csv = exportData.map((row: any) =>
