@@ -44,7 +44,7 @@ export class ConfigScreenComponent implements OnInit {
       'port': ['', Validators.required],
       'defaultCredential': ['', Validators.required],
       'noOfRetry': [''],
-      'durationRetry': ['', [Validators.max(100), Validators.min(3)]],
+      'durationRetry': [''],
       'userName': [''],
       'pswd': ['']
     });
@@ -85,7 +85,12 @@ export class ConfigScreenComponent implements OnInit {
 * @returns boolean
 */
   preventInput(event: any) {
-   
+    debugger;
+    let retryNumber = Number(event.target.value);
+    if (retryNumber < 3) {
+      this.numberModel = "";
+      return;
+    }
     if ((+event.target.value < +event.target.min || +event.target.value > +event.target.max) &&
       event.target.value !== undefined && event.target.value !== null) {
       this.numberModel = this.oldNumberValue;
