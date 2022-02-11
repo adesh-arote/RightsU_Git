@@ -60,6 +60,8 @@ export class SearchScreenComponent implements OnInit {
   popupData: any;
   LABEL;
   MESSAGE;
+  retryFailOptionInConfig: boolean = false;
+  retrySuccessOptionInConfig: boolean = false;
 
 
   constructor(public _formBuilder: FormBuilder, private readonly utilityService: UtilityService,
@@ -141,6 +143,9 @@ export class SearchScreenComponent implements OnInit {
         } else {
           this.showResendBtn = false;
         }
+
+        this.retryFailOptionInConfig = outputData.Response[0].RetryOptionForFailed;
+        this.retrySuccessOptionInConfig = outputData.Response[0].ResendOptionForSuccessful;
         //  this.showResendBtn = true;
       });
 
@@ -220,18 +225,33 @@ export class SearchScreenComponent implements OnInit {
           this.totalRecords = outputData.Response.TotalRecords;
           this.listData = outputData.Response.lstGetMessages;
           this.listData.map((option: any) => {
-            if (option.Status === 'Success' || option.Status === 'Fail') {
-              option['showBtn'] = true;
-            } else {
-              option['showBtn'] = false;
+            //if (option.Status === 'Success' || option.Status === 'Fail') {
+            //  option['showBtn'] = true;
+            //} else {
+            //  option['showBtn'] = false;
+            //}
+            if (option.Status === 'Success') {
+              if (this.retrySuccessOptionInConfig) {
+                option['showBtn'] = true;
+              } else {
+                option['showBtn'] = false;
+              }
+            }
+
+            if (option.Status === 'Fail') {
+              if (this.retryFailOptionInConfig) {
+                option['showBtn'] = true;
+              } else {
+                option['showBtn'] = false;
+              }
             }
           });
           this.cloneData = cloneDeep(this.listData);
           this.isLoading = false;
           console.log(this.listData)
         }, error => {
-        this.isLoading = false;
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Something Went Wrong' });
+          this.isLoading = false;
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Record Found' });
         });
 
     } else {
@@ -289,10 +309,11 @@ export class SearchScreenComponent implements OnInit {
   }
 
   onResendClick(data: any) {
+    debugger;
     this.isLoading = true;
     let obj = {
       "NECode": data.NotificationsCode,
-      "UpdatedStatus": 'Pending',
+      "UpdatedStatus": 'RESEND',
       "ReadDateTime": this.datepipe.transform(new Date(), 'dd/MMM/yyyy hh:mm:ss')
     }
     this.notificationEngineService.resendData(obj).subscribe(
@@ -307,8 +328,8 @@ export class SearchScreenComponent implements OnInit {
         this.showConfirmPopup = false;
         this.isLoading = false;
       }, error => {
-      this.isLoading = false;
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Something Went Wrong' });
+        this.isLoading = false;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Records Found' });
       });
   }
 
@@ -358,6 +379,14 @@ export class SearchScreenComponent implements OnInit {
         outputData => {
 
           let exportData = outputData.Response.lstGetMessages;
+
+         // exportData.Message = exportData.Message.replace(/,/g, '&#44');
+
+          exportData.map((rowData: any) => {
+            rowData.Message = rowData.Message.replace(/,/g, '&#44');
+            
+          });
+
           if (outputData.Status && !this.utilityService.isEmpty(exportData)) {
             const result = [
               'TransactionCode',
@@ -373,7 +402,7 @@ export class SearchScreenComponent implements OnInit {
               'Subject'
             ];
             const re2 = ['Transaction Code', 'Transaction Type', 'Message Type', 'Message', 'Sent To', 'Status',
-              'No Of Retry', 'Sent Date Time', 'Schedule Date Time', 'Event/Category', 'Subject'
+              'No Of Retry', 'SentDate Time', 'ScheduleDate Time', 'Event/Category', 'Subject'
             ];
             const header = result;
             const csv = exportData.map((row: any) =>
@@ -460,10 +489,26 @@ export class SearchScreenComponent implements OnInit {
           this.totalRecords = outputData.Response.TotalRecords;
           this.listData = outputData.Response.lstGetMessages;
           this.listData.map((option: any) => {
-            if (option.Status === 'Success' || option.Status === 'Fail') {
-              option['showBtn'] = true;
-            } else {
-              option['showBtn'] = false;
+            //if (option.Status === 'Success' || option.Status === 'Fail') {
+            //  option['showBtn'] = true;
+            //} else {
+            //  option['showBtn'] = false;
+            //}
+
+            if (option.Status === 'Success') {
+              if (this.retrySuccessOptionInConfig) {
+                option['showBtn'] = true;
+              } else {
+                option['showBtn'] = false;
+              }
+            }
+
+            if (option.Status === 'Fail') {
+              if (this.retryFailOptionInConfig) {
+                option['showBtn'] = true;
+              } else {
+                option['showBtn'] = false;
+              }
             }
           });
           this.cloneData = cloneDeep(this.listData);
