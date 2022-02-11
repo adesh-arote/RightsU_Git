@@ -1,11 +1,11 @@
-﻿CREATE PROCEDURE USP_Get_EmailConfig_Users 
+﻿ALTER PROCEDURE USP_Get_EmailConfig_Users 
 (
-	@Key VARCHAR(4),
+	@Key VARCHAR(5),
 	@CallFor CHAR(1) = 'N'
 )       
 AS    
 BEGIN
-	--DECLARE @Key NVARCHAR(MAX) = 'CUR', @CallFor  CHAR(1) = 'Y'
+	--DECLARE @Key NVARCHAR(MAX) = 'TME', @CallFor  CHAR(1) = 'N'
 	DECLARE @Tbl2 TABLE (
 		Id INT IDENTITY(1,1),
 		BuCode INT,
@@ -136,47 +136,101 @@ BEGIN
 		--SELECT BuCode, NULL, To_User_Mail_Id+';'+CC_User_Mail_Id+';'+BCC_User_Mail_Id FROM @tbl WHERE To_Users_Code IS NULL AND CC_Users_Code IS NULL AND BCC_Users_Code IS NULL
 	END
 
-	DECLARE db_BU_cursor CURSOR FOR 
-	SELECT DISTINCT BuCode, Channel_Codes FROM @tbl
+	
+	SELECT @Business_Unit_Codes = ECDU.Business_Unit_Codes	
+	FROM Email_Config EC 
+		INNER JOIN Email_Config_Detail ECD ON ECD.Email_Config_Code = EC.Email_Config_Code
+		INNER JOIN Email_Config_Detail_User ECDU ON ECDU.Email_Config_Detail_Code = ECD.Email_Config_Detail_Code
+	WHERE [Key] = @Key
 
-	OPEN db_BU_cursor  
-	FETCH NEXT FROM db_BU_cursor INTO @BUCode ,@Channel_Codes
+	IF(@Business_Unit_Codes = 0)
+	BEGIN
+		DECLARE db_Channel_Cursor CURSOR FOR 
+		SELECT DISTINCT  Channel_Codes FROM @tbl
 
-	WHILE @@FETCH_STATUS = 0  
-	BEGIN  
-			INSERT INTO @Tbl2 (BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes)
-			SELECT @BUCode, STUFF((
-					SELECT ',' + CAST(To_Users_Code AS NVARCHAR(MAX))
-					FROM @tbl  where BuCode = @BUCode
-				FOR XML PATH('')), 1, 1, ''), 
-				STUFF((
-					SELECT ';' + To_User_Mail_Id
-					FROM @tbl  where BuCode = @BUCode
-				FOR XML PATH('')), 1, 1, ''), 
-				STUFF((
-					SELECT ',' + CAST(CC_Users_Code AS NVARCHAR(MAX))
-					FROM @tbl  where BuCode = @BUCode
-				FOR XML PATH('')), 1, 1, ''), 
-				STUFF((
-					SELECT ';' + CC_User_Mail_Id
-					FROM @tbl  where BuCode = @BUCode
-				FOR XML PATH('')), 1, 1, ''),
-				STUFF((
-					SELECT ',' + CAST(BCC_Users_Code AS NVARCHAR(MAX))
-					FROM @tbl  where BuCode = @BUCode
-				FOR XML PATH('')), 1, 1, ''), 
-				STUFF((
-					SELECT ';' + BCC_User_Mail_Id
-					FROM @tbl  where BuCode = @BUCode
-				FOR XML PATH('')), 1, 1, ''), @Channel_Codes
+		OPEN db_Channel_Cursor  
+		FETCH NEXT FROM db_Channel_Cursor INTO @Channel_Codes
+
+		WHILE @@FETCH_STATUS = 0  
+		BEGIN  
+				INSERT INTO @Tbl2 (BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes)
+				SELECT 0, STUFF((
+						SELECT DISTINCT ',' + CAST(To_Users_Code AS NVARCHAR(MAX))
+						FROM @tbl 
+					FOR XML PATH('')), 1, 1, ''), 
+					STUFF((
+						SELECT DISTINCT ';' + To_User_Mail_Id
+						FROM @tbl  
+					FOR XML PATH('')), 1, 1, ''), 
+					STUFF((
+						SELECT DISTINCT ',' + CAST(CC_Users_Code AS NVARCHAR(MAX))
+						FROM @tbl
+					FOR XML PATH('')), 1, 1, ''), 
+					STUFF((
+						SELECT DISTINCT ';' + CC_User_Mail_Id
+						FROM @tbl 
+					FOR XML PATH('')), 1, 1, ''),
+					STUFF((
+						SELECT DISTINCT ',' + CAST(BCC_Users_Code AS NVARCHAR(MAX))
+						FROM @tbl 
+					FOR XML PATH('')), 1, 1, ''), 
+					STUFF((
+						SELECT DISTINCT ';' + BCC_User_Mail_Id
+						FROM @tbl 
+					FOR XML PATH('')), 1, 1, ''), @Channel_Codes
 
 		 
-		  FETCH NEXT FROM db_BU_cursor INTO @BUCode , @Channel_Codes
-	END 
+			  FETCH NEXT FROM db_Channel_Cursor INTO  @Channel_Codes
+		END 
 
-	CLOSE db_BU_cursor  
-	DEALLOCATE db_BU_cursor 
-	
+		CLOSE db_Channel_Cursor  
+		DEALLOCATE db_Channel_Cursor 
+
+	END
+	ELSE
+	BEGIN
+
+		DECLARE db_BU_cursor CURSOR FOR 
+		SELECT DISTINCT BuCode, Channel_Codes FROM @tbl
+
+		OPEN db_BU_cursor  
+		FETCH NEXT FROM db_BU_cursor INTO @BUCode ,@Channel_Codes
+
+		WHILE @@FETCH_STATUS = 0  
+		BEGIN  
+				INSERT INTO @Tbl2 (BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes)
+				SELECT @BUCode, STUFF((
+						SELECT DISTINCT ',' + CAST(To_Users_Code AS NVARCHAR(MAX))
+						FROM @tbl  where BuCode = @BUCode
+					FOR XML PATH('')), 1, 1, ''), 
+					STUFF((
+						SELECT DISTINCT ';' + To_User_Mail_Id
+						FROM @tbl  where BuCode = @BUCode
+					FOR XML PATH('')), 1, 1, ''), 
+					STUFF((
+						SELECT DISTINCT ',' + CAST(CC_Users_Code AS NVARCHAR(MAX))
+						FROM @tbl  where BuCode = @BUCode
+					FOR XML PATH('')), 1, 1, ''), 
+					STUFF((
+						SELECT DISTINCT ';' + CC_User_Mail_Id
+						FROM @tbl  where BuCode = @BUCode
+					FOR XML PATH('')), 1, 1, ''),
+					STUFF((
+						SELECT  DISTINCT ',' + CAST(BCC_Users_Code AS NVARCHAR(MAX))
+						FROM @tbl  where BuCode = @BUCode
+					FOR XML PATH('')), 1, 1, ''), 
+					STUFF((
+						SELECT DISTINCT ';' + BCC_User_Mail_Id
+						FROM @tbl  where BuCode = @BUCode
+					FOR XML PATH('')), 1, 1, ''), @Channel_Codes
+
+		 
+			  FETCH NEXT FROM db_BU_cursor INTO @BUCode , @Channel_Codes
+		END 
+
+		CLOSE db_BU_cursor  
+		DEALLOCATE db_BU_cursor 
+	END
 	IF @CallFor = 'N'
 		SELECT Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes FROM @tbl2
 

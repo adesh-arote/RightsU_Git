@@ -14,13 +14,28 @@ BEGIN
  -- interfering with SELECT statements.        
  SET NOCOUNT ON;        
           
-BEGIN       
-      
+BEGIN    
+
+--DECLARE
+--   @User_Name NVARCHAR(100) = 'stefan'
+-- , @First_Name NVARCHAR(100)  = 'stefan'
+-- , @Last_Name NVARCHAR(100)  = 'Gaikwad'         
+-- , @Pass_Word varchar(100)  = 's12345'       
+-- , @IsLDAP_Required varchar(20)='N'        
+-- , @Site_Address NVARCHAR(200)    ='http://192.168.0.114/RIGHTSU_Plus/'   
+-- , @System_Name NVARCHAR(100)    ='U-To'  
+-- , @Status varchar(200) ='NP'
+-- , @cur_email_id  NVARCHAR(250) = 'stefan@uto.in'
+
+    DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT  
+	DECLARE @Email_Config_Code INT
     DECLARE @body  NVARCHAR(MAX)  SET @body  = ''       
     DECLARE @body1 NVARCHAR(1000) SET @body1 = ''        
     DECLARE @body2 NVARCHAR(1000) SET @body2 = ''       
     DEclare @body3 NVARCHAR(1000) SET @body2 = ''           
-       
+    
+	SELECT @Email_Config_Code= Email_Config_Code FROM Email_Config WHERE [Key]='UCFP'
+
     --//--------------- SELECT AND SET A PARTICULAR TEMPLATE ---------------//--        
           
                 /* ========== PASSWORD CHANGED =============== */      
@@ -95,7 +110,7 @@ BEGIN
     END       
    ELSE      
     BEGIN      
-       SELECT @body2 = Template_Desc FROM Email_template WHERE Template_For = 'FB2'      
+       SELECT @body2 = Template_Desc FROM Email_template WHERE Template_For = 'FB3'      
     END      
           
    SELECT @body3 = Template_Desc FROM Email_template WHERE Template_For='FB4'       
@@ -134,19 +149,29 @@ BEGIN
 	 declare @MailSubjectCr NVARCHAR(250) = ''
 	 IF(@Status = 'FP') 
 		BEGIN
-		SET @MailSubjectCr = 'RightsU_Live :- New password for the system RightsU'
+		SET @MailSubjectCr = 'New password for the system RightsU'
 		END
-	 IF(@Status = 'NUC') 
+	 ELSE IF(@Status = 'NUC') 
 		BEGIN
-			SET @MailSubjectCr = 'RightsU_Live :- New user created'
+			SET @MailSubjectCr = 'New user created'
+		END
+	 ELSE IF(@Status = 'NP') 
+		BEGIN
+			SET @MailSubjectCr = 'New user created'
 		END
 	 
-	EXEC msdb.dbo.sp_send_dbmail 
-	@profile_name = @DatabaseEmail_Profile,
-	@recipients =  @cur_email_id,
-	@subject = @MailSubjectCr,
-	@body = @body, 
-	@body_format = 'HTML';  
+	--EXEC msdb.dbo.sp_send_dbmail 
+	--@profile_name = @DatabaseEmail_Profile,
+	--@recipients =  @cur_email_id,
+	--@subject = @MailSubjectCr,
+	--@body = @body, 
+	--@body_format = 'HTML'; 
+
+	INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_User_Mail_Id, [Subject])
+	SELECT @Email_Config_Code, @body, ISNULL(@cur_email_id ,''),  @MailSubjectCr
+
+
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
     ------Send E-Mail END         
 END       
           
