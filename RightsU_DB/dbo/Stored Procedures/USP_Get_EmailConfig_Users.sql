@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE USP_Get_EmailConfig_Users 
+﻿CREATE PROCEDURE USP_Get_EmailConfig_Users 
 (
 	@Key VARCHAR(5),
 	@CallFor CHAR(1) = 'N'

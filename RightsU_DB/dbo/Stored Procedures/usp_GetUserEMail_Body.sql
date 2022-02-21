@@ -129,7 +129,11 @@ BEGIN
      SET @body = REPLACE(@body,'{isLDAPAuthReqd}',@IsLDAP_Required)        
      SET @body = REPLACE(@body,'{SiteAddress}',@Site_Address)        
      SET @body = REPLACE(@body,'{system_admin}',@System_Name)        
-     
+	 IF(@Status = 'NP')     
+	   SET @body = REPLACE(@body,'{regenerated}','generated') 
+	 ELSE IF(@Status = 'FP')     
+		SET @body = REPLACE(@body,'{regenerated}','regenerated') 
+
      print @User_Name
      print @First_Name
      print @Last_Name
