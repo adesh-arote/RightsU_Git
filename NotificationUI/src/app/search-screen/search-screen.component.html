@@ -141,6 +141,7 @@
 
 <div class="row table-div" [ngClass]="{'blur-background': isLoading ? true: false}">
   <p-table [columns]="scrollableCols" #dt [value]="listData" [rows]="20" [scrollable]="true" [virtualRowHeight]="10"
+           [paginator]="true"
            [virtualScroll]="isVirtualScroll" (onLazyLoad)="loadDataOnScroll($event)" [lazyLoadOnInit]="false"
            [totalRecords]="totalRecords" [loading]="loading" [lazy]="true" scrollHeight="calc(100vh - 200px)"
            [globalFilterFields]="['transCode','transType','notificationType','message','recipient','status','noOfRetry','sentDateTime','scheduleDateTime']">

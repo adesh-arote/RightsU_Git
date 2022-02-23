@@ -3,7 +3,7 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 Object.defineProperty(exports, "__esModule", { value: true });
-var LOCAL_MACHINE_URL = 'http://192.168.0.114/UTONotificationUI/UTONotificationAPI'; //'http://localhost:52972/'
+var LOCAL_MACHINE_URL = 'http://192.168.0.114/UTONotificationUI/UTONotificationAPI'; // 'http://localhost:65453/' //
 var STAGE_ENV_URL = ''; // Stage 81
 var UTO_ENV_URL = ''; // UTO Envoirmrnt
 var BETA_ENV_URL = ''; // Beta
