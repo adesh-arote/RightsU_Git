@@ -14,6 +14,7 @@ namespace SendNotificationService
         public string bcc { get; set; }
         public string Subject { get; set; }
         public string HtmlBody { get; set; }
-
-    }
+        public long UserCode { get; set; }
+        public DateTime RequestDateTime { get; set; }
+}
 }

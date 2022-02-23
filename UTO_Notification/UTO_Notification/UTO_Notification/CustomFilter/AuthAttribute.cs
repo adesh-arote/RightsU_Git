@@ -118,8 +118,8 @@ namespace UTO_Notification.API.AuthFilter
             UTOLog logObj = new UTOLog();
             logObj.RequestUri = System.Web.HttpContext.Current.Request.Url.AbsoluteUri;
             logObj.RequestMethod = System.Web.HttpContext.Current.Request.Url.AbsolutePath;
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
             logObj.ResponseContent = resp.ReasonPhrase;
             logObj.ResponseLength = Convert.ToString(resp.ReasonPhrase.Length);
             logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
@@ -256,8 +256,8 @@ namespace UTO_Notification.API.AuthFilter
             logObj.UserId = "-1";
             logObj.RequestContent = "";
             logObj.RequestLength = "0";
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
+            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
             logObj.ResponseContent = content;
             logObj.ResponseLength = Convert.ToString(logObj.ResponseContent.Length);
             logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();

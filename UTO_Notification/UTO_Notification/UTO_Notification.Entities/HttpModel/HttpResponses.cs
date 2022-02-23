@@ -27,9 +27,6 @@ namespace UTO_Notification.Entities
             ErrorMessage = string.Empty;
             Status = true;
             NECode = 0;
-
-
-
         }
     }
 }

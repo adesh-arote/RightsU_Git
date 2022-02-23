@@ -58,21 +58,17 @@ namespace SendNotificationService
 
             Email = new MailMessage();
             Email.From = new MailAddress(this.FromEmailId);
-            Email.To.Add(this.To);
+            Email.To.Add(this.To.Replace(";", ","));
             if (!String.IsNullOrEmpty(this.CC))
-                Email.CC.Add(this.CC);
+                Email.CC.Add(this.CC.Replace(";",","));
             if (!String.IsNullOrEmpty(this.Bcc))
-                Email.Bcc.Add(this.Bcc);
+                Email.Bcc.Add(this.Bcc.Replace(";", ","));
             Email.IsBodyHtml = this.IsBodyHTML;
             Email.Body = this.Body;
             Email.Subject = this.Subject;
             Email.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
             
-                Client.Send(Email);
-            //}
-            //catch (Exception)
-            //{
-            //}
+            Client.Send(Email);
             Email.Dispose();
         }
      }

@@ -193,12 +193,12 @@ export class SearchScreenComponent implements OnInit {
         "Subject": this.subject,
         "Status": this.selectedStatus,
         "NoOfRetry": this.selectedNoOfRetry,
-        "size": 50,
+        "size": 10,
         "from": 0,
-        "ScheduleStartDateTime": this.datepipe.transform(this.sStartDate, 'dd/MMM/yyyy hh:mm:ss'),
-        "ScheduleEndDateTime": this.datepipe.transform(this.sEndDate, 'dd/MMM/yyyy hh:mm:ss'),
-        "SentStartDateTime": this.datepipe.transform(this.sentStartDate, 'dd/MMM/yyyy hh:mm:ss'),
-        "SentEndDateTime": this.datepipe.transform(this.sentEndDate, 'dd/MMM/yyyy hh:mm:ss'),
+        "ScheduleStartDateTime": this.datepipe.transform(this.sStartDate, 'dd/MMM/yyyy h:mm:ss'),
+        "ScheduleEndDateTime": this.datepipe.transform(this.sEndDate, 'dd/MMM/yyyy h:mm:ss'),
+        "SentStartDateTime": this.datepipe.transform(this.sentStartDate, 'dd/MMM/yyyy HH:mm:ss'),
+        "SentEndDateTime": this.datepipe.transform(this.sentEndDate, 'dd/MMM/yyyy HH:mm:ss'),
         "Recipient": this.recipient
       }
 
@@ -383,7 +383,11 @@ export class SearchScreenComponent implements OnInit {
          // exportData.Message = exportData.Message.replace(/,/g, '&#44');
 
           exportData.map((rowData: any) => {
-            rowData.Message = rowData.Message.replace(/,/g, '&#44');
+          //  rowData.Message = rowData.Message.replace(/,/g, '&#44');
+            if (rowData.Message) {
+              rowData.Message = rowData.Message.replace(/,/g, '&#44');
+             // const service = row[5];
+            }
             
           });
 
@@ -457,7 +461,7 @@ export class SearchScreenComponent implements OnInit {
         "Subject": this.subject,
         "Status": this.selectedStatus,
         "NoOfRetry": this.selectedNoOfRetry,
-        "size": 50,
+        "size": 10,
         "from": 0,
         "ScheduleStartDateTime": this.datepipe.transform(this.sStartDate, 'dd/MM/yyyy hh:mm:ss'),
         "ScheduleEndDateTime": this.datepipe.transform(this.sEndDate, 'dd/MM/yyyy hh:mm:ss'),
@@ -465,25 +469,6 @@ export class SearchScreenComponent implements OnInit {
         "SentEndDateTime": this.datepipe.transform(this.sentEndDate, 'dd/MM/yyyy hh:mm:ss'),
         "Recipient": this.recipient
       }
-
-      // let obj = {
-      //   "NECode": "8,9,10,11,12,13,14,15,16,17,18,19,20",
-      //   "TransType": "",
-      //   "TransCode": "",
-      //   "UserCode": "",
-      //   "NotificationType": "",
-      //   "EventCategory": "",
-      //   "Subject": "",
-      //   "Status": "",
-      //   "NoOfRetry": 0,
-      //   "size": 50,
-      //   "from": 0,
-      //   "ScheduleStartDateTime": "",
-      //   "ScheduleEndtDateTime": "",
-      //   "SentStartDateTime": "",
-      //   "SentEndDateTime": "",
-      //   "Recipient": ""
-      // }
       this.notificationEngineService.GetListData(obj).subscribe(
         outputData => {
           this.totalRecords = outputData.Response.TotalRecords;
@@ -494,7 +479,6 @@ export class SearchScreenComponent implements OnInit {
             //} else {
             //  option['showBtn'] = false;
             //}
-
             if (option.Status === 'Success') {
               if (this.retrySuccessOptionInConfig) {
                 option['showBtn'] = true;
@@ -543,6 +527,7 @@ export class SearchScreenComponent implements OnInit {
     }
   }
 
+  
 
   openViewPopup(rowData: any) {
     this.popupData = rowData;
