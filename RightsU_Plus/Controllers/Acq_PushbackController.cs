@@ -520,7 +520,7 @@ namespace RightsU_WebApp.Controllers
                 Acq_Deal_Pushback_Service objADPS = new Acq_Deal_Pushback_Service(objLoginEntity.ConnectionStringName);
                 Acq_Deal_Pushback objAcq_Deal_Pushback = CreatePushbackObject(obj, hdnTitleList, hdnRights_Platform_Code, Year ?? 0, Month ?? 0, Day ?? 0,
                     hdnTerritory_Type, hdn_Dubbing_Type, hdn_SubTitling_Type, hdnTerritoryList, hdn_Dubb_LanguageList, hdn_Sub_LanguageList, hdnRight_Start_Date, hdnRight_End_Date, ref objADPS);
-                objAcq_Deal_Pushback = CreateRightObject(objAcq_Deal_Pushback, obj);
+                objAcq_Deal_Pushback = CreateRightObject(objAcq_Deal_Pushback, obj, View_Type_Search);
                 objADPS.Save(objAcq_Deal_Pushback, out resultSet);
                 lstDupRecords = resultSet;
                 //if (lstDupRecords.Count() > 0)
@@ -569,13 +569,19 @@ namespace RightsU_WebApp.Controllers
 
             return PartialView("_Acq_Rev_HB_Validation_Popup", lstDuplicates);
         }
-        private Acq_Deal_Pushback CreateRightObject(Acq_Deal_Pushback objExistingRights, Acq_Deal_Pushback objMVCRights)
+        private Acq_Deal_Pushback CreateRightObject(Acq_Deal_Pushback objExistingRights, Acq_Deal_Pushback objMVCRights, string View_Type_Search = "G")
         {
-           
+                   
             Deal_Rights_UDT objDRUDT = new Deal_Rights_UDT();
+            if (View_Type_Search != "G")
+            {
+                objDRUDT.Title_Code = objExistingRights.Acq_Deal_Pushback_Title.Select(x => x.Title_Code).First();
+            }
+            if (View_Type_Search == "D")
+            {
+                objDRUDT.Platform_Code = objExistingRights.Acq_Deal_Pushback_Platform.Select(x => x.Platform_Code).First();
+            }
 
-            objDRUDT.Title_Code = objExistingRights.Acq_Deal_Pushback_Title.Select(x=>x.Title_Code).First();
-            objDRUDT.Platform_Code = objExistingRights.Acq_Deal_Pushback_Platform.Select(x=>x.Platform_Code).First();
             //objDRUDT.Deal_Rights_Code = objPage_Properties.TCODE > 0 ? 0 : objPage_Properties.RCODE; //objExistingRights.Acq_Deal_Rights_Code;
             objDRUDT.Deal_Rights_Code = objExistingRights.Acq_Deal_Pushback_Code;
             objDRUDT.Deal_Code = objExistingRights.Acq_Deal_Code = objDeal_Schema.Deal_Code;
