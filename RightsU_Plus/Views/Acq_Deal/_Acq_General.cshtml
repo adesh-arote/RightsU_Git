@@ -193,6 +193,37 @@
     //    $('#divTitle > d')
     //});
 
+    function AddTitle() {
+        debugger;
+        showLoading();
+
+        var DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindLanguage", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DealTypeCode: DealTypeCode,
+                fromAcqGeneral : "Y"
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    $("#popAddTitle").html(result);
+                    $("#popAddTitle").modal();
+                    initializeChosen();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
 </script>
 
 <script src="~/JS_Core/Acq_Deal_Gen.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
@@ -440,6 +471,9 @@
                                         </td>
                                         <td style="width: 10%;">
                                             <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearchTitle_Click()">
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitle()">Add Title</a>
                                         </td>
                                         <td style="width: 10%; text-align: right">
                                             @if (ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_ADD || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_CLONE)
@@ -781,4 +815,6 @@
             </form>
         </div>
     </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitle" role="dialog" tabindex="-1" aria-hidden="false">
 </div>

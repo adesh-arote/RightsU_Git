@@ -366,6 +366,7 @@
         });
     }
     function AddTitle() {
+        debugger;
         showLoading();
         $.ajax({
             type: "POST",
@@ -374,7 +375,10 @@
             enctype: 'multipart/form-data',
             async: false,
             contentType: "application/json; charset=utf-8",
-            data: "",
+            data: JSON.stringify({
+                DealTypeCode: 0,
+                fromAcqGeneral: "N"
+            }),
             success: function (result) {
                 if (result == "true") {
                     redirectToLogin();

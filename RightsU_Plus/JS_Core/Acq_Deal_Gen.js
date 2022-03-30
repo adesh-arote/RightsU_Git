@@ -367,6 +367,8 @@ function rblIsMasterDeal_OnChange() {
         $("#ddlMaster_Deal_List").attr("disabled", false);
         $("#ddlOther").attr("disabled", false);
         $("#hdnDeal_Type_Code").val(0);
+        $("#ddlOther").attr("disabled", false);
+        $("#btnAddTitleMaster").attr("disabled", true);
     }
     else {
         $("input[name=Deal_Type_Code][value='" + Deal_Type_Movie + "']").prop("checked", "checked");
@@ -376,6 +378,7 @@ function rblIsMasterDeal_OnChange() {
         $("#ddlOther").attr("disabled", true);
         PopulateMasterDealData();
         $("#hdnDeal_Type_Code").val(Deal_Type_Movie);
+        $("#btnAddTitleMaster").attr("disabled", false);
     }
 
     BindTitleLabel(true);

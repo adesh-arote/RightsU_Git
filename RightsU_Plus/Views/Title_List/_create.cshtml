@@ -9,6 +9,13 @@
 <script type="text/javascript">
     $(document).ready(function () {
         debugger;
+
+        if ('@ViewBag.fromAcqGeneral' == 'Y') {
+            $("#ddlDealType").val(@ViewBag.DealTypeCode).trigger("chosen:updated");
+            $("#btnAddAdditionalmetadata").hide();
+        }
+            
+
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
             //$('.form_links').addClass('form_links-Head')
             //$('.close').addClass('close-Head')
@@ -278,15 +285,15 @@
                             }
                             @if ((string)ViewBag.IsTitleDurationMandatory == "Y")
                             {
-                            <li style="margin-top:15px;">
-                                <label>@objMessageKey.Duration</label>
-                                @Html.TextBoxFor(m => Model.Duration_In_Min, new { @id = "txtDuration", @style = "width:95%" })
-                            </li>
+                                <li style="margin-top:15px;">
+                                    <label>@objMessageKey.Duration</label>
+                                    @Html.TextBoxFor(m => Model.Duration_In_Min, new { @id = "txtDuration", @style = "width:95%" })
+                                </li>
                             }
                             <li id="liMusicLabel" style="display:none">
                                 <label>@objMessageKey.MusicLabel</label>
                                 @Html.DropDownList("ddlMusicLabel", (List<SelectListItem>)ViewBag.MusicLabelList,
-                           new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
+                                new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
                             </li>
                         </ul>
                     </div>
@@ -297,7 +304,7 @@
                                     <a class="btn btn-primary" href="#" onclick="ValidateSave('S');">@objMessageKey.Save</a>
                                 </li>
                                 <li>
-                                    <a class="btn btn-primary" href="#" onclick="ValidateSave('SS');">@objMessageKey.AddAdditionalmetadata</a>
+                                    <a class="btn btn-primary" href="#" id="btnAddAdditionalmetadata" onclick="ValidateSave('SS');">@objMessageKey.AddAdditionalmetadata</a>
                                 </li>
                                 <li>
                                     <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
