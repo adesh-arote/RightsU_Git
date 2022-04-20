@@ -50,6 +50,7 @@
     <Compile Include="Entity\USPGetConfig.cs" />
     <Compile Include="Entity\USPGetPendingNotifications.cs" />
     <Compile Include="Entity\USPUpdateNotificationStatus.cs" />
+    <Compile Include="Entity\UTOLog.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

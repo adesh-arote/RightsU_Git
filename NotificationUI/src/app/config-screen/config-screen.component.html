@@ -217,7 +217,7 @@
           </td>
           <td>
             <span>
-              <input type="number" min="0" max="720" class="duration-input"
+              <input type="number" min="3" max="720" class="duration-input"
                      [(ngModel)]="numberModel" formControlName="durationRetry"
                      (keypress)="keyPress($event)" (keyup)="preventInput($event);showRetryVal2=false">
               <div class="box-danger retry-val-msg" *ngIf="showRetryVal2">

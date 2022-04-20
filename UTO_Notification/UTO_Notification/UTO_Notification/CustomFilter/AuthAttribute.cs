@@ -12,6 +12,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
 using UTO_Notification.API.CustomFilter;
+using System.Web;
+using UTO_Notification.Entities;
+using UTO_Notification.Controllers;
+using System.Web.Hosting;
 
 namespace UTO_Notification.API.AuthFilter
 {
@@ -19,6 +23,11 @@ namespace UTO_Notification.API.AuthFilter
     {
         public Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
+            UTOLog logObj = new UTOLog();
+            logObj.ApplicationName = "Notification Engine";
+            Boolean isSuccess = false; double TimeTaken;
+            DateTime startTime;
+            startTime = DateTime.Now;
             IEnumerable<string> requstAuthKey = context.Request.Headers.GetValues("AuthKey");
             var myListrequstAuthKey = requstAuthKey.ToList();
             IEnumerable<string> requstService = context.Request.Headers.GetValues("Service");
@@ -39,6 +48,8 @@ namespace UTO_Notification.API.AuthFilter
             {
                 if (myListrequstService[0] == "false")
                 {
+                    TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
                     if (sKeys.Contains(myListrequstAuthKey[0].ToString()))
                     {
                         return Task.FromResult<object>(null);
@@ -93,12 +104,36 @@ namespace UTO_Notification.API.AuthFilter
                         {
                             ReasonPhrase = "Not Authenticated"
                         };
+                        TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                        Anuthorised(ipAddress, resp, TimeTaken);
                         throw new HttpResponseException(resp);
                     }
                 }
-                
+
             }
         }
+
+        private void Anuthorised(string ipAddress, HttpResponseMessage resp, double TimeTaken)
+        {
+            UTOLog logObj = new UTOLog();
+            logObj.RequestUri = System.Web.HttpContext.Current.Request.Url.AbsoluteUri;
+            logObj.RequestMethod = System.Web.HttpContext.Current.Request.Url.AbsolutePath;
+            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+            logObj.ResponseContent = resp.ReasonPhrase;
+            logObj.ResponseLength = Convert.ToString(resp.ReasonPhrase.Length);
+            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+            logObj.UserAgent = "Notification API";
+            logObj.Method = System.Web.HttpContext.Current.Request.RequestType;
+            logObj.ClientIpAddress = ipAddress; //(HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+            logObj.IsSuccess = "False";
+            logObj.TimeTaken = Convert.ToString(TimeTaken);
+            logObj.HttpStatusCode = resp.StatusCode.ToString();
+            logObj.HttpStatusDescription = resp.ReasonPhrase;
+            HostingEnvironment.QueueBackgroundWorkItem(ctx => LogService(logObj, (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString()));
+            // var result = new NotificationController().LogService(logObj);
+        }
+
 
         private byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
         {
@@ -132,6 +167,107 @@ namespace UTO_Notification.API.AuthFilter
         public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
             return Task.FromResult<object>(null);
+        }
+
+        public static void LogService(string content)
+        {
+            try
+            {
+                string rootLogFolderPath = ConfigurationSettings.AppSettings["LogFolderPath"];
+                string FileName = rootLogFolderPath + "NotificationService" + "_" + DateTime.Now.Date.ToString("dd-MMM-yyyy") + "_" + "Log.txt";
+                FileStream fs = new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(fs);
+                sw.BaseStream.Seek(0, SeekOrigin.End);
+                sw.WriteLine(content);
+                sw.Flush();
+                sw.Close();
+            }
+            catch (Exception ex)
+            {
+                LogError("Not able to write to file - " + ex.InnerException);
+            }
+        }
+        public static void LogService(UTOLog obj, string AuthKey)
+        {
+            int timeout = 3600;
+            string result = "";
+            string url = ConfigurationSettings.AppSettings["LogURL"];
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.ContentType = "application/Json";
+            request.Method = "POST";
+            request.Headers.Add("ContentType", "application/json");
+            request.Headers.Add("AuthKey", AuthKey);
+            request.Headers.Add("Service", "True");
+            if (obj.RequestContent == null)
+            {
+                obj.RequestContent = "";
+            }
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = "{" + "\"ApplicationName\": \"Notification Engine\"," +
+                        "\"RequestId\": \"" + obj.RequestId + "\"," +
+                        "\"User\": \"" + obj.UserId + "\"," +
+                        "\"RequestUri\": \"" + obj.RequestUri + "\"," +
+                        "\"RequestMethod\": \"" + obj.RequestMethod + "\"," +
+                        "\"Method\": \"" + obj.Method + "\"," +
+                        "\"IsSuccess\": \"" + obj.IsSuccess + "\"," +
+                        "\"TimeTaken\": \"" + obj.TimeTaken + "\"," +
+                        "\"RequestContent\": \"" + obj.RequestContent.Replace("\"", "'") + "\"," +
+                        "\"RequestLength\": \"" + obj.RequestLength + "\"," +
+                        "\"RequestDateTime\": \"" + obj.RequestDateTime + "\"," +
+                        "\"ResponseContent\": \"" + obj.ResponseContent + "\"," +
+                        "\"ResponseLength\": \"" + obj.ResponseLength + "\"," +
+                        "\"ResponseDateTime\": \"" + obj.ResponseDateTime + "\"," +
+                        "\"HttpStatusCode\": \"\"," +
+                        "\"HttpStatusDescription\": \"\"," +
+                        "\"AuthenticationKey\": \"\"," +
+                        "\"UserAgent\": \"" + obj.UserAgent + "\"," +
+                        "\"ServerName\": \"" + obj.ServerName + "\"," +
+                        "\"ClientIpAddress\": \"" + obj.ClientIpAddress + "\""
+                    + "}";
+                streamWriter.Write(json);
+            }
+            var httpResponse = (HttpWebResponse)request.GetResponse();
+            try
+            {
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                request.Abort();
+                LogService("Not able to post to Log Service");
+            }
+            if (result != "")
+            {
+                //request posted successfully;	
+            }
+
+        }
+
+        private static void LogError(string content)
+        {
+            UTOLog logObj = new UTOLog();
+            logObj.RequestId = "0";
+            logObj.UserId = "-1";
+            logObj.RequestContent = "";
+            logObj.RequestLength = "0";
+            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+            logObj.ResponseContent = content;
+            logObj.ResponseLength = Convert.ToString(logObj.ResponseContent.Length);
+            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+            logObj.UserAgent = "Notification Service";
+            logObj.Method = "Email";
+            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+            logObj.IsSuccess = "false";
+            // LogService(logObj);
+            HostingEnvironment.QueueBackgroundWorkItem(ctx => LogService(logObj, (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString()));
+
         }
     }
 }

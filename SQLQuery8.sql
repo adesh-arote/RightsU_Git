@@ -1,392 +1,312 @@
-
-ALTER FUNCTION [dbo].[UFN_Deal_Set_Button_Visibility]
-(
-	--DECLARE
- 	 @Acq_Deal_Code INT=2729 
-	,@Version FLOAT=0003
-	,@User_Code INT=143
-	,@WorkFlowStatus VARCHAR(50)='A'
-) 
-RETURNS VARCHAR(MAX)
+ALTER PROCEDURE  USPMHNotificationMail
+	@MHRequestCode INT,
+	@MHRequestTypeCode INT,
+	@UsersCode INT
 AS
 BEGIN
-	-- DECLARE
-	-- @Acq_Deal_Code INT=15523
-	--,@Version FLOAT=0001
-	--,@User_Code INT=203
-	--,@WorkFlowStatus VARCHAR(50)='WA'
-
-	--select @Acq_Deal_Code = Acq_Deal_Code, @WorkFlowStatus = Deal_Workflow_Status, @Version = [Version] 
-	--from Acq_Deal where Agreement_No = 'A-2020-00040'
-
-	DECLARE @Is_Right_Available VARCHAR(MAX) , @IsZeroWorkFlow VARCHAR(2), @IsShowAmmendment INT, @ParentDealCode INT ,
-			@DealtagDescription NVARCHAR(50), @TotalMilestoneCount INT, @CountMovieClosed INT, @IsCompleted VARCHAR(2),
-			@Is_Terminated VARCHAR(2),@IsMasterDeal VARCHAR(2)
-	--,@WorkFlowStatus VARCHAR(50)='A'
-	/*
-	2. Edit
-	6. Delete
-	7. View
-	10. Clone
-	8. SEND FOR APPROVAL
-	11. APPROVE
-	12. Reject
-	18. Amendment
-	71.Content
-	79. AMENDMENT AFTER SYNDICATION
-	88. CLOSE DEAL
-	89. RE-OPEN DEAL
-	116. Rollback
-	127. Terminate
-	130. Assign Music (List) -- It will come for Configured Deal_Type (in System_Parameter_New table)
-	138. Release Content
-	164 Deal Archive
-	166 Send for deal archive
-	*/
-
-	Declare @UserSecCode  INT = 0, @dealTypeCode INT = 0, @dealTypeCode_Music INT = 0, @Deal_Type_Condition VARCHAR(MAX) = ''
-	SELECT TOP 1 @dealTypeCode = Deal_Type_Code FROM Acq_Deal With(NoLock) WHERE Acq_Deal_Code = @Acq_Deal_Code
-	IF EXISTS (SELECT * FROM System_Parameter_New With(NoLock) WHERE Parameter_Name = 'Deal_Type_Music')
-		SELECT TOP 1 @dealTypeCode_Music = CAST(Parameter_Value AS INT) FROM System_Parameter_New With(NoLock) WHERE Parameter_Name = 'Deal_Type_Music'
-
-	SELECT @Deal_Type_Condition = dbo.UFN_GetDealTypeCondition(@dealTypeCode)
-
-	SELECT @UserSecCode = Security_Group_Code FROM Users With(NoLock) WHERE Users_Code = @User_Code  
-
-	DECLARE @Module_Rights Table
-	(
-		Right_Code INT,
-		Right_Name  NVARCHAR(100),
-		Visible varchar(1)
-	)
-
-	INSERT INTO @Module_Rights (Right_Code, Right_Name,Visible)
-	SELECT DISTINCT sr.Right_Code, sr.Right_Name ,CASE WHEN ISNULL(sgr.Security_Group_Code,0)=0 THEN  'N' ELSE 'Y' END
-	FROM System_Module_Right smr With(NoLock) 
-	INNER JOIN System_Right sr With(NoLock) ON sr.Right_Code = smr.Right_Code
-	LEFT JOIN Security_Group_Rel sgr With(NoLock) ON smr.Module_Right_Code = sgr.System_Module_Rights_Code AND sgr.Security_Group_Code=@UserSecCode
-	WHERE SR.Right_Code IN (1, 2, 6, 7, 8, 10, 11, 12, 18, 19, 71, 79, 88, 89, 116, 127, 130, 134, 135, 138, 164,166) AND smr.Module_Code=30  
-	ORDER BY SR.Right_Code
-
-	DECLARE @Edit int =2, @Delete int = 6 , @View int = 7, @Clone int = 10, @SEND_FOR_APPROVAL int =8, @APPROVE int = 11, 
-			@Reject int = 12, @Amendment int = 18, @Amort int = 19, @Content int = 71, @AMENDMENT_SYN int = 79, @CLOSE_DEAL int = 88, @RE_OPEN_DEAL int = 89, 
-			@Rollback int =116 ,@Terminate int =127, @AssignMusic_List INT = 130 , @MileStone varchar(1) = 'Y',@Edit_Without_Approval int=134,
-			@RollbackWithoutApproval INT = 135, @ReleaseContent INT = 138, @ShowError CHAR(1) = 'N',
-			@SEND_FOR_ARCHIVE INT = 166, @ARCHIVE INT = 164
-
-	Select @Is_Terminated = CASE WHEN ISNULL(UPPER([Status]), '') = 'T' THEN 'Y' ELSE 'N' END  FROM Acq_Deal With(NoLock) WHERE Acq_Deal_Code = @Acq_Deal_Code
-
-	IF(@Deal_Type_Condition NOT IN ('DEAL_MOVIE', 'DEAL_PROGRAM'))
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@ReleaseContent)
-	IF EXISTS(
-		SELECT TCM.Title_Content_Mapping_Code FROM Acq_Deal_Movie ADM With(NoLock) 
-		INNER JOIN Title_Content_Mapping TCM With(NoLock) ON TCM.Acq_Deal_Movie_Code = ADM.Acq_Deal_Movie_Code
-		WHERE ADM.Acq_Deal_Code = @Acq_Deal_Code
-	)
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Delete)
-	END
+-----------------------------------
+--Author: Rahul Kembhavi
+--Description: Notification mails would trigger on Consumption, MusicTrack And Movie/Album Request
+--Date Created: 10-July-2018
+---------------------------------------------
 	
-	IF(@WorkFlowStatus <> 'A')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Amort)
-	END
+	--DECLARE
+	--@MHRequestCode INT = 10492,
+	--@MHRequestTypeCode INT = 1,
+	--@UsersCode INT = 1287
 
-	IF(@Is_Terminated = 'Y')
-	BEGIN
+
+	IF(OBJECT_ID('TEMPDB..#tempUsage') IS NOT NULL)
+		DROP TABLE #tempUsage
+	IF(OBJECT_ID('TEMPDB..#tempMusicMovie') IS NOT NULL)
+		DROP TABLE #tempMusicMovie
+
+	DECLARE @MailSubjectCr AS NVARCHAR(MAX),
+			@RequestID NVARCHAR(50),
+			@DatabaseEmail_Profile varchar(MAX),
+			@EmailUser_Body NVARCHAR(Max),
+			@DefaultSiteUrl VARCHAR(MAX),
+			@Emailbody NVARCHAR(MAX),
+			@EmailHead NVARCHAR(max),
+			@EMailFooter NVARCHAR(max),
+			@NoOfSongs INT,
+			@ChannelName NVARCHAR(50),
+			@ShowName NVARCHAR(MAX),
+			@EpisodeFrom INT,
+			@EpisodeTo INT,
+			@TeleCastFrom NVARCHAR(50),
+			@TeleCastTo NVARCHAR(50),
+			@TeleCastDate NVARCHAR(MAX),
+			@MusicLabel NVARCHAR(MAX),
+			@RequestedDate NVARCHAR(50),
+			@RequestedBy NVARCHAR(50),
+			@VendorName NVARCHAR(MAX),
+			@VendorCode INT,
+			@TitleName NVARCHAR(MAX),
+			@EmailConfigCode INT,
+			@Subject NVARCHAR(MAX),
+			@ToMail NVARCHAR(MAX),
+			@UserCode INT
+			
+			DECLARE @Email_Config_Code INT, @Channel_Codes NVARCHAR(MAX)
 	
-		-- Terminated Deal, Show Only View Button
-		IF(@WorkFlowStatus = 'R')
+			DECLARE @Business_Unit_Code INT,
+			@To_Users_Code NVARCHAR(MAX),
+			@To_User_Mail_Id  NVARCHAR(MAX),
+			@CC_Users_Code  NVARCHAR(MAX),
+			@CC_User_Mail_Id  NVARCHAR(MAX),
+			@BCC_Users_Code  NVARCHAR(MAX),
+			@BCC_User_Mail_Id  NVARCHAR(MAX)
+	
+			DECLARE @Tbl2 TABLE (
+				Id INT,
+				BuCode INT,
+				To_Users_Code NVARCHAR(MAX),
+				To_User_Mail_Id  NVARCHAR(MAX),
+				CC_Users_Code  NVARCHAR(MAX),
+				CC_User_Mail_Id  NVARCHAR(MAX),
+				BCC_Users_Code  NVARCHAR(MAX),
+				BCC_User_Mail_Id  NVARCHAR(MAX),
+				Channel_Codes NVARCHAR(MAX)
+			)
+
+			DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+
+
+
+			SELECT @DatabaseEmail_Profile = parameter_value FROM System_Parameter_New WHERE Parameter_Name = 'DatabaseEmail_Profile_MusicHub'
+
+			SELECT @DefaultSiteUrl = parameter_value FROM System_Parameter_New WHERE Parameter_Name = 'MusicHub_URL_Link'
+			SET @RequestID = (Select RequestID from MHRequest Where MHRequestCode = @MHRequestCode)
+
+			SET @VendorCode = (Select top 1 Vendor_Code from MHUsers where Users_Code = @UsersCode)
+
+			If(@MHRequestTypeCode = 1)
+				BEGIN
+					SET @MailSubjectCr=''+@RequestID+' – Usage Request - Awaiting Request Authorization';
+					SET @EmailConfigCode = (Select Email_Config_Code from Email_Config where Email_Type = 'MHConsumptionRequest' )
+					SET @Subject = ''+@RequestID+' - New Usage Request is Sent for approval';
+
+					SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='MHCR'
+
+					INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+					EXEC USP_Get_EmailConfig_Users 'MHCR', 'N'
+				END
+			ELSE IF(@MHRequestTypeCode = 2)
+				BEGIN
+					SET @MailSubjectCr=''+@RequestID+'  – New Music Tracks Request - Awaiting Request Authorization'
+					SET @EmailConfigCode = (Select Email_Config_Code from Email_Config where Email_Type = 'MHMusicRequest' )
+					SET @Subject = ''+@RequestID+' - New Music Track Request is Sent for approval';
+
+					SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='MHMUR'
+
+					INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+					EXEC USP_Get_EmailConfig_Users 'MHMUR', 'N'
+				END
+			Else
+				BEGIN
+					SET @MailSubjectCr=''+@RequestID+'  – New Movie Request - Awaiting Request Authorization';
+					SET @EmailConfigCode = (Select Email_Config_Code from Email_Config where Email_Type = 'MHMovieRequest' )
+					SET @Subject = ''+@RequestID+' - New Movie Request is Sent for approval';
+
+					SELECT @Email_Config_Code=Email_Config_Code FROM Email_Config WHERE [Key]='MHMOR'
+
+					INSERT INTO @Tbl2( Id,BuCode,To_Users_Code ,To_User_Mail_Id  ,CC_Users_Code  ,CC_User_Mail_Id  ,BCC_Users_Code  ,BCC_User_Mail_Id  ,Channel_Codes)
+					EXEC USP_Get_EmailConfig_Users 'MHMOR', 'N'
+				END
+
+			IF(@MHRequestTypeCode = 1)
+				BEGIN
+					SELECT COUNT(MHRequestCode) AS NoOfSongs,Channel_Name,Title_Name,EpisodeFrom,EpisodeTo,TelecastFrom,TelecastTo,MusicLabel,RequestedDate,Login_Name,Vendor_Name
+					INTO #tempUsage
+					from (
+					Select MR.MHRequestCode,C.Channel_Name,T.Title_Name,MR.EpisodeFrom,MR.EpisodeTo,MR.TelecastFrom,MR.TelecastTo,
+					ISNULL(STUFF((SELECT DISTINCT ', ' + CAST(ML.Music_Label_Name AS VARCHAR(Max))[text()]
+								 FROM MHRequestDetails MRD
+								 --INNER JOIN MHRequest MR ON MR.MHRequestCode = MRD.MHRequestCode
+								 LEFT JOIN Music_Title_Label MTL ON MTL.Music_Title_Code = MRD.MusicTitleCode AND MTL.Effective_To IS NULL
+								 LEFT JOIN Music_Label ML ON ML.Music_Label_Code = MTL.Music_Label_Code
+								 Where MRD.MHRequestCode = MR.MHRequestCode
+								 FOR XML PATH(''), TYPE)
+								.value('.','NVARCHAR(MAX)'),1,2,' '),'' ) MusicLabel,CAST(MR.RequestedDate AS DATE) AS RequestedDate,U.Login_Name,V.Vendor_Name
+					from MHRequest MR
+					LEFT JOIN Channel C ON c.Channel_Code = MR.ChannelCode
+					LEFT JOIN Title T ON T.Title_Code = MR.TitleCode
+					INNER JOIN MHRequestDetails MRD ON MRD.MHRequestCode = MR.MHRequestCode
+					INNER JOIN Users U ON U.Users_Code = MR.UsersCode
+					INNER JOIN MHUsers MU ON MU.Users_Code = MR.UsersCode
+					INNER JOIN VENDOR V ON V.Vendor_Code = MU.Vendor_Code
+					where MR.MHRequestCode = @MHRequestCode
+					) AS t
+					GROUP BY t.MHRequestCode,Channel_Name,Title_Name,EpisodeFrom,EpisodeTo,TelecastFrom,TelecastTo,MusicLabel,RequestedDate,Login_Name,Vendor_Name
+
+					
+					SET @NoOfSongs = (Select NoOfSongs from #tempUsage)
+					SET @ChannelName = (Select Channel_Name from #tempUsage)
+					SET @ShowName = (SELECT Title_Name from #tempUsage)
+					SET	@EpisodeFrom = (SELECT EpisodeFrom from #tempUsage)
+					SET	@EpisodeTo =(SELECT EpisodeTo from #tempUsage)
+					SET	@TeleCastFrom = REPLACE(CONVERT(NVARCHAR,(SELECT TelecastFrom from #tempUsage), 106),' ', '-')--(SELECT TelecastFrom from #tempUsage)
+					SET	@TeleCastTo = REPLACE(CONVERT(NVARCHAR,(SELECT TelecastTo from #tempUsage), 106),' ', '-')--(SELECT TelecastTo from #tempUsage)
+					IF(@EpisodeFrom = @EpisodeTo)
+						BEGIN
+							SET @TeleCastDate = @TeleCastFrom
+						END
+					ELSE
+						BEGIN
+							SET @TeleCastDate = CAST(ISNULL(@TeleCastFrom,' ') as nvarchar(MAX))+' - '+CAST(ISNULL(@TeleCastTo,' ') as nvarchar(MAX))
+						END
+
+
+					SET	@MusicLabel = (SELECT MusicLabel from #tempUsage)
+					--@RequestedDate = REPLACE(CONVERT(NVARCHAR,(SELECT RequestedDate from #tempUsage),' ', '-')--(SELECT RequestedDate from #tempUsage)
+					Select @RequestedDate =  REPLACE(CONVERT(NVARCHAR,(SELECT RequestedDate from #tempUsage), 106),' ', '-')
+					SET	@RequestedBy = (SELECT Login_Name from #tempUsage)
+					SET @VendorName = (SELECT Vendor_Name from #tempUsage)
+				END
+			ELSE 
+				BEGIN
+					
+					SELECT COUNT(MR.MHRequestCode) AS NoOfSongs,
+					ISNULL(STUFF((SELECT DISTINCT ', ' + CAST(MRD.TitleName AS VARCHAR(Max))[text()]
+								 FROM MHRequestDetails MRD
+								 Where MRD.MHRequestCode = MR.MHRequestCode
+								 FOR XML PATH(''), TYPE)
+								.value('.','NVARCHAR(MAX)'),1,2,' '),'' ) TitleName
+					,MR.RequestedDate,U.Login_Name,V.Vendor_Name INTO #tempMusicMovie
+					FROM MHRequest MR
+					INNER JOIN MHRequestDetails MRD ON MRD.MHRequestCode = MR.MHRequestCode
+					INNER JOIN Users U ON U.Users_Code = MR.UsersCode
+					INNER JOIN MHUsers MU ON MU.Users_Code = MR.UsersCode
+					INNER JOIN Vendor V ON V.Vendor_Code = MU.Vendor_Code
+					where MR.MHRequestCode = @MHRequestCode
+					GROUP BY MR.MHRequestCode,MR.RequestedDate,U.Login_Name,V.Vendor_Name,MRD.TitleName 
+
+					SET @NoOfSongs = (Select top 1 NoOfSongs from #tempMusicMovie)
+					--SET	@RequestedDate = (SELECT top 1 RequestedDate from #tempMusicMovie)
+					Select @RequestedDate =  REPLACE(CONVERT(NVARCHAR,(SELECT top 1 RequestedDate from #tempMusicMovie), 106),' ', '-')
+					SET	@RequestedBy = (SELECT top 1 Login_Name from #tempMusicMovie)
+					SET @VendorName = (SELECT top 1 Vendor_Name from #tempMusicMovie)
+					SET @TitleName = (SELECT top 1 TitleName from #tempMusicMovie)
+				END
+			
+		--DECLARE curOuter CURSOR FOR 
+		--SELECT Users_Code,Email_Id from Users Where Users_Code IN (Select Users_Code from MHUsers where Vendor_Code = (Select top 1 Vendor_Code from MHUsers where Users_Code = @UsersCode))
+		--OPEN curOuter 
+		--FETCH NEXT FROM curOuter INTO @UserCode, @ToMail
+		--WHILE(@@Fetch_Status = 0) 
+		--BEGIN
+
+		DECLARE cPointer CURSOR FOR 
+		SELECT DISTINCT To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
+		-- Where To_Users_Code IN (Select Users_Code from MHUsers where Vendor_Code = (Select top 1 Vendor_Code from MHUsers where Users_Code = @UsersCode))
+		OPEN cPointer
+		FETCH NEXT FROM cPointer INTO  @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View, @Rollback, @SEND_FOR_APPROVAL, @APPROVE, 1)
+
+			set @EmailHead= 
+			'<html>
+			<head>
+				
+			</head>
+			<body>
+					<p>Dear User,</p>
+					<p>The Request No: '+ @RequestID +' is waiting for approval.</p>
+					<p>Please click <a href="'+@DefaultSiteUrl+'">here</a> to access RightsU - Music Hub and take appropriate actions.</p>'
+
+			SET @Emailbody= 
+			'<table class="tblFormat" style="width:90%; border:1px solid black;border-collapse:collapse;">
+				<tr>
+					<th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Request Date</th>
+					<th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Request Description</th>
+					<th align="center" width="20%" class="tblHead" style="border:1px solid black;  text-align:center; color: #ffffff ; background-color: #585858;font-family:verdana;font-size:12px;font-weight:bold; padding:5px;">Requested By</th>
+				</tr>'
+			
+			IF(@MHRequestTypeCode = 1 )
+				BEGIN
+					SET @Emailbody = @Emailbody +
+					'<tr>
+							<td align="center" class="tblData" rowspan=6 style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ REPLACE(CONVERT(NVARCHAR,@RequestedDate, 106),' ', '-')+'</td>
+							<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>Channel Name:</b> '+ CAST(ISNULL(@ChannelName,' ') as varchar(MAX))+' </td>
+							<td align="center" class="tblData" rowspan=6 style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+CAST(ISNULL(@VendorName,' ') as varchar(MAX))+'/'+ CAST(ISNULL(@RequestedBy,' ') as varchar(MAX))+' </td>
+						</tr>
+						<tr>
+							<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>Show Name:</b>'+ CAST(ISNULL(@ShowName,' ') as varchar(MAX))+' </td>
+						</tr>
+						<tr>
+							<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>Episode No:</b>'+ CAST(ISNULL(@EpisodeFrom,' ') as varchar(MAX))+' </td>
+						</tr>
+						<tr>
+							<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>Telecast Date:</b>'+ CAST(ISNULL(@TeleCastDate,' ') as varchar(MAX))+'</td>
+						</tr>
+						<tr>
+							<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>Music Label:</b>'+ CAST(ISNULL(@MusicLabel,' ') as varchar(MAX))+' </td>
+						</tr>
+						<tr>
+							<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>No Of Songs:</b>'+ CAST(ISNULL(@NoOfSongs,' ') as varchar(MAX))+' </td>
+						</tr>
+					</table>'
+				END
+			ElSE 
+				BEGIN
+					Declare @Label NVARCHAR(50)
+					IF(@MHRequestTypeCode = 2)
+						BEGIN
+							SET @Label = 'No Of. Tracks: '
+							SET @Emailbody = @Emailbody +
+							'<tr>
+									<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ REPLACE(CONVERT(NVARCHAR,@RequestedDate, 106),' ', '-')+'</td>
+									<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>No Of. Tracks:</b>'+ CAST(ISNULL(@NoOfSongs,' ') as varchar(MAX))+' </td>
+									<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+CAST(ISNULL(@VendorName,' ') as varchar(MAX))+'/'+ CAST(ISNULL(@RequestedBy,' ') as varchar(MAX))+' </td>
+							</tr>
+							</table>'
+						END
+					ELSE
+						BEGIN
+							SET @Label = 'Movie/Album Name: '
+							SET @Emailbody = @Emailbody +
+							'<tr>
+									<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+ REPLACE(CONVERT(NVARCHAR,@RequestedDate, 106),' ', '-')+'</td>
+									<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px"><b>Movie/Album Name:</b>'+ CAST(ISNULL(@TitleName,' ') as varchar(MAX))+' </td>
+									<td class="tblData" style="border:1px solid black;text-align:center; vertical-align:top;font-family:verdana;font-size:12px; padding:5px">'+CAST(ISNULL(@VendorName,' ') as varchar(MAX))+'/'+ CAST(ISNULL(@RequestedBy,' ') as varchar(MAX))+' </td>
+							</tr>
+							</table>'
+						END
+				END
+
+			SET @EMailFooter =
+					'</br>
+					(This is a system generated mail. Please do not reply back to the same)</br>
+					</p>
+					</body></html>'
+
+			Set @EmailUser_Body= @EmailHead+@Emailbody+@EMailFooter
+			print @EmailUser_Body
+			
+			--EXEC msdb.dbo.sp_send_dbmail 
+			--@profile_name = @DatabaseEmail_Profile,
+			--@recipients =  @ToMail,
+			--@subject = @MailSubjectCr,
+			--@body = @EmailUser_Body, 
+			--@body_format = 'HTML';
+
+			INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+			SELECT @Email_Config_Code,@Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Channel Unutilized Run'
+				
+			
+			
+	--	FETCH NEXT FROM curOuter INTO @UserCode, @ToMail
+	--END
+	--Close curOuter
+	--Deallocate curOuter
+		FETCH NEXT FROM cPointer INTO @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 		END
-		ELSE
-		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View, 1, @AssignMusic_List,@APPROVE)
-		END
-	END
-	--select @WorkFlowStatus
-	--select * from @Module_Rights where Right_Name='APPROVE'
-	/*ZeroWorkFlow*/
-	Select @IsZeroWorkFlow=[dbo].[UFN_Check_Workflow](30,@Acq_Deal_Code) ,@IsCompleted = [dbo].[UFN_Get_Deal_IsComplete](@Acq_Deal_Code)
-	Select @ParentDealCode = COUNT(AT_Acq_Deal_Code) from AT_Acq_Deal With(NoLock) where Acq_Deal_Code = @Acq_Deal_Code
-	select @DealtagDescription = Deal_Tag_Description from Deal_Tag With(NoLock) where Deal_Tag_Code = @Acq_Deal_Code 
-	Select @TotalMilestoneCount = dbo.[UFN_Get_MIlestone_Count](@Acq_Deal_Code) 
-	SELECT @CountMovieClosed = COUNT(*) from Acq_Deal_Movie With(NoLock) where Acq_Deal_Code in (@Acq_Deal_Code)  and ISNULL(is_closed,'N')='Y' 
-	SELECT @IsMasterDeal=Is_Master_Deal from Acq_Deal With(NoLock) where Acq_Deal_Code=@Acq_Deal_Code
-	IF(@IsZeroWorkFlow = 'Y')
-		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code in( @SEND_FOR_APPROVAL,@SEND_FOR_ARCHIVE )
-	ELSE IF(@IsZeroWorkFlow != 'N')
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL,@APPROVE, @SEND_FOR_ARCHIVE, @ARCHIVE)
+	CLOSE cPointer
+	DEALLOCATE cPointer
 
-	--If Approved , Waiting for Authorization , Rejected
-	IF(@WorkFlowStatus = 'A' OR @WorkFlowStatus = 'W' OR @WorkFlowStatus = 'R' OR @WorkFlowStatus='EO')
-		SET @IsCompleted ='Y'
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 
-	--Not Completed
-	IF(@IsCompleted!='Y')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @Clone, @Amendment, @Content, @AMENDMENT_SYN, @APPROVE, @CLOSE_DEAL, @Terminate, @AssignMusic_List)
-		SET @MileStone ='N'
-	END
-
-	IF(@WorkFlowStatus = 'A' AND EXISTS(select * from @Module_Rights WHERE Right_Code IN (@Edit_Without_Approval) AND Visible='Y'))
-		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code IN (@Edit_Without_Approval)
-	ELSE IF(@WorkFlowStatus != 'EO' )
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Edit_Without_Approval)
-	IF(@WorkFlowStatus = 'EO')
-	BEGIN
-		IF(EXISTS(select * from @Module_Rights WHERE Right_Code IN (@RollbackWithoutApproval) AND Visible='Y'))
-		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code IN (@RollbackWithoutApproval)
-		IF(EXISTS(select * from @Module_Rights WHERE Right_Code IN (@Edit_Without_Approval) AND Visible='Y'))
-		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code IN (@Edit_Without_Approval)
-	END
-	ELSE 
-	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@RollbackWithoutApproval)
-	
-	DECLARE @Parameter_Value VARCHAR(MAX)
-	SELECT @Parameter_Value=Parameter_Value FROM System_Parameter_New With(NoLock) where Parameter_Name='Edit_WO_Approval_Tabs'
-	if(@Parameter_Value='RU')
-	BEGIN
-		DECLARE @Result varchar(2)
-		set @Result = 'N'
-		IF(
-			(
-				select  Count(AD.Acq_Deal_Code) from Acq_Deal AD With(NoLock) 
-				inner join Acq_Deal_Rights ADR With(NoLock) on AD.Acq_Deal_Code = ADR.Acq_Deal_Code
-				inner join Acq_Deal_Rights_Platform ADRP With(NoLock) on ADRP.Acq_Deal_Rights_Code= ADR.Acq_Deal_Rights_Code
-				inner join Platform P With(NoLock) on P.Platform_Code = ADRP.Platform_Code AND p.Is_No_Of_Run = 'Y'
-				where AD.Acq_Deal_Code = @Acq_Deal_Code
-			) > 0
-		  )
-		  BEGIN
-			set @Result = 'Y'
-		  END
-		  IF(@Result = 'N')
-		  UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Edit_Without_Approval)
-	END
-	
-	--New Version
-	IF(@Version < 1)
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  = @Rollback 
-	END
-	
-	IF(@Version = 1 AND @WorkFlowStatus <> 'R')
-	BEGIN
-		IF @WorkFlowStatus <> 'A'
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  IN( @SEND_FOR_ARCHIVE)
-
-		IF @WorkFlowStatus = 'N'
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  IN( @ARCHIVE)
-	END
-
-	--Waiting for Authorization
-	IF(@WorkFlowStatus = 'W')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL,@SEND_FOR_ARCHIVE,@ARCHIVE, @Amendment, @Content,  @AMENDMENT_SYN, 
-				 @Rollback, @Terminate, @AssignMusic_List, @ReleaseContent)
-
-		SET @MileStone ='N'
-	END
-
-	--Waiting for ARCHIVE
-	IF(@WorkFlowStatus = 'WA')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @RE_OPEN_DEAL, @Reject, @APPROVE ,@SEND_FOR_ARCHIVE, @Amendment,@Content, @AMENDMENT_SYN,
-		@Rollback,@Terminate, @AssignMusic_List, @ReleaseContent)
-
-		SET @MileStone ='N'
-	END
-
-	--Not Approved
-	IF(@WorkFlowStatus != 'A' AND @WorkFlowStatus !='EO')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Amendment ,@Content,  @AMENDMENT_SYN , @Clone , @CLOSE_DEAL, @Terminate, @AssignMusic_List)
-		SET @MileStone = 'N'
-	END
-	
-	IF EXISTS (SELECT * FROM System_Parameter_New With(NoLock) WHERE Parameter_Name = 'AssignMusic_DealType')
-	BEGIN
-		DECLARE @Codes VARCHAR(MAX) = ''
-		SELECT TOP 1 @Codes = Parameter_Value FROM System_Parameter_New With(NoLock) WHERE Parameter_Name = 'AssignMusic_DealType'
-
-		IF NOT EXISTS (SELECT * FROM DBO.fn_Split_withdelemiter(@Codes, ',') WHERE number = @dealTypeCode AND number <> @dealTypeCode_Music)
-		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@AssignMusic_List)
-		END
-	END
-	ELSE
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@AssignMusic_List)
-
-	BEGIN
-		SELECT @IsShowAmmendment = COUNT(Deal_Code) from Syn_Acq_Mapping With(NoLock) where Deal_Code = @Acq_Deal_Code
-		IF(@IsShowAmmendment > 0)
-		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_ARCHIVE, @ARCHIVE)
-		END
-	END
-		--Approved
-	IF(@WorkFlowStatus = 'A' OR @WorkFlowStatus ='EO')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @AMENDMENT_SYN, @APPROVE,@ARCHIVE, @Rollback, @ReleaseContent)
-		Select @IsShowAmmendment = COUNT(Deal_Code) from Syn_Acq_Mapping With(NoLock) where Deal_Code = @Acq_Deal_Code
-
-		IF(@IsShowAmmendment > 0)
-		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Amendment,@SEND_FOR_ARCHIVE, @ARCHIVE)
-
-			IF NOT EXISTS (SELECT * FROM Acq_Deal_Rights ADR With(NoLock) WHERE Acq_Deal_Code = @Acq_Deal_Code 
-				AND ADR.Acq_Deal_Rights_Code NOT IN (SELECT DISTINCT Deal_Rights_Code FROM Syn_Acq_Mapping With(NoLock) where Deal_Code = @Acq_Deal_Code))
-			BEGIN
-				SET @MileStone = 'N'
-			END
-
-
-			IF(@CountMovieClosed <= 0  AND @Is_Terminated = 'N')
-			BEGIN
-				UPDATE B 
-					SET B.Visible = A.SHOW
-				FROM 
-				@Module_Rights B
-				INNER JOIn 
-				(Select SR.Right_Code,CASE WHEN ISNULL(sgr.Security_Group_Code,0)=0 THEN  'N' ELSE 'Y' END SHOW
-				FROM System_Module_Right smr With(NoLock) 
-				INNER JOIN System_Right sr With(NoLock) on sr.Right_Code = smr.Right_Code
-				LEFT JOIN Security_Group_Rel sgr With(NoLock) on smr.Module_Right_Code = sgr.System_Module_Rights_Code and sgr.Security_Group_Code=@UserSecCode
-				WHERE SR.Right_Code IN (@AMENDMENT_SYN) AND smr.Module_Code=30 )
-				AS A ON A.Right_Code=b.Right_Code
-			END
-		END
-	END
-	
-	IF(@WorkFlowStatus = 'R')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Amendment, @Delete, @AMENDMENT_SYN, @Terminate, @AssignMusic_List)
-		SET @MileStone = 'N'
-
-		Declare @hdnAllow_Edit_All_On_Rejection VARCHAR(1), @RetValue Int = 0
-		SELECT @hdnAllow_Edit_All_On_Rejection = Parameter_value FROM System_Parameter_New With(NoLock) 
-		WHERE Parameter_Name = 'Allow_Edit_All_On_Rejection' AND IsActive = 'Y'
-
-		Select Top 1 @RetValue = Group_Code From Module_Workflow_Detail With(NoLock) 
-		Where Record_Code = @Acq_Deal_Code And Module_Code = 30 And Role_Level = 0 Order By Module_Workflow_Detail_Code Desc
-		
-
-		IF (@UserSecCode = @RetValue OR @hdnAllow_Edit_All_On_Rejection = 'Y') 
-		BEGIN
-			IF(@IsZeroWorkFlow = 'N')
-			BEGIN
-			UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code = @SEND_FOR_APPROVAL
-			END
-		END
-		ELSE
-		BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Edit, @SEND_FOR_APPROVAL,@APPROVE)
-		END
-		IF(@Is_Terminated = 'Y')
-		BEGIN
-		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code IN (@Rollback)
-		END
-	END
-	--ELSE
-	--UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Rollback)
-
-	--For Approve
-	Declare @GCode INT=0,@UGCode INT=0,@DBUCode INT=0
-	select @DBUCode=Business_Unit_Code from Acq_Deal With(NoLock) where Acq_Deal_Code=@Acq_Deal_Code
-	select  @UGCode=Security_Group_Code from Users u With(NoLock) 
-	INNER JOIN Users_Business_Unit bu With(NoLock) ON bu.Users_Code=u.Users_Code
-	 where u.Users_Code=@User_Code and @DBUCode=bu.Business_Unit_Code
-	select @GCode=ISNULL(dbo.UFN_Get_Current_Approver_Code(30,@Acq_Deal_Code),0)
-
-	IF( @UGCode != @GCode)
-	BEGIN
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code in( @Approve, @ARCHIVE)
-	END
-	
-
-	DECLARE @IsCompleted_R VARCHAR(50)
-			SELECT @IsCompleted_R =[dbo].[UFN_Get_Deal_IsComplete](@Acq_Deal_Code)
-	IF(@WorkFlowStatus = 'R' AND @IsCompleted_R <>'Y')
-	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code  = @SEND_FOR_APPROVAL
-
-	IF(@WorkFlowStatus = 'RS')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@EDIT, @Delete, @SEND_FOR_APPROVAL, @AMENDMENT_SYN, @Close_Deal, @Clone, @Amendment, @Terminate, @AssignMusic_List)
-		SET @MileStone = 'N'
-	END
-
-	DECLARE @cntE INT
-	SELECT @cntE = COUNT(Acq_Deal_Code) from Acq_Deal_Rights With(NoLock) where Acq_Deal_Code = @Acq_Deal_Code and ISNULL(Right_Status,'C') in ('E')
-	
-	IF (@cntE > 0)
-	BEGIN
-		SET @ShowError = 'Y'
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @APPROVE)
-	END
-	ELSE
-	BEGIN
-		DECLARE @cntP INT
-		SELECT @cntP = COUNT(Acq_Deal_Code) from Acq_Deal_Rights With(NoLock) where Acq_Deal_Code = @Acq_Deal_Code and ISNULL(Right_Status,'C') in ('P','W')
-		
-		IF (@cntP > 0)
-			UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @APPROVE)
-	END
-
-	-- Re-Open
-	IF(@WorkFlowStatus = 'RO')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'Y' WHERE Right_Code IN (@EDIT,@View)
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Delete,@Clone,@SEND_FOR_APPROVAL,@APPROVE,@Reject, @Amendment,@CLOSE_DEAL,@RE_OPEN_DEAL,@Rollback,@Terminate)
-	END
-	IF(@WorkFlowStatus = 'EO')
-	UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@Edit_Without_Approval,@RollbackWithoutApproval,@View)
-	IF(@ParentDealCode > 0)
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code = @Delete
-
-	
-	IF(@DealtagDescription = 'Close')
-	BEGIn
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@SEND_FOR_APPROVAL, @Amendment, @AMENDMENT_SYN, @Terminate, @AssignMusic_List)
-		SET @MileStone = 'N'
-	END
-
-	IF(@IsMasterDeal='N')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code IN (@Content, @ARCHIVE, @SEND_FOR_ARCHIVE)
-	END
-
-	IF(@WorkFlowStatus = 'AR')
-	BEGIN
-		UPDATE @Module_Rights SET Visible = 'N' WHERE Right_Code NOT IN (@View)
-		SET @MileStone ='N'
-	END
-
-
-	IF(@TotalMilestoneCount = 0)
-	BEGIn
-		SET @MileStone = 'N'
-	END	
-
-  	SELECT  @Is_Right_Available = (SELECT STUFF((SELECT ','+ Cast(Right_Code as Varchar(MAX)) FROM @Module_Rights WHERE Visible='Y' FOR XML PATH('')), 1, 1, '' ) )
-    	
-	if(@MileStone='Y' AND @Is_Terminated = 'N')
-		RETURN  @Is_Right_Available + ',' + @MileStone +','
-
-	IF (@ShowError = 'Y' AND @Is_Terminated = 'N')
-		RETURN  @Is_Right_Available + ',' +'E,'
-
-	--RETURN   ','+@Is_Right_Available +','
-	RETURN    ','+@Is_Right_Available +','
-	--select ','+@Is_Right_Available +','+ @MileStone +','
+	IF OBJECT_ID('tempdb..#tempMusicMovie') IS NOT NULL DROP TABLE #tempMusicMovie
+	IF OBJECT_ID('tempdb..#tempUsage') IS NOT NULL DROP TABLE #tempUsage
 END
-
-
---exec USP_Deal_Process
-
---select * from workflow_Module where module_code = 30 and  Business_Unit_Code = 5 order by Last_Updated_Time
---select * from Business_Unit
-
---Update workflow_Module set Effective_Start_Date = getdate() , System_End_Date = null where Workflow_module_code = 1250
-

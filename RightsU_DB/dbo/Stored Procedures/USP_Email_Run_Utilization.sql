@@ -36,13 +36,13 @@ BEGIN
 	
 	--------
 
-	DECLARE @Business_Unit_Code INT,
-	@To_Users_Code NVARCHAR(MAX),
-	@To_User_Mail_Id  NVARCHAR(MAX),
-	@CC_Users_Code  NVARCHAR(MAX),
-	@CC_User_Mail_Id  NVARCHAR(MAX),
-	@BCC_Users_Code  NVARCHAR(MAX),
-	@BCC_User_Mail_Id  NVARCHAR(MAX)
+		DECLARE @Business_Unit_Code INT,
+		@To_Users_Code NVARCHAR(MAX),
+		@To_User_Mail_Id  NVARCHAR(MAX),
+		@CC_Users_Code  NVARCHAR(MAX),
+		@CC_User_Mail_Id  NVARCHAR(MAX),
+		@BCC_Users_Code  NVARCHAR(MAX),
+		@BCC_User_Mail_Id  NVARCHAR(MAX)
 
 	DECLARE @Tbl2 TABLE (
 		Id INT,
@@ -285,28 +285,22 @@ BEGIN
 	IF(@EmailUser_Body != '')
 	BEGIN
 		DECLARE curOuter CURSOR FOR 
-					SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  FROM @Tbl2
+		SELECT BuCode, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, Channel_Codes  
+		FROM @Tbl2
 	
 		OPEN curOuter 
-		FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+		FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code,
+									@BCC_User_Mail_Id, @Channel_Codes
 		WHILE (@@Fetch_Status = 0) 
 		BEGIN		
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id,
+				BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code,@Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''),
+				ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Last Month Run Utilization'
 
-			 --  EXEC msdb.dbo.sp_send_dbmail 
-				--@profile_name = @DatabaseEmail_Profile,
-				--@recipients =  @To_User_Mail_Id,
-				--@copy_recipients = @CC_User_Mail_Id,
-				--@blind_copy_recipients = @BCC_User_Mail_Id,
-				--@subject = @MailSubjectCr,
-				--@body = @Emailbody, 
-				--@body_format = 'HTML';
-
-
-				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
-				SELECT @Email_Config_Code,@Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Last Month Run Utilization'
-
-			FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
-		END -- End of Fetch outer
+			FETCH NEXT FROM curOuter INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id,
+						@BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
+		END 
 		CLOSE curOuter
 		DEALLOCATE curOuter	
 	END

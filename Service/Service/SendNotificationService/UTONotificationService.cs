@@ -192,7 +192,7 @@ namespace SendNotificationService
                 SqlCommand nonQryCommand = new SqlCommand();
                 nonQryCommand.CommandType = CommandType.StoredProcedure;
                 nonQryCommand.CommandText = "USPGetPendingNotifications";
-                nonQryCommand.Parameters.Add(new SqlParameter("@FromDateTime", SqlDbType.VarChar)).Value = DateTime.Now.ToString("dd/MM/yyyy hh:mm");
+                nonQryCommand.Parameters.Add(new SqlParameter("@FromDateTime", SqlDbType.VarChar)).Value = DateTime.Now.ToString("dd-MMM-yyyy HH:mm");
                 nonQryCommand.Connection = myConn;
                 nonQryCommand.ExecuteNonQuery();
                 DataSet ds = new DataSet();
@@ -385,16 +385,16 @@ namespace SendNotificationService
                 nonQryCommand.Parameters.Add(new SqlParameter("@ErrorDetails", SqlDbType.VarChar)).Value = ErrorDetails;
                 nonQryCommand.Connection = myConn;
                 nonQryCommand.ExecuteNonQuery();
-                DataSet ds = new DataSet();
-                SqlDataAdapter da = new SqlDataAdapter();
-                da.SelectCommand = nonQryCommand;
-                da.Fill(ds);
+                //DataSet ds = new DataSet();
+                //SqlDataAdapter da = new SqlDataAdapter();
+                //da.SelectCommand = nonQryCommand;
+                //da.Fill(ds);
 
-                List<USPUpdateNotificationStatus> lst = ds.Tables[0].AsEnumerable()
-                .Select(dataRow => new USPUpdateNotificationStatus
-                {
-                    NotificationsCode = dataRow.Field<long>("NotificationsCode")
-                }).ToList();
+                //List<USPUpdateNotificationStatus> lst = ds.Tables[0].AsEnumerable()
+                //.Select(dataRow => new USPUpdateNotificationStatus
+                //{
+                //    NotificationsCode = dataRow.Field<long>("NotificationsCode")
+                //}).ToList();
 
                 myConn.Close();
                 myConn.Dispose();
