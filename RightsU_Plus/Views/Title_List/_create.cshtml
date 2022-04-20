@@ -7,8 +7,18 @@
     }
 }
 <script type="text/javascript">
+
+     var URL_SaveTitle = '@Url.Action("SaveTitle", "Acq_General")';
+
     $(document).ready(function () {
         debugger;
+
+        if ('@ViewBag.fromAcqGeneral' == 'Y') {
+            $("#ddlDealType").val(@ViewBag.DealTypeCode).trigger("chosen:updated");
+            $("#btnAddAdditionalmetadata").hide();
+        }
+
+
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
             //$('.form_links').addClass('form_links-Head')
             //$('.close').addClass('close-Head')
@@ -38,147 +48,58 @@
             $("#ddlLanguage").trigger("chosen:updated");
         }
     }
-    function ValidateSave(Type)
-    {
+
+
+
+    function general(TitleCode) {
         debugger;
-        $('.required').removeClass('required');
-        $("[required='required']").removeAttr("required");
-        var hdnddlDealType = "";
-        var hdnddlLanguage = "";
-        var hdnTxtTitleName = "";
-        var hdnMusicLabel = "0";
-        var hdnProgramCategory = "";
-        var hdnTxtDuration = "0";
-        var Error = "";
+        var arrTitleCodes = TitleCode;
+        $("#divTitle").removeClass("required");
+        if (arrTitleCodes != null) {
+            showLoading();
+            Enable_DisableControl(true);
+            titleCodes = arrTitleCodes;
+            $('#popAddDealMovie').modal('hide')
 
-        if ($("#ddlDealType").val() != "0")
-        {
-            hdnddlDealType = $("#ddlDealType").val();
-        }
-        else {
-            $('#ddlDealType').addClass("required");
-            Error = "E";
-        }
+            valid = SaveTitleListData(false);
+            if (!valid)
+                return false;
 
-        if ($.trim($('#txtTitleName').val()) != "")
-            hdnTxtTitleName = $("#txtTitleName").val();
-        else {
-            $("#txtTitleName").addClass("required");
-            Error = "E";
-        }
-
-        if ('@ViewBag.IsTitleDurationMandatory' == 'Y') {
-            if ($("#txtDuration").val() != undefined) {
-                if ($.trim($('#txtDuration').val()) != "")
-                    hdnTxtDuration = $("#txtDuration").val();
-                else {
-                    $("#txtDuration").addClass("required");
-                    Error = "E";
-                }
-            }
-        }
-
-        if ($("#ddlLanguage").val() != "") {
-            hdnddlLanguage = $("#ddlLanguage").val();
-            if (hdnddlLanguage == "0") {
-                $('#ddlLanguage').addClass('required');
-                Error = "E";
-            }
-        }
-        else {
-            Error = "E";
-        }
-
-        if ($("#ddlProgramCategory").val()!=undefined ){
-            if ($("#ddlProgramCategory").val() != "0") {
-                hdnProgramCategory = $("#ddlProgramCategory").val();
-            }
-            else {
-                $("#ddlProgramCategory").addClass('required');
-                $("#ddlProgramCategory").attr('required', true);
-                Error = "E";
-            }
-        }
-
-        if ($("#ddlDealType").val() == '@ViewBag.CodeForEmbeddedMusic') {
-            if ($("#ddlMusicLabel").val() != "" && $("#ddlMusicLabel").val() != null) {
-                hdnMusicLabel = $("#ddlMusicLabel").val();
-            }
-            else {
-                $('#ddlMusicLabel').addClass("required");
-                Error = "E";
-            }
-        }
-
-        var ISDuplicate = ""
-        var NewTitleName = $.trim($('#txtTitleName').val());
-
-        if (NewTitleName != "") {
+            var dealTypeCode = GetDealTypeCode();
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("ValidateIsDuplicate", "Title_List")',
+                url: URL_SaveTitle,
                 traditional: true,
                 enctype: 'multipart/form-data',
-                async: false,
-                data: JSON.stringify({
-                    TitleName: NewTitleName,
-                    DealTypeCode: $("#ddlDealType").val()
-                }),
                 contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    titleCodes: titleCodes,
+                    dealTypeCode: dealTypeCode
+                }),
+                async: false,
                 success: function (result) {
-                    if (result.Message != "") {
-                        ISDuplicate = result.Message;
-                        showAlert("E", ISDuplicate);
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            $('#imgTitleIcon').prop("src", result.Title_Icon_Path);
+                            $('#divTitleIcon').attr("title", result.Title_Icon_Tooltip);
+                            BindTitleGridview();
+                            addNumeric();
+                            BindTitleLabel(true);
+                            hideLoading();
+                        }
                     }
                 },
                 error: function (result) {
+                    alert('Error: ' + result.responseText);
                 }
             });
         }
-        if (Error == "E" && ISDuplicate != "") {
-            $('#popAddTitle').modal('');
-
-        }
-
-        if (Error == "" && ISDuplicate == "") {
-
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("SaveTitle", "Title_List")',
-                traditional: true,
-                enctype: 'multipart/form-data',
-                async: false,
-                data: JSON.stringify({
-                    hdnddlDealType: hdnddlDealType,
-                    hdnddlLanguage: hdnddlLanguage,
-                    hdnTxtTitleName: hdnTxtTitleName,
-                    hdnProgramCategory:hdnProgramCategory,
-                    hdnTxtDuration:hdnTxtDuration,
-                    hdnMusicLabel: hdnMusicLabel,
-                    Type: Type
-                }),
-                contentType: "application/json; charset=utf-8",
-                success: function (result) {
-
-                    var TitleCode = parseInt(result.TitleCode);
-                    if (Type == "SS") {    //window.location.href = '.replace("TitleCode", parseInt(result.TitleCode));
-
-                        var URL = '@Url.Action("Index", "Title", new { id = "TitleCode", Page_No = @ViewBag.PageNo, SearchedTitle = @ViewBag.SearchedTitle, PageSize = @ViewBag.PageSizeCreate,DealTypeCode=@ViewBag.DealTypeCodeSearch, Type = "E"})';
-                        URL = URL.replace("TitleCode", parseInt(result.TitleCode));
-                        URL = URL.replace("amp;", "");
-                        URL = URL.replace("amp;", "");
-                        URL = URL.replace("amp;", "");
-                        URL = URL.replace("amp;", "");
-                        window.location.href = URL;
-                    }
-                    BindGrid($("#hdnPageIndex").val(),'','','');
-                    BindTitle();
-                    $('#popAddTitle').modal('hide');
-                    showAlert("S", result.Message, "");
-                },
-                error: function (result) {
-                }
-            });
+        else {
+            $("#divTitle").addClass("required");
+            showAlert("E", ShowMessage.MsgForSelectTitle, 'ddlTitle')//MsgForSelectTitle = Please select atleast one title
         }
     }
 
@@ -234,7 +155,7 @@
             opacity: .3;
             padding-left: 28px;
             /*position: relative;
-                top: -21px;*/
+                top: -21px;
     }
     */
 </style>
@@ -249,7 +170,8 @@
                             <span>×</span>
                             <span class="sr-only">Close</span>
                         </a>
-                        <h2>@objMessageKey.AddTitle</h2>
+                        @*<h2>@objMessageKey.AddTitle</h2>*@
+                        <h2>Add Title</h2>
                     </div>
                     <div class="modal_block">
                         <ul class="add_title_popup">
@@ -278,15 +200,15 @@
                             }
                             @if ((string)ViewBag.IsTitleDurationMandatory == "Y")
                             {
-                            <li style="margin-top:15px;">
-                                <label>@objMessageKey.Duration</label>
-                                @Html.TextBoxFor(m => Model.Duration_In_Min, new { @id = "txtDuration", @style = "width:95%" })
-                            </li>
+                                <li style="margin-top:15px;">
+                                    <label>@objMessageKey.Duration</label>
+                                    @Html.TextBoxFor(m => Model.Duration_In_Min, new { @id = "txtDuration", @style = "width:95%" })
+                                </li>
                             }
                             <li id="liMusicLabel" style="display:none">
                                 <label>@objMessageKey.MusicLabel</label>
                                 @Html.DropDownList("ddlMusicLabel", (List<SelectListItem>)ViewBag.MusicLabelList,
-                           new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
+                                          new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
                             </li>
                         </ul>
                     </div>
@@ -294,10 +216,18 @@
                         <div class="form_links">
                             <ul class="modal_block clearfix">
                                 <li>
-                                    <a class="btn btn-primary" href="#" onclick="ValidateSave('S');">@objMessageKey.Save</a>
+                                    @if (@ViewBag.fromAcqGeneral == "Y")
+                                    {
+                                        <a class="btn btn-primary" href="#" onclick="ValidateSavefromAcqGeneral('S');">@objMessageKey.Save</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-primary" href="#" onclick="ValidateSave('S');">@objMessageKey.Save</a>
+                                    }
+
                                 </li>
                                 <li>
-                                    <a class="btn btn-primary" href="#" onclick="ValidateSave('SS');">@objMessageKey.AddAdditionalmetadata</a>
+                                    <a class="btn btn-primary" href="#" id="btnAddAdditionalmetadata" onclick="ValidateSave('SS');">@objMessageKey.AddAdditionalmetadata</a>
                                 </li>
                                 <li>
                                     <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>

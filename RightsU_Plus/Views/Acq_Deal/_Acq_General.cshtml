@@ -122,13 +122,15 @@
     var URL_BindPrimaryContactDetail = '@Url.Action("BindPrimaryContactDetail", "Acq_General")';
     var URL_BindTitlePopup = '@Url.Action("BindTitlePopup", "Acq_General")';
     var URL_SearchTitle = '@Url.Action("SearchTitle", "Acq_General")';
-    var URL_SaveTitle = '@Url.Action("SaveTitle", "Acq_General")';
+   // var URL_SaveTitle = '@Url.Action("SaveTitle", "Acq_General")';
     var URL_Close_Title = '@Url.Action("Close_Title", "Acq_General")';
     var URL_SaveTitleListData = '@Url.Action("SaveTitleListData", "Acq_General")';
     var URL_DeleteTitle = '@Url.Action("DeleteTitle", "Acq_General")';
     var URL_Replace_Title = '@Url.Action("Replace_Title", "Acq_General")';
     var URL_Login_Index = '@Url.Action("Index", "Login")';
     var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_General")';
+    var URL_ValidateIsDuplicate = '@Url.Action("ValidateIsDuplicate", "Title_List")';
+    var URL_SaveTitleFromAcqGen = '@Url.Action("SaveTitle", "Title_List")';
 
     var ShowMessage = {
         "lblForAssignor": '@objMessageKey.Assignor',
@@ -192,6 +194,39 @@
     //$(function(){
     //    $('#divTitle > d')
     //});
+
+    function AddTitleFromAcqGeneral() {
+        debugger;
+        showLoading();
+
+        var DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindLanguage", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DealTypeCode: DealTypeCode,
+                fromAcqGeneral : "Y"
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    $("#popAddTitleDealPage").html(result);
+                    $("#popAddTitleDealPage").modal();
+                    initializeChosen();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
+
 
 </script>
 
@@ -278,12 +313,12 @@
                                                 {
                                                     <label class="radio-inline">
                                                         @Html.RadioButtonFor(m => Model.Deal_Type_Code, (object)item.Value, new
-                                                   {
-                                                       @id = "rblDeal_For_" + item.Value,
-                                                       onclick = "rblDeal_For_OnChange()"
-                                                   })@item.Text
-                                            </label>
-                                        }
+                                                        {
+                                                            @id = "rblDeal_For_" + item.Value,
+                                                            onclick = "rblDeal_For_OnChange()"
+                                                        })@item.Text
+                                                    </label>
+                                                }
                                                 <label class="radio-inline dealForOther">
                                                     @if (ViewBag.Other_Deal_Type_List != null)
                                                     {
@@ -441,6 +476,13 @@
                                         <td style="width: 10%;">
                                             <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearchTitle_Click()">
                                         </td>
+                                        @if (ViewBag.IsAddTitle_AcqGen == "Y")
+                                        {
+                                            <td>
+                                                <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Add Title</a>
+                                            </td>
+                                        }
+
                                         <td style="width: 10%; text-align: right">
                                             @if (ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_ADD || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_CLONE)
                                             {
@@ -781,4 +823,6 @@
             </form>
         </div>
     </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitleDealPage" role="dialog" tabindex="-1" aria-hidden="false">
 </div>
