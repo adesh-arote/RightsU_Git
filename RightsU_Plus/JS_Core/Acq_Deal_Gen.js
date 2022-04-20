@@ -126,12 +126,11 @@ function getPrimaryLicensor() {
     var index = $('#ddlLicensor_chosen li.search-choice.primary a').data("option-array-index");
     var length = $('#ddlLicensor  :selected').length;
 
-    if (length == 1)
-    {
+    if (length == 1) {
         var index1 = $('#ddlLicensor  :selected').index();
         index1 = parseInt(index1) + 1;
         return $('#ddlLicensor option:nth-child(' + index1 + ')').val();
-    }   
+    }
     else if (isNaN(index))
         return 0;
 
@@ -387,6 +386,7 @@ function rblIsMasterDeal_OnChange() {
 }
 
 function rblDeal_For_OnChange() {
+
     BindTopBand();
     var selectedValue = $("input[name='Deal_Type_Code']:radio:checked").val();
 
@@ -407,6 +407,14 @@ function rblDeal_For_OnChange() {
     }
     BindTitleLabel(true);
     $('.chosen-select:not(#ddlLicensor)').trigger("chosen:updated");
+
+    var isMasterDeal = $("input[name='Is_Master_Deal']:radio:checked").val();
+    if (isMasterDeal == "N") {
+        $("#btnAddTitleMaster").attr("disabled", true);
+    }
+    else {
+        $("#btnAddTitleMaster").attr("disabled", false);
+    }
 
     BindTitleGridview();
 }
@@ -435,6 +443,14 @@ function ddlOther_OnChange() {
         $("#ddlMaster_Deal_List").attr("disabled", false);
     }
     BindTitleLabel(true);
+
+    var isMasterDeal = $("input[name='Is_Master_Deal']:radio:checked").val();
+    if (isMasterDeal == "N") {
+        $("#btnAddTitleMaster").attr("disabled", true);
+    }
+    else {
+        $("#btnAddTitleMaster").attr("disabled", false);
+    }
 
     $('.chosen-select:not(#ddlLicensor)').trigger("chosen:updated");
     BindTitleGridview();
@@ -839,6 +855,7 @@ function CancelSaveDeal() {
     Command_Name = "CANCEL_SAVE_DEAL";
     showAlert("I", ShowMessage.MsgForunsavedData, "OKCANCEL");//MsgForunsavedData = All unsaved data will be lost, still want to go ahead?
 }
+
 
 function BindTitleGridview() {
     var pageNo = $('#hdnPageNo').val();
@@ -1262,7 +1279,7 @@ function SaveTitleListData(validateOverlapping) {
 
     var returnVal = true;
 
-    if (validateOverlapping) { returnVal = ValidateEpisodeOverlapping(); }   
+    if (validateOverlapping) { returnVal = ValidateEpisodeOverlapping(); }
 
     if (returnVal) {
         var dealTypeCode = GetDealTypeCode();
@@ -1332,7 +1349,7 @@ function SaveTitleListData(validateOverlapping) {
     return returnVal;
 }
 
-function tblMovie_RowCommand(dummyGuid, rowIndex, commandName) {   
+function tblMovie_RowCommand(dummyGuid, rowIndex, commandName) {
     $('.required').removeClass('required');
     $("[required='required']").removeAttr("required");
 
@@ -1494,10 +1511,10 @@ function tblMovie_RowCommand(dummyGuid, rowIndex, commandName) {
         var dealTypeCode = GetDealTypeCode();
         var tc = parseInt(hdnTitleCode.val());
         BindTitlePopup(masterDealMovieCode, dealTypeCode, tc, ddlTitle[0].id)
-      
+
         initializeChosen();
         ddlTitle.val(hdnTitleCode.val());
-        ddlTitle.trigger("chosen:updated");        
+        ddlTitle.trigger("chosen:updated");
 
     }
     else if (commandName == 'SAVE_REPLACE_TITLE') {
@@ -1533,9 +1550,9 @@ function tblMovie_RowCommand(dummyGuid, rowIndex, commandName) {
                 }
                 else {
                     if (result.Status == "S") {
-                      
+
                         divTitle.hide();
-                      lblTitleName.show();
+                        lblTitleName.show();
 
                         lblTitleName.text(result.Title_Name)
                         lblTitleLangName.text(result.Title_Language_Name)
@@ -1560,9 +1577,9 @@ function tblMovie_RowCommand(dummyGuid, rowIndex, commandName) {
         });
     }
     else if (commandName == 'CANCEL_REPLACE_TITLE') {
-      
+
         divTitle.hide();
-        
+
         lblTitleName.show();
 
         btnDelete.show();
@@ -1633,7 +1650,7 @@ function ValidateSave() {
         $('input[name=hdnDealDesc]').val($("select[ID='txtDeal_Desc'] option:selected").val());
     }
     else {
-    $('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
+        $('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
     }
     $('input[name=hdnDealTagStatusCode]').val($("select[ID='ddlDeal_Tag'] option:selected").val());
 
@@ -1783,5 +1800,151 @@ function BindAllPreReq_Async() {
             alert('Error: ' + result.responseText);
         }
     });
+}
+
+function ValidateSavefromAcqGeneral(Type) {
+    debugger;
+    $('.required').removeClass('required');
+    $("[required='required']").removeAttr("required");
+    var hdnddlDealType = "";
+    var hdnddlLanguage = "";
+    var hdnTxtTitleName = "";
+    var hdnMusicLabel = "0";
+    var hdnProgramCategory = "";
+    var hdnTxtDuration = "0";
+    var Error = "";
+
+    if ($("#ddlDealType").val() != "0") {
+        hdnddlDealType = $("#ddlDealType").val();
+    }
+    else {
+        $('#ddlDealType').addClass("required");
+        Error = "E";
+    }
+
+    if ($.trim($('#txtTitleName').val()) != "")
+        hdnTxtTitleName = $("#txtTitleName").val();
+    else {
+        $("#txtTitleName").addClass("required");
+        Error = "E";
+    }
+
+    if ('@ViewBag.IsTitleDurationMandatory' == 'Y') {
+        if ($("#txtDuration").val() != undefined) {
+            if ($.trim($('#txtDuration').val()) != "")
+                hdnTxtDuration = $("#txtDuration").val();
+            else {
+                $("#txtDuration").addClass("required");
+                Error = "E";
+            }
+        }
+    }
+
+    if ($("#ddlLanguage").val() != "") {
+        hdnddlLanguage = $("#ddlLanguage").val();
+        if (hdnddlLanguage == "0") {
+            $('#ddlLanguage').addClass('required');
+            Error = "E";
+        }
+    }
+    else {
+        Error = "E";
+    }
+
+    if ($("#ddlProgramCategory").val() != undefined) {
+        if ($("#ddlProgramCategory").val() != "0") {
+            hdnProgramCategory = $("#ddlProgramCategory").val();
+        }
+        else {
+            $("#ddlProgramCategory").addClass('required');
+            $("#ddlProgramCategory").attr('required', true);
+            Error = "E";
+        }
+    }
+
+    if ($("#ddlDealType").val() == '@ViewBag.CodeForEmbeddedMusic') {
+        if ($("#ddlMusicLabel").val() != "" && $("#ddlMusicLabel").val() != null) {
+            hdnMusicLabel = $("#ddlMusicLabel").val();
+        }
+        else {
+            $('#ddlMusicLabel').addClass("required");
+            Error = "E";
+        }
+    }
+
+    var ISDuplicate = ""
+    var NewTitleName = $.trim($('#txtTitleName').val());
+
+    if (NewTitleName != "") {
+        $.ajax({
+            type: "POST",
+            url: URL_ValidateIsDuplicate,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            data: JSON.stringify({
+                TitleName: NewTitleName,
+                DealTypeCode: $("#ddlDealType").val()
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.Message != "") {
+                    ISDuplicate = result.Message;
+                    showAlert("E", ISDuplicate);
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }
+    if (Error == "E" && ISDuplicate != "") {
+        $('#popAddTitle').modal('');
+
+    }
+
+    if (Error == "" && ISDuplicate == "") {
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveTitleFromAcqGen,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            data: JSON.stringify({
+                hdnddlDealType: hdnddlDealType,
+                hdnddlLanguage: hdnddlLanguage,
+                hdnTxtTitleName: hdnTxtTitleName,
+                hdnProgramCategory: hdnProgramCategory,
+                hdnTxtDuration: hdnTxtDuration,
+                hdnMusicLabel: hdnMusicLabel,
+                Type: Type
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+
+                var TitleCode = parseInt(result.TitleCode);
+                if (Type == "SS") {    //window.location.href = '.replace("TitleCode", parseInt(result.TitleCode));
+
+                    var URL = '@Url.Action("Index", "Title", new { id = "TitleCode", Page_No = @ViewBag.PageNo, SearchedTitle = @ViewBag.SearchedTitle, PageSize = @ViewBag.PageSizeCreate,DealTypeCode=@ViewBag.DealTypeCodeSearch, Type = "E"})';
+                    URL = URL.replace("TitleCode", parseInt(result.TitleCode));
+                    URL = URL.replace("amp;", "");
+                    URL = URL.replace("amp;", "");
+                    URL = URL.replace("amp;", "");
+                    URL = URL.replace("amp;", "");
+                    window.location.href = URL;
+                }
+
+
+                general(TitleCode);
+
+
+
+                $('#popAddTitleDealPage').modal('hide');
+                showAlert("S", result.Message, "");
+            },
+            error: function (result) {
+            }
+        });
+    }
 }
 
