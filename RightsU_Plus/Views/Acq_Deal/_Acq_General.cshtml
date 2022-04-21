@@ -200,6 +200,15 @@
         showLoading();
 
         var DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
+
+        if (DealTypeCode == 1 || DealTypeCode == 11) {
+            DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
+        }
+        else {
+            DealTypeCode = $("#ddlOther").val();
+        }
+
+
         $.ajax({
             type: "POST",
             url: '@Url.Action("BindLanguage", "Title_List")',
