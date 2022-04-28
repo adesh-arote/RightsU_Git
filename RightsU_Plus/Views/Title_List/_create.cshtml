@@ -209,9 +209,11 @@
                             <li id="liMusicLabel" style="display:none">
                                 <label>@objMessageKey.MusicLabel</label>
                                 @Html.DropDownList("ddlMusicLabel", (List<SelectListItem>)ViewBag.MusicLabelList,
-                                          new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
+                                new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
                             </li>
                         </ul>
+                        <input type="hidden" name="IsTitleDurationMandatory" value="@ViewBag.IsTitleDurationMandatory" id="IsTitleDurationMandatory" />
+                        <input type="hidden" name="CodeForEmbeddedMusic" value="@ViewBag.CodeForEmbeddedMusic" id="CodeForEmbeddedMusic" />
                     </div>
                     <div class="modal_block_full">
                         <div class="form_links">
