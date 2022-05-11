@@ -1829,7 +1829,8 @@ function ValidateSavefromAcqGeneral(Type) {
         Error = "E";
     }
 
-    if ('@ViewBag.IsTitleDurationMandatory' == 'Y') {
+    var IsTitleDurationMandatory = $("#IsTitleDurationMandatory").val();
+    if (IsTitleDurationMandatory == 'Y') {
         if ($("#txtDuration").val() != undefined) {
             if ($.trim($('#txtDuration').val()) != "")
                 hdnTxtDuration = $("#txtDuration").val();

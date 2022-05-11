@@ -122,7 +122,7 @@
     var URL_BindPrimaryContactDetail = '@Url.Action("BindPrimaryContactDetail", "Acq_General")';
     var URL_BindTitlePopup = '@Url.Action("BindTitlePopup", "Acq_General")';
     var URL_SearchTitle = '@Url.Action("SearchTitle", "Acq_General")';
-   // var URL_SaveTitle = '@Url.Action("SaveTitle", "Acq_General")';
+    var URL_SaveTitle = '@Url.Action("SaveTitle", "Acq_General")';
     var URL_Close_Title = '@Url.Action("Close_Title", "Acq_General")';
     var URL_SaveTitleListData = '@Url.Action("SaveTitleListData", "Acq_General")';
     var URL_DeleteTitle = '@Url.Action("DeleteTitle", "Acq_General")';
@@ -200,6 +200,15 @@
         showLoading();
 
         var DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
+
+        if (DealTypeCode == 1 || DealTypeCode == 11) {
+            DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
+        }
+        else {
+            DealTypeCode = $("#ddlOther").val();
+        }
+
+
         $.ajax({
             type: "POST",
             url: '@Url.Action("BindLanguage", "Title_List")',
@@ -478,9 +487,10 @@
                                         </td>
                                         @if (ViewBag.IsAddTitle_AcqGen == "Y")
                                         {
-                                            <td>
-                                                <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Add Title</a>
-                                            </td>
+                                        <td>
+                                            <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Add Title</a>
+                                            <input type="hidden" name="name" value="@ViewBag.IsTitleDurationMandatory" id="IsTitleDurationMandatory" />
+                                        </td>
                                         }
 
                                         <td style="width: 10%; text-align: right">
