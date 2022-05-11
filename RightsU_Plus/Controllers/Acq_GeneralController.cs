@@ -200,6 +200,9 @@ namespace RightsU_Plus.Controllers
             string IsAddTitle_AcqGen = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "IsAddTitle_AcqGen").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.IsAddTitle_AcqGen = IsAddTitle_AcqGen;
 
+            var IsTitleDurationMandatory = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "IsTitleDurationMandatory").Select(w => w.Parameter_Value).SingleOrDefault();
+            ViewBag.IsTitleDurationMandatory = IsTitleDurationMandatory;
+
             if (IsConfirmingParty.ToUpper() == "Y")
             {
                 ViewBag.lstConfirmingParty = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active.ToUpper() == "Y").Select(x => new { Vendor_Code = x.Vendor_Code, Vendor_Name = x.Vendor_Name} ).ToList(), "Vendor_Code", "Vendor_Name").ToList();

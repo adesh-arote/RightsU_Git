@@ -1249,7 +1249,8 @@
             Error = "E";
         }
 
-        if ('@ViewBag.IsTitleDurationMandatory' == 'Y') {
+         var IsTitleDurationMandatory = $("#IsTitleDurationMandatory").val();
+         if (IsTitleDurationMandatory == 'Y') {
             if ($("#txtDuration").val() != undefined) {
                 if ($.trim($('#txtDuration').val()) != "")
                     hdnTxtDuration = $("#txtDuration").val();
@@ -1282,7 +1283,8 @@
             }
         }
 
-        if ($("#ddlDealType").val() == '@ViewBag.CodeForEmbeddedMusic') {
+       var CodeForEmbeddedMusic = $("#CodeForEmbeddedMusic").val();
+        if ($("#ddlDealType").val() == CodeForEmbeddedMusic) {
             if ($("#ddlMusicLabel").val() != "" && $("#ddlMusicLabel").val() != null) {
                 hdnMusicLabel = $("#ddlMusicLabel").val();
             }

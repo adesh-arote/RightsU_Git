@@ -1625,6 +1625,7 @@ namespace RightsU_Plus.Controllers
                 obj.Columns_Name = hdnExtendedColumnName;
                 obj.Name = hdnName;
 
+                gvExtended.Remove(obj);
 
                 int MapExtendedColumnCode = 0;
 
@@ -1799,23 +1800,23 @@ namespace RightsU_Plus.Controllers
                             }
                         }
 
-                        if (hdnType == "D")
-                        {
-                            lstAddedExtendedColumns.Remove(objMEc);
-                        }
+                        //if (hdnType == "D")
+                        //{
+                        //    lstAddedExtendedColumns.Remove(objMEc);
+                        //}
                     }
                     //}
                 }
                 catch
                 {
                     objMEc = lstAddedExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode).FirstOrDefault();
-                    if (objMEc != null)
-                    {
-                        if (hdnType == "D")
-                            objMEc.EntityState = State.Deleted;
-                        else
-                            objMEc.EntityState = State.Modified;
-                    }
+                    //if (objMEc != null)
+                    //{
+                    //    if (hdnType == "D")
+                    //        objMEc.EntityState = State.Deleted;
+                    //    else
+                    //        objMEc.EntityState = State.Modified;
+                    //}
                 }
 
             }
