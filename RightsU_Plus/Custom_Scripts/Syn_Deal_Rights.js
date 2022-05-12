@@ -828,6 +828,19 @@ $(document).ready(function () {
     $('#lbTitles').change(function () {
         debugger;
         showLoading();
+
+        var newPerLogic = $('#hdnAllow_Perpetual_Date_Logic').val();
+        if (newPerLogic == "Y") {
+            var Titles = $('#lbTitles').val() == null ? 0 : $('#lbTitles').val().length;
+            if (Titles == 1) {
+                $('#li_Perpetuity').show();
+                CalculatePerpetuityEndDate()
+            }
+            else {
+                $('#li_Perpetuity').hide();
+            }
+        }    
+
         SetTitleLanguage();
         var Rmode = $('#hdn_RMODE').val();
 
@@ -1050,12 +1063,12 @@ function CalculateTerm(startDate, endDate) {
         var FirstDay = new Date(y, m, 1);
         day = CalculateDaysBetweenTwoDates(FirstDay, endDate);
 
-        startDate.setMonth(startDate.getMonth() + month);
-        startDate.setYear(startDate.getYear() + year);
+        //startDate.setMonth(startDate.getMonth() + month);
+        //startDate.setYear(startDate.getYear() + year);
 
         m = startDate.getMonth(),
             y = startDate.getFullYear();
-        var LastDay = new Date(y, m + 1, 1);
+        var LastDay = new Date(y, m + 1, 0);
         day = day + CalculateDaysBetweenTwoDates(startDate, LastDay);
     }
     var term = parseInt(year) + '.' + month + "." + day;
@@ -1081,15 +1094,57 @@ function CalculateDaysBetweenTwoDates(startDate, endDate) {
     var diffDays = Math.round(Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay)))
     return diffDays;
 }
-function CalculatePerpetuityEndDate() {
+function CalculatePerpetuityEndDate(ValidateSave = "") {
+    debugger;
+    var newPerLogic = $('#hdnAllow_Perpetual_Date_Logic').val();
+    if (newPerLogic === "N") {
+        var strSD = $('#txtPerpetuity_Date').val();
+        if (strSD != '' && $('#hdnTerm_Perputity').val() != undefined && $('#hdnTerm_Perputity').val() != '' && $('#txtPerpetuity_EndDate').val() != undefined) {
+            var startDate = new Date(MakeDateFormate(strSD));
+            if (!isNaN(startDate)) {
+                var year = $('#hdnTerm_Perputity').val();
+                var endDate = CalculateEndDate(startDate, year, 0, 0);
+                $('#txtPerpetuity_EndDate').val(endDate);
+            }
+        }
+    }
+    else {
+        var Titles = $('#lbTitles').val() == null ? 0 : $('#lbTitles').val().length;
+        var perpetuityDate = $('#txtPerpetuity_Date').val();
+        if (ValidateSave == "Y") {
+            Titles = 1;
+        }
+        if (Titles == 1) {
 
-    var strSD = $('#txtPerpetuity_Date').val();
-    if (strSD != '' && $('#hdnTerm_Perputity').val() != undefined && $('#hdnTerm_Perputity').val() != '' && $('#txtPerpetuity_EndDate').val() != undefined) {
-        var startDate = new Date(MakeDateFormate(strSD));
-        if (!isNaN(startDate)) {
-            var year = $('#hdnTerm_Perputity').val();
-            var endDate = CalculateEndDate(startDate, year, 0, 0);
-            $('#txtPerpetuity_EndDate').val(endDate);
+            $.ajax({
+                type: "POST",
+                url: URL_GetPerpetuity_Logic_Date,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    perpetuityDate: perpetuityDate,
+                    titleCodes: $('#lbTitles').val(),
+                    callFromValidate: ValidateSave
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    if (ValidateSave == "Y") {
+
+                        if (result != "") {
+                            showAlert("E", result + " does not has Release Date.")
+                        }
+                    }
+                    else {
+                        $('#txtPer_Date_Logic_EndDate').val(result);
+                    }
+
+                },
+                error: function (x, e) {
+                }
+            });
         }
     }
 }
@@ -2344,6 +2399,19 @@ function ValidateSave() {
         if ($('#txtPerpetuity_EndDate').val() == "" || $('#txtPerpetuity_EndDate').val() == "DD/MM/YYYY") {
             IsValidSave = false;
             $("#txtPerpetuity_EndDate").attr('required', true);
+        }
+
+        var newPerLogic = $('#hdnAllow_Perpetual_Date_Logic').val();
+        if (newPerLogic = "Y") {
+            CalculatePerpetuityEndDate("Y");
+
+            var Titles = $('#lbTitles').val() == null ? 0 : $('#lbTitles').val().length;
+            if (Titles == 1) {
+                if ($('#txtPer_Date_Logic_EndDate').val() == "" || $('#txtPer_Date_Logic_EndDate').val() == "DD/MM/YYYY") {
+                    IsValidSave = false;
+                    $("#txtPer_Date_Logic_EndDate").attr('required', true);
+                }
+            }
         }
     }
 

@@ -179,6 +179,7 @@ namespace RightsU_Plus.Controllers
                 obj_Dictionary = TempData["QueryString_IPR"] as Dictionary<string, string>;
                 TempData.Keep("QueryString_IPR");
                 Mode = obj_Dictionary["MODE"];
+                ViewBag.Mode = Mode;
                 CurrentTab = obj_Dictionary["Tab"];
                 code = Convert.ToInt32(obj_Dictionary["IPR_Opp_Code"]);
             }
@@ -248,6 +249,8 @@ namespace RightsU_Plus.Controllers
                 var businessUnitCodes = objIPR_Opp.IPR_Opp_Business_Unit.Select(s => s.Business_Unit_Code).ToArray();
                 ViewBag.BusinessUnitList = new MultiSelectList(lstBusinessUnit, "Business_Unit_Code", "Business_Unit_Name", businessUnitCodes);
             }
+            ViewBag.CurrentLoginUserName = objLoginUser.First_Name + " " + objLoginUser.Last_Name;
+
 
             if (Mode != GlobalParams.DEAL_MODE_VIEW)
                 return View(objIPR_Opp);
@@ -740,6 +743,10 @@ namespace RightsU_Plus.Controllers
 
         public string Save(IPR_Opp iprOppInstance, FormCollection formCollectionInstance)
         {
+            if(Mode == "C")
+            {
+                iprOppInstance.IPR_Opp_Code = 0;
+            }
             return SaveRecord(iprOppInstance, formCollectionInstance);
         }
 

@@ -37,7 +37,13 @@ namespace RightsU_DAL
         public virtual ObjectResult<USP_List_Acq_Result> USP_List_Acq(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, Nullable<int> user_Code, string exactMatch, ObjectParameter recordCount)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_List_Acq(strSearch, pageNo, orderByCndition, isPaging, pageSize, recordCount, user_Code, exactMatch );
+            return objContext.USP_List_Acq(strSearch, pageNo, orderByCndition, isPaging, pageSize, recordCount, user_Code, exactMatch);
+        }
+
+        public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch,string Type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, Nullable<int> user_Code, string exactMatch, ObjectParameter recordCount)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Objection_Adv_List(strSearch, Type, pageNo, orderByCndition, isPaging, pageSize, recordCount, user_Code, exactMatch);
         }
 
         public ObjectResult<USP_List_Syn_Result> USP_List_Syn(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string ExactMatch)
@@ -58,7 +64,7 @@ namespace RightsU_DAL
             return objContext.USP_Get_Territory_ForDDL(IsThetrical);
         }
 
-        public ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name,string IS_Sport_Right)
+        public ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Get_Platform_Tree_Hierarchy(platformCodes, search_Platform_Name, IS_Sport_Right);
@@ -108,6 +114,23 @@ namespace RightsU_DAL
                 LstDeal_Rights_UDT, LstDeal_Rights_Title_UDT, LstDeal_Rights_Platform_UDT, LstDeal_Rights_Territory_UDT, LstDeal_Rights_Subtitling_UDT, LstDeal_Rights_Dubbing_UDT, CallFrom
                 );
         }
+
+        public IEnumerable<USP_Validate_Rev_HB_Duplication_UDT_Acq> USP_Validate_Rev_HB_Duplication_UDT(
+            List<Deal_Rights_UDT> LstDeal_Rights_UDT,
+            List<Deal_Rights_Title_UDT> LstDeal_Rights_Title_UDT,
+            List<Deal_Rights_Platform_UDT> LstDeal_Rights_Platform_UDT,
+            List<Deal_Rights_Territory_UDT> LstDeal_Rights_Territory_UDT,
+            List<Deal_Rights_Subtitling_UDT> LstDeal_Rights_Subtitling_UDT,
+            List<Deal_Rights_Dubbing_UDT> LstDeal_Rights_Dubbing_UDT
+            //string CallFrom
+            )
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Validate_Rev_HB_Duplication_UDT(
+                LstDeal_Rights_UDT, LstDeal_Rights_Title_UDT, LstDeal_Rights_Platform_UDT, LstDeal_Rights_Territory_UDT, LstDeal_Rights_Subtitling_UDT, LstDeal_Rights_Dubbing_UDT/*, CallFrom*/
+                );
+        }
+
         public IEnumerable<USP_Get_Data_Restriction_Remark_UDT> USP_Get_Data_Restriction_Remark_UDT(
             List<Deal_Rights_UDT> LstDeal_Rights_UDT,
             List<Deal_Rights_Title_UDT> LstDeal_Rights_Title_UDT,
@@ -290,6 +313,11 @@ namespace RightsU_DAL
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Get_Dashboard_Detail(dashboardType, searchFor, user_Code, dashboardDays);
+        }
+        public virtual ObjectResult<USP_Get_IPR_Dashboard_Details_Result> USP_Get_IPR_Dashboard_Detail(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_IPR_Dashboard_Detail(dashboardType, searchFor, user_Code, dashboardDays);
         }
 
         public virtual ObjectResult<string> USP_Get_Title_Language(string title_Codes)
@@ -744,6 +772,12 @@ namespace RightsU_DAL
             return objContext.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code, DM_Master_Import_Code);
         }
 
+        public IEnumerable<USP_Validate_Title_Objection_Dup> USP_Validate_Title_Objection_Dup(List<Title_Objection_UDT> LstTitle_Objection_UDT, int User_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Validate_Title_Objection_Dup(LstTitle_Objection_UDT, User_Code);
+        }
+
 
         public virtual ObjectResult<USP_Get_Termination_Title_Data_Result> USP_Get_Termination_Title_Data(Nullable<int> deal_Code, string type)
         {
@@ -863,6 +897,11 @@ namespace RightsU_DAL
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Get_Acq_PreReq(data_For, call_From, loginUserCode, acq_Deal_Code, deal_Type_Code, businessUnitCode);
+        }
+        public virtual ObjectResult<USP_Title_Objection_Adv_PreReq_Result> USP_Title_Objection_Adv_PreReq(string type)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Objection_Adv_PreReq(type);
         }
 
         public virtual ObjectResult<USP_Get_Acq_PreReq_Result> USP_Get_Syn_PreReq(string data_For, string call_From, Nullable<int> loginUserCode, Nullable<int> syn_Deal_Code, Nullable<int> deal_Type_Code, Nullable<int> businessUnitCode)
@@ -1209,7 +1248,7 @@ namespace RightsU_DAL
         public virtual ObjectResult<USP_List_Music_Deal_Result> USP_List_Music_Deal(string searchText, string agreement_No, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate, string deal_Type_Code, string status_Code, Nullable<int> business_Unit_Code, Nullable<int> deal_Tag_Code, string workflow_Status, string vendor_Codes, string show_Type_Code, string title_Code, string music_Label_Codes, string isAdvance_Search, Nullable<int> user_Code, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_List_Music_Deal(searchText, agreement_No, startDate, endDate, deal_Type_Code, status_Code, business_Unit_Code, deal_Tag_Code,  workflow_Status, vendor_Codes, show_Type_Code, title_Code, music_Label_Codes, isAdvance_Search, user_Code, pageNo, pageSize, recordCount);
+            return objContext.USP_List_Music_Deal(searchText, agreement_No, startDate, endDate, deal_Type_Code, status_Code, business_Unit_Code, deal_Tag_Code, workflow_Status, vendor_Codes, show_Type_Code, title_Code, music_Label_Codes, isAdvance_Search, user_Code, pageNo, pageSize, recordCount);
         }
 
         public virtual ObjectResult<USP_Music_Deal_Link_Show_Result> USP_Music_Deal_Link_Show(string channel_Code, string title_Name, string mode, Nullable<int> music_Deal_Code, string selectedTitleCodes)
@@ -1477,7 +1516,7 @@ namespace RightsU_DAL
         public virtual ObjectResult<USP_List_Title_Milestone_Result> USP_List_Title_Milestone(Nullable<int> pageNo, ObjectParameter recordCount, string pagingRequired, Nullable<int> pageSize, Nullable<int> titleCode)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_List_Title_Milestone(pageNo, recordCount,  pagingRequired, pageSize,  titleCode);
+            return objContext.USP_List_Title_Milestone(pageNo, recordCount, pagingRequired, pageSize, titleCode);
         }
         public virtual ObjectResult<string> USPMHGetMaxVendorCodes(string lastRequiredDate, string dealTypeCode, string businessUnitCode)
         {
@@ -1528,7 +1567,7 @@ namespace RightsU_DAL
         public virtual ObjectResult<USP_List_MusicTrackBulkImport_Result> USP_List_MusicTrackBulkImport(Nullable<int> dM_Master_Import_Code, string searchCriteria, string musicTrack, string movieAlbum, string musicLabel, string titleLanguage, string starCast, string singer, string status, string errorMsg, string musicAlbumType, string genres, Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_List_MusicTrackBulkImport(dM_Master_Import_Code, searchCriteria, musicTrack, movieAlbum, musicLabel, titleLanguage, starCast, singer, status,errorMsg, musicAlbumType, genres, pageNo, pageSize, recordCount);
+            return objContext.USP_List_MusicTrackBulkImport(dM_Master_Import_Code, searchCriteria, musicTrack, movieAlbum, musicLabel, titleLanguage, starCast, singer, status, errorMsg, musicAlbumType, genres, pageNo, pageSize, recordCount);
         }
         public virtual ObjectResult<USPExportToExcelBulkImport_Result> USPExportToExcelBulkImport(Nullable<int> dM_Master_Import_Code, string searchCriteria, string file_Type)
         {
@@ -1572,6 +1611,18 @@ namespace RightsU_DAL
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Get_Title_Import_Utility_AdvSearch(dM_Master_Import_Code, callFor);
+        }
+
+        public virtual ObjectResult<USP_Title_Objection_List_Result> USP_Title_Objection_List(string callFrom, string title_Codes, string licensor_Codes)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Objection_List(callFrom, title_Codes, licensor_Codes);
+        }
+
+        public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type, string pCodes)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type, pCodes);
         }
 
     }

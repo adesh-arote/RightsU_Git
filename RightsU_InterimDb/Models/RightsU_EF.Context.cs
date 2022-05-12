@@ -428,6 +428,12 @@ namespace RightsU_InterimDb.Models
         public DbSet<DM_Title_Resolve_Conflict> DM_Title_Resolve_Conflict { get; set; }
         public DbSet<Music_Title> Music_Title { get; set; }
         public DbSet<Platform_Broadcast> Platform_Broadcast { get; set; }
+        public DbSet<Title_Objection> Title_Objection { get; set; }
+        public DbSet<Title_Objection_Platform> Title_Objection_Platform { get; set; }
+        public DbSet<Title_Objection_Rights_Period> Title_Objection_Rights_Period { get; set; }
+        public DbSet<Title_Objection_Status> Title_Objection_Status { get; set; }
+        public DbSet<Title_Objection_Territory> Title_Objection_Territory { get; set; }
+        public DbSet<Title_Objection_Type> Title_Objection_Type { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {
@@ -4939,6 +4945,111 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("CallFor", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_Import_Utility_AdvSearch_Result>("USP_Get_Title_Import_Utility_AdvSearch", dM_Master_Import_CodeParameter, callForParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_IPR_Dashboard_Details_Result> USP_Get_IPR_Dashboard_Details(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            var dashboardTypeParameter = dashboardType != null ?
+                new ObjectParameter("DashboardType", dashboardType) :
+                new ObjectParameter("DashboardType", typeof(string));
+    
+            var searchForParameter = searchFor != null ?
+                new ObjectParameter("SearchFor", searchFor) :
+                new ObjectParameter("SearchFor", typeof(string));
+    
+            var user_CodeParameter = user_Code.HasValue ?
+                new ObjectParameter("User_Code", user_Code) :
+                new ObjectParameter("User_Code", typeof(int));
+    
+            var dashboardDaysParameter = dashboardDays.HasValue ?
+                new ObjectParameter("DashboardDays", dashboardDays) :
+                new ObjectParameter("DashboardDays", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_IPR_Dashboard_Details_Result>("USP_Get_IPR_Dashboard_Details", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
+        }
+    
+        public virtual ObjectResult<USP_Title_Objection_List_Result> USP_Title_Objection_List(string callFrom, string title_Codes, string licensor_Codes)
+        {
+            var callFromParameter = callFrom != null ?
+                new ObjectParameter("CallFrom", callFrom) :
+                new ObjectParameter("CallFrom", typeof(string));
+    
+            var title_CodesParameter = title_Codes != null ?
+                new ObjectParameter("Title_Codes", title_Codes) :
+                new ObjectParameter("Title_Codes", typeof(string));
+    
+            var licensor_CodesParameter = licensor_Codes != null ?
+                new ObjectParameter("Licensor_Codes", licensor_Codes) :
+                new ObjectParameter("Licensor_Codes", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_List_Result>("USP_Title_Objection_List", callFromParameter, title_CodesParameter, licensor_CodesParameter);
+        }
+    
+        public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type, string pCodes)
+        {
+            var titleCodeParameter = titleCode.HasValue ?
+                new ObjectParameter("TitleCode", titleCode) :
+                new ObjectParameter("TitleCode", typeof(int));
+    
+            var record_CodeParameter = record_Code.HasValue ?
+                new ObjectParameter("Record_Code", record_Code) :
+                new ObjectParameter("Record_Code", typeof(int));
+    
+            var record_TypeParameter = record_Type != null ?
+                new ObjectParameter("Record_Type", record_Type) :
+                new ObjectParameter("Record_Type", typeof(string));
+    
+            var pCodesParameter = pCodes != null ?
+                new ObjectParameter("PCodes", pCodes) :
+                new ObjectParameter("PCodes", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_PreReq_Result>("USP_Title_Objection_PreReq", titleCodeParameter, record_CodeParameter, record_TypeParameter, pCodesParameter);
+        }
+    
+        public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch, string type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string exactMatch)
+        {
+            var strSearchParameter = strSearch != null ?
+                new ObjectParameter("StrSearch", strSearch) :
+                new ObjectParameter("StrSearch", typeof(string));
+    
+            var typeParameter = type != null ?
+                new ObjectParameter("Type", type) :
+                new ObjectParameter("Type", typeof(string));
+    
+            var pageNoParameter = pageNo.HasValue ?
+                new ObjectParameter("PageNo", pageNo) :
+                new ObjectParameter("PageNo", typeof(int));
+    
+            var orderByCnditionParameter = orderByCndition != null ?
+                new ObjectParameter("OrderByCndition", orderByCndition) :
+                new ObjectParameter("OrderByCndition", typeof(string));
+    
+            var isPagingParameter = isPaging != null ?
+                new ObjectParameter("IsPaging", isPaging) :
+                new ObjectParameter("IsPaging", typeof(string));
+    
+            var pageSizeParameter = pageSize.HasValue ?
+                new ObjectParameter("PageSize", pageSize) :
+                new ObjectParameter("PageSize", typeof(int));
+    
+            var user_CodeParameter = user_Code.HasValue ?
+                new ObjectParameter("User_Code", user_Code) :
+                new ObjectParameter("User_Code", typeof(int));
+    
+            var exactMatchParameter = exactMatch != null ?
+                new ObjectParameter("ExactMatch", exactMatch) :
+                new ObjectParameter("ExactMatch", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_Adv_List_Result>("USP_Title_Objection_Adv_List", strSearchParameter, typeParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, exactMatchParameter);
+        }
+    
+        public virtual ObjectResult<USP_Title_Objection_Adv_PreReq_Result> USP_Title_Objection_Adv_PreReq(string type)
+        {
+            var typeParameter = type != null ?
+                new ObjectParameter("Type", type) :
+                new ObjectParameter("Type", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_Adv_PreReq_Result>("USP_Title_Objection_Adv_PreReq", typeParameter);
         }
     }
 }

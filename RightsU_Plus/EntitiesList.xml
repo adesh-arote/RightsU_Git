@@ -2,7 +2,7 @@
   <Entity>
     <ShortName>VMP</ShortName>
     <FullName>Viacom18 Motion Pictures</FullName>
-    <DatabaseName>RightsU_Plus_Testing</DatabaseName>
+    <DatabaseName>Rightsu_Plus_testing</DatabaseName>
     <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
   </Entity>

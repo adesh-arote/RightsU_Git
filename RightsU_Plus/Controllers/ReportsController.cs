@@ -440,7 +440,7 @@ namespace RightsU_Plus.Controllers
             if (!string.IsNullOrEmpty(keyword))
             {
                 List<string> terms = keyword.Split('﹐').ToList();
-               
+
                 terms = terms.Select(s => s.Trim()).ToList();
                 string searchString = terms.LastOrDefault().ToString().Trim();
 
@@ -463,6 +463,31 @@ namespace RightsU_Plus.Controllers
                 rights = lstRights.FirstOrDefault();
 
             return rights;
+        }
+        #endregion
+        #region--- IPR Report ---
+        public ActionResult IPRReport()
+        {
+            ViewBag.Applicant = new SelectList(new IPR_ENTITY_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList(), "Entity", "Entity").ToList();
+            ViewBag.IPRClass = new SelectList(new IPR_CLASS_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parent_Class_Code == 0).ToList(), "Description", "Description").ToList();
+
+            return View("~/Views/Reports/IPR_Report.cshtml");
+        }
+
+        public PartialViewResult BindIPRReport(string Trademark, string Applicant, string RegDate, string ExpiryDate, string IntDom, string ClassCode)
+        {
+            ReportParameter[] parm = new ReportParameter[7];
+            parm[0] = new ReportParameter("Trademark", Trademark ?? " ");
+            parm[1] = new ReportParameter("Registration_Date", GlobalUtil.MakedateFormat(RegDate));
+            parm[2] = new ReportParameter("Renewed_Until", GlobalUtil.MakedateFormat(ExpiryDate));
+            parm[3] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+            parm[4] = new ReportParameter("Organization", Applicant ?? " ");
+            parm[5] = new ReportParameter("Class", ClassCode == ""? "00" : ClassCode);
+            parm[6] = new ReportParameter("IntDom", IntDom ?? "D");
+
+            ReportViewer rptViewer = BindReport(parm, "rptIPR_IntDom_Report");
+            ViewBag.ReportViewer = rptViewer;
+            return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }
         #endregion
 
@@ -2584,6 +2609,10 @@ namespace RightsU_Plus.Controllers
                 {
                     UTOFrameWork.FrameworkClasses.ReportSetting objRS = new UTOFrameWork.FrameworkClasses.ReportSetting();
                     rptViewer.ServerReport.ReportPath = objRS.GetReport(ReportName);
+                    if (ReportName == "rptIPR_IntDom_Report")
+                    {
+                        rptViewer.ServerReport.DisplayName = "rptIPR_Report";
+                    }
                 }
                 rptViewer.Visible = true;
                 rptViewer.ProcessingMode = ProcessingMode.Remote;
@@ -2968,7 +2997,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserName = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Users_Code", "First_Name").ToList();
 
             ViewBag.status = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Tag_Code > 0), "Deal_Tag_Code", "Deal_Tag_Description").ToList();
-            ViewBag.AcquisitionDeal = new SelectList(new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit.Users_Business_Unit.All(u => u.Users_Code == objLoginUser.Users_Code))).ToList();
+            ViewBag.AcquisitionDeal = new SelectList(new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit.Users_Business_Unit.All(u => u.Users_Code == objLoginUser.Users_Code)).Distinct()).ToList();
+
+            ViewBag.DealWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x=> true).Select(x=> new { x.Deal_Workflow_Status_Name,x.Deal_WorkflowFlag}).Distinct(), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name").ToList();
+
             if (rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllBusinessUnit + "~") && rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllRegionalGEC + "~"))
             {
                 ViewBag.BusinessUnitList = GetBusinessUnitList(true, true);
@@ -3002,7 +3034,7 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        public PartialViewResult BindDealStatusReport(string dealCode, string businessUnitcode, string dateformat, string acqDealCode, string userName, string startDate, string endDate, bool isExpiredDeal)
+        public PartialViewResult BindDealStatusReport(string dealCode, string businessUnitcode, string dateformat, string acqDealCode, string userName, string startDate, string endDate, bool isExpiredDeal, string dealWorkflowStatus)
         {
             ReportViewer rptViewer = new ReportViewer();
             try
@@ -3013,7 +3045,7 @@ namespace RightsU_Plus.Controllers
 
                 if (dealCode == GlobalParams.ModuleCodeForAcqDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[9];
+                    ReportParameter[] parm = new ReportParameter[10];
                     parm[0] = new ReportParameter("ModuleCode", dealCode);
                     parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
                     parm[2] = new ReportParameter("UserCode", userName);
@@ -3023,11 +3055,12 @@ namespace RightsU_Plus.Controllers
                     parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
                     parm[7] = new ReportParameter("DateFormat", dateformat);
                     parm[8] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    parm[9] = new ReportParameter("DealWorkflowStatus", dealWorkflowStatus);
                     rptViewer = BindReport(parm, "rptDealStatusReport");
                 }
                 else if (dealCode == GlobalParams.ModuleCodeForSynDeal.ToString())
                 {
-                    ReportParameter[] parm = new ReportParameter[9];
+                    ReportParameter[] parm = new ReportParameter[10];
                     parm[0] = new ReportParameter("ModuleCode", dealCode);
                     parm[1] = new ReportParameter("BusinessUnitcode", businessUnitcode);
                     parm[2] = new ReportParameter("UserCode", userName);
@@ -3037,6 +3070,7 @@ namespace RightsU_Plus.Controllers
                     parm[6] = new ReportParameter("Show_Expired", strShowExpiredDeals);
                     parm[7] = new ReportParameter("DateFormat", dateformat);
                     parm[8] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                    parm[9] = new ReportParameter("DealWorkflowStatus", dealWorkflowStatus);
                     rptViewer = BindReport(parm, "rptDealStatusReport");
                 }
             }
@@ -3049,13 +3083,13 @@ namespace RightsU_Plus.Controllers
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }
 
-        public  JsonResult BindUserDropdown(string businessUnitcode)
+        public JsonResult BindUserDropdown(string businessUnitcode)
         {
             dynamic result = "";
             string[] arr_BUCodes = businessUnitcode.Split(',');
 
 
-            int[] arrUsers =  new Users_Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arr_BUCodes.Contains(x.Business_Unit_Code.ToString())).Select(s => s.Users_Code ?? 0).ToArray();
+            int[] arrUsers = new Users_Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arr_BUCodes.Contains(x.Business_Unit_Code.ToString())).Select(s => s.Users_Code ?? 0).ToArray();
 
             result = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && arrUsers.Contains(x.Users_Code)), "Users_Code", "First_Name").ToList();
 

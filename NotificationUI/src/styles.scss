@@ -1,0 +1,170 @@
+/* You can add global styles to this file, and also import other style files */
+:host ::ng-deep .showScroll .p-overflow-hidden {
+  overflow: visible !important;
+}
+
+.error-messages-style {
+  font-family: WorkSans-Regular;
+  font-size: 15px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #d0021b !important;
+  padding-inline-start: 1px;
+}
+
+
+.error-msgs {
+  color: #d0021b;
+  font-size: 11px;
+  font-weight: 100;
+  padding: 1% 1%;
+}
+
+.toasterStyle {
+  font-family: WorkSans-Medium !important;
+  font-size: 14px !important;
+}
+
+.p-toast {
+  width: 20em !important;
+  opacity: 1.9;
+}
+
+//   .p-toast .p-toast-message.p-toast-message-success {
+//     background: #20d515;
+//     border: solid #439446;
+//     border-width: 0 0 0 6px;
+//     color: #161a16;
+// }
+:root {
+  // Colors
+  --foreground-default: #08090a;
+  --foreground-text: #ffffff;
+  --foreground-nav: #ffffff;
+  --icons-hover-color: #268cca;
+  --leftpan-text-default-color: #0a5888;
+  --my-title-color: #0a5888;
+  --background-default: #f4f9fd;
+  --background-nav: #2893d3;
+  --background-transparent: transparent;
+  --background-image: linear-gradient( to right, #e3f8ff, rgba(255, 255, 255, 0) 99% );
+  --navbar-background-default: #117ab8;
+  // Font
+  --font-weight-normal: normal;
+  --font-weight-bold: bold;
+  --font-stretch: normal;
+  --font-style: normal;
+  --letter-spacing: normal;
+  --line-height: normal;
+  --text-align-center: center;
+  --display-block: block;
+  --display-inline-block: inline-block;
+}
+
+.sidebar-collapse > tr > td > a.next {
+  padding: 3px 3px;
+  width: 20%;
+  height: 40%;
+  text-align: var(--text-align-center);
+  text-decoration: none;
+  display: var(--display-inline-block);
+  background: #ffffff;
+  margin: 0 auto;
+}
+
+div.sidebar-collapse {
+  overflow-y: auto;
+  margin: 5px -10px;
+  background-color: #fff;
+
+  &:nth-last-child(3),
+  :nth-last-child(1),
+  :nth-last-child(2) {
+    margin-bottom: 0px !important;
+  }
+
+  i {
+    display: var(--display-block);
+    line-height: var(--line-height);
+    text-align: var(--text-align-center);
+    font-size: 18px;
+    margin-top: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    max-width: 60px;
+  }
+
+  a {
+    &.next {
+      padding: 3px 3px;
+      text-decoration: none;
+      text-align: var(--text-align-center);
+      width: 20%;
+      height: 40%;
+      margin: 0 auto;
+      border-radius: 10px;
+    }
+
+    & span {
+      padding: 3px 0 3px 0;
+      display: var(--display-block);
+      font-size: 11px;
+      font-weight: bold;
+      text-align: var(--text-align-center);
+      color: black;
+      font-family: WorkSans-Regular;
+      max-width: 60px;
+      background: none;
+    }
+  }
+
+  & div.menu-item {
+    height: 47px;
+    width: 75px;
+    max-width: 100px;
+
+    &:hover {
+      background-image: var(--background-image);
+      background-color: var(--icons-hover-color);
+    }
+  }
+
+  & div.menu-item-current-module {
+    background-image: var(--background-image);
+    border-radius: 5px;
+    display: inline-block;
+    color: var(--icons-hover-color) !important;
+  }
+
+  div > a.current-module {
+    color: black;
+    text-decoration: none;
+
+    & span {
+      font-family: WorkSans-Bold;
+      font-size: 12px;
+      background: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.p-tooltip {
+  max-width: fit-content;
+}
+
+.tblFormat {
+  border: 1px solid black;
+}
+
+.tblHead {
+  border: 1px solid black;
+}
+
+.tblData {
+  border: 1px solid black;
+}

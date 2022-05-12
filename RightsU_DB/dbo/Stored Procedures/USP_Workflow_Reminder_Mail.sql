@@ -9,7 +9,7 @@ BEGIN
 		DECLARE @EmailBody NVARCHAR(max)='',@EmailBody1 NVARCHAR(max)='',@EmailBody2 NVARCHAR(max)='',@MailSubject NVARCHAR(Max), @DatabaseEmailProfile NVARCHAR(25), @EmailHeader NVARCHAR(max)='',
 		@EmailFooter NVARCHAR(max)='', @users NVARCHAR(max), @UsersEmailId NVARCHAR(max),@Users_Email_id NVARCHAR(max),@Business_Unit_Code INT, @Title_Name NVARCHAR(max)
 		, @Agreement_No NVARCHAR(max), @Deal_Desc NVARCHAR(max),@Email_Id NVARCHAR(MAX),@Vender_Name NVARCHAR(500), @Agreement_Date NVARCHAR(max), @Is_Daily CHAR(1)
-		,@Days INT, @Bu_Name NVARCHAR(100) 
+		,@Days INT, @Bu_Name NVARCHAR(100), @Email_Config_Code INT
 
 	DECLARE @Mail_alert_days INT = 7
 	SELECT @DatabaseEmailProfile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'  
@@ -43,6 +43,10 @@ BEGIN
 			EmailId NVARCHAR(MAX)
 		)
 
+		SELECT @Email_Config_Code= Email_Config_Code FROM Email_Config WHERE [Key]='ARE'
+
+		DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT 
+
 		INSERT INTO @ENL (BUCode, User_Code, EmailId)
 		EXEC USP_Get_EmailConfig_Users 'ARE', 'Y'
 
@@ -64,30 +68,18 @@ BEGIN
 	INNER JOIN Business_Unit BU ON BU.Business_Unit_Code=AD.Business_Unit_Code AND BU.Is_Active='Y'
 	INNER JOIN Workflow_Module_Role WMR ON WMR.Workflow_Module_Code=WM.Workflow_Module_Code AND WMR.Group_Code=MWD.Group_Code AND WMR.Group_Level=MWD.Role_Level
 	LEFT JOIN #TmpEmail_Config DEE ON DEE.BUCode= AD.Business_Unit_Code
-	WHERE MWD.Module_Workflow_Detail_Code IN(
-		SELECT MIN(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail
-		WHERE Is_Done='N' and Module_Code = 30
-		GROUP BY Record_Code,Module_Code,Is_Done
-	) AND MSH.Module_Status_Code IN (
-		SELECT MAX(Module_Status_Code) FROM Module_Status_History WHERE Module_Code = 30 AND Record_Code IN (
-			SELECT Acq_Deal_Code FROM Acq_Deal WHERE Deal_Workflow_Status = 'W'
-		)
-		GROUP BY Record_Code
-	) --AND MSH.Status = 'W'
-	AND (
-		(
-			(
-				(DATEADD(d, @Mail_alert_days, MSH.Status_Changed_On) <= GETDATE()) OR
-				(DATEDIFF(d, MSH.Status_Changed_On, GETDATE()) > @Mail_alert_days)
-			) AND @Is_Daily='Y'
-		) OR (
-			(
-				(dateadd(d, @Mail_alert_days, MSH.Status_Changed_On)=GETDATE()) OR
-				(DATEDIFF(d,MSH.Status_Changed_On,GETDATE())=@Mail_alert_days)
-			) AND @Is_Daily = 'N'
-		)
-	)
-
+	WHERE MWD.Module_Workflow_Detail_Code IN(  
+	  SELECT MIN(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail  
+	  WHERE Is_Done='N' and Module_Code = 30  
+	  GROUP BY Record_Code,Module_Code,Is_Done  
+	 ) AND MSH.Module_Status_Code IN (  
+	  SELECT MAX(Module_Status_Code) FROM Module_Status_History WHERE Module_Code = 30 AND Record_Code IN (  
+	   SELECT Acq_Deal_Code FROM Acq_Deal WHERE Deal_Workflow_Status = 'W'  
+	  )  
+	  GROUP BY Record_Code  
+	 ) --AND MSH.Status = 'W'  
+	 AND (MSH.Status_Changed_On <= getdate())  
+	 --AND DEE.Alert_Type='W'  
 
 	SELECT DISTINCT MWD.Record_Code, ISNULL(DEE.Users_Email_id,'') + ';' +
 	   STUFF(( SELECT DISTINCT  ';' + U.Email_Id FROM Users U
@@ -104,29 +96,19 @@ BEGIN
 	INNER JOIN Business_Unit BU ON BU.Business_Unit_Code=SD.Business_Unit_Code AND BU.Is_Active='Y'
 	INNER JOIN Workflow_Module_Role WMR ON WMR.Workflow_Module_Code=WM.Workflow_Module_Code AND WMR.Group_Code=MWD.Group_Code AND WMR.Group_Level=MWD.Role_Level
 	LEFT JOIN #TmpEmail_Config DEE ON DEE.BUCode= SD.Business_Unit_Code
-	WHERE MWD.Module_Workflow_Detail_Code IN(
-		SELECT MIN(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail
-		WHERE Is_Done='N' and Module_Code = 35
-		GROUP BY Record_Code,Module_Code,Is_Done
-	) AND  MSH.Module_Status_Code IN (
-		SELECT MAX(Module_Status_Code) FROM Module_Status_History WHERE Module_Code = 35 AND Record_Code IN (
-			SELECT Syn_Deal_Code FROM Syn_Deal WHERE Deal_Workflow_Status = 'W'
-		)
-		GROUP BY Record_Code
-	) --AND MSH.Status = 'W')
-	AND (
-		(
-			(
-				(DATEADD(d, @Mail_alert_days, MSH.Status_Changed_On) <= GETDATE()) OR
-				(DATEDIFF(d, MSH.Status_Changed_On, GETDATE()) > @Mail_alert_days)
-			) AND @Is_Daily='Y'
-		) OR (
-			(
-				(dateadd(d, @Mail_alert_days, MSH.Status_Changed_On)=GETDATE()) OR
-				(DATEDIFF(d,MSH.Status_Changed_On,GETDATE())=@Mail_alert_days)
-			) AND @Is_Daily = 'N'
-		)
-	)
+	 WHERE MWD.Module_Workflow_Detail_Code IN(  
+  SELECT MIN(Module_Workflow_Detail_Code) FROM Module_Workflow_Detail  
+  WHERE Is_Done='N' and Module_Code = 35  
+  GROUP BY Record_Code,Module_Code,Is_Done  
+ ) AND  MSH.Module_Status_Code IN (  
+  SELECT MAX(Module_Status_Code) FROM Module_Status_History WHERE Module_Code = 35 AND Record_Code IN (  
+   SELECT Syn_Deal_Code FROM Syn_Deal WHERE Deal_Workflow_Status = 'W'  
+  )  
+  GROUP BY Record_Code  
+ ) --AND MSH.Status = 'W')  
+ AND (MSH.Status_Changed_On <= getdate())  
+ --AND DEE.Alert_Type='W'  
+  
 
 
 	IF EXISTS(SELECT * FROM #TempA)
@@ -233,12 +215,17 @@ BEGIN
 			--select @EmailDetails,@Email_Id
 			IF(@EmailDetails!='')
 			BEGIN
-					EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
-					@recipients =  @Email_Id,
-					@subject = @MailSubject,
-					@body = @EmailDetails, 
-					--@blind_copy_recipients = 'adesh@uto.in;vishal.onkar@uto.in',
-					@body_format = 'HTML';
+					--EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
+					--@recipients =  @Email_Id,
+					--@subject = @MailSubject,
+					--@body = @EmailDetails, 
+					----@blind_copy_recipients = 'adesh@uto.in;vishal.onkar@uto.in',
+					--@body_format = 'HTML';
+
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code, @EmailDetails, ISNULL(@Email_Id ,''), @MailSubject
+
+
 			END
 			SEt @EmailDetails='' 	
 			SET @EmailBody=''
@@ -363,11 +350,15 @@ BEGIN
 		IF(@EmailDetails!='')
 		BEGIN
 
-			EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
-				@recipients = @Email_Id,
-				@subject = @MailSubject,
-				@body = @EmailDetails, 
-				@body_format = 'HTML';
+			--EXEC msdb.dbo.sp_send_dbmail @profile_name = @DatabaseEmailProfile,
+			--	@recipients = @Email_Id,
+			--	@subject = @MailSubject,
+			--	@body = @EmailDetails, 
+			--	@body_format = 'HTML';
+
+				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_User_Mail_Id, [Subject])
+				SELECT @Email_Config_Code, @EmailDetails, ISNULL(@Email_Id ,''), @MailSubject
+
 		END
 		SEt @EmailDetails='' 	
 		SET @EmailBody=''

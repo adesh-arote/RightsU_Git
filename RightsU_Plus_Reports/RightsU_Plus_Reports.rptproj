@@ -78,6 +78,7 @@
     <Report Include="rptDealExpiry.rdl" />
     <Report Include="rptDealStatusReport.rdl" />
     <Report Include="rptExportToExcelBulkImport.rdl" />
+    <Report Include="rptIPR_IntDom.rdl" />
     <Report Include="rptListIPR.rdl" />
     <Report Include="rptListIPROpp.rdl" />
     <Report Include="rptListMasters.rdl" />

@@ -223,7 +223,7 @@
 
 
                         </td>
-                        <td class="applicant_action">
+                        <td class="applicant_action">    
                             @if (@objIPROppList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
                             {
                                 <a title="View" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Opp_Code = objIPROppList.IPR_Opp_Code })"></a>

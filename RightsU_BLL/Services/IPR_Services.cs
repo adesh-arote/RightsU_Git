@@ -284,6 +284,61 @@ namespace RightsU_BLL
         }
     }
 
+    public class IPR_REP_Class_Service : BusinessLogic<IPR_REP_CLASS>
+    {
+        private readonly IPR_REP_CLass_Repository objIPRRR;
+        //public IPR_REP_Service()
+        //{
+        //    this.objIPRRR = new IPR_REP_Repository(DBConnection.Connection_Str);
+        //}
+        public IPR_REP_Class_Service(string Connection_Str)
+        {
+            this.objIPRRR = new IPR_REP_CLass_Repository(Connection_Str);
+        }
+        public IQueryable<IPR_REP_CLASS> SearchFor(Expression<Func<IPR_REP_CLASS, bool>> predicate)
+        {
+            return objIPRRR.SearchFor(predicate);
+        }
+
+        public IPR_REP_CLASS GetById(int id)
+        {
+            return objIPRRR.GetById(id);
+        }
+
+        public bool Save(IPR_REP_CLASS objIPRR, out dynamic resultSet)
+        {
+            return base.Save(objIPRR, objIPRRR, out resultSet);
+        }
+
+        public bool Update(IPR_REP_CLASS objIPRR, out dynamic resultSet)
+        {
+            return base.Update(objIPRR, objIPRRR, out resultSet);
+        }
+
+        public bool Delete(IPR_REP_CLASS objIPRR, out dynamic resultSet)
+        {
+            return base.Delete(objIPRR, objIPRRR, out resultSet);
+        }
+
+        public override bool Validate(IPR_REP_CLASS objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(IPR_REP_CLASS objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(IPR_REP_CLASS objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
     public class IPR_Opp_Service : BusinessLogic<IPR_Opp>
     {
         private readonly IPR_Opp_Repository objRepository;

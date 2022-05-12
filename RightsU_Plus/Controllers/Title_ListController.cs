@@ -414,7 +414,7 @@ namespace RightsU_Plus.Controllers
             objPage_Properties.ProgramCode_Search = "";
             objPage_Properties.Column_Name = "";
         }
-        public PartialViewResult BindLanguage()
+        public PartialViewResult BindLanguage(int DealTypeCode = 0, string fromAcqGeneral = "N")
         {
             objTitle = new RightsU_Entities.Title();
 
@@ -454,6 +454,8 @@ namespace RightsU_Plus.Controllers
                 ViewBag.DealTypeCodeSearch = "0";
             ViewBag.PageSizeCreate = recordPerPage;
             ViewBag.CodeForEmbeddedMusic = GlobalParams.CodeForEmbeddedMusic;
+            ViewBag.DealTypeCode = DealTypeCode;
+            ViewBag.fromAcqGeneral = fromAcqGeneral;
             return PartialView("_Create", objTitle);
         }
         private List<SelectListItem> BindMusicLabel()

@@ -2355,6 +2355,131 @@ namespace RightsU_BLL
             return true;
         }
     }
+    public class Deal_Description_Service : BusinessLogic<Deal_Description>
+    {
+        private readonly Deal_Description_Repository objRepository;
+
+        public Deal_Description_Service(string Connection_Str)
+        {
+            this.objRepository = new Deal_Description_Repository(Connection_Str);
+        }
+        public IQueryable<Deal_Description> SearchFor(Expression<Func<Deal_Description, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Deal_Description GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Deal_Description objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Deal_Description objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Deal_Description objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Deal_Description objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Deal_Description objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        public override bool ValidateDelete(Deal_Description objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Deal_Description objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Deal_Desc_Name == objToValidate.Deal_Desc_Name && s.Deal_Desc_Code != objToValidate.Deal_Desc_Code && s.Type == objToValidate.Type).Count() > 0)
+            {
+                resultSet = "Deal Description already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Title_Objection_Type_Service : BusinessLogic<Title_Objection_Type>
+    {
+        private readonly Objection_Type_Repository objRepository;
+
+        public Title_Objection_Type_Service(string Connection_Str)
+        {
+            this.objRepository = new Objection_Type_Repository(Connection_Str);
+        }
+        public IQueryable<Title_Objection_Type> SearchFor(Expression<Func<Title_Objection_Type, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Type GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Title_Objection_Type objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Title_Objection_Type objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Title_Objection_Type objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Title_Objection_Type objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Title_Objection_Type objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        public override bool ValidateDelete(Title_Objection_Type objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Title_Objection_Type objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Objection_Type_Name == objToValidate.Objection_Type_Name && s.Objection_Type_Code != objToValidate.Objection_Type_Code).Count() > 0)
+            {
+                resultSet = "Title Objection Type already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
     public class Grade_Master_Service : BusinessLogic<Grade_Master>
     {
         private readonly Grade_Master_Repository objRepository;
@@ -6679,27 +6804,6 @@ namespace RightsU_BLL
             return true;
         }
     }
-
-    public class Deal_Description_Service
-    {
-        private readonly Deal_Description_Repository obj_Repository;
-
-        public Deal_Description_Service(string Connection_Str)
-        {
-            this.obj_Repository = new Deal_Description_Repository(Connection_Str);
-        }
-
-        public IQueryable<Deal_Description> SearchFor(Expression<Func<Deal_Description, bool>> predicate)
-        {
-            return obj_Repository.SearchFor(predicate);
-        }
-
-        public Deal_Description GetById(int id)
-        {
-            return obj_Repository.GetById(id);
-        }
-    }
-
     public class Deal_Segment_Service
     {
         private readonly Deal_Segment_Repository obj_Repository;
@@ -6858,6 +6962,203 @@ namespace RightsU_BLL
 
             resultSet = "";
             return true;
+        }
+    }
+
+    public class Title_Objection_Status_Service : BusinessLogic<Title_Objection_Status>
+    {
+        private readonly Title_Objection_Status_Repository obj_Repository;
+
+        public Title_Objection_Status_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Status_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Status> SearchFor(Expression<Func<Title_Objection_Status, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Status GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Title_Objection_Status objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Title_Objection_Status objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Title_Objection_Status objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Title_Objection_Service : BusinessLogic<Title_Objection>
+    {
+        private readonly Title_Objection_Repository objRepository;
+
+        public Title_Objection_Service(string Connection_Str)
+        {
+            this.objRepository = new Title_Objection_Repository(Connection_Str);
+        }
+        public IQueryable<Title_Objection> SearchFor(Expression<Func<Title_Objection, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Title_Objection GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Title_Objection objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Title_Objection objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Title_Objection objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Title_Objection objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Title_Objection objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        public override bool ValidateDelete(Title_Objection objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Title_Objection objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Title_Objection_Platform_Service : BusinessLogic<Title_Objection_Platform>
+    {
+        private readonly Title_Objection_Platform_Repository obj_Repository;
+
+        public Title_Objection_Platform_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Platform_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Platform> SearchFor(Expression<Func<Title_Objection_Platform, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Platform GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Title_Objection_Platform objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Title_Objection_Platform objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Title_Objection_Platform objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Title_Objection_Territory_Service : BusinessLogic<Title_Objection_Territory>
+    {
+        private readonly Title_Objection_Territory_Repository obj_Repository;
+
+        public Title_Objection_Territory_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Territory_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Territory> SearchFor(Expression<Func<Title_Objection_Territory, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Territory GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Title_Objection_Territory objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Title_Objection_Territory objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Title_Objection_Territory objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Title_Objection_Rights_Period_Service : BusinessLogic<Title_Objection_Rights_Period>
+    {
+        private readonly Title_Objection_Rights_Period_Repository obj_Repository;
+
+        public Title_Objection_Rights_Period_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Title_Objection_Rights_Period_Repository(Connection_Str);
+        }
+
+        public IQueryable<Title_Objection_Rights_Period> SearchFor(Expression<Func<Title_Objection_Rights_Period, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Title_Objection_Rights_Period GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Title_Objection_Rights_Period objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Title_Objection_Rights_Period objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Title_Objection_Rights_Period objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
         }
     }
 }

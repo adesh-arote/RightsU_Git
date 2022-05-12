@@ -366,6 +366,7 @@
         });
     }
     function AddTitle() {
+        debugger;
         showLoading();
         $.ajax({
             type: "POST",
@@ -374,7 +375,10 @@
             enctype: 'multipart/form-data',
             async: false,
             contentType: "application/json; charset=utf-8",
-            data: "",
+            data: JSON.stringify({
+                DealTypeCode: 0,
+                fromAcqGeneral: "N"
+            }),
             success: function (result) {
                 if (result == "true") {
                     redirectToLogin();
@@ -1214,6 +1218,160 @@
             }
         });
         return returnVal;
+    }
+
+     function ValidateSave(Type)
+    {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var hdnddlDealType = "";
+        var hdnddlLanguage = "";
+        var hdnTxtTitleName = "";
+        var hdnMusicLabel = "0";
+        var hdnProgramCategory = "";
+        var hdnTxtDuration = "0";
+        var Error = "";
+
+        if ($("#ddlDealType").val() != "0")
+        {
+            hdnddlDealType = $("#ddlDealType").val();
+        }
+        else {
+            $('#ddlDealType').addClass("required");
+            Error = "E";
+        }
+
+        if ($.trim($('#txtTitleName').val()) != "")
+            hdnTxtTitleName = $("#txtTitleName").val();
+        else {
+            $("#txtTitleName").addClass("required");
+            Error = "E";
+        }
+
+         var IsTitleDurationMandatory = $("#IsTitleDurationMandatory").val();
+         if (IsTitleDurationMandatory == 'Y') {
+            if ($("#txtDuration").val() != undefined) {
+                if ($.trim($('#txtDuration').val()) != "")
+                    hdnTxtDuration = $("#txtDuration").val();
+                else {
+                    $("#txtDuration").addClass("required");
+                    Error = "E";
+                }
+            }
+        }
+
+        if ($("#ddlLanguage").val() != "") {
+            hdnddlLanguage = $("#ddlLanguage").val();
+            if (hdnddlLanguage == "0") {
+                $('#ddlLanguage').addClass('required');
+                Error = "E";
+            }
+        }
+        else {
+            Error = "E";
+        }
+
+        if ($("#ddlProgramCategory").val()!=undefined ){
+            if ($("#ddlProgramCategory").val() != "0") {
+                hdnProgramCategory = $("#ddlProgramCategory").val();
+            }
+            else {
+                $("#ddlProgramCategory").addClass('required');
+                $("#ddlProgramCategory").attr('required', true);
+                Error = "E";
+            }
+        }
+
+       var CodeForEmbeddedMusic = $("#CodeForEmbeddedMusic").val();
+        if ($("#ddlDealType").val() == CodeForEmbeddedMusic) {
+            if ($("#ddlMusicLabel").val() != "" && $("#ddlMusicLabel").val() != null) {
+                hdnMusicLabel = $("#ddlMusicLabel").val();
+            }
+            else {
+                $('#ddlMusicLabel').addClass("required");
+                Error = "E";
+            }
+        }
+
+        var ISDuplicate = ""
+        var NewTitleName = $.trim($('#txtTitleName').val());
+
+        if (NewTitleName != "") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ValidateIsDuplicate", "Title_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    TitleName: NewTitleName,
+                    DealTypeCode: $("#ddlDealType").val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.Message != "") {
+                        ISDuplicate = result.Message;
+                        showAlert("E", ISDuplicate);
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+        if (Error == "E" && ISDuplicate != "") {
+            $('#popAddTitle').modal('');
+
+        }
+
+        if (Error == "" && ISDuplicate == "") {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveTitle", "Title_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    hdnddlDealType: hdnddlDealType,
+                    hdnddlLanguage: hdnddlLanguage,
+                    hdnTxtTitleName: hdnTxtTitleName,
+                    hdnProgramCategory:hdnProgramCategory,
+                    hdnTxtDuration:hdnTxtDuration,
+                    hdnMusicLabel: hdnMusicLabel,
+                    Type: Type
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+
+                    var TitleCode = parseInt(result.TitleCode);
+                    if (Type == "SS") {    //window.location.href = '.replace("TitleCode", parseInt(result.TitleCode));
+
+                        var URL = '@Url.Action("Index", "Title", new { id = "TitleCode", Page_No = @ViewBag.PageNo, SearchedTitle = @ViewBag.SearchedTitle, PageSize = @ViewBag.PageSizeCreate,DealTypeCode=@ViewBag.DealTypeCodeSearch, Type = "E"})';
+                        URL = URL.replace("TitleCode", parseInt(result.TitleCode));
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        window.location.href = URL;
+                    }
+
+                    if ('@ViewBag.fromAcqGeneral' != 'Y') {
+                        BindGrid($("#hdnPageIndex").val(), '', '', '');
+                        BindTitle();
+                    }
+                    else {
+                        general(TitleCode);
+                    }
+                    
+                    
+                    $('#popAddTitle').modal('hide');
+                    showAlert("S", result.Message, "");
+                },
+                error: function (result) {
+                }
+            });
+        }
     }
 
 </script>

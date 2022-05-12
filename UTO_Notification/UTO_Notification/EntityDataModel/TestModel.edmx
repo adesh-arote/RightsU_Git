@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="BranchInformationSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <Function Name="USPGetMessageStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="NECode" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="TransType" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="TransCode" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="UserCode" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="NotificationType" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="EventCategory" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Subject" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Status" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="NoOfRetry" Type="int" Mode="In" />
+          <Parameter Name="size" Type="int" Mode="In" />
+          <Parameter Name="from" Type="int" Mode="In" />
+          <Parameter Name="ScheduleDateTime" Type="nvarchar" Mode="In" />
+          <Parameter Name="SentDateTime" Type="nvarchar" Mode="In" />
+          <Parameter Name="Recipient" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="USPInsertNotification" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EventCategory" Type="varchar" Mode="In" />
+          <Parameter Name="NotificationType" Type="varchar" Mode="In" />
+          <Parameter Name="TO" Type="varchar(max)" Mode="In" />
+          <Parameter Name="CC" Type="varchar(max)" Mode="In" />
+          <Parameter Name="BCC" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Subject" Type="varchar" Mode="In" />
+          <Parameter Name="HTMLMessage" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="TextMessage" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="TransType" Type="varchar" Mode="In" />
+          <Parameter Name="TransCode" Type="bigint" Mode="In" />
+          <Parameter Name="ScheduleDateTime" Type="varchar" Mode="In" />
+          <Parameter Name="UserCode" Type="bigint" Mode="In" />
+        </Function>
+        <EntityContainer Name="BranchInformationSystemModelStoreContainer" />
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BranchInformationSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="BranchInformationSystemEntities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="USPInsertNotification" ReturnType="Collection(BranchInformationSystemModel.USPInsertNotification)">
+            <Parameter Name="EventCategory" Mode="In" Type="String" />
+            <Parameter Name="NotificationType" Mode="In" Type="String" />
+            <Parameter Name="TO" Mode="In" Type="String" />
+            <Parameter Name="CC" Mode="In" Type="String" />
+            <Parameter Name="BCC" Mode="In" Type="String" />
+            <Parameter Name="Subject" Mode="In" Type="String" />
+            <Parameter Name="HTMLMessage" Mode="In" Type="String" />
+            <Parameter Name="TextMessage" Mode="In" Type="String" />
+            <Parameter Name="TransType" Mode="In" Type="String" />
+            <Parameter Name="TransCode" Mode="In" Type="Int64" />
+            <Parameter Name="ScheduleDateTime" Mode="In" Type="String" />
+            <Parameter Name="UserCode" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="USPGetMessageStatus" ReturnType="Collection(BranchInformationSystemModel.USPGetMessageStatus_Result)">
+            <Parameter Name="NECode" Mode="In" Type="String" />
+            <Parameter Name="TransType" Mode="In" Type="String" />
+            <Parameter Name="TransCode" Mode="In" Type="String" />
+            <Parameter Name="UserCode" Mode="In" Type="String" />
+            <Parameter Name="NotificationType" Mode="In" Type="String" />
+            <Parameter Name="EventCategory" Mode="In" Type="String" />
+            <Parameter Name="Subject" Mode="In" Type="String" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="NoOfRetry" Mode="In" Type="Int32" />
+            <Parameter Name="size" Mode="In" Type="Int32" />
+            <Parameter Name="from" Mode="In" Type="Int32" />
+            <Parameter Name="ScheduleDateTime" Mode="In" Type="String" />
+            <Parameter Name="SentDateTime" Mode="In" Type="String" />
+            <Parameter Name="Recipient" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="USPInsertNotification">
+          <Property Type="Int64" Name="NotificationsCode" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="USPGetMessageStatus_Result">
+          <Property Type="Int32" Name="TotalRecords" Nullable="true" />
+          <Property Type="Int64" Name="RowNum" Nullable="true" />
+          <Property Type="String" Name="EventCategory" Nullable="true" MaxLength="4000" />
+          <Property Type="Int64" Name="TransactionCode" Nullable="true" />
+          <Property Type="String" Name="TransactionType" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="MessageType" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Subject" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Message" Nullable="true" />
+          <Property Type="String" Name="SentTo" Nullable="true" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="NoOfRetry" Nullable="false" />
+          <Property Type="String" Name="ScheduleDateTime" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="SentDateTime" Nullable="true" MaxLength="30" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BranchInformationSystemModelStoreContainer" CdmEntityContainer="BranchInformationSystemEntities">
+          <FunctionImportMapping FunctionImportName="USPInsertNotification" FunctionName="BranchInformationSystemModel.Store.USPInsertNotification">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="BranchInformationSystemModel.USPInsertNotification">
+                <ScalarProperty Name="NotificationsCode" ColumnName="NotificationsCode" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USPGetMessageStatus" FunctionName="BranchInformationSystemModel.Store.USPGetMessageStatus">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="BranchInformationSystemModel.USPGetMessageStatus_Result">
+                <ScalarProperty Name="TotalRecords" ColumnName="TotalRecords" />
+                <ScalarProperty Name="RowNum" ColumnName="RowNum" />
+                <ScalarProperty Name="EventCategory" ColumnName="EventCategory" />
+                <ScalarProperty Name="TransactionCode" ColumnName="TransactionCode" />
+                <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="SentTo" ColumnName="SentTo" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="NoOfRetry" ColumnName="NoOfRetry" />
+                <ScalarProperty Name="ScheduleDateTime" ColumnName="ScheduleDateTime" />
+                <ScalarProperty Name="SentDateTime" ColumnName="SentDateTime" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
