@@ -1462,6 +1462,9 @@
     <Build Include="dbo\Views\System_Parameter_New.sql" />
     <Build Include="dbo\Stored Procedures\USPDealStatusReport.sql" />
     <Build Include="dbo\Stored Procedures\USPDealStatusReportFilter.sql" />
+    <None Include="Database Scripts\DBConfig_v5.0.4.sql" />
+    <None Include="Database Scripts\DBSchema_v5.0.4.sql" />
+    <None Include="Database Scripts\DBSchema_ShowAvail_v5.0.4.sql" />
     <Build Include="dbo\Stored Procedures\USP_Trademark_Expiry.sql" />
     <Build Include="dbo\Stored Procedures\USP_Get_IPR_Dashboard_Details.sql" />
     <Build Include="dbo\Stored Procedures\USP_IPR_IntDom_Report.sql" />
@@ -1480,9 +1483,6 @@
     <Build Include="dbo\Stored Procedures\USP_Title_Objection_Adv_PreReq.sql" />
     <Build Include="dbo\Stored Procedures\USP_Validate_Rev_HB_Duplication_UDT_Acq.sql" />
     <Build Include="dbo\Stored Procedures\USP_Validate_Perpetuity_Rights_Duplication_Acq.sql" />
-    <None Include="Database Scripts\DBConfig_v5.0.4.sql" />
-    <None Include="Database Scripts\DBSchema_v5.0.4.sql" />
-    <None Include="Database Scripts\DBSchema_ShowAvail_v5.0.4.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
