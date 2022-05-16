@@ -1579,6 +1579,9 @@
     <Compile Include="Models\USP_List_Status_History_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_List_Syn_Ancillary_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_List_Syn_Deal_Status_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

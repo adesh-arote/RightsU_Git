@@ -16,6 +16,7 @@ namespace RightsU_Entities
             this.List_Sports = new List<USP_List_Rights_Result>();
             this.Title_List = new List<Title_List>();
             this.Module_Rights_List = new List<int>();
+            this.List_Ancillary_Syn = new List<USP_List_Syn_Ancillary_Result>();
         }
 
 
@@ -66,6 +67,7 @@ namespace RightsU_Entities
         public List<USP_List_Rights_Result> List_Sports { get; set; }
         public List<USP_List_Rights_Result> List_Pushback { get; set; }
         public List<USP_List_Acq_Ancillary_Result> List_Ancillary { get; set; }
+        public List<USP_List_Syn_Ancillary_Result> List_Ancillary_Syn { get; set; }
         public List<Title_List> Title_List { get; set; }
         public List<int> Module_Rights_List { get; set; }
         public object List_Deal_Tag { get; set; }

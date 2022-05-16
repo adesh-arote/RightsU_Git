@@ -47,6 +47,7 @@
     var dealMode_Approve = '@GlobalParams.DEAL_MODE_APPROVE';
     var pageRightsBulkUpdate = '@GlobalParams.Page_From_Rights_Bulk_Update';
     var currentTabMultiLnag = '@ViewBag.currentTab';
+    var pageAncillary = '@GlobalParams.Page_From_Ancillary';
 
 
     $(document).ready(function () {
@@ -272,10 +273,10 @@
             $("#liRun").attr('disabled', 'disabled').addClass("active");
             $("#liRun input:button").attr('disabled', 'disabled');
         }
-            @*else if (tabName == pageAncillary) {
+        else if (tabName == pageAncillary) {
             URL_PartialView = '@Url.Action("Index", "Syn_Ancillary")';
             $("#liAncillary").addClass("active");
-        }*@
+        }
         else if (tabName == pageRevenue) {
 
             //$("#ancFileName").attr('href', 'Help/index.html?IntCode=Login');

@@ -1625,5 +1625,11 @@ namespace RightsU_DAL
             return objContext.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type, pCodes);
         }
 
+        public virtual ObjectResult<USP_List_Syn_Ancillary_Result> USP_List_Syn_Ancillary(Nullable<int> syn_Deal_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_List_Syn_Ancillary(syn_Deal_Code);
+        }
+
     }
 }

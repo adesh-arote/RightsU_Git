@@ -13353,6 +13353,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="ExactMatch" Type="varchar(max)" Mode="In" />
         </Function>
+        <Function Name="USP_List_Syn_Ancillary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_List_Syn_Deal_Status" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Debug" Type="char" Mode="In" />
@@ -21023,7 +21026,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ExactMatch" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Title_Objection_Adv_PreReq" ReturnType="Collection(RightsU_NeoModel.USP_Title_Objection_Adv_PreReq_Result)">
-            <Parameter Name="Type" Mode="In" Type="String" />
+          <Parameter Name="Type" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_List_Syn_Ancillary" ReturnType="Collection(RightsU_NeoModel.USP_List_Syn_Ancillary_Result)">
+            <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -36005,6 +36011,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Display_Text" Nullable="true" />
           <Property Type="String" Name="Data_For" Nullable="true" />
         </ComplexType>
+        <ComplexType Name="USP_List_Syn_Ancillary_Result">
+          <Property Type="Int32" Name="Syn_Deal_Ancillary_Code" Nullable="false" />
+          <Property Type="String" Name="TitleName" Nullable="false" MaxLength="1" />
+          <Property Type="Int32" Name="Ancillary_Type_Code" Nullable="false" />
+          <Property Type="String" Name="Ancillary_Type_Name" Nullable="false" MaxLength="1" />
+          <Property Type="Int32" Name="Duration" Nullable="false" />
+          <Property Type="Int32" Name="ADay" Nullable="false" />
+          <Property Type="String" Name="Remarks" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="Platform_Name" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="Ancillary_Medium_Name" Nullable="false" MaxLength="1" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -45205,6 +45222,21 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Display_Value" ColumnName="Display_Value" />
                 <ScalarProperty Name="Display_Text" ColumnName="Display_Text" />
                 <ScalarProperty Name="Data_For" ColumnName="Data_For" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_List_Syn_Ancillary" FunctionName="RightsU_NeoModel.Store.USP_List_Syn_Ancillary">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_List_Syn_Ancillary_Result">
+                <ScalarProperty Name="Syn_Deal_Ancillary_Code" ColumnName="Syn_Deal_Ancillary_Code" />
+                <ScalarProperty Name="TitleName" ColumnName="TitleName" />
+                <ScalarProperty Name="Ancillary_Type_Code" ColumnName="Ancillary_Type_Code" />
+                <ScalarProperty Name="Ancillary_Type_Name" ColumnName="Ancillary_Type_Name" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="ADay" ColumnName="ADay" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Platform_Name" ColumnName="Platform_Name" />
+                <ScalarProperty Name="Ancillary_Medium_Name" ColumnName="Ancillary_Medium_Name" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

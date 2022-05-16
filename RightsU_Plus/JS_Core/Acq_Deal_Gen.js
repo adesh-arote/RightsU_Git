@@ -1831,14 +1831,14 @@ function ValidateSavefromAcqGeneral(Type) {
 
     var IsTitleDurationMandatory = $("#IsTitleDurationMandatory").val();
     if (IsTitleDurationMandatory == 'Y') {
-        if ($("#txtDuration").val() != undefined) {
-            if ($.trim($('#txtDuration').val()) != "")
-                hdnTxtDuration = $("#txtDuration").val();
-            else {
-                $("#txtDuration").addClass("required");
-                Error = "E";
-            }
+    if ($("#txtDuration").val() != undefined) {
+        if ($.trim($('#txtDuration').val()) != "")
+            hdnTxtDuration = $("#txtDuration").val();
+        else {
+            $("#txtDuration").addClass("required");
+            Error = "E";
         }
+    }
     }
 
     if ($("#ddlLanguage").val() != "") {

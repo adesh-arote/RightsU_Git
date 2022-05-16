@@ -1609,5 +1609,11 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type, pCodes);
         }
+
+        public virtual ObjectResult<USP_List_Syn_Ancillary_Result> USP_List_Syn_Ancillary(Nullable<int> syn_Deal_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_List_Syn_Ancillary(syn_Deal_Code);
+        }
     }
 }

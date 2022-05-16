@@ -1544,7 +1544,7 @@ namespace RightsU_Plus.Controllers
             if (hdnColumnValueCode == null || hdnColumnValueCode == "")
                 hdnColumnValueCode = "0";
             string[] arrColumnsValueCode = hdnColumnValueCode.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
+            
             int ColumnCode = Convert.ToInt32(hdnExtendedColumnsCode);
             if (hdnType == "A" || hdnType == "")
             {
@@ -1626,7 +1626,7 @@ namespace RightsU_Plus.Controllers
                 obj.Name = hdnName;
 
                 gvExtended.Remove(obj);
-
+                
                 int MapExtendedColumnCode = 0;
 
                 if (hdnMEColumnCode != "")
@@ -1800,23 +1800,23 @@ namespace RightsU_Plus.Controllers
                             }
                         }
 
-                        //if (hdnType == "D")
-                        //{
-                        //    lstAddedExtendedColumns.Remove(objMEc);
-                        //}
+                        if (hdnType == "D")
+                        {
+                            lstAddedExtendedColumns.Remove(objMEc);
+                        }
                     }
                     //}
                 }
                 catch
                 {
                     objMEc = lstAddedExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode).FirstOrDefault();
-                    //if (objMEc != null)
-                    //{
-                    //    if (hdnType == "D")
-                    //        objMEc.EntityState = State.Deleted;
-                    //    else
-                    //        objMEc.EntityState = State.Modified;
-                    //}
+                    if (objMEc != null)
+                    {
+                        if (hdnType == "D")
+                            objMEc.EntityState = State.Deleted;
+                        else
+                            objMEc.EntityState = State.Modified;
+                    }
                 }
 
             }
