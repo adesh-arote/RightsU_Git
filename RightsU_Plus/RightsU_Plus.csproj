@@ -126,11 +126,11 @@
     </Reference>
     <Reference Include="RightsUAvailsProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Downloads\RightsUAvailsProvider.dll</HintPath>
+      <HintPath>C:\Users\adesh\Desktop\GenFiles\RightsUAvailsProvider.dll</HintPath>
     </Reference>
     <Reference Include="RightsUAvailsProviderContract, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Downloads\RightsUAvailsProviderContract.dll</HintPath>
+      <HintPath>C:\Users\adesh\Desktop\GenFiles\RightsUAvailsProviderContract.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -205,20 +205,21 @@
     </Reference>
     <Reference Include="UTO.Framework.Shared, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Downloads\UTO.Framework.Shared.dll</HintPath>
+      <HintPath>C:\Users\adesh\Desktop\GenFiles\UTO.Framework.Shared.dll</HintPath>
     </Reference>
     <Reference Include="UTO.Framework.SharedInfrastructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Downloads\UTO.Framework.SharedInfrastructure.dll</HintPath>
+      <HintPath>C:\Users\adesh\Desktop\GenFiles\UTO.Framework.SharedInfrastructure.dll</HintPath>
     </Reference>
     <Reference Include="ZeroFormatter.Interfaces, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Downloads\ZeroFormatter.Interfaces.dll</HintPath>
+      <HintPath>C:\Users\adesh\Desktop\GenFiles\ZeroFormatter.Interfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
+    <Compile Include="Controllers\Syn_AncillaryController.cs" />
     <Compile Include="Controllers\Title_Objection_ListController.cs" />
     <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
     <Compile Include="Controllers\Availability_Movie_NewController.cs" />
@@ -714,6 +715,8 @@
       <DependentUpon>Syn_Deal_Rights.css</DependentUpon>
     </Content>
     <Content Include="Custom_Scripts\Email_Config.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Ancillary.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Ancillary_List.js" />
     <Content Include="Custom_Scripts\Syn_Deal_Gen.js" />
     <Content Include="Custom_Scripts\Acq_Deal_List.js" />
     <Content Include="Custom_Scripts\Acq_Deal_List.min.js">
@@ -1298,6 +1301,10 @@
     <Content Include="Views\Title_Objection_Type\Index.cshtml" />
     <Content Include="Views\Title\_Title_Main_Release.cshtml" />
     <Content Include="Views\Title\View_Release.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Ancillary_List.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Ancillary_Adv.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Ancillary.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Ancillary_Syn.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1306,6 +1313,7 @@
     <Folder Include="Views\Music_Title_List\" />
     <Folder Include="Views\Shared\Demo_Digital\css\" />
     <Folder Include="Views\Shared\Demo_Digital\js\" />
+    <Folder Include="Views\Syn_Ancillary\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
