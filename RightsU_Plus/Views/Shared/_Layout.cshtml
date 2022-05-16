@@ -1,5 +1,6 @@
-﻿@using System.Web.Optimization
-@using RightsU_Entities
+﻿@using System.Web.Optimization;
+@using RightsU_Entities;
+@using RightsU_Plus.Controllers;
 @using UTOFrameWork.FrameworkClasses
 @using RightsU_BLL;
 @{
@@ -26,7 +27,8 @@
     && x.User_Code == objLoginUser.Users_Code && x.Created_Time >= dt
     && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").Select(s => s.Email_Notification_Log_Code).Count();
 
-
+    List<EventCategoryMsgCount> lstEventCategoryMsgCount = new NotificationController().GetSummarisedMessageStatus(objLoginUser.Email_Id).ToList();
+    int BellIconCount = lstEventCategoryMsgCount.Sum(x => x.cnt);
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -852,7 +854,7 @@
             var strWindowFeatures = "location=yes,toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=4000,height=4000";
             window.open('http://localhost:52844/Login/Login', '_blank', strWindowFeatures);
         }
-        
+
     </script>
 </head>
 
@@ -862,9 +864,9 @@
             <div class="navigation" onclick="RightmenuHide()">
                 <ul>
                     @*<li class="home_button" title="Home" data-placement="right">
-            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
-        </li>
-        <li class="seperator"></li>*@
+                            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
+                        </li>
+                        <li class="seperator"></li>*@
                     @{ if (Menulist != null)
                         {
                             string dataPlacement = "right";
@@ -903,6 +905,12 @@
                                     <a class="glyphicon glyphicon-headphones" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Music_Deal_List", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForMusicDeal })"></a>
                                 </li>
                             }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForTitleObjection))
+                            {
+                                <li title="Title Objection" data-placement="@dataPlacement" class="menu_margin">
+                                    <a class="glyphicon glyphicon-align-justify" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Title_Objection_List", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForTitleObjection })"></a>
+                                </li>
+                            }
                             if (Is_Approve == "Yes")
                             {
                                 <li class="check_button  showhidetooltip menu_margin" onclick="javascript: togglePanelVisibility('pnlApprovalList');" title="@objMessageKey.ApprovalList" data-placement="@dataPlacement">
@@ -913,15 +921,15 @@
                             }
 
                             @*<li class="seperator"></li>
-                            <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-calendar" href="#"></a>
-                            </li>
-                            <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-phone" href="#"></a>
-                            </li>
-                            <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-tent" href="#"></a>
-                            </li>*@
+                                <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-calendar" href="#"></a>
+                                </li>
+                                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-phone" href="#"></a>
+                                </li>
+                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-tent" href="#"></a>
+                                </li>*@
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title) ||
                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
@@ -955,10 +963,10 @@
                             }
 
                             @*{
-                    <li title="Digital" data-placement="right">
-                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
-                    </li>
-                }*@
+                                    <li title="Digital" data-placement="right">
+                                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
+                                    </li>
+                                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('G','pnlAvail');" title="@objMessageKey.Availability" data-placement="@dataPlacement">
@@ -973,11 +981,11 @@
                                 </li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGlossary))
-                {
-                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
-                       <a class="glyphicon glyphicon-tasks" href="#"></a>
-                   </li>
-                }*@
+                                {
+                                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
+                                       <a class="glyphicon glyphicon-tasks" href="#"></a>
+                                   </li>
+                                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('E','pnlReports');" title="@objMessageKey.Reports" data-placement="@dataPlacement">
@@ -991,11 +999,11 @@
                                 <li class="seperator"></li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForUploads))
-                {
-                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
-                        <a class="glyphicon glyphicon-open" href="#"></a>
-                    </li>
-                }*@
+                                {
+                                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
+                                        <a class="glyphicon glyphicon-open" href="#"></a>
+                                    </li>
+                                }*@
 
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application))
@@ -1013,8 +1021,8 @@
                         }
                     }
                     @*<li title="Log Out" data-placement="right">
-            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
-        </li>*@
+                            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
+                        </li>*@
                 </ul>
             </div>
             <div class="header-nav ">
@@ -1042,53 +1050,29 @@
                             }
                             else
                             {
-                                <span class="TotalEmailCount" id="TotalEmailCount">@count</span>
+                                <span class="TotalEmailCount" id="TotalEmailCount">@BellIconCount</span>
                             }
-                            <input type="hidden" id="hdnTotalEmailCount" value="@count" />
+                            <input type="hidden" id="hdnTotalEmailCount" value="@BellIconCount" />
                             <ul id="EmailPanel" class="NotifyEmailPanel" style="display: none;">
                                 <li class="emailPNL">
                                     <span class="bold">Notifications</span>
                                 </li>
-                                @{ 
-                                       List<Email_Config> lstEmailConfig = new Email_Config_Service(objLoginEntity.ConnectionStringName)
-                                        .SearchFor(x => x.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y")
-                                                            .OrderBy(x => x.Email_Type).ToList();
-
-                                    List<Email_Notification_Log> lstEmail_Notification_Log = (List<Email_Notification_Log>)Session["lstEmail_Notification_Log"];
-
+                                @{
                                     var EmailConfig = new List<Email_Config>();
-
-                                    foreach (Email_Config objEmail in lstEmailConfig)
-                                    {
-                                        objEmail.TotalCount = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName)
-                                            .SearchFor(x => x.User_Code == objLoginUser.Users_Code
-                                            && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
-                                            && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
-                                            )
-                                            .Count();
-                                        objEmail.Count = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N"
-                                        && x.User_Code == objLoginUser.Users_Code && string.IsNullOrEmpty(x.Email_Body) == false
-                                        && x.Email_Config_Code == objEmail.Email_Config_Code && x.Created_Time >= dt
-                                        && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y"
-                                        )
-                                        .Count();
-                                    }
-                                    EmailConfig = lstEmailConfig;
                                 }
 
                                 @{int NoNotiCount = 0;}
                                 <div id="DivEmailConfig">
 
-                                    @foreach (Email_Config item in EmailConfig)
+                                    @foreach (EventCategoryMsgCount item in lstEventCategoryMsgCount)
                                     {
-                                        if (item.TotalCount > 0)
-                                        {
-                                            NoNotiCount = 1;
-                                            <li class="liEmail" onclick="EmailPopup('@item.Email_Config_Code','@item.Email_Type','@item.Count');">
-                                                <a href="#">@item.Email_Type</a>
-                                                <span class="EmailCount" title="Unseen Message" id="TotalECount_@item.Email_Config_Code">@item.Count</span>
-                                            </li>
-                                        }
+
+                                        NoNotiCount++;
+                                        <li class="liEmail" onclick="EmailPopup('@NoNotiCount','@item.EventCategory','@item.cnt');">
+                                            <a href="#">@item.EventCategory</a>
+                                            <span class="EmailCount" title="Unseen Message" id="TotalECount_@NoNotiCount">@item.cnt</span>
+                                        </li>
+
                                     }
 
                                     @if (NoNotiCount == 0)
@@ -1367,7 +1351,7 @@
                                 <ul class="modal_block clearfix">
                                     <li class="pull-left">
                                         @*<input type="button" title="Previous" id="btnPrev" value="<<" onclick="showPrevious()" />*@
-                                        <a class="btn btn-primary" href="#" id="btnPrev" onclick="showPrevious()">Previous</a>
+                                        <a class="btn btn-primary" disabled="true" href="#" id="btnPrev" onclick="showPrevious()">Previous</a>
                                     </li>
                                     <b>
                                         <li style="position:relative; left:38%!important; vertical-align:middle">
@@ -1397,7 +1381,76 @@
 </body>
 </html>
 <script>
+    function MarkAllRead() {
+        debugger;
+        var markCount = parseInt(document.getElementById("TotalEmailCount").innerHTML);
+        if (markCount != 0) {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("MarkAllRead", "Base")',
+                traditional: true,
+                async: false,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Email_Log_Codes: $('#hdnSelectedEmail').val()
+                }),
+                success: function (result) {
+                    var outputs = document.querySelectorAll("span.EmailCount");
+                    for (var i = 0; i < outputs.length; ++i) {
+                        outputs[i].textContent = 0;
+                    }
+                    document.getElementById("TotalEmailCount").innerHTML = parseInt(0);
+                    $('#hdnTotalEmailCount').val(0);
+                },
+                error: function (x, e) {
+                }
+            });
+        }
+
+    }
+
+    var URL_UpdateMessageStatus = '@Url.Action("UpdateMessageStatus", "Notification")';
+    function UpdateMessageStatus(NEDetailCode, NECode) {
+            debugger;
+
+            $.ajax({
+                type: "POST",
+                url: URL_UpdateMessageStatus,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    NEDetailCode: NEDetailCode,
+                    NECode: NECode
+                }),
+                async: false,
+                success: function (result) {
+                    hideLoading();
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            debugger;
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    hideLoading();
+                    alert('Error: ' + result.responseText);
+                }
+            });
+    }
+
     function showPrevious() {
+        debugger;
+     
+        $('#btnNext').attr('disabled', false);
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();
         var num = parseInt($('#hdnDiv').val().split('_')[1]);
@@ -1434,9 +1487,38 @@
                 $('#hdnSeenCount').val(hdnCount - unseenCount);
             }
         }
+
+        if ($("#SeenEmailCount").text() === $("#TotalEmailLogCount").text())
+            $('#btnNext').attr('disabled', true);
+        else
+            $('#btnNext').attr('disabled', false);
+
+        if ($("#SeenEmailCount").text() == 1)
+            $('#btnPrev').attr('disabled', true);
+        else
+            $('#btnPrev').attr('disabled', true);
+
+        ++num;
+
+        if ($('#hdnSeenNew_' + num).val() == "N") {
+            var ETC = $('#hdnEmail_Type_Code').val();
+            var TotalETC = $('#TotalECount_' + ETC).text();
+            var TotalEmailCount = $('#TotalEmailCount').text();
+            if (TotalETC != 0) {
+                $('#TotalECount_' + ETC).text(TotalETC - 1);
+                $('#TotalEmailCount').text(TotalEmailCount - 1);
+            }
+        }
+        var NEDCode = $('#hdnSeenId_' + num).val();
+        var NECode = $('#hdnNECode_' + num).val();
+        $('#hdnSeenNew_' + num).val("Y");
+        UpdateMessageStatus(NEDCode, NECode);
+
         $('#' + oldDiv).attr('style', 'display:none')
     }
     function showNext() {
+        debugger;
+
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();
         var num = parseInt($('#hdnDiv').val().split('_')[1]);
@@ -1448,6 +1530,7 @@
         else
             $('#hdnSelectedEmail').val(hdnSeenId);
         if ($('#hdnSeen_' + num).val() == 'N') {
+
             $('#hdnSeen_' + num).val('Y');
 
             if (unseenCount != 0) {
@@ -1478,23 +1561,57 @@
             document.getElementById('SeenEmailCount').innerHTML = 1;
             $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
         }
+
+        if ($("#SeenEmailCount").text() === $("#TotalEmailLogCount").text())
+            $('#btnNext').attr('disabled', true);
+        else
+            $('#btnNext').attr('disabled', false);
+
+        debugger;
+
         $('#' + oldDiv).attr('style', 'display:none')
+
+        --num;
+
+        if ($('#hdnSeenNew_' + num).val() == "N") {
+            var ETC = $('#hdnEmail_Type_Code').val();
+            var TotalETC = $('#TotalECount_' + ETC).text();
+            var TotalEmailCount = $('#TotalEmailCount').text();
+            if (TotalETC != 0) {
+                $('#TotalECount_' + ETC).text(TotalETC - 1);
+                $('#TotalEmailCount').text(TotalEmailCount - 1);
+            }
+        }
+
+        var NEDCode = $('#hdnSeenId_' + num).val();
+        var NECode = $('#hdnNECode_' + num).val();
+        $('#hdnSeenNew_' + num).val("Y");
+        UpdateMessageStatus(NEDCode, NECode);
     }
+
     function EmailPopup(Email_Type_Code, Email_Type, Count) {
+        debugger;
         $('#hdnSelectedEmail').val('');
         $('#hdnCurrNoti').val(Email_Type_Code);
         $('#hdnSeenCount').val('0')
         var unseenCount = parseInt(Count) - 1;
+
+        if ($('#TotalECount_' + Email_Type_Code).text() == 0) {
+            return false;
+        }
+
         //document.getElementById('unseenCount').innerHTML=unseenCount;
         document.getElementById('Email_Type').innerHTML = Email_Type + ' Notifications';
         $.ajax({
             type: "POST",
-            url: '@Url.Action("Show_Email_Popup", "Base")',
+            url: '@Url.Action("Show_Email_Popup", "Notification")',
             traditional: true,
             async: false,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
+                Email_Type: Email_Type,
+                Email_Id: '@objLoginUser.Email_Id',
                 Email_Type_Code: Email_Type_Code
             }),
             success: function (result) {
@@ -1524,8 +1641,10 @@
         //setChosenWidth('#lbSearchTitles', '500px');
         initializeExpander();
     }
+
     function updateCount() {
         debugger
+
         var TotalCounttt = 0;
         var greaterEmailCount = 0;
         var num = parseInt($('#hdnDiv').val().split('_')[1]);
@@ -1564,53 +1683,21 @@
 
             }
         }
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("updateSeenNotification", "Base")',
-            traditional: true,
-            async: false,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Email_Log_Codes: $('#hdnSelectedEmail').val()
-            }),
-            success: function (result) {
 
-            },
-            error: function (x, e) {
+        var NEDCode = $('#hdnSeenId_' + num).val();
+        var NECode = $('#hdnNECode_' + num).val();
+
+        if ($('#hdnSeenNew_' + num).val() == "N") {
+            var ETC = $('#hdnEmail_Type_Code').val();
+            var TotalETC = $('#TotalECount_' + ETC).text();
+            var TotalEmailCount = $('#TotalEmailCount').text();
+            if (TotalETC != 0) {
+                $('#TotalECount_' + ETC).text(TotalETC - 1);
+                $('#TotalEmailCount').text(TotalEmailCount - 1);
             }
-        });
-    }
-    function MarkAllRead() {
-        var markCount = parseInt(document.getElementById("TotalEmailCount").innerHTML);
-        if (markCount != 0) {
-            $.ajax({
-                type: "POST",
-                traditional: true,
-                enctype: 'multipart/form-data',
-                contentType: "application/json; charset=utf-8",
-                url: '@Url.Action("MarkAllRead", "Base")',
-                async: true,
-                data: JSON.stringify({
-                }),
-                success: function (result) {
-                    var outputs = document.querySelectorAll("span.EmailCount");
-                    for (var i = 0; i < outputs.length; ++i) {
-                        outputs[i].textContent = 0;
-                    }
-                    document.getElementById("TotalEmailCount").innerHTML = parseInt(0);
-                    $('#hdnTotalEmailCount').val(0);
-                    // document.getElementById("TotalEmailCount").style.display='none';
-                    //showAlert("S","All Notifications are mark as read","");
-                },
-                error: function (x, e) {
-                }
-            });
         }
-        //else{
-        //    showAlert("E","No new notifications to read","");
-        //}
-
+        $('#hdnSeenNew_' + num).val("Y");
+        UpdateMessageStatus(NEDCode, NECode);
     }
 </script>
 <script>

@@ -28,14 +28,17 @@ BEGIN
 	DECLARE @New_Acq_Deal_Rights_Code INT = 0
 
 	BEGIN
+		
+	
+
 	INSERT INTO Acq_Deal_Rights(Acq_Deal_Code, Is_Exclusive, Is_Title_Language_Right, Is_Sub_License, Sub_License_Code, Is_Theatrical_Right,
 		Right_Type, Is_Tentative, Term, Right_Start_Date, Right_End_Date, Milestone_Type_Code, Milestone_No_Of_Unit, Milestone_Unit_Type, Is_ROFR,
 		ROFR_Date, Restriction_Remarks, Effective_Start_Date, Actual_Right_Start_Date, Actual_Right_End_Date, Inserted_By, Inserted_On, 
-		Last_Updated_Time, Last_Action_By,Original_Right_Type,Promoter_Flag)
+		Last_Updated_Time, Last_Action_By,Original_Right_Type,Promoter_Flag, Right_Status)
 	Select @New_Acq_Deal_Code, Is_Exclusive, Is_Title_Language_Right, Is_Sub_License, Sub_License_Code, Is_Theatrical_Right,
 		Right_Type, Is_Tentative, Term, Right_Start_Date, Right_End_Date, Milestone_Type_Code, Milestone_No_Of_Unit, Milestone_Unit_Type, Is_ROFR,
 		ROFR_Date, Restriction_Remarks, Effective_Start_Date, Actual_Right_Start_Date, Actual_Right_End_Date, Inserted_By, Inserted_On, 
-		Last_Updated_Time, Last_Action_By,Original_Right_Type,Promoter_Flag
+		Last_Updated_Time, Last_Action_By,Original_Right_Type,Promoter_Flag, 'P'
 	From Acq_Deal_Rights WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
 	
 	SELECT @New_Acq_Deal_Rights_Code = IDENT_CURRENT('Acq_Deal_Rights')

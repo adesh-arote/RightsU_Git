@@ -1,0 +1,172 @@
+﻿@model List<RightsU_Entities.Deal_Description>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}           
+<script>
+    $('.expand_DealDescs_Name').expander({
+        slicePoint: 90,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+   
+</script>
+<table class="table table-bordered table-hover" id="tblDealDescs">
+    <thead>
+        <tr>
+            <th style="width:40%;">Deal Description</th>
+            <th style="width:20%;">Type</th>
+            <th style="width:20%;">@objMessageKey.Status</th>
+            <th style="width:20%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName == "ADD")
+        {
+        <tr>
+            <td>
+                <input id="txtDealDescsName_0" type="text" value="" maxlength="100" />
+            </td>
+            <td  align="center">
+                <div id="radio_0">
+                    <input id="txtAcqType_0" type="radio" name="Type" value="A"> Acquisition
+                    <input id="txtSynType_0" type="radio" name="Type" value="S"> Syndication
+                </div>
+                @*<input id="txtType_0" type="text" value="" maxlength="100" />*@
+            </td>
+            <td align="center">
+                <span>@objMessageKey.Active</span>
+            </td>
+            <td align="center">
+                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveDealDesc(0)"></a>
+                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+            </td>
+        </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                var Acq_Count = new RightsU_BLL.Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Desc == item.Deal_Desc_Name).ToList();
+                string strActive =objMessageKey.Active;
+                string strType = item.Type;
+                if(strType == "S")
+                {
+                    strType = "Syndication";
+                }
+                else
+                {
+                    strType = "Acquisition";
+                }
+                if (item.Is_Active == "N")
+                {
+                    strActive = @objMessageKey.Deactive;
+                }
+            <tr>
+                @if (ViewBag.CommandName == "EDIT" && ViewBag.DealDescs_Code == item.Deal_Desc_Code)
+                {
+                <td>
+                    <input id="txtDealDescsName_@item.Deal_Desc_Code" type="text" value="@item.Deal_Desc_Name" maxlength="100" />
+                </td>
+                <td align="center">
+                    @if (item.Type == "A")
+                    {
+                        <input id="txtAcqType_@item.Deal_Desc_Code" type="radio" name="Type" value="A" checked> <Span>Acquisition</Span>
+                        <input id="txtSynType_@item.Deal_Desc_Code" type="radio" name="Type" value="S"><Span>Syndication</Span>
+                    }
+                    else if (item.Type == "S")
+                    {
+                        <input id="txtAcqType_@item.Deal_Desc_Code" type="radio" name="Type" value="A" > <Span>Acquisition</Span>
+                        <input id="txtSynType_@item.Deal_Desc_Code" type="radio" name="Type" value="S" checked><Span>Syndication</Span>
+                    }
+
+                </td>
+                <td align="center">
+                    <span>@strActive</span>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveDealDesc(@item.Deal_Desc_Code)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    <div class="expand_DealDescs_Name">@item.Deal_Desc_Name</div>
+                </td>
+                @*<td>
+                    <input id="txtType_@item.Deal_Desc_Code" type="text" value="@item.Type" maxlength="100" />
+                </td>*@
+                <td align="center">
+                    <span>@strType</span>
+                </td>
+                
+                <td align="center">
+                    <span>@strActive</span>
+                </td>
+                <td align="center">
+                    @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                    {
+                        if (item.Is_Active == "Y")
+                        {
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Deal_Desc_Code, 'EDIT')"></a>
+                        }
+                        else
+                        {
+                            <a title="Can not edit this Deal Description as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                        }
+                    }
+                    @if (item.Is_Active == "Y")
+                    {
+                        bool canDeactivate = true;
+                        string strToolTip = "";
+                        if (Acq_Count.Count > 0)
+                        {
+                            canDeactivate = false;
+                            strToolTip = "Can not deactivate this Deal Desc as it is used in Acq Deal";
+                        }
+                        //else if (Acq_Count.Count > 0)
+                        //{
+                        //    canDeactivate = false;
+                        //    strToolTip = objMessageKey.CannotdeactivatethisDealDescasitisusedintitle;
+                        //}
+                        if (canDeactivate)
+                        {
+                            <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactiveDealDesc(@item.Deal_Desc_Code, 'N')"></a>
+                        }
+                        else
+                        {
+                            <a title="@strToolTip" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                        }
+                    }
+                    else
+                    {
+                        if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                        {
+                            <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveDealDesc(@item.Deal_Desc_Code, 'Y')"></a>
+                        }
+                    }
+                </td>
+            }
+        </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

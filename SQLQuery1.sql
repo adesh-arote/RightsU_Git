@@ -1,40 +1,21 @@
---CREATE TABLE Revenue_Vertical
---(
---	Revenue_Vertical_Code INT IDENTITY (1,1) PRIMARY KEY,
---	Revenue_Vertical_Name NVARCHAR(MAX),
---	[Type] CHAR(1),
---	Is_Active CHAR(1)
---)
+select * from title order by 1 desc
 
---ALTER TABLE Acq_Deal
---Add Revenue_Vertical_Code INT 
+select T.Title_Code, MIN(TR.Release_Date) AS Release_Date into #TitleRelease from Title_Release TR
+INNER JOIN Title T ON T.Title_Code = TR.Title_Code
+GROUP BY  T.Title_Code
 
---ALTER TABLE Syn_Deal
---Add Revenue_Vertical_Code INT 
+SELECT * FROM TITLE WHERE TITLE_cODE = 38559
 
---INSERT INTO Revenue_Vertical (Is_Active, Type, Revenue_Vertical_Name)
--- SELECT 'Y','A','Content Licensing - Airborne'
---UNION ALL SELECT 'Y','A','Content Licensing - Cable'
---UNION ALL SELECT 'Y','A','Content Licensing - Surface Transport'
---UNION ALL SELECT 'Y','A','Content Repository'
---UNION ALL SELECT 'Y','A','Digital - Domestic mobile'
---UNION ALL SELECT 'Y','A','Digital - India Syndication'
---UNION ALL SELECT 'Y','A','Digital - International Mobile'
---UNION ALL SELECT 'Y','A','DTH - DTH Services'
---UNION ALL SELECT 'Y','A','International Digital Syndication'
---UNION ALL SELECT 'Y','A','International Non Digital Syndication'
---UNION ALL SELECT 'Y','A','L&M Licensing'
---UNION ALL SELECT 'Y','A','L&M Merchandising'
---UNION ALL SELECT 'Y','A','Physical - Devices'
---UNION ALL SELECT 'Y','A','Physical - Home Video'
---UNION ALL SELECT 'Y','A','Television Syndication'
---UNION ALL SELECT 'Y','A','Theatrical'
---select * from System_Language_Message where Message_Desc like '%busin%'
---UPDATE System_Language_Message SET Message_Desc = 'Content Category' where Message_Desc like '%busin%'
+SELECT ADR.Actual_Right_Start_Date, ADR.Actual_Right_End_Date, ADR.Right_Type, ADRT.*,
+TR.Release_Date,  DATEADD(DAY,-1, (DATEADD(year, 60, CONVERT(date,DATEADD(YEAR,DATEDIFF(YEAR,0,DATEADD(year, 1, TR.Release_Date)),0))))) FROM Acq_Deal_Rights_Title ADRT
+--UPDATE ADR SET 
+--ADR.Actual_Right_End_Date = DATEADD(DAY,-1, (DATEADD(year, 60, CONVERT(date,DATEADD(YEAR,DATEDIFF(YEAR,0,DATEADD(year, 1, TR.Release_Date)),0)))))
+-- FROM Acq_Deal_Rights_Title ADRT
+INNER JOIN #TitleRelease TR ON ADRT.Title_Code = TR.Title_Code
+INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Rights_Code = ADRT.Acq_Deal_Rights_Code
+WHERE ADR.Right_Type ='U'
+ 
 
---select * from system_parameter_new where Parameter_Name like '%ddl%'
---UPDATE system_parameter_new SET Parameter_Value = 'Y' where id = 1208
---  Create func [UFN_Get_Platform_Hierarchy_WithNo], UFN_Get_PR_Rights_Criteria
+ select * from System_Parameter_New order by 1 desc
 
-
-
+select convert (date,DATEADD(YEAR,DATEDIFF(YEAR,0,DATEADD(year, 1, getdate())),0))

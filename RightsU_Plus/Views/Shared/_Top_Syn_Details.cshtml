@@ -39,6 +39,7 @@
 </style>
 <script>
     function LoadTab(tabName, IsActive) {
+        debugger;
         if (document.location.search == "") {
             url_page = history.pushState({}, null, window.location.href + "?currentTab=GNR");
         }
@@ -356,7 +357,7 @@
                 </li>
             }
 
-            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAncillaryTab))
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForSynAncillaryTab))
             {
                 cssclass = objSchema.Page_From == GlobalParams.Page_From_Ancillary ? "active" : "";
                 <li class="@cssclass" id="liAncillary">

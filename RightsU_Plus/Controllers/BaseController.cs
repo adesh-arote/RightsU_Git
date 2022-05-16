@@ -1313,66 +1313,73 @@ namespace RightsU_Plus.Controllers
         }
 
 
-        public ActionResult Show_Email_Popup(int Email_Type_Code)
+        public ActionResult Show_Email_Popup1(string Email_Type)
         {
             List<Email_Notification_Log> lstLog = new List<Email_Notification_Log>();
-            string alertDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Email_Alert_Days").Select(x => x.Parameter_Value).FirstOrDefault();
-            DateTime dt = DateTime.Today.AddDays(Convert.ToDouble(alertDays));
-            //if (lstEmail_Notification_Log.Count == 0)
-            //{
-            lstEmail_Notification_Log = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.User_Code == objLoginUser.Users_Code
-            && string.IsNullOrEmpty(x.Email_Body) == false && x.Created_Time >= dt
-            && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").ToList();
-            //}
-            lstLog = lstEmail_Notification_Log.Where(x => x.Email_Config_Code == Email_Type_Code).OrderBy(x => x.Is_Read).ToList();
-            ViewBag.EmailCount = lstLog.Where(w => w.Is_Read == "N").Count();
-            ViewBag.FirstTotalCount = lstLog.Count();
+            //string alertDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Email_Alert_Days").Select(x => x.Parameter_Value).FirstOrDefault();
+            //DateTime dt = DateTime.Today.AddDays(Convert.ToDouble(alertDays));
+            ////if (lstEmail_Notification_Log.Count == 0)
+            ////{
+            //lstEmail_Notification_Log = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.User_Code == objLoginUser.Users_Code
+            //&& string.IsNullOrEmpty(x.Email_Body) == false && x.Created_Time >= dt
+            //&& x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").ToList();
+            ////}
+            //lstLog = lstEmail_Notification_Log.Where(x => x.Email_Config_Code == Email_Type_Code).OrderBy(x => x.Is_Read).ToList();
+            //ViewBag.EmailCount = lstLog.Where(w => w.Is_Read == "N").Count();
+            //ViewBag.FirstTotalCount = lstLog.Count();
             return PartialView("_Email_Notification_Popup", lstLog);
         }
         public void updateSeenNotification(string Email_Log_Codes)
         {
             dynamic resultSet;
-
-            string[] Email_Log_Code = Email_Log_Codes.Split(',').Distinct().ToArray();
-            foreach (var item in Email_Log_Code)
-            {
-                if (item != "")
-                {
-                    Email_Notification_Log_Service objS = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName);
-                    int code = Convert.ToInt32(item);
-                    Email_Notification_Log objEmail_Notification_Log = objS.SearchFor(s => s.Email_Notification_Log_Code == code).FirstOrDefault();
-                    if (objEmail_Notification_Log.Is_Read == "N")
-                    {
-                        objEmail_Notification_Log.EntityState = State.Modified;
-                        objEmail_Notification_Log.Is_Read = "Y";
-                        objS.Save(objEmail_Notification_Log, out resultSet);
-                        lstEmail_Notification_Log.Where(w => w.Email_Notification_Log_Code == code).Select(x => x).FirstOrDefault().Is_Read = "Y";
-                    }
-                }
-            }
+           
+            //string[] Email_Log_Code = Email_Log_Codes.Split(',').Distinct().ToArray();
+            //foreach (var item in Email_Log_Code)
+            //{
+            //    if (item != "")
+            //    {
+            //        Email_Notification_Log_Service objS = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName);
+            //        int code = Convert.ToInt32(item);
+            //        Email_Notification_Log objEmail_Notification_Log = objS.SearchFor(s => s.Email_Notification_Log_Code == code).FirstOrDefault();
+            //        if (objEmail_Notification_Log.Is_Read == "N")
+            //        {
+            //            objEmail_Notification_Log.EntityState = State.Modified;
+            //            objEmail_Notification_Log.Is_Read = "Y";
+            //            objS.Save(objEmail_Notification_Log, out resultSet);
+            //            lstEmail_Notification_Log.Where(w => w.Email_Notification_Log_Code == code).Select(x => x).FirstOrDefault().Is_Read = "Y";
+            //        }
+            //    }
+            //}
         }
         public void MarkAllRead()
         {
-            string alertDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Email_Alert_Days").Select(x => x.Parameter_Value).FirstOrDefault();
-            DateTime dt = DateTime.Today.AddDays(Convert.ToDouble(alertDays));
-            List<Email_Notification_Log> lst = new List<Email_Notification_Log>();
-            lst = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.User_Code == objLoginUser.Users_Code
-                  && string.IsNullOrEmpty(x.Email_Body) == false && x.Created_Time >= dt
-                  && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").ToList();
-            string[] emailnotifycode = lst.Select(x => x.Email_Notification_Log_Code.ToString()).ToArray();
-            dynamic resultSet;
-            foreach (var item in emailnotifycode)
+            NotificationController obj = new NotificationController();
+            List<GetMessageStatus> lstGetMessageStatus = obj.GetMessageStatusDetails("", objLoginUser.Email_Id);
+            foreach (GetMessageStatus item in lstGetMessageStatus)
             {
-                Email_Notification_Log_Service objS = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName);
-                int code = Convert.ToInt32(item);
-                Email_Notification_Log objEmail_Notification_Log = objS.SearchFor(s => s.Email_Notification_Log_Code == code).FirstOrDefault();
-                if (objEmail_Notification_Log.Is_Read == "N")
-                {
-                    objEmail_Notification_Log.EntityState = State.Modified;
-                    objEmail_Notification_Log.Is_Read = "Y";
-                    objS.Save(objEmail_Notification_Log, out resultSet);
-                }
+                obj.UpdateMessageStatusDetails(item.NotificationsCode, item.NotificationDetailCode);
             }
+
+            //string alertDays = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Email_Alert_Days").Select(x => x.Parameter_Value).FirstOrDefault();
+            //DateTime dt = DateTime.Today.AddDays(Convert.ToDouble(alertDays));
+            //List<Email_Notification_Log> lst = new List<Email_Notification_Log>();
+            //lst = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.User_Code == objLoginUser.Users_Code
+            //      && string.IsNullOrEmpty(x.Email_Body) == false && x.Created_Time >= dt
+            //      && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").ToList();
+            //string[] emailnotifycode = lst.Select(x => x.Email_Notification_Log_Code.ToString()).ToArray();
+            //dynamic resultSet;
+            //foreach (var item in emailnotifycode)
+            //{
+            //    Email_Notification_Log_Service objS = new Email_Notification_Log_Service(objLoginEntity.ConnectionStringName);
+            //    int code = Convert.ToInt32(item);
+            //    Email_Notification_Log objEmail_Notification_Log = objS.SearchFor(s => s.Email_Notification_Log_Code == code).FirstOrDefault();
+            //    if (objEmail_Notification_Log.Is_Read == "N")
+            //    {
+            //        objEmail_Notification_Log.EntityState = State.Modified;
+            //        objEmail_Notification_Log.Is_Read = "Y";
+            //        objS.Save(objEmail_Notification_Log, out resultSet);
+            //    }
+            //}
         }
         public JsonResult UpdateSystemLanguage(int systemLanguageCode)
         {

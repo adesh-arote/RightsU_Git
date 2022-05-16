@@ -179,6 +179,10 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForCustomer = 211;
         public const int ModuleCodeForAcq_Rights_Template = 213;
         public const int ModuleCodeForDealWorkflowStausPending = 217;
+        public const int ModuleCodeFor_IPR_Dashboard = 249;
+        public const int ModuleCodeForTitleObjection= 251;
+        public const int ModuleCodeForDealDescription = 252;
+        public const int ModuleCodeForTitleObjectionType = 253;
 
         #endregion
 
@@ -1771,7 +1775,7 @@ namespace UTOFrameWork.FrameworkClasses
             else if (ReportName == "Title_Availability_Languagewise_3")
                 ReportPath = ReportFolder + "/rptMovie_Availability";
             else if (ReportName == "Title_Availability_Languagewise_V18")
-                ReportPath = ReportFolder + "/Movie_Availability_Report";//--/rptMovie_Availability_V18
+                ReportPath = ReportFolder + "/rptMovie_Availability_V18";
             else if (ReportName == "Title_Availability_Languagewise_V18_Demo")
                 ReportPath = ReportFolder + "/rptMovie_Availability_V18_Demo";
             else if (ReportName == "Acquisition_Expiry_Reports")
@@ -1783,7 +1787,7 @@ namespace UTOFrameWork.FrameworkClasses
             else if (ReportName == "Title_Availability_Show_3")
                 ReportPath = ReportFolder + "/rptShow_Availability";
             else if (ReportName == "Title_Availability_Show_3_V18")
-                ReportPath = ReportFolder + "/Show_Availability_Report";//--/rptShow_Availability_V18
+                ReportPath = ReportFolder + "/rptShow_Availability_V18";
             else if (ReportName == "Title_Availability_Show_3_V18_Demo")
                 ReportPath = ReportFolder + "/rptShow_Availability_V18_Demo";
             else if (ReportName == "rptDealContent")
@@ -1858,6 +1862,8 @@ namespace UTOFrameWork.FrameworkClasses
                 ReportPath = ReportFolder + "/rpt_Deal_WFStatus_Pending";
             else if (ReportName == "rptDealStatusReport")
                 ReportPath = ReportFolder + "/rptDealStatusReport";
+            else if (ReportName == "rptIPR_IntDom_Report")
+                ReportPath = ReportFolder + "/rptIPR_IntDom";
 
             return ReportPath;
         }

@@ -48,6 +48,46 @@ namespace RightsU_Entities
         public string Is_Title_Language_Right { get; set; }
         public string Agreement_No { get; set; }
     }
+    [StoredProcedure("USP_Validate_Rev_HB_Duplication_UDT_Acq")]
+    public class USP_Validate_Rev_HB_Duplication_UDT_Acq
+    {
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights")]
+        public List<Deal_Rights_UDT> Deal_Rights { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Title")]
+        public List<Deal_Rights_Title_UDT> Deal_Rights_Title { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Platform")]
+        public List<Deal_Rights_Platform_UDT> Deal_Rights_Platform { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Territory")]
+        public List<Deal_Rights_Territory_UDT> Deal_Rights_Territory { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Subtitling")]
+        public List<Deal_Rights_Subtitling_UDT> Deal_Rights_Subtitling { get; set; }
+
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Deal_Rights_Dubbing")]
+        public List<Deal_Rights_Dubbing_UDT> Deal_Rights_Dubbing { get; set; }
+
+        //[StoredProcedureParameter(SqlDbType.VarChar, ParameterName = "CallFrom")]
+        //public string CallFrom { get; set; }
+
+        public string Platform_Name { get; set; }
+        public int Platform_Code { get; set; }
+        public string Territory_Name { get; set; }
+        public string Country_Name { get; set; }
+        public string Territory_Type { get; set; }
+        public string Title_Name { get; set; }
+        public Nullable<DateTime> Right_Start_Date { get; set; }
+        public Nullable<DateTime> Right_End_Date { get; set; }
+        public string Right_Type { get; set; }
+        public string Is_Sub_License { get; set; }
+        public string Subtitling_Language { get; set; }
+        public string Dubbing_Language { get; set; }
+        public string ErrorMSG { get; set; }
+        public string Is_Title_Language_Right { get; set; }
+        public string Agreement_No { get; set; }
+    }
 
     [StoredProcedure("USP_Validate_Show_Episode_UDT")]
     public class USP_Validate_Show_Episode_UDT
@@ -1655,6 +1695,49 @@ namespace RightsU_Entities
         public string callFor { get; set; }
         [StoredProcedureParameter(SqlDbType.Int, ParameterName = "DM_Master_Import_Code")]
         public int DM_Master_Import_Code { get; set; }
+        public string Result { get; set; }
+    }
+
+    [UserDefinedTableType("Title_Objection_UDT")]
+    public class Title_Objection_UDT
+    {
+        [UserDefinedTableTypeColumn(1)]
+        public int Title_Objection_Code { get; set; }
+        [UserDefinedTableTypeColumn(2)]
+        public string PlatformCodes { get; set; }
+        [UserDefinedTableTypeColumn(3)]
+        public string CTCodes { get; set; }
+        [UserDefinedTableTypeColumn(4)]
+        public string LPCodes { get; set; }
+        [UserDefinedTableTypeColumn(5)]
+        public string SD { get; set; }
+        [UserDefinedTableTypeColumn(6)]
+        public string ED { get; set; }
+        [UserDefinedTableTypeColumn(7)]
+        public string ObjRemarks { get; set; }
+        [UserDefinedTableTypeColumn(8)]
+        public string ResRemarks { get; set; }
+        [UserDefinedTableTypeColumn(9)]
+        public int Objection_Type_Code { get; set; }
+        [UserDefinedTableTypeColumn(10)]
+        public int Title_Status_Code { get; set; }
+        [UserDefinedTableTypeColumn(11)]
+        public char CntTerr { get; set; }
+        [UserDefinedTableTypeColumn(12)]
+        public int TitleCode { get; set; }
+        [UserDefinedTableTypeColumn(13)]
+        public char RecordType { get; set; }
+        [UserDefinedTableTypeColumn(14)]
+        public int RecordCode { get; set; }
+    }
+
+    [StoredProcedure("USP_Validate_Title_Objection_Dup")]
+    public class USP_Validate_Title_Objection_Dup
+    {
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "Title_Objection_UDT")]
+        public List<Title_Objection_UDT> Title_Objection_UDT { get; set; }
+        [StoredProcedureParameter(SqlDbType.Int, ParameterName = "User_Code")]
+        public int User_Code { get; set; }
         public string Result { get; set; }
     }
 }

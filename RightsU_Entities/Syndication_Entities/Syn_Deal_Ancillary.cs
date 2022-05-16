@@ -18,6 +18,9 @@ namespace RightsU_Entities
         {
             this.Syn_Deal_Ancillary_Platform = new HashSet<Syn_Deal_Ancillary_Platform>();
             this.Syn_Deal_Ancillary_Title = new HashSet<Syn_Deal_Ancillary_Title>();
+            this.LstDeal_Ancillary_Title_UDT = new List<Deal_Ancillary_Title_UDT>();
+            this.LstDeal_Ancillary_Platform_UDT = new List<Deal_Ancillary_Platform_UDT>();
+            this.LstDeal_Ancillary_Platform_Medium_UDT = new List<Deal_Ancillary_Platform_Medium_UDT>();
         }
 
         public State EntityState { get; set; }
@@ -35,5 +38,9 @@ namespace RightsU_Entities
         public virtual Syn_Deal Syn_Deal { get; set; }
         public virtual ICollection<Syn_Deal_Ancillary_Platform> Syn_Deal_Ancillary_Platform { get; set; }
         public virtual ICollection<Syn_Deal_Ancillary_Title> Syn_Deal_Ancillary_Title { get; set; }
+
+        public List<Deal_Ancillary_Title_UDT> LstDeal_Ancillary_Title_UDT { get; set; }
+        public List<Deal_Ancillary_Platform_UDT> LstDeal_Ancillary_Platform_UDT { get; set; }
+        public List<Deal_Ancillary_Platform_Medium_UDT> LstDeal_Ancillary_Platform_Medium_UDT { get; set; }
     }
 }

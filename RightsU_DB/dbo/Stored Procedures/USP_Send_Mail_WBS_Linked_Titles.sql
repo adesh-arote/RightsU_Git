@@ -120,19 +120,19 @@ BEGIN
 			SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile_User_Master'
 
 				
-				EXEC msdb.dbo.sp_send_dbmail 
-				@profile_name = @DatabaseEmail_Profile,
-				@recipients =  @To_User_Mail_Id,
-				@copy_recipients = @CC_User_Mail_Id,
-				@blind_copy_recipients = @BCC_User_Mail_Id,
-				@subject = 'WBS Codes are already linked',
-				@body = @mailBody, 
-				@body_format = 'HTML';
+				--EXEC msdb.dbo.sp_send_dbmail 
+				--@profile_name = @DatabaseEmail_Profile,
+				--@recipients =  @To_User_Mail_Id,
+				--@copy_recipients = @CC_User_Mail_Id,
+				--@blind_copy_recipients = @BCC_User_Mail_Id,
+				--@subject = 'WBS Codes are already linked',
+				--@body = @mailBody, 
+				--@body_format = 'HTML';
 
 
 				
 				INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
-				SELECT @Email_Config_Code,@EmailTable, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'WBS Title Link'
+				SELECT @Email_Config_Code,@mailBody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'WBS Codes are already linked'
 
 			END
 			FETCH NEXT FROM CurOuter Into  @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
