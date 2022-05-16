@@ -18,5 +18,9 @@ namespace RightsU_InterimDb.Models
     	    public string Deal_Desc_Name { get; set; }
     	    public string Type { get; set; }
     	    public string Is_Active { get; set; }
+    	    public Nullable<System.DateTime> Inserted_On { get; set; }
+    	    public Nullable<int> Inserted_By { get; set; }
+    	    public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+    	    public Nullable<int> Last_Action_By { get; set; }
     }
 }

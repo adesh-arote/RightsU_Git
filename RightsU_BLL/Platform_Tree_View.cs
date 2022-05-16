@@ -58,6 +58,13 @@ namespace RightsU_BLL
             set { this._HBPlatformCodes_Reference = value; }
         }
 
+        private string[] _TOPlatformCodes_Reference;
+        public string[] TOPlatformCodes_Reference
+        {
+            get { return this._TOPlatformCodes_Reference; }
+            set { this._TOPlatformCodes_Reference = value; }
+        }
+
         private string[] _AncPlatformCodes_Reference;
         public string[] AncPlatformCodes_Reference
         {
@@ -184,6 +191,11 @@ namespace RightsU_BLL
                             if (HBPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
                             {
                                 referenceIn.Add("Holdback");
+                            }
+                        if (TOPlatformCodes_Reference != null)
+                            if (TOPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
+                            {
+                                referenceIn.Add("Title Objection");
                             }
                         if (AncPlatformCodes_Reference != null)
                             if (AncPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
@@ -365,6 +377,11 @@ namespace RightsU_BLL
                         if (HBPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
                         {
                             referenceIn.Add("Holdback");
+                        }
+                    if (TOPlatformCodes_Reference != null)
+                        if (TOPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
+                        {
+                            referenceIn.Add("Title Objection");
                         }
                     if (AncPlatformCodes_Reference != null)
                         if (AncPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)

@@ -256,8 +256,15 @@ namespace RightsU_Plus.Controllers
             if (Type == "G")
             {
                 int selectedGroup = 0;
-                if (!string.IsNullOrEmpty(DummyGuid))
-                    selectedGroup = (int)objECD.Email_Config_Detail_User.Where(x => x.Dummy_Guid == DummyGuid).Select(x => x.Security_Group_Code).FirstOrDefault();
+                try
+                {
+                    if (!string.IsNullOrEmpty(DummyGuid))
+                        selectedGroup = (int)objECD.Email_Config_Detail_User.Where(x => x.Dummy_Guid == DummyGuid).Select(x => x.Security_Group_Code).FirstOrDefault();
+
+                }
+                catch (Exception)
+                {
+                }
                 
                 if (BUCodes != null)
                 {

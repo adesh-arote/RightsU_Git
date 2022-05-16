@@ -1,4 +1,4 @@
-﻿--USP_ValidateIfHoldbackExist 6693,'12901','5','0,0,0,151,152,153,154,155,156,157,158,159,160,0,161,162,163,164,165,166,167,168,169,170,0,171,172,173,174,175,176,177,178,179,180,0,73,74,75,76,77,78,79,80,260,0,0,181,182,183,184,185,186,187,188,189,190,0,191,192,193,194,195,196,197,198,199,200,0,201,202,203,204,205,206,207,208,209,210,0,211,212,213,214,215,216,217,218,219,220,0,221,222,223,224,225,226,227,228,229,230,0,86,87,88,89,90,261','','','I','L','L','24/08/2016','23/08/2020','','Y'
+﻿--USP_ValidateIfHoldbackExist 6693,'4134','1','0,0,90,91,92,0,217,219,221,223,224,225,226,94,0,0,95,96,97,98,99,100,101,102,103,0,0,227,228,229,230,231,232,105,106,107,109','1','','G','G','L','12/10/2014','11/10/2021','','N'
 
 CREATE PROC USP_ValidateIfHoldbackExist(
 	@Syn_Deal_Rights_Code BIGINT,
@@ -57,6 +57,8 @@ BEGIN
 	--SET @Is_Title_Language_Right = 'Y'
 
 	BEGIN /*Delete Temp Tables*/
+	IF OBJECT_ID('tempdb..#tmpTable1') IS NOT NULL DROP TABLE #tmpTable1
+	IF OBJECT_ID('tempdb..#tmpTable2') IS NOT NULL DROP TABLE #tmpTable2
 	IF OBJECT_ID('tempdb..#Temp_Acq_Rights_Title') IS NOT NULL
 	BEGIN
 		DROP TABLE #Temp_Acq_Rights_Title
@@ -338,7 +340,8 @@ BEGIN
 	IF EXISTS(SELECT TOP 1 Holdback_Code FROM #Acq_Rights_Holdback)
 	BEGIN
 		--PRINT 'Im'
-
+		--OLD CODE
+		/*
 		SELECT DISTINCT ADRH.Acq_Deal_Rights_Holdback_Code AS Holdback_Code FROM Acq_Deal_Rights_Holdback ADRH 
 		INNER JOIN Acq_Deal_Rights_Holdback_Platform ADRHP ON ADRH.Acq_Deal_Rights_Holdback_Code = ADRHP.Acq_Deal_Rights_Holdback_Code
 		INNER JOIN Acq_Deal_Rights_Holdback_Territory ADRHT ON ADRH.Acq_Deal_Rights_Holdback_Code = ADRHT.Acq_Deal_Rights_Holdback_Code
@@ -356,8 +359,45 @@ BEGIN
 			OR ADRHS.Language_Code IN (Select Language_Code from #Selected_Subtitling_Lang)
 			OR ADRHD.Language_Code IN (Select Language_Code from #Selected_Dubbing_Lang)
 		)
-
+		*/
 		--SELECT Holdback_Code FROM #Acq_Rights_Holdback
+
+		SELECT 
+		DISTINCT ADRH.Acq_Deal_Rights_Holdback_Code AS Acq_Deal_Rights_Holdback_Code
+		,ADRH.Is_Title_Language_Right
+		,ADRHS.Language_Code as Slang
+		,ADRHD.Language_Code as Dlang
+		INTO #tmpTable1
+		FROM Acq_Deal_Rights_Holdback ADRH 
+		LEFT JOIN Acq_Deal_Rights_Holdback_Subtitling ADRHS ON ADRH.Acq_Deal_Rights_Holdback_Code = ADRHS.Acq_Deal_Rights_Holdback_Code
+		LEFT JOIN Acq_Deal_Rights_Holdback_Dubbing ADRHD ON ADRH.Acq_Deal_Rights_Holdback_Code = ADRHD.Acq_Deal_Rights_Holdback_Code
+		WHERE ADRH.Acq_Deal_Rights_Holdback_Code IN (SELECT Holdback_Code FROM #Acq_Rights_Holdback)
+
+		SELECT 
+		DISTINCT ADRH.Acq_Deal_Rights_Holdback_Code AS Acq_Deal_Rights_Holdback_Code
+		,ADRHT.Country_Code
+		,ADRHP.Platform_Code
+		INTO #tmpTable2
+		FROM Acq_Deal_Rights_Holdback ADRH 
+		INNER JOIN Acq_Deal_Rights_Holdback_Platform ADRHP ON ADRH.Acq_Deal_Rights_Holdback_Code = ADRHP.Acq_Deal_Rights_Holdback_Code
+		INNER JOIN Acq_Deal_Rights_Holdback_Territory ADRHT ON ADRH.Acq_Deal_Rights_Holdback_Code = ADRHT.Acq_Deal_Rights_Holdback_Code
+		WHERE ADRH.Acq_Deal_Rights_Holdback_Code IN (SELECT Holdback_Code FROM #Acq_Rights_Holdback)
+
+		declare @Cnt1 INT = 0, @Cnt2 INT = 0
+
+		select  @Cnt1 = Count(*) from #tmpTable2 ADRH
+		WHERE 
+		ADRH.Country_Code IN (select Region_Code from #Selected_Region)
+		AND ADRH.Platform_Code IN (select Platform_Code from #Selected_Platform)
+
+		select @Cnt2= Count(*) from #tmpTable1 ADRH
+		WHERE 
+			ADRH.Is_Title_Language_Right = 'Y' 
+			OR ADRH.Slang IN (Select Language_Code from #Selected_Subtitling_Lang)
+			OR ADRH.Dlang IN (Select Language_Code from #Selected_Dubbing_Lang)
+		---------------------
+		if(@Cnt1 > 0 AND @Cnt2 > 0 )
+			SELECT 1 As Holdback_Code
 	END
 	ELSE
 	BEGIN
@@ -395,6 +435,8 @@ BEGIN
 	
 END
 
+	IF OBJECT_ID('tempdb..#tmpTable1') IS NOT NULL DROP TABLE #tmpTable1
+	IF OBJECT_ID('tempdb..#tmpTable2') IS NOT NULL DROP TABLE #tmpTable2
 	IF OBJECT_ID('tempdb..#Acq_Rights_Holdback') IS NOT NULL DROP TABLE #Acq_Rights_Holdback
 	IF OBJECT_ID('tempdb..#Selected_Dubbing_Lang') IS NOT NULL DROP TABLE #Selected_Dubbing_Lang
 	IF OBJECT_ID('tempdb..#Selected_Platform') IS NOT NULL DROP TABLE #Selected_Platform

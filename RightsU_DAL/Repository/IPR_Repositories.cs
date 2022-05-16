@@ -97,6 +97,49 @@ namespace RightsU_DAL
         }
     }
 
+    public class IPR_REP_CLass_Repository : RightsU_Repository<IPR_REP_CLASS>
+    {
+        public IPR_REP_CLass_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(IPR_REP_CLASS objIPRR)
+        {
+            Save_IPR_REP_Entities_Generic objSaveEntities = new Save_IPR_REP_Entities_Generic();
+
+            //if (objIPRR.IPR_REP_ATTACHMENTS != null) objIPRR.IPR_REP_ATTACHMENTS = objSaveEntities.SaveAttachments(objIPRR.IPR_REP_ATTACHMENTS, base.DataContext);
+            //if (objIPRR.IPR_REP_EMAIL_FREQ != null) objIPRR.IPR_REP_EMAIL_FREQ = objSaveEntities.SaveEmailFreq(objIPRR.IPR_REP_EMAIL_FREQ, base.DataContext);
+            //if (objIPRR.IPR_REP_STATUS_HISTORY != null) objIPRR.IPR_REP_STATUS_HISTORY = objSaveEntities.SaveStatusHistory(objIPRR.IPR_REP_STATUS_HISTORY, base.DataContext);
+            //if (objIPRR.IPR_REP_CLASS != null) objIPRR.IPR_REP_CLASS = objSaveEntities.SaveClass(objIPRR.IPR_REP_CLASS, base.DataContext);
+            //if (objIPRR.IPR_Rep_Business_Unit != null) objIPRR.IPR_Rep_Business_Unit = objSaveEntities.SaveBusinessUnit(objIPRR.IPR_Rep_Business_Unit, base.DataContext);
+            //if (objIPRR.IPR_Rep_Channel != null) objIPRR.IPR_Rep_Channel = objSaveEntities.SaveChannel(objIPRR.IPR_Rep_Channel, base.DataContext);
+
+            if (objIPRR.EntityState == State.Added)
+            {
+                base.Save(objIPRR);
+            }
+            else if (objIPRR.EntityState == State.Modified)
+            {
+                base.Update(objIPRR);
+            }
+            else if (objIPRR.EntityState == State.Deleted)
+            {
+                base.Delete(objIPRR);
+            }
+        }
+
+        //public override void Delete(IPR_REP objIPRR)
+        //{
+        //    Save_IPR_REP_Entities_Generic objSaveEntities = new Save_IPR_REP_Entities_Generic();
+        //    objSaveEntities.DeleteAttachments(objIPRR.IPR_REP_ATTACHMENTS, base.DataContext);
+        //    objSaveEntities.DeleteStatusHistory(objIPRR.IPR_REP_STATUS_HISTORY, base.DataContext);
+        //    objSaveEntities.DeleteEmailFreq(objIPRR.IPR_REP_EMAIL_FREQ, base.DataContext);
+        //    objSaveEntities.DeleteClass(objIPRR.IPR_REP_CLASS, base.DataContext);
+        //    objSaveEntities.DeleteBusinessUnit(objIPRR.IPR_Rep_Business_Unit, base.DataContext);
+        //    objSaveEntities.DeleteChannel(objIPRR.IPR_Rep_Channel, base.DataContext);
+
+        //    base.Delete(objIPRR);
+        //}
+    }
+
     public class IPR_REP_ATTACHMENTS_Repository : RightsU_Repository<IPR_REP_ATTACHMENTS>
     {
         public IPR_REP_ATTACHMENTS_Repository(string conStr) : base(conStr) { }

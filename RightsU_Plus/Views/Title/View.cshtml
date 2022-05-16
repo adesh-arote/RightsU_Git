@@ -27,22 +27,25 @@
         width: 100px;
         word-break: break-all;
     }
-     #Tree_Filter_Rights_Platform {
+
+    #Tree_Filter_Rights_Platform {
         margin-left: -10px;
         width: 300px;
         margin-top: -3px;
     }
-     #divPlatformTree {
+
+    #divPlatformTree {
         overflow-x: hidden;
-       
         /*overflow-y:auto;*/
     }
-      #popupFade .modal_header{
-        background:#c3c3c3;
+
+    #popupFade .modal_header {
+        background: #c3c3c3;
     }
-      #popupFade{
-          width:300px!important;
-      }
+
+    #popupFade {
+        width: 300px !important;
+    }
 </style>
 <script type="text/javascript">
 </script>
@@ -94,7 +97,7 @@
             else
                 Bind_Deal_List(page_index, 'N');
         }
-        else if ('@ViewBag.Mode' == 'R') {   
+        else if ('@ViewBag.Mode' == 'R') {
            recordLockingCode = @ViewBag.RecordLockingCode_View;
             $('#hdnRecordLockingCode').val(recordLockingCode)
             if(recordLockingCode > 0)
@@ -746,7 +749,7 @@
                                                     <td class="intro_pic">
                                                         <div>
                                                             @if (Model.Title_Image != null)
-                                                            {   <img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Title_Image)" alt="Image" />}
+                                                            {<img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Title_Image)" alt="Image" />}
                                                             else
                                                             {
                                                                 if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
@@ -758,7 +761,7 @@
                                                                 else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
                                                                 {<a href="javascript:void(0)"><img src="~/Images/Event.png" alt="Image" /></a> }
                                                                 else
-                                                                {<a href="javascript:void(0)"><img src="~/Images/movieIcon.png" alt="Image" /></a> }
+                                                                {<a href="javascript:void(0)"><img src="~/Images/movieIcon.png" alt="Image" /></a>}
                                                             }
                                                         </div>
                                                     </td>
@@ -774,12 +777,12 @@
                                                                 </td>
                                                                 <td>
                                                                     @{
-                                                                 string Program_Name = objMessageKey.Noprogram;
-                                                                if (@Model.Program_Code > 0 && @Model.Program_Code != null && @Model.Program_Code.ToString() != "")
-                                                                {
-                                                                    Program_Name = objP.GetById(Model.Program_Code ?? 0).Program_Name;
-                                                                }
-                                                                   }
+                                                                        string Program_Name = objMessageKey.Noprogram;
+                                                                        if (@Model.Program_Code > 0 && @Model.Program_Code != null && @Model.Program_Code.ToString() != "")
+                                                                        {
+                                                                            Program_Name = objP.GetById(Model.Program_Code ?? 0).Program_Name;
+                                                                        }
+                                                                    }
                                                                     @Html.Label("ProgramName", Program_Name)
                                                                 </td>
 
@@ -791,7 +794,7 @@
                                                                 </td>
                                                                 <td>@objMessageKey.OriginalTitle</td>
                                                                 @{
-                                                                   string originaltitle = objMessageKey.NA;
+                                                                    string originaltitle = objMessageKey.NA;
                                                                     if (@Model.Original_Title != null && @Model.Original_Title != "")
                                                                     {
                                                                         originaltitle = Model.Original_Title;
@@ -804,70 +807,70 @@
                                                             <tr>
                                                                 <td>@objMessageKey.DurationInMin &#x200E;</td>
                                                                 @{
-                string durationInMin = objMessageKey.NA;
-                                                                  if (@Model.Duration_In_Min != null && @Model.Duration_In_Min.ToString() != "")
-                                                                   {   
-                                                                     durationInMin = Model.Duration_In_Min.ToString();
-                                                                   }
+                                                                    string durationInMin = objMessageKey.NA;
+                                                                    if (@Model.Duration_In_Min != null && @Model.Duration_In_Min.ToString() != "")
+                                                                    {
+                                                                        durationInMin = Model.Duration_In_Min.ToString();
+                                                                    }
                                                                 }
                                                                 <td>
                                                                     @durationInMin
                                                                 </td>
                                                                 <td>@objMessageKey.YearOfRelease</td>
                                                                 @{
-                string YOR = objMessageKey.NA;
-                                                                    if(@Model.Year_Of_Production != null && @Model.Year_Of_Production.ToString() != "")
+                                                                    string YOR = objMessageKey.NA;
+                                                                    if (@Model.Year_Of_Production != null && @Model.Year_Of_Production.ToString() != "")
                                                                     {
-                                                                        YOR = Model.Year_Of_Production.ToString();   
+                                                                        YOR = Model.Year_Of_Production.ToString();
                                                                     }
-                                                                  }
+                                                                }
                                                                 <td>
-                                                                   @YOR
+                                                                    @YOR
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>@objMessageKey.TitleLanguage</td>
                                                                 <td>
                                                                     @{
-                                                            string Language_Name = "";
-                                                            if (@Model.Title_Language_Code > 0)
-                                                            {
-                                                                Language_Name = objLS.GetById(Model.Title_Language_Code ?? 0).Language_Name;
-                                                            }
+                                                                        string Language_Name = "";
+                                                                        if (@Model.Title_Language_Code > 0)
+                                                                        {
+                                                                            Language_Name = objLS.GetById(Model.Title_Language_Code ?? 0).Language_Name;
+                                                                        }
                                                                     }
                                                                     @Html.Label(@objMessageKey.TitleLanguage, Language_Name)
                                                                 </td>
                                                                 <td>@objMessageKey.OriginalLanguage</td>
                                                                 <td>
                                                                     @{
-                string Original_language = objMessageKey.NA;
-                                                            if (@Model.Original_Language_Code > 0 && @Model.Original_Language_Code != null && @Model.Original_Language_Code.ToString() != "")
-                                                            {
-                                                                Original_language = objLS.GetById(Model.Original_Language_Code ?? 0).Language_Name;
-                                                            }
+                                                                        string Original_language = objMessageKey.NA;
+                                                                        if (@Model.Original_Language_Code > 0 && @Model.Original_Language_Code != null && @Model.Original_Language_Code.ToString() != "")
+                                                                        {
+                                                                            Original_language = objLS.GetById(Model.Original_Language_Code ?? 0).Language_Name;
+                                                                        }
                                                                     }
                                                                     @Html.Label("Original_language", Original_language)
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>@objMessageKey.ProducerName</td>
-                                                               @{
-                string producername = objMessageKey.NA;
-                                                            if (@ViewBag.ProduceList !=null && @ViewBag.ProduceList != "")
-                                                            {
-                                                                producername = @ViewBag.ProduceList;
-                                                            }
+                                                                @{
+                                                                    string producername = objMessageKey.NA;
+                                                                    if (@ViewBag.ProduceList != null && @ViewBag.ProduceList != "")
+                                                                    {
+                                                                        producername = @ViewBag.ProduceList;
+                                                                    }
                                                                 }
                                                                 <td class="expandable">
                                                                     @producername
-                                                                                </td>
+                                                                </td>
                                                                 <td>@objMessageKey.DirectorName</td>
                                                                 @{
-                string directorname = objMessageKey.Nodirector;
-                                                            if (@ViewBag.DirectorList != null && @ViewBag.DirectorList != "")
-                                                            {
-                                                                directorname = @ViewBag.DirectorList;
-                                                            }
+                                                                    string directorname = objMessageKey.Nodirector;
+                                                                    if (@ViewBag.DirectorList != null && @ViewBag.DirectorList != "")
+                                                                    {
+                                                                        directorname = @ViewBag.DirectorList;
+                                                                    }
                                                                 }
                                                                 <td class="expandable">
                                                                     @directorname
@@ -880,11 +883,11 @@
                                                                 </td>
                                                                 <td>@objMessageKey.TitleGenres</td>
                                                                 @{
-                string genresname = objMessageKey.Nogenres;
-                                                            if (@ViewBag.GenresList != null && @ViewBag.GenresList != "")
-                                                            {
-                                                                genresname = @ViewBag.GenresList;
-                                                            }
+                                                                    string genresname = objMessageKey.Nogenres;
+                                                                    if (@ViewBag.GenresList != null && @ViewBag.GenresList != "")
+                                                                    {
+                                                                        genresname = @ViewBag.GenresList;
+                                                                    }
                                                                 }
                                                                 <td class="expandable">
                                                                     @genresname
@@ -900,29 +903,29 @@
                                                             <tr>
                                                                 <td>@objMessageKey.KeyStarCast</td>
                                                                 @{
-        string talent = objMessageKey.Notalent;
-        if (@ViewBag.StarCastList != null && @ViewBag.StarCastList != "")
-        {
-            talent = @ViewBag.StarCastList;
-        }
+                                                                    string talent = objMessageKey.Notalent;
+                                                                    if (@ViewBag.StarCastList != null && @ViewBag.StarCastList != "")
+                                                                    {
+                                                                        talent = @ViewBag.StarCastList;
+                                                                    }
                                                                 }
                                                                 <td colspan="1" class="expandable">
                                                                     @talent
                                                                 </td>
                                                                 @if (ViewBag.IsCalculatePublicDomain == "Y")
                                                                 {
-                                                                <td>
-                                                                    Public Domain
-                                                                </td>
-                                                                <td><div id="PDomain"></div></td>
+                                                                    <td>
+                                                                        Public Domain
+                                                                    </td>
+                                                                    <td><div id="PDomain"></div></td>
                                                                 }
                                                             </tr>
                                                             <tr>
                                                                 <td>@objMessageKey.Synopsis</td>
                                                                 @{
-                string synopsis = objMessageKey.NA;
-                                                                    if (@Model.Synopsis != null && @Model.Synopsis !="")
-                                                                    { 
+                                                                    string synopsis = objMessageKey.NA;
+                                                                    if (@Model.Synopsis != null && @Model.Synopsis != "")
+                                                                    {
                                                                         synopsis = Model.Synopsis;
                                                                     }
                                                                 }

@@ -328,7 +328,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.PartialTabList = null;
             }
             // ViewBag.IsFirstTime = "Y";
-
+            Fillddl();
             return View(objTitle);
         }
 
@@ -364,11 +364,13 @@ namespace RightsU_Plus.Controllers
                 ViewBag.DealListPageSize = Convert.ToInt32(obj_Dictionary_Title["DealListPageSize"]);
                 TempData["TitleData"] = null;
             }
+
+            Fillddl();
             if (Type == "R")
             {
                 ViewBag.RecordLockingCode_View = TempData["RecodLockingCode"];
                 TempData.Keep("RecodLockingCode");
-                Fillddl();
+                //Fillddl();
             }
             else
                 ViewBag.RecordLockingCode_View = 0;
@@ -403,6 +405,13 @@ namespace RightsU_Plus.Controllers
                 ViewBag.OriginalLanguage = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(e => e.Language_Code == objTitle.Original_Language_Code).Select(i => new { i.Language_Name });
             else
                 ViewBag.OriginalLanguage = "No Original Langauge";
+
+            string Per_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic_Title").FirstOrDefault().Parameter_Value;
+
+            if (Per_Logic == "Y")
+            {
+                return View("~/Views/Title/View_Release.cshtml", objTitle);
+            }
             return View(objTitle);
         }
 
@@ -1081,7 +1090,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
-        public PartialViewResult GetTitle_Release_List(int Title_Code, int PageNo = 1, int PageSize = 10)
+        public PartialViewResult GetTitle_Release_List(int Title_Code, int PageNo = 1, int PageSize = 10, string cmdName = "")
         {
             //new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(p => true).Select(p => p)
             //    .Join(new Title_Release_Platform_Service().SearchFor(p => true).Select(p => p), x => x.Title_Release_Code, y => y.Title_Release_Code, (x, y) => new { Title_Release = x, Title_Release_Platforms = y })
@@ -1090,6 +1099,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.TitleReleasePageNo = PageNo;
             ViewBag.TitleReleaseCount = new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Title_Code == Title_Code).Count();
             var title_List = new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Title_Code == Title_Code).OrderBy(p => p.Title_Release_Code).Skip(skip).Take(PageSize).ToList();
+            if (cmdName == "C")
+            {
+                title_List.Clear();
+            }
             return PartialView("_List_Title_Release", title_List);
         }
 
@@ -1374,7 +1387,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult SaveExtendedMetadata(string ExtendedColumnValue)
         {
             int ccount = 0;
-           // ExtendedColumnCode ;
+            // ExtendedColumnCode ;
             string msgType = "";
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             try
@@ -1531,7 +1544,7 @@ namespace RightsU_Plus.Controllers
             if (hdnColumnValueCode == null || hdnColumnValueCode == "")
                 hdnColumnValueCode = "0";
             string[] arrColumnsValueCode = hdnColumnValueCode.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
+            
             int ColumnCode = Convert.ToInt32(hdnExtendedColumnsCode);
             if (hdnType == "A" || hdnType == "")
             {
@@ -1612,7 +1625,8 @@ namespace RightsU_Plus.Controllers
                 obj.Columns_Name = hdnExtendedColumnName;
                 obj.Name = hdnName;
 
-
+                gvExtended.Remove(obj);
+                
                 int MapExtendedColumnCode = 0;
 
                 if (hdnMEColumnCode != "")
@@ -1899,8 +1913,16 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.Direction = "LTR";
                 ViewBag.IsFirstTime = "N";
-                ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").First().Parameter_Value;
+                ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").FirstOrDefault().Parameter_Value;
                 //return PartialView("~/Views/Title/Index.cshtml", objTitle);
+
+                string Per_Logic =  new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic_Title").FirstOrDefault().Parameter_Value;
+
+                if (Per_Logic == "Y")
+                {
+                    return PartialView("~/Views/Title/_Title_Main_Release.cshtml", objTitle);
+                }
+
                 return PartialView("~/Views/Title/_Title_Main.cshtml", objTitle);
             }
             else

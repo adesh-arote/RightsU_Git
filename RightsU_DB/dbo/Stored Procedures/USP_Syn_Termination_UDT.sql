@@ -261,8 +261,12 @@ BEGIN
 
 						IF(@Right_Type = 'M')
 						BEGIN
+							--UPDATE Syn_Deal_Rights SET Actual_Right_End_Date = @Termination_Date, 
+							--Milestone_No_Of_Unit = CAST(CAST([dbo].[UFN_Calculate_Term](Actual_Right_Start_Date,@Termination_Date) as float) as int), Right_Type ='M'
+							--WHERE Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code
+
 							UPDATE Syn_Deal_Rights SET Actual_Right_End_Date = @Termination_Date, 
-							Milestone_No_Of_Unit = CAST(CAST([dbo].[UFN_Calculate_Term](Actual_Right_Start_Date,@Termination_Date) as float) as int), Right_Type ='M'
+							Term = [dbo].[UFN_Calculate_Term](Right_Start_Date,@Termination_Date), Right_Type ='M'
 							WHERE Syn_Deal_Rights_Code = @Syn_Deal_Rights_Code
 						END
 						ELSE
@@ -629,7 +633,7 @@ BEGIN
 	CLOSE cursorTermination_Deals;
 	DEALLOCATE cursorTermination_Deals;
 
-	EXEC USP_Assign_Workflow @lastDealCode, 35, @Login_User_Code
+	EXEC USP_Assign_Workflow @lastDealCode, 35, @Login_User_Code , ''
 
 	SELECT Deal_Code, Title_Code, Episode_No, Termination_Date, Is_Error, Error_Details FROM #Termination_Deals_Status
 

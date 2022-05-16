@@ -471,8 +471,12 @@ BEGIN
 
 								IF(@Right_Type = 'M')
 								BEGIN
+									--UPDATE Acq_Deal_Rights SET Actual_Right_End_Date = @Termination_Date, 
+									--Milestone_No_Of_Unit = CAST(CAST([dbo].[UFN_Calculate_Term](Actual_Right_Start_Date,@Termination_Date) as float) as int), Right_Type ='M'
+									--WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+
 									UPDATE Acq_Deal_Rights SET Actual_Right_End_Date = @Termination_Date, 
-									Milestone_No_Of_Unit = CAST(CAST([dbo].[UFN_Calculate_Term](Actual_Right_Start_Date,@Termination_Date) as float) as int), Right_Type ='M'
+									Term = [dbo].[UFN_Calculate_Term](Right_Start_Date,@Termination_Date), Right_Type ='M'
 									WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
 								END
 								ELSE
@@ -1099,7 +1103,7 @@ BEGIN
 			Last_Action_By = @Login_User_Code, Last_Updated_Time=GETDATE() 
 			WHERE Acq_Deal_Code = @lastDealCode
 
-			EXEC USP_Assign_Workflow @lastDealCode, 30, @Login_User_Code
+			EXEC USP_Assign_Workflow @lastDealCode, 30, @Login_User_Code, ''
 		END
 	END
 

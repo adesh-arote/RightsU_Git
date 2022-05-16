@@ -569,6 +569,27 @@ namespace RightsU_Plus.Controllers
             return lstDuplicates_Main.Skip((PageNo - 1) * partialPageSize).Take(partialPageSize).ToList();
         }
 
+        public List<USP_Validate_Rev_HB_Duplication_UDT_Acq> Acq_Rev_HB_Validation_Popup(List<USP_Validate_Rev_HB_Duplication_UDT_Acq> lstDupRecords, string searchForTitles, string PageSize, int PageNo, out int Record_Count)
+        {
+            if (PageSize == "" || PageSize == "0")
+                PageSize = "10";
+
+            int partialPageSize = Convert.ToInt32(PageSize);
+            List<string> arrTitleNames;
+            List<USP_Validate_Rev_HB_Duplication_UDT_Acq> lstDuplicates_Main;
+
+            if (searchForTitles != "")
+            {
+                arrTitleNames = searchForTitles.Split(',').ToList();
+                lstDuplicates_Main = lstDupRecords.Where(x => arrTitleNames.Contains(x.Title_Name)).ToList();
+            }
+            else
+                lstDuplicates_Main = lstDupRecords;
+
+            Record_Count = lstDuplicates_Main.Count;
+            return lstDuplicates_Main.Skip((PageNo - 1) * partialPageSize).Take(partialPageSize).ToList();
+        }
+
         public JsonResult ChangeTab(string tabName, int ModuleCode = 30)
         {
             int pageNo = 1;

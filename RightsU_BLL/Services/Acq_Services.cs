@@ -54,23 +54,29 @@ namespace RightsU_BLL
             if (!objToValidate.SaveGeneralOnly)
             {
                 USP_Service objValidateService = new USP_Service(_Connection_Str);
-                List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
+
+                //Commented by akshay rane temporary (need to Recheck by aayush)
+                /*
+                List<USP_Validate_Rev_HB_Duplication_UDT_Acq> objResult = new List<USP_Validate_Rev_HB_Duplication_UDT_Acq>();
                 foreach (Acq_Deal_Pushback objADP in objToValidate.Acq_Deal_Pushback)
                 {
                     if (objADP.LstDeal_Pushback_UDT.Count > 0)
                     {
 
-                        objResult.AddRange(objValidateService.USP_Validate_Rights_Duplication_UDT(
+                        objResult.AddRange(objValidateService.USP_Validate_Rev_HB_Duplication_UDT(
                            objADP.LstDeal_Pushback_UDT,
                            objADP.LstDeal_Pushback_Title_UDT,
                            objADP.LstDeal_Pushback_Platform_UDT,
                            objADP.LstDeal_Pushback_Territory_UDT,
                            objADP.LstDeal_Pushback_Subtitling_UDT,
-                           objADP.LstDeal_Pushback_Dubbing_UDT,
-                           "AP"
+                           objADP.LstDeal_Pushback_Dubbing_UDT
+                           //"AP"
                            ).ToList());
                     }
                 }
+                */
+
+                List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
                 foreach (Acq_Deal_Rights objADP in objToValidate.Acq_Deal_Rights)
                 {
                     if (objADP.LstDeal_Rights_UDT.Count > 0)
@@ -143,6 +149,81 @@ namespace RightsU_BLL
         }
 
         public override bool ValidateDelete(Acq_Deal_Movie objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Acq_Deal_Rights_Perpetuity_Service : BusinessLogic<Acq_Deal_Rights>
+    {
+        private readonly Acq_Deal_Rights_Repository objADRR;
+        private string _Connection_Str = "";
+        //public Acq_Deal_Rights_Service()
+        //{
+        //    this.objADRR = new Acq_Deal_Rights_Repository(DBConnection.Connection_Str);
+        //}
+        public Acq_Deal_Rights_Perpetuity_Service(string Connection_Str)
+        {
+            _Connection_Str = Connection_Str;
+            this.objADRR = new Acq_Deal_Rights_Repository(Connection_Str);
+        }
+        public IQueryable<Acq_Deal_Rights> SearchFor(Expression<Func<Acq_Deal_Rights, bool>> predicate)
+        {
+            IQueryable<Acq_Deal_Rights> lst = objADRR.SearchFor(predicate);
+            foreach (Acq_Deal_Rights objRight in lst)
+            {
+                objRight.Acq_Deal_Rights_Territory.Clear();
+                objRight.Acq_Deal_Rights_Territory = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Territory(objRight.Acq_Deal_Rights_Code).ToList();
+                objRight.Acq_Deal_Rights_Subtitling.Clear();
+                objRight.Acq_Deal_Rights_Subtitling = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Subtitling(objRight.Acq_Deal_Rights_Code).ToList();
+                objRight.Acq_Deal_Rights_Dubbing.Clear();
+                objRight.Acq_Deal_Rights_Dubbing = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Dubbing(objRight.Acq_Deal_Rights_Code).ToList();
+            }
+            return lst;
+        }
+
+        public Acq_Deal_Rights GetById(int id)
+        {
+            Acq_Deal_Rights objRight = objADRR.GetById(id);
+            objRight.Acq_Deal_Rights_Territory.Clear();
+            objRight.Acq_Deal_Rights_Territory = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Territory(objRight.Acq_Deal_Rights_Code).ToList();
+            objRight.Acq_Deal_Rights_Subtitling.Clear();
+            objRight.Acq_Deal_Rights_Subtitling = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Subtitling(objRight.Acq_Deal_Rights_Code).ToList();
+            objRight.Acq_Deal_Rights_Dubbing.Clear();
+            objRight.Acq_Deal_Rights_Dubbing = objADRR.DataContext.USP_Select_Acq_Deal_Rights_Dubbing(objRight.Acq_Deal_Rights_Code).ToList();
+            return objRight;
+            //return objADRR.GetById(id);
+        }
+
+        public bool Save(Acq_Deal_Rights objADR, out dynamic resultSet)
+        {
+            return base.Save(objADR, objADRR, out resultSet);
+        }
+
+        public bool Update(Acq_Deal_Rights objADR, out dynamic resultSet)
+        {
+            return base.Update(objADR, objADRR, out resultSet);
+        }
+
+        public bool Delete(Acq_Deal_Rights objADR, out dynamic resultSet)
+        {
+            return base.Delete(objADR, objADRR, out resultSet);
+        }
+
+        public override bool Validate(Acq_Deal_Rights objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(Acq_Deal_Rights objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(Acq_Deal_Rights objToValidate, out dynamic resultSet)
         {
             resultSet = "";
             return true;
@@ -346,14 +427,15 @@ namespace RightsU_BLL
         {
             USP_Service objValidateService = new USP_Service(_Connection_Str);
             resultSet = "";
-            IEnumerable<USP_Validate_Rights_Duplication_UDT> objResult = objValidateService.USP_Validate_Rights_Duplication_UDT(
+            IEnumerable<USP_Validate_Rev_HB_Duplication_UDT_Acq> objResult = objValidateService.USP_Validate_Rev_HB_Duplication_UDT(
                objToValidate.LstDeal_Pushback_UDT,
                objToValidate.LstDeal_Pushback_Title_UDT,
                objToValidate.LstDeal_Pushback_Platform_UDT,
                objToValidate.LstDeal_Pushback_Territory_UDT,
                objToValidate.LstDeal_Pushback_Subtitling_UDT,
-               objToValidate.LstDeal_Pushback_Dubbing_UDT,
-               "AP");
+               objToValidate.LstDeal_Pushback_Dubbing_UDT
+               //"AP"
+               );
 
             resultSet = objResult;
             return !(objResult.Count() > 0);

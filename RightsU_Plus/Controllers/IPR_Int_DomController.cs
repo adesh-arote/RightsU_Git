@@ -238,6 +238,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.imagePage = imagePage;
             ViewBag.message = Message;
             ViewBag.ImageShow = imageshow;
+            ViewBag.Mode = Mode;
+            ViewBag.CurrentLoginUserCode = objLoginUser.Users_Code;
 
             if (TempData["RecodLockingCode"] == "" || TempData["RecodLockingCode"] == null)
                 ViewBag.RecordLockingCode = 0;
@@ -301,7 +303,6 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         #region Tree view
-
         public string PopulateTreeNode(string IsView, string[] selectedPlatformCodes)
         {
             string codes = string.Empty;
@@ -336,7 +337,7 @@ namespace RightsU_Plus.Controllers
                         if (selectedPlatformCodes.Where(x => x == Convert.ToString(objClass.IPR_Class_Code)).Count() > 0)
                         {
                             IsChecked = true;
-                            strChild += ", selected: true";
+                            strChild += ", selected: true, preselected : true";
                         }
                 }
                 if (IsChecked)
@@ -349,9 +350,21 @@ namespace RightsU_Plus.Controllers
                 //        strChild += ", expanded: false";
                 //}
 
-                if (IsView == "Y")
-                    strChild += ", hideCheckbox: true";
+                //if (IsView == "Y")
+                //    strChild += ", hideCheckbox: true";
 
+                if (IsView == "Y")
+                {
+                    if (selectedPlatformCodes.Contains(objClass.IPR_Class_Code.ToString()))
+                    {
+                        strChild += ", unselectableStatus: true";
+                    }
+                    else
+                    {
+                        strChild += ", unselectable: true";
+                    }
+                    //strChild += ", hideCheckbox: false";      
+                }
 
                 if (tvChildData != "")
                     tvChildData += ",";
@@ -361,8 +374,13 @@ namespace RightsU_Plus.Controllers
             }
 
             string IsRef = "";
+            //if (IsView == "Y")
+            //    IsRef += ", hideCheckbox: true";
+
             if (IsView == "Y")
-                IsRef += ", hideCheckbox: true";
+            {
+                IsRef += ", unselectableStatus: true";
+            }
 
 
             if (IsMenuChecked)
@@ -403,11 +421,24 @@ namespace RightsU_Plus.Controllers
                 }
                 if (selectedPlatformCodes != null)
                     if (selectedPlatformCodes.Where(x => x == Convert.ToString(objClass.IPR_Class_Code)).Count() > 0)
-                        strLocalChild += ", selected: true";
+                        strLocalChild += ", selected: true, preselected : true";
 
+
+                //if (IsView == "Y")
+                //    strLocalChild += ", hideCheckbox: true";
 
                 if (IsView == "Y")
-                    strLocalChild += ", hideCheckbox: true";
+                {
+                    if (selectedPlatformCodes.Where(x => x == Convert.ToString(objClass.IPR_Class_Code)).Count() > 0)
+                    {
+                        strLocalChild += ", unselectableStatus: true";
+                    }
+                    else
+                    {
+                        strLocalChild += ", unselectable: true";
+                    }
+
+                }
 
                 if (selectedPlatformCodes != null)
                     strLocalChild += ", expanded: true";
@@ -418,7 +449,6 @@ namespace RightsU_Plus.Controllers
             }
             return IsChecked;
         }
-
         #endregion
 
         [HttpPost]
@@ -608,6 +638,7 @@ namespace RightsU_Plus.Controllers
                 objIPR_REP.EntityState = State.Added;
                 objIPR_REP.Creation_Date = DateTime.Now;
                 objIPR_REP.Version = "0001";
+               
             }
 
             objIPR_REP.Created_By = objLoginUser.Users_Code;
@@ -779,6 +810,11 @@ namespace RightsU_Plus.Controllers
 
         public string Save(IPR_REP iprREPInstance, FormCollection formCollectionInstance)
         {
+            if (Mode == "C")
+            {
+                iprREPInstance.IPR_Rep_Code = 0;
+                iprREPInstance.IPR_REP_STATUS_HISTORY.Clear();
+            }
             return SaveRecord(iprREPInstance, formCollectionInstance);
         }
 

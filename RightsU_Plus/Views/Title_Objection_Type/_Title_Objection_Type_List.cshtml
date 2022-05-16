@@ -1,0 +1,136 @@
+﻿@model List<RightsU_Entities.Title_Objection_Type>
+@{
+
+}
+<script>
+    $('.expand_TOT_Name').expander({
+        slicePoint: 90,
+        expandPrefix: '',
+        expandText: '...Read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $(document).ready(function () {
+        $("#ddlPTOT_" + '@ViewBag.Title_Objection_Type_Code').val('@ViewBag.ParentObjectionType').trigger("chosen:updated");
+    });
+
+</script>
+<table class="table table-bordered table-hover" id="tblTOT">
+    <thead>
+        <tr>
+            <th style="width:40%;">Objection Type Name</th>
+            <th style="width:40%;">Parent Objection Type Name</th>
+            <th style="width:10%;">Status</th>
+            <th style="width:10%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input id="txtTOTName_0" type="text" value="" maxlength="100" />
+                </td>
+                <td>
+                     @Html.DropDownList("ddlPTOT", (IEnumerable<SelectListItem>)ViewBag.ddlPTOT, "Please Select", new { @id = "ddlPTOT_0", @class = "form_input chosen-select" })
+                </td>
+                <td align="center">
+                    <span>Active</span>
+                </td>
+                <td align="center">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTitle_Objection_Type(0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = "Active";
+                if (item.Is_Active == "N")
+                {
+                    strActive = "Deactive";
+                }
+                <tr>
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.Title_Objection_Type_Code == item.Objection_Type_Code)
+                    {
+                        <td>
+                            <input id="txtTOTName_@item.Objection_Type_Code" type="text" value="@item.Objection_Type_Name" maxlength="100" />
+                        </td>
+                        <td>
+                            @Html.DropDownList("ddlPTOT", (IEnumerable<SelectListItem>)ViewBag.ddlPTOT,"Please Select", new { @id = "ddlPTOT_"+item.Objection_Type_Code, @class = "form_input chosen-select" })
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTitle_Objection_Type(@item.Objection_Type_Code)"></a>
+                            <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <div class="expand_TOT_Name">@item.Objection_Type_Name</div>
+                        </td>
+                        <td>
+                            @{
+                                string ParentTypeName = Model.Where(x => x.Objection_Type_Code == item.Parent_Objection_Type_Code).Select(x => x.Objection_Type_Name).FirstOrDefault();
+                            }
+                            <div class="expand_TOT_Name">@(ParentTypeName ?? "")</div>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                if (item.Is_Active == "Y")
+                                {
+                                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Objection_Type_Code, 'EDIT')"></a>
+                                }
+                                else
+                                {
+                                    <a title="Cannot Edit this Objection Type as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                }
+                            }
+                            @if (item.Is_Active == "Y")
+                            {
+                                bool canDeactivate = true;
+                                string strToolTip = "";
+                                if (item.Title_Objection.Count > 0)
+                                {
+                                    canDeactivate = false;
+                                    strToolTip = "Cannot deactivate this Objection Type as it is used in Title Objection";
+                                }
+
+                                if (canDeactivate)
+                                {
+                                    <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactiveTitle_Objection_Type(@item.Objection_Type_Code, 'N')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@strToolTip" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveTitle_Objection_Type(@item.Objection_Type_Code, 'Y')"></a>
+                                }
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No Record Found</td>
+            </tr>
+        }
+    </tbody>
+</table>

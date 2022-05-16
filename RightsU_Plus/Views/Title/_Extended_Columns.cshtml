@@ -18,6 +18,7 @@
     //var dummyobj;
     function ValidateDelete(obj) {
         debugger;
+        
         if ($("#hdnRowNum").val() != "") {
             showAlert("e", "Please complete add/edit operation.", "");
             return false;
@@ -35,6 +36,26 @@
 
     //    DeleteExtended(dummyobj);
     //}
+
+    function handleOk() {
+        debugger;
+        if ($('#hdnMainConfirmationtype').val() == 'ExtendedColumn') {
+            confirmed = true;
+            DeleteExtended(dummyobj);
+        }
+        if ($('#hdnMainConfirmationtype').val() == 'talent') {
+            if ($("#hdnConfirmationtype").val() == 'talent') {
+                ValidateSave('validate');
+            }
+            else {
+                var URL = URL_TitleList_Ok;
+                URL = URL.replace("amp;", "");
+                URL = URL.replace("amp;", "");
+                window.location.href = URL;
+            }
+        }
+    }
+
     function handleECancel(Type, RowNum) {
         //var id = obj.id;
         //var RowNum = id.substring(id.length - 1);

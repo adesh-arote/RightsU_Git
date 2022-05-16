@@ -1187,7 +1187,6 @@
     <Build Include="dbo\Stored Procedures\USP_Insert_Title_Import_UDT.sql" />
     <Build Include="dbo\Stored Procedures\USP_Populate_Titles.sql" />
     <Build Include="dbo\Stored Procedures\USP_DM_Title_PI.sql" />
-    <Build Include="dbo\Stored Procedures\USP_Deal_Expiry_Email.sql" />
     <Build Include="dbo\Stored Procedures\USPMHForgotPassword.sql" />
     <Build Include="dbo\Stored Procedures\USPExportToExcelBulkImport.sql" />
     <Build Include="dbo\Stored Procedures\USP_List_ContentBulkImport.sql" />
@@ -1460,12 +1459,29 @@
     <Build Include="dbo\Stored Procedures\USP_Deal_WF_Pending_Automated_Email.sql" />
     <Build Include="dbo\Stored Procedures\USP_Validate_Delay_Rights_Duplication_Acq.sql" />
     <Build Include="dbo\Functions\UFN_Get_UsernName_Last_Approved.sql" />
-    <Build Include="dbo\Stored Procedures\USP_Insert_Email_Notification_Log.sql" />
     <Build Include="dbo\Stored Procedures\USP_Get_EmailConfig_Users.sql" />
     <Build Include="dbo\Tables\System_Parameter.sql" />
     <Build Include="dbo\Views\System_Parameter_New.sql" />
     <Build Include="dbo\Stored Procedures\USPDealStatusReport.sql" />
     <Build Include="dbo\Stored Procedures\USPDealStatusReportFilter.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Trademark_Expiry.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Get_IPR_Dashboard_Details.sql" />
+    <Build Include="dbo\Stored Procedures\USP_IPR_IntDom_Report.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Title_Objection_List.sql" />
+    <Build Include="dbo\Tables\Title_Objection.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Platform.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Rights_Period.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Status.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Territory.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Type.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Title_Objection_PreReq.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Title_Objection_ADV_List.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_Title_Objection_Dup.sql" />
+    <Build Include="dbo\User Defined Types\Title_Objection_UDT.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Title_Objection_Territory.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Title_Objection_Adv_PreReq.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_Rev_HB_Duplication_UDT_Acq.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_Perpetuity_Rights_Duplication_Acq.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

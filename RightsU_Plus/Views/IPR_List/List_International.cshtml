@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<RightsU_Entities.USP_List_IPR_Result>
 @using UTOFrameWork.FrameworkClasses;
 <script type="text/javascript">
+    var ajaxCallURL = '@Url.Action("ModalPopup", "IPR_List")';
     $(document).ready(function () {
 
         debugger;
@@ -118,7 +119,42 @@
         $('#txtPageSize_Int').attr('required', true)
         return false
     }
-
+    function ModalPopup(ApplicationNo, counter,IPRRepCode) {
+        debugger
+        // var btdId = $("#" + counter + "_ModelPopup");
+        pos = $("#" + counter + "_ModelPopup").offset();
+        $.ajax({
+            type: "POST",
+            url: ajaxCallURL,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                ApplicationNo: ApplicationNo,
+                IPRRepCode: IPRRepCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#ModalPopup').html(result);
+                    $('#popupFade').offset({ top: pos.top+20, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top+20, left: pos.left }).fadeIn();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function FadeOutPopup() {
+        $('#ModalPopup').empty();
+        $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeOut();
+        return false;
+    }
 
 
 </script>
@@ -131,6 +167,41 @@
         font-style: italic;
         opacity: 0.5;
     }
+
+    span.not-available {
+        font-style: italic;
+        opacity: 0.5;
+    }
+
+    #ModalPopup {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: auto;
+        border: #bbb 1px solid;
+        /*z-index: 100;*/
+        width: 500px;
+        left: 691.94px !important;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            overflow-y: auto;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_List_Platform {
+            max-height: 300px;
+        }
 </style>
 <div class="paging_area clearfix">
     <input type="hidden" id="hdnPageIndex" />
@@ -176,7 +247,7 @@
                                 <li><span title="Country">@objIPRList.Country</span></li>
                             </ul>
                         </td>
-                        <td class="applicant_Trademark">
+                        <td class="applicant_Trademark" style="width: 15% !important;">
                             <h5>
                                 <span title="Trademark">
                                     <a href="#" onclick="window.location.href = '@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Rep_Code = objIPRList.IPR_Rep_Code })'">
@@ -190,13 +261,13 @@
                                 </li>
                             </ul>
                         </td>
-                        <td class="applicant_BusinessUnit">
+                        <td class="applicant_BusinessUnit" style="width: 15% !important;">
                             <ul class="expandable" title="Business Unit">
                                 <li>
                                     <div>
                                         @if (string.IsNullOrEmpty(objIPRList.Business_Unit))
                                         {
-                                        <span class="not-available">@GlobalParams.msgNO Business Unit</span>
+                                            <span class="not-available">@GlobalParams.msgNO Business Unit</span>
                                         }
                                         else
                                         {
@@ -225,7 +296,7 @@
                                 </li>
                             </ul>
                         </td>
-                        <td class="applicant_status">
+                        <td class="applicant_status" style="width: 20% !important;">
                             <ul>
                                 <li><span title="Type">@objIPRList.Type</span></li>
                                 <li><span class="seperator">| </span></li>
@@ -245,8 +316,17 @@
 
 
                         </td>
+                        @{
+                            var ApplicationNo = @objIPRList.Application_No;
+                        }
+                        <td style="width:14%;">
+                            <a title="" id="@(counter)_ModelPopup" style="color: blue; text-decoration: underline;cursor:pointer" onclick="ModalPopup('@ApplicationNo',@counter,@objIPRList.IPR_Rep_Code)">Opposition Details</a>
+                        </td>
                         <td class="applicant_action">
-
+                            @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRightGranted + ",") && @objIPRList.Workflow_Status == "Approved")
+                            {
+                                <a title="Clone" class="glyphicon glyphicon-duplicate" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_CLONE, IPR_Rep_Code = objIPRList.IPR_Rep_Code })"></a>
+                            }
                             @if (@objIPRList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForView + ","))
                             {
                                 <a title="View" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvent", "IPR_List", new { MODE = UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW, IPR_Rep_Code = objIPRList.IPR_Rep_Code })"></a>
@@ -267,5 +347,24 @@
                 </table>
             </div>
         }
+        <div id="popupFade">
+            <div class="modal-dialog">
+                <div class="modal-content clearfix">
+                    <form class="form">
+                        <div class="form_fields">
+                            <div class="modal_block modal_header">
+                                <a class="close" onclick="FadeOutPopup()">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h5> </h5>
+                            </div>
+                            <div id="ModalPopup" class="MoreActionDiv">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     }
 </div>

@@ -235,18 +235,18 @@ BEGIN
 
 		SET @Email_Template = REPLACE(@Email_Template , '{syntable}',@TableBody)
 
-		EXEC msdb.dbo.sp_send_dbmail 
-				@profile_name = @DatabaseEmailProfile,
-				@recipients =  @To_User_Mail_Id,
-				@copy_recipients = @CC_User_Mail_Id,
-				@blind_copy_recipients = @BCC_User_Mail_Id,
-				@subject = @MailSubject,
-				@body = @Email_Template, 
-				@body_format = 'HTML';
+		--EXEC msdb.dbo.sp_send_dbmail 
+		--		@profile_name = @DatabaseEmailProfile,
+		--		@recipients =  @To_User_Mail_Id,
+		--		@copy_recipients = @CC_User_Mail_Id,
+		--		@blind_copy_recipients = @BCC_User_Mail_Id,
+		--		@subject = @MailSubject,
+		--		@body = @Email_Template, 
+		--		@body_format = 'HTML';
 
 				
 		INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
-		SELECT @Email_Config_Code,@TableBody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  'Automated Mail Pending'
+		SELECT @Email_Config_Code,@Email_Template, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''),  @MailSubject
 
 		FETCH NEXT FROM curUserData INTO @Business_Unit_Code, @To_Users_Code, @To_User_Mail_Id, @CC_Users_Code, @CC_User_Mail_Id, @BCC_Users_Code, @BCC_User_Mail_Id, @Channel_Codes
 	END 

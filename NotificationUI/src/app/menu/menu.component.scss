@@ -1,0 +1,163 @@
+#icon {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  margin: 10px 15px;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  background: #268cca;
+  cursor: pointer;
+  padding: 15px;
+
+  &:hover:not(.no-hover) {
+    background-color: #268cca;
+    cursor: pointer;
+    padding: 15px;
+  }
+}
+
+#icon span {
+  display: block;
+  position: absolute;
+  height: 5px;
+  width: 5px;
+  background: #ffffff;
+  opacity: 1;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  -webkit-transition: 0.25s ease-in-out;
+  -moz-transition: 0.25s ease-in-out;
+  -o-transition: 0.25s ease-in-out;
+  transition: 0.25s ease-in-out;
+  margin: 3px;
+}
+
+#icon span:nth-child(even) {
+  left: 30%;
+  background: #ffffff;
+}
+
+#icon span:nth-child(odd) {
+  left: 0px;
+  background: #ffffff;
+}
+
+#icon span:nth-child(1),
+#icon span:nth-child(2),
+#icon span:nth-child(3) {
+  top: 0px;
+  background: #ffffff;
+}
+
+#icon span:nth-child(4),
+#icon span:nth-child(5),
+#icon span:nth-child(6) {
+  top: 8px;
+  background: #ffffff;
+}
+
+#icon span:nth-child(7),
+#icon span:nth-child(8),
+#icon span:nth-child(9) {
+  top: 16px;
+}
+
+#icon span:nth-child(3) {
+  left: 60%;
+  background: #ffffff;
+}
+
+#icon span:nth-child(6) {
+  left: 60%;
+  background: #ffffff;
+}
+
+#icon span:nth-child(9) {
+  left: 60%;
+  background: #ffffff;
+}
+
+#icon.open span:nth-child(1),
+#icon.open span:nth-child(2),
+#icon.open span:nth-child(3) {
+  top: 12px;
+  background: #ffffff;
+}
+
+#icon.open span:nth-child(7),
+#icon.open span:nth-child(8),
+#icon.open span:nth-child(9) {
+  top: 12px;
+  background: #ffffff;
+}
+
+.nav-bar-item {
+  display: flex;
+  flex-direction: row;
+  margin-inline-start: 15px;
+}
+
+.navbar-expand .navbar-nav .nav-link {
+  padding-inline-end: 0rem !important;
+  padding-inline-start: 0.5rem !important;
+}
+
+.navbar-default {
+  font-size: 12px;
+  height: 47px;
+  border-radius: 100px;
+  width: fit-content;
+  font-family: Worksans-Regular;
+}
+
+span:hover {
+  background-color: #268cca;
+  cursor: pointer;
+}
+
+::ng-deep .overlayClass .p-overlaypanel .p-overlaypanel-content {
+  padding: 2rem;
+  padding-right: 5rem;
+  color: black;
+}
+
+.span1 {
+  cursor: pointer;
+  font-size: 12px;
+}
+
+
+.product-list {
+  height: calc(94vh - 56px);
+  max-height: 540px;
+  overflow-y: auto;
+  padding-bottom: 15px;
+}
+
+.menu-item {
+  cursor: pointer;
+  color: var(--foreground-default);
+}
+
+.menu-item-btn {
+  height: 25px !important;
+  margin-bottom: 0;
+  margin-top: auto;
+}
+
+.arrow-rectangle {
+  width: 50px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  margin-inline-start: 12px;
+}
+
+.next-btn {
+  display: inline;
+  padding: 5px;
+}
