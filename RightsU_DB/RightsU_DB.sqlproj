@@ -1187,7 +1187,6 @@
     <Build Include="dbo\Stored Procedures\USP_Insert_Title_Import_UDT.sql" />
     <Build Include="dbo\Stored Procedures\USP_Populate_Titles.sql" />
     <Build Include="dbo\Stored Procedures\USP_DM_Title_PI.sql" />
-    <Build Include="dbo\Stored Procedures\USP_Deal_Expiry_Email.sql" />
     <Build Include="dbo\Stored Procedures\USPMHForgotPassword.sql" />
     <Build Include="dbo\Stored Procedures\USPExportToExcelBulkImport.sql" />
     <Build Include="dbo\Stored Procedures\USP_List_ContentBulkImport.sql" />
@@ -1444,9 +1443,7 @@
     <Build Include="dbo\User Defined Types\CuratedPreview_UDT.sql" />
     <Build Include="dbo\User Defined Types\RightsDefination.sql" />
     <Build Include="dbo\Tables\Acq_Adv_Ancillary_Report.sql" />
-    <Build Include="dbo\Dev_Query\Dev_TagQuery.sql" />
     <Build Include="dbo\Tables\DM_Title_Resolve_Conflict.sql" />
-    <Build Include="dbo\Dev_Query\DB_Script_15165.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_Utility_PIII.sql" />
     <Build Include="dbo\Stored Procedures\USP_Title_Import_RCData.sql" />
     <Build Include="dbo\Stored Procedures\USPMHMovieAlbumMusicDetailsList.sql" />
@@ -1457,7 +1454,6 @@
     <Build Include="dbo\Stored Procedures\USP_Deal_WF_Pending_Automated_Email.sql" />
     <Build Include="dbo\Stored Procedures\USP_Validate_Delay_Rights_Duplication_Acq.sql" />
     <Build Include="dbo\Functions\UFN_Get_UsernName_Last_Approved.sql" />
-    <Build Include="dbo\Stored Procedures\USP_Insert_Email_Notification_Log.sql" />
     <Build Include="dbo\Stored Procedures\USP_Get_EmailConfig_Users.sql" />
     <Build Include="dbo\Tables\System_Parameter.sql" />
     <Build Include="dbo\Views\System_Parameter_New.sql" />
